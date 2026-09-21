@@ -436,7 +436,7 @@ blocks: docs/restructure-3-repos.md
 
 | Шаг | Дата | Вердикт гейта | Заметки |
 |---|---|---|---|
-| У0 | | | красное ДО начала: 3 экрана — сюда |
+| У0 | 21.09.2026 | `FAIL (3 из 115)` | красное ДО начала, снимок — `docs/agent-imp-baseline.txt`: `Concepts/ai-bankster-prototype-v02/MaterialReport.html` — Б5 (×5: `.nav-layout`, `.nav`, `.screen`, `.crumbs`, `main.screen__content`) и Б6; `Projects/post/mainPage/index.html` — Б32 (спека, строки 122, 137, 149); `Projects/post/Portfolio-did/Portfolio.html` — Б32 (15 строк). Плюс `ВНИМАНИЕ:` калибровка сметы, замеров 0 |
 | У1 | | | |
 | У2 | | | ожидается: гейт станет краснее — это норма |
 | У3а | | | |

@@ -1,0 +1,44 @@
+# Снимок состояния до работ по docs/agent-imp.md (шаг У0)
+# Команда: node .opencode/skills/screen-review/tooling/lessons-cli.mjs gate --full
+# Дата: 21.09.2026 · ветка chore/agent-imp от 8f749c5 · 36,6 с
+
+== gate: проверки по изменениям ==
+режим: полный (--full)
+
+OK    линтер, страницы ДС пакетом — файлов: 62  (0,7 с)
+OK    projects-hub --selftest  (0,1 с)
+OK    projects-hub (реестр хаба проектов)  (0,0 с)
+OK    agent-config --selftest  (0,0 с)
+OK    agent-config (один конфиг, без модели)  (0,0 с)
+OK    линтер, глобальные правила  (0,5 с)
+OK    линтер --parity (доки = код)  (0,1 с)
+OK    spec-audit  (0,4 с)
+OK    сенсор --etalons  (0,1 с)
+OK    anchors  (0,1 с)
+OK    check (форма журнала уроков)  (0,1 с)
+OK    coverage (чек-листы)  (0,1 с)
+OK    ctx-budget --selftest (смета контекста)  (0,1 с)
+OK    stats (регресс)  (0,1 с)
+OK    verify --corpus sensor  (2,2 с)
+OK    verify --corpus lint  (17,2 с)
+OK    vendor-scan (нейтральность)  (0,2 с)
+OK    сенсор — файлов: 19  (1,3 с)
+OK    линтер — файлов: 22  (10,8 с)
+OK    docs-split check — файлов: 54  (1,9 с)
+FAIL  сенсор Concepts/ai-bankster-prototype-v02/MaterialReport.html  (0,1 с)
+      FAIL  Б5 каркас: .nav-layout
+      FAIL  Б5 каркас: .nav
+      FAIL  Б5 каркас: .screen
+      FAIL  Б5 каркас: .crumbs
+      FAIL  Б5 каркас: main.screen__content
+      FAIL  Б6 ровно один h1 в .phead__title (1)
+      ВЕРДИКТ: FAIL (6 блокер, 0 замечание)
+FAIL  сенсор Projects/post/mainPage/index.html  (0,1 с)
+      FAIL  Б32 в mainPage.screen.md разделы-журнал, строки 122, 137, 149 — спека описывает состояние экрана, история живёт в git
+      ВЕРДИКТ: FAIL (1 блокер, 1 замечание)
+FAIL  сенсор Projects/post/Portfolio-did/Portfolio.html  (0,1 с)
+      FAIL  Б32 в Portfolio.screen.md разделы-журнал, строки 365, 396, 411, 422, 436 и ещё 10 — спека описывает состояние экрана, история живёт в git
+      ВЕРДИКТ: FAIL (1 блокер, 1 замечание)
+
+ВНИМАНИЕ: калибровка сметы: замеров 0 — смета ни разу не сверена с фактом; коэффициенты в stages.json остаются оценкой (ctx-budget.mjs --calibrate --stage <этап> --fact <токенов>)
+ВЕРДИКТ: FAIL (3 из 115)
