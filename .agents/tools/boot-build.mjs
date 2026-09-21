@@ -169,7 +169,16 @@ function selftest() {
   const pass = head.includes('"kit-ds/"') && !render(P)['boot/ds-body.js'].includes('kit-ds');
   if (!pass) failed++;
   out.push((pass ? 'ok    ' : 'FAIL  ') + 'путь до ДС — только в ds-head.js');
-  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + (CASES.length + 1) + ')' : 'OK (кейсов: ' + (CASES.length + 1) + ')'));
+  /* Сгенерированный код разбирается как JS. --check сравнивает файл с выводом
+     генератора и испорченный самим генератором файл признал бы верным —
+     правильность генерата доказывается исполнением, а не сравнением (урок Л128). */
+  let parsed = 0;
+  for (const [rel, text] of Object.entries(render({ ...P, ds: 'kit-ds/it\'s' }))) {
+    try { new Function(text); parsed++; } catch (e) { out.push('FAIL  ' + rel + ' не разбирается как JS: ' + e.message); }
+  }
+  if (parsed !== 2) failed++;
+  else out.push('ok    сгенерированный загрузчик разбирается как JS (и с кавычкой в пути до ДС)');
+  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + (CASES.length + 2) + ')' : 'OK (кейсов: ' + (CASES.length + 2) + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
 }

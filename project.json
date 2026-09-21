@@ -21,7 +21,9 @@
     "page": "index.html",
     "registry": "hub.js",
     "registryFormat": "script-global",
-    "managed": false
+    "generatedFrom": "apps",
+    "managed": false,
+    "ds": { "id": "ds-ibp", "title": "Дизайн-система IBP", "desc": "Документация основ и компонентов", "icon": "layer-01" }
   },
 
   "state": ".agent-state",

@@ -48,8 +48,9 @@ cat design-system/specs/Kanban.md                                  # полна�
 - Экранный скрипт — после `ds.js`; после перерисовки `innerHTML` заново звать
   `dsIcons.apply`, `DSMenu.bindAll`, `DSModal.bindAll`, `DSDrawer.bindAll`,
   `DSKanban.bind`, `DSTable.wireAll`.
-- Запись в `hub.js` (`group: 'concepts'`, `root: 'apps/<имя>'`, `href`), строка
-  пользователя в меню → `../../../index.html`.
+- Запись приложения — `app.json` (`id`, `track`, `title`, `desc`, `home`, `icon`),
+  реестр `hub.js` пересобрать: `node .agents/tools/hub-build.mjs` (руками не
+  править); строка пользователя в меню → `../../../index.html`.
 - Валюта — кодом (`RUB`), не «руб.»/«₽» (Б26). Глиф `Important-deals` сенсор не знает.
 - Своё поверх ДС — только на токенах и с записью в «Открытые вопросы» спеки.
 

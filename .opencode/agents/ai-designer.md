@@ -6,7 +6,6 @@ permission:
   edit:
     "*": ask
     "apps/**": allow
-    "hub.js": allow
     "apps/post/**": ask
   webfetch: deny
   websearch: deny

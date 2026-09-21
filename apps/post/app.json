@@ -1,4 +1,9 @@
 {
   "id": "post",
-  "track": "product"
+  "track": "product",
+  "title": "Post — ДИД",
+  "desc": "Финансист ДИД: главная, текущий портфель, страница сделки",
+  "home": "pages/MainPage.html",
+  "icon": "folder",
+  "build": "tools/assemble.mjs"
 }

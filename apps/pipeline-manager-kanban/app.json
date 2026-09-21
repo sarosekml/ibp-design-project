@@ -1,4 +1,8 @@
 {
   "id": "pipeline-manager-kanban",
-  "track": "rnd"
+  "track": "rnd",
+  "title": "Pipeline Management",
+  "desc": "Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица",
+  "home": "pages/index.html",
+  "icon": "layout-grid-01"
 }

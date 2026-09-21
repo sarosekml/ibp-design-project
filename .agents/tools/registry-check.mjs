@@ -197,6 +197,14 @@ export function check(from = HERE) {
     if (app.id !== undefined && app.id !== path.basename(rootAbs)) {
       defects.push('П3 ' + name + ' — id «' + app.id + '» в ' + relOf(mf) + ' не совпадает с каталогом приложения «' + path.basename(rootAbs) + '»');
     }
+    /* С Ш9 запись хаба живёт в app.json, а hub.js собирается из неё
+       (hub-build.mjs): поля сверяются там, где их правят. */
+    const miss = ['title', 'desc', 'home', 'icon'].filter((k) => typeof app[k] !== 'string' || !app[k].trim());
+    if (miss.length) defects.push('П1 ' + name + ' — в ' + relOf(mf) + ' нет полей записи: ' + miss.join(', '));
+    else {
+      if (!existsSync(path.join(rootAbs, app.home))) defects.push('П3 ' + name + ' — home «' + app.home + '» из ' + relOf(mf) + ' ведёт на несуществующий файл');
+      if (icons && !icons.has(app.icon)) defects.push('П2 ' + name + ' — иконки «' + app.icon + '» из ' + relOf(mf) + ' нет в ' + P.ds + '/specs/Icons.md');
+    }
   }
 
   /* П4 полнота */
@@ -208,7 +216,9 @@ export function check(from = HERE) {
       if (inFixtures(rel)) continue;
       stats.pages++;
       if (roots.some((r) => inside(f, r))) continue;
-      defects.push('П4 ' + rel + ' — страница вне записей реестра: добавить запись в ' + REGISTRY + ' (root — ' + (APPS ? 'каталог приложения ' + P.appsDir + '/<id>' : 'папка проекта или концепта') + ')');
+      defects.push('П4 ' + rel + ' — страница вне записей реестра: ' + (APPS
+        ? 'завести ' + P.appsDir + '/<id>/' + P.appsManifest + ' приложения и пересобрать ' + REGISTRY + ' (hub-build.mjs)'
+        : 'добавить запись в ' + REGISTRY + ' (root — папка проекта или концепта)'));
     }
   }
   /* П6 форма приложения */
@@ -318,7 +328,8 @@ const MANIFEST = {
     { id: 'rnd', title: 'Концепты', hubGroup: 'concepts' },
   ],
 };
-const appJson = (id, track) => JSON.stringify({ id, track }, null, 2);
+const appJson = (id, track, home = 'pages/Start.html', patch = {}) =>
+  JSON.stringify({ id, track, title: 'Приложение ' + id, desc: 'тест', home, icon: 'folder', ...patch }, null, 2);
 
 function cleanTree(root) {
   put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
@@ -334,7 +345,7 @@ function cleanTree(root) {
     + 'var s = window.IBPHome.footerHTML(role, { logoutModal: \'m\' }).replace(\' href="#"\', USER_LINK_TO);</script>');
   put(root, 'apps/alpha/pages/NoNav.html', '<p>экран без меню</p>');
   put(root, 'apps/alpha/components/Tile/Tile.html', '<section class="tile">фрагмент</section>');
-  put(root, 'apps/gamma/app.json', appJson('gamma', 'rnd'));
+  put(root, 'apps/gamma/app.json', appJson('gamma', 'rnd', 'pages/Gamma.html'));
   put(root, 'apps/gamma/pages/Gamma.html',
     '<div class="nav__footer"><a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">Г</a></div>');
   put(root, 'apps/alpha/fixtures/index.html', '<a class="nav__user" href="#">фикстура</a>');
@@ -344,7 +355,13 @@ function cleanTree(root) {
 const CASES = [
   { name: 'чистое дерево', expect: null },
   { name: 'страница приложения вне реестра', expect: 'П4 apps/beta/pages/Beta.html',
-    mutate: (r) => { put(r, 'apps/beta/app.json', appJson('beta', 'rnd')); put(r, 'apps/beta/pages/Beta.html', '<p>новый концепт</p>'); } },
+    mutate: (r) => put(r, 'apps/beta/pages/Beta.html', '<p>новый концепт</p>') },
+  { name: 'в записи приложения нет полей', expect: 'П1 запись 3 «gamma» — в apps/gamma/app.json нет полей записи: title, desc',
+    mutate: (r) => put(r, 'apps/gamma/app.json', JSON.stringify({ id: 'gamma', track: 'rnd', home: 'pages/Gamma.html', icon: 'folder' })) },
+  { name: 'home записи приложения ведёт в никуда', expect: 'home «pages/Missing.html» из apps/gamma/app.json ведёт на несуществующий файл',
+    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('gamma', 'rnd', 'pages/Missing.html')) },
+  { name: 'иконки записи приложения нет в ДС', expect: 'П2 запись 3 «gamma» — иконки «no-such-glyph» из apps/gamma/app.json',
+    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('gamma', 'rnd', 'pages/Gamma.html', { icon: 'no-such-glyph' })) },
   { name: 'ДС не в реестре', expect: 'П4 design-system/index.html',
     mutate: (r) => put(r, 'hub.js', registryJs(CLEAN_ENTRIES.filter((e) => e.group !== 'ds'))) },
   { name: 'битый href', expect: 'несуществующий файл',
@@ -356,9 +373,9 @@ const CASES = [
   { name: 'у приложения нет app.json', expect: 'нет apps/gamma/app.json',
     mutate: (r) => rmSync(path.join(r, 'apps/gamma/app.json')) },
   { name: 'track не из манифеста', expect: 'track «lab»',
-    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('gamma', 'lab')) },
+    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('gamma', 'lab', 'pages/Gamma.html')) },
   { name: 'id записи приложения не совпадает с каталогом', expect: 'не совпадает с каталогом приложения «gamma»',
-    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('delta', 'rnd')) },
+    mutate: (r) => put(r, 'apps/gamma/app.json', appJson('delta', 'rnd', 'pages/Gamma.html')) },
   { name: 'root — не каталог приложения', expect: 'не каталог приложения',
     mutate: (r) => put(r, 'hub.js', registryJs(withEntry(2, { root: 'apps/gamma/pages' }))) },
   { name: 'экран вне pages', expect: 'П6 apps/gamma/Extra.html',
@@ -393,7 +410,7 @@ const CASES = [
   { name: 'другие имена каталогов в манифесте', expect: null,
     mutate: (r) => renameTree(r) },
   { name: 'страница вне реестра в переименованном каталоге', expect: 'П4 prj/delta/screens/Delta.html',
-    mutate: (r) => { renameTree(r); put(r, 'prj/delta/meta.json', appJson('delta', 'rnd')); put(r, 'prj/delta/screens/Delta.html', '<p>новый концепт</p>'); } },
+    mutate: (r) => { renameTree(r); put(r, 'prj/delta/screens/Delta.html', '<p>новый концепт</p>'); } },
   /* Манифест прежней формы: у треков свои каталоги, записи приложений нет. */
   { name: 'форма до Ш7: каталоги треков', expect: null,
     mutate: (r) => legacyTree(r) },
@@ -413,6 +430,8 @@ function renameTree(root) {
   for (const app of ['alpha', 'gamma']) {
     renameSync(path.join(root, 'prj', app, 'app.json'), path.join(root, 'prj', app, 'meta.json'));
     renameSync(path.join(root, 'prj', app, 'pages'), path.join(root, 'prj', app, 'screens'));
+    const meta = path.join(root, 'prj', app, 'meta.json');
+    writeFileSync(meta, readFileSync(meta, 'utf8').replace('"pages/', '"screens/'), 'utf8');
   }
   rmSync(path.join(root, 'hub.js'));
   const entries = CLEAN_ENTRIES.map((e) => ({

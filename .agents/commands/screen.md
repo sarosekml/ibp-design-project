@@ -15,8 +15,7 @@ agent: ai-designer
 результат — субагенту `screen-reviewer`. Приёмку не пропускай.
 
 Результат — два файла в приложении трека `rnd`: `apps/<Имя>/pages/<Имя>.html`
-и `<Имя>.screen.md` рядом; у нового приложения — `apps/<Имя>/app.json`
-(`track: "rnd"`) и запись в `hub.js` (`group: 'concepts'`) — без них гейт
+и `<Имя>.screen.md` рядом; у нового приложения — `apps/<Имя>/app.json` (`id`, `track: "rnd"`, `title`, `desc`, `home`, `icon`) и пересборка реестра `node .agents/tools/hub-build.mjs` — без них гейт
 красный. Концепт собирается строго на ДС, если ТЗ прямо не просит
 кастомного решения.
 

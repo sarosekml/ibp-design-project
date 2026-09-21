@@ -1,4 +1,8 @@
 {
   "id": "ai-bankster-prototype",
-  "track": "rnd"
+  "track": "rnd",
+  "title": "Аналитические материалы",
+  "desc": "Прототип модуля AI Pitcher: новый отчёт, история, журнал",
+  "home": "pages/index.html",
+  "icon": "folder"
 }

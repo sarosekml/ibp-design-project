@@ -21,7 +21,7 @@ updated: "21.09.2026"
 - Задача агента: превратить ТЗ в экран на дизайн-системе IBP. На выходе
   `apps/<Имя>/pages/<Имя>.html` (живой HTML-макет) и `<Имя>.screen.md`
   (спецификация для агента-разработчика) в приложении трека `rnd`, плюс
-  `app.json` приложения и запись в реестре `hub.js`.
+  `app.json` приложения и пересобранный реестр хаба `hub.js`.
 - Человек выбирает одного агента, **`ai-designer`**. Это оркестратор: он
   разговаривает с человеком, выбирает маршрут и раздаёт задания субагентам
   `screen-builder` и `screen-reviewer`. Третья роль, `ux-researcher`,
@@ -189,7 +189,7 @@ sequenceDiagram
     B->>T: layout-check.mjs <экран>
     T-->>B: ВЕРДИКТ
     B-->>D: пути, компоненты, допущения, вопросы, блокеры ДС
-    Note over D: запись экрана в hub.js
+    Note over D: app.json приложения, hub-build.mjs
 
     D->>R: task: путь к экрану + путь к ТЗ
     Note over R: skills: screen-review → composition-review<br/>+ lessons.md
