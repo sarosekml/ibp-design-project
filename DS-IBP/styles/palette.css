@@ -1,0 +1,209 @@
+/* =========================================================================
+   Design System — Semantic Color Palette
+   Семантические токены: имя говорит о НАЗНАЧЕНИИ, значение — ссылка на
+   базовый токен цветовой рампы из styles/colors.css.
+
+   Правило слоя: здесь не бывает hex. Правка базового токена обязана менять
+   все семантические, которые на него ссылаются, — ради этого слой и разведён.
+   Единственное исключение — группа Chart: у неё собственная палитра графиков,
+   базовых токенов у неё нет (так в спеке).
+
+   Полупрозрачные варианты — color-mix() поверх transparent, чтобы они
+   правильно ложились на любой фон.
+
+   Источник: Uploads/DS _ Swap _ Palette (Static · Active · Situative ·
+   Status · Chart), 119 токенов. Сверено 20.09.2026.
+   ========================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------
+     STATIC — фоновые цвета и отображение информации
+     --------------------------------------------------------------------- */
+
+  /* BG */
+  --bg-popup:     var(--mgrey-50);
+  --bg-tile:      var(--mgrey-50);
+  --bg-main-menu: var(--mgrey-100);
+  --bg-hint:      var(--cgrey-800);
+  --bg-page:      var(--swamp-A100);
+
+  /* BGTable */
+  --bg-table-default:       var(--mgrey-50);
+  --bg-table-default-hover: var(--swamp-A400);
+  --bg-table-default-focus: var(--swamp-A700);
+  --bg-table-accent:        var(--amber-50);
+  --bg-table-accent-hover:  var(--amber-A100);
+  --bg-table-accent-focus:  var(--amber-A200);
+  --bg-table-pinned:        var(--swamp-A100);
+  --bg-table-pinned-hover:  var(--swamp-50);
+  --bg-table-pinned-focus:  var(--swamp-A700);
+
+  /* Border */
+  --border-primary:  var(--swamp-300);
+  --border-light:    var(--swamp-200);
+  --border-dark:     var(--swamp-600);
+  --disabled-border: var(--cgrey-100);
+
+  /* Text */
+  --text-primary:   var(--cgrey-600);
+  --text-secondary: var(--cgrey-500);
+  --text-inactive:  var(--cgrey-300);
+  --text-on-dark:   var(--mgrey-50);
+
+
+  /* ---------------------------------------------------------------------
+     ACTIVE — для интерактивных элементов
+     --------------------------------------------------------------------- */
+
+  /* Primary */
+  --primary:                    var(--emerald-500);
+  --primary-dark:               var(--emerald-700);
+  --primary-light:              var(--emerald-300);
+  --primary-bg:                 color-mix(in srgb, var(--emerald-500) 8%, transparent);
+  --primary-bg-light:           color-mix(in srgb, var(--emerald-500) 4%, transparent);
+  --primary-bg-semy-transparent: color-mix(in srgb, var(--mgrey-50) 50%, transparent);
+
+  /* Secondary */
+  --secondary:          var(--emerald-200);
+  --secondary-dark:     var(--emerald-600);
+  --secondary-light:    var(--emerald-100);
+  --secondary-bg:       color-mix(in srgb, var(--emerald-200) 32%, transparent);
+  --secondary-bg-light: color-mix(in srgb, var(--emerald-200) 16%, transparent);
+
+  /* Tertiary */
+  --tertiary:          var(--swamp-100);
+  --tertiary-dark:     var(--swamp-400);
+  --tertiary-light:    var(--swamp-50);
+  --tertiary-bg:       color-mix(in srgb, var(--swamp-500) 8%, transparent);
+  --tertiary-bg-light: color-mix(in srgb, var(--swamp-500) 4%, transparent);
+
+
+  /* ---------------------------------------------------------------------
+     SITUATIVE — для ситуаций успеха / ошибки / внимания / информирования
+     --------------------------------------------------------------------- */
+
+  /* Error */
+  --error:          var(--red-300);
+  --error-light:    var(--red-200);
+  --error-dark:     var(--red-700);
+  --error-bg:       var(--red-A200);
+  --error-bg-light: var(--red-A100);
+  --error-bg-dark:  var(--red-A400);
+
+  /* Warning */
+  --warning:       var(--amber-600);
+  --warning-light: var(--amber-400);
+  --warning-dark:  var(--amber-800);
+  --warning-bg:    var(--amber-50);
+
+  /* Success */
+  --success:       var(--light-green-600);
+  --success-light: var(--light-green-400);
+  --success-dark:  var(--light-green-800);
+  --success-bg:    var(--light-green-50);
+
+  /* Info */
+  --info:       var(--light-blue-600);
+  --info-light: var(--light-blue-400);
+  --info-dark:  var(--light-blue-900);
+  --info-bg:    var(--light-blue-50);
+
+  /* Link */
+  --link:       var(--emerald-500);
+  --link-light: var(--emerald-300);
+  --link-dark:  var(--emerald-700);
+
+  /* Disabled */
+  --disabled:                     var(--cgrey-200);
+  --disabled-bg:                  var(--cgrey-50);
+  --disabled-bg-semy-transparent: color-mix(in srgb, var(--mgrey-50) 56%, transparent);
+
+
+  /* ---------------------------------------------------------------------
+     STATUS — для обозначения статусов
+     Каждая рампа: Dark / base / Mid 56% / MidLight 32% / Light 16%
+     --------------------------------------------------------------------- */
+
+  /* Green */
+  --st-green-dark:     var(--green-800);
+  --st-green:          var(--green-500);
+  --st-green-mid:      color-mix(in srgb, var(--green-500) 56%, transparent);
+  --st-green-midlight: color-mix(in srgb, var(--green-500) 32%, transparent);
+  --st-green-light:    color-mix(in srgb, var(--green-500) 16%, transparent);
+
+  /* Blue */
+  --st-blue-dark:     var(--light-blue-900);
+  --st-blue:          var(--light-blue-500);
+  --st-blue-mid:      color-mix(in srgb, var(--light-blue-500) 56%, transparent);
+  --st-blue-midlight: color-mix(in srgb, var(--light-blue-500) 32%, transparent);
+  --st-blue-light:    color-mix(in srgb, var(--light-blue-500) 16%, transparent);
+
+  /* Orange */
+  --st-orange-dark:     var(--amber-900);
+  --st-orange:          var(--amber-700);
+  --st-orange-mid:      color-mix(in srgb, var(--amber-700) 56%, transparent);
+  --st-orange-midlight: color-mix(in srgb, var(--amber-700) 32%, transparent);
+  --st-orange-light:    color-mix(in srgb, var(--amber-700) 16%, transparent);
+
+  /* Red */
+  --st-red-dark:     var(--red-700);
+  --st-red:          var(--red-400);
+  --st-red-mid:      color-mix(in srgb, var(--red-400) 56%, transparent);
+  --st-red-midlight: color-mix(in srgb, var(--red-400) 32%, transparent);
+  --st-red-light:    color-mix(in srgb, var(--red-400) 16%, transparent);
+
+  /* Purple */
+  --st-dpurple-dark:     var(--deep-purple-900);
+  --st-dpurple:          var(--deep-purple-400);
+  --st-dpurple-mid:      color-mix(in srgb, var(--deep-purple-400) 56%, transparent);
+  --st-dpurple-midlight: color-mix(in srgb, var(--deep-purple-400) 32%, transparent);
+  --st-dpurple-light:    color-mix(in srgb, var(--deep-purple-400) 16%, transparent);
+
+  /* Grey */
+  --st-grey-dark:     var(--cgrey-900);
+  --st-grey:          var(--cgrey-700);
+  --st-grey-mid:      color-mix(in srgb, var(--cgrey-700) 56%, transparent);
+  --st-grey-midlight: color-mix(in srgb, var(--cgrey-700) 32%, transparent);
+  --st-grey-light:    color-mix(in srgb, var(--cgrey-700) 16%, transparent);
+
+  /* System */
+  --st-system-dark:     var(--cgrey-600);
+  --st-system:          var(--swamp-400);
+  --st-system-mid:      color-mix(in srgb, var(--swamp-400) 56%, transparent);
+  --st-system-midlight: color-mix(in srgb, var(--swamp-400) 32%, transparent);
+  --st-system-light:    color-mix(in srgb, var(--swamp-400) 16%, transparent);
+
+  /* Disabled — своя шкала прозрачности: 40 / 24 / 16 / 8 / 4 */
+  --st-disabled-dark:     color-mix(in srgb, var(--cgrey-600) 40%, transparent);
+  --st-disabled:          color-mix(in srgb, var(--cgrey-600) 24%, transparent);
+  --st-disabled-mid:      color-mix(in srgb, var(--cgrey-600) 16%, transparent);
+  --st-disabled-midlight: color-mix(in srgb, var(--cgrey-600) 8%, transparent);
+  --st-disabled-light:    color-mix(in srgb, var(--cgrey-600) 4%, transparent);
+
+  /* Primary */
+  --st-primary-dark:     var(--emerald-900);
+  --st-primary:          var(--emerald-500);
+  --st-primary-mid:      color-mix(in srgb, var(--emerald-500) 56%, transparent);
+  --st-primary-midlight: color-mix(in srgb, var(--emerald-500) 32%, transparent);
+  --st-primary-light:    color-mix(in srgb, var(--emerald-500) 16%, transparent);
+
+
+  /* ---------------------------------------------------------------------
+     CHART — для применения в графиках
+     Единственная группа без базовых токенов: в спеке колонка «Стиль и токен
+     Colors» у всех двенадцати строк пустая. Это собственная палитра графиков,
+     а не рампа общего назначения, поэтому здесь hex — по спеке, не по забывчивости.
+     --------------------------------------------------------------------- */
+  --ch-red:          #F99290;
+  --ch-orange:       #F9A580;
+  --ch-yellow:       #FFD081;
+  --ch-shiny-green:  #8CCB5E;
+  --ch-pastel-green: #76E385;
+  --ch-turquoise:    #31D4A8;
+  --ch-light-blue:   #7DCAFA;
+  --ch-blue:         #5B9CFA;
+  --ch-indigo:       #8D87F9;
+  --ch-purple:       #CB88F8;
+  --ch-pale-purple:  #F58BD8;
+  --ch-pink-purple:  #EC7390;
+}
