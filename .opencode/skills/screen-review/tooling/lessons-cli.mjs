@@ -1164,6 +1164,11 @@ function gateStep(id, paths = null) {
     case 'stats': return { title: 'stats (регресс)', args: [SELF, 'stats'], cwd: ROOT };
     case 'coverage': return { title: 'coverage (чек-листы)', args: [SELF, 'coverage'], cwd: ROOT };
     case 'vendor': return { title: 'vendor-scan (нейтральность)', args: [VENDOR], cwd: ROOT };
+    /* Селфтест нейтральности — откат на временном дереве, по случаю на каждую
+       форму абсолютного пути (posix, windows) и чистые почти-совпадения.
+       Заведён 21.09.2026: образец пути был только windows-формы, и на macOS
+       сторож пропускал posix-путь с вердиктом «чисто» (шапка vendor-scan.mjs). */
+    case 'vendor-selftest': return { title: 'vendor-scan --selftest', args: [VENDOR, '--selftest'], cwd: ROOT };
     /* Селфтест сметы контекста. Заведён 14.09.2026: инструмент написали, сторож
        (обратный тест на известном провале) написали, а звать его забыли — гейт
        на правку `stages.json` поднимал один vendor-scan. Сторож без вызывающего
@@ -1244,6 +1249,7 @@ function gateStepsFor(rel, deleted) {
   if (rel.startsWith('.opencode/skills/session-plan/')) add('ctx-budget');
   if (rel === TOOL_REL + '/projects-hub.mjs') add('projects-selftest', 'projects');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
+  if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
   if (/^\.opencode\/skills\/[^/]+\/references\/[^/]+\.html$/.test(rel)) add('etalons');
   if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith('.opencode/')) add('check', 'stats');
   if (rel === TOOL_REL + '/coverage.json' || rel === '.opencode/skills/screen-review/SKILL.md' || rel === '.opencode/skills/composition-review/SKILL.md') add('coverage');
@@ -1251,9 +1257,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'vendor'];
+const GATE_FULL = ['lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor'];
+const GATE_ORDER = ['sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

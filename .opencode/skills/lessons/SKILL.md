@@ -280,7 +280,7 @@ node .opencode/skills/screen-review/tooling/lessons-cli.mjs state
 node .opencode/skills/screen-review/tooling/lessons-cli.mjs stats
 node .opencode/skills/screen-review/tooling/layout-check.mjs --rules
 node .opencode/skills/screen-review/tooling/layout-check.mjs --etalons
-node .opencode/skills/screen-review/tooling/vendor-scan.mjs
+node .opencode/skills/screen-review/tooling/vendor-scan.mjs     # --selftest — откат на временном дереве
 ```
 
 - `add` — дозапись урока из черновика: номер, дата, EOL, `updated:`.
