@@ -153,7 +153,7 @@ function loadFragment(inputDir, tag) {
 
   const raw = readFileSync(file, 'utf8');
   /* BOM снимается по коду символа, а не регуляркой: escape-последовательность
-     в исходнике легко теряется при правке через шелл (ds-rules §8) */
+     в исходнике легко теряется при правке через шелл (process.md §8) */
   const frag = (raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw).trim();
   if (!frag) fail('фрагмент пуст: ' + rel);
   if (/^<!DOCTYPE/i.test(frag) || /^<html[\s>]/i.test(frag)) {

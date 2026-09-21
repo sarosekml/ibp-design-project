@@ -30,29 +30,31 @@ HTML + markdown-спеку экрана, проверить и сдать.
 
 В проекте четыре смысловые части, и они **не взаимозаменяемы**:
 
-### 1. `.opencode/` — рабочая среда агента ai-designer
+### 1. `.agents/` — рабочая среда агента ai-designer
 
 Папка, где лежит всё для работы агента `ai-designer`: правила его работы,
-агенты, скиллы, команды и весь процесс генерации HTML-прототипов. Это
-инструментарий, а не продукт и не дизайн-решения.
+агенты, скиллы, команды, оснастка (`.agents/tools/`) и весь процесс генерации
+HTML-прототипов. Это инструментарий, а не продукт и не дизайн-решения. Рядом —
+тонкий адаптер `.opencode/`: конфиг opencode и указатели на роли и команды
+харнеса; содержания в нём нет, правится `.agents/`.
 
 Ключевые файлы:
 
 | Файл | Что содержит |
 |---|---|
-| `.opencode/opencode.json` | Конфиг: подключение `ds-rules.md` и `DS-IBP/AGENTS.md`, права на инструменты |
-| `.opencode/rules/ds-rules.md` | **Правила процесса агента** — читать всегда, целиком |
+| `.opencode/opencode.json` | Конфиг: подключение `process.md` и `DS-IBP/AGENTS.md`, права на инструменты |
+| `.agents/rules/process.md` | **Правила процесса агента** — читать всегда, целиком |
 | `DS-IBP/AGENTS.md` | **Знание о ДС**: карта, чтение, запреты, каркас экрана, каталог — читать всегда, целиком |
-| `.opencode/agents/ai-designer.md` | Ведущий агент: маршруты, распределение по субагентам, границы |
-| `.opencode/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
-| `.opencode/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
-| `.opencode/agents/ux-researcher.md` | Исследование по базе знаний продукта — выключено, пока база не подключена (`KB` в `knowledge-lookup`) |
-| `.opencode/commands/*.md` | `/screen`, `/concepts`, `/handoff`, `/resume`, `/screen-check` |
-| `.opencode/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
-| `.opencode/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
-| `.opencode/skills/screen-review/SKILL.md` | Полная приёмка экрана |
+| `.agents/agents/ai-designer.md` | Ведущий агент: маршруты, распределение по субагентам, границы |
+| `.agents/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
+| `.agents/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
+| `.agents/agents/ux-researcher.md` | Исследование по базе знаний продукта — выключено, пока база не подключена (`KB` в `knowledge-lookup`) |
+| `.agents/commands/*.md` | `/screen`, `/concepts`, `/handoff`, `/resume`, `/screen-check` |
+| `.agents/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
+| `.agents/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
+| `.agents/skills/screen-review/SKILL.md` | Полная приёмка экрана |
 | `DS-IBP/templates/screen/Screen.html` | **Каркас экрана** — стартовая копия при сборке |
-| `.opencode/skills/screen-assembly/references/patterns.md` | Готовые рецепты разметки (крошки, шапка, таблица, модалка) |
+| `.agents/skills/screen-assembly/references/patterns.md` | Готовые рецепты разметки (крошки, шапка, таблица, модалка) |
 | `DS-IBP/specs/_runtime-hooks.md` | Таблица «что работает само / что требует атрибута» |
 
 ### 2. `DS-IBP/` — дизайн-система и компоненты
@@ -101,7 +103,7 @@ HTML + markdown-спеку экрана, проверить и сдать.
 ## Как работать: главная задача — сборка экрана
 
 Сборку ведёт агент `ai-designer` по маршрутам из
-`.opencode/agents/ai-designer.md`. Ключевые моменты:
+`.agents/agents/ai-designer.md`. Ключевые моменты:
 
 ### Порядок чтения перед задачей
 
@@ -109,8 +111,8 @@ HTML + markdown-спеку экрана, проверить и сдать.
 контекст:
 
 1. `GIGACODE.md` (этот файл) — карта проекта. ✅
-2. `.opencode/rules/ds-rules.md` — правила процесса и `DS-IBP/AGENTS.md` — знание о ДС, оба **целиком**.
-3. `.opencode/agents/ai-designer.md` — роли и маршруты (по своей роли).
+2. `.agents/rules/process.md` — правила процесса и `DS-IBP/AGENTS.md` — знание о ДС, оба **целиком**.
+3. `.agents/agents/ai-designer.md` — роли и маршруты (по своей роли).
 4. По необходимости — скиллы: `screen-assembly` (сборка),
    `screen-review` (приёмка), `ds-lookup` (поиск компонента),
    `concept-design` (концепты), `session-plan` (смета захода).

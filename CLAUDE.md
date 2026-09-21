@@ -2,7 +2,7 @@
 
 Локальный файл (исключён из git через `.git/info/exclude`): в репозитории
 действует сторож нейтральности, служебным файлам агентов в `main` не место.
-Общие правила живут в `AGENTS.md` и `.opencode/` — здесь только указатели и
+Общие правила живут в `AGENTS.md` и `.agents/` — здесь только указатели и
 выжимка того, что нужно при сборке прототипа.
 
 @AGENTS.md
@@ -11,13 +11,13 @@
 
 | Что | Где |
 |---|---|
-| Правила процесса (целиком) | `.opencode/rules/ds-rules.md` |
+| Правила процесса (целиком) | `.agents/rules/process.md` |
 | Знание о ДС (целиком) | `DS-IBP/AGENTS.md` |
-| Как устроены роли и маршруты | `.opencode/agents/ai-designer.md`, `.opencode/agents/screen-builder.md` |
-| Сборка экрана по шагам | `.opencode/skills/screen-assembly/SKILL.md` + `DS-IBP/templates/screen/Screen.html`, `patterns.md`, `DS-IBP/specs/_runtime-hooks.md` |
-| Формат спеки экрана | `.opencode/skills/screen-spec/references/template.md` |
-| Композиция | `.opencode/skills/layout-composition/SKILL.md` |
-| Приёмка | `.opencode/skills/screen-review/SKILL.md`, `.opencode/skills/composition-review/SKILL.md` |
+| Как устроены роли и маршруты | `.agents/agents/ai-designer.md`, `.agents/agents/screen-builder.md` |
+| Сборка экрана по шагам | `.agents/skills/screen-assembly/SKILL.md` + `DS-IBP/templates/screen/Screen.html`, `patterns.md`, `DS-IBP/specs/_runtime-hooks.md` |
+| Формат спеки экрана | `.agents/skills/screen-spec/references/template.md` |
+| Композиция | `.agents/skills/layout-composition/SKILL.md` |
+| Приёмка | `.agents/skills/screen-review/SKILL.md`, `.agents/skills/composition-review/SKILL.md` |
 
 ## ДС — читать точечно
 
@@ -49,9 +49,9 @@ cat DS-IBP/specs/Kanban.md                                  # полная сп�
 ## Проверка
 
 ```bash
-node .opencode/skills/screen-review/tooling/layout-check.mjs Concepts/<имя>/<Экран>.html
-node .opencode/skills/screen-review/tooling/lessons-cli.mjs gate
-node .opencode/skills/screen-review/tooling/vendor-scan.mjs
+node .agents/tools/layout-check.mjs Concepts/<имя>/<Экран>.html
+node .agents/tools/lessons-cli.mjs gate
+node .agents/tools/vendor-scan.mjs
 ```
 
 Во встроенном браузере страницы по file:// открываются без стилей — поднимать

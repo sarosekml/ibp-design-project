@@ -55,7 +55,7 @@ node Projects/post/assemble.mjs <файл>   # один
 
 Инструменты приёмки фрагмент экраном не считают: `layout-check` и `ds-lint-cli` печатают
 на нём `ПРОПУЩЕН:` и проверяют собранный файл. Определение фрагмента — в
-`.opencode/skills/screen-review/tooling/fragments.mjs`.
+`.agents/tools/fragments.mjs`.
 
 ## Связи между модулями
 

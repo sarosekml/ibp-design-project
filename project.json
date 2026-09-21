@@ -9,8 +9,9 @@
     "source": { "type": "inline" }
   },
   "agentKit": {
-    "mount": ".opencode",
-    "tools": ".opencode/skills/screen-review/tooling",
+    "mount": ".agents",
+    "tools": ".agents/tools",
+    "adapter": ".opencode",
     "source": { "type": "inline" }
   },
 
