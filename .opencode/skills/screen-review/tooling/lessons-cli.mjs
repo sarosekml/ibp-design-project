@@ -1158,6 +1158,20 @@ function pageForScript(rel) {
   return found;
 }
 
+/* Экран спеки: одноимённый `.html` рядом или файл из строки `file:` шапки —
+   тот же порядок поиска, что у сенсора (Б12). */
+function screenOfSpec(rel) {
+  const abs = path.resolve(ROOT, rel);
+  const same = abs.replace(/\.screen\.md$/, '.html');
+  if (existsSync(same)) return [toRel(same)];
+  try {
+    const m = readFileSync(abs, 'utf8').match(/^file:\s*(.+)$/m);
+    const target = m ? path.resolve(ROOT, m[1].trim()) : '';
+    if (target.endsWith('.html') && existsSync(target)) return [toRel(target)];
+  } catch { /* спека не читается — перепроверять нечего */ }
+  return [];
+}
+
 const isDocsSplit = (rel) => {
   try { return readFileSync(path.resolve(ROOT, rel), 'utf8').includes('class="page ds-split"'); } catch { return false; }
 };
@@ -1251,6 +1265,13 @@ function gateStepsFor(rel, deleted) {
         for (const t of [h, built].filter(Boolean)) add('sensor:' + toRel(t), 'lint:' + toRel(t));
       }
     } else add('sensor:' + rel, 'lint:' + rel);
+  }
+  /* Спека экрана — вход сенсора (шапка — Б12, разделы-журнал — Б32), а не
+     только документ для человека: её правка перепроверяет экран, которому
+     она принадлежит. Иначе починенная спека висит ДОЛГОМ до полного гейта
+     (поймано 21.09.2026 на Б32). */
+  if (screenArea && !inFixtures && rel.endsWith('.screen.md')) {
+    for (const h of screenOfSpec(rel)) add('sensor:' + h);
   }
   if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith('DS-IBP/fixtures/')) add('verify-lint', 'anchors');
 

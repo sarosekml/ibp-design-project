@@ -1505,3 +1505,13 @@
 {"n":1505,"t":"2026-09-21T12:16:23.397Z","tool":"нейтральность","target":"репозиторий","verdict":"OK","codes":[]}
 {"n":1506,"t":"2026-09-21T12:16:37.826Z","tool":"нейтральность","target":"репозиторий","verdict":"OK","codes":[]}
 {"n":1507,"t":"2026-09-21T12:18:28.491Z","tool":"нейтральность","target":"репозиторий","verdict":"OK","codes":[]}
+{"n":1508,"t":"2026-09-21T12:19:29.546Z","tool":"сенсор","target":"Projects/post/mainPage/index.html","verdict":"OK","codes":["З11"]}
+{"n":1509,"t":"2026-09-21T12:19:29.615Z","tool":"сенсор","target":"Projects/post/Portfolio-did/Portfolio.html","verdict":"OK","codes":["З11"]}
+{"n":1510,"t":"2026-09-21T12:19:57.007Z","tool":"сенсор","target":"Projects/post/mainPage/index.html","verdict":"OK","codes":["З11"]}
+{"n":1511,"t":"2026-09-21T12:19:57.078Z","tool":"сенсор","target":"Projects/post/Portfolio-did/Portfolio.html","verdict":"OK","codes":["З11"]}
+{"n":1512,"t":"2026-09-21T12:20:15.966Z","tool":"нейтральность","target":"репозиторий","verdict":"FAIL","codes":["V1"]}
+{"n":1513,"t":"2026-09-21T12:21:56.288Z","tool":"нейтральность","target":"репозиторий","verdict":"FAIL","codes":["V1"]}
+{"n":1514,"t":"2026-09-21T12:22:03.973Z","tool":"нейтральность","target":"репозиторий","verdict":"OK","codes":[]}
+{"n":1515,"t":"2026-09-21T12:22:04.028Z","tool":"сенсор","target":"Projects/post/mainPage/index.html","verdict":"OK","codes":["З11"]}
+{"n":1516,"t":"2026-09-21T12:22:04.097Z","tool":"сенсор","target":"Projects/post/Portfolio-did/Portfolio.html","verdict":"OK","codes":["З11"]}
+{"n":1517,"t":"2026-09-21T12:22:58.281Z","tool":"нейтральность","target":"репозиторий","verdict":"OK","codes":[]}
