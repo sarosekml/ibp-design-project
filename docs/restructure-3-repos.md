@@ -183,7 +183,7 @@ depends_on: docs/agent-imp.md
 | `Projects/post/post_local_components/` | `apps/post/components/` | Ш7 |
 | `Concepts/*/exports/`, pdf-референсы | `apps/*/refs/` | Ш7 |
 | `Uploads/` | `refs/` в корне проекта | Ш10 |
-| `runs.jsonl`, `gate-snapshot.json` внутри харнеса | `.agent-state/` проекта, вне git | Ш4 |
+| журнал прогонов `runs/` (файл на прогон, с 21.09.2026), `gate-snapshot.json` внутри харнеса | `.agent-state/` проекта, вне git | Ш4 |
 
 ---
 
@@ -507,7 +507,7 @@ ibp-prototypes/
   boot/  ds-head.js · ds-body.js   ← генерируются; здесь и только здесь путь до ДС
   design-system/           ← точка монтирования ДС
   .agents/                 ← точка монтирования харнеса
-  .agent-state/            ← вне git: runs.jsonl, gate-snapshot.json
+  .agent-state/            ← вне git: runs/, gate-snapshot.json
   refs/                    ← бывш. Uploads/: входящие материалы
   apps/
     post/                          app.json (track: product)

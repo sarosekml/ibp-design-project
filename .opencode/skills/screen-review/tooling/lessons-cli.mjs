@@ -42,6 +42,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from '
 import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
 import { isTraceName } from './vendor-scan.mjs';
+import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate } from './runlog.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -61,7 +62,6 @@ const LINT_FIXTURES = path.join(ROOT, 'DS-IBP/fixtures');
    verifyCorpus обходит каталог без вложенных. */
 const SCREEN_FIXTURES_REL = '.opencode/skills/screen-review/tooling/fixtures/lint-screens';
 const SCREEN_FIXTURES = path.join(ROOT, SCREEN_FIXTURES_REL);
-const RUNS = path.join(HERE, 'runs.jsonl');
 const REFS = path.join(ROOT, '.opencode/skills/screen-review/references');
 const RAW = path.join(REFS, 'lessons-raw.md');
 const CUR = path.join(REFS, 'lessons.md');
@@ -871,15 +871,9 @@ function state() {
 
 const HORIZON = 10;
 
-function readRuns() {
-  if (!existsSync(RUNS)) return [];
-  const out = [];
-  for (const line of rd(RUNS).split(/\r?\n/)) {
-    if (!line.trim()) continue;
-    try { out.push(JSON.parse(line)); } catch { /* битая строка журнала не роняет отчёт */ }
-  }
-  return out;
-}
+/* Журнал прогонов читает `readRuns` из runlog.mjs: там же запись и вращение,
+   у формата хранения один владелец (файл на прогон, каталог runs/). */
+const journalRel = () => path.relative(ROOT, RUNS_DIR).split(path.sep).join('/') + '/';
 
 const parseDay = (s) => {
   const m = String(s).match(/(\d{2})\.(\d{2})\.(\d{4})/);
@@ -996,7 +990,7 @@ function stats() {
   log('== stats: сигнал об эффекте ==');
   log('');
   if (!runs.length) {
-    log('  журнал прогонов пуст: ' + path.relative(ROOT, RUNS).replace(/\\/g, '/'));
+    log('  журнал прогонов пуст: ' + journalRel());
     log('');
     log('Он наполняется сам — каждым прогоном сенсора, линтера и аудита на');
     log('НАСТОЯЩЕМ файле. Фикстуры в журнал не идут намеренно: `verify` даёт');
@@ -1017,7 +1011,7 @@ function stats() {
   const times = runs.map((r) => Date.parse(r.t)).filter((n) => !Number.isNaN(n));
   log('  прогонов: ' + runs.length + '   ' + [...byTool].map(([t, rs]) => t + ' ' + rs.length).join(' · '));
   if (times.length) log('  период: ' + fmtDay(Math.min(...times)) + ' — ' + fmtDay(Math.max(...times)));
-  log('  журнал: ' + path.relative(ROOT, RUNS).replace(/\\/g, '/'));
+  log('  журнал: ' + journalRel() + ' (файл на прогон, хранятся последние ' + LIMIT + ' строк)');
   /* Счётчик печатается рядом с выводом: разбор дат закрепления, давший НОЛЬ,
      выглядел бы как «регресса нет» — то же, чем обманул `/^Правило\b/` (Л56). */
   log('  якорей с датой закрепления: ' + fixed.size);
@@ -1114,6 +1108,7 @@ const DOCS_SPLIT = path.join(ROOT, '.opencode/skills/docs-split/tooling/docs-spl
 const CTX_BUDGET = path.join(ROOT, '.opencode/skills/session-plan/tooling/ctx-budget.mjs');
 const PROJECTS_HUB = path.join(HERE, 'projects-hub.mjs');
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
+const RUNLOG = path.join(HERE, 'runlog.mjs');
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1134,7 +1129,7 @@ const AGENT_CONFIG_FILES = new Set(['.opencode/opencode.json', '.opencode/openco
 const HUB_FILES = new Set(['index.html', 'index.screen.md', 'hub.js']);
 const GATE_SKIP_DIRS = new Set(['node_modules', '.git', 'uploads', 'screenshots']);
 // журнал прогонов и сам снимок меняет гейт — это не изменение работы
-const gateIgnored = (rel) => rel === TOOL_REL + '/runs.jsonl' || rel === TOOL_REL + '/gate-snapshot.json';
+const gateIgnored = (rel) => rel === TOOL_REL + '/runs.jsonl' || rel.startsWith(TOOL_REL + '/runs/') || rel === TOOL_REL + '/gate-snapshot.json';
 const TEXT_EXT = /\.(md|json|js|mjs|cjs|html|css|txt|ya?ml|jsonc)$/i;
 
 const toRel = (abs) => path.relative(ROOT, abs).split(path.sep).join('/');
@@ -1233,6 +1228,10 @@ function gateStep(id, paths = null) {
        Заведён 21.09.2026: образец пути был только windows-формы, и на macOS
        сторож пропускал posix-путь с вердиктом «чисто» (шапка vendor-scan.mjs). */
     case 'vendor-selftest': return { title: 'vendor-scan --selftest', args: [VENDOR, '--selftest'], cwd: ROOT };
+    /* Селфтест журнала прогонов — вращение (предел, без разрыва истории),
+       порядок чтения, один файл на прогон гейта. Заведён 21.09.2026 вместе с
+       хранением «файл на прогон» (шапка runlog.mjs). */
+    case 'runlog-selftest': return { title: 'runlog --selftest (журнал прогонов)', args: [RUNLOG, '--selftest'], cwd: ROOT };
     /* Селфтест сметы контекста. Заведён 14.09.2026: инструмент написали, сторож
        (обратный тест на известном провале) написали, а звать его забыли — гейт
        на правку `stages.json` поднимал один vendor-scan. Сторож без вызывающего
@@ -1323,6 +1322,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/projects-hub.mjs') add('projects-selftest', 'projects');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
+  if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
   if (/^\.opencode\/skills\/[^/]+\/references\/[^/]+\.html$/.test(rel)) add('etalons');
   if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith('.opencode/')) add('check', 'stats');
   if (rel === TOOL_REL + '/coverage.json' || rel === '.opencode/skills/screen-review/SKILL.md' || rel === '.opencode/skills/composition-review/SKILL.md') add('coverage');
@@ -1330,9 +1330,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1442,8 +1442,12 @@ function gate() {
      нём стоит `stats`. Инструмент, который молча не пишет, делает регресс
      невидимым — так с 12.09.2026 линтер не писал ни одного прогона по экрану
      (путь `../Projects/…` журнал счёл внешним). Сторож стоит здесь, потому что
-     гейт — единственное место, которое знает, что прогон был настоящим. */
-  const journalLines = () => (existsSync(RUNS) ? rd(RUNS).split('\n').filter(Boolean).length : 0);
+     гейт — единственное место, которое знает, что прогон был настоящим.
+     Один гейт — один файл прогона (runlog.mjs, шапка): путь передаётся
+     инструментам переменной окружения, и «записал ли» проверяется по нему. */
+  const runFile = path.join(RUNS_DIR, runFileName());
+  process.env.RUNLOG_FILE = runFile;
+  const journalLines = () => countLines(runFile);
   const MUST_LOG = new Set(['sensor', 'lint', 'lint-pages']);
   const results = [];
   for (const id of ids) {
@@ -1454,10 +1458,14 @@ function gate() {
     // ПРОПУЩЕН — инструмент сам объявил, что файл не его вход; строки в журнале у пропуска нет по устройству
     if (MUST_LOG.has(kindOf(id)) && !target.startsWith('..') && !/^ПРОПУЩЕН:/m.test(r.out) && journalLines() === before) {
       r.code = r.code || 1;
-      r.out += '\nЖУРНАЛ: прогон по настоящему файлу не записан в runs.jsonl — stats его не видит (класс Л100)';
+      r.out += '\nЖУРНАЛ: прогон по настоящему файлу не записан в журнал прогонов (' + journalRel() + ') — stats его не видит (класс Л100)';
     }
     results.push({ id, step, debt: retried.includes(id), ...r });
   }
+  /* Вращение в конце прогона: файл гейта растёт уже после того, как его
+     первая строка сдвинула окно, и без второго вызова журнал держался бы
+     в пределе «плюс один прогон» (runlog.mjs, шапка). */
+  rotate();
 
   /* Вывод сжат: он оседает в контексте агента. Прошедшие пофайловые шаги
      сворачиваются в строку на вид проверки; находки печатаются только у
