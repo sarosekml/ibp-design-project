@@ -441,24 +441,42 @@ function fieldsOf(entry) {
   return labels;
 }
 
+/* Область, где ищутся копии процедуры: `.opencode/`, `docs/` и все `.md` в
+   корне. До 21.09.2026 обход шёл по `.opencode/` и одному корневому AGENTS.md —
+   документ процесса, вынесенный в `docs/`, выпал из-под правила, которое сам
+   пересказывает: находка Л-ВЛАДЕЛЕЦ исчезла не потому, что копию убрали, а
+   потому что файл переехал (класс Л100). Корень — целиком, а не AGENTS.md:
+   рядом с ним лежат правила других агентных CLI, и копия процедуры туда
+   вставляется так же легко.
+   Один список на два потребителя — обход `checkOwners` и матрица гейта
+   (правка документа в этой области поднимает `check`). Пока это константа;
+   после реструктуризации область обхода приходит из манифеста проекта
+   (шаг Ш4 плана `docs/restructure-3-repos.md`), а не отсюда. */
+const OWNER_ROOTS = ['.opencode', 'docs'];
+const inOwnerArea = (rel) => rel.endsWith('.md') && (!rel.includes('/') || OWNER_ROOTS.some((r) => rel.startsWith(r + '/')));
+
 function checkOwners(findings) {
   /* Самоприменение Л43: у процедуры один владелец. Файл считается владельцем,
      если ОПРЕДЕЛЯЕТ все три уровня закрепления; журналы их употребляют, а не
      определяют, и из проверки исключены. */
   const owners = [];
+  const consider = (p) => {
+    if (/lessons(-raw)?\.md$/.test(path.basename(p))) return;
+    const rel = path.relative(ROOT, p).replace(/\\/g, '/');
+    if (!inOwnerArea(rel)) return;
+    const t = rd(p);
+    if (FIX_LEVELS.every((l) => t.includes(l))) owners.push(rel);
+  };
   const walk = (dir) => {
+    if (!existsSync(dir)) return;
     for (const e of readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) { if (e.name !== 'node_modules' && e.name !== '.git') walk(p); continue; }
-      if (!e.name.endsWith('.md')) continue;
-      if (/lessons(-raw)?\.md$/.test(e.name)) continue;
-      const t = rd(p);
-      if (FIX_LEVELS.every((l) => t.includes(l))) owners.push(path.relative(ROOT, p).replace(/\\/g, '/'));
+      consider(p);
     }
   };
-  walk(path.join(ROOT, '.opencode'));
-  const agents = path.join(ROOT, 'AGENTS.md');
-  if (existsSync(agents) && FIX_LEVELS.every((l) => rd(agents).includes(l))) owners.push('AGENTS.md');
+  for (const r of OWNER_ROOTS) walk(path.join(ROOT, r));
+  for (const e of readdirSync(ROOT, { withFileTypes: true })) if (e.isFile()) consider(path.join(ROOT, e.name));
 
   const OWNER = '.opencode/skills/lessons/SKILL.md';
   const extra = owners.filter((p) => p !== OWNER);
@@ -1077,10 +1095,13 @@ const PROJECTS_HUB = path.join(HERE, 'projects-hub.mjs');
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const SELF = fileURLToPath(import.meta.url);
 
+/* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
+   здесь были перечислены AGENTS.md и файлы хаба, и правка правил другого
+   агентного CLI рядом с AGENTS.md, как и любого документа в `docs/`, не
+   поднимала ни нейтральность, ни `check` — гейт не видел входа (класс Л100). */
 const GATE_ROOTS = ['DS-IBP/styles', 'DS-IBP/scripts', 'DS-IBP/specs', 'DS-IBP/pages', 'DS-IBP/fixtures',
   'DS-IBP/ds.css', 'Projects', 'Concepts', '.opencode/rules', '.opencode/agents', '.opencode/commands', '.opencode/skills',
-  'AGENTS.md', '.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc',
-  'index.html', 'index.screen.md', 'hub.js'];
+  '.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc', 'docs'];
 // конфиг агентного CLI: живёт в .opencode/, корневые пути — чтобы гейт увидел появившийся второй слой (agent-config.mjs, КФ1)
 const AGENT_CONFIG_FILES = new Set(['.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc']);
 // хаб проектов в корне: страница, её спека и реестр
@@ -1108,6 +1129,7 @@ function fingerprint() {
     if (!gateIgnored(rel)) out[rel] = Math.round(st.mtimeMs) + ':' + st.size;
   };
   for (const r of GATE_ROOTS) walk(path.join(ROOT, r));
+  for (const e of readdirSync(ROOT, { withFileTypes: true })) if (e.isFile() && TEXT_EXT.test(e.name)) walk(path.join(ROOT, e.name));
   return out;
 }
 
@@ -1203,6 +1225,8 @@ function gateStepsFor(rel, deleted) {
   if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('projects');
   // конфиг, в том числе удалённый или появившийся в корне
   if (AGENT_CONFIG_FILES.has(rel)) add('agent-config');
+  // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
+  if (inOwnerArea(rel)) add('check');
 
   if (deleted) {
     if (rel.startsWith('DS-IBP/')) add('lint-global', 'parity');
