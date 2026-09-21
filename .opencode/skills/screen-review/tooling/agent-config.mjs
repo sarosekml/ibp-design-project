@@ -20,7 +20,16 @@
      КФ1 в корне репозитория нет opencode.json и opencode.jsonc;
      КФ2 конфиг есть ровно один — .opencode/opencode.json, читается как JSON;
      КФ3 в нём нет ключей модели: model, small_model, provider,
-         agent.<имя>.model.
+         agent.<имя>.model;
+     КФ4 каждый скилл `.opencode/skills/<id>/SKILL.md` виден модели: в шапке
+         есть непустой `description`, а `name`, если задан, совпадает с
+         именем папки. opencode v2 (документация установленной версии 2.0.11,
+         проверено 21.09.2026) берёт ID скилла из пути, а скилл без
+         `description` модели не объявляет: он зарегистрирован, но в список
+         доступных не попадает, и агент узнаёт о нём, только прочитав файл
+         по пути. Так жил `docs-split` до 21.09.2026 (docs/agent-imp.md, У6).
+         `name` в v2 — отображаемое имя; расходящееся с папкой вводит в
+         заблуждение, а в v1 скилл грузился именно по нему.
 
    Честная граница: frontmatter агентов (.opencode/agents) на ключ model
    не проверяется — там его сейчас нет, и заводить вход без случая незачем.
@@ -33,7 +42,7 @@
      node agent-config.mjs --selftest   — откат на временном дереве
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
-import { readFileSync, existsSync, mkdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, writeFileSync, rmSync, mkdtempSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -76,7 +85,39 @@ function check(root) {
     if (a && a.model !== undefined) defects.push('КФ3 ' + CONFIG + ' → agent.' + name + '.model — на другом контуре даст «Model not found»');
   }
 
+  checkSkills(root, defects);
   return { defects };
+}
+
+/* КФ4 — см. шапку. Шапка читается построчно: значение в строке ключа или,
+   для блочной формы YAML (`description: >`), в следующих строках с отступом. */
+function checkSkills(root, defects) {
+  const dir = path.join(root, '.opencode', 'skills');
+  if (!existsSync(dir)) return;
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (!e.isDirectory()) continue;
+    const file = path.join(dir, e.name, 'SKILL.md');
+    if (!existsSync(file)) continue;
+    const rel = '.opencode/skills/' + e.name + '/SKILL.md';
+    const lines = readFileSync(file, 'utf8').split(/\r?\n/);
+    const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+    const head = end > 0 ? lines.slice(1, end) : [];
+    const field = (k) => {
+      const i = head.findIndex((l) => l.startsWith(k + ':'));
+      if (i < 0) return null;
+      let v = head[i].slice(k.length + 1).trim();
+      if (/^[>|][-+]?$/.test(v)) {
+        const block = [];
+        for (let j = i + 1; j < head.length && /^\s+\S/.test(head[j]); j++) block.push(head[j].trim());
+        v = block.join(' ');
+      }
+      return v.replace(/^["']|["']$/g, '');
+    };
+    const desc = field('description');
+    const name = field('name');
+    if (!desc) defects.push('КФ4 ' + rel + ' — в шапке нет description: скилл зарегистрирован, но модели не объявлен и грузится только чтением файла по пути');
+    if (name !== null && name !== e.name) defects.push('КФ4 ' + rel + ' — name «' + name + '» не совпадает с папкой «' + e.name + '»: ID скилла берётся из пути');
+  }
 }
 
 function report({ defects }) {
@@ -120,7 +161,15 @@ const CASES = [
     mutate: (r) => put(r, CONFIG, cfgJson({ model: 'corp-gateway/deepseek-v4-flash' })) },
   { name: 'провайдер', expect: '→ provider',
     mutate: (r) => put(r, CONFIG, cfgJson({ provider: { 'corp-gateway': {} } })) },
+  { name: 'скилл без description', expect: 'КФ4 .opencode/skills/bare/SKILL.md — в шапке нет description',
+    mutate: (r) => put(r, '.opencode/skills/bare/SKILL.md', '---\nbelongs_to: bare\npurpose: скилл без описания\n---\n\n# Голый скилл\n') },
+  { name: 'name скилла не совпадает с папкой', expect: 'name «other» не совпадает с папкой «named»',
+    mutate: (r) => put(r, '.opencode/skills/named/SKILL.md', '---\nname: other\ndescription: Описание есть.\n---\n\n# Скилл\n') },
+  { name: 'description блочной формой YAML', expect: null,
+    mutate: (r) => put(r, '.opencode/skills/folded/SKILL.md', '---\nname: folded\ndescription: >\n  Описание в две\n  строки.\n---\n\n# Скилл\n') },
 ];
+// в каждом дереве селфтеста — исправный скилл: чистый случай проходит через КФ4, а не мимо
+const GOOD_SKILL = '---\nname: good\ndescription: Исправный скилл для селфтеста.\n---\n\n# Исправный скилл\n';
 
 function selftest() {
   const out = ['== agent-config --selftest =='];
@@ -129,6 +178,7 @@ function selftest() {
     const root = mkdtempSync(path.join(os.tmpdir(), 'agent-config-'));
     try {
       put(root, CONFIG, cfgJson({}));
+      put(root, '.opencode/skills/good/SKILL.md', GOOD_SKILL);
       if (c.mutate) c.mutate(root);
       const { defects } = check(root);
       const pass = c.expect === null

@@ -1287,8 +1287,8 @@ function gateStepsFor(rel, deleted) {
   // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками
   const screenArea = rel.startsWith('Projects/') || rel.startsWith('Concepts/');
   if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('projects');
-  // конфиг, в том числе удалённый или появившийся в корне
-  if (AGENT_CONFIG_FILES.has(rel)) add('agent-config');
+  // конфиг, в том числе удалённый или появившийся в корне; шапка скилла — КФ4 (видим ли скилл модели)
+  if (AGENT_CONFIG_FILES.has(rel) || (!deleted && /^\.opencode\/skills\/[^/]+\/SKILL\.md$/.test(rel))) add('agent-config');
   // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
   if (inOwnerArea(rel)) add('check');
 
