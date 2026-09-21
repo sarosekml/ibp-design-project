@@ -72,6 +72,18 @@ const SHARDS = [
   ['docs-split', path.join(ROOT, '.opencode/skills/docs-split/references/lessons.md')],
   ['lessons', path.join(ROOT, '.opencode/skills/lessons/references/lessons.md')],
 ];
+/* Предел выжимки — у КАЖДОЙ выжимки отдельно, основной и шардов (Л79): он
+   меряет стоимость чтения на одной задаче. Объявлен в скилле lessons. До
+   21.09.2026 его только печатал `state`, на превышение не краснел никто — и
+   шард `lessons` дошёл до 155 строк молча: предел, превышение которого ничего
+   не краснит, пределом не является. Теперь это БЛОКЕР Л-ПРЕДЕЛ в `check`.
+   Одна константа на `check` и `state`. */
+const DIGEST_LIMIT = { entries: 20, lines: 150 };
+const digestSize = (p) => {
+  const s = rd(p);
+  return { entries: [...s.matchAll(/^### Л\d+\./gm)].length, lines: s.split(/\r?\n/).length };
+};
+const overLimit = (sz) => sz.entries > DIGEST_LIMIT.entries || sz.lines > DIGEST_LIMIT.lines;
 
 const rd = (p) => readFileSync(p, 'utf8');
 const log = (s = '') => console.log(s);
@@ -653,6 +665,15 @@ function cmdCheck() {
 
   const owners = checkOwners(findings);
 
+  // предел выжимок — см. DIGEST_LIMIT
+  for (const p of [CUR, ...SHARDS.map(([, sp]) => sp)].filter((f) => existsSync(f))) {
+    const sz = digestSize(p);
+    if (overLimit(sz)) {
+      findings.push(['БЛОКЕР', 'Л-ПРЕДЕЛ', path.relative(ROOT, p).replace(/\\/g, '/') + ' — ' + sz.entries + ' записей / ' + sz.lines +
+        ' строк при пределе ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + '. Курация: вывести закрытое исполняемым сторожем, вынести чужое по адресату (скилл lessons)']);
+    }
+  }
+
   log('== check: форма записей журнала ==');
   log('');
   const blockers = findings.filter((f) => f[0] === 'БЛОКЕР');
@@ -792,13 +813,13 @@ function state() {
     if (settled(d)) return false;
     return claimsInclusion(d);
   });
-  const curLines = cur.split(/\r?\n/).length;
+  const curSize = digestSize(CUR);
+  const mark = (sz) => (overLimit(sz) ? '   СВЕРХ ПРЕДЕЛА — БЛОКЕР Л-ПРЕДЕЛ в check' : '');
 
-  const LIMIT_N = 20, LIMIT_L = 150;
   log('== состояние журнала уроков ==');
   log('');
   log('  архив:   ' + inRaw.size + ' записей');
-  log('  выжимка: ' + inCur.size + ' записей / ' + curLines + ' строк   (предел ' + LIMIT_N + ' / ' + LIMIT_L + ')');
+  log('  выжимка: ' + curSize.entries + ' записей / ' + curSize.lines + ' строк   (предел ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + ')' + mark(curSize));
   log('');
   log('  долг курации (нет ни в одной выжимке: решение не записано или заявлено, но не внесено): ' + debt.length + (debt.length ? ' — ' + debt.map((n) => 'Л' + n).join(' ') : ''));
 
@@ -812,10 +833,10 @@ function state() {
      чтения на одной задаче, а не объём журнала (урок Л79). */
   if (live.length) {
     log('');
-    log('  шарды по scope (свой предел у каждого):');
+    log('  шарды по scope (предел ' + DIGEST_LIMIT.entries + ' / ' + DIGEST_LIMIT.lines + ' у каждого):');
     for (const [name, p] of live) {
-      const s = rd(p);
-      log('    ' + name + ': ' + nums(s).length + ' записей / ' + s.split(/\r?\n/).length + ' строк');
+      const sz = digestSize(p);
+      log('    ' + name + ': ' + sz.entries + ' записей / ' + sz.lines + ' строк' + mark(sz));
     }
   }
   log('');
@@ -829,14 +850,16 @@ function state() {
   const кбСтрока = кб.out.split(/\r?\n/).find((l) => /калибровка сметы/.test(l));
   if (кбСтрока) { log('  ' + кбСтрока.trim()); log(''); }
 
-  const over = inCur.size > LIMIT_N || curLines > LIMIT_L;
+  const over = [CUR, ...live.map(([, p]) => p)].some((p) => overLimit(digestSize(p)));
   if (over) {
     log('Выжимка сверх предела. Это не «журнал вырос» — это счётчик несделанных');
     log('закреплений: столько уроков держатся на памяти агента вместо кода.');
+    log('Краснит `check` (БЛОКЕР Л-ПРЕДЕЛ): предел, превышение которого ничего не краснит, пределом не является.');
   }
   if (debt.length >= 3) log('Долг курации >= 3 — курация обязательна (триггер по событию, не по календарю).');
 
-  // код выхода: долг курации — то, что чинится за минуту; предел — долгая работа
+  /* Код выхода — только по долгу курации: предел краснит `check`, второй раз
+     его здесь не считают (один владелец у находки). */
   return debt.length >= 3 ? 1 : 0;
 }
 
