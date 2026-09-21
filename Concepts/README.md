@@ -43,7 +43,7 @@ Concepts/
   красный: сторож `projects-hub` (П4) видит страницу вне реестра.
 - **Строка пользователя в футере меню** (`<a class="nav__user">`) ведёт на хаб:
   `href="../../index.html"`, `aria-label="Хаб проектов"`. Каркас
-  `screen-assembly/references/skeleton.html` уже собран так.
+  `DS-IBP/templates/screen/Screen.html` уже собран так.
 - Концепт стал частью настоящей системы — папка переезжает в `Projects/`, запись
   в `hub.js` меняет `group`, `href` и `root`.
 

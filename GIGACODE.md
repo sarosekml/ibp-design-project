@@ -40,8 +40,9 @@ HTML + markdown-спеку экрана, проверить и сдать.
 
 | Файл | Что содержит |
 |---|---|
-| `.opencode/opencode.json` | Конфиг: подключение `ds-rules.md`, права на инструменты |
-| `.opencode/rules/ds-rules.md` | **Главные правила работы с ДС** — читать всегда, целиком |
+| `.opencode/opencode.json` | Конфиг: подключение `ds-rules.md` и `DS-IBP/AGENTS.md`, права на инструменты |
+| `.opencode/rules/ds-rules.md` | **Правила процесса агента** — читать всегда, целиком |
+| `DS-IBP/AGENTS.md` | **Знание о ДС**: карта, чтение, запреты, каркас экрана, каталог — читать всегда, целиком |
 | `.opencode/agents/ai-designer.md` | Ведущий агент: маршруты, распределение по субагентам, границы |
 | `.opencode/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
 | `.opencode/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
@@ -50,9 +51,9 @@ HTML + markdown-спеку экрана, проверить и сдать.
 | `.opencode/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
 | `.opencode/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
 | `.opencode/skills/screen-review/SKILL.md` | Полная приёмка экрана |
-| `.opencode/skills/screen-assembly/references/skeleton.html` | **Каркас экрана** — стартовая копия при сборке |
+| `DS-IBP/templates/screen/Screen.html` | **Каркас экрана** — стартовая копия при сборке |
 | `.opencode/skills/screen-assembly/references/patterns.md` | Готовые рецепты разметки (крошки, шапка, таблица, модалка) |
-| `.opencode/skills/screen-assembly/references/runtime-hooks.md` | Таблица «что работает само / что требует атрибута» |
+| `DS-IBP/specs/_runtime-hooks.md` | Таблица «что работает само / что требует атрибута» |
 
 ### 2. `DS-IBP/` — дизайн-система и компоненты
 
@@ -108,13 +109,13 @@ HTML + markdown-спеку экрана, проверить и сдать.
 контекст:
 
 1. `GIGACODE.md` (этот файл) — карта проекта. ✅
-2. `.opencode/rules/ds-rules.md` — правила ДС, **целиком**.
+2. `.opencode/rules/ds-rules.md` — правила процесса и `DS-IBP/AGENTS.md` — знание о ДС, оба **целиком**.
 3. `.opencode/agents/ai-designer.md` — роли и маршруты (по своей роли).
 4. По необходимости — скиллы: `screen-assembly` (сборка),
    `screen-review` (приёмка), `ds-lookup` (поиск компонента),
    `concept-design` (концепты), `session-plan` (смета захода).
-5. Каркас экрана — `.opencode/skills/screen-assembly/references/skeleton.html`
-   (копия при старте сборки) + `patterns.md` + `runtime-hooks.md`.
+5. Каркас экрана — `DS-IBP/templates/screen/Screen.html`
+   (копия при старте сборки) + `patterns.md` + `DS-IBP/specs/_runtime-hooks.md`.
 
 ### Главное правило: ничего не выдумывать
 
@@ -143,7 +144,7 @@ HTML + markdown-спеку экрана, проверить и сдать.
 - Состояния компонентов (`--selected`/`--disabled`/`:hover`) задаёт только сам
   компонент; свой `<style>` — только раскладка (grid/flex/gap) на токенах.
 - Собственный JavaScript вместо рантайма ДС не пишется. Хуки рантаймов —
-  в `runtime-hooks.md`.
+  в `DS-IBP/specs/_runtime-hooks.md`.
 - Таблица-реестр занимает всю свободную высоту (`screen--app` + `dtable--fill`).
 - После каждой сборки — приёмка `screen-reviewer`, без исключений.
 

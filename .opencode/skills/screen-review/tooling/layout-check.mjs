@@ -35,7 +35,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { logRun, codesFrom } from './runlog.mjs';
+import { logRun, codesFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
@@ -410,11 +410,12 @@ function checkMechanics(html, icons, pagePath) {
      склеенный из кусков (`class="tc' + extra + '"`), — нет (Л70). */
   const markupInScripts = collectScriptMarkup(noComments);
 
-  /* Эталон скилла (`.opencode/skills/<скилл>/references/*.html`) — не экран
-     проекта: спутника-спеки у него нет по устройству (см. Б12). Вид файла
-     берётся из спеки — у эталона он всегда `screen`. */
-  const isEtalon = /\/skills\/[^/]+\/references\//.test((pagePath || '').replace(/\\/g, '/'));
-  const spec = pagePath && !isEtalon ? specOf(pagePath) : null;
+  /* Эталон — шаблон экрана ДС или образец скилла (определение одно, `isEtalon`
+     в runlog.mjs) — не экран проекта: спутника-спеки у него нет по
+     устройству (см. Б12). Вид файла берётся из спеки — у эталона он всегда
+     `screen`. */
+  const etalon = Boolean(pagePath) && isEtalon(pagePath);
+  const spec = pagePath && !etalon ? specOf(pagePath) : null;
   const { kind, declared: kindDeclared } = kindOf(spec);
   const isDocument = kind === 'document';
 
@@ -603,7 +604,7 @@ function checkMechanics(html, icons, pagePath) {
   const tagClsSel = [...styleText.matchAll(/(?:^|\n)\s*(?:button|a|input)\.[a-z0-9_-]+\s*\{/g)]
     .map((m) => m[0].replace(/\s*\{\s*$/, '').trim());
   ok(tagClsSel.length === 0,
-    tagClsSel.length ? `Б21 селекторы тег+класс компонента в <style>: ${[...new Set(tagClsSel)].join(', ')} (перебивают состояния — ds-rules §4)` : 'Б21 нет button./a./input. селекторов в <style> (состояния не перебиты)');
+    tagClsSel.length ? `Б21 селекторы тег+класс компонента в <style>: ${[...new Set(tagClsSel)].join(', ')} (перебивают состояния — DS-IBP/AGENTS.md §4)` : 'Б21 нет button./a./input. селекторов в <style> (состояния не перебиты)');
 
   /* Б22 сброс body margin (урок Л26: без него UA-дефолт 8px → рамка по периметру
      и горизонтальный скролл; экран обязан собираться из шаблона с body-reset) */
@@ -1032,13 +1033,13 @@ function checkMechanics(html, icons, pagePath) {
      «ровно один дефект» у корпуса держится по каждой проверке отдельно,
      а не по каждому файлу.
 
-     Эталон скилла (`.opencode/skills/<скилл>/references/*.html`) — не экран
+     Эталон (шаблон экрана ДС, образец скилла) — не экран
      проекта: он никому не сдаётся на приёмку, спутника-спеки у него нет и не
      должно быть. Остальные правила на нём работать обязаны — ради них он и
      линтуется, — а Б12 на нём ложный. Пропуск печатается строкой, молчаливого
      пропуска нет (ds-rules §9). Поиск спутника — `specOf`, выше. */
-  if (pagePath && isEtalon) {
-    ok(true, 'Б12 ПРОПУЩЕН: эталон скилла — спутника-спеки у него нет по устройству');
+  if (pagePath && etalon) {
+    ok(true, 'Б12 ПРОПУЩЕН: эталон каркаса — спутника-спеки у него нет по устройству');
   } else if (pagePath) {
     if (!spec) {
       ok(false, `Б12 рядом нет ${path.basename(pagePath).replace(/\.html$/i, '.screen.md')} и ни одна спека в папке не объявляет этот файл строкой file: — приёмке не с чем сверять состав экрана`);
@@ -1425,36 +1426,41 @@ function checkOne(pageArg, width) {
   return { status: fails.length === 0 ? 'OK' : 'FAIL', path: p, printed, fails: fails.length, warns: warns.length };
 }
 
-/* ---------------- --etalons: образцы каркаса из скиллов ----------------
+/* ---------------- --etalons: образцы каркаса ----------------
 
-   Каркас экрана лежит образцом в `.opencode/skills/<скилл>/references/*.html`,
-   и с него начинается каждая сборка. Разъехавшийся образец разъезжается сразу
-   во всём, что от него произошло (Л69), а прогонять его по одному некому —
-   этот режим обходит все такие файлы разом.
+   С образца начинается каждая сборка экрана. Разъехавшийся образец
+   разъезжается сразу во всём, что от него произошло (Л69), а прогонять его по
+   одному некому — этот режим обходит все образцы разом. Где они лежат:
+     - шаблон экрана ДС, `DS-IBP/templates/screen/*.html` — с 21.09.2026
+       единственный каркас: в него слит эталон, живший в харнесе
+       (скилл `screen-assembly`, файл `skeleton.html` в его `references`), — два образца расходились
+       молча (реструктуризация, шаг Ш3);
+     - образцы скиллов, `.opencode/skills/<скилл>/references/*.html`, — если
+       скилл заведёт свой.
 
    ЧИСЛО НАЙДЕННОГО ПЕЧАТАЕТСЯ, и пустой обход — это FAIL. Обход, не нашедший
    ни одного файла, неотличим по выводу от обхода, нашедшего десять чистых:
-   зелёный вердикт на пустом множестве — буквально Л100. Сегодня под глобом
-   лежит ровно один файл, и это стоит видеть в выводе, а не обнаруживать.
+   зелёный вердикт на пустом множестве — буквально Л100. Сегодня образец ровно
+   один, и это стоит видеть в выводе, а не обнаруживать.
 
    В журнал прогонов режим не пишет: отсечение — `isEtalon` в runlog.mjs, там
    же причина. */
 function etalons(width) {
-  const base = path.join(ROOT, '.opencode', 'skills');
   const found = [];
+  const htmlIn = (dir) => {
+    if (!existsSync(dir)) return;
+    for (const f of readdirSync(dir)) if (f.endsWith('.html')) found.push(path.join(dir, f));
+  };
+  htmlIn(path.join(DS, 'templates', 'screen'));
+  const base = path.join(ROOT, '.opencode', 'skills');
   if (existsSync(base)) {
     for (const skill of readdirSync(base, { withFileTypes: true })) {
-      if (!skill.isDirectory()) continue;
-      const refs = path.join(base, skill.name, 'references');
-      if (!existsSync(refs)) continue;
-      for (const f of readdirSync(refs)) {
-        if (f.endsWith('.html')) found.push(path.join(refs, f));
-      }
+      if (skill.isDirectory()) htmlIn(path.join(base, skill.name, 'references'));
     }
   }
   found.sort();
 
-  log('== layout-check --etalons: образцы каркаса из .opencode/skills/*/references ==');
+  log('== layout-check --etalons: образцы каркаса (шаблон экрана ДС, образцы скиллов) ==');
   log('эталонов найдено: ' + found.length);
   log('');
   if (!found.length) {

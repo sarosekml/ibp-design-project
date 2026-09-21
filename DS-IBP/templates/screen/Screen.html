@@ -1,36 +1,162 @@
 <!DOCTYPE html>
 <!-- Шаблон экрана на IBP DS. Новый экран = копия этого файла + точечные правки.
+     С 21.09.2026 — единственный каркас экрана: в него слит эталон, который жил
+     в харнесе агента (скилл screen-assembly, файл skeleton.html в его references). Два образца
+     расходились молча — правка одного не доходила до другого.
+
      Копировать обычными средствами оболочки (cp / Copy-Item): инструмента
      `copy_files` в контуре нет, ссылка на него порождала фиктивное «выполнено»
      (урок Л37 — шаг обязан быть исполнимой командой с кодом выхода).
-     Контекст для сборки: specs/_cheatsheet.md (обзор всех компонентов) + specs/<Имя>.md точечно.
-     CSS компонентов не читать — классы и DOM уже в спеках. -->
+
+     Пути ниже — от места шаблона внутри ДС (templates/screen/), поэтому файл
+     открывается и сам по себе. В проекте подключение ДС переписывается под
+     экран: три строки — фавикон, ds.css и scripts/ds.js — ведут к корню ДС
+     оттуда, где лежит экран (правила проекта — в его харнесе). Остальное не
+     трогается. Строка пользователя в футере ведёт на хаб проекта: href — путь
+     до корневого index.html проекта.
+
+     Контекст для сборки: specs/_cheatsheet.md (обзор всех компонентов) +
+     specs/<Имя>.md точечно. CSS компонентов не читать — классы и DOM уже в
+     спеках. Хуки рантаймов (data-table, data-modal, data-tabs…) —
+     specs/_runtime-hooks.md.
+     Якоря секций #sec:head, #sec:content, #sec:modals — точки точечной правки:
+     экран дописывается по grep-у якоря, без перечитывания целиком. -->
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Экран — IBP</title>
+<title>НАЗВАНИЕ ЭКРАНА — IBP</title>
 <link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
 <link rel="stylesheet" href="../../ds.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body {
-    margin: 0; font-family: var(--font-text), system-ui, sans-serif;
-    color: var(--text-primary); background: var(--bg-page); background-attachment: fixed;
-    min-height: 100vh;
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
   }
-  /* стили экрана — ниже; значения только из токенов ДС (var(--*)) */
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Здесь только grid / flex / gap и только на токенах.
+     Ни одного цвета, ни одного размера «на глаз».                          */
+
+  /* Перестроение считается от ширины рабочей области, не окна:
+     закрепление бокового меню сужает контент на 216px, не трогая вьюпорт.
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }                                                                          */
 </style>
 </head>
 <body>
 
-  <main data-screen-label="Screen">
-    <!-- контент экрана -->
-  </main>
+<div class="nav-layout">
 
-  <!-- локальный компонент — строкой, не копией разметки:
-  <ds-include src="../../kit/components/<Имя>/<Имя>.html" state="data" mode="view"></ds-include> -->
-  <script src="../../scripts/ds.js"></script>
+  <!-- ── Боковое меню ────────────────────────────────────────────────────── -->
+  <nav class="nav nav--rail" aria-label="Главное меню">
+    <div class="nav__top">
+      <button class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list">
+      <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="main-page"></i></span><span class="nav__label">Главная</span></a>
+      <div class="nav__block">
+        <div class="nav__block-label">Origination</div>
+        <a class="nav__item nav__item--selected" href="#" aria-current="page"><span class="nav__ico"><i data-icon="corporate-transactions"></i></span><span class="nav__label">Сделки</span></a>
+        <a class="nav__item" href="#"><span class="nav__ico"><i data-icon="tasks"></i></span><span class="nav__label">Задачи</span></a>
+      </div>
+    </div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span><span class="nav__user-role">Аналитик ДИД</span></span>
+      </a>
+      <button class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <!-- ── Рабочая область ─────────────────────────────────────────────────── -->
+  <div class="screen">
+
+    <!-- Крошки: 44px и поля 24px задаёт сам компонент, экран их не трогает.
+         Отступ 8px между крошками и контентом даёт .screen__content (--layout-pad-top) -->
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <li class="crumbs__item"><a class="link link--muted" href="#">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделки</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Название текущей страницы</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Screen">
+
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Название экрана</h1>
+            </div>
+            <div class="phead__chips">
+              <span class="chip chip--rounded chip--s"><span class="chip__label">Статус</span></span>
+            </div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span>Обновлено 26.08.2026</span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button class="btn btn--outline btn--m"><i data-icon="download"></i><span class="btn__label">Выгрузить</span></button>
+          <button class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Создать</span></button>
+          <button class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false"><i data-icon="more-dots"></i></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Контент ────────────────────────────────────────── -->
+      <!-- Ряд тайлов: сумма span в ряду = 12 -->
+      <div class="tile-row">
+        <section class="tile" style="grid-column:span 8">
+          <header class="tile__header">
+            <div class="tile__header-main">
+              <div class="tile__title-row"><h3 class="tile__title">Заголовок тайла</h3></div>
+            </div>
+            <div class="tile__actions">
+              <button class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+            </div>
+          </header>
+          <div class="tile__body">
+            <div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+              <div class="rof">
+                <span class="ds-label"><span class="ds-label__text">Название поля</span></span>
+                <div class="rof__row"><span class="rof__value">Значение</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tile" style="grid-column:span 4">
+          <header class="tile__header">
+            <div class="tile__header-main">
+              <div class="tile__title-row"><h3 class="tile__title">Второй тайл</h3></div>
+            </div>
+          </header>
+          <div class="tile__body">…</div>
+        </section>
+      </div>
+
+      <!-- Локальный компонент проекта — строкой, не копией разметки:
+      <ds-include src="<путь до компонента>/<Имя>/<Имя>.html" state="data" mode="view"></ds-include> -->
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Модальные окна — здесь, в конце body, с hidden.
+     Триггер помечается data-modal="id-скрима".
+     Якорь #sec:modals — точка дозаписи для этапа build-modals: модалки
+     вставляются сюда по grep-у якоря, без перечитывания экрана целиком. -->
+
+<script src="../../scripts/ds.js"></script>
 </body>
 </html>

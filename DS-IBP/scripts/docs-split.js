@@ -3,7 +3,7 @@
    (пилот AllocationBar2 → общий слой, 29.08.2026).
 
    Требует: styles/docs-split.css, рантаймы ds-splitter.js и ds-tabs.js
-   (таблицу рантайм-хуков см. .opencode/skills/screen-assembly/references/runtime-hooks.md).
+   (таблицу рантайм-хуков см. DS-IBP/specs/_runtime-hooks.md).
 
    Запускается только на страницах-хостах: <main class="page ds-split">.
    Порядок: подключать ПОСЛЕ page.js страницы (конструктор и демо строятся

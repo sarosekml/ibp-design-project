@@ -1343,8 +1343,10 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel.startsWith('DS-IBP/styles/') || rel === 'DS-IBP/ds.css') add('lint-global', 'parity', 'etalons');
   if (rel.startsWith('DS-IBP/specs/')) add('parity', 'spec-audit');
-  // каталог компонентов в правилах агента сверяется с манифестом — проход 8 аудита
-  if (rel === '.opencode/rules/ds-rules.md') add('spec-audit');
+  // каталог компонентов в AGENTS.md ДС сверяется с манифестом — проход 8 аудита
+  if (rel === 'DS-IBP/AGENTS.md') add('spec-audit');
+  // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
+  if (/^DS-IBP\/templates\/screen\/[^/]+\.html$/.test(rel)) add('etalons');
 
   // корпус экранов линтера — подпапка tooling/fixtures, но сенсор его не читает
   if (rel === TOOL_REL + '/layout-check.mjs' || (rel.startsWith(TOOL_REL + '/fixtures/') && !rel.startsWith(SCREEN_FIXTURES_REL + '/'))) add('verify-sensor', 'anchors', 'etalons');

@@ -11,9 +11,10 @@
 
 | Что | Где |
 |---|---|
-| Правила ДС (целиком) | `.opencode/rules/ds-rules.md` |
+| Правила процесса (целиком) | `.opencode/rules/ds-rules.md` |
+| Знание о ДС (целиком) | `DS-IBP/AGENTS.md` |
 | Как устроены роли и маршруты | `.opencode/agents/ai-designer.md`, `.opencode/agents/screen-builder.md` |
-| Сборка экрана по шагам | `.opencode/skills/screen-assembly/SKILL.md` + `references/skeleton.html`, `patterns.md`, `runtime-hooks.md` |
+| Сборка экрана по шагам | `.opencode/skills/screen-assembly/SKILL.md` + `DS-IBP/templates/screen/Screen.html`, `patterns.md`, `DS-IBP/specs/_runtime-hooks.md` |
 | Формат спеки экрана | `.opencode/skills/screen-spec/references/template.md` |
 | Композиция | `.opencode/skills/layout-composition/SKILL.md` |
 | Приёмка | `.opencode/skills/screen-review/SKILL.md`, `.opencode/skills/composition-review/SKILL.md` |

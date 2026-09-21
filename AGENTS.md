@@ -8,8 +8,9 @@ updated: "21.09.2026"
 # IBP — правила для opencode
 
 Этот файл читает **opencode** из корня воркспейса `aiDesigner`. Он намеренно
-короткий: подробные правила вынесены в `.opencode/rules/ds-rules.md`
-(подключается через `instructions` в `.opencode/opencode.json`).
+короткий: подробные правила вынесены в `.opencode/rules/ds-rules.md` (процесс)
+и `DS-IBP/AGENTS.md` (знание о дизайн-системе) — оба подключаются через
+`instructions` в `.opencode/opencode.json`.
 
 `AGENTS.md` — открытый формат файла правил, его читают и другие агентные CLI.
 Поэтому здесь только то, что верно для любого инструмента; всё, что специфично
@@ -23,7 +24,8 @@ updated: "21.09.2026"
 
 | Что | Где | Когда читать |
 |---|---|---|
-| Подробные правила ДС | `.opencode/rules/ds-rules.md` | всегда, в начале задачи, целиком |
+| Правила процесса | `.opencode/rules/ds-rules.md` | всегда, в начале задачи, целиком |
+| Знание о ДС: карта, чтение, запреты, каркас, каталог | `DS-IBP/AGENTS.md` | всегда, в начале задачи, целиком |
 | Роли и порядок работы | `.opencode/agents/*.md` | по роли текущей задачи |
 | Сценарии команд | `.opencode/commands/*.md` | когда пользователь пишет `/screen`, `/screen-check`, `/concepts`, `/handoff`, `/resume` |
 | Пошаговые инструкции | `.opencode/skills/*/SKILL.md` | когда дошёл до соответствующего шага |
@@ -107,4 +109,4 @@ aiDesigner/
 Экран подключает `../../DS-IBP/scripts/ds.js` — все рантаймы ДС работают, если в
 разметке стоят их хуки (`data-table`, `data-modal`, `data-tabs`, `data-popover`,
 `data-riskmetric` и т.д.). Свой JavaScript вместо рантайма ДС не пишется.
-Таблица хуков — `.opencode/skills/screen-assembly/references/runtime-hooks.md`.
+Таблица хуков — `DS-IBP/specs/_runtime-hooks.md`.

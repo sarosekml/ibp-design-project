@@ -75,7 +75,8 @@
 
   "постоянный вход": [
     "AGENTS.md",
-    ".opencode/rules/ds-rules.md"
+    ".opencode/rules/ds-rules.md",
+    "DS-IBP/AGENTS.md"
   ],
 
   "маршруты": {
@@ -112,8 +113,8 @@
         ".opencode/skills/ds-lookup/SKILL.md",
         ".opencode/skills/screen-assembly/SKILL.md",
         ".opencode/skills/screen-assembly/references/patterns.md",
-        ".opencode/skills/screen-assembly/references/skeleton.html",
-        ".opencode/skills/screen-assembly/references/runtime-hooks.md",
+        "DS-IBP/templates/screen/Screen.html",
+        "DS-IBP/specs/_runtime-hooks.md",
         ".opencode/skills/screen-spec/SKILL.md",
         ".opencode/skills/screen-spec/references/template.md",
         ".opencode/skills/screen-review/references/lessons.md"
@@ -133,7 +134,7 @@
         ".opencode/skills/ds-lookup/SKILL.md",
         ".opencode/skills/screen-assembly/SKILL.md",
         ".opencode/skills/screen-assembly/references/patterns.md",
-        ".opencode/skills/screen-assembly/references/skeleton.html",
+        "DS-IBP/templates/screen/Screen.html",
         ".opencode/skills/screen-spec/SKILL.md",
         ".opencode/skills/screen-spec/references/template.md",
         ".opencode/skills/screen-review/references/lessons.md"
@@ -162,7 +163,7 @@
       "делает": "проставить хуки рантаймов по всем секциям, прогнать layout-check, починить своё",
       "читает": [
         ".opencode/agents/screen-builder.md",
-        ".opencode/skills/screen-assembly/references/runtime-hooks.md",
+        "DS-IBP/specs/_runtime-hooks.md",
         ".opencode/skills/screen-review/references/lessons.md"
       ],
       "выход_фикс": 2000,
