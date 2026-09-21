@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- ФИКСТУРА сенсора: Б5, вариант document. Эталон варианта _document.ok.html + одно изменение.
+     ДЕФЕКТ: в спеке-спутнике нет строки `kind: document` — лист без каркаса
+     приложения проверяется как экран, и Б5 обязан упасть. Разметка совпадает
+     с эталоном варианта: изменение — в спутнике Б5@document.bad.screen.md.
+     Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на обоих эталонах — `lessons-cli verify`. -->
+<!-- ФИКСТУРА сенсора layout-check: ЭТАЛОН ВАРИАНТА «document».
+     Лист-документ без каркаса приложения — то, что пользователь получает
+     файлом или видит в превью (образец из работы — материал-бриф
+     Concepts/ai-bankster-prototype-v02/MaterialReport.html). Вид объявлен
+     в спеке-спутнике строкой `kind: document`.
+     На этом файле не обязано срабатывать ни одно правило: каркас (Б5) к
+     документу не применяется, Б6 у документа — «ровно один h1».
+     Эталон варианта не заменяет общий `_base.ok.html`, а добавляется к нему:
+     фикстура `<ID>@document.bad.html` обязана молчать на обоих
+     (`lessons-cli verify`, эталон варианта). -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Фикстура — лист-документ — IBP</title>
+<link rel="stylesheet" href="../../DS-IBP/ds.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary); background: var(--bg-page);
+  }
+  .fx-sheet { max-width: 960px; margin: 0 auto; padding: var(--layout-block-gap); display: grid; gap: var(--layout-block-gap); }
+</style>
+</head>
+<body>
+  <main class="fx-sheet">
+    <h1>ООО «Пример» — бриф перед встречей</h1>
+    <p>Выручка за 2025 год — 12 400 млн RUB, чистая прибыль — 1 860 млн RUB.</p>
+    <section>
+      <h2>Ключевые риски</h2>
+      <p>Долговая нагрузка выше медианы отрасли; срок погашения — 31.12.2027.</p>
+    </section>
+  </main>
+  <script src="../../DS-IBP/scripts/ds.js"></script>
+</body>
+</html>

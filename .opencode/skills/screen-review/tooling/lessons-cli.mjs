@@ -138,8 +138,25 @@ function verifyCorpus(dir, run, title, only = null) {
 
   const baseOut = run(baseName);
 
+  /* Эталон варианта. У варианта входа бывает свой эталон: `Б5@document` —
+     лист-документ, спутник которого не объявляет `kind: document`, и молчать
+     правило обязано не только на экране-эталоне, но и на ТОМ ЖЕ листе с
+     объявленным видом (`_document.ok.html`). Иначе доказано одно «лист без
+     вида краснеет», а «вид снимает Б5» не доказано ничем (заведено 21.09.2026,
+     docs/agent-imp.md, У3б). Эталон варианта добавляется к общему, а не
+     заменяет его: правило не должно шуметь ни там, ни там. */
+  const variantOuts = new Map();
+  const variantBase = (f) => {
+    const v = f.replace(/\.bad\.html$/, '').split('@')[1];
+    const name = v ? '_' + v + '.ok.html' : null;
+    if (!name || !files.includes(name)) return null;
+    if (!variantOuts.has(name)) variantOuts.set(name, run(name));
+    return { name, out: variantOuts.get(name) };
+  };
+  const variantNames = [...new Set(bads.map((f) => '_' + (f.replace(/\.bad\.html$/, '').split('@')[1] || '') + '.ok.html'))].filter((n) => files.includes(n));
+
   log('== ' + title + ' ==');
-  log('эталон: ' + baseName);
+  log('эталон: ' + baseName + (variantNames.length ? ' · эталоны вариантов: ' + variantNames.join(', ') : ''));
   let bad = 0;
   /* Печатается ИМЯ ФАЙЛА, а не только идентификатор. У правила с вариантами
      строк несколько, и все они про один и тот же `Б15`: «ДОКАЗАН Б15» дважды
@@ -149,13 +166,16 @@ function verifyCorpus(dir, run, title, only = null) {
     const caught = firedOn(run(f), id);
     // на эталоне того же дефекта быть не должно — иначе правило шумит всегда
     const quiet = !firedOn(baseOut, id);
+    const vb = variantBase(f);
+    const quietVariant = !vb || !firedOn(vb.out, id);
 
-    if (caught && quiet) {
-      log('  ДОКАЗАН  ' + f + ' → ' + id + ' — падает на дефекте, молчит на эталоне');
+    if (caught && quiet && quietVariant) {
+      log('  ДОКАЗАН  ' + f + ' → ' + id + ' — падает на дефекте, молчит на эталоне' + (vb ? ' и на эталоне варианта ' + vb.name : ''));
     } else {
       bad++;
       if (!caught) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — дефект внесён, а находки ' + id + ' нет: сторож мёртв либо не видит вход (класс Л48)');
       if (!quiet) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — правило срабатывает и на эталоне: оно шумит, а не ловит');
+      if (!quietVariant) log('  НЕ ДОКАЗАН ' + f + ' → ' + id + ' — правило срабатывает на эталоне варианта ' + vb.name + ': вариант входа не различается');
     }
   }
   log('');
@@ -1266,10 +1286,10 @@ function gateStepsFor(rel, deleted) {
       }
     } else add('sensor:' + rel, 'lint:' + rel);
   }
-  /* Спека экрана — вход сенсора (шапка — Б12, разделы-журнал — Б32), а не
-     только документ для человека: её правка перепроверяет экран, которому
-     она принадлежит. Иначе починенная спека висит ДОЛГОМ до полного гейта
-     (поймано 21.09.2026 на Б32). */
+  /* Спека экрана — вход сенсора (шапка — Б12, разделы-журнал — Б32, вид
+     файла `kind` — Б5/Б6/К12), а не только документ для человека: её правка
+     перепроверяет экран, которому она принадлежит. Иначе починенная спека
+     висит ДОЛГОМ до полного гейта (поймано 21.09.2026 на Б32). */
   if (screenArea && !inFixtures && rel.endsWith('.screen.md')) {
     for (const h of screenOfSpec(rel)) add('sensor:' + h);
   }

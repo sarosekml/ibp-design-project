@@ -321,6 +321,49 @@ function collectScriptMarkup(src) {
   return out.join('');
 }
 
+/* ---------------- спутник-спека и вид файла ---------------- */
+
+/* Спутник-спека: `<Имя>.screen.md` рядом, а не найдя пару по имени — спека в
+   той же папке, чья YAML-строка `file:` указывает на эту страницу: экран может
+   лежать в своей папке как `index.html`, а спека называться по экрану
+   (`mainPage/index.html` ↔ `mainPage/mainPage.screen.md`). Связь объявлена в
+   самой спеке, гадать по имени незачем. Один поиск на всех потребителей —
+   Б12, Б32 и вид файла (Л43). */
+function specOf(pagePath) {
+  const same = pagePath.replace(/\.html$/i, '.screen.md');
+  if (existsSync(same)) return same;
+  const dir = path.dirname(pagePath);
+  const rel = path.relative(ROOT, pagePath).replace(/\\/g, '/');
+  const owner = readdirSync(dir).filter((n) => n.endsWith('.screen.md')).find((n) => {
+    const m = readFileSync(path.join(dir, n), 'utf8').match(/^file:\s*(.+)$/m);
+    return m && m[1].trim().replace(/\\/g, '/').endsWith(path.basename(pagePath)) && rel.endsWith(m[1].trim().replace(/\\/g, '/'));
+  });
+  return owner ? path.join(dir, owner) : null;
+}
+
+/* Вид файла — строка `kind:` в YAML-шапке спеки (решение владельца 21.09.2026,
+   docs/agent-imp.md, У3б). Сенсор считал экраном приложения любой `.html` в
+   проектах и концептах; лист отчёта — документ, который пользователь получает
+   файлом или видит в превью, — каркаса приложения не имеет и иметь не должен.
+   Отличать фрагмент от экрана сенсор уже умел (fragments.mjs), третьего вида
+   не было — и лист краснел на Б5/Б6 без дефекта.
+   Вид объявляется в спеке, а не списком исключений в сенсоре: список снял бы
+   красноту с одного файла, и следующий документ упёрся бы в то же место.
+     screen   — экран приложения; значение по умолчанию, когда строки нет;
+     document — лист-документ: не применяются проверки, которые предполагают
+                каркас (Б5, К12), Б6 — «ровно один h1» без .phead__title.
+   Остальные правила — те же: подключения, токены, иконки, классы, заглушки,
+   валюта. Неизвестное значение — находка Б12: опечатка в виде иначе молча
+   вернула бы файл в экраны. */
+const KINDS = ['screen', 'document'];
+function kindOf(spec) {
+  if (!spec) return { kind: 'screen', declared: null };
+  const lines = readFileSync(spec, 'utf8').split(/\r?\n/);
+  const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  const m = end > 0 ? lines.slice(1, end).map((l) => l.match(/^kind:\s*["']?([^"'\s#]+)/)).find(Boolean) : null;
+  return m ? { kind: m[1], declared: m[1] } : { kind: 'screen', declared: null };
+}
+
 /* ---------------- механика (Б-блокеры) ---------------- */
 
 function checkMechanics(html, icons, pagePath) {
@@ -367,6 +410,14 @@ function checkMechanics(html, icons, pagePath) {
      склеенный из кусков (`class="tc' + extra + '"`), — нет (Л70). */
   const markupInScripts = collectScriptMarkup(noComments);
 
+  /* Эталон скилла (`.opencode/skills/<скилл>/references/*.html`) — не экран
+     проекта: спутника-спеки у него нет по устройству (см. Б12). Вид файла
+     берётся из спеки — у эталона он всегда `screen`. */
+  const isEtalon = /\/skills\/[^/]+\/references\//.test((pagePath || '').replace(/\\/g, '/'));
+  const spec = pagePath && !isEtalon ? specOf(pagePath) : null;
+  const { kind, declared: kindDeclared } = kindOf(spec);
+  const isDocument = kind === 'document';
+
   /* Б1 подключения. Путь к ds.css НЕ фиксирован по числу уровней: экраны лежат
      на разной глубине (`Concepts/<Имя>/` → `../../DS-IBP/ds.css`,
      `Projects/post/<экран>/` → `../../../DS-IBP/ds.css`,
@@ -400,9 +451,14 @@ function checkMechanics(html, icons, pagePath) {
   const rgbs = [...html.matchAll(/rgba?\(/g)].map((m) => lineOf(html, m.index));
   ok(rgbs.length === 0, rgbs.length ? `Б3 rgb() на строках: ${[...new Set(rgbs)].join(', ')}` : 'Б3 нет rgb()');
 
-  /* Б5 каркас */
-  for (const [cls, label] of [['nav-layout', '.nav-layout'], ['class="nav ', '.nav'], ['class="screen', '.screen'], ['class="crumbs', '.crumbs'], ['screen__content', 'main.screen__content']]) {
-    ok(html.includes(cls), `Б5 каркас: ${label}`);
+  /* Б5 каркас. Документу (`kind: document`) каркас приложения не положен —
+     пропуск печатается строкой, молчаливого пропуска нет (ds-rules §9). */
+  if (isDocument) {
+    ok(true, `Б5 ПРОПУЩЕН: вид document (${path.basename(spec)}) — лист-документ без каркаса приложения по устройству`);
+  } else {
+    for (const [cls, label] of [['nav-layout', '.nav-layout'], ['class="nav ', '.nav'], ['class="screen', '.screen'], ['class="crumbs', '.crumbs'], ['screen__content', 'main.screen__content']]) {
+      ok(html.includes(cls), `Б5 каркас: ${label}`);
+    }
   }
 
   /* Б31 — анатомия NavPanel: узлы, которые CSS ПРЯЧЕТ, а не отменяет.
@@ -461,12 +517,15 @@ function checkMechanics(html, icons, pagePath) {
      разделу о стартовой). Признак структурный, а не по тексту: в крошках ровно
      один пункт и он текущий (у любой другой страницы первая крошка — ссылка на
      стартовую), в разметке есть .grid12 и нет .phead. Больше одного h1 не
-     разрешено и стартовой. */
+     разрешено и стартовой.
+     Документ (`kind: document`): шапки страницы PageHeader у него нет, как нет
+     и каркаса, — остаётся «ровно один h1», заголовок листа. */
   const h1s = [...html.matchAll(/<h1\b/g)].length;
   const crumbItems = [...html.matchAll(/class="[^"]*\bcrumbs__item\b[^"]*"/g)].map((m) => m[0]);
   const isStartPage = crumbItems.length === 1 && /\bcrumbs__item--current\b/.test(crumbItems[0])
     && /class="[^"]*\bgrid12\b/.test(html) && !/\bphead\b/.test(html);
-  if (isStartPage) ok(h1s <= 1, `Б6 стартовая страница: не больше одного h1 (${h1s})`);
+  if (isDocument) ok(h1s === 1, `Б6 документ: ровно один h1 (${h1s})`);
+  else if (isStartPage) ok(h1s <= 1, `Б6 стартовая страница: не больше одного h1 (${h1s})`);
   else ok(h1s === 1 && /phead__title/.test(html), `Б6 ровно один h1 в .phead__title (${h1s})`);
 
   /* Б14 свои классы ширины */
@@ -977,29 +1036,11 @@ function checkMechanics(html, icons, pagePath) {
      проекта: он никому не сдаётся на приёмку, спутника-спеки у него нет и не
      должно быть. Остальные правила на нём работать обязаны — ради них он и
      линтуется, — а Б12 на нём ложный. Пропуск печатается строкой, молчаливого
-     пропуска нет (ds-rules §9). */
-  const isEtalon = /\/skills\/[^/]+\/references\//.test((pagePath || '').replace(/\\/g, '/'));
+     пропуска нет (ds-rules §9). Поиск спутника — `specOf`, выше. */
   if (pagePath && isEtalon) {
     ok(true, 'Б12 ПРОПУЩЕН: эталон скилла — спутника-спеки у него нет по устройству');
   } else if (pagePath) {
-    /* Имя спутника не всегда совпадает с именем файла: экран может лежать в
-       своей папке как `index.html`, а спека называться по экрану
-       (`mainPage/index.html` ↔ `mainPage/mainPage.screen.md`). Поэтому,
-       не найдя пару по имени, ищем в той же папке спеку, чья YAML-строка
-       `file:` указывает на эту страницу — связь объявлена в самой спеке,
-       и гадать по имени незачем. */
-    const dir = path.dirname(pagePath);
-    let spec = pagePath.replace(/\.html$/i, '.screen.md');
-    if (!existsSync(spec)) {
-      const rel = path.relative(ROOT, pagePath).replace(/\\/g, '/');
-      const near = readdirSync(dir).filter((n) => n.endsWith('.screen.md'));
-      const owner = near.find((n) => {
-        const m = readFileSync(path.join(dir, n), 'utf8').match(/^file:\s*(.+)$/m);
-        return m && m[1].trim().replace(/\\/g, '/').endsWith(path.basename(pagePath)) && rel.endsWith(m[1].trim().replace(/\\/g, '/'));
-      });
-      if (owner) spec = path.join(dir, owner);
-    }
-    if (!existsSync(spec)) {
+    if (!spec) {
       ok(false, `Б12 рядом нет ${path.basename(pagePath).replace(/\.html$/i, '.screen.md')} и ни одна спека в папке не объявляет этот файл строкой file: — приёмке не с чем сверять состав экрана`);
     } else {
       const head = readFileSync(spec, 'utf8').split(/\r?\n/);
@@ -1008,6 +1049,9 @@ function checkMechanics(html, icons, pagePath) {
       ok(head[0] === '---' && keys >= 2, keys >= 2 && head[0] === '---'
         ? `Б12 спутник ${path.basename(spec)} на месте, полей в шапке ${keys}`
         : `Б12 у ${path.basename(spec)} нет заполненной YAML-шапки (полей ${keys}) — шапка и есть то, что читает приёмка`);
+      if (kindDeclared && !KINDS.includes(kindDeclared)) {
+        ok(false, `Б12 у ${path.basename(spec)} неизвестный вид kind: ${kindDeclared} — допустимы ${KINDS.join(', ')}; с таким значением файл проверяется как экран`);
+      }
 
       /* Б32 — спека описывает СОСТОЯНИЕ экрана, а не его историю. Разделы
          «Правки ДД.ММ.ГГГГ» копятся заходами и платятся заново каждой
@@ -1037,8 +1081,11 @@ function checkMechanics(html, icons, pagePath) {
      свободную высоту: `.screen--app` + `.dtable--fill`. Иначе таблица растёт
      по числу строк, а страница скроллится целиком — шапка и колонтитул
      уезжают. Экраны с тайлами над таблицей правило не трогает: там высота
-     разбирается индивидуально (оговорка самого пункта). */
-  if (/class="[^"]*\bdtable\b/.test(html) && !/class="[^"]*\btile\b/.test(html)) {
+     разбирается индивидуально (оговорка самого пункта). Документу растяжка
+     не положена: `.screen--app` — модификатор каркаса, которого у листа нет. */
+  if (isDocument && /class="[^"]*\bdtable\b/.test(html) && !/class="[^"]*\btile\b/.test(html)) {
+    ok(true, 'К12 ПРОПУЩЕН: вид document — растяжка по .screen--app предполагает каркас приложения');
+  } else if (/class="[^"]*\bdtable\b/.test(html) && !/class="[^"]*\btile\b/.test(html)) {
     const app = /class="[^"]*\bscreen--app\b/.test(html);
     const fill = /class="[^"]*\bdtable--fill\b/.test(html);
     const miss = [!app && '.screen--app на .screen', !fill && '.dtable--fill на .dtable'].filter(Boolean);
