@@ -2,7 +2,7 @@
 type: rules
 title: Правила работы с дизайн-системой IBP
 scope: подключается через instructions в .opencode/opencode.json — в контексте всех агентов
-updated: "15.09.2026"
+updated: "21.09.2026"
 ---
 
 # Дизайн-система IBP — правила работы (opencode)
@@ -34,8 +34,8 @@ HTML/CSS, без React и без сборщика.** Экран — это од�
 | `Projects/` | Файлы, соответствующие настоящей системе; строго на компонентах ДС |
 | `index.html` (корень) | Хаб проектов: одна точка входа в ДС, проекты и концепты. Страница не правится — меню и колонки строятся из реестра |
 | `hub.js` (корень) | Реестр хаба: одна запись на проект или концепт (формат — шапка файла). Полноту проверяет гейт, шаг `projects` |
-| `.opencode/agents/` | Определения агентов (`ai-designer`, `screen-builder`, `screen-reviewer`, `ux-researcher`) |
-| `.opencode/commands/` | Команды `/screen`, `/research`, `/screen-check`, `/concepts`, `/handoff`, `/resume` |
+| `.opencode/agents/` | Определения агентов (`ai-designer`, `screen-builder`, `screen-reviewer`; `ux-researcher` выключен, пока не задан `KB` в `knowledge-lookup`) |
+| `.opencode/commands/` | Команды `/screen`, `/screen-check`, `/concepts`, `/handoff`, `/resume` |
 | `DS-IBP/templates/screen/Screen.html` | Стартовый шаблон экрана |
 
 ## 3. Как читать ДС и не сжечь контекст

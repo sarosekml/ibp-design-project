@@ -2,7 +2,7 @@
 type: workspace
 title: Правила работы с воркспейсом IBP (GigaCode)
 scope: корневой файл контекста для GigaCode
-updated: "16.09.2026"
+updated: "21.09.2026"
 ---
 
 # IBP ai-Designer — правила для GigaCode
@@ -45,8 +45,8 @@ HTML + markdown-спеку экрана, проверить и сдать.
 | `.opencode/agents/ai-designer.md` | Ведущий агент: маршруты, распределение по субагентам, границы |
 | `.opencode/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
 | `.opencode/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
-| `.opencode/agents/ux-researcher.md` | Исследование: база знаний продукта, выжимка под задачу |
-| `.opencode/commands/*.md` | `/screen`, `/research`, `/concepts`, `/handoff`, `/resume`, `/screen-check` |
+| `.opencode/agents/ux-researcher.md` | Исследование по базе знаний продукта — выключено, пока база не подключена (`KB` в `knowledge-lookup`) |
+| `.opencode/commands/*.md` | `/screen`, `/concepts`, `/handoff`, `/resume`, `/screen-check` |
 | `.opencode/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
 | `.opencode/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
 | `.opencode/skills/screen-review/SKILL.md` | Полная приёмка экрана |
