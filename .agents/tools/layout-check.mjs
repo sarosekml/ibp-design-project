@@ -109,6 +109,8 @@ const PAD_TOP = 10;                              // .tile__body padding-top
 function log(msg) { process.stdout.write(msg + '\n'); }
 function fail(msg) { log('ОШИБКА: ' + msg); process.exit(2); }
 
+const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 function lineOf(text, index) {
   return text.slice(0, index).split('\n').length;
 }
@@ -432,13 +434,44 @@ function checkMechanics(html, icons, pagePath) {
      Раньше здесь была зашита строка `../../../ds.css` — путь структуры до
      переезда ДС в `DS-IBP/` (01.09.2026; с 21.09.2026 каталог — `design-system/`), из-за чего Б1 падал на ЛЮБОМ экране
      репозитория, включая заведомо правильные из тогдашней песочницы. */
-  const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
-  ok(dsCssLinks.length === 1,
-    `Б1 ровно один ds.css (${dsCssLinks.length})`);
-  ok((html.match(/scripts\/ds\.js/g) || []).length === 1,
-    `Б1 ровно один scripts/ds.js (${(html.match(/scripts\/ds\.js/g) || []).length})`);
+  /* С Ш8 (22.09.2026) экран проекта с загрузчиком (`boot` манифеста)
+     подключает ДС двумя тегами загрузчика, а ds.css и ds.js пишет загрузчик
+     сам. Прежняя форма — прямые теги — осталась у эталонов (шаблон ДС
+     ссылается на ДС от собственного места) и у проекта без загрузчика. */
+  const bootForm = Boolean(PRJ.boot) && !etalon;
+  if (bootForm) {
+    const tagCount = (file) => (html.match(new RegExp('<script[^>]*\\bsrc="[^"]*\\b' + escRx(path.basename(file)) + '"', 'g')) || []).length;
+    const heads = tagCount(PRJ.boot.head), bodies = tagCount(PRJ.boot.body);
+    ok(heads === 1, `Б1 ровно один тег загрузчика ${path.basename(PRJ.boot.head)} (${heads})`);
+    ok(bodies === 1, `Б1 ровно один тег загрузчика ${path.basename(PRJ.boot.body)} (${bodies})`);
+    const headAt = html.indexOf(path.basename(PRJ.boot.head)), headEnd = html.search(/<\/head>/i);
+    ok(heads !== 1 || headEnd < 0 || headAt < headEnd, `Б1 ${path.basename(PRJ.boot.head)} — в <head>: он пишет ds.css до собственного <style> экрана`);
+  } else {
+    const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
+    ok(dsCssLinks.length === 1,
+      `Б1 ровно один ds.css (${dsCssLinks.length})`);
+    ok((html.match(/scripts\/ds\.js/g) || []).length === 1,
+      `Б1 ровно один scripts/ds.js (${(html.match(/scripts\/ds\.js/g) || []).length})`);
+  }
   ok(!/href="[^"]*styles\//.test(html), 'Б1 нет поштучных styles/* (только ds.css)');
   ok(!/src="[^"]*scripts\/ds-[a-z-]+\.js/.test(html), 'Б1 нет поштучных scripts/ds-*');
+
+  /* Б34 — путь до ДС записан ровно в одном месте (решение владельца Р5).
+     В экране проекта с загрузчиком нет литерала каталога ДС (`designSystem.mount`
+     манифеста) ни в разметке, ни в стилях, ни в скриптах: корень рантайма,
+     фавикон, ds.css и ds.js ставит загрузчик, дополнительные скрипты ДС —
+     атрибут `data-ds` его тега, фон стартовой страницы —
+     `var(--boot-bg-illustration, none)`. Комментарии не в счёт: подсказка
+     «контекст для правки — <ДС>/specs/…» ничего не подключает. Литерал в коде
+     значит, что следующий переезд ДС снова потребует правки экранов. */
+  if (bootForm) {
+    const code = noComments.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+    const lit = new RegExp('(^|[^\\w-])' + escRx(PRJ.ds) + '/', 'g');
+    const lines = [...code.matchAll(lit)].map((m) => lineOf(code, m.index + m[1].length));
+    ok(lines.length === 0, lines.length
+      ? `Б34 литерал пути до ДС «${PRJ.ds}/» на строках ${[...new Set(lines)].join(', ')}: ДС подключает загрузчик (${PRJ.boot.dir}/), путь до неё живёт только в project.json`
+      : `Б34 литерала пути до ДС нет — ДС подключает загрузчик`);
+  }
 
   /* Б2 иконки */
   ok(!/<svg[\s>]/.test(html), 'Б2 нет инлайн-<svg>');

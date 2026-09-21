@@ -7,12 +7,10 @@
      правится. Спека — index.screen.md. -->
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = 'design-system/';</script>
+<script src="boot/ds-head.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Хаб проектов — IBP</title>
-<link rel="icon" type="image/svg+xml" href="design-system/assets/logo.svg">
-<link rel="stylesheet" href="design-system/ds.css">
 <style>
   /* ---------- хаб проектов: только раскладка на токенах ---------- */
   body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); }
@@ -23,7 +21,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: url("design-system/assets/illustrations/background-illustration.svg") center/cover no-repeat;
+    background: var(--boot-bg-illustration, none) center/cover no-repeat;
     opacity: .6;
     pointer-events: none;
   }
@@ -60,8 +58,7 @@
   </div>
 </div>
 
-<script src="design-system/scripts/ds.js"></script>
-<script src="design-system/scripts/ibp-home.js"></script>
+<script src="boot/ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <script src="hub.js"></script>
 <script>
 /* экранный скрипт: меню панели и колонки строятся из реестра window.IBPHub

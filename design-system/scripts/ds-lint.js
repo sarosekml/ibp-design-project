@@ -854,7 +854,14 @@ async function pageChecks(p, P, opts, out) {
   const links = all(RX.link, html);
   const scripts = all(RX.src, html);
   const linkNames = links.map(base);
-  const hasBundle = linkNames.includes('ds.css');
+  /* Загрузчик проекта (opts.boot — имена его файлов из манифеста, передаёт
+     обёртка; без проекта — null): экран подключает ДС двумя тегами загрузчика,
+     а ds.css и ds.js загрузчик пишет сам во время разбора страницы, и
+     статически их не видно. Тег головы засчитывается как ds.css, тег тела —
+     как ds.js. */
+  const boot = opts.boot || null;
+  const isEntry = (s) => base(s) === 'ds.js' || Boolean(boot && base(s) === boot.body);
+  const hasBundle = linkNames.includes('ds.css') || Boolean(boot && scripts.some((s) => base(s) === boot.head));
   const say = (lvl, id, msg) => {
     // на экранах контракт разделов и реестры не применяются, таблица-мокап — замечание
     if (isScreen && /^[CD]/.test(id)) return;
@@ -917,13 +924,13 @@ async function pageChecks(p, P, opts, out) {
   /* A6 — контейнер страницы: ds-nav/ds-toc монтируются только в <main class="page"> */
   if (!isScreen && !/<main class="page(?:\s|")/.test(markup) && scripts.some((s) => /ds-(nav|toc)\.js$/.test(s))) say('BLOCKER', 'A6', 'нет <main class="page"> — ds-nav/ds-toc молча не смонтируются');
   /* A4 — иконки без своих скриптов (ds.js на экранах закрывает оба) */
-  if (/data-icon="[^"…\s]/.test(markup) && !scripts.some((x) => base(x) === 'ds.js')) {
+  if (/data-icon="[^"…\s]/.test(markup) && !scripts.some(isEntry)) {
     const need = ['icons-data.js', 'ds-icons.js'].filter((s) => !scripts.some((x) => base(x) === s));
     if (need.length) say('BLOCKER', 'A4', '<i data-icon> есть, не подключено: ' + need.join(', '));
   }
   /* A7 — экран мимо единой точки входа ds.js (K0, RulesAudit W0) */
   if (isScreen) {
-    const dsJsCount = scripts.filter((s) => base(s) === 'ds.js').length;
+    const dsJsCount = scripts.filter(isEntry).length;
     const direct = scripts.filter((s) => DS_JS_BUNDLES.includes(base(s)));
     if (dsJsCount === 0) say('BLOCKER', 'A7', 'экран без <script src="ds.js"> — рантаймы подключаются вручную и легко забываются');
     if (dsJsCount > 1) say('WARN', 'A7', 'ds.js подключён ' + dsJsCount + ' раза');

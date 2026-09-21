@@ -8,12 +8,10 @@
      Контекст для правки: design-system/specs/_cheatsheet.md. CSS компонентов не читать. -->
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../../design-system/';</script>
+<script src="../../../boot/ds-head.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Главная — IBP</title>
-<link rel="icon" type="image/svg+xml" href="../../../design-system/assets/logo.svg">
-<link rel="stylesheet" href="../../../design-system/ds.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; scrollbar-gutter: stable; }
@@ -35,7 +33,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: url("../../../design-system/assets/illustrations/background-illustration.svg") center/cover no-repeat;
+    background: var(--boot-bg-illustration, none) center/cover no-repeat;
     opacity: .6;
     pointer-events: none;
   }
@@ -175,6 +173,6 @@
   </div>
 </div>
 
-<script src="../../../design-system/scripts/ds.js"></script>
+<script src="../../../boot/ds-body.js"></script>
 </body>
 </html>

@@ -39,7 +39,10 @@ cat design-system/specs/Kanban.md                                  # полна�
   глубине (иначе сторож хаба, П6).
 - `pages/index.html` — главная (стартовая страница Layout) → остальные экраны.
 - На каждый `.html` — спека `<Имя>.screen.md` рядом (иначе сенсор Б12).
-- ДС из экрана — `../../../design-system/`.
+- ДС подключает загрузчик: `<script src="../../../boot/ds-head.js">` первым в
+  `<head>` и `<script src="../../../boot/ds-body.js">` вместо `ds.js`
+  (`data-ds="scripts/ibp-home.js"` — доп. скрипты ДС); фон главной —
+  `var(--boot-bg-illustration, none)`. Литерал `design-system/` в экране — Б34.
 - Демо-данные — `data/*.js` приложения, из экрана `../data/*.js`, обычным
   `<script>` (file://, без fetch).
 - Экранный скрипт — после `ds.js`; после перерисовки `innerHTML` заново звать

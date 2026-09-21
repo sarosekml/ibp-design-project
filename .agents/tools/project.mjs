@@ -62,6 +62,11 @@ export function project(from = HERE) {
     data: norm(shape.data) || 'data', refs: norm(shape.refs) || 'refs',
   };
   const tracks = (Array.isArray(m.tracks) ? m.tracks : []).map((t) => ({ ...t, dir: norm(t && t.dir) || appsDir }));
+  /* Загрузчик ДС (Ш8): экран подключает ДС двумя его тегами, путь до ДС
+     записан только в манифесте и в сгенерированном boot/ds-head.js. */
+  const boot = m.boot && typeof m.boot === 'object'
+    ? { dir: norm(m.boot.dir), head: norm(m.boot.head), body: norm(m.boot.body) }
+    : null;
   const hubPage = norm(m.hub && m.hub.page);
   const hubRegistry = norm(m.hub && m.hub.registry);
   return {
@@ -73,6 +78,7 @@ export function project(from = HERE) {
     state, stateAbs: abs(state),
     docs, docsAbs: abs(docs),
     appsDir, appsManifest, appShape, tracks,
+    boot, bootAbs: boot ? { head: abs(boot.head), body: abs(boot.body), dir: abs(boot.dir) } : null,
     hubPage, hubRegistry,
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),

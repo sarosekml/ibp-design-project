@@ -12,12 +12,10 @@
 -->
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../../design-system/';</script>
+<script src="../../../boot/ds-head.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Сделка — IBP</title>
-<link rel="icon" type="image/svg+xml" href="../../../design-system/assets/logo.svg">
-<link rel="stylesheet" href="../../../design-system/ds.css">
 <!-- @lc-css --><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
 <style>
   /* ---------- только раскладка экрана, на токенах ДС ---------- */
@@ -213,8 +211,7 @@
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
-<script src="../../../design-system/scripts/ds.js"></script>
-<script src="../../../design-system/scripts/ibp-home.js"></script>
+<script src="../../../boot/ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
    меню по каталогу ролей, данные сделки, переключение панелей табов и

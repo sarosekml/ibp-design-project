@@ -16,7 +16,7 @@
 import { readFile as fsReadFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { importKitTool, projectRoot } from './kit-link.mjs';
+import { importKitTool, projectRoot, projectBoot } from './kit-link.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.vscode', 'uploads', 'screenshots']);
@@ -55,7 +55,7 @@ if (requested.length && !targets.length && !parity) process.exit(0);
 
 const report = parity
   ? await run([], { global: false, parity: true })
-  : await run(targets, { changed: targets });
+  : await run(targets, { changed: targets, boot: projectBoot() });
 
 console.log(report);
 const bad = /^BLOCKER\s+[1-9]/m.test(report) || /NEEDS-WORK/.test(report);

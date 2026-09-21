@@ -15,6 +15,8 @@
     "source": { "type": "inline" }
   },
 
+  "boot": { "dir": "boot", "head": "boot/ds-head.js", "body": "boot/ds-body.js", "generated": true },
+
   "hub": {
     "page": "index.html",
     "registry": "hub.js",

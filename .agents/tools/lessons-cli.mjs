@@ -1147,6 +1147,8 @@ const SPEC_AUDIT = path.join(DS, 'scripts/spec-audit.mjs');
 const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
 const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
 const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
+const BOOT_BUILD = path.join(HERE, 'boot-build.mjs');
+const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): сгенерированные теги экрана
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
@@ -1166,7 +1168,7 @@ const SELF = fileURLToPath(import.meta.url);
    состояния в отпечаток не входит — его меняет сам гейт. Адаптер агентного
    CLI — тоже корень отпечатка (Ш5): это отдельный каталог, и без него правка
    конфига или указателя на роль шла бы мимо гейта. */
-const GATE_ROOTS = [DS_REL, KIT_REL, ADAPTER_REL, ...TRACK_DIRS, PRJ.docs].filter(Boolean);
+const GATE_ROOTS = [DS_REL, KIT_REL, ADAPTER_REL, ...TRACK_DIRS, PRJ.docs, BOOT_DIR].filter(Boolean);
 /* Конфиг агентного CLI живёт в каталоге адаптера — любой его файл гонит
    agent-config (матрица ниже). Здесь — места, где конфига быть не должно:
    корень (второй слой, КФ1) и каталог харнеса (мёртвый конфиг, КФ2). */
@@ -1297,6 +1299,10 @@ function gateStep(id, paths = null) {
        временном дереве, гоняется, когда правят самого сторожа. */
     case 'registry': return { title: 'registry-check (реестр хаба проектов)', args: [REGISTRY_CHECK], cwd: ROOT };
     case 'registry-selftest': return { title: 'registry-check --selftest', args: [REGISTRY_CHECK, '--selftest'], cwd: ROOT };
+    /* Загрузчик ДС: файлы boot/ сгенерированы из манифеста и руками не
+       правлены — путь до ДС записан ровно в одном месте (Р5, Ш8). */
+    case 'boot': return { title: 'boot-build --check (загрузчик ДС = манифест)', args: [BOOT_BUILD, '--check'], cwd: ROOT };
+    case 'boot-selftest': return { title: 'boot-build --selftest', args: [BOOT_BUILD, '--selftest'], cwd: ROOT };
     /* Адаптер агентного CLI. Конфиг читается и из корня, и из каталога
        адаптера — второй файл молча складывает права из двух слоёв; модель в
        репозитории на другом контуре не стартует (решение 15.09.2026);
@@ -1386,8 +1392,11 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/anchors.json') add('anchors', 'check');
   if (rel.startsWith(KIT_REL + '/skills/session-plan/')) add('ctx-budget');
   if (rel === TOOL_REL + '/registry-check.mjs') add('registry-selftest', 'registry');
+  // загрузчик: его файлы, генератор, манифест (designSystem.mount, boot)
+  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/')) || rel === 'project.json') add('boot');
+  if (rel === TOOL_REL + '/boot-build.mjs') add('boot-selftest', 'boot');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
-  if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'registry-selftest', 'registry', 'runlog-selftest',
+  if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'registry-selftest', 'registry', 'runlog-selftest',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1400,9 +1409,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

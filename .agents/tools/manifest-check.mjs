@@ -97,6 +97,15 @@ export function check(root) {
   onDisk(m.designSystem?.mount, 'dir', 'designSystem.mount');
   onDisk(m.agentKit?.mount, 'dir', 'agentKit.mount');
   onDisk(m.agentKit?.tools, 'dir', 'agentKit.tools');
+  if (m.boot !== undefined) {
+    if (!m.boot || typeof m.boot !== 'object') defects.push('МФ2 boot — объект: dir, head, body загрузчика ДС');
+    else {
+      for (const k of ['dir', 'head', 'body']) if (!str(m.boot[k])) defects.push('МФ2 boot.' + k + ' — путь от корня (строка)');
+      onDisk(m.boot.dir, 'dir', 'boot.dir');
+      onDisk(m.boot.head, 'file', 'boot.head (сгенерировать: boot-build.mjs)');
+      onDisk(m.boot.body, 'file', 'boot.body (сгенерировать: boot-build.mjs)');
+    }
+  }
   if (m.agentKit && m.agentKit.adapter !== undefined && !str(m.agentKit.adapter)) defects.push('МФ2 agentKit.adapter — каталог адаптера агентного CLI от корня (строка)');
   onDisk(m.agentKit?.adapter, 'dir', 'agentKit.adapter');
   onDisk(m.docs, 'dir', 'docs');
@@ -177,6 +186,8 @@ const CASES = [
     mutate: (r) => rmSync(path.join(r, '.cli'), { recursive: true }) },
   { name: 'каталог состояния на диске не нужен', expect: null,
     mutate: (r) => { if (existsSync(path.join(r, '.state'))) rmSync(path.join(r, '.state'), { recursive: true }); } },
+  { name: 'загрузчик не сгенерирован', expect: 'МФ4 boot.head',
+    mutate: (r) => { mkdirSync(path.join(r, 'boot')); put(r, MANIFEST, manifestJson({ boot: { dir: 'boot', head: 'boot/ds-head.js', body: 'boot/ds-body.js' } })); } },
   { name: 'agentEdit вне словаря', expect: 'МФ2 tracks[0].agentEdit',
     mutate: (r) => put(r, MANIFEST, manifestJson({ tracks: [{ ...CLEAN.tracks[0], agentEdit: 'sometimes' }, CLEAN.tracks[1]] })) },
   { name: 'форма после Ш7: общий apps.dir', expect: null,

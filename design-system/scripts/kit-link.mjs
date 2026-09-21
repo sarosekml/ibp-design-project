@@ -59,6 +59,16 @@ export function kitFile(rel) {
   return existsSync(f) ? f : null;
 }
 
+/** Загрузчик ДС проекта (`boot` манифеста): имена файлов тегов экрана
+    { head, body } или null. Экран в таком проекте подключает ДС тегами
+    загрузчика, а ds.css и ds.js пишет сам загрузчик — линтеру их не видно. */
+export function projectBoot() {
+  const p = projectOf();
+  const b = p && p.m.boot;
+  if (!b || typeof b.head !== 'string' || typeof b.body !== 'string') return null;
+  return { head: path.basename(b.head), body: path.basename(b.body) };
+}
+
 /** Модуль оснастки агента для мягкого импорта или null. */
 export async function importKitTool(name) {
   const f = kitTool(name);
