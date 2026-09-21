@@ -105,6 +105,13 @@ export function check(root) {
   onDisk(m.hub?.page, 'file', 'hub.page');
   onDisk(m.hub?.registry, 'file', 'hub.registry');
   onDisk(appsDir, 'dir', 'apps.dir');
+  if (m.apps && m.apps.manifest !== undefined && !str(m.apps.manifest)) defects.push('МФ2 apps.manifest — имя файла записи приложения (строка)');
+  for (const [k, v] of Object.entries(m.appShape || {})) if (!str(v)) defects.push('МФ2 appShape.' + k + ' — каталог внутри приложения (строка)');
+  tracks.forEach((t, i) => {
+    if (t && t.agentEdit !== undefined && !['allow', 'ask', 'deny'].includes(t.agentEdit)) {
+      defects.push('МФ2 tracks[' + i + '].agentEdit — allow | ask | deny: как агент правит приложения трека');
+    }
+  });
   for (const t of tracks) if (t && str(t.dir)) onDisk(t.dir, 'dir', 'tracks[' + (t.id || '?') + '].dir');
 
   const ids = tracks.map((t) => t && t.id).filter(Boolean);
@@ -170,6 +177,8 @@ const CASES = [
     mutate: (r) => rmSync(path.join(r, '.cli'), { recursive: true }) },
   { name: 'каталог состояния на диске не нужен', expect: null,
     mutate: (r) => { if (existsSync(path.join(r, '.state'))) rmSync(path.join(r, '.state'), { recursive: true }); } },
+  { name: 'agentEdit вне словаря', expect: 'МФ2 tracks[0].agentEdit',
+    mutate: (r) => put(r, MANIFEST, manifestJson({ tracks: [{ ...CLEAN.tracks[0], agentEdit: 'sometimes' }, CLEAN.tracks[1]] })) },
   { name: 'форма после Ш7: общий apps.dir', expect: null,
     mutate: (r) => {
       mkdirSync(path.join(r, 'apps'));

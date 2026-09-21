@@ -58,7 +58,18 @@
          сверяются). opencode не жалуется на пропавший файл правил — правила
          просто перестают попадать в контекст. Так на Ш5 чуть не уехал
          `.opencode/rules/ds-rules.md`: файл переехал в харнес, а конфиг
-         адаптера по-прежнему называл старый путь, и КФ1–КФ5 молчали.
+         адаптера по-прежнему называл старый путь, и КФ1–КФ5 молчали;
+     КФ7 приложение трека, который агент правит только с подтверждением
+         (`agentEdit: ask | deny` у трека в манифесте; трек приложения — в
+         его `app.json`), закрыто у каждой роли адаптера: итоговое право на
+         правку пробного экрана `<apps>/<id>/pages/…` — не `allow`. Право
+         считается, как его считает opencode: общие правила конфига, затем
+         правила роли, побеждает последнее совпавшее (документация v1 и v2),
+         без правил — разрешено. Зачем: с Ш7 (22.09.2026) проекты и концепты
+         лежат в одном `apps/`, и граница «в продукт агент не пишет» больше не
+         совпадает с каталогом — её держит строка `"<apps>/<id>/**": ask`
+         после общего разрешения `apps/**`, и забытая строка открыла бы
+         продукт молча.
 
    Журнал прогонов (runs/) сторож не пишет — по той же причине, что
    registry-check.mjs: кодов для деления на «живой/исчез» у него нет.
@@ -102,12 +113,53 @@ function frontmatter(text) {
     }
     return v.replace(/^["']|["']$/g, '');
   };
-  return { body, field };
+  return { head, body, field };
+}
+
+/* Правила правки из шапки роли (`permission.edit`): строка — одно правило на
+   всё, карта — по порядку записи. */
+function roleEditRules(head) {
+  const i = head.findIndex((l) => /^permission:\s*$/.test(l));
+  if (i < 0) return [];
+  for (let j = i + 1; j < head.length && /^\s+\S/.test(head[j]); j++) {
+    const m = head[j].match(/^(\s+)edit:\s*(.*)$/);
+    if (!m) continue;
+    if (m[2].trim()) return [['*', m[2].trim().replace(/^["']|["']$/g, '')]];
+    const rules = [];
+    for (let k = j + 1; k < head.length; k++) {
+      const n = head[k].match(/^(\s+)(?:"([^"]+)"|'([^']+)'|([^:\s]+)):\s*(\S+)\s*$/);
+      if (!n || n[1].length <= m[1].length) break;
+      rules.push([n[2] || n[3] || n[4], n[5].replace(/^["']|["']$/g, '')]);
+    }
+    return rules;
+  }
+  return [];
+}
+
+/* Правила правки из конфига: форма v1 (`permission.edit` — строка или карта)
+   и v2 (`permissions` — список action/resource/effect). */
+function configEditRules(cfg) {
+  const rules = [];
+  const e = cfg && cfg.permission && cfg.permission.edit;
+  if (typeof e === 'string') rules.push(['*', e]);
+  else if (e && typeof e === 'object') for (const [k, v] of Object.entries(e)) rules.push([k, v]);
+  for (const r of Array.isArray(cfg && cfg.permissions) ? cfg.permissions : []) {
+    if (r && (r.action === 'edit' || r.action === '*')) rules.push([r.resource || '*', r.effect]);
+  }
+  return rules;
+}
+
+const globRx = (g) => new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
+/** Итоговое право на путь: побеждает последнее совпавшее правило, без правил — allow. */
+function effectFor(rules, p) {
+  let eff = 'allow';
+  for (const [pat, ef] of rules) if (globRx(pat).test(p)) eff = ef;
+  return eff;
 }
 
 const placeholders = (text) => [...new Set(text.match(/\$(?:ARGUMENTS|[1-9])/g) || [])].sort();
 
-function check(root, kit, adapter) {
+function check(root, kit, adapter, apps = null) {
   const defects = [];
   const CONFIG = adapter ? adapter + '/opencode.json' : null;
 
@@ -129,6 +181,7 @@ function check(root, kit, adapter) {
   if (adapter) {
     checkConfig(root, adapter, defects);
     checkAdapter(root, kit, adapter, defects);
+    if (apps && apps.guarded.length) checkGuardedApps(root, adapter, apps, defects);
   }
   checkSkills(root, kit, defects);
   return { defects };
@@ -202,6 +255,42 @@ function checkAdapter(root, kit, adapter, defects) {
   }
 }
 
+/* КФ7 — см. шапку. apps: { dir, guarded: [{ id, track, agentEdit }] }. */
+function checkGuardedApps(root, adapter, apps, defects) {
+  let cfg = null;
+  try { cfg = JSON.parse(readFileSync(path.join(root, adapter, 'opencode.json'), 'utf8')); } catch { /* форму конфига сторожит КФ2 */ }
+  const global = configEditRules(cfg);
+  const dir = path.join(root, adapter, 'agents');
+  const roles = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.md')).sort() : [];
+  for (const f of roles) {
+    const rel = adapter + '/agents/' + f;
+    const rules = [...global, ...roleEditRules(frontmatter(readFileSync(path.join(dir, f), 'utf8')).head)];
+    for (const app of apps.guarded) {
+      const probe = apps.dir + '/' + app.id + '/pages/Probe.html';
+      if (effectFor(rules, probe) !== 'allow') continue;
+      defects.push('КФ7 ' + rel + ' — роль правит ' + apps.dir + '/' + app.id + '/ (трек ' + app.track + ', agentEdit: ' + app.agentEdit
+        + ') без подтверждения: после общего разрешения нужна строка "' + apps.dir + '/' + app.id + '/**": ' + app.agentEdit);
+    }
+  }
+}
+
+/* Приложения, чей трек агент правит только с подтверждением. null — формы
+   apps/ в манифесте нет. Форму записей приложений сторожит registry-check. */
+function guardedApps(P) {
+  if (!P.appsDir) return null;
+  const abs = path.join(P.root, P.appsDir);
+  const tracks = new Map(P.tracks.map((t) => [t.id, t]));
+  const guarded = [];
+  for (const d of existsSync(abs) ? readdirSync(abs, { withFileTypes: true }) : []) {
+    if (!d.isDirectory()) continue;
+    let app;
+    try { app = JSON.parse(readFileSync(path.join(abs, d.name, P.appsManifest), 'utf8')); } catch { continue; }
+    const t = tracks.get(app.track);
+    if (t && t.agentEdit && t.agentEdit !== 'allow') guarded.push({ id: d.name, track: t.id, agentEdit: t.agentEdit });
+  }
+  return { dir: P.appsDir, guarded };
+}
+
 /* КФ4 — см. шапку. */
 function checkSkills(root, kit, defects) {
   const dir = path.join(root, kit, 'skills');
@@ -251,6 +340,9 @@ const COMMAND = '---\ndescription: Команда для селфтеста.\nag
 const commandAdapter = (patch = {}) => '---\ndescription: Команда для селфтеста.\nagent: ' + (patch.agent || 'role') + '\n---\n\n'
   + 'Сценарий — `' + SELFTEST_KIT + '/commands/run.md`: прочитай и выполни.\n\n' + (patch.args || 'Аргумент 1: $1\nАргумент 2: $2\n');
 
+/* КФ7: приложение трека «только с подтверждением» и шапка прав роли. */
+const GUARDED = { dir: 'apps', guarded: [{ id: 'prod', track: 'product', agentEdit: 'ask' }] };
+const permHead = (rules) => 'permission:\n  edit:\n' + rules.map((r) => '    ' + r + '\n').join('');
 const CASES = [
   { name: 'чистое дерево', expect: null },
   { name: 'конфиг в корне', expect: 'КФ1 opencode.json',
@@ -302,6 +394,16 @@ const CASES = [
     mutate: (r) => put(r, SELFTEST_ADAPTER + '/commands/run.md', commandAdapter({ args: 'Аргумент 1: $1\n' })) },
   { name: 'agent команды разошёлся', expect: 'КФ5 .opencode/commands/run.md — agent расходится',
     mutate: (r) => put(r, SELFTEST_ADAPTER + '/commands/run.md', commandAdapter({ agent: 'other' })) },
+  { name: 'продуктовое приложение закрыто после разрешения', expect: null, apps: GUARDED,
+    mutate: (r) => put(r, SELFTEST_ADAPTER + '/agents/role.md', roleAdapter({ head: permHead(['"*": ask', '"apps/**": allow', '"apps/prod/**": ask']) })) },
+  { name: 'продуктовое приложение открыто роли', expect: 'КФ7 .opencode/agents/role.md — роль правит apps/prod/',
+    mutate: (r) => put(r, SELFTEST_ADAPTER + '/agents/role.md', roleAdapter({ head: permHead(['"*": ask', '"apps/**": allow']) })), apps: GUARDED },
+  { name: 'исключение записано до разрешения', expect: 'КФ7',
+    mutate: (r) => put(r, SELFTEST_ADAPTER + '/agents/role.md', roleAdapter({ head: permHead(['"apps/prod/**": ask', '"apps/**": allow']) })), apps: GUARDED },
+  { name: 'роль без правил правки наследует общее разрешение', expect: 'КФ7',
+    mutate: (r) => put(r, SELFTEST_CONFIG, cfgJson({ permission: { edit: { '*': 'allow' } } })), apps: GUARDED },
+  { name: 'правка запрещена роли целиком', expect: null, apps: GUARDED,
+    mutate: (r) => put(r, SELFTEST_ADAPTER + '/agents/role.md', roleAdapter({ head: 'permission:\n  edit: deny\n' })) },
 ];
 
 function selftest() {
@@ -318,7 +420,7 @@ function selftest() {
       put(root, SELFTEST_KIT + '/commands/run.md', COMMAND);
       put(root, SELFTEST_ADAPTER + '/commands/run.md', commandAdapter());
       if (c.mutate) c.mutate(root);
-      const { defects } = check(root, SELFTEST_KIT, c.adapter === undefined ? SELFTEST_ADAPTER : c.adapter);
+      const { defects } = check(root, SELFTEST_KIT, c.adapter === undefined ? SELFTEST_ADAPTER : c.adapter, c.apps || null);
       const pass = c.expect === null
         ? defects.length === 0
         : defects.length > 0 && defects.some((d) => d.includes(c.expect));
@@ -341,7 +443,7 @@ function main() {
   if (args.includes('--selftest')) return selftest();
   const rIdx = args.indexOf('--root');
   const P = need('agent-config', rIdx >= 0 ? path.resolve(args[rIdx + 1]) : HERE);
-  const res = check(P.root, P.kit, P.adapter);
+  const res = check(P.root, P.kit, P.adapter, guardedApps(P));
   console.log(report(res));
   process.exit(res.defects.length ? 1 : 0);
 }

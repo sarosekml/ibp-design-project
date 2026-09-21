@@ -55,6 +55,12 @@ export function project(from = HERE) {
   const state = norm(typeof m.state === 'string' ? m.state : m.state && m.state.dir);
   const docs = norm(m.docs);
   const appsDir = norm(m.apps && m.apps.dir);
+  const appsManifest = appsDir ? norm(m.apps.manifest) || 'app.json' : null;
+  const shape = m.appShape || {};
+  const appShape = {
+    pages: norm(shape.pages) || 'pages', components: norm(shape.components) || 'components',
+    data: norm(shape.data) || 'data', refs: norm(shape.refs) || 'refs',
+  };
   const tracks = (Array.isArray(m.tracks) ? m.tracks : []).map((t) => ({ ...t, dir: norm(t && t.dir) || appsDir }));
   const hubPage = norm(m.hub && m.hub.page);
   const hubRegistry = norm(m.hub && m.hub.registry);
@@ -66,7 +72,7 @@ export function project(from = HERE) {
     adapter, adapterAbs: abs(adapter),
     state, stateAbs: abs(state),
     docs, docsAbs: abs(docs),
-    appsDir, tracks,
+    appsDir, appsManifest, appShape, tracks,
     hubPage, hubRegistry,
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),

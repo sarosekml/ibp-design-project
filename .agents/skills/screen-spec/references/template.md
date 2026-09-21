@@ -1,7 +1,7 @@
 ---
 screen: DealRegistry
 title: Реестр сделок
-file: Concepts/DealRegistry/DealRegistry.html
+file: apps/deal-registry/pages/DealRegistry.html
 source: ТЗ — design-system/uploads/ТЗ-реестр-сделок.docx
 version: "1.000"
 created: "26.08.2026"

@@ -5,8 +5,9 @@ temperature: 0.2
 permission:
   edit:
     "*": ask
-    "Concepts/**": allow
+    "apps/**": allow
     "hub.js": allow
+    "apps/post/**": ask
   webfetch: deny
   websearch: deny
   task: allow

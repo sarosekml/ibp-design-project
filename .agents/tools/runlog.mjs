@@ -269,8 +269,8 @@ const CASES = [
       const was = process.env.RUNLOG_FILE;
       process.env.RUNLOG_FILE = file;
       try {
-        logRun({ tool: 'сенсор', target: 'Concepts/x/x.html', verdict: 'OK', codes: [] });
-        logRun({ tool: 'линтер', target: 'Concepts/x/x.html', verdict: 'PASS', codes: ['D4'] });
+        logRun({ tool: 'сенсор', target: 'apps/x/pages/X.html', verdict: 'OK', codes: [] });
+        logRun({ tool: 'линтер', target: 'apps/x/pages/X.html', verdict: 'PASS', codes: ['D4'] });
       } finally {
         if (was === undefined) delete process.env.RUNLOG_FILE; else process.env.RUNLOG_FILE = was;
       }

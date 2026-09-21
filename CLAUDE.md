@@ -30,32 +30,36 @@ cat design-system/specs/Kanban.md                                  # полна�
 - Никогда целиком: `_cheatsheet.md`, `design-system/scripts/icons-data.js`, `design-system/pages/**`.
 - Имена глифов — `design-system/specs/Icons.md`; иллюстрации — `ls design-system/assets/illustrations`.
 - Каталог тайлов и меню главной — `design-system/scripts/ibp-home.js`.
-- Живые примеры экранов: `Projects/post/` (главная, реестр с фильтром `.tfm`),
-  `Concepts/pipeline-manager-kanban/` (канбан + таблица + Drawer + модалки).
+- Живые примеры экранов: `apps/post/` (главная, реестр с фильтром `.tfm`),
+  `apps/pipeline-manager-kanban/` (канбан + таблица + Drawer + модалки).
 
-## Прототип в `Concepts/<имя>/`
+## Прототип в `apps/<имя>/`
 
-- `index.html` — главная (стартовая страница Layout) → остальные экраны.
+- `app.json` — `id` и `track: "rnd"`; экраны и спеки — в `pages/`, все на одной
+  глубине (иначе сторож хаба, П6).
+- `pages/index.html` — главная (стартовая страница Layout) → остальные экраны.
 - На каждый `.html` — спека `<Имя>.screen.md` рядом (иначе сенсор Б12).
-- Демо-данные — `data/*.js` обычным `<script>` (file://, без fetch).
+- ДС из экрана — `../../../design-system/`.
+- Демо-данные — `data/*.js` приложения, из экрана `../data/*.js`, обычным
+  `<script>` (file://, без fetch).
 - Экранный скрипт — после `ds.js`; после перерисовки `innerHTML` заново звать
   `dsIcons.apply`, `DSMenu.bindAll`, `DSModal.bindAll`, `DSDrawer.bindAll`,
   `DSKanban.bind`, `DSTable.wireAll`.
-- Запись в `hub.js` (`group: 'concepts'`, `root`, `href`), строка пользователя
-  в меню → `../../index.html`.
+- Запись в `hub.js` (`group: 'concepts'`, `root: 'apps/<имя>'`, `href`), строка
+  пользователя в меню → `../../../index.html`.
 - Валюта — кодом (`RUB`), не «руб.»/«₽» (Б26). Глиф `Important-deals` сенсор не знает.
 - Своё поверх ДС — только на токенах и с записью в «Открытые вопросы» спеки.
 
 ## Проверка
 
 ```bash
-node .agents/tools/layout-check.mjs Concepts/<имя>/<Экран>.html
+node .agents/tools/layout-check.mjs apps/<имя>/pages/<Экран>.html
 node .agents/tools/lessons-cli.mjs gate
 node .agents/tools/vendor-scan.mjs
 ```
 
 Во встроенном браузере страницы по file:// открываются без стилей — поднимать
-статический сервер из локальной конфигурации запуска (`ds-static`, порт 8765) и открывать `http://localhost:8765/Concepts/<имя>/…`.
+статический сервер из локальной конфигурации запуска (`ds-static`, порт 8765) и открывать `http://localhost:8765/apps/<имя>/pages/…`.
 
 ## Pixso
 

@@ -1323,6 +1323,8 @@ function gateStepsFor(rel, deleted) {
   // файл адаптера, роль или команда харнеса, в том числе удалённые, — КФ5 (указатели не разошлись с харнесом)
   if (AGENT_CONFIG_FILES.has(rel) || (!deleted && underKit('skills/[^/]+/SKILL\\.md$').test(rel))
     || (ADAPTER_REL && rel.startsWith(ADAPTER_REL + '/')) || underKit('(agents|commands)/[^/]+\\.md$').test(rel)) add('agent-config');
+  // трек приложения и правила треков — КФ7 (продуктовое приложение закрыто от правки без подтверждения)
+  if (rel === 'project.json' || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('agent-config');
   // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
   if (inOwnerArea(rel)) add('check');
 

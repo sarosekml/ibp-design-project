@@ -27,7 +27,7 @@ metadata:
 ## Правила заполнения
 
 1. **Файл лежит рядом с HTML** и называется так же:
-   `Concepts/DealRegistry/DealRegistry.html` → `Concepts/DealRegistry/DealRegistry.screen.md`.
+   `apps/deal-registry/pages/DealRegistry.html` → `apps/deal-registry/pages/DealRegistry.screen.md`.
 
 2. **YAML-шапка обязательна** — по ней экран находят автоматически.
    Поле `components` перечисляет все использованные компоненты ДС.

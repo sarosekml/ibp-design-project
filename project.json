@@ -25,10 +25,13 @@
   "state": ".agent-state",
   "docs": "docs",
 
+  "apps": { "dir": "apps", "manifest": "app.json" },
+  "appShape": { "pages": "pages", "components": "components", "data": "data", "refs": "refs" },
+
   "tracks": [
-    { "id": "product", "title": "Проекты", "dir": "Projects", "hubGroup": "projects", "custom": "forbidden",
+    { "id": "product", "title": "Проекты", "hubGroup": "projects", "custom": "forbidden", "agentEdit": "ask",
       "desc": "соответствует настоящей системе, строго на ДС" },
-    { "id": "rnd", "title": "Концепты", "dir": "Concepts", "hubGroup": "concepts", "custom": "by-spec",
+    { "id": "rnd", "title": "Концепты", "hubGroup": "concepts", "custom": "by-spec", "agentEdit": "allow",
       "desc": "R&D: кастом допустим, если ТЗ прямо просит" }
   ]
 }
