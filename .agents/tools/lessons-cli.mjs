@@ -70,7 +70,7 @@ const ANCHORS = path.join(HERE, 'anchors.json');
 const LINT_FIXTURES = path.join(DS, 'fixtures');
 /* Корпус экранов лежит ВНЕ дерева ДС не по вкусу, а по определению правила:
    линтер считает экраном путь, начинающийся с `pages/screens/` или с `../`.
-   Правила A7, F6, L4, L5, L6 внутри `DS-IBP/fixtures/` не срабатывают никогда —
+   Правила A7, F6, L4, L5, L6 внутри `design-system/fixtures/` не срабатывают никогда —
    доказывать их там значило бы доказывать на входе, который им не вход (Л71).
    С 15.09.2026 корпус лежит в оснастке (подпапка fixtures/lint-screens), а не в
    удалённой песочнице Projects/test. Сенсорный корпус эту подпапку не читает:
@@ -1204,8 +1204,8 @@ function fingerprint() {
   return out;
 }
 
-/* Страничный скрипт живёт в `DS-IBP/scripts/<kebab>.page.js`, страница — в
-   `DS-IBP/pages/<раздел>/<Pascal>.html`. Имена сверяются без дефисов и регистра. */
+/* Страничный скрипт живёт в `design-system/scripts/<kebab>.page.js`, страница — в
+   `design-system/pages/<раздел>/<Pascal>.html`. Имена сверяются без дефисов и регистра. */
 function pageForScript(rel) {
   const key = path.basename(rel).replace(/\.page\.js$/, '').replace(/-/g, '').toLowerCase();
   const found = [];

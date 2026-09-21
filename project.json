@@ -5,7 +5,7 @@
   "purpose": "интерактивные прототипы на дизайн-системе IBP; результат работы агента",
 
   "designSystem": {
-    "mount": "DS-IBP",
+    "mount": "design-system",
     "source": { "type": "inline" }
   },
   "agentKit": {

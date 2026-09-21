@@ -76,7 +76,7 @@
   "постоянный вход": [
     "AGENTS.md",
     ".agents/rules/process.md",
-    "DS-IBP/AGENTS.md"
+    "design-system/AGENTS.md"
   ],
 
   "маршруты": {
@@ -113,8 +113,8 @@
         ".agents/skills/ds-lookup/SKILL.md",
         ".agents/skills/screen-assembly/SKILL.md",
         ".agents/skills/screen-assembly/references/patterns.md",
-        "DS-IBP/templates/screen/Screen.html",
-        "DS-IBP/specs/_runtime-hooks.md",
+        "design-system/templates/screen/Screen.html",
+        "design-system/specs/_runtime-hooks.md",
         ".agents/skills/screen-spec/SKILL.md",
         ".agents/skills/screen-spec/references/template.md",
         ".agents/skills/screen-review/references/lessons.md"
@@ -134,7 +134,7 @@
         ".agents/skills/ds-lookup/SKILL.md",
         ".agents/skills/screen-assembly/SKILL.md",
         ".agents/skills/screen-assembly/references/patterns.md",
-        "DS-IBP/templates/screen/Screen.html",
+        "design-system/templates/screen/Screen.html",
         ".agents/skills/screen-spec/SKILL.md",
         ".agents/skills/screen-spec/references/template.md",
         ".agents/skills/screen-review/references/lessons.md"
@@ -163,7 +163,7 @@
       "делает": "проставить хуки рантаймов по всем секциям, прогнать layout-check, починить своё",
       "читает": [
         ".agents/agents/screen-builder.md",
-        "DS-IBP/specs/_runtime-hooks.md",
+        "design-system/specs/_runtime-hooks.md",
         ".agents/skills/screen-review/references/lessons.md"
       ],
       "выход_фикс": 2000,

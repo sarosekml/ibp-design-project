@@ -41,7 +41,7 @@ import { need } from './project.mjs';
 
 /* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
    (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
-   литералом `DS-IBP`. */
+   литералом `design-system`. */
 const PRJ = need('layout-check', path.dirname(fileURLToPath(import.meta.url)));
 const ROOT = PRJ.root;
 const DS = PRJ.dsAbs;
@@ -425,11 +425,11 @@ function checkMechanics(html, icons, pagePath) {
   const isDocument = kind === 'document';
 
   /* Б1 подключения. Путь к ds.css НЕ фиксирован по числу уровней: экраны лежат
-     на разной глубине (`Concepts/<Имя>/` → `../../DS-IBP/ds.css`,
-     `Projects/post/<экран>/` → `../../../DS-IBP/ds.css`,
-     корневой хаб `index.html` → `DS-IBP/ds.css`).
+     на разной глубине (`Concepts/<Имя>/` → `../../design-system/ds.css`,
+     `Projects/post/<экран>/` → `../../../design-system/ds.css`,
+     корневой хаб `index.html` → `design-system/ds.css`).
      Раньше здесь была зашита строка `../../../ds.css` — путь структуры до
-     переезда ДС в `DS-IBP/` (01.09.2026), из-за чего Б1 падал на ЛЮБОМ экране
+     переезда ДС в `DS-IBP/` (01.09.2026; с 21.09.2026 каталог — `design-system/`), из-за чего Б1 падал на ЛЮБОМ экране
      репозитория, включая заведомо правильные из тогдашней песочницы. */
   const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
   ok(dsCssLinks.length === 1,
@@ -473,7 +473,7 @@ function checkMechanics(html, icons, pagePath) {
      панель переключается в drawer/fixed тем же DOM, и недостающий узел там уже
      не появится. Эталон каркаса и оба экрана в `Projects/test/post` ушли в
      работу без `.nav__pin`: F5 линтера этот контракт знает, но его корень —
-     `DS-IBP/`, до `Projects/**` и до эталонов скиллов он не достаёт.
+     `design-system/`, до `Projects/**` и до эталонов скиллов он не достаёт.
      Строка пользователя — ссылка на личный кабинет (NavPanel.md:125), не <div>:
      иначе футер панели недостижим с клавиатуры. */
   const navSources = [html, markupInScripts];
@@ -1436,7 +1436,7 @@ function checkOne(pageArg, width) {
    С образца начинается каждая сборка экрана. Разъехавшийся образец
    разъезжается сразу во всём, что от него произошло (Л69), а прогонять его по
    одному некому — этот режим обходит все образцы разом. Где они лежат:
-     - шаблон экрана ДС, `DS-IBP/templates/screen/*.html` — с 21.09.2026
+     - шаблон экрана ДС, `design-system/templates/screen/*.html` — с 21.09.2026
        единственный каркас: в него слит эталон, живший в харнесе
        (скилл `screen-assembly`, файл `skeleton.html` в его `references`), — два образца расходились
        молча (реструктуризация, шаг Ш3);

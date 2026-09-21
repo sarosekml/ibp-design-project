@@ -12,9 +12,9 @@
 | Что | Где |
 |---|---|
 | Правила процесса (целиком) | `.agents/rules/process.md` |
-| Знание о ДС (целиком) | `DS-IBP/AGENTS.md` |
+| Знание о ДС (целиком) | `design-system/AGENTS.md` |
 | Как устроены роли и маршруты | `.agents/agents/ai-designer.md`, `.agents/agents/screen-builder.md` |
-| Сборка экрана по шагам | `.agents/skills/screen-assembly/SKILL.md` + `DS-IBP/templates/screen/Screen.html`, `patterns.md`, `DS-IBP/specs/_runtime-hooks.md` |
+| Сборка экрана по шагам | `.agents/skills/screen-assembly/SKILL.md` + `design-system/templates/screen/Screen.html`, `patterns.md`, `design-system/specs/_runtime-hooks.md` |
 | Формат спеки экрана | `.agents/skills/screen-spec/references/template.md` |
 | Композиция | `.agents/skills/layout-composition/SKILL.md` |
 | Приёмка | `.agents/skills/screen-review/SKILL.md`, `.agents/skills/composition-review/SKILL.md` |
@@ -22,14 +22,14 @@
 ## ДС — читать точечно
 
 ```bash
-grep -n "^## " DS-IBP/specs/_cheatsheet.md                 # оглавление
-sed -n '/^## Kanban$/,/^## /p' DS-IBP/specs/_cheatsheet.md  # блок компонента
-cat DS-IBP/specs/Kanban.md                                  # полная спека, если блока мало
+grep -n "^## " design-system/specs/_cheatsheet.md                 # оглавление
+sed -n '/^## Kanban$/,/^## /p' design-system/specs/_cheatsheet.md  # блок компонента
+cat design-system/specs/Kanban.md                                  # полная спека, если блока мало
 ```
 
-- Никогда целиком: `_cheatsheet.md`, `DS-IBP/scripts/icons-data.js`, `DS-IBP/pages/**`.
-- Имена глифов — `DS-IBP/specs/Icons.md`; иллюстрации — `ls DS-IBP/assets/illustrations`.
-- Каталог тайлов и меню главной — `DS-IBP/scripts/ibp-home.js`.
+- Никогда целиком: `_cheatsheet.md`, `design-system/scripts/icons-data.js`, `design-system/pages/**`.
+- Имена глифов — `design-system/specs/Icons.md`; иллюстрации — `ls design-system/assets/illustrations`.
+- Каталог тайлов и меню главной — `design-system/scripts/ibp-home.js`.
 - Живые примеры экранов: `Projects/post/` (главная, реестр с фильтром `.tfm`),
   `Concepts/pipeline-manager-kanban/` (канбан + таблица + Drawer + модалки).
 

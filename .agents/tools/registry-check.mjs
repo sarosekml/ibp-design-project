@@ -11,7 +11,7 @@
    Имена — из манифеста project.json (project.mjs; реструктуризация, шаг Ш4):
    реестр и страница хаба (`hub`), группы записей и их каталоги (`tracks[]`:
    `hubGroup` → `dir`), ДС (`designSystem.mount`). До Ш4 здесь были литералы
-   `hub.js`, `Projects`, `Concepts`, `DS-IBP`, и переезд любого каталога
+   `hub.js`, `Projects`, `Concepts`, `design-system`, и переезд любого каталога
    сделал бы сторожа слепым. Группа `ds` — витрина ДС, у неё нет root.
 
    Что проверяет (коды П — «проекты»):
@@ -220,7 +220,7 @@ function registryJs(entries) {
 }
 
 const CLEAN_ENTRIES = [
-  { id: 'ds', group: 'ds', title: 'ДС', desc: 'тест', href: 'DS-IBP/index.html', root: null, icon: 'layer-01' },
+  { id: 'ds', group: 'ds', title: 'ДС', desc: 'тест', href: 'design-system/index.html', root: null, icon: 'layer-01' },
   { id: 'alpha', group: 'projects', title: 'Альфа', desc: 'тест', href: 'Projects/alpha/start/index.html', root: 'Projects/alpha', icon: 'folder' },
   { id: 'gamma', group: 'concepts', title: 'Гамма', desc: 'тест', href: 'Concepts/gamma/Gamma.html', root: 'Concepts/gamma', icon: 'folder' },
 ];
@@ -228,7 +228,7 @@ const withEntry = (i, patch) => CLEAN_ENTRIES.map((e, k) => (k === i ? { ...e, .
 
 const MANIFEST = {
   contract: 1, id: 'fixture',
-  designSystem: { mount: 'DS-IBP' }, agentKit: { mount: '.kit' },
+  designSystem: { mount: 'design-system' }, agentKit: { mount: '.kit' },
   hub: { page: 'index.html', registry: 'hub.js' },
   tracks: [
     { id: 'product', title: 'Проекты', dir: 'Projects', hubGroup: 'projects' },
@@ -238,8 +238,8 @@ const MANIFEST = {
 
 function cleanTree(root) {
   put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
-  put(root, 'DS-IBP/specs/Icons.md', '# Иконки\n\n## Все глифы (2)\nfolder · layer-01\n');
-  put(root, 'DS-IBP/index.html', '<!DOCTYPE html><title>ДС</title>');
+  put(root, 'design-system/specs/Icons.md', '# Иконки\n\n## Все глифы (2)\nfolder · layer-01\n');
+  put(root, 'design-system/index.html', '<!DOCTYPE html><title>ДС</title>');
   put(root, 'index.html', '<!DOCTYPE html><title>Хаб</title>');
   put(root, 'hub.js', registryJs(CLEAN_ENTRIES));
   put(root, 'Projects/alpha/start/index.html',
@@ -260,7 +260,7 @@ const CASES = [
     mutate: (r) => put(r, 'Projects/beta/index.html', '<p>новый проект</p>') },
   { name: 'экран концепта вне реестра', expect: 'П4 Concepts/delta/Delta.html',
     mutate: (r) => put(r, 'Concepts/delta/Delta.html', '<p>новый концепт</p>') },
-  { name: 'ДС не в реестре', expect: 'П4 DS-IBP/index.html',
+  { name: 'ДС не в реестре', expect: 'П4 design-system/index.html',
     mutate: (r) => put(r, 'hub.js', registryJs(CLEAN_ENTRIES.filter((e) => e.group !== 'ds'))) },
   { name: 'битый href', expect: 'несуществующий файл',
     mutate: (r) => put(r, 'hub.js', registryJs(withEntry(1, { href: 'Projects/alpha/start/missing.html' }))) },
@@ -294,13 +294,13 @@ const CASES = [
    описывает новые имена. Ссылки внутри экранов не зависят от имён треков
    (глубина та же), поэтому переписываются только пути в реестре. */
 function renameTree(root) {
-  renameSync(path.join(root, 'DS-IBP'), path.join(root, 'kit-ds'));
+  renameSync(path.join(root, 'design-system'), path.join(root, 'kit-ds'));
   renameSync(path.join(root, 'Projects'), path.join(root, 'prod'));
   renameSync(path.join(root, 'Concepts'), path.join(root, 'idea'));
   rmSync(path.join(root, 'hub.js'));
   const entries = CLEAN_ENTRIES.map((e) => ({
     ...e,
-    href: e.href.replace(/^DS-IBP\//, 'kit-ds/').replace(/^Projects\//, 'prod/').replace(/^Concepts\//, 'idea/'),
+    href: e.href.replace(/^design-system\//, 'kit-ds/').replace(/^Projects\//, 'prod/').replace(/^Concepts\//, 'idea/'),
     root: e.root && e.root.replace(/^Projects\//, 'prod/').replace(/^Concepts\//, 'idea/'),
   }));
   put(root, 'registry.js', registryJs(entries));

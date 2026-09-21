@@ -2,7 +2,7 @@
 screen: HomePage
 title: Главная страница IBP
 file: Concepts/ai-bankster-prototype-v02/index.html
-source: макеты главной страницы и бокового меню «Аналитические отчёты»; каталог разделов — DS-IBP/scripts/ibp-home.js
+source: макеты главной страницы и бокового меню «Аналитические отчёты»; каталог разделов — design-system/scripts/ibp-home.js
 version: "1.000"
 created: "12.09.2026"
 design_system: IBP DS
@@ -148,7 +148,7 @@ JavaScript на этом экране нет.
 Меню и плитки собраны **статической разметкой**, а не вызовом
 `IBPHome.itemsFor(role)`, как на `Projects/post/mainPage/`.
 Причина: роли «Консультант-аналитик ДИД» и раздела «AI Pitcher» в
-каталоге `DS-IBP/scripts/ibp-home.js` нет, а файлы ДС правилами проекта не
+каталоге `design-system/scripts/ibp-home.js` нет, а файлы ДС правилами проекта не
 меняются. Состав, подписи и глифы взяты из каталога дословно везде, где пункт
 в нём есть.
 

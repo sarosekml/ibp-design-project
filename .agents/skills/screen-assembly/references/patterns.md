@@ -1,7 +1,7 @@
 ---
 belongs_to: screen-assembly
 purpose: Готовые куски разметки типовых узлов экрана — копировать дословно
-source: DS-IBP/specs/_cheatsheet.md
+source: design-system/specs/_cheatsheet.md
 updated: "26.08.2026"
 ---
 
@@ -11,7 +11,7 @@ updated: "26.08.2026"
 количество строк/колонок и перечисленные модификаторы. Структуру не переверстывай.
 
 Если нужного узла тут нет — достань блок компонента командой
-`sed -n '/^## Имя$/,/^## /p' DS-IBP/specs/_cheatsheet.md`.
+`sed -n '/^## Имя$/,/^## /p' design-system/specs/_cheatsheet.md`.
 
 ---
 
@@ -142,7 +142,7 @@ CSS (`margin-left:auto` на `.pgn-row__right`), а не разметка: ле�
 `pgn__pagesize-label` + чеврон `.pgn__pagesize-btn`): вертикальное центрирование
 даёт CSS, вручную `ddl-anchor` его не добавлять и ничего не выравнивать.
 Предпочтительный способ сборки колонтитула — `data-pagination` на пустом `<div>`
-(рантайм рисует всё сам, см. DS-IBP/specs/_runtime-hooks.md).
+(рантайм рисует всё сам, см. design-system/specs/_runtime-hooks.md).
 
 **Про ширины колонок.** `grid-template-columns` пишется на каждой строке и в
 шапке — значения обязаны совпадать посимвольно. Схема: `8px` (разделитель) →

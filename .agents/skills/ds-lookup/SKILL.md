@@ -24,16 +24,16 @@ metadata:
 
 | Файл | Размер | Что делать вместо |
 |---|---|---|
-| `DS-IBP/scripts/icons-data.js` | 671 KB, одна строка | никогда не открывать; имена глифов — `DS-IBP/specs/Icons.md` |
-| `DS-IBP/specs/_cheatsheet.md` | ~170 KB | читать по одному блоку компонента |
-| `DS-IBP/pages/**/*.html` | 40–70 KB каждая | не читать; всё нужное есть в спеке |
-| `DS-IBP/styles/*.css` | — | целиком не читать; **точечный `grep` по классу — можно и нужно**, когда чит-шит и спека расходятся или когда значение подозрительное |
+| `design-system/scripts/icons-data.js` | 671 KB, одна строка | никогда не открывать; имена глифов — `design-system/specs/Icons.md` |
+| `design-system/specs/_cheatsheet.md` | ~170 KB | читать по одному блоку компонента |
+| `design-system/pages/**/*.html` | 40–70 KB каждая | не читать; всё нужное есть в спеке |
+| `design-system/styles/*.css` | — | целиком не читать; **точечный `grep` по классу — можно и нужно**, когда чит-шит и спека расходятся или когда значение подозрительное |
 
 ## Чит-шит — не истина в последней инстанции
 
 Чит-шит собирается руками и **может расходиться со спекой и с CSS**. Такое
 уже случалось: в блоке NavPanel бургер был `ibtn--s`, а спека и расчёт оси в
-`DS-IBP/styles/nav-panel.css` требуют `ibtn--m`; в блоке DatePicker сниппет давал
+`design-system/styles/nav-panel.css` требуют `ibtn--m`; в блоке DatePicker сниппет давал
 `btn--s` при том, что проза того же блока строкой выше говорила XS
 (оба исправлены 26.08.2026 — но гарантии, что расхождений не осталось, нет).
 
@@ -46,17 +46,17 @@ metadata:
 ### 1. Какие вообще есть компоненты
 
 ```bash
-grep -n "^## " DS-IBP/specs/_cheatsheet.md
+grep -n "^## " design-system/specs/_cheatsheet.md
 ```
 
 Отдаёт список всех компонентов с номерами строк. ~50 строк, дёшево.
 
-Альтернатива с версиями и зависимостями — `cat DS-IBP/specs/_index.md`.
+Альтернатива с версиями и зависимостями — `cat design-system/specs/_index.md`.
 
 ### 2. Разметка и классы одного компонента
 
 ```bash
-sed -n '/^## Tile$/,/^## /p' DS-IBP/specs/_cheatsheet.md
+sed -n '/^## Tile$/,/^## /p' design-system/specs/_cheatsheet.md
 ```
 
 Подставь нужное имя вместо `Tile`. Отдаёт 20–40 строк: CSS-файл, зависимости,
@@ -73,7 +73,7 @@ sed -n '/^## Tile$/,/^## /p' DS-IBP/specs/_cheatsheet.md
 ### 3. Полная спека — обязательные триггеры
 
 ```bash
-cat DS-IBP/specs/Tile.md
+cat design-system/specs/Tile.md
 ```
 
 6–12 KB. **Жёсткого лимита на число прочитанных спек нет** — читай столько,
@@ -106,13 +106,13 @@ cat DS-IBP/specs/Tile.md
 
 ## Иконки
 
-Все 247 имён глифов — одной строкой в `DS-IBP/specs/Icons.md`:
+Все 247 имён глифов — одной строкой в `design-system/specs/Icons.md`:
 
 ```bash
-grep -o "^[^#].*" DS-IBP/specs/Icons.md | tail -1 | tr '·' '\n' | grep -i "arrow"
+grep -o "^[^#].*" design-system/specs/Icons.md | tail -1 | tr '·' '\n' | grep -i "arrow"
 ```
 
-или просто `cat DS-IBP/specs/Icons.md` (файл 16 строк).
+или просто `cat design-system/specs/Icons.md` (файл 16 строк).
 
 Правила:
 
@@ -126,21 +126,21 @@ grep -o "^[^#].*" DS-IBP/specs/Icons.md | tail -1 | tr '·' '\n' | grep -i "arro
 
 | Что нужно | Где смотреть |
 |---|---|
-| Цвета — семантика | `grep -n "^  --" DS-IBP/styles/palette.css` |
-| Цвета — базовые токены | `grep -n "^  --" DS-IBP/styles/colors.css` |
-| Типографика (`--type-*`, классы `.ds-*`) | `sed -n '/^## Ключевые/,/^## /p' DS-IBP/specs/Typography.md` |
-| Отступы, шкала `--space-*`, сетка `.grid12`/`.col-N` | `sed -n '/^## Spacing/,/^## /p' DS-IBP/specs/_cheatsheet.md` |
-| Радиусы | `grep -n "radius" DS-IBP/styles/radius.css` |
-| Тени | `grep -n "shadow" DS-IBP/styles/shadow.css` |
+| Цвета — семантика | `grep -n "^  --" design-system/styles/palette.css` |
+| Цвета — базовые токены | `grep -n "^  --" design-system/styles/colors.css` |
+| Типографика (`--type-*`, классы `.ds-*`) | `sed -n '/^## Ключевые/,/^## /p' design-system/specs/Typography.md` |
+| Отступы, шкала `--space-*`, сетка `.grid12`/`.col-N` | `sed -n '/^## Spacing/,/^## /p' design-system/specs/_cheatsheet.md` |
+| Радиусы | `grep -n "radius" design-system/styles/radius.css` |
+| Тени | `grep -n "shadow" design-system/styles/shadow.css` |
 
-Ищешь конкретный токен по имени — `grep -rn "имя-токена" DS-IBP/styles/`.
+Ищешь конкретный токен по имени — `grep -rn "имя-токена" design-system/styles/`.
 
 Токена нет — **спроси**. Не подставляй `#hex`, не считай «примерно как рядом».
 
 ## Проверка «есть ли такой компонент»
 
 ```bash
-grep -in "имя" DS-IBP/specs/_index.md
+grep -in "имя" design-system/specs/_index.md
 ```
 
 Нет в `_index.md` — компонента в ДС нет. Это стоп-сигнал: сообщи человеку,

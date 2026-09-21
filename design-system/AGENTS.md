@@ -14,8 +14,8 @@ updated: "21.09.2026"
 записи) — в харнесе проекта, `.agents/rules/process.md`.
 
 **Пути ниже — от корня ДС.** В проекте ДС лежит в каталоге
-`designSystem.mount` из `project.json` (сейчас `DS-IBP/`), и команды
-запускаются с этим префиксом: `grep -n "^## " DS-IBP/specs/_cheatsheet.md`.
+`designSystem.mount` из `project.json` (сейчас `design-system/`), и команды
+запускаются с этим префиксом: `grep -n "^## " design-system/specs/_cheatsheet.md`.
 
 ## 1. Что это
 

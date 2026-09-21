@@ -7,7 +7,7 @@
      файл существует только как вход для правил, которые срабатывают лишь на
      экране. Линтер считает экраном путь, начинающийся с `pages/screens/` или
      с `../` — то есть файл ВНЕ дерева ДС; поэтому корпус лежит здесь, а не в
-     `DS-IBP/fixtures/`, где живут страничные пары.
+     `design-system/fixtures/`, где живут страничные пары.
      Правила этого корпуса: A7 (единая точка входа ds.js), F6 (ручки ширины
      колонок), L4/L5/L6 (поля контентной области, порог раскладки, внешний
      отступ блоку ДС).
@@ -18,7 +18,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Фикстура экрана</title>
-<link rel="stylesheet" href="../../../../DS-IBP/ds.css">
+<link rel="stylesheet" href="../../../../design-system/ds.css">
 <style>
   .fx-note { font: var(--type-body-m); color: var(--text-secondary); }
   .dtable { margin-bottom: var(--space-8); }
@@ -31,6 +31,6 @@
     <p class="fx-note">Область содержимого.</p>
   </main>
 </div>
-<script src="../../../../DS-IBP/ds.js"></script>
+<script src="../../../../design-system/ds.js"></script>
 </body>
 </html>

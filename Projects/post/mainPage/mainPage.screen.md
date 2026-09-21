@@ -2,7 +2,7 @@
 screen: mainPage
 title: Главная страница
 file: Projects/post/mainPage/index.html
-source: DS-IBP/uploads/1920_Dashboard_Финансист ДИД.png (референс), решение пользователя 01.09.2026 (роли, состав)
+source: design-system/uploads/1920_Dashboard_Финансист ДИД.png (референс), решение пользователя 01.09.2026 (роли, состав)
 version: "1.004"
 created: "01.09.2026"
 updated: "10.09.2026"
@@ -44,7 +44,7 @@ components: [Layout, NavPanel, Breadcrumbs, NavTile, Illustrations, Modal, Badge
 ## 3. Источник данных — единый каталог
 
 Меню панели и тайлы главной строятся из одного файла
-`DS-IBP/scripts/ibp-home.js` (`window.IBPHome`):
+`design-system/scripts/ibp-home.js` (`window.IBPHome`):
 
 - `IBPHome.itemsFor(role)` — группы меню роли (с по-пунктной доступностью,
   partial: у роли «Финансист ДИД» в «Администрировании» только «Администрирование»,

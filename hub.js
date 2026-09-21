@@ -25,14 +25,14 @@
               Concepts/); у группы 'ds' — null. Всё внутри неё — часть записи:
               остальным экранам своя запись не нужна, а экраны с меню обязаны
               вести строкой пользователя в футере на хаб;
-     icon   — имя глифа из DS-IBP/specs/Icons.md. */
+     icon   — имя глифа из design-system/specs/Icons.md. */
 window.IBPHub = [
   {
     id: 'ds-ibp',
     group: 'ds',
     title: 'Дизайн-система IBP',
     desc: 'Документация основ и компонентов',
-    href: 'DS-IBP/index.html',
+    href: 'design-system/index.html',
     root: null,
     icon: 'layer-01'
   },

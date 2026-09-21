@@ -2,7 +2,7 @@
 screen: DealRegistry
 title: Реестр сделок
 file: Concepts/DealRegistry/DealRegistry.html
-source: ТЗ — DS-IBP/uploads/ТЗ-реестр-сделок.docx
+source: ТЗ — design-system/uploads/ТЗ-реестр-сделок.docx
 version: "1.000"
 created: "26.08.2026"
 design_system: IBP DS
@@ -144,14 +144,14 @@ components: [Layout, NavPanel, Breadcrumbs, PageHeader, Table, TableCell, TableF
 
 | Компонент | Где на экране | Варианты | Спека |
 |---|---|---|---|
-| Layout | каркас | `nav--rail` | `DS-IBP/specs/Layout.md` |
-| Breadcrumbs | зона крошек | — | `DS-IBP/specs/Breadcrumbs.md` |
-| PageHeader | шапка | без иконки, без статуса | `DS-IBP/specs/PageHeader.md` |
-| Tile | сводка | обычный, 4 колонки | `DS-IBP/specs/Tile.md` |
-| Table | реестр | тулбар + футер | `DS-IBP/specs/Table.md` |
-| TableCell | строки и шапка | сортировка, выбор строк, чипы | `DS-IBP/specs/TableCell.md` |
-| TableFilter | тулбар | с чипом «Применено» | `DS-IBP/specs/TableFilter.md` |
-| Modal | 4 окна | `--w3`, `--w4`, `--w6` | `DS-IBP/specs/Modal.md` |
+| Layout | каркас | `nav--rail` | `design-system/specs/Layout.md` |
+| Breadcrumbs | зона крошек | — | `design-system/specs/Breadcrumbs.md` |
+| PageHeader | шапка | без иконки, без статуса | `design-system/specs/PageHeader.md` |
+| Tile | сводка | обычный, 4 колонки | `design-system/specs/Tile.md` |
+| Table | реестр | тулбар + футер | `design-system/specs/Table.md` |
+| TableCell | строки и шапка | сортировка, выбор строк, чипы | `design-system/specs/TableCell.md` |
+| TableFilter | тулбар | с чипом «Применено» | `design-system/specs/TableFilter.md` |
+| Modal | 4 окна | `--w3`, `--w4`, `--w6` | `design-system/specs/Modal.md` |
 
 ## 12. Доступность
 

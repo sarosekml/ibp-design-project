@@ -42,9 +42,9 @@ HTML-прототипов. Это инструментарий, а не прод
 
 | Файл | Что содержит |
 |---|---|
-| `.opencode/opencode.json` | Конфиг: подключение `process.md` и `DS-IBP/AGENTS.md`, права на инструменты |
+| `.opencode/opencode.json` | Конфиг: подключение `process.md` и `design-system/AGENTS.md`, права на инструменты |
 | `.agents/rules/process.md` | **Правила процесса агента** — читать всегда, целиком |
-| `DS-IBP/AGENTS.md` | **Знание о ДС**: карта, чтение, запреты, каркас экрана, каталог — читать всегда, целиком |
+| `design-system/AGENTS.md` | **Знание о ДС**: карта, чтение, запреты, каркас экрана, каталог — читать всегда, целиком |
 | `.agents/agents/ai-designer.md` | Ведущий агент: маршруты, распределение по субагентам, границы |
 | `.agents/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
 | `.agents/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
@@ -53,11 +53,11 @@ HTML-прототипов. Это инструментарий, а не прод
 | `.agents/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
 | `.agents/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
 | `.agents/skills/screen-review/SKILL.md` | Полная приёмка экрана |
-| `DS-IBP/templates/screen/Screen.html` | **Каркас экрана** — стартовая копия при сборке |
+| `design-system/templates/screen/Screen.html` | **Каркас экрана** — стартовая копия при сборке |
 | `.agents/skills/screen-assembly/references/patterns.md` | Готовые рецепты разметки (крошки, шапка, таблица, модалка) |
-| `DS-IBP/specs/_runtime-hooks.md` | Таблица «что работает само / что требует атрибута» |
+| `design-system/specs/_runtime-hooks.md` | Таблица «что работает само / что требует атрибута» |
 
-### 2. `DS-IBP/` — дизайн-система и компоненты
+### 2. `design-system/` — дизайн-система и компоненты
 
 Источник истины: токены, классы компонентов и документация. **Файлы этой
 папки агент не меняет** (исключение — явное поручение человека). Экран
@@ -68,15 +68,15 @@ HTML-прототипов. Это инструментарий, а не прод
 
 | Файл | Что содержит |
 |---|---|
-| `DS-IBP/ds.css` | Единая точка подключения стилей (@import всех `styles/*`) |
-| `DS-IBP/scripts/ds.js` | Единая точка подключения рантаймов (сам догружает иконки, табы, модалки, таблицы) |
-| `DS-IBP/specs/_index.md` | Манифест: компонент → спека → CSS → версия |
-| `DS-IBP/specs/_cheatsheet.md` | Чит-шит: по блоку на каждый компонент. **Большой — читать только точечно** |
-| `DS-IBP/specs/<Имя>.md` | Полная спека компонента |
-| `DS-IBP/specs/Icons.md` | Все имена глифов (вставляются как `<i data-icon="имя">`) |
-| `DS-IBP/styles/colors.css` (базовые цветовые рампы), `palette.css` (семантика цвета), `typography.css`, `spacing.css`, `radius.css`, `shadow.css` | Токены фундамента |
-| `DS-IBP/templates/screen/Screen.html` | Стартовый шаблон экрана |
-| `DS-IBP/pages/` | Документация компонентов (не читать целиком) |
+| `design-system/ds.css` | Единая точка подключения стилей (@import всех `styles/*`) |
+| `design-system/scripts/ds.js` | Единая точка подключения рантаймов (сам догружает иконки, табы, модалки, таблицы) |
+| `design-system/specs/_index.md` | Манифест: компонент → спека → CSS → версия |
+| `design-system/specs/_cheatsheet.md` | Чит-шит: по блоку на каждый компонент. **Большой — читать только точечно** |
+| `design-system/specs/<Имя>.md` | Полная спека компонента |
+| `design-system/specs/Icons.md` | Все имена глифов (вставляются как `<i data-icon="имя">`) |
+| `design-system/styles/colors.css` (базовые цветовые рампы), `palette.css` (семантика цвета), `typography.css`, `spacing.css`, `radius.css`, `shadow.css` | Токены фундамента |
+| `design-system/templates/screen/Screen.html` | Стартовый шаблон экрана |
+| `design-system/pages/` | Документация компонентов (не читать целиком) |
 
 ### 3. `Projects/` — готовые экраны проекта
 
@@ -111,13 +111,13 @@ HTML-прототипов. Это инструментарий, а не прод
 контекст:
 
 1. `GIGACODE.md` (этот файл) — карта проекта. ✅
-2. `.agents/rules/process.md` — правила процесса и `DS-IBP/AGENTS.md` — знание о ДС, оба **целиком**.
+2. `.agents/rules/process.md` — правила процесса и `design-system/AGENTS.md` — знание о ДС, оба **целиком**.
 3. `.agents/agents/ai-designer.md` — роли и маршруты (по своей роли).
 4. По необходимости — скиллы: `screen-assembly` (сборка),
    `screen-review` (приёмка), `ds-lookup` (поиск компонента),
    `concept-design` (концепты), `session-plan` (смета захода).
-5. Каркас экрана — `DS-IBP/templates/screen/Screen.html`
-   (копия при старте сборки) + `patterns.md` + `DS-IBP/specs/_runtime-hooks.md`.
+5. Каркас экрана — `design-system/templates/screen/Screen.html`
+   (копия при старте сборки) + `patterns.md` + `design-system/specs/_runtime-hooks.md`.
 
 ### Главное правило: ничего не выдумывать
 
@@ -131,9 +131,9 @@ HTML-прототипов. Это инструментарий, а не прод
 `sed -n '/^## <Имя>$/,/^## /p'` по блоку компонента, `read` с `offset/limit`.
 Запрещено читать целиком:
 
-- `DS-IBP/scripts/icons-data.js` (671 KB в одну строку);
-- `DS-IBP/specs/_cheatsheet.md` (~170 KB);
-- страницы `DS-IBP/pages/**/*.html`;
+- `design-system/scripts/icons-data.js` (671 KB в одну строку);
+- `design-system/specs/_cheatsheet.md` (~170 KB);
+- страницы `design-system/pages/**/*.html`;
 - собранный экран при правке — только по якорям секций (`#sec:head`,
   `#sec:content`, `#sec:modals`).
 
@@ -146,7 +146,7 @@ HTML-прототипов. Это инструментарий, а не прод
 - Состояния компонентов (`--selected`/`--disabled`/`:hover`) задаёт только сам
   компонент; свой `<style>` — только раскладка (grid/flex/gap) на токенах.
 - Собственный JavaScript вместо рантайма ДС не пишется. Хуки рантаймов —
-  в `DS-IBP/specs/_runtime-hooks.md`.
+  в `design-system/specs/_runtime-hooks.md`.
 - Таблица-реестр занимает всю свободную высоту (`screen--app` + `dtable--fill`).
 - После каждой сборки — приёмка `screen-reviewer`, без исключений.
 

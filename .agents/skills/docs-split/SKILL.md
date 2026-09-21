@@ -1,21 +1,21 @@
 ---
 name: docs-split
-description: Как раскатать страницу документации ДС IBP (DS-IBP/pages/**) на паттерн «сплиттер + табы» — процедура, тулчейн check/inject/map и правила точечного чтения страницы. Загружать, когда поручение касается страниц документации компонентов, а не экранов в Concepts/ или Projects/.
+description: Как раскатать страницу документации ДС IBP (design-system/pages/**) на паттерн «сплиттер + табы» — процедура, тулчейн check/inject/map и правила точечного чтения страницы. Загружать, когда поручение касается страниц документации компонентов, а не экранов в Concepts/ или Projects/.
 belongs_to: docs-split
-purpose: Раскатка страниц документации IBP (DS-IBP/pages/**) на паттерн «сплиттер + табы» (docs-split) — процедура, тулчейн, правила чтения
+purpose: Раскатка страниц документации IBP (design-system/pages/**) на паттерн «сплиттер + табы» (docs-split) — процедура, тулчейн, правила чтения
 checked: "30.08.2026 — пилот AllocationBar2, тулчейн check/inject/map работает; 13.09.2026 — verify удалён"
 ---
 
-# Раскатка `DS-IBP/pages/**` на docs-split
+# Раскатка `design-system/pages/**` на docs-split
 
 ## Когда применять
 
-Поручение касается страниц документации (`DS-IBP/pages/foundations|atoms|molecules|organisms/**`).
+Поручение касается страниц документации (`design-system/pages/foundations|atoms|molecules|organisms/**`).
 Сценарий ведёт `ai-designer` сам (страницы документации не собираются через
 `screen-builder` и не имеют `.screen.md`). Приёмку делает `screen-reviewer`.
 
 Правила паттерна — раздел 11 `process.md`. Общий слой —
-`DS-IBP/styles/docs-split.css` + `DS-IBP/scripts/docs-split.js` (не трогать).
+`design-system/styles/docs-split.css` + `design-system/scripts/docs-split.js` (не трогать).
 
 ## Правила чтения (экономия контекста)
 
@@ -28,20 +28,20 @@ checked: "30.08.2026 — пилот AllocationBar2, тулчейн check/inject/
    не читаются** — при раскатке они проходят насквозь.
 3. **CSS не читать и не перепечатывать.** Вкладку «Код» заполняет
    `node …docs-split.mjs inject <page>`, который вставляет полный
-   `DS-IBP/styles/<компонент>.css` в `src-code-css` из файла. Модель CSS не видит.
+   `design-system/styles/<компонент>.css` в `src-code-css` из файла. Модель CSS не видит.
 4. **Эталон — `references/skeleton.md`**, не Entity.html и не другие готовые
    страницы (их не перечитывать).
 
 ## Тулчейн
 
 ```
-node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css DS-IBP/styles/x.css]
+node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css design-system/styles/x.css]
 ```
 
 | Команда | Что делает |
 |---|---|
 | `map` | перегенерирует `references/pages-index.md` (структурная карта всех doc-страниц) |
-| `inject <page>` | вставляет полный CSS компонента в `src-code-css` (маппинг имя→css из `DS-IBP/specs/_index.md`; для страниц без спеки — `--css`) |
+| `inject <page>` | вставляет полный CSS компонента в `src-code-css` (маппинг имя→css из `design-system/specs/_index.md`; для страниц без спеки — `--css`) |
 | `check <page>` | баланс тегов (вне `<script>`), остатки `ds-toc.js`/`pg-kit.js`/`ds-toc.css`, `.splitpane--app`, один `</body></html>`, 3 `src-code`, panes. Код выхода 1 при FAIL |
 
 Браузерной проверки живости в тулчейне нет (подкоманда `verify` удалена
@@ -86,7 +86,7 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css DS-IBP
 
 ## Границы
 
-- `DS-IBP/styles/`, `DS-IBP/scripts/`, `DS-IBP/specs/`, `DS-IBP/pages/**` (кроме раскатываемой страницы) —
+- `design-system/styles/`, `design-system/scripts/`, `design-system/specs/`, `design-system/pages/**` (кроме раскатываемой страницы) —
   не трогать. Тулчейн — рабочий инструмент харнеса, живёт в `.agents/skills/docs-split/tooling/`.
 - Один `</body></html>` в конце файла; перед инлайн-скриптами страницы дубликатов
   не создавать (урок Entity).

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../../DS-IBP/';</script>
+<script>window.__DS_ROOT = '../../../design-system/';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Текущий портфель ДИД — IBP</title>
-<link rel="icon" type="image/svg+xml" href="../../../DS-IBP/assets/logo.svg">
-<link rel="stylesheet" href="../../../DS-IBP/ds.css">
+<link rel="icon" type="image/svg+xml" href="../../../design-system/assets/logo.svg">
+<link rel="stylesheet" href="../../../design-system/ds.css">
 <style>
   /* ---------- только раскладка экрана, на токенах ДС ---------- */
   *, *::before, *::after { box-sizing: border-box; }
@@ -691,8 +691,8 @@
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
-<script src="../../../DS-IBP/scripts/ds.js"></script>
-<script src="../../../DS-IBP/scripts/ibp-home.js"></script>
+<script src="../../../design-system/scripts/ds.js"></script>
+<script src="../../../design-system/scripts/ibp-home.js"></script>
 <script>
 /* Экранный скрипт: меню панели навигации строится из каталога ibp-home.js
    (window.IBPHome) по роли «Финансист ДИД»; пункт «Текущий портфель» selected. */
@@ -769,7 +769,7 @@
 /* Модалка фильтра — вертикальные табы как ЯКОРНЫЕ ссылки по контентной области
    (TableFilter, правило `.tmsf__nav` + scroll-spy). Рантайма ДС для этого нет
    (ds-table-filter.js умеет только сброс чипа), поэтому поведение повторяет
-   эталонного демо (DS-IBP/scripts/table-filter.page.js, 497–531). Слушатели
+   эталонного демо (design-system/scripts/table-filter.page.js, 497–531). Слушатели
    вешаются на статичные элементы — DSModal порталит скрим в body, но НЕ клонирует
    его, поэтому обработчики переживают перенос. */
 (function () {

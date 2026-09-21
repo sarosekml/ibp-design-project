@@ -77,7 +77,7 @@ updated: "21.09.2026"
 | `.opencode/agents/*.md` | указатели на роли: в шапке — режим, температура и права роли, в теле — путь к роли в `.agents/agents/` | opencode |
 | `.opencode/commands/*.md` | указатели на команды: в шапке — описание и роль-исполнитель, в теле — путь к сценарию в `.agents/commands/` и аргументы | opencode |
 | `.agents/rules/process.md` | правила процесса: проект, границы записи, работа с файлами, проверки, экономия контекста, самообучение | подключается через `instructions`, попадает в контекст всегда |
-| `DS-IBP/AGENTS.md` | правила ДС для агента: карта ДС, чтение, запреты, каркас экрана, каталог компонентов | подключается через `instructions`, попадает в контекст всегда |
+| `design-system/AGENTS.md` | правила ДС для агента: карта ДС, чтение, запреты, каркас экрана, каталог компонентов | подключается через `instructions`, попадает в контекст всегда |
 | `.agents/agents/ai-designer.md` | **ведущий агент** — маршрутизация и разговор с вами | opencode |
 | `.agents/agents/screen-builder.md` | субагент: собирает экран | вызывается `ai-designer` |
 | `.agents/agents/screen-reviewer.md` | субагент: приёмка, ничего не правит | вызывается `ai-designer` |
@@ -87,7 +87,7 @@ updated: "21.09.2026"
 | `.agents/commands/concepts.md` | команда `/concepts` — несколько концептов текстовыми спеками | opencode |
 | `.agents/commands/handoff.md`, `resume.md` | команды `/handoff` и `/resume <Задача>` — перенос контекста между сессиями через `Concepts/<Задача>/<Задача>.handoff.md` | opencode |
 | `.agents/skills/ds-lookup/` | как искать компоненты в ДС, не сжигая контекст | агент, по своему решению |
-| `.agents/skills/screen-assembly/` | пошаговая сборка; в `references/` — рецепты разметки. Каркас экрана и хуки рантаймов — в ДС: `DS-IBP/templates/screen/Screen.html`, `DS-IBP/specs/_runtime-hooks.md` | агент |
+| `.agents/skills/screen-assembly/` | пошаговая сборка; в `references/` — рецепты разметки. Каркас экрана и хуки рантаймов — в ДС: `design-system/templates/screen/Screen.html`, `design-system/specs/_runtime-hooks.md` | агент |
 | `.agents/skills/screen-spec/` | формат `<Имя>.screen.md` + шаблон | агент |
 | `.agents/skills/screen-review/` | **чек-лист приёмки** | агент |
 | `.agents/tools/` | оснастка: сенсор `layout-check.mjs`, `lessons-cli.mjs` (журнал уроков, итоговая проверка `gate`), сторожа, фикстуры | агент — запуском через `node`, в контекст идёт только вывод |
@@ -145,9 +145,9 @@ opencode
 | Способ | Как |
 |---|---|
 | Выбор агента | `Tab` → выбрать `ai-designer`. Он единственный в списке — остальные субагенты и вручную не выбираются |
-| Собрать экран | `/screen DS-IBP/uploads/ТЗ-реестр-сделок.md` |
+| Собрать экран | `/screen design-system/uploads/ТЗ-реестр-сделок.md` |
 | Проверить готовое | `/screen-check Concepts/DealRegistry/DealRegistry.html` |
-| Несколько концептов до сборки | `/concepts DS-IBP/uploads/ТЗ-реестр-сделок.md` |
+| Несколько концептов до сборки | `/concepts design-system/uploads/ТЗ-реестр-сделок.md` |
 | Посчитать смету захода | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --stage build --tz <ТЗ> --cheat Table,Modal --out-lines 900` — строка `ВЕРДИКТ:` |
 | Посмотреть состав этапов | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --stages` |
 | Сверить смету с фактом захода | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --calibrate --stage build --fact <токенов>` + аргументы сметы |
@@ -249,7 +249,7 @@ opencode
 | Действие | Права |
 |---|---|
 | чтение и поиск (`read`, `glob`, `grep`) | разрешены |
-| правка файлов (`edit`) | разрешена везде, в том числе в `DS-IBP/` |
+| правка файлов (`edit`) | разрешена везде, в том числе в `design-system/` |
 | команды (`bash`) | разрешены все без подтверждения, кроме трёх запретов по началу команды: `rm …`, `git push…`, `git reset…` |
 | интернет (`webfetch`, `websearch`) | разрешён |
 | субагенты (`task`) и скиллы (`skill`) | разрешены |
@@ -292,10 +292,10 @@ opencode
 ## 6. Как это дорабатывать
 
 **Появился новый компонент в ДС.** В харнесе править ничего не нужно: знание о
-ДС живёт в самой ДС (`DS-IBP/AGENTS.md`, в контексте агента всегда). Имя
-компонента — в каталог `DS-IBP/AGENTS.md`, раздел 6 (его сверяет с манифестом
-аудит ДС), рантайм с хуком — строкой в `DS-IBP/specs/_runtime-hooks.md`.
-Порядок — `DS-IBP/MAINTAINING.md`, «Новый компонент».
+ДС живёт в самой ДС (`design-system/AGENTS.md`, в контексте агента всегда). Имя
+компонента — в каталог `design-system/AGENTS.md`, раздел 6 (его сверяет с манифестом
+аудит ДС), рантайм с хуком — строкой в `design-system/specs/_runtime-hooks.md`.
+Порядок — `design-system/MAINTAINING.md`, «Новый компонент».
 
 **Появились локальные компоненты проекта** (тайл «КНР», «Финансовые метрики»).
 Заведите отдельный скилл: `.agents/skills/local-components/SKILL.md` с
@@ -341,7 +341,7 @@ opencode
 - путает компоненты → дополните «Частая путаница в именах» в `ds-lookup/SKILL.md`;
 - халтурит с контентом → усильте «Контент: рисуем, а не заглушаем» в
   `screen-assembly/SKILL.md`;
-- макет не кликается → проверьте `DS-IBP/specs/_runtime-hooks.md`;
+- макет не кликается → проверьте `design-system/specs/_runtime-hooks.md`;
 - пропускает проверку → добавьте пункт в блокеры `screen-review/SKILL.md`;
 - субагент делает не то → почти всегда виновато задание: усильте раздел
   «Главное про субагентов» в `ai-designer.md`.

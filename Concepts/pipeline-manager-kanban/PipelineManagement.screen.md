@@ -189,7 +189,7 @@ EmptyState, PageHeader, Breadcrumbs, NavPanel, Layout (`.screen--app`).
    плотностью. Поля «Команда сделки» заменены на «Ведущий» + аватары команды.
 6. **Иллюстрация тайла** «Pipeline Management» на главной — в ДС нет своей,
    стоит `ecm-pipeline`. Иллюстрацию из Pixso (окна канбана) нужно добавить в
-   `DS-IBP/assets/illustrations/`.
+   `design-system/assets/illustrations/`.
 7. **Иконка пункта меню** — `layout-grid-01` (своей нет).
 8. **Итоги колонки и лента групп** — расширение Kanban; при переносе в ДС —
    решить, становятся ли они частью компонента (слот подвала колонки).

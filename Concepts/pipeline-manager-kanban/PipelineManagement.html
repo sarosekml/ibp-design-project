@@ -5,19 +5,19 @@
      дохода и объёма карточек колонки. Клик по карточке или строке — панель
      сделки (Drawer). Стрелка в шапке колонки — «провалиться» в деск или стадию.
 
-     Основа — Kanban из ДС (DS-IBP/specs/Kanban.md); собственное поверх ДС:
+     Основа — Kanban из ДС (design-system/specs/Kanban.md); собственное поверх ДС:
      итоги колонки (.pm-colsum), лента групп «Лиды / Pipeline» (.pm-rail),
      зазор между группами колонок. Всё — на токенах, см. спеку экрана.
      Разметка доски, таблицы и списков строится экранным скриптом из
      data/pipeline-data.js. Якоря секций: #sec:head, #sec:content, #sec:modals, #sec:script. -->
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../DS-IBP/';</script>
+<script>window.__DS_ROOT = '../../design-system/';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pipeline Management — IBP</title>
-<link rel="icon" type="image/svg+xml" href="../../DS-IBP/assets/logo.svg">
-<link rel="stylesheet" href="../../DS-IBP/ds.css">
+<link rel="icon" type="image/svg+xml" href="../../design-system/assets/logo.svg">
+<link rel="stylesheet" href="../../design-system/ds.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -374,7 +374,7 @@
 </div>
 
 <script src="data/pipeline-data.js"></script>
-<script src="../../DS-IBP/scripts/ds.js"></script>
+<script src="../../design-system/scripts/ds.js"></script>
 
 <!-- #sec:script ── Модель экрана: фильтрация, доска, таблица, панель ──────
      Рантаймы ДС дают поведение компонентов (перенос, меню, модалки, табы,

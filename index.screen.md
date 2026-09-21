@@ -20,7 +20,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 
 | Колонка | Что в ней | Папка |
 |---|---|---|
-| Дизайн-система | документация ДС | `DS-IBP/` |
+| Дизайн-система | документация ДС | `design-system/` |
 | Проекты | файлы, соответствующие настоящей системе; строго на компонентах ДС | `Projects/` |
 | Концепты | концепты на ДС; кастомные решения — только если ТЗ прямо их просит | `Concepts/` |
 
@@ -52,7 +52,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | Откуда | Как |
 |---|---|
 | Экран проекта или концепта | `<a class="nav__user">` в футере меню, `aria-label="Хаб проектов"`, относительный путь до корневого `index.html`. В продукте эта строка ведёт в личный кабинет, подмена действует только в макетах |
-| Документация ДС | закреплённый низ левой панели `.ds-nav__footer` — «Хаб проектов» (`DS-IBP/scripts/ds-nav.js`) |
+| Документация ДС | закреплённый низ левой панели `.ds-nav__footer` — «Хаб проектов» (`design-system/scripts/ds-nav.js`) |
 
 ## 3. Шапка страницы (PageHeader)
 
@@ -107,7 +107,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | `desc` | строка | да | описание одной строкой |
 | `href` | строка | да | стартовая страница, путь от корня |
 | `root` | строка / null | да для `projects` и `concepts` | папка записи от корня, внутри `Projects/` или `Concepts/` |
-| `icon` | строка | да | имя глифа из `DS-IBP/specs/Icons.md` |
+| `icon` | строка | да | имя глифа из `design-system/specs/Icons.md` |
 
 Полноту реестра и обратные переходы проверяет сторож
 `.agents/tools/registry-check.mjs` (шаг `registry` гейта).
@@ -125,13 +125,13 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 
 | Компонент | Где на экране | Варианты | Спека |
 |---|---|---|---|
-| Layout | каркас | стартовая страница, `nav--rail` | `DS-IBP/specs/Layout.md` |
-| NavPanel | меню | футер из `IBPHome.footerHTML`, строка пользователя — текущая страница | `DS-IBP/specs/NavPanel.md` |
-| Avatar | футер меню | `av--circular av--m`, инициалы | `DS-IBP/specs/Avatar.md` |
-| Breadcrumbs | зона крошек | одна текущая | `DS-IBP/specs/Breadcrumbs.md` |
-| Tile | колонки | обычный, `col-3 colw-6` | `DS-IBP/specs/Tile.md` |
-| Entity | строки | M, `--interactive`, корень `<a>`, контейнер `.entity-list` (1.008) | `DS-IBP/specs/Entity.md` |
-| Illustrations | фон | `background-illustration` | `DS-IBP/specs/Illustrations.md` |
+| Layout | каркас | стартовая страница, `nav--rail` | `design-system/specs/Layout.md` |
+| NavPanel | меню | футер из `IBPHome.footerHTML`, строка пользователя — текущая страница | `design-system/specs/NavPanel.md` |
+| Avatar | футер меню | `av--circular av--m`, инициалы | `design-system/specs/Avatar.md` |
+| Breadcrumbs | зона крошек | одна текущая | `design-system/specs/Breadcrumbs.md` |
+| Tile | колонки | обычный, `col-3 colw-6` | `design-system/specs/Tile.md` |
+| Entity | строки | M, `--interactive`, корень `<a>`, контейнер `.entity-list` (1.008) | `design-system/specs/Entity.md` |
+| Illustrations | фон | `background-illustration` | `design-system/specs/Illustrations.md` |
 
 ## 9. Доступность
 
