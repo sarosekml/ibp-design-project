@@ -1,0 +1,32 @@
+# Снимок состояния до реструктуризации (docs/restructure-3-repos.md, шаг Ш0)
+# Команда: node .opencode/skills/screen-review/tooling/lessons-cli.mjs gate --full
+# Дата: 21.09.2026 · ветка chore/restructure от chore/agent-imp (699b4dc)
+
+== gate: проверки по изменениям ==
+режим: полный (--full)
+
+OK    линтер, страницы ДС пакетом — файлов: 62  (0,7 с)
+OK    projects-hub --selftest  (0,1 с)
+OK    projects-hub (реестр хаба проектов)  (0,0 с)
+OK    agent-config --selftest  (0,1 с)
+OK    agent-config (один конфиг, без модели)  (0,0 с)
+OK    runlog --selftest (журнал прогонов)  (0,0 с)
+OK    линтер, глобальные правила  (0,5 с)
+OK    линтер --parity (доки = код)  (0,1 с)
+OK    spec-audit  (0,4 с)
+OK    сенсор --etalons  (0,1 с)
+OK    anchors  (0,1 с)
+OK    check (форма журнала уроков)  (0,1 с)
+OK    coverage (чек-листы)  (0,1 с)
+OK    ctx-budget --selftest (смета контекста)  (0,1 с)
+OK    stats (регресс)  (0,1 с)
+OK    verify --corpus sensor  (2,5 с)
+OK    verify --corpus lint  (17,1 с)
+OK    vendor-scan --selftest  (0,0 с)
+OK    vendor-scan (нейтральность)  (0,2 с)
+OK    сенсор — файлов: 22  (1,5 с)
+OK    линтер — файлов: 22  (10,8 с)
+OK    docs-split check — файлов: 54  (1,9 с)
+
+ВНИМАНИЕ: калибровка сметы: ДОЛГ — замеров 0 из 3: смета ни разу не сверена с фактом; коэффициенты в stages.json остаются оценкой (ctx-budget.mjs --calibrate --stage <этап> --fact <токенов> после реального захода сборки экрана)
+ВЕРДИКТ: OK (117 шаг.)
