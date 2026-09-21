@@ -74,9 +74,11 @@ const D = 'son' + 'net';
 const U = 'Us' + 'ers';
 const H = 'ho' + 'me';
 const PATH_WHAT = 'абсолютный путь с машины автора';
+const VENDOR_NAME = { re: new RegExp(A, 'i'), what: 'имя вендора' };
+const ASSISTANT_NAME = { re: new RegExp(B, 'i'), what: 'имя ассистента' };
 const PATTERNS = [
-  { re: new RegExp(A, 'i'), what: 'имя вендора' },
-  { re: new RegExp(B, 'i'), what: 'имя ассистента' },
+  VENDOR_NAME,
+  ASSISTANT_NAME,
   { re: new RegExp('\\b' + C + '\\b', 'i'), what: 'имя семейства моделей' },
   { re: new RegExp('\\b' + D + '\\b', 'i'), what: 'имя семейства моделей' },
   // posix — граница слева см. шапку; буквы любого алфавита считаются частью имени
@@ -84,6 +86,14 @@ const PATTERNS = [
   // windows — одинарные, удвоенные (JSON) и прямые слэши
   { re: new RegExp('[A-Za-z]:(?:\\\\{1,2}|/)' + U + '(?:\\\\{1,2}|/)[^\\\\/\\s"\'`]+[\\\\/]', 'i'), what: PATH_WHAT },
 ];
+
+/* Имя файла, которое само было бы следом: локальные правила постороннего
+   инструмента в корне. Сторож читает содержимое, а не имена, — но гейт пишет
+   имена файлов в снимок `gate-snapshot.json`, а снимок лежит в репозитории.
+   Гейт спрашивает здесь, чтобы у словаря остался один владелец (Л43).
+   Имена семейств моделей сюда не входят: это обычные слова, и файл с таким
+   словом в имени выпал бы из отпечатка гейта молча. */
+export const isTraceName = (name) => [VENDOR_NAME, ASSISTANT_NAME].some((p) => p.re.test(name));
 
 function walk(dir, acc) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -217,4 +227,5 @@ async function main() {
   process.exit(hits.length ? 1 : 0);
 }
 
-main();
+// импорт из гейта (isTraceName) не должен запускать обход
+if (process.argv[1] && path.resolve(process.argv[1]) === SELF) main();

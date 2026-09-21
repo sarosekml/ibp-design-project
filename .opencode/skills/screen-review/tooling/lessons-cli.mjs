@@ -41,6 +41,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
+import { isTraceName } from './vendor-scan.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -1098,7 +1099,12 @@ const SELF = fileURLToPath(import.meta.url);
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
    здесь были перечислены AGENTS.md и файлы хаба, и правка правил другого
    агентного CLI рядом с AGENTS.md, как и любого документа в `docs/`, не
-   поднимала ни нейтральность, ни `check` — гейт не видел входа (класс Л100). */
+   поднимала ни нейтральность, ни `check` — гейт не видел входа (класс Л100).
+   Исключение — файл, чьё ИМЯ само было бы находкой нейтральности (локальные
+   правила постороннего инструмента, `isTraceName` в vendor-scan.mjs): снимок
+   лежит в репозитории, и имя в нём стало бы следом. Содержимое такого файла
+   нейтральность и `check` всё равно читают — при любом их прогоне и в полном
+   гейте; не видна гейту только правка его одного. */
 const GATE_ROOTS = ['DS-IBP/styles', 'DS-IBP/scripts', 'DS-IBP/specs', 'DS-IBP/pages', 'DS-IBP/fixtures',
   'DS-IBP/ds.css', 'Projects', 'Concepts', '.opencode/rules', '.opencode/agents', '.opencode/commands', '.opencode/skills',
   '.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc', 'docs'];
@@ -1129,7 +1135,9 @@ function fingerprint() {
     if (!gateIgnored(rel)) out[rel] = Math.round(st.mtimeMs) + ':' + st.size;
   };
   for (const r of GATE_ROOTS) walk(path.join(ROOT, r));
-  for (const e of readdirSync(ROOT, { withFileTypes: true })) if (e.isFile() && TEXT_EXT.test(e.name)) walk(path.join(ROOT, e.name));
+  for (const e of readdirSync(ROOT, { withFileTypes: true })) {
+    if (e.isFile() && TEXT_EXT.test(e.name) && !isTraceName(e.name)) walk(path.join(ROOT, e.name));
+  }
   return out;
 }
 
