@@ -1,0 +1,29 @@
+{
+  "contract": 1,
+  "id": "ibp-prototypes",
+  "name": "Прототипы IBP",
+  "purpose": "интерактивные прототипы на дизайн-системе IBP; результат работы агента",
+
+  "designSystem": {
+    "mount": "DS-IBP",
+    "source": { "type": "inline" }
+  },
+  "agentKit": {
+    "mount": ".opencode",
+    "source": { "type": "inline" }
+  },
+
+  "hub": {
+    "page": "index.html",
+    "registry": "hub.js",
+    "registryFormat": "script-global",
+    "managed": false
+  },
+
+  "tracks": [
+    { "id": "product", "title": "Проекты", "dir": "Projects", "hubGroup": "projects", "custom": "forbidden",
+      "desc": "соответствует настоящей системе, строго на ДС" },
+    { "id": "rnd", "title": "Концепты", "dir": "Concepts", "hubGroup": "concepts", "custom": "by-spec",
+      "desc": "R&D: кастом допустим, если ТЗ прямо просит" }
+  ]
+}

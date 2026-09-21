@@ -1132,6 +1132,7 @@ const CTX_BUDGET = path.join(ROOT, '.opencode/skills/session-plan/tooling/ctx-bu
 const PROJECTS_HUB = path.join(HERE, 'projects-hub.mjs');
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
+const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1255,6 +1256,11 @@ function gateStep(id, paths = null) {
        порядок чтения, один файл на прогон гейта. Заведён 21.09.2026 вместе с
        хранением «файл на прогон» (шапка runlog.mjs). */
     case 'runlog-selftest': return { title: 'runlog --selftest (журнал прогонов)', args: [RUNLOG, '--selftest'], cwd: ROOT };
+    /* Манифест проекта (Ш1 реструктуризации): project.json описывает, где ДС,
+       харнес, хаб и треки. Идёт первым: при разошедшемся манифесте остальные
+       шаги падали бы непонятным «файл не найден». */
+    case 'manifest': return { title: 'manifest-check (project.json против диска)', args: [MANIFEST_CHECK], cwd: ROOT };
+    case 'manifest-selftest': return { title: 'manifest-check --selftest', args: [MANIFEST_CHECK, '--selftest'], cwd: ROOT };
     /* Селфтест сметы контекста. Заведён 14.09.2026: инструмент написали, сторож
        (обратный тест на известном провале) написали, а звать его забыли — гейт
        на правку `stages.json` поднимал один vendor-scan. Сторож без вызывающего
@@ -1291,6 +1297,9 @@ function gateStepsFor(rel, deleted) {
   if (AGENT_CONFIG_FILES.has(rel) || (!deleted && /^\.opencode\/skills\/[^/]+\/SKILL\.md$/.test(rel))) add('agent-config');
   // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
   if (inOwnerArea(rel)) add('check');
+
+  // манифест: правка самого файла; удаление любого пути — мог пропасть объявленный каталог
+  if (rel === 'project.json' || deleted) add('manifest');
 
   if (deleted) {
     if (rel.startsWith('DS-IBP/')) add('lint-global', 'parity');
@@ -1346,6 +1355,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
   if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
+  if (rel === TOOL_REL + '/manifest-check.mjs') add('manifest-selftest', 'manifest');
   if (/^\.opencode\/skills\/[^/]+\/references\/[^/]+\.html$/.test(rel)) add('etalons');
   if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith('.opencode/')) add('check', 'stats');
   if (rel === TOOL_REL + '/coverage.json' || rel === '.opencode/skills/screen-review/SKILL.md' || rel === '.opencode/skills/composition-review/SKILL.md') add('coverage');
@@ -1353,9 +1363,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
