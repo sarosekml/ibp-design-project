@@ -35,7 +35,7 @@
    не проверяется — там его сейчас нет, и заводить вход без случая незачем.
 
    Журнал прогонов (runs/) сторож не пишет — по той же причине, что
-   projects-hub.mjs: кодов для деления на «живой/исчез» у него нет.
+   registry-check.mjs: кодов для деления на «живой/исчез» у него нет.
 
    Использование:
      node agent-config.mjs [--root <корень репозитория>]
@@ -46,15 +46,19 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, rmSync, mkdtempSync
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { need } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const REPO = path.resolve(HERE, '..', '..', '..', '..');
-
-const CONFIG = '.opencode/opencode.json';
+/* Каталог конфига и скиллов — каталог харнеса из манифеста (project.mjs;
+   реструктуризация, Ш4). В селфтесте он задаётся явно: временное дерево без
+   манифеста. */
+const SELFTEST_KIT = '.opencode';
+const SELFTEST_CONFIG = SELFTEST_KIT + '/opencode.json';
 const MODEL_KEYS = ['model', 'small_model', 'provider'];
 
-function check(root) {
+function check(root, kit) {
   const defects = [];
+  const CONFIG = kit + '/opencode.json';
 
   for (const name of ['opencode.json', 'opencode.jsonc']) {
     if (existsSync(path.join(root, name))) {
@@ -62,8 +66,8 @@ function check(root) {
     }
   }
 
-  if (existsSync(path.join(root, '.opencode/opencode.jsonc'))) {
-    defects.push('КФ2 .opencode/opencode.jsonc — конфиг ведётся одним файлом ' + CONFIG);
+  if (existsSync(path.join(root, kit, 'opencode.jsonc'))) {
+    defects.push('КФ2 ' + kit + '/opencode.jsonc — конфиг ведётся одним файлом ' + CONFIG);
   }
   const abs = path.join(root, CONFIG);
   if (!existsSync(abs)) {
@@ -85,20 +89,20 @@ function check(root) {
     if (a && a.model !== undefined) defects.push('КФ3 ' + CONFIG + ' → agent.' + name + '.model — на другом контуре даст «Model not found»');
   }
 
-  checkSkills(root, defects);
+  checkSkills(root, kit, defects);
   return { defects };
 }
 
 /* КФ4 — см. шапку. Шапка читается построчно: значение в строке ключа или,
    для блочной формы YAML (`description: >`), в следующих строках с отступом. */
-function checkSkills(root, defects) {
-  const dir = path.join(root, '.opencode', 'skills');
+function checkSkills(root, kit, defects) {
+  const dir = path.join(root, kit, 'skills');
   if (!existsSync(dir)) return;
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (!e.isDirectory()) continue;
     const file = path.join(dir, e.name, 'SKILL.md');
     if (!existsSync(file)) continue;
-    const rel = '.opencode/skills/' + e.name + '/SKILL.md';
+    const rel = kit + '/skills/' + e.name + '/SKILL.md';
     const lines = readFileSync(file, 'utf8').split(/\r?\n/);
     const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
     const head = end > 0 ? lines.slice(1, end) : [];
@@ -150,17 +154,17 @@ const CASES = [
   { name: 'jsonc в корне', expect: 'КФ1 opencode.jsonc',
     mutate: (r) => put(r, 'opencode.jsonc', '{}') },
   { name: 'конфига нет', expect: 'не найден',
-    mutate: (r) => rmSync(path.join(r, CONFIG)) },
+    mutate: (r) => rmSync(path.join(r, SELFTEST_CONFIG)) },
   { name: 'jsonc рядом в .opencode', expect: 'КФ2 .opencode/opencode.jsonc',
     mutate: (r) => put(r, '.opencode/opencode.jsonc', '{}') },
   { name: 'битый JSON', expect: 'не читается как JSON',
-    mutate: (r) => put(r, CONFIG, '{ "permission": ') },
+    mutate: (r) => put(r, SELFTEST_CONFIG, '{ "permission": ') },
   { name: 'модель агента', expect: 'agent.plan.model',
-    mutate: (r) => put(r, CONFIG, cfgJson({ agent: { plan: { model: 'deepseek/deepseek-v4-flash' } } })) },
+    mutate: (r) => put(r, SELFTEST_CONFIG, cfgJson({ agent: { plan: { model: 'deepseek/deepseek-v4-flash' } } })) },
   { name: 'модель по умолчанию', expect: '→ model',
-    mutate: (r) => put(r, CONFIG, cfgJson({ model: 'corp-gateway/deepseek-v4-flash' })) },
+    mutate: (r) => put(r, SELFTEST_CONFIG, cfgJson({ model: 'corp-gateway/deepseek-v4-flash' })) },
   { name: 'провайдер', expect: '→ provider',
-    mutate: (r) => put(r, CONFIG, cfgJson({ provider: { 'corp-gateway': {} } })) },
+    mutate: (r) => put(r, SELFTEST_CONFIG, cfgJson({ provider: { 'corp-gateway': {} } })) },
   { name: 'скилл без description', expect: 'КФ4 .opencode/skills/bare/SKILL.md — в шапке нет description',
     mutate: (r) => put(r, '.opencode/skills/bare/SKILL.md', '---\nbelongs_to: bare\npurpose: скилл без описания\n---\n\n# Голый скилл\n') },
   { name: 'name скилла не совпадает с папкой', expect: 'name «other» не совпадает с папкой «named»',
@@ -177,10 +181,10 @@ function selftest() {
   for (const c of CASES) {
     const root = mkdtempSync(path.join(os.tmpdir(), 'agent-config-'));
     try {
-      put(root, CONFIG, cfgJson({}));
+      put(root, SELFTEST_CONFIG, cfgJson({}));
       put(root, '.opencode/skills/good/SKILL.md', GOOD_SKILL);
       if (c.mutate) c.mutate(root);
-      const { defects } = check(root);
+      const { defects } = check(root, SELFTEST_KIT);
       const pass = c.expect === null
         ? defects.length === 0
         : defects.length > 0 && defects.some((d) => d.includes(c.expect));
@@ -202,8 +206,8 @@ function main() {
   const args = process.argv.slice(2);
   if (args.includes('--selftest')) return selftest();
   const rIdx = args.indexOf('--root');
-  const repo = rIdx >= 0 ? path.resolve(args[rIdx + 1]) : REPO;
-  const res = check(repo);
+  const P = need('agent-config', rIdx >= 0 ? path.resolve(args[rIdx + 1]) : HERE);
+  const res = check(P.root, P.kit);
   console.log(report(res));
   process.exit(res.defects.length ? 1 : 0);
 }

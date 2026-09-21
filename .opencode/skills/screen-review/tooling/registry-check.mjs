@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ============================================================
-   PROJECTS-HUB — сторож хаба проектов (корневой index.html).
+   REGISTRY-CHECK — сторож реестра хаба проектов (бывший projects-hub.mjs).
 
    Зачем. Хаб строит меню и три колонки (дизайн-система, проекты, концепты)
    из реестра hub.js в корне. По file:// страница не может сама обойти
@@ -8,16 +8,22 @@
    прозой не держится: забытый проект или концепт просто молча не появляется
    на хабе. Сторож делает забывание видимым: гейт краснеет.
 
+   Имена — из манифеста project.json (project.mjs; реструктуризация, шаг Ш4):
+   реестр и страница хаба (`hub`), группы записей и их каталоги (`tracks[]`:
+   `hubGroup` → `dir`), ДС (`designSystem.mount`). До Ш4 здесь были литералы
+   `hub.js`, `Projects`, `Concepts`, `DS-IBP`, и переезд любого каталога
+   сделал бы сторожа слепым. Группа `ds` — витрина ДС, у неё нет root.
+
    Что проверяет (коды П — «проекты»):
-     П1 реестр читается; у записей есть обязательные поля, id уникальны,
-        group из списка, у проектов и концептов есть root;
-     П2 иконка записи есть в DS-IBP/specs/Icons.md;
+     П1 манифест и реестр читаются; у записей есть обязательные поля, id
+        уникальны, group из списка, у записей треков есть root;
+     П2 иконка записи есть в <ДС>/specs/Icons.md;
      П3 файл по href существует, папка root существует, href лежит в root,
-        root лежит в папке своей группы (projects — Projects, concepts —
-        Concepts): концепт не зарегистрировать проектом и наоборот;
-     П4 полнота: каждый .html в папках Projects и Concepts лежит внутри root
+        root лежит в каталоге своего трека: концепт не зарегистрировать
+        проектом и наоборот;
+     П4 полнота: каждый .html в каталогах треков лежит внутри root
         какой-нибудь записи (исключение — любая папка fixtures);
-        DS-IBP/index.html зарегистрирован;
+        витрина ДС (<ДС>/index.html) зарегистрирована;
      П5 возврат в хаб: экран внутри root проекта или концепта, где есть
         строка пользователя меню (nav__user или вызов footerHTML), ведёт ею на
         хаб — в файле есть литерал относительного пути до корневого
@@ -33,23 +39,18 @@
    окна настоящие экраны.
 
    Использование:
-     node projects-hub.mjs [check] [--root <корень репозитория>]
-     node projects-hub.mjs --selftest   — откат на временном дереве
+     node registry-check.mjs [check] [--root <корень проекта>]
+     node registry-check.mjs --selftest   — откат на временном дереве
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
-import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync, rmSync, mkdtempSync, renameSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { project } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const REPO = path.resolve(HERE, '..', '..', '..', '..');
-
-const REGISTRY = 'hub.js';
-const HUB = 'index.html';
-// группа → папка, в которой обязан лежать root записи (у ds root нет)
-const GROUP_DIRS = { ds: null, projects: 'Projects', concepts: 'Concepts' };
 const FIELDS = ['id', 'group', 'title', 'desc', 'href', 'icon'];
 
 const slash = (p) => p.split(path.sep).join('/');
@@ -76,8 +77,8 @@ function loadRegistry(file) {
 }
 
 /** Имена глифов из строки после заголовка «## Все глифы». null — файла нет. */
-function iconNames(repo) {
-  const f = path.join(repo, 'DS-IBP', 'specs', 'Icons.md');
+function iconNames(dsAbs) {
+  const f = path.join(dsAbs, 'specs', 'Icons.md');
   if (!existsSync(f)) return null;
   const lines = readFileSync(f, 'utf8').split(/\r?\n/);
   const i = lines.findIndex((l) => l.startsWith('## Все глифы'));
@@ -92,9 +93,19 @@ function codeOf(src) {
 
 const inFixtures = (rel) => rel.split('/').includes('fixtures');
 
-export function check(repo = REPO) {
+export function check(from = HERE) {
   const defects = [];
-  const stats = { entries: 0, pages: 0, screens: 0 };
+  const stats = { entries: 0, pages: 0, screens: 0, areas: [] };
+  const P = project(from);
+  if (P.error) return { defects: ['П1 ' + P.error + ' — реестр не с чем сверять'], stats };
+  const repo = P.root;
+  const REGISTRY = P.hubRegistry;
+  const HUB = P.hubPage;
+  // группа → каталог трека, в котором обязан лежать root записи (у ds root нет)
+  const GROUP_DIRS = { ds: null };
+  for (const t of P.tracks) if (t.hubGroup) GROUP_DIRS[t.hubGroup] = t.dir;
+  const AREAS = [...new Set(P.tracks.map((t) => t.dir).filter(Boolean))];
+  stats.areas = AREAS;
   const regFile = path.join(repo, REGISTRY);
 
   if (!existsSync(regFile)) return { defects: ['П1 нет реестра ' + REGISTRY + ' в корне'], stats };
@@ -106,7 +117,7 @@ export function check(repo = REPO) {
   stats.entries = list.length;
 
   /* П1–П3 записи */
-  const icons = iconNames(repo);
+  const icons = iconNames(P.dsAbs);
   const ids = new Set();
   const valid = [];
   list.forEach((e, i) => {
@@ -123,7 +134,7 @@ export function check(repo = REPO) {
     const groupDir = GROUP_DIRS[e.group];
     const hasRoot = typeof e.root === 'string' && e.root.trim();
     if (groupDir && !hasRoot) defects.push('П1 ' + name + ' — нет root (папка записи от корня, внутри ' + groupDir + '/)');
-    if (icons && !icons.has(e.icon)) defects.push('П2 ' + name + ' — иконки «' + e.icon + '» нет в DS-IBP/specs/Icons.md');
+    if (icons && !icons.has(e.icon)) defects.push('П2 ' + name + ' — иконки «' + e.icon + '» нет в ' + P.ds + '/specs/Icons.md');
 
     const href = path.resolve(repo, e.href);
     if (!existsSync(href)) defects.push('П3 ' + name + ' — href ведёт на несуществующий файл: ' + e.href);
@@ -141,7 +152,7 @@ export function check(repo = REPO) {
 
   /* П4 полнота */
   const roots = valid.filter((e) => e.rootAbs).map((e) => e.rootAbs);
-  for (const area of ['Projects', 'Concepts']) {
+  for (const area of AREAS) {
     for (const f of walk(path.join(repo, area))) {
       if (!f.endsWith('.html')) continue;
       const rel = slash(path.relative(repo, f));
@@ -151,9 +162,9 @@ export function check(repo = REPO) {
       defects.push('П4 ' + rel + ' — страница вне записей реестра: добавить запись в ' + REGISTRY + ' (root — папка проекта или концепта)');
     }
   }
-  const dsIndex = path.join(repo, 'DS-IBP', 'index.html');
+  const dsIndex = path.join(P.dsAbs, 'index.html');
   if (existsSync(dsIndex) && !valid.some((e) => e.hrefAbs === dsIndex)) {
-    defects.push('П4 DS-IBP/index.html — дизайн-система не в реестре (group: \'ds\')');
+    defects.push('П4 ' + P.ds + '/index.html — дизайн-система не в реестре (group: \'ds\')');
   }
 
   /* П5 возврат в хаб */
@@ -189,8 +200,8 @@ export function check(repo = REPO) {
 }
 
 function report({ defects, stats }) {
-  const out = ['== projects-hub ==',
-    'реестр: записей ' + stats.entries + ' · страниц в Projects/ и Concepts/: ' + stats.pages + ' · экранов с меню проверено: ' + stats.screens];
+  const out = ['== registry-check ==',
+    'реестр: записей ' + stats.entries + ' · страниц в ' + (stats.areas.map((a) => a + '/').join(' и ') || '—') + ': ' + stats.pages + ' · экранов с меню проверено: ' + stats.screens];
   for (const d of defects) out.push('FAIL  ' + d);
   out.push('ВЕРДИКТ: ' + (defects.length ? 'FAIL (дефектов: ' + defects.length + ')' : 'OK'));
   return out.join('\n');
@@ -215,7 +226,18 @@ const CLEAN_ENTRIES = [
 ];
 const withEntry = (i, patch) => CLEAN_ENTRIES.map((e, k) => (k === i ? { ...e, ...patch } : e));
 
+const MANIFEST = {
+  contract: 1, id: 'fixture',
+  designSystem: { mount: 'DS-IBP' }, agentKit: { mount: '.kit' },
+  hub: { page: 'index.html', registry: 'hub.js' },
+  tracks: [
+    { id: 'product', title: 'Проекты', dir: 'Projects', hubGroup: 'projects' },
+    { id: 'rnd', title: 'Концепты', dir: 'Concepts', hubGroup: 'concepts' },
+  ],
+};
+
 function cleanTree(root) {
+  put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
   put(root, 'DS-IBP/specs/Icons.md', '# Иконки\n\n## Все глифы (2)\nfolder · layer-01\n');
   put(root, 'DS-IBP/index.html', '<!DOCTYPE html><title>ДС</title>');
   put(root, 'index.html', '<!DOCTYPE html><title>Хаб</title>');
@@ -258,13 +280,46 @@ const CASES = [
     mutate: (r) => put(r, 'Projects/alpha/screen/Screen.html', '<script>var USER_LINK_TO = \' href="../../../index.html"\';\nvar s = window.IBPHome.footerHTML(role);</script>') },
   { name: 'реестр не выполняется', expect: 'не выполняется',
     mutate: (r) => put(r, 'hub.js', 'window.IBPHub = [ {;') },
+  /* Имена — из манифеста, а не литералами: то же дерево под другими именами
+     обязано пройти, а страница вне реестра — найтись в переименованном треке. */
+  { name: 'другие имена каталогов в манифесте', expect: null,
+    mutate: (r) => renameTree(r) },
+  { name: 'страница вне реестра в переименованном треке', expect: 'П4 idea/delta/Delta.html',
+    mutate: (r) => { renameTree(r); put(r, 'idea/delta/Delta.html', '<p>новый концепт</p>'); } },
+  { name: 'манифеста нет', expect: 'П1 project.json не найден',
+    mutate: (r) => rmSync(path.join(r, 'project.json')) },
 ];
 
+/* Дерево под другими именами: ДС, треки и реестр переименованы, манифест
+   описывает новые имена. Ссылки внутри экранов не зависят от имён треков
+   (глубина та же), поэтому переписываются только пути в реестре. */
+function renameTree(root) {
+  renameSync(path.join(root, 'DS-IBP'), path.join(root, 'kit-ds'));
+  renameSync(path.join(root, 'Projects'), path.join(root, 'prod'));
+  renameSync(path.join(root, 'Concepts'), path.join(root, 'idea'));
+  rmSync(path.join(root, 'hub.js'));
+  const entries = CLEAN_ENTRIES.map((e) => ({
+    ...e,
+    href: e.href.replace(/^DS-IBP\//, 'kit-ds/').replace(/^Projects\//, 'prod/').replace(/^Concepts\//, 'idea/'),
+    root: e.root && e.root.replace(/^Projects\//, 'prod/').replace(/^Concepts\//, 'idea/'),
+  }));
+  put(root, 'registry.js', registryJs(entries));
+  put(root, 'project.json', JSON.stringify({
+    ...MANIFEST,
+    designSystem: { mount: 'kit-ds' },
+    hub: { page: 'index.html', registry: 'registry.js' },
+    tracks: [
+      { id: 'product', title: 'Проекты', dir: 'prod', hubGroup: 'projects' },
+      { id: 'rnd', title: 'Концепты', dir: 'idea', hubGroup: 'concepts' },
+    ],
+  }, null, 2));
+}
+
 function selftest() {
-  const out = ['== projects-hub --selftest =='];
+  const out = ['== registry-check --selftest =='];
   let failed = 0;
   for (const c of CASES) {
-    const root = mkdtempSync(path.join(os.tmpdir(), 'projects-hub-'));
+    const root = mkdtempSync(path.join(os.tmpdir(), 'registry-check-'));
     try {
       cleanTree(root);
       if (c.mutate) c.mutate(root);
@@ -290,8 +345,7 @@ function main() {
   const args = process.argv.slice(2);
   if (args.includes('--selftest')) return selftest();
   const rIdx = args.indexOf('--root');
-  const repo = rIdx >= 0 ? path.resolve(args[rIdx + 1]) : REPO;
-  const res = check(repo);
+  const res = check(rIdx >= 0 ? path.resolve(args[rIdx + 1]) : HERE);
   console.log(report(res));
   process.exit(res.defects.length ? 1 : 0);
 }

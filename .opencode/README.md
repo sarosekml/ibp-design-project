@@ -131,7 +131,7 @@ opencode
 | Сверить смету с фактом захода | `node .opencode/skills/session-plan/tooling/ctx-budget.mjs --calibrate --stage build --fact <токенов>` + аргументы сметы |
 | Сохранить контекст / продолжить в новой сессии | `/handoff` · `/resume DealRegistry` |
 | Закрыть заход | `node .opencode/skills/screen-review/tooling/lessons-cli.mjs gate` — строка `ВЕРДИКТ:` |
-| Проверить хаб проектов | `node .opencode/skills/screen-review/tooling/projects-hub.mjs` — реестр `hub.js`, страницы вне реестра и ссылки на хаб, строка `ВЕРДИКТ:` (в гейте — шаг `projects`) |
+| Проверить хаб проектов | `node .opencode/skills/screen-review/tooling/registry-check.mjs` — реестр `hub.js`, страницы вне реестра и ссылки на хаб, строка `ВЕРДИКТ:` (в гейте — шаг `registry`) |
 | Просто спросить | пишите словами: «есть ли в ДС компонент для…», «чем Chip отличается от Badge» |
 
 Скриншот макета прикладывается в сообщение как файл — если выбранная модель

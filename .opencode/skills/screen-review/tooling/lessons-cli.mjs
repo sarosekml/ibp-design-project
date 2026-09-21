@@ -38,21 +38,35 @@
    Кодировка и escape: файл правится редактором, НЕ через шелл — шелл-слой
    схлопывает обратные слэши и молча ломает регулярки (урок Л51).
    ============================================================ */
-import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
-import { isTraceName } from './vendor-scan.mjs';
 import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate } from './runlog.mjs';
+import { need } from './project.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(HERE, '..', '..', '..', '..');
+/* Корень и каталоги — из манифеста project.json (project.mjs; реструктуризация,
+   шаг Ш4). До этого корень считался «четыре уровня вверх», а ДС, харнес,
+   треки и хаб звались литералами — каждый переезд ломал бы оснастку молча.
+   Нет манифеста — отказ с понятным текстом (гейт без него не определит, что
+   стеречь). */
+const PRJ = need('lessons-cli', HERE);
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;          // ДС: абсолютный путь …
+const DS_REL = PRJ.ds;         // … и от корня
+const KIT = PRJ.kitAbs;        // харнес
+const KIT_REL = PRJ.kit;
+const TRACK_DIRS = [...new Set(PRJ.tracks.map((t) => t.dir).filter(Boolean))];
+const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const underDs = (tail) => new RegExp('^' + escRx(DS_REL) + '/' + tail);
+const underKit = (tail) => new RegExp('^' + escRx(KIT_REL) + '/' + tail);
 const SENSOR = path.join(HERE, 'layout-check.mjs');
 const FIXTURES = path.join(HERE, 'fixtures');
 const REGISTRY = path.join(HERE, 'coverage.json');
 const ANCHORS = path.join(HERE, 'anchors.json');
-const LINT_FIXTURES = path.join(ROOT, 'DS-IBP/fixtures');
+const LINT_FIXTURES = path.join(DS, 'fixtures');
 /* Корпус экранов лежит ВНЕ дерева ДС не по вкусу, а по определению правила:
    линтер считает экраном путь, начинающийся с `pages/screens/` или с `../`.
    Правила A7, F6, L4, L5, L6 внутри `DS-IBP/fixtures/` не срабатывают никогда —
@@ -60,17 +74,17 @@ const LINT_FIXTURES = path.join(ROOT, 'DS-IBP/fixtures');
    С 15.09.2026 корпус лежит в оснастке (подпапка tooling/fixtures), а не в
    удалённой песочнице Projects/test. Сенсорный корпус эту подпапку не читает:
    verifyCorpus обходит каталог без вложенных. */
-const SCREEN_FIXTURES_REL = '.opencode/skills/screen-review/tooling/fixtures/lint-screens';
+const SCREEN_FIXTURES_REL = PRJ.rel(path.join(HERE, 'fixtures', 'lint-screens'));
 const SCREEN_FIXTURES = path.join(ROOT, SCREEN_FIXTURES_REL);
-const REFS = path.join(ROOT, '.opencode/skills/screen-review/references');
+const REFS = path.join(KIT, 'skills/screen-review/references');
 const RAW = path.join(REFS, 'lessons-raw.md');
 const CUR = path.join(REFS, 'lessons.md');
 /* Шарды выжимки по scope (Л79). Список объявлен ОДИН раз: до 13.09.2026 он жил
    в трёх местах — `state`, `journalFiles()` и захардкоженный `[RAW, CUR]` в
    `check`, — и шарды не попали в `check`: мёртвый якорь в них не ловился (Л43). */
 const SHARDS = [
-  ['docs-split', path.join(ROOT, '.opencode/skills/docs-split/references/lessons.md')],
-  ['lessons', path.join(ROOT, '.opencode/skills/lessons/references/lessons.md')],
+  ['docs-split', path.join(KIT, 'skills/docs-split/references/lessons.md')],
+  ['lessons', path.join(KIT, 'skills/lessons/references/lessons.md')],
 ];
 /* Предел выжимки — у КАЖДОЙ выжимки отдельно, основной и шардов (Л79): он
    меряет стоимость чтения на одной задаче. Объявлен в скилле lessons. До
@@ -112,7 +126,7 @@ function firedOn(out, id) {
    запускается оттуда. Ненулевой код — норма для `.bad`, перехватываем. */
 function runLinter(rel) {
   try {
-    return execFileSync(process.execPath, ['scripts/ds-lint-cli.mjs', rel], { cwd: path.join(ROOT, 'DS-IBP'), encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+    return execFileSync(process.execPath, ['scripts/ds-lint-cli.mjs', rel], { cwd: DS, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
   } catch (e) {
     return String(e.stdout || '') + String(e.stderr || '');
   }
@@ -202,7 +216,7 @@ function verify(only = null, corpus = null) {
   log('');
   const none = { total: 0, bad: 0 };
   const s = corpus === 'lint' ? none : verifyCorpus(FIXTURES, (f) => runSensor(path.join(FIXTURES, f)), 'сенсор layout-check (tooling/fixtures)', only);
-  const l = corpus === 'sensor' ? none : verifyCorpus(LINT_FIXTURES, (f) => runLinter('fixtures/' + f), 'линтер ds-lint, страницы (DS-IBP/fixtures)', only);
+  const l = corpus === 'sensor' ? none : verifyCorpus(LINT_FIXTURES, (f) => runLinter('fixtures/' + f), 'линтер ds-lint, страницы (' + DS_REL + '/fixtures)', only);
   const e = corpus === 'sensor' ? none : verifyCorpus(SCREEN_FIXTURES, (f) => runLinter('../' + SCREEN_FIXTURES_REL + '/' + f), 'линтер ds-lint, экраны (tooling/fixtures/lint-screens)', only);
 
   const total = s.total + l.total + e.total, bad = s.bad + l.bad + e.bad;
@@ -226,7 +240,7 @@ function verify(only = null, corpus = null) {
    даёт 56 идентификаторов, из них пять живут только в прозе шапки. */
 
 function lintIds() {
-  const src = rd(path.join(ROOT, 'DS-IBP/scripts/ds-lint.js'));
+  const src = rd(path.join(DS, 'scripts/ds-lint.js'));
   const out = new Set();
   // say('WARN', 'A2', …) и out.push(['BLOCKER', 'P1', …]) — обе формы отчёта
   for (const m of src.matchAll(/(?:say|out\.push)\(\s*\[?\s*(?:'[A-Z]+'|lvl)\s*,\s*'([A-Z]\d{1,2})'/g)) out.add(m[1]);
@@ -243,7 +257,7 @@ function lintIds() {
    внутри `pageChecks`. Список руками разъехался бы с кодом на первой же новой
    проверке; здесь он пересчитывается каждым прогоном. */
 function lintRepoIds() {
-  const src = rd(path.join(ROOT, 'DS-IBP/scripts/ds-lint.js'));
+  const src = rd(path.join(DS, 'scripts/ds-lint.js'));
   const at = src.indexOf('function pageChecks');
   const head = at > 0 ? src.slice(0, at) : src;
   const tail = at > 0 ? src.slice(at) : '';
@@ -270,7 +284,7 @@ function sensorIds() {
 }
 
 function auditIds() {
-  const src = rd(path.join(ROOT, 'DS-IBP/scripts/spec-audit.mjs'));
+  const src = rd(path.join(DS, 'scripts/spec-audit.mjs'));
   return [...new Set([...src.matchAll(/section\('Проход (\d)/g)].map((m) => m[1]))];
 }
 
@@ -281,20 +295,20 @@ function checklistIds(md, letter) {
 }
 
 function checkIds() {
-  const srv = rd(path.join(ROOT, '.opencode/skills/screen-review/SKILL.md'));
-  const cmp = rd(path.join(ROOT, '.opencode/skills/composition-review/SKILL.md'));
+  const srv = rd(path.join(KIT, 'skills/screen-review/SKILL.md'));
+  const cmp = rd(path.join(KIT, 'skills/composition-review/SKILL.md'));
   return [...checklistIds(srv, 'Б'), ...checklistIds(srv, 'З'), ...checklistIds(srv, 'К'), ...checklistIds(cmp, 'K')];
 }
 
 function anchorsFromCode() {
   return {
     сгенерировано: today(),
-    как: 'node .opencode/skills/screen-review/tooling/lessons-cli.mjs anchors --write',
+    как: 'node ' + PRJ.rel(path.join(HERE, 'lessons-cli.mjs')) + ' anchors --write',
     зачем: 'Журнал уроков сверяется с этим реестром, а не с грепом по коду. Расхождение реестра и кода — находка команды anchors.',
     пространства: {
-      'линтер': { источник: 'DS-IBP/scripts/ds-lint.js', алфавит: 'латиница', ids: lintIds() },
-      'сенсор': { источник: '.opencode/skills/screen-review/tooling/layout-check.mjs --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
-      'аудит': { источник: 'DS-IBP/scripts/spec-audit.mjs', алфавит: 'номер прохода', ids: auditIds() },
+      'линтер': { источник: DS_REL + '/scripts/ds-lint.js', алфавит: 'латиница', ids: lintIds() },
+      'сенсор': { источник: PRJ.rel(SENSOR) + ' --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
+      'аудит': { источник: DS_REL + '/scripts/spec-audit.mjs', алфавит: 'номер прохода', ids: auditIds() },
       'чек-лист': { источник: 'SKILL.md screen-review и composition-review', алфавит: 'кириллица Б/З/К, латинская K — композиция', ids: checkIds() },
     },
   };
@@ -338,8 +352,8 @@ function cmdAnchors(write) {
 /* ---------------- coverage ---------------- */
 
 function coverage() {
-  const srv = rd(path.join(ROOT, '.opencode/skills/screen-review/SKILL.md'));
-  const cmp = rd(path.join(ROOT, '.opencode/skills/composition-review/SKILL.md'));
+  const srv = rd(path.join(KIT, 'skills/screen-review/SKILL.md'));
+  const cmp = rd(path.join(KIT, 'skills/composition-review/SKILL.md'));
 
   const groups = [
     ['блокеры screen-review', 'Б', checklistIds(srv, 'Б')],
@@ -485,7 +499,7 @@ function fieldsOf(entry) {
    (правка документа в этой области поднимает `check`). Пока это константа;
    после реструктуризации область обхода приходит из манифеста проекта
    (шаг Ш4 плана `docs/restructure-3-repos.md`), а не отсюда. */
-const OWNER_ROOTS = ['.opencode', 'docs'];
+const OWNER_ROOTS = [KIT_REL, PRJ.docs].filter(Boolean);
 const inOwnerArea = (rel) => rel.endsWith('.md') && (!rel.includes('/') || OWNER_ROOTS.some((r) => rel.startsWith(r + '/')));
 
 function checkOwners(findings) {
@@ -511,7 +525,7 @@ function checkOwners(findings) {
   for (const r of OWNER_ROOTS) walk(path.join(ROOT, r));
   for (const e of readdirSync(ROOT, { withFileTypes: true })) if (e.isFile()) consider(path.join(ROOT, e.name));
 
-  const OWNER = '.opencode/skills/lessons/SKILL.md';
+  const OWNER = KIT_REL + '/skills/lessons/SKILL.md';
   const extra = owners.filter((p) => p !== OWNER);
   if (!owners.includes(OWNER)) findings.push(['БЛОКЕР', 'Л-ВЛАДЕЛЕЦ', OWNER + ' не определяет три уровня закрепления — владельца ритуала нет']);
   for (const p of extra) findings.push(['БЛОКЕР', 'Л-ВЛАДЕЛЕЦ', p + ' повторно определяет уровни закрепления. У процедуры один владелец (' + OWNER + '), остальные — указатели: копия разъедется молча (урок Л43)']);
@@ -1122,14 +1136,15 @@ function stats() {
 
    Вердикт читается строкой `ВЕРДИКТ:`, а не кодом выхода (ds-rules §8). */
 
-const GATE_SNAPSHOT = path.join(HERE, 'gate-snapshot.json');
-const DS = path.join(ROOT, 'DS-IBP');
-const TOOL_REL = '.opencode/skills/screen-review/tooling';
+/* Снимок гейта — в каталоге состояния проекта (`state` манифеста, вне git):
+   внутри харнеса он пачкал бы подмодуль после каждого прогона (Ш4). */
+const GATE_SNAPSHOT = path.join(PRJ.stateAbs, 'gate-snapshot.json');
+const TOOL_REL = PRJ.rel(HERE);
 const VENDOR = path.join(HERE, 'vendor-scan.mjs');
 const SPEC_AUDIT = path.join(DS, 'scripts/spec-audit.mjs');
-const DOCS_SPLIT = path.join(ROOT, '.opencode/skills/docs-split/tooling/docs-split.mjs');
-const CTX_BUDGET = path.join(ROOT, '.opencode/skills/session-plan/tooling/ctx-budget.mjs');
-const PROJECTS_HUB = path.join(HERE, 'projects-hub.mjs');
+const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
+const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
+const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
@@ -1139,21 +1154,24 @@ const SELF = fileURLToPath(import.meta.url);
    здесь были перечислены AGENTS.md и файлы хаба, и правка правил другого
    агентного CLI рядом с AGENTS.md, как и любого документа в `docs/`, не
    поднимала ни нейтральность, ни `check` — гейт не видел входа (класс Л100).
-   Исключение — файл, чьё ИМЯ само было бы находкой нейтральности (локальные
-   правила постороннего инструмента, `isTraceName` в vendor-scan.mjs): снимок
-   лежит в репозитории, и имя в нём стало бы следом. Содержимое такого файла
-   нейтральность и `check` всё равно читают — при любом их прогоне и в полном
-   гейте; не видна гейту только правка его одного. */
-const GATE_ROOTS = ['DS-IBP/styles', 'DS-IBP/scripts', 'DS-IBP/specs', 'DS-IBP/pages', 'DS-IBP/fixtures',
-  'DS-IBP/ds.css', 'Projects', 'Concepts', '.opencode/rules', '.opencode/agents', '.opencode/commands', '.opencode/skills',
-  '.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc', 'docs'];
+   Исключений нет: снимок с Ш4 лежит в каталоге состояния вне git, и имена
+   файлов в нём следами не становятся. */
+/* Каталоги отпечатка — из манифеста и целиком: ДС, харнес, каталоги треков,
+   документы проекта (Ш4). До этого здесь был список подкаталогов литералами,
+   и всё вне списка менялось мимо гейта — так правка AGENTS.md и шаблона
+   экрана ДС не поднимала ни аудит, ни обход эталонов (класс Л100/Л122).
+   Тяжёлое и чужое (node_modules, uploads) пропускается по имени, каталог
+   состояния в отпечаток не входит — его меняет сам гейт. */
+const GATE_ROOTS = [DS_REL, KIT_REL, ...TRACK_DIRS, PRJ.docs].filter(Boolean);
 // конфиг агентного CLI: живёт в .opencode/, корневые пути — чтобы гейт увидел появившийся второй слой (agent-config.mjs, КФ1)
-const AGENT_CONFIG_FILES = new Set(['.opencode/opencode.json', '.opencode/opencode.jsonc', 'opencode.json', 'opencode.jsonc']);
+const AGENT_CONFIG_FILES = new Set([KIT_REL + '/opencode.json', KIT_REL + '/opencode.jsonc', 'opencode.json', 'opencode.jsonc']);
 // хаб проектов в корне: страница, её спека и реестр
-const HUB_FILES = new Set(['index.html', 'index.screen.md', 'hub.js']);
+const HUB_FILES = new Set([PRJ.hubPage, PRJ.hubPage.replace(/\.html$/, '.screen.md'), PRJ.hubRegistry]);
 const GATE_SKIP_DIRS = new Set(['node_modules', '.git', 'uploads', 'screenshots']);
-// журнал прогонов и сам снимок меняет гейт — это не изменение работы
-const gateIgnored = (rel) => rel === TOOL_REL + '/runs.jsonl' || rel.startsWith(TOOL_REL + '/runs/') || rel === TOOL_REL + '/gate-snapshot.json';
+// журнал прогонов и сам снимок меняет гейт — это не изменение работы. Старые места
+// внутри оснастки (до Ш4) — на случай слияния с веткой, где состояние лежит ещё там
+const gateIgnored = (rel) => rel === TOOL_REL + '/runs.jsonl' || rel.startsWith(TOOL_REL + '/runs/') || rel === TOOL_REL + '/gate-snapshot.json'
+  || rel.startsWith(PRJ.state + '/');
 const TEXT_EXT = /\.(md|json|js|mjs|cjs|html|css|txt|ya?ml|jsonc)$/i;
 
 const toRel = (abs) => path.relative(ROOT, abs).split(path.sep).join('/');
@@ -1175,7 +1193,7 @@ function fingerprint() {
   };
   for (const r of GATE_ROOTS) walk(path.join(ROOT, r));
   for (const e of readdirSync(ROOT, { withFileTypes: true })) {
-    if (e.isFile() && TEXT_EXT.test(e.name) && !isTraceName(e.name)) walk(path.join(ROOT, e.name));
+    if (e.isFile() && TEXT_EXT.test(e.name)) walk(path.join(ROOT, e.name));
   }
   return out;
 }
@@ -1271,8 +1289,8 @@ function gateStep(id, paths = null) {
        страница папки не обходит), поэтому забытый проект или концепт молча не появляется
        на хабе — сторож делает это красным гейтом. Селфтест — откат на
        временном дереве, гоняется, когда правят самого сторожа. */
-    case 'projects': return { title: 'projects-hub (реестр хаба проектов)', args: [PROJECTS_HUB], cwd: ROOT };
-    case 'projects-selftest': return { title: 'projects-hub --selftest', args: [PROJECTS_HUB, '--selftest'], cwd: ROOT };
+    case 'registry': return { title: 'registry-check (реестр хаба проектов)', args: [REGISTRY_CHECK], cwd: ROOT };
+    case 'registry-selftest': return { title: 'registry-check --selftest', args: [REGISTRY_CHECK, '--selftest'], cwd: ROOT };
     /* Конфиг агентного CLI. Конфиг читается и из корня, и из .opencode/ — второй
        файл молча складывает права из двух слоёв; модель в репозитории на
        другом контуре не стартует. Решение 15.09.2026, шапка agent-config.mjs. */
@@ -1291,10 +1309,10 @@ function gateStepsFor(rel, deleted) {
   const html = rel.endsWith('.html');
 
   // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками
-  const screenArea = rel.startsWith('Projects/') || rel.startsWith('Concepts/');
-  if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('projects');
+  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/'));
+  if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('registry');
   // конфиг, в том числе удалённый или появившийся в корне; шапка скилла — КФ4 (видим ли скилл модели)
-  if (AGENT_CONFIG_FILES.has(rel) || (!deleted && /^\.opencode\/skills\/[^/]+\/SKILL\.md$/.test(rel))) add('agent-config');
+  if (AGENT_CONFIG_FILES.has(rel) || (!deleted && underKit('skills/[^/]+/SKILL\\.md$').test(rel))) add('agent-config');
   // документ в области владельцев (OWNER_ROOTS): мог стать второй копией процедуры — или унести её владельца
   if (inOwnerArea(rel)) add('check');
 
@@ -1302,11 +1320,11 @@ function gateStepsFor(rel, deleted) {
   if (rel === 'project.json' || deleted) add('manifest');
 
   if (deleted) {
-    if (rel.startsWith('DS-IBP/')) add('lint-global', 'parity');
+    if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
     return s;
   }
-  // экран: в репозитории — Projects/**, Concepts/** и хаб; вне репозитория — только через --changed (проверка откатом на копии)
-  if (html && !inFixtures && (screenArea || rel === 'index.html' || rel.startsWith('..'))) {
+  // экран: в репозитории — каталоги треков из манифеста (TRACK_DIRS) и хаб; вне репозитория — только через --changed (проверка откатом на копии)
+  if (html && !inFixtures && (screenArea || rel === PRJ.hubPage || rel.startsWith('..'))) {
     /* Фрагмент модульного экрана инструменты пропускают (fragments.mjs) —
        проверяется то, во что он вшит: источник и его собранный файл. */
     const hosts = rel.startsWith('..') ? [] : includersOf(path.resolve(ROOT, rel));
@@ -1324,50 +1342,55 @@ function gateStepsFor(rel, deleted) {
   if (screenArea && !inFixtures && rel.endsWith('.screen.md')) {
     for (const h of screenOfSpec(rel)) add('sensor:' + h);
   }
-  if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith('DS-IBP/fixtures/')) add('verify-lint', 'anchors');
+  if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/fixtures/')) add('verify-lint', 'anchors');
 
-  if (/^DS-IBP\/pages\/.+\.html$/.test(rel)) {
+  if (underDs('pages/.+\\.html$').test(rel)) {
     add('lint:' + rel);
     if (isDocsSplit(rel)) add('split:' + rel);
   }
-  if (/^DS-IBP\/scripts\/[^/]+\.page\.js$/.test(rel)) {
+  if (underDs('scripts/[^/]+\\.page\\.js$').test(rel)) {
     const pages = pageForScript(rel);
     if (!pages.length) add('lint-global');
     for (const p of pages) { add('lint:' + p); if (isDocsSplit(p)) add('split:' + p); }
-  } else if (rel === 'DS-IBP/scripts/ds-lint.js' || rel === 'DS-IBP/scripts/ds-lint-cli.mjs') {
+  } else if (rel === DS_REL + '/scripts/ds-lint.js' || rel === DS_REL + '/scripts/ds-lint-cli.mjs') {
     add('verify-lint', 'anchors', 'lint-global', 'parity');
-  } else if (rel === 'DS-IBP/scripts/spec-audit.mjs') {
+  } else if (rel === DS_REL + '/scripts/spec-audit.mjs') {
     add('anchors', 'spec-audit');
-  } else if (/^DS-IBP\/scripts\/[^/]+\.js$/.test(rel)) {
+  } else if (underDs('scripts/[^/]+\\.js$').test(rel)) {
     add('lint-global', 'parity', 'etalons');
   }
-  if (rel.startsWith('DS-IBP/styles/') || rel === 'DS-IBP/ds.css') add('lint-global', 'parity', 'etalons');
-  if (rel.startsWith('DS-IBP/specs/')) add('parity', 'spec-audit');
+  if (rel.startsWith(DS_REL + '/styles/') || rel === DS_REL + '/ds.css') add('lint-global', 'parity', 'etalons');
+  if (rel.startsWith(DS_REL + '/specs/')) add('parity', 'spec-audit');
+  // реестры ДС, которые читают глобальные правила линтера (D1–D4): витрина и правила ведения
+  if (rel === DS_REL + '/index.html' || rel === DS_REL + '/MAINTAINING.md') add('lint-global');
   // каталог компонентов в AGENTS.md ДС сверяется с манифестом — проход 8 аудита
-  if (rel === 'DS-IBP/AGENTS.md') add('spec-audit');
+  if (rel === DS_REL + '/AGENTS.md') add('spec-audit');
   // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
-  if (/^DS-IBP\/templates\/screen\/[^/]+\.html$/.test(rel)) add('etalons');
+  if (underDs('templates/screen/[^/]+\\.html$').test(rel)) add('etalons');
 
   // корпус экранов линтера — подпапка tooling/fixtures, но сенсор его не читает
   if (rel === TOOL_REL + '/layout-check.mjs' || (rel.startsWith(TOOL_REL + '/fixtures/') && !rel.startsWith(SCREEN_FIXTURES_REL + '/'))) add('verify-sensor', 'anchors', 'etalons');
   if (rel === TOOL_REL + '/lessons-cli.mjs' || rel === TOOL_REL + '/runlog.mjs') add('verify-sensor', 'verify-lint', 'anchors', 'check', 'coverage', 'stats');
   if (rel === TOOL_REL + '/anchors.json') add('anchors', 'check');
-  if (rel.startsWith('.opencode/skills/session-plan/')) add('ctx-budget');
-  if (rel === TOOL_REL + '/projects-hub.mjs') add('projects-selftest', 'projects');
+  if (rel.startsWith(KIT_REL + '/skills/session-plan/')) add('ctx-budget');
+  if (rel === TOOL_REL + '/registry-check.mjs') add('registry-selftest', 'registry');
+  // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
+  if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'registry-selftest', 'registry', 'runlog-selftest',
+    'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
   if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
   if (rel === TOOL_REL + '/manifest-check.mjs') add('manifest-selftest', 'manifest');
-  if (/^\.opencode\/skills\/[^/]+\/references\/[^/]+\.html$/.test(rel)) add('etalons');
-  if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith('.opencode/')) add('check', 'stats');
-  if (rel === TOOL_REL + '/coverage.json' || rel === '.opencode/skills/screen-review/SKILL.md' || rel === '.opencode/skills/composition-review/SKILL.md') add('coverage');
+  if (underKit('skills/[^/]+/references/[^/]+\\.html$').test(rel)) add('etalons');
+  if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith(KIT_REL + '/')) add('check', 'stats');
+  if (rel === TOOL_REL + '/coverage.json' || rel === KIT_REL + '/skills/screen-review/SKILL.md' || rel === KIT_REL + '/skills/composition-review/SKILL.md') add('coverage');
   if (TEXT_EXT.test(rel) && !rel.startsWith('..')) add('vendor');
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'sensor', 'lint', 'lint-pages', 'split', 'projects-selftest', 'projects', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1417,7 +1440,7 @@ function gate() {
   if (isFull) {
     for (const rel of Object.keys(now)) {
       for (const id of gateStepsFor(rel, false)) {
-        if (id.startsWith('lint:DS-IBP/pages/')) want('lint-pages', id.slice(5));
+        if (id.startsWith('lint:' + DS_REL + '/pages/')) want('lint-pages', id.slice(5));
         else want(id, rel);
       }
     }
@@ -1439,7 +1462,7 @@ function gate() {
       if (target && !(target in now)) continue;          // файл удалён — долга больше нет
       if (target) { carried.push(id); continue; }
       retried.push(id);
-      if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (/^DS-IBP\/pages\/.+\.html$/.test(rel)) want(id, rel); }
+      if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (underDs('pages/.+\\.html$').test(rel)) want(id, rel); }
       else want(id, null);
     }
   }
@@ -1566,6 +1589,7 @@ function gate() {
 }
 
 function saveSnapshot(files, failed) {
+  mkdirSync(path.dirname(GATE_SNAPSHOT), { recursive: true });
   writeFileSync(GATE_SNAPSHOT, JSON.stringify({ files, failed }) + '\n', 'utf8');
 }
 

@@ -21,14 +21,18 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { project } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-export const REPO = path.resolve(HERE, '..', '..', '..', '..');
+/* Граница поиска вверх — корень проекта из манифеста (project.mjs; Ш4), а не
+   «четыре уровня вверх». Проекта нет — каталог запуска: поиск по всему диску
+   был бы хуже промаха. */
+export const REPO = project(HERE).root || process.cwd();
 
 const stripComments = (s) => s.replace(/<!--[\s\S]*?-->/g, '');
 
-/* `.opencode` не исключается намеренно: фикстуры корпуса лежат там, и источник
-   фрагмента-фикстуры обязан находиться. */
+/* Каталог харнеса не исключается намеренно: фикстуры корпуса лежат там, и
+   источник фрагмента-фикстуры обязан находиться. */
 const SKIP_DIRS = new Set(['.git', 'node_modules']);
 
 /** Все .html в поддереве каталога. */

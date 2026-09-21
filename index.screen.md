@@ -110,7 +110,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | `icon` | строка | да | имя глифа из `DS-IBP/specs/Icons.md` |
 
 Полноту реестра и обратные переходы проверяет сторож
-`.opencode/skills/screen-review/tooling/projects-hub.mjs` (шаг `projects` гейта).
+`.opencode/skills/screen-review/tooling/registry-check.mjs` (шаг `registry` гейта).
 
 ## 7. Тексты интерфейса
 

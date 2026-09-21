@@ -8,7 +8,10 @@
    закрепления, но не знает, что случилось ПОСЛЕ неё.
 
    ХРАНЕНИЕ — ФАЙЛ НА ПРОГОН (с 21.09.2026, решение владельца, docs/agent-imp.md,
-   У4). Журнал — каталог `runs/`, в нём `run-<ГГГГ-ММ-ДД>-<ЧЧММСС>-<id>.jsonl`:
+   У4). Журнал — каталог `runs/` в каталоге состояния проекта (`state` в
+   project.json, вне git — реструктуризация, шаг Ш4: журнал внутри харнеса
+   пачкал бы его подмодуль после каждого прогона гейта). В нём
+   `run-<ГГГГ-ММ-ДД>-<ЧЧММСС>-<id>.jsonl`:
    дата и время UTC, `id` случайный. Прогон — один вызов гейта (все
    инструменты, которые он запускает, пишут в его файл: путь приходит
    переменной окружения RUNLOG_FILE) или один отдельный запуск инструмента.
@@ -48,8 +51,10 @@
    Владелец один — и записи, и чтения, и вращения. Три инструмента
    (`layout-check.mjs`, `ds-lint-cli.mjs`, `spec-audit.mjs`) импортируют этот
    модуль МЯГКО — через try/catch: журнал прогонов не имеет права уронить
-   проверку. Нет `.opencode/` (ДС уехала отдельно) — инструменты работают как
-   работали, просто без записи. Читает журнал `lessons-cli` (`stats`, `check`,
+   проверку. Инструменты ДС находят его через манифест проекта
+   (`scripts/kit-link.mjs` ДС → `agentKit.tools`), а не литералом пути в
+   харнес. Нет проекта (ДС проверяется отдельно, без харнеса) — инструменты
+   работают как работали, просто без записи. Читает журнал `lessons-cli` (`stats`, `check`,
    `state`) — через `readRuns` отсюда, а не своим разбором.
 
    Запуск: node runlog.mjs --selftest — откат на временном каталоге.
@@ -59,13 +64,18 @@ import { randomBytes } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { project } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(HERE, '..', '..', '..', '..');
-export const RUNS_DIR = path.join(HERE, 'runs');
-/* Общий файл — форма журнала до 21.09.2026. Если он появится снова (слияние с
-   веткой, где журнал ещё общий), его строки читаются как самые старые и
-   уходят первыми при вращении. */
+/* Корень и каталоги — из манифеста (project.mjs). Проекта нет — журнал не
+   пишется (RUNS_DIR = null), а пути в проверках отсчитываются от каталога
+   запуска: инструмент обязан работать и так. */
+const P = project(HERE);
+const ROOT = P.root || process.cwd();
+export const RUNS_DIR = P.stateAbs ? path.join(P.stateAbs, 'runs') : null;
+/* Общий файл — форма журнала до 21.09.2026, внутри оснастки харнеса. Если он
+   появится снова (слияние с веткой, где журнал ещё общий), его строки
+   читаются как самые старые и уходят первыми при вращении. */
 const LEGACY = path.join(HERE, 'runs.jsonl');
 export const LIMIT = 2000;
 const FILE_RX = /^run-\d{4}-\d{2}-\d{2}-\d{6}-[0-9a-z]+\.jsonl$/;
@@ -122,6 +132,7 @@ export function rotate(dir = RUNS_DIR, limit = LIMIT, legacy = LEGACY) {
 let own = null;
 export function currentRunFile() {
   if (process.env.RUNLOG_FILE) return process.env.RUNLOG_FILE;
+  if (!RUNS_DIR) return null;
   if (!own) own = path.join(RUNS_DIR, runFileName());
   return own;
 }
@@ -140,8 +151,8 @@ export function isFixture(p) {
 }
 
 /** ЭТАЛОНЫ В ЖУРНАЛ ТОЖЕ НЕ ПОПАДАЮТ. Шаблон экрана ДС
-    (`DS-IBP/templates/screen/*.html`) и образцы скиллов
-    (`.opencode/skills/<скилл>/references/*.html`) — образец каркаса, а не
+    (`<ДС>/templates/screen/*.html`, пути — из манифеста) и образцы скиллов
+    (`<харнес>/skills/<скилл>/references/*.html`) — образец каркаса, а не
     работа: его прогоняют, чтобы образец не разъехался с ДС. Определение одно
     на всех: его зовут и журнал, и сенсор (пропуск Б12) — две копии правила
     разошлись бы на первом переезде образца (Л43). Причина отсечения та же, что у фикстур, но
@@ -154,9 +165,12 @@ export function isFixture(p) {
     Отдельная функция, а не расширение `isFixture`: `ds-lint-cli.mjs` зовёт
     `isFixture` по своему поводу — «партия целиком фикстурная», — и менять
     смысл чужого вызова из этого файла нельзя. */
+const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const KIT_REFS = P.kit ? new RegExp('^' + escRx(P.kit) + '/skills/[^/]+/references/') : null;
+const DS_TEMPLATES = P.ds ? new RegExp('^' + escRx(P.ds) + '/templates/screen/') : null;
 export function isEtalon(p) {
   const rel = relTarget(p);
-  return /^\.opencode\/skills\/[^/]+\/references\//.test(rel) || /^DS-IBP\/templates\/screen\//.test(rel);
+  return Boolean((KIT_REFS && KIT_REFS.test(rel)) || (DS_TEMPLATES && DS_TEMPLATES.test(rel)));
 }
 
 /** ФАЙЛ ВНЕ РЕПОЗИТОРИЯ — НЕ РАБОТА НАД РЕПОЗИТОРИЕМ. Путь, вышедший из
@@ -194,6 +208,7 @@ export function logRun(rec) {
     const codes = rec.codes || codesFrom(rec.text || '');
     const line = JSON.stringify({ t: new Date().toISOString(), tool: rec.tool, target, verdict: rec.verdict, codes });
     const file = currentRunFile();
+    if (!file) return false;                      // проекта нет — журнала нет
     const fresh = !existsSync(file);
     mkdirSync(path.dirname(file), { recursive: true });
     appendFileSync(file, line + '\n', 'utf8');

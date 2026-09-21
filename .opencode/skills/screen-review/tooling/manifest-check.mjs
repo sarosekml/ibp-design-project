@@ -22,14 +22,16 @@
      МФ1 project.json в корне есть и читается как JSON;
      МФ2 обязательные поля на месте и нужного вида;
      МФ3 contract известен сторожу;
-     МФ4 объявленные пути существуют: каталоги ДС и харнеса, страница хаба и
-         её реестр, каталоги треков или apps.dir. Каталог состояния (state) на
+     МФ4 объявленные пути существуют: каталоги ДС, харнеса и его оснастки
+         (agentKit.tools), страница хаба и её реестр, каталоги треков или
+         apps.dir, каталог документов (docs). Каталог состояния (state) на
          диске не требуется: он вне git и создаётся инструментами;
      МФ5 id треков не повторяются.
 
-   Корень — каталог, где лежит project.json: поиск идёт вверх от этого файла.
-   Подъём на фиксированное число уровней привязал бы сторожа к одной глубине
-   харнеса, а она меняется на Ш5.
+   Корень — каталог, где лежит project.json: поиск идёт вверх от этого файла
+   (`findRoot` в project.mjs — один владелец на всю оснастку). Подъём на
+   фиксированное число уровней привязал бы сторожа к одной глубине харнеса, а
+   она меняется на Ш5.
 
    Использование:
      node manifest-check.mjs [--root <корень проекта>]
@@ -40,19 +42,9 @@ import { readFileSync, existsSync, statSync, mkdirSync, writeFileSync, rmSync, m
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { findRoot, MANIFEST_FILE as MANIFEST } from './project.mjs';
 
-const HERE = path.dirname(fileURLToPath(import.meta.url));
-const MANIFEST = 'project.json';
 const CONTRACTS = [1];
-
-/** Корень проекта: ближайший вверх каталог с project.json. Не нашёлся —
-    корень репозитория по прежнему правилу, и МФ1 скажет, где манифеста нет. */
-export function findRoot(from = HERE) {
-  for (let d = from; ; d = path.dirname(d)) {
-    if (existsSync(path.join(d, MANIFEST))) return d;
-    if (path.dirname(d) === d) return path.resolve(HERE, '..', '..', '..', '..');
-  }
-}
 
 const str = (v) => typeof v === 'string' && v.trim() !== '';
 
@@ -102,6 +94,10 @@ export function check(root) {
   };
   onDisk(m.designSystem?.mount, 'dir', 'designSystem.mount');
   onDisk(m.agentKit?.mount, 'dir', 'agentKit.mount');
+  onDisk(m.agentKit?.tools, 'dir', 'agentKit.tools');
+  onDisk(m.docs, 'dir', 'docs');
+  const stateRel = typeof m.state === 'string' ? m.state : m.state?.dir;
+  if (m.state !== undefined && !str(stateRel)) defects.push('МФ2 state — каталог состояния гейта от корня (строка)');
   onDisk(m.hub?.page, 'file', 'hub.page');
   onDisk(m.hub?.registry, 'file', 'hub.registry');
   onDisk(appsDir, 'dir', 'apps.dir');
@@ -133,7 +129,9 @@ const CLEAN = {
   contract: 1,
   id: 'fixture',
   designSystem: { mount: 'ds', source: { type: 'inline' } },
-  agentKit: { mount: '.kit', source: { type: 'inline' } },
+  agentKit: { mount: '.kit', tools: '.kit/tools', source: { type: 'inline' } },
+  state: '.state',
+  docs: 'docs',
   hub: { page: 'index.html', registry: 'hub.js' },
   tracks: [
     { id: 'product', title: 'Проекты', dir: 'Projects', hubGroup: 'projects' },
@@ -162,6 +160,10 @@ const CASES = [
     mutate: (r) => put(r, MANIFEST, manifestJson({ tracks: [CLEAN.tracks[1], { ...CLEAN.tracks[1], dir: 'Projects' }] })) },
   { name: 'трек без каталога и без apps.dir', expect: 'tracks[0] — каталог',
     mutate: (r) => put(r, MANIFEST, manifestJson({ tracks: [{ id: 'product', title: 'Проекты', hubGroup: 'projects' }] })) },
+  { name: 'каталога оснастки харнеса нет', expect: 'МФ4 agentKit.tools: «.kit/tools»',
+    mutate: (r) => rmSync(path.join(r, '.kit', 'tools'), { recursive: true }) },
+  { name: 'каталог состояния на диске не нужен', expect: null,
+    mutate: (r) => { if (existsSync(path.join(r, '.state'))) rmSync(path.join(r, '.state'), { recursive: true }); } },
   { name: 'форма после Ш7: общий apps.dir', expect: null,
     mutate: (r) => {
       mkdirSync(path.join(r, 'apps'));
@@ -176,7 +178,7 @@ function selftest() {
     const root = mkdtempSync(path.join(os.tmpdir(), 'manifest-check-'));
     try {
       put(root, MANIFEST, manifestJson({}));
-      for (const d of ['ds', '.kit', 'Projects', 'Concepts']) mkdirSync(path.join(root, d));
+      for (const d of ['ds', '.kit', '.kit/tools', 'docs', 'Projects', 'Concepts']) mkdirSync(path.join(root, d));
       put(root, 'index.html', '<!DOCTYPE html>\n');
       put(root, 'hub.js', 'window.IBPHub = [];\n');
       if (c.mutate) c.mutate(root);
@@ -203,6 +205,10 @@ function main() {
   if (args.includes('--selftest')) return selftest();
   const rIdx = args.indexOf('--root');
   const root = rIdx >= 0 ? path.resolve(args[rIdx + 1]) : findRoot();
+  if (!root) {
+    console.log(report({ defects: ['МФ1 ' + MANIFEST + ' не найден ни в одном каталоге выше оснастки — структура проекта не описана'] }));
+    process.exit(1);
+  }
   const res = check(root);
   console.log(report(res));
   process.exit(res.defects.length ? 1 : 0);

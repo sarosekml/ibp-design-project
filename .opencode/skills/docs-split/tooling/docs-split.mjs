@@ -29,8 +29,11 @@ import { fileURLToPath } from 'node:url';
 
 const run = promisify(execFile);
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
-const DS = path.join(ROOT, 'DS-IBP');
+import { need } from '../../screen-review/tooling/project.mjs';
+/* Корень проекта и ДС — из манифеста project.json (реструктуризация, Ш4). */
+const PRJ = need('docs-split', path.dirname(fileURLToPath(import.meta.url)));
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;
 const TOOL = path.dirname(fileURLToPath(import.meta.url));
 const INDEX_MD = path.join(DS, 'specs', '_index.md');
 const PAGES_INDEX = path.join(TOOL, '..', 'references', 'pages-index.md');
@@ -77,7 +80,7 @@ async function resolveCss(pagePath, explicitCss) {
     const p = path.join(DS, 'styles', c);
     if (existsSync(p)) return p;
   }
-  fail(`не найден CSS для ${name} — укажи явно: --css DS-IBP/styles/<файл>.css`);
+  fail(`не найден CSS для ${name} — укажи явно: --css ${PRJ.ds}/styles/<файл>.css`);
 }
 
 function pagePath(arg) {

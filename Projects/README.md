@@ -28,7 +28,7 @@
 ## Кто проверяет
 
 Сенсор и линтер — как для любого экрана; реестр и возврат на хаб — сторож
-`.opencode/skills/screen-review/tooling/projects-hub.mjs` (шаг `projects` в
+`.opencode/skills/screen-review/tooling/registry-check.mjs` (шаг `registry` в
 `lessons-cli gate`):
 
 | Код | Что ловит |
@@ -40,7 +40,7 @@
 | П5 | строка пользователя меню не ведёт на хаб |
 
 Исключение — любые папки `fixtures/`. Вручную:
-`node .opencode/skills/screen-review/tooling/projects-hub.mjs`.
+`node .opencode/skills/screen-review/tooling/registry-check.mjs`.
 
 ## Структура
 

@@ -25,11 +25,14 @@
 import { readFileSync, existsSync, statSync, appendFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { need } from '../../screen-review/tooling/project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(HERE, '..', '..', '..', '..');
+/* Корень проекта и ДС — из манифеста project.json (реструктуризация, Ш4). */
+const PRJ = need('ctx-budget', HERE);
+const ROOT = PRJ.root;
 const STAGES_FILE = path.join(HERE, 'stages.json');
-const CHEATSHEET = path.join(ROOT, 'DS-IBP', 'specs', '_cheatsheet.md');
+const CHEATSHEET = path.join(PRJ.dsAbs, 'specs', '_cheatsheet.md');
 
 const П = JSON.parse(readFileSync(STAGES_FILE, 'utf8'));
 const К = П['коэффициенты'];
@@ -183,7 +186,7 @@ function смета(имяЭтапа, о = null) {
   if (cheatArg) {
     const карта = блокиЧитШита();
     if (!карта.size) {
-      печать('ОШИБКА: DS-IBP/specs/_cheatsheet.md не прочитан — блоки посчитать нечем.');
+      печать('ОШИБКА: ' + PRJ.rel(CHEATSHEET) + ' не прочитан — блоки посчитать нечем.');
       if (о) return null;
       process.exit(1);
     }

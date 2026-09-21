@@ -2,7 +2,7 @@
 
    Новый проект или концепт = одна запись здесь. Хаб строит из реестра и меню,
    и три колонки; сама страница не правится. Полноту реестра проверяет сторож
-   `.opencode/skills/screen-review/tooling/projects-hub.mjs` (шаг `projects`
+   `.opencode/skills/screen-review/tooling/registry-check.mjs` (шаг `registry`
    в `lessons-cli gate`): любой .html в Projects/ или Concepts/ вне папки
    зарегистрированной записи даёт FAIL.
 

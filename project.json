@@ -10,6 +10,7 @@
   },
   "agentKit": {
     "mount": ".opencode",
+    "tools": ".opencode/skills/screen-review/tooling",
     "source": { "type": "inline" }
   },
 
@@ -19,6 +20,9 @@
     "registryFormat": "script-global",
     "managed": false
   },
+
+  "state": ".agent-state",
+  "docs": "docs",
 
   "tracks": [
     { "id": "product", "title": "Проекты", "dir": "Projects", "hubGroup": "projects", "custom": "forbidden",

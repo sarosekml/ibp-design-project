@@ -37,9 +37,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { logRun, codesFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
+import { need } from './project.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
-const DS = path.join(ROOT, 'DS-IBP');
+/* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
+   (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
+   литералом `DS-IBP`. */
+const PRJ = need('layout-check', path.dirname(fileURLToPath(import.meta.url)));
+const ROOT = PRJ.root;
+const DS = PRJ.dsAbs;
 
 /* ---------------- токены ДС (источник истины — styles/*.css) ---------------- */
 
@@ -604,7 +609,7 @@ function checkMechanics(html, icons, pagePath) {
   const tagClsSel = [...styleText.matchAll(/(?:^|\n)\s*(?:button|a|input)\.[a-z0-9_-]+\s*\{/g)]
     .map((m) => m[0].replace(/\s*\{\s*$/, '').trim());
   ok(tagClsSel.length === 0,
-    tagClsSel.length ? `Б21 селекторы тег+класс компонента в <style>: ${[...new Set(tagClsSel)].join(', ')} (перебивают состояния — DS-IBP/AGENTS.md §4)` : 'Б21 нет button./a./input. селекторов в <style> (состояния не перебиты)');
+    tagClsSel.length ? `Б21 селекторы тег+класс компонента в <style>: ${[...new Set(tagClsSel)].join(', ')} (перебивают состояния — ${PRJ.ds}/AGENTS.md §4)` : 'Б21 нет button./a./input. селекторов в <style> (состояния не перебиты)');
 
   /* Б22 сброс body margin (урок Л26: без него UA-дефолт 8px → рамка по периметру
      и горизонтальный скролл; экран обязан собираться из шаблона с body-reset) */
@@ -1452,7 +1457,7 @@ function etalons(width) {
     for (const f of readdirSync(dir)) if (f.endsWith('.html')) found.push(path.join(dir, f));
   };
   htmlIn(path.join(DS, 'templates', 'screen'));
-  const base = path.join(ROOT, '.opencode', 'skills');
+  const base = path.join(PRJ.kitAbs, 'skills');
   if (existsSync(base)) {
     for (const skill of readdirSync(base, { withFileTypes: true })) {
       if (skill.isDirectory()) htmlIn(path.join(base, skill.name, 'references'));

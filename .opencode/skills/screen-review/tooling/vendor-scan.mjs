@@ -14,7 +14,11 @@
    физически не видит `.opencode/` и `Projects/`, то есть ровно те места,
    где следы и нашлись. Сторож, не достающий до входа, — это класс Л100
    («правило, у которого отняли вход, молчит»), и повторять его здесь
-   нельзя. Корень берётся как у `layout-check.mjs` — четыре уровня вверх.
+   нельзя. Корень — из манифеста проекта (project.mjs; реструктуризация,
+   шаг Ш4), как у всей оснастки. Из дот-каталогов обходится ровно один —
+   каталог харнеса, и его имя тоже берётся из манифеста (`agentKit.mount`):
+   иначе на переезде харнеса (Ш5) сторож молча перестал бы его видеть — тот
+   же класс «у правила отняли вход».
 
    Почему шаблоны собраны из кусков. Сторож, написавший стоп-слова
    литералами, находит сам себя: файл правила стал бы первым нарушителем.
@@ -58,9 +62,25 @@ import { readFileSync, readdirSync, mkdirSync, writeFileSync, rmSync, mkdtempSyn
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { project } from './project.mjs';
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const PRJ = project(HERE);
+const REPO = PRJ.root || process.cwd();
 const SELF = path.resolve(fileURLToPath(import.meta.url));
+
+/* Дот-каталоги, которые обходятся: каталог харнеса по манифесту и тот, где
+   лежит сам сторож, — если он внутри обходимого корня. Остальные дот-каталоги
+   (служебные каталоги git и посторонних инструментов, состояние гейта) не
+   обходятся. */
+function dotDirsFor(root) {
+  const out = new Set();
+  const p = project(root);
+  if (!p.error && p.root === path.resolve(root) && p.kit) out.add(p.kit.split('/')[0]);
+  const self = path.relative(root, HERE).split(path.sep)[0];
+  if (self && self.startsWith('.') && self !== '..') out.add(self);
+  return out;
+}
 
 const SKIP_DIRS = new Set(['node_modules', '.git', 'uploads']);
 const TEXT_EXT = new Set(['.md', '.json', '.js', '.mjs', '.cjs', '.html', '.css', '.txt', '.yml', '.yaml', '.jsonc']);
@@ -87,21 +107,13 @@ const PATTERNS = [
   { re: new RegExp('[A-Za-z]:(?:\\\\{1,2}|/)' + U + '(?:\\\\{1,2}|/)[^\\\\/\\s"\'`]+[\\\\/]', 'i'), what: PATH_WHAT },
 ];
 
-/* Имя файла, которое само было бы следом: локальные правила постороннего
-   инструмента в корне. Сторож читает содержимое, а не имена, — но гейт пишет
-   имена файлов в снимок `gate-snapshot.json`, а снимок лежит в репозитории.
-   Гейт спрашивает здесь, чтобы у словаря остался один владелец (Л43).
-   Имена семейств моделей сюда не входят: это обычные слова, и файл с таким
-   словом в имени выпал бы из отпечатка гейта молча. */
-export const isTraceName = (name) => [VENDOR_NAME, ASSISTANT_NAME].some((p) => p.re.test(name));
-
-function walk(dir, acc) {
+function walk(dir, acc, dotDirs) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if (e.name.startsWith('.') && e.isDirectory() && e.name !== '.opencode') continue;
+    if (e.name.startsWith('.') && e.isDirectory() && !dotDirs.has(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
-      walk(p, acc);
+      walk(p, acc, dotDirs);
     } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase())) {
       acc.push(p);
     }
@@ -109,9 +121,9 @@ function walk(dir, acc) {
   return acc;
 }
 
-function scan(root) {
+function scan(root, dotDirs = dotDirsFor(root)) {
   const hits = [];
-  for (const file of walk(root, [])) {
+  for (const file of walk(root, [], dotDirs)) {
     if (path.resolve(file) === SELF) continue;          // см. шапку: иначе сторож ловит сам себя
     let text;
     try { text = readFileSync(file, 'utf8'); } catch { continue; }
@@ -164,6 +176,19 @@ const CASES = [
     mutate: (r) => put(r, 'data/w.js', "const src = '" + WIN.replace(/\\/g, '/') + "';\n") },
   { name: 'имя вендора', expect: 'v.md — имя вендора',
     mutate: (r) => put(r, 'v.md', 'Сделано в ' + A + '.\n') },
+  /* Каталог харнеса — дот-каталог, и обходится он потому, что назван в
+     манифесте (Ш4): переименованный харнес обязан остаться видимым, а
+     посторонний дот-каталог — невидимым. */
+  { name: 'каталог харнеса из манифеста обходится', expect: 'kit2/rules.md — имя вендора',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, '.kit2/rules.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'посторонний дот-каталог не обходится', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, '.other/notes.md', 'Сделано в ' + A + '.\n');
+    } },
   { name: 'node_modules не обходится', expect: null,
     mutate: (r) => put(r, 'node_modules/pkg/readme.md', 'source: ' + POSIX_USER + '\n') },
 ];
@@ -227,5 +252,5 @@ async function main() {
   process.exit(hits.length ? 1 : 0);
 }
 
-// импорт из гейта (isTraceName) не должен запускать обход
+// импорт модуля не должен запускать обход
 if (process.argv[1] && path.resolve(process.argv[1]) === SELF) main();

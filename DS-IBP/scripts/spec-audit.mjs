@@ -37,6 +37,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { importKitTool, projectRoot } from './kit-link.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -376,12 +377,16 @@ const needWork = promiseComponents.length > 0 || catalogFindings > 0;
    разбора собственного вывода: маркер «  · » в этом отчёте несёт и находки,
    и инвентарь (проход 4 перечисляет им зарегистрированные селекторы), так что
    разбор текста считал бы закрытый проход сработавшим.
-   Импорт мягкий: аудит обязан работать и без агентской оснастки. */
+   Импорт мягкий: аудит обязан работать и без агентской оснастки; путь до неё
+   — из манифеста проекта (kit-link.mjs). Цель в журнале — каталог ДС от
+   корня проекта, а не литерал имени: имя меняется на переезде. */
 try {
-  const { logRun } = await import('../../.opencode/skills/screen-review/tooling/runlog.mjs');
+  const kit = await importKitTool('runlog.mjs');
+  if (!kit) throw new Error('оснастки нет');
+  const { logRun } = kit;
   const perPass = { 1: stateMiss.length, 2: dataMiss.length, 3: apiMiss.length, 4: promiseComponents.length, 5: conflicts.length, 6: classMiss.length, 7: sheetMiss.length, 8: catalogFindings };
   const codes = Object.keys(perPass).filter((k) => perPass[k] > 0);
-  logRun({ tool: 'аудит', target: 'DS-IBP', verdict: needWork ? 'NEEDS-WORK' : 'OK', codes });
+  logRun({ tool: 'аудит', target: path.relative(projectRoot() || path.dirname(ROOT), ROOT).split(path.sep).join('/') || '.', verdict: needWork ? 'NEEDS-WORK' : 'OK', codes });
 } catch { /* оснастки нет — аудит работает как работал */ }
 
 process.exit(needWork ? 1 : 0);

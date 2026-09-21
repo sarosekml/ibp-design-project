@@ -16,6 +16,7 @@
 import { readFile as fsReadFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { importKitTool, projectRoot } from './kit-link.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.vscode', 'uploads', 'screenshots']);
@@ -39,9 +40,10 @@ const requested = args.filter((a) => !a.startsWith('--'));
 
 /* Фрагмент модульного экрана (модалка/таблица, вшиваемая через <ds-include>)
    экраном не является и линтуется в собранном файле. Определение — в оснастке
-   агентов (`fragments.mjs`); импорт мягкий: без неё всё линтуется как раньше. */
+   агентов (`fragments.mjs`), путь до неё — из манифеста проекта (kit-link.mjs);
+   импорт мягкий: без неё всё линтуется как раньше. */
 let includersOf = () => [];
-try { ({ includersOf } = await import('../../.opencode/skills/screen-review/tooling/fragments.mjs')); } catch { /* оснастки нет */ }
+try { const kit = await importKitTool('fragments.mjs'); if (kit) ({ includersOf } = kit); } catch { /* оснастки нет */ }
 const skippedFragments = requested.filter((t) => includersOf(path.join(ROOT, t)).length);
 const targets = requested.filter((t) => !skippedFragments.includes(t));
 for (const t of skippedFragments) {
@@ -58,20 +60,23 @@ const report = parity
 console.log(report);
 const bad = /^BLOCKER\s+[1-9]/m.test(report) || /NEEDS-WORK/.test(report);
 
-/* Журнал прогонов (.opencode/skills/screen-review/tooling/runs.jsonl) — сигнал
-   «сторож сработал / замолчал / вернулся» для самообучения агентов. Импорт
-   МЯГКИЙ: ДС обязана линтоваться и без агентской оснастки, а запись в журнал
-   не имеет права уронить проверку. Фикстуры не логируются — их отсекает
-   сам runlog. */
+/* Журнал прогонов агента (runlog.mjs оснастки; где она — говорит манифест
+   проекта, kit-link.mjs) — сигнал «сторож сработал / замолчал / вернулся» для
+   самообучения агентов. Импорт МЯГКИЙ: ДС обязана линтоваться и без агентской
+   оснастки, а запись в журнал не имеет права уронить проверку. Фикстуры не
+   логируются — их отсекает сам runlog. */
 try {
-  const { logRun, isFixture } = await import('../../.opencode/skills/screen-review/tooling/runlog.mjs');
+  const kit = await importKitTool('runlog.mjs');
+  if (!kit) throw new Error('оснастки нет');
+  const { logRun, isFixture } = kit;
   /* Пути линтера отсчитываются от корня ДС, а журнал — от корня репозитория.
      Экран `../Projects/…` журнал прочитал бы как путь ВНЕ репозитория и молча
      отбросил бы (отсечение временных копий, runlog.isOutside): с 12.09.2026 по
      13.09.2026 ни один прогон линтера по экрану в журнал не попал, и `stats`
-     не видел кодов экранов. Путь с `../` переводится к корню репозитория;
-     страницы `pages/…` остаются как были — на этой форме лежит история. */
-  const journalPath = (t) => (t.startsWith('../') ? path.relative(path.resolve(ROOT, '..'), path.resolve(ROOT, t)).split(path.sep).join('/') : t);
+     не видел кодов экранов. Путь с `../` переводится к корню проекта (его
+     называет манифест, kit-link.mjs — не «на уровень выше ДС»); страницы
+     `pages/…` остаются как были — на этой форме лежит история. */
+  const journalPath = (t) => (t.startsWith('../') ? path.relative(projectRoot(), path.resolve(ROOT, t)).split(path.sep).join('/') : t);
   if (!targets.some(isFixture)) {
     logRun({
       tool: 'линтер',
