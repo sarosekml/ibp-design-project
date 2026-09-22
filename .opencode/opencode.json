@@ -3,21 +3,104 @@
 
   "instructions": [".agents/rules/process.md", "design-system/AGENTS.md"],
 
-  "permission": {
-    "read": "allow",
-    "glob": "allow",
-    "grep": "allow",
-    "webfetch": "allow",
-    "websearch": "allow",
-    "task": "allow",
-    "external_directory": {},
-    "skill": { "*": "allow" },
-    "edit": { "*": "allow" },
-    "bash": {
-      "*": "allow",
-      "rm *": "deny",
-      "git push*": "deny",
-      "git reset*": "deny"
+  "skills": [".agents/skills"],
+
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "webfetch", "resource": "*", "effect": "allow" },
+    { "action": "websearch", "resource": "*", "effect": "allow" },
+    { "action": "subagent", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "rm *", "effect": "deny" },
+    { "action": "shell", "resource": "git push*", "effect": "deny" },
+    { "action": "shell", "resource": "git reset*", "effect": "deny" }
+  ],
+
+  "agents": {
+    "ai-designer": {
+      "description": "Ведущий агент-дизайнер IBP. Принимает задачу целиком (ТЗ, скриншот, вопрос по продукту), сам решает, что нужно сделать, и распределяет работу по субагентам — сборка экрана и приёмка. Это единственный агент, который выбирается вручную; остальные вызываются им.",
+      "mode": "primary",
+      "system": "Роль целиком — файл .agents/agents/ai-designer.md. Прочитай его полностью до первого действия и работай по нему. В начале задачи читаются целиком правила процесса .agents/rules/process.md и правила дизайн-системы design-system/AGENTS.md.",
+      "request": { "body": { "temperature": 0.2 } },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "ask" },
+        { "action": "edit", "resource": "apps/**", "effect": "allow" },
+        { "action": "edit", "resource": "apps/post/**", "effect": "ask" },
+        { "action": "webfetch", "resource": "*", "effect": "deny" },
+        { "action": "websearch", "resource": "*", "effect": "deny" },
+        { "action": "subagent", "resource": "*", "effect": "allow" },
+        { "action": "skill", "resource": "*", "effect": "allow" }
+      ]
+    },
+    "screen-builder": {
+      "description": "Собирает экран продукта по ТЗ из компонентов дизайн-системы IBP. Результат — HTML-макет в приложении apps/<id>/ (экран — в его pages/) с работающим штатным поведением компонентов и спецификация экрана <Имя>.screen.md для разработчика. Вызывается агентом ai-designer, когда задача на сборку экрана уже уточнена.",
+      "mode": "subagent",
+      "system": "Роль целиком — файл .agents/agents/screen-builder.md. Прочитай его полностью до первого действия и работай по нему. В начале задачи читаются целиком правила процесса .agents/rules/process.md и правила дизайн-системы design-system/AGENTS.md.",
+      "request": { "body": { "temperature": 0.1 } },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "ask" },
+        { "action": "edit", "resource": "apps/**", "effect": "allow" },
+        { "action": "edit", "resource": "apps/post/**", "effect": "ask" },
+        { "action": "webfetch", "resource": "*", "effect": "deny" },
+        { "action": "websearch", "resource": "*", "effect": "deny" },
+        { "action": "skill", "resource": "*", "effect": "allow" }
+      ]
+    },
+    "screen-reviewer": {
+      "description": "Проверяет собранный экран на соответствие дизайн-системе IBP и ТЗ. Ничего не правит — выдаёт список дефектов с номерами строк и вердикт PASS или NEEDS-WORK. Вызывается агентом ai-designer после каждой сборки экрана.",
+      "mode": "subagent",
+      "system": "Роль целиком — файл .agents/agents/screen-reviewer.md. Прочитай его полностью до первого действия и работай по нему. В начале задачи читаются целиком правила процесса .agents/rules/process.md и правила дизайн-системы design-system/AGENTS.md.",
+      "request": { "body": { "temperature": 0 } },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "webfetch", "resource": "*", "effect": "deny" },
+        { "action": "websearch", "resource": "*", "effect": "deny" },
+        { "action": "skill", "resource": "*", "effect": "allow" }
+      ]
+    },
+    "ux-researcher": {
+      "description": "ВЫКЛЮЧЕН, пока не подключена база знаний продукта (KB в скилле knowledge-lookup не задан) — не вызывать. После подключения читает базу знаний — пользователи и их роли, цели и задачи, задачи компании, ограничения, результаты исследований, ранее принятые решения — и выдаёт выжимку под конкретную задачу дизайна.",
+      "mode": "subagent",
+      "system": "Роль целиком — файл .agents/agents/ux-researcher.md. Прочитай его полностью до первого действия и работай по нему. В начале задачи читаются целиком правила процесса .agents/rules/process.md и правила дизайн-системы design-system/AGENTS.md.",
+      "request": { "body": { "temperature": 0.1 } },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "webfetch", "resource": "*", "effect": "deny" },
+        { "action": "websearch", "resource": "*", "effect": "deny" },
+        { "action": "skill", "resource": "*", "effect": "allow" }
+      ]
+    }
+  },
+
+  "commands": {
+    "screen": {
+      "description": "Собрать экран по ТЗ из компонентов IBP DS",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/screen.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
+    "screen-check": {
+      "description": "Проверить собранный экран на соответствие ДС и ТЗ",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/screen-check.md: прочитай его целиком и выполни. Аргумент 1: $1. Аргумент 2: $2"
+    },
+    "concepts": {
+      "description": "Спроектировать интерфейс в виде нескольких концептов на шкале «консервативно ↔ концептуально»",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/concepts.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
+    "handoff": {
+      "description": "Сохранить контекст задачи в файл, чтобы продолжить её в новой сессии",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/handoff.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
+    "resume": {
+      "description": "Продолжить задачу в новой сессии по её handoff-файлу",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/resume.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
     }
   },
 

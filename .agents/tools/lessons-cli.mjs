@@ -58,7 +58,7 @@ const DS = PRJ.dsAbs;          // ДС: абсолютный путь …
 const DS_REL = PRJ.ds;         // … и от корня
 const KIT = PRJ.kitAbs;        // харнес
 const KIT_REL = PRJ.kit;
-const ADAPTER_REL = PRJ.adapter;  // адаптер агентного CLI: его конфиг и указатели на роли и команды (Ш5)
+const ADAPTER_REL = PRJ.adapter;  // адаптер агентного CLI: один конфиг с путями до харнеса (Ш5, доработка 22.09.2026)
 const TRACK_DIRS = [...new Set(PRJ.tracks.map((t) => t.dir).filter(Boolean))];
 const escRx = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const underDs = (tail) => new RegExp('^' + escRx(DS_REL) + '/' + tail);
