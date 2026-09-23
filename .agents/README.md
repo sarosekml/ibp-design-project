@@ -26,7 +26,7 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 ## 0. Коротко
 
 - Задача агента: превратить ТЗ в экран на дизайн-системе IBP. На выходе
-  `apps/<Имя>/pages/<Имя>.html` (живой HTML-макет) и `<Имя>.screen.md`
+  `apps/<раздел>/drafts/<Имя>/pages/<Имя>.html` (живой HTML-макет) и `<Имя>.screen.md`
   (спецификация для агента-разработчика) в приложении трека `rnd`, плюс
   `app.json` приложения и пересобранный реестр хаба `hub.js`.
 - Человек выбирает одного агента — **`ai-designer`**. Это оркестратор: он
@@ -66,11 +66,11 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 
 | Часть | Где | Кто знает путь |
 |---|---|---|
-| Дизайн-система | `design-system/` (её вход — `design-system/AGENTS.md`) | `project.json → designSystem.mount`; экраны — через загрузчик `boot/` |
+| Дизайн-система | `design-system/` (её вход — `design-system/AGENTS.md`) | `apps/ds-config.js` (строка `DS_PATH`, `project.json → designSystem.from`); экраны — через загрузчик |
 | Харнес агента | `.agents/` | `project.json → agentKit.mount`, оснастка — `agentKit.tools` |
 | Адаптер opencode | `.opencode/opencode.json` — **один файл**: пути до харнеса, режимы и права ролей | `project.json → agentKit.adapter` |
-| Приложения | `apps/<id>/` — `app.json` (трек и запись хаба), экраны в `pages/`, `components/`, `data/`, `refs/` | `project.json → apps`, форма — `appShape` |
-| Загрузчик ДС | `boot/` — **единственное место в экранах, где записан путь до ДС**; генерируется | `project.json → boot` (см. `boot/README.md`) |
+| Приложения | `apps/…/<id>/` — папка с `app.json` на любой глубине (разделы `core/`, `ib/`, `pretrade/` …; концепты — в `<раздел>/drafts/`); (трек и запись хаба), экраны в `pages/`, `components/`, `data/`, `refs/` | `project.json → apps`, форма — `appShape` |
+| Загрузчик ДС | `apps/ds-config.js` + `apps/ds-body.js` — **строка `DS_PATH` — единственное место, где записан путь до ДС**; остальное генерируется | `project.json → boot` (см. `apps/README.md`) |
 | Реестр хаба | `hub.js` — генерируется из `app.json`; страница хаба `index.html` не правится | `project.json → hub` |
 | Состояние проверок | `.agent-state/` — журнал прогонов и снимок гейта, вне git | `project.json → state` (см. `.agent-state/README.md`) |
 
@@ -181,7 +181,7 @@ opencode
 Скриншот макета прикладывается в сообщение файлом — если выбранная модель
 умеет смотреть картинки; иначе макет описывается текстом.
 
-Результат: экран в `apps/<Имя>/pages/` — `<Имя>.html` открывается двойным
+Результат: экран в `apps/<раздел>/drafts/<Имя>/pages/` — `<Имя>.html` открывается двойным
 кликом в браузере (или с хаба `index.html`), `<Имя>.screen.md` уходит
 агенту-разработчику.
 
@@ -294,7 +294,7 @@ sequenceDiagram
     D->>T: lessons-cli gate
     T-->>D: ВЕРДИКТ:
     D->>H: отчёт: сделано / нужно от вас / следующий шаг + ВЕРДИКТ
-    Note over D: /handoff → apps/<Имя>/<Имя>.handoff.md
+    Note over D: /handoff → apps/<раздел>/drafts/<Имя>/<Имя>.handoff.md
 ```
 
 На длинном маршруте (смета `РАЗБИТЬ`) сборка идёт этапами, по одному этапу за
@@ -428,7 +428,7 @@ handoff (`apps/<Задача>/<Задача>.handoff.md`), а не истори�
 | `screen-reviewer` | запрещена | запрещён |
 | `ux-researcher` | запрещена | запрещён |
 
-Приложение трека `product` закрыто правилом `edit` на `apps/<id>/**` с
+Приложение трека `product` закрыто правилом `edit` на `apps/<раздел>/<id>/**` с
 эффектом `ask` **после** общего разрешения `apps/**`. Проекты и концепты с
 22.09.2026 лежат в одном `apps/`, и граница «в продукт агент не пишет»
 держится этим правилом; забытое правило ловит гейт (`agent-config`, КФ7).
@@ -572,7 +572,7 @@ API — частый случай) описывается там же блоко
 | Журнал прогонов и снимок гейта | каталог состояния `.agent-state/` вне git | `.agent-state/README.md`, шапка `runlog.mjs` |
 | Адаптер CLI | один файл `opencode.json`; записи сходятся с харнесом (КФ5), пути живые (КФ6), продуктовые приложения закрыты (КФ7) | `agent-config.mjs` |
 | Приложения и хаб | трек — поле `app.json`; экраны прямо в `pages/` (П6), ссылки страниц живые (П7); `hub.js` собирается из `app.json` | `registry-check.mjs`, `hub-build.mjs` |
-| Путь до ДС | только `project.json` и сгенерированный `boot/`; литерал каталога ДС в экране — блокер Б34 | `boot/README.md`, `layout-check.mjs` |
+| Путь до ДС | только строка `DS_PATH` в `apps/ds-config.js`; литерал каталога ДС в экране — блокер Б34 | `apps/README.md`, `boot-build.mjs`, `layout-check.mjs` |
 
 Что осталось по реструктуризации: разводка трёх каталогов по отдельным
 репозиториям (шаги Ш12–Ш13 плана) — отложена решением владельца 22.09.2026:
@@ -589,7 +589,7 @@ API — частый случай) описывается там же блоко
 | Подкоманды оснастки уроков | `node .agents/tools/lessons-cli.mjs` без аргументов |
 | Паспорт этапов, коэффициенты, пороги окна | `ctx-budget.mjs --stages` |
 | Структура проекта и её сверка с диском | `project.json`; `manifest-check.mjs` |
-| Загрузчик ДС, реестр хаба | `boot/README.md`, `boot-build.mjs`, `hub-build.mjs` — оба с `--check` |
+| Загрузчик ДС, реестр хаба | `apps/README.md`, `boot-build.mjs`, `hub-build.mjs` — оба с `--check` |
 | Приложения, их форма и возврат на хаб | `apps/README.md`, `registry-check.mjs` |
 | Самообучение: формат урока, уровни закрепления, доказательство откатом, курация | скилл `lessons` — единственный владелец процедуры |
 | Состояние журнала уроков, долг курации, давность ритуальных прогонов | `lessons-cli.mjs state` |

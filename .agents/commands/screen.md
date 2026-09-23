@@ -14,8 +14,8 @@ agent: ai-designer
 непонятному одним списком, затем передай работу субагенту `screen-builder`, а
 результат — субагенту `screen-reviewer`. Приёмку не пропускай.
 
-Результат — два файла в приложении трека `rnd`: `apps/<Имя>/pages/<Имя>.html`
-и `<Имя>.screen.md` рядом; у нового приложения — `apps/<Имя>/app.json` (`id`, `track: "rnd"`, `title`, `desc`, `home`, `icon`) и пересборка реестра `node .agents/tools/hub-build.mjs` — без них гейт
+Результат — два файла в приложении трека `rnd`: `apps/<раздел>/drafts/<Имя>/pages/<Имя>.html`
+и `<Имя>.screen.md` рядом; у нового приложения — `apps/<раздел>/drafts/<Имя>/app.json` (`id`, `track: "rnd"`, `title`, `desc`, `home`, `icon`) и пересборка реестра `node .agents/tools/hub-build.mjs` — без них гейт
 красный. Концепт собирается строго на ДС, если ТЗ прямо не просит
 кастомного решения.
 

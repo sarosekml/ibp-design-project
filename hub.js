@@ -39,26 +39,35 @@ window.IBPHub = [
     group: 'projects',
     title: 'Post — ДИД',
     desc: 'Финансист ДИД: главная, текущий портфель, страница сделки',
-    href: 'apps/post/pages/MainPage.html',
-    root: 'apps/post',
+    href: 'apps/postrade/drafts/pages/MainPage.html',
+    root: 'apps/postrade/drafts',
     icon: 'folder'
   },
   {
-    id: 'ai-bankster-prototype',
+    id: 'ai-bankster-prototype-mvp',
     group: 'concepts',
-    title: 'Аналитические материалы',
+    title: 'AI Pitcher — MVP',
+    desc: 'Состав MVP: чат, конструктор отчёта, история, журнал; без просмотра материала',
+    href: 'apps/ib/drafts/ai-bankster-prototype-mvp/pages/index.html',
+    root: 'apps/ib/drafts/ai-bankster-prototype-mvp',
+    icon: 'ai-stars'
+  },
+  {
+    id: 'ai-bankster-prototype-v01',
+    group: 'concepts',
+    title: 'AI Pitcher ver. 01',
     desc: 'Прототип модуля AI Pitcher: новый отчёт, история, журнал',
-    href: 'apps/ai-bankster-prototype/pages/index.html',
-    root: 'apps/ai-bankster-prototype',
+    href: 'apps/ib/drafts/ai-bankster-prototype-v01/pages/index.html',
+    root: 'apps/ib/drafts/ai-bankster-prototype-v01',
     icon: 'folder'
   },
   {
     id: 'ai-bankster-prototype-v02',
     group: 'concepts',
-    title: 'AI Pitcher',
+    title: 'AI Pitcher ver. 02',
     desc: 'Прототип v02: чат с конструктором запроса и просмотром материала',
-    href: 'apps/ai-bankster-prototype-v02/pages/index.html',
-    root: 'apps/ai-bankster-prototype-v02',
+    href: 'apps/ib/drafts/ai-bankster-prototype-v02/pages/index.html',
+    root: 'apps/ib/drafts/ai-bankster-prototype-v02',
     icon: 'ai-stars'
   },
   {
@@ -66,8 +75,8 @@ window.IBPHub = [
     group: 'concepts',
     title: 'Pipeline Management',
     desc: 'Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица',
-    href: 'apps/pipeline-manager-kanban/pages/index.html',
-    root: 'apps/pipeline-manager-kanban',
+    href: 'apps/pretrade/drafts/pipeline-manager-kanban/pages/index.html',
+    root: 'apps/pretrade/drafts/pipeline-manager-kanban',
     icon: 'layout-grid-01'
   }
 ];

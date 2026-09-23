@@ -29,7 +29,7 @@
       "permissions": [
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
-        { "action": "edit", "resource": "apps/post/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/drafts/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "subagent", "resource": "*", "effect": "allow" },
@@ -37,14 +37,14 @@
       ]
     },
     "screen-builder": {
-      "description": "Собирает экран продукта по ТЗ из компонентов дизайн-системы IBP. Результат — HTML-макет в приложении apps/<id>/ (экран — в его pages/) с работающим штатным поведением компонентов и спецификация экрана <Имя>.screen.md для разработчика. Вызывается агентом ai-designer, когда задача на сборку экрана уже уточнена.",
+      "description": "Собирает экран продукта по ТЗ из компонентов дизайн-системы IBP. Результат — HTML-макет в приложении apps/<раздел>/<id>/ (экран — в его pages/) с работающим штатным поведением компонентов и спецификация экрана <Имя>.screen.md для разработчика. Вызывается агентом ai-designer, когда задача на сборку экрана уже уточнена.",
       "mode": "subagent",
       "system": "Роль целиком — файл .agents/agents/screen-builder.md. Прочитай его полностью до первого действия и работай по нему. В начале задачи читаются целиком правила процесса .agents/rules/process.md и правила дизайн-системы design-system/AGENTS.md.",
       "request": { "body": { "temperature": 0.1 } },
       "permissions": [
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
-        { "action": "edit", "resource": "apps/post/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/drafts/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "skill", "resource": "*", "effect": "allow" }

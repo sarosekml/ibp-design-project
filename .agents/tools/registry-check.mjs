@@ -42,7 +42,13 @@
         footerHTML(…) заканчивается подменой .replace(…);
      П6 форма приложения: .html приложения лежат только в `pages/` — прямо в
         нём, все экраны на одной глубине — или в `components/` на любой
-        глубине (фрагменты модульных экранов); исключение — папки fixtures;
+        глубине (фрагменты модульных экранов); исключение — папки fixtures.
+
+   Папки `drafts/` модулей (с 23.09.2026) — ресерч, структура внутри
+   свободная: П4 (страница вне записи хаба), П6 (форма приложения) и сверка
+   id с именем папки там не действуют; приложение может лежать прямо в
+   `drafts/` или внутри другого. Ссылки (П7) и возврат на хаб (П5)
+   проверяются и там — страницы обязаны работать;
      П7 ссылки страниц приложений и хаба живые: каждый относительный путь в
         href, src, data и `__DS_ROOT` (вне комментариев, без склейки в
         скрипте) ведёт к существующему файлу — так страница откроется двойным
@@ -69,7 +75,7 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project } from './project.mjs';
+import { project, findApps, inDrafts } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FIELDS = ['id', 'group', 'title', 'desc', 'href', 'icon'];
@@ -129,6 +135,9 @@ export function check(from = HERE) {
   /* Форма после Ш7: общий каталог приложений, трек — в записи приложения. */
   const APPS = P.appsDir ? path.join(repo, P.appsDir) : null;
   const trackById = new Map(P.tracks.map((t) => [t.id, t]));
+  /* Приложения — каталоги с app.json на любой глубине apps/ (с 23.09.2026:
+     разделы core/, ib/drafts/, postrade/drafts/ … — просто папки). */
+  const appDirs = APPS ? findApps(repo, P.appsDir, P.appsManifest).map((a) => a.abs) : [];
   const relOf = (abs) => slash(path.relative(repo, abs));
   stats.areas = AREAS;
   const regFile = path.join(repo, REGISTRY);
@@ -178,8 +187,8 @@ export function check(from = HERE) {
 
   /* П3 для формы после Ш7: root — каталог приложения с записью app.json. */
   function appDefects(name, e, rootAbs) {
-    if (path.dirname(rootAbs) !== APPS) {
-      defects.push('П3 ' + name + ' — root «' + e.root + '» не каталог приложения: ожидается ' + P.appsDir + '/<id>');
+    if (!appDirs.includes(rootAbs)) {
+      defects.push('П3 ' + name + ' — root «' + e.root + '» не каталог приложения: ожидается ' + P.appsDir + '/…/<id> с ' + P.appsManifest);
       return;
     }
     const mf = path.join(rootAbs, P.appsManifest);
@@ -194,7 +203,7 @@ export function check(from = HERE) {
     else if (t.hubGroup !== e.group) {
       defects.push('П3 ' + name + ' — group «' + e.group + '» не совпадает с треком приложения «' + t.id + '» (ожидается group \'' + t.hubGroup + '\')');
     }
-    if (app.id !== undefined && app.id !== path.basename(rootAbs)) {
+    if (app.id !== undefined && !inDrafts(relOf(rootAbs)) && app.id !== path.basename(rootAbs)) {
       defects.push('П3 ' + name + ' — id «' + app.id + '» в ' + relOf(mf) + ' не совпадает с каталогом приложения «' + path.basename(rootAbs) + '»');
     }
     /* С Ш9 запись хаба живёт в app.json, а hub.js собирается из неё
@@ -215,23 +224,23 @@ export function check(from = HERE) {
       const rel = slash(path.relative(repo, f));
       if (inFixtures(rel)) continue;
       stats.pages++;
+      if (inDrafts(rel)) continue;       // drafts/ — ресерч, структура свободная: страница может жить вне записи хаба
       if (roots.some((r) => inside(f, r))) continue;
       defects.push('П4 ' + rel + ' — страница вне записей реестра: ' + (APPS
-        ? 'завести ' + P.appsDir + '/<id>/' + P.appsManifest + ' приложения и пересобрать ' + REGISTRY + ' (hub-build.mjs)'
+        ? 'завести ' + P.appsDir + '/…/<id>/' + P.appsManifest + ' приложения и пересобрать ' + REGISTRY + ' (hub-build.mjs)'
         : 'добавить запись в ' + REGISTRY + ' (root — папка проекта или концепта)'));
     }
   }
   /* П6 форма приложения */
   if (APPS && existsSync(APPS)) {
     const S = P.appShape;
-    for (const d of readdirSync(APPS, { withFileTypes: true })) {
-      if (!d.isDirectory() || d.name.startsWith('.')) continue;
-      const appAbs = path.join(APPS, d.name);
+    for (const appAbs of appDirs) {
+      if (inDrafts(relOf(appAbs))) continue;   // drafts/ — структура свободная (ресерч)
       for (const f of walk(appAbs)) {
         if (!f.endsWith('.html') || inFixtures(relOf(f))) continue;
         const parts = slash(path.relative(appAbs, f)).split('/');
         if ((parts.length === 2 && parts[0] === S.pages) || parts[0] === S.components) continue;
-        defects.push('П6 ' + relOf(f) + ' — страница вне ' + S.pages + '/ приложения: экраны лежат прямо в ' + P.appsDir + '/<id>/' + S.pages + '/ на одной глубине, фрагменты — в ' + S.components + '/');
+        defects.push('П6 ' + relOf(f) + ' — страница вне ' + S.pages + '/ приложения: экраны лежат прямо в ' + P.appsDir + '/…/<id>/' + S.pages + '/ на одной глубине, фрагменты — в ' + S.components + '/');
       }
     }
   }
@@ -370,7 +379,7 @@ const CASES = [
     mutate: (r) => put(r, 'hub.js', registryJs(withEntry(1, { href: 'apps/gamma/pages/Gamma.html' }))) },
   { name: 'концепт зарегистрирован проектом', expect: 'не совпадает с треком приложения «rnd»',
     mutate: (r) => put(r, 'hub.js', registryJs(withEntry(2, { group: 'projects' }))) },
-  { name: 'у приложения нет app.json', expect: 'нет apps/gamma/app.json',
+  { name: 'у приложения нет app.json', expect: 'root «apps/gamma» не каталог приложения',
     mutate: (r) => rmSync(path.join(r, 'apps/gamma/app.json')) },
   { name: 'track не из манифеста', expect: 'track «lab»',
     mutate: (r) => put(r, 'apps/gamma/app.json', appJson('gamma', 'lab', 'pages/Gamma.html')) },
@@ -403,6 +412,22 @@ const CASES = [
     mutate: (r) => put(r, 'apps/gamma/pages/Gamma.html', '<a class="nav__user" href="#" aria-label="Открыть личный кабинет">Г</a>') },
   { name: 'footerHTML без подмены', expect: 'без подмены',
     mutate: (r) => put(r, 'apps/alpha/pages/Screen.html', '<script>var USER_LINK_TO = \' href="../../../index.html"\';\nvar s = window.IBPHome.footerHTML(role);</script>') },
+  /* Приложение в разделе apps/ (core/, ib/drafts/, postrade/drafts/ …): глубже
+     на уровень — и хаб дальше на уровень. */
+  { name: 'приложение в разделе apps/', expect: null,
+    mutate: (r) => nestedApp(r, '../../../../../index.html') },
+  { name: 'приложение в разделе: ссылка на хаб прежней глубины', expect: 'П5 apps/postrade/drafts/delta/pages/Delta.html — нет ссылки на хаб',
+    mutate: (r) => nestedApp(r, '../../../index.html') },
+  { name: 'root — раздел, а не приложение', expect: 'П3 запись 4 «delta» — root «apps/postrade» не каталог приложения',
+    mutate: (r) => { nestedApp(r, '../../../../../index.html'); put(r, 'hub.js', registryJs([...CLEAN_ENTRIES, { ...DELTA, root: 'apps/postrade' }])); } },
+  { name: 'drafts: свободная структура — страница вне записи, экран вне pages/, id ≠ папка', expect: null,
+    mutate: (r) => { put(r, 'apps/ib/drafts/notes/Loose.html', '<p>ресерч</p>'); put(r, 'apps/ib/drafts/post/app.json', appJson('delta', 'rnd', 'Screen.html'));
+      put(r, 'apps/ib/drafts/post/Screen.html', '<p>экран вне pages</p>');
+      put(r, 'hub.js', registryJs([...CLEAN_ENTRIES, { ...DELTA, href: 'apps/ib/drafts/post/Screen.html', root: 'apps/ib/drafts/post' }])); } },
+  { name: 'drafts: битая ссылка ловится и там', expect: 'П7 apps/ib/drafts/notes/Loose.html — битая ссылка',
+    mutate: (r) => put(r, 'apps/ib/drafts/notes/Loose.html', '<a href="../missing.html">нет</a>') },
+  { name: 'экран в разделе вне приложения', expect: 'П4 apps/core/Loose.html',
+    mutate: (r) => put(r, 'apps/core/Loose.html', '<p>экран без приложения</p>') },
   { name: 'реестр не выполняется', expect: 'не выполняется',
     mutate: (r) => put(r, 'hub.js', 'window.IBPHub = [ {;') },
   /* Имена — из манифеста, а не литералами: то же дерево под другими именами
@@ -419,6 +444,14 @@ const CASES = [
   { name: 'манифеста нет', expect: 'П1 project.json не найден',
     mutate: (r) => rmSync(path.join(r, 'project.json')) },
 ];
+
+const DELTA = { id: 'delta', group: 'concepts', title: 'Дельта', desc: 'тест', href: 'apps/postrade/drafts/delta/pages/Delta.html', root: 'apps/postrade/drafts/delta', icon: 'folder' };
+function nestedApp(root, hubLink) {
+  put(root, 'apps/postrade/drafts/delta/app.json', appJson('delta', 'rnd', 'pages/Delta.html'));
+  put(root, 'apps/postrade/drafts/delta/pages/Delta.html',
+    '<div class="nav__footer"><a class="nav__user" href="' + hubLink + '" aria-label="Хаб проектов">Д</a></div>');
+  put(root, 'hub.js', registryJs([...CLEAN_ENTRIES, DELTA]));
+}
 
 /* Дерево под другими именами: ДС, каталог приложений, их записи, папка
    экранов и реестр переименованы, манифест описывает новые имена. Ссылки

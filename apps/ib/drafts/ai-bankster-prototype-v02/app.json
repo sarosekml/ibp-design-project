@@ -1,0 +1,8 @@
+{
+  "id": "ai-bankster-prototype-v02",
+  "track": "rnd",
+  "title": "AI Pitcher ver. 02",
+  "desc": "Прототип v02: чат с конструктором запроса и просмотром материала",
+  "home": "pages/index.html",
+  "icon": "ai-stars"
+}

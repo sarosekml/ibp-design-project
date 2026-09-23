@@ -4,7 +4,8 @@
 
    Зачем (реструктуризация, шаг Ш9). До генератора новое приложение
    регистрировалось правкой общего файла в корне, а забывчивость сторожил
-   отдельный валидатор. Теперь запись принадлежит приложению: `apps/<id>/app.json`
+   отдельный валидатор. Теперь запись принадлежит приложению: `apps/…/<id>/app.json`
+   (каталог приложения — на любой глубине apps/, с 23.09.2026)
    (id, track, title, desc, home, icon), а `hub.js` собирается отсюда. Запись
    дизайн-системы — `project.json → hub.ds`, её href — `<ДС>/index.html`.
    Сторожу хаба остаётся проверить, что генератор отработал, и что экраны
@@ -37,7 +38,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-import { project, need } from './project.mjs';
+import { project, need, findApps, inDrafts } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'hub-build.mjs';
@@ -62,23 +63,23 @@ export function collect(P) {
   }
   const tracks = P.tracks.filter((t) => t.id && t.hubGroup);
   const byTrack = new Map(tracks.map((t) => [t.id, []]));
-  const abs = path.join(P.root, P.appsDir);
-  const dirs = existsSync(abs) ? readdirSync(abs, { withFileTypes: true }).filter((d) => d.isDirectory() && !d.name.startsWith('.')).map((d) => d.name).sort() : [];
-  for (const dir of dirs) {
+  /* Приложение — каталог с app.json на любой глубине apps/: разделы
+     (core/, ib/drafts/, postrade/drafts/ …) — просто папки. */
+  for (const { dir } of findApps(P.root, P.appsDir, P.appsManifest)) {
     const rel = P.appsDir + '/' + dir + '/' + P.appsManifest;
     const file = path.join(P.root, rel);
-    if (!existsSync(file)) continue;                       // каталог без записи — не приложение; страницы в нём ловит registry-check (П4)
     let app;
     try { app = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { defects.push('ХБ4 ' + rel + ' не читается как JSON: ' + e.message); continue; }
     const miss = APP_FIELDS.filter((k) => typeof app[k] !== 'string' || !app[k].trim());
     if (miss.length) { defects.push('ХБ4 ' + rel + ' — нет полей записи: ' + miss.join(', ')); continue; }
-    if (app.id !== dir) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + dir + '»'); continue; }
+    /* В drafts/ структура свободная: id не обязан совпадать с папкой (повтор id ловит registry-check, П1). */
+    if (!inDrafts(dir) && app.id !== path.posix.basename(dir)) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + path.posix.basename(dir) + '»'); continue; }
     if (!byTrack.has(app.track)) { defects.push('ХБ4 ' + rel + ' — track «' + app.track + '» не из треков манифеста: ' + [...byTrack.keys()].join(', ')); continue; }
-    byTrack.get(app.track).push(app);
+    byTrack.get(app.track).push({ ...app, dir });
   }
   for (const t of tracks) {
-    for (const app of byTrack.get(t.id)) {
-      const root = P.appsDir + '/' + app.id;
+    for (const app of byTrack.get(t.id).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
+      const root = P.appsDir + '/' + app.dir;
       entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon });
     }
   }
@@ -173,6 +174,14 @@ const CASES = [
     mutate: (r) => put(r, 'apps/beta/app.json', JSON.stringify({ id: 'beta', track: 'rnd', desc: 'тест', home: 'pages/Start.html', icon: 'folder' })) },
   { name: 'трек не из манифеста', expect: 'ХБ4 apps/beta/app.json — track «lab»',
     mutate: (r) => put(r, 'apps/beta/app.json', app('beta', 'lab')) },
+  { name: 'приложение в разделе apps/', expect: null, build: true,
+    mutate: (r) => { put(r, 'apps/postrade/drafts/delta/app.json', app('delta', 'rnd')); check(project(r), true);
+      if (!readFileSync(path.join(r, 'hub.js'), 'utf8').includes("root: 'apps/postrade/drafts/delta'")) put(r, 'hub.js', 'сломан'); } },
+  { name: 'id вложенного приложения не совпадает с каталогом', expect: 'ХБ4 apps/ib/eps/app.json — id «epsilon»',
+    mutate: (r) => put(r, 'apps/ib/eps/app.json', app('epsilon', 'rnd')) },
+  { name: 'drafts: id не совпадает с папкой — допустимо', expect: null, build: true,
+    mutate: (r) => { put(r, 'apps/postrade/drafts/app.json', app('post', 'rnd')); put(r, 'apps/postrade/drafts/lab/x/app.json', app('lab', 'rnd')); check(project(r), true);
+      const h = readFileSync(path.join(r, 'hub.js'), 'utf8'); if (!h.includes("root: 'apps/postrade/drafts'") || !h.includes("root: 'apps/postrade/drafts/lab/x'")) put(r, 'hub.js', 'сломан'); } },
   { name: 'манифест без каталога приложений', expect: 'ХБ1',
     mutate: (r) => { const { apps, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
 ];

@@ -5,7 +5,7 @@
   "purpose": "интерактивные прототипы на дизайн-системе IBP; результат работы агента",
 
   "designSystem": {
-    "mount": "design-system",
+    "from": "apps/ds-config.js",
     "source": { "type": "inline" }
   },
   "agentKit": {
@@ -15,7 +15,7 @@
     "source": { "type": "inline" }
   },
 
-  "boot": { "dir": "boot", "head": "boot/ds-head.js", "body": "boot/ds-body.js", "generated": true },
+  "boot": { "dir": "apps", "head": "apps/ds-config.js", "body": "apps/ds-body.js", "generated": true },
 
   "hub": {
     "page": "index.html",

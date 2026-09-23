@@ -82,7 +82,7 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync, rmSync, mkdtempSync
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { need } from './project.mjs';
+import { need, findApps } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 /* Каталоги харнеса и адаптера — из манифеста (project.mjs; Ш4, Ш5). В
@@ -285,15 +285,15 @@ function checkGuardedApps(adapter, cfg, apps, defects) {
    apps/ в манифесте нет. Форму записей приложений сторожит registry-check. */
 function guardedApps(P) {
   if (!P.appsDir) return null;
-  const abs = path.join(P.root, P.appsDir);
   const tracks = new Map(P.tracks.map((t) => [t.id, t]));
   const guarded = [];
-  for (const d of existsSync(abs) ? readdirSync(abs, { withFileTypes: true }) : []) {
-    if (!d.isDirectory()) continue;
+  /* Приложение — на любой глубине apps/ (разделы core/, postrade/drafts/ …):
+     id здесь — путь каталога от apps/, по нему строится правило edit. */
+  for (const d of findApps(P.root, P.appsDir, P.appsManifest)) {
     let app;
-    try { app = JSON.parse(readFileSync(path.join(abs, d.name, P.appsManifest), 'utf8')); } catch { continue; }
+    try { app = JSON.parse(readFileSync(path.join(d.abs, P.appsManifest), 'utf8')); } catch { continue; }
     const t = tracks.get(app.track);
-    if (t && t.agentEdit && t.agentEdit !== 'allow') guarded.push({ id: d.name, track: t.id, agentEdit: t.agentEdit });
+    if (t && t.agentEdit && t.agentEdit !== 'allow') guarded.push({ id: d.dir, track: t.id, agentEdit: t.agentEdit });
   }
   return { dir: P.appsDir, guarded };
 }

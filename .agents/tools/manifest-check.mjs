@@ -10,7 +10,8 @@
    отсутствующего: инструменты, которые читают его, пойдут по несуществующим
    путям. Поэтому он сторожится с первого дня (шаг Ш1).
 
-   Поля, контракт 1. Обязательные: contract, id, designSystem.mount,
+   Поля, контракт 1. Обязательные: contract, id, designSystem.from (файл, где
+   адрес ДС записан строкой DS_PATH) или designSystem.mount,
    agentKit.mount, hub.page, hub.registry, tracks[] — у каждого трека id,
    title, hubGroup (группа записи в реестре хаба) и каталог: собственный `dir`
    или общий `apps.dir`. Остальные поля описаны в плане, §6.1; поля, которые
@@ -44,7 +45,7 @@ import { readFileSync, existsSync, statSync, mkdirSync, writeFileSync, rmSync, m
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { findRoot, MANIFEST_FILE as MANIFEST } from './project.mjs';
+import { findRoot, dsFromConfig, MANIFEST_FILE as MANIFEST } from './project.mjs';
 
 const CONTRACTS = [1];
 
@@ -68,7 +69,8 @@ export function check(root) {
   const need = (ok, what) => { if (!ok) defects.push('МФ2 ' + what); };
   need(Number.isInteger(m.contract), 'contract — целое число, версия формата манифеста');
   need(str(m.id), 'id — строка');
-  need(m.designSystem && str(m.designSystem.mount), 'designSystem.mount — каталог ДС от корня');
+  need(m.designSystem && (str(m.designSystem.mount) || str(m.designSystem.from)),
+    'designSystem.from — файл с адресом ДС (строка DS_PATH) или designSystem.mount — каталог ДС от корня');
   need(m.agentKit && str(m.agentKit.mount), 'agentKit.mount — каталог харнеса от корня');
   need(m.hub && str(m.hub.page), 'hub.page — страница хаба');
   need(m.hub && str(m.hub.registry), 'hub.registry — реестр хаба');
@@ -95,6 +97,12 @@ export function check(root) {
     if (!ok) defects.push('МФ4 ' + what + ': «' + rel + '» — ' + (kind === 'dir' ? 'каталога' : 'файла') + ' нет на диске');
   };
   onDisk(m.designSystem?.mount, 'dir', 'designSystem.mount');
+  if (str(m.designSystem?.from)) {
+    onDisk(m.designSystem.from, 'file', 'designSystem.from');
+    const conf = existsSync(path.join(root, m.designSystem.from)) ? dsFromConfig(root, m.designSystem.from) : null;
+    if (conf && conf.error) defects.push('МФ4 designSystem.from: ' + conf.error);
+    else if (conf) onDisk(conf.ds, 'dir', 'DS_PATH из ' + m.designSystem.from);
+  }
   onDisk(m.agentKit?.mount, 'dir', 'agentKit.mount');
   onDisk(m.agentKit?.tools, 'dir', 'agentKit.tools');
   if (m.boot !== undefined) {
@@ -166,7 +174,7 @@ const CASES = [
     mutate: (r) => rmSync(path.join(r, MANIFEST)) },
   { name: 'битый JSON', expect: 'не читается как JSON',
     mutate: (r) => put(r, MANIFEST, '{ "contract": ') },
-  { name: 'нет точки монтирования ДС', expect: 'МФ2 designSystem.mount',
+  { name: 'нет точки монтирования ДС', expect: 'МФ2 designSystem.from — файл с адресом ДС',
     mutate: (r) => put(r, MANIFEST, manifestJson({ designSystem: { source: { type: 'inline' } } })) },
   { name: 'неизвестный contract', expect: 'МФ3 contract 2',
     mutate: (r) => put(r, MANIFEST, manifestJson({ contract: 2 })) },

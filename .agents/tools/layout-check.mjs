@@ -457,8 +457,8 @@ function checkMechanics(html, icons, pagePath) {
   ok(!/src="[^"]*scripts\/ds-[a-z-]+\.js/.test(html), 'Б1 нет поштучных scripts/ds-*');
 
   /* Б34 — путь до ДС записан ровно в одном месте (решение владельца Р5).
-     В экране проекта с загрузчиком нет литерала каталога ДС (`designSystem.mount`
-     манифеста) ни в разметке, ни в стилях, ни в скриптах: корень рантайма,
+     В экране проекта с загрузчиком нет литерала каталога ДС (адрес — строка
+     DS_PATH в `apps/ds-config.js`, `project.json → designSystem.from`) ни в разметке, ни в стилях, ни в скриптах: корень рантайма,
      фавикон, ds.css и ds.js ставит загрузчик, дополнительные скрипты ДС —
      атрибут `data-ds` его тега, фон стартовой страницы —
      `var(--boot-bg-illustration, none)`. Комментарии не в счёт: подсказка
@@ -469,7 +469,7 @@ function checkMechanics(html, icons, pagePath) {
     const lit = new RegExp('(^|[^\\w-])' + escRx(PRJ.ds) + '/', 'g');
     const lines = [...code.matchAll(lit)].map((m) => lineOf(code, m.index + m[1].length));
     ok(lines.length === 0, lines.length
-      ? `Б34 литерал пути до ДС «${PRJ.ds}/» на строках ${[...new Set(lines)].join(', ')}: ДС подключает загрузчик (${PRJ.boot.dir}/), путь до неё живёт только в project.json`
+      ? `Б34 литерал пути до ДС «${PRJ.ds}/» на строках ${[...new Set(lines)].join(', ')}: ДС подключает загрузчик (${PRJ.boot.head}), путь до неё живёт только в ${PRJ.dsFrom || 'project.json'}`
       : `Б34 литерала пути до ДС нет — ДС подключает загрузчик`);
   }
 

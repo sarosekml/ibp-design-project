@@ -17,7 +17,7 @@
    отказ там, где без манифеста работать нельзя. Форму манифеста сторожит
    manifest-check.mjs.
    ============================================================ */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +34,56 @@ export function findRoot(from = HERE) {
 
 const norm = (p) => (typeof p === 'string' && p.trim() ? p.trim().replace(/\\/g, '/').replace(/\/+$/, '') : null);
 
+/** Строка адреса ДС в файле конфигурации загрузчика: `var DS_PATH = '…';`. */
+export const DS_PATH_RX = /\bDS_PATH\s*=\s*(['"])([^'"\n]*)\1/;
+
+/**
+ * Каталог ДС от корня по файлу конфигурации (`designSystem.from`): адрес в
+ * нём записан от каталога самого файла. { ds } или { error }.
+ */
+export function dsFromConfig(root, from) {
+  const file = path.join(root, from);
+  if (!existsSync(file)) return { error: from + ' (designSystem.from) нет на диске' };
+  const m = readFileSync(file, 'utf8').match(DS_PATH_RX);
+  if (!m || !m[2].trim()) return { error: from + ' — нет строки DS_PATH = \'<путь до ДС>\'' };
+  if (/^([a-z][\w+.-]*:|\/)/i.test(m[2])) return { error: from + ' — DS_PATH «' + m[2] + '» не относительный путь: проверкам гейта нужна ДС на диске' };
+  const ds = path.relative(root, path.resolve(path.dirname(file), m[2])).split(path.sep).join('/');
+  if (!ds || ds.startsWith('..')) return { error: from + ' — DS_PATH «' + m[2] + '» ведёт вне проекта' };
+  return { ds };
+}
+
+/** Папка черновиков модуля: внутри неё структура свободная (ресерч). */
+export const DRAFTS_DIR = 'drafts';
+
+/** Путь (слэшами вперёд) лежит внутри папки drafts на любой глубине. */
+export const inDrafts = (rel) => String(rel).replace(/\\/g, '/').split('/').includes(DRAFTS_DIR);
+
+/**
+ * Приложения: каталоги с записью `manifest` внутри `appsDir` на любой глубине
+ * (разделы вроде `core/`, `ib/drafts/` — просто папки). Внутрь приложения
+ * поиск не спускается — кроме папок `drafts/`: там структура свободная, и
+ * приложение может лежать внутри другого (сама `drafts/` тоже может быть
+ * приложением). `fixtures`, скрытые каталоги и node_modules пропускаются.
+ * [{ dir — путь от appsDir, abs }] по порядку dir.
+ */
+export function findApps(root, appsDir, manifest = 'app.json') {
+  const out = [];
+  const base = path.join(root, appsDir);
+  const walk = (abs, rel) => {
+    let list;
+    try { list = readdirSync(abs, { withFileTypes: true }); } catch { return; }
+    for (const e of list) {
+      if (!e.isDirectory() || e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'fixtures') continue;
+      const a = path.join(abs, e.name), r = rel ? rel + '/' + e.name : e.name;
+      const isApp = existsSync(path.join(a, manifest));
+      if (isApp) out.push({ dir: r, abs: a });
+      if (!isApp || inDrafts(r)) walk(a, r);
+    }
+  };
+  walk(base, '');
+  return out.sort((x, y) => (x.dir < y.dir ? -1 : x.dir > y.dir ? 1 : 0));
+}
+
 /**
  * Проект с разобранными путями: `x` — от корня слэшами вперёд, `xAbs` —
  * абсолютный. Ошибка чтения — в поле `error`, остальные поля тогда null.
@@ -48,7 +98,11 @@ export function project(from = HERE) {
     return { error: MANIFEST_FILE + ' не читается: ' + e.message, root };
   }
   const abs = (rel) => (rel ? path.join(root, rel) : null);
-  const ds = norm(m.designSystem && m.designSystem.mount);
+  /* Путь до ДС: `designSystem.from` — файл конфигурации загрузчика, где
+     адрес записан один раз (apps/ds-config.js), либо прямо `mount`. */
+  const dsFrom = norm(m.designSystem && m.designSystem.from);
+  const dsConf = dsFrom ? dsFromConfig(root, dsFrom) : null;
+  const ds = dsConf ? (dsConf.ds || null) : norm(m.designSystem && m.designSystem.mount);
   const kit = norm(m.agentKit && m.agentKit.mount);
   const tools = norm(m.agentKit && m.agentKit.tools);
   const adapter = norm(m.agentKit && m.agentKit.adapter);
@@ -63,7 +117,8 @@ export function project(from = HERE) {
   };
   const tracks = (Array.isArray(m.tracks) ? m.tracks : []).map((t) => ({ ...t, dir: norm(t && t.dir) || appsDir }));
   /* Загрузчик ДС (Ш8): экран подключает ДС двумя его тегами, путь до ДС
-     записан только в манифесте и в сгенерированном boot/ds-head.js. */
+     записан только в файле конфигурации (designSystem.from) — он же первый
+     тег загрузчика (boot.head). */
   const boot = m.boot && typeof m.boot === 'object'
     ? { dir: norm(m.boot.dir), head: norm(m.boot.head), body: norm(m.boot.body) }
     : null;
@@ -71,13 +126,15 @@ export function project(from = HERE) {
   const hubRegistry = norm(m.hub && m.hub.registry);
   return {
     error: null, root, manifest: m,
-    ds, dsAbs: abs(ds),
+    ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
     kit, kitAbs: abs(kit),
     tools, toolsAbs: abs(tools),
     adapter, adapterAbs: abs(adapter),
     state, stateAbs: abs(state),
     docs, docsAbs: abs(docs),
     appsDir, appsManifest, appShape, tracks,
+    /** Приложения на любой глубине apps/: [{ dir, abs }]. */
+    apps: () => (appsDir ? findApps(root, appsDir, appsManifest) : []),
     boot, bootAbs: boot ? { head: abs(boot.head), body: abs(boot.body), dir: abs(boot.dir) } : null,
     hubPage, hubRegistry,
     /** Путь от корня проекта, слэшами вперёд. */
