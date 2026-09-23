@@ -52,19 +52,13 @@ export function dsFromConfig(root, from) {
   return { ds };
 }
 
-/** Папка черновиков модуля: внутри неё структура свободная (ресерч). */
-export const DRAFTS_DIR = 'drafts';
-
-/** Путь (слэшами вперёд) лежит внутри папки drafts на любой глубине. */
-export const inDrafts = (rel) => String(rel).replace(/\\/g, '/').split('/').includes(DRAFTS_DIR);
-
 /**
  * Приложения: каталоги с записью `manifest` внутри `appsDir` на любой глубине
- * (разделы вроде `core/`, `ib/drafts/` — просто папки). Внутрь приложения
- * поиск не спускается — кроме папок `drafts/`: там структура свободная, и
- * приложение может лежать внутри другого (сама `drafts/` тоже может быть
- * приложением). `fixtures`, скрытые каталоги и node_modules пропускаются.
- * [{ dir — путь от appsDir, abs }] по порядку dir.
+ * (разделы `core/`, `ib/` …, их модули `*-app/` и концепты `drafts/<имя>/` —
+ * где приложению можно лежать, решает манифест, `appPlaces`, и сторожит
+ * registry-check, П8). Внутрь приложения поиск не спускается; `fixtures`,
+ * скрытые каталоги и node_modules пропускаются. [{ dir — путь от appsDir,
+ * abs }] по порядку dir.
  */
 export function findApps(root, appsDir, manifest = 'app.json') {
   const out = [];
@@ -75,9 +69,8 @@ export function findApps(root, appsDir, manifest = 'app.json') {
     for (const e of list) {
       if (!e.isDirectory() || e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'fixtures') continue;
       const a = path.join(abs, e.name), r = rel ? rel + '/' + e.name : e.name;
-      const isApp = existsSync(path.join(a, manifest));
-      if (isApp) out.push({ dir: r, abs: a });
-      if (!isApp || inDrafts(r)) walk(a, r);
+      if (existsSync(path.join(a, manifest))) out.push({ dir: r, abs: a });
+      else walk(a, r);
     }
   };
   walk(base, '');
@@ -108,13 +101,29 @@ export function project(from = HERE) {
   const adapter = norm(m.agentKit && m.agentKit.adapter);
   const state = norm(typeof m.state === 'string' ? m.state : m.state && m.state.dir);
   const docs = norm(m.docs);
+  /* Черновые каталоги (решение владельца 24.09.2026): рабочие заметки и
+     выгрузки, которые периодически чистятся; сторожа их не обходят. */
+  const scratch = (Array.isArray(m.scratch) ? m.scratch : typeof m.scratch === 'string' ? [m.scratch] : []).map(norm).filter(Boolean);
   const appsDir = norm(m.apps && m.apps.dir);
   const appsManifest = appsDir ? norm(m.apps.manifest) || 'app.json' : null;
+  /* Форма приложения (23–24.09.2026): pages — экраны, widgets — крупные блоки
+     (тайлы, таблицы, модалки, контекстные меню, поповеры) по группам, data —
+     демо-данные, refs — входящие материалы. Других папок в приложении нет:
+     features/ и components/ фронтенда у нас — widgets/; сборка страниц —
+     общий сборщик оснастки, не папка приложения. tools — только если манифест
+     её объявит. */
   const shape = m.appShape || {};
   const appShape = {
-    pages: norm(shape.pages) || 'pages', components: norm(shape.components) || 'components',
-    data: norm(shape.data) || 'data', refs: norm(shape.refs) || 'refs',
+    pages: norm(shape.pages) || 'pages', widgets: norm(shape.widgets) || 'widgets',
+    data: norm(shape.data) || 'data', refs: norm(shape.refs) || 'refs', tools: norm(shape.tools),
+    /** Группы виджетов (widgets/<группа>/…); null — манифест их не ограничивает. */
+    widgetGroups: Array.isArray(shape.widgetGroups) ? shape.widgetGroups.map(norm).filter(Boolean) : null,
   };
+  /* Где приложению лежать (23.09.2026): модуль раздела — `<раздел>/<имя>-app/`,
+     концепт — `<раздел>/drafts/<имя>/`. null — манифест места не задаёт. */
+  const places = m.appPlaces && typeof m.appPlaces === 'object'
+    ? { moduleSuffix: norm(m.appPlaces.moduleSuffix) || '-app', drafts: norm(m.appPlaces.drafts) || 'drafts' }
+    : null;
   const tracks = (Array.isArray(m.tracks) ? m.tracks : []).map((t) => ({ ...t, dir: norm(t && t.dir) || appsDir }));
   /* Загрузчик ДС (Ш8): экран подключает ДС двумя его тегами, путь до ДС
      записан только в файле конфигурации (designSystem.from) — он же первый
@@ -131,8 +140,8 @@ export function project(from = HERE) {
     tools, toolsAbs: abs(tools),
     adapter, adapterAbs: abs(adapter),
     state, stateAbs: abs(state),
-    docs, docsAbs: abs(docs),
-    appsDir, appsManifest, appShape, tracks,
+    docs, docsAbs: abs(docs), scratch,
+    appsDir, appsManifest, appShape, places, tracks,
     /** Приложения на любой глубине apps/: [{ dir, abs }]. */
     apps: () => (appsDir ? findApps(root, appsDir, appsManifest) : []),
     boot, bootAbs: boot ? { head: abs(boot.head), body: abs(boot.body), dir: abs(boot.dir) } : null,

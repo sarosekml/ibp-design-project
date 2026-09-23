@@ -1153,6 +1153,9 @@ const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): �
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
+const ASSEMBLE = path.join(HERE, 'assemble.mjs');
+const MODULE_README = path.join(HERE, 'module-readme.mjs');
+const PROMOTE = path.join(HERE, 'promote.mjs');
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1315,6 +1318,18 @@ function gateStep(id, paths = null) {
        (Ш5). Подробно — шапка agent-config.mjs. */
     case 'agent-config': return { title: 'agent-config (адаптер CLI: один конфиг, без модели, указатели сходятся)', args: [AGENT_CONFIG], cwd: ROOT };
     case 'agent-config-selftest': return { title: 'agent-config --selftest', args: [AGENT_CONFIG, '--selftest'], cwd: ROOT };
+    /* Модульные страницы (24.09.2026): собранный *.preview.html не устарел,
+       метки ведут в widgets/ своего раздела, модуль не берёт виджеты из
+       drafts/. Сборщик общий для всех приложений (шапка assemble.mjs). */
+    case 'assemble': return { title: 'assemble --check (собранные страницы = источники и виджеты)', args: [ASSEMBLE, '--check'], cwd: ROOT };
+    case 'assemble-selftest': return { title: 'assemble --selftest', args: [ASSEMBLE, '--selftest'], cwd: ROOT };
+    /* README модуля: есть у каждого <имя>-app, дерево в нём сходится с
+       папкой (24.09.2026, шапка module-readme.mjs). */
+    case 'readme': return { title: 'module-readme --check (README модулей = их папки)', args: [MODULE_README, '--check'], cwd: ROOT };
+    case 'readme-selftest': return { title: 'module-readme --selftest', args: [MODULE_README, '--selftest'], cwd: ROOT };
+    /* Перенос концепта в модуль (/promote): сам инструмент гоняется только
+       откатом на временном дереве — на рабочем дереве он пишет. */
+    case 'promote-selftest': return { title: 'promote --selftest (перенос концепта в модуль)', args: [PROMOTE, '--selftest'], cwd: ROOT };
     default: throw new Error('неизвестный шаг гейта: ' + id);
   }
 }
@@ -1403,9 +1418,16 @@ function gateStepsFor(rel, deleted) {
   // реестр хаба: записи приложений, сам реестр, манифест (треки, hub.ds, каталог приложений)
   if (rel === PRJ.hubRegistry || rel === 'project.json'
     || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('hub');
-  if (rel === TOOL_REL + '/hub-build.mjs') add('hub-selftest', 'hub');
+  if (rel === TOOL_REL + '/hub-build.mjs') add('hub-selftest', 'hub', 'promote-selftest');
+  // приложения: любой файл может сдвинуть дерево README модуля; .html — источник или виджет модульной страницы
+  if ((screenArea && !inFixtures) || rel === 'project.json') add('readme');
+  if ((screenArea && !inFixtures && html) || rel === 'project.json') add('assemble');
+  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest');
+  if (rel === TOOL_REL + '/module-readme.mjs') add('readme-selftest', 'readme', 'promote-selftest');
+  if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
+    'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1418,9 +1440,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

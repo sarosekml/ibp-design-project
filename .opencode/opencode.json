@@ -29,7 +29,7 @@
       "permissions": [
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
-        { "action": "edit", "resource": "apps/postrade/drafts/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/deals-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "subagent", "resource": "*", "effect": "allow" },
@@ -44,7 +44,7 @@
       "permissions": [
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
-        { "action": "edit", "resource": "apps/postrade/drafts/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/deals-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "skill", "resource": "*", "effect": "allow" }
@@ -101,6 +101,11 @@
       "description": "Продолжить задачу в новой сессии по её handoff-файлу",
       "agent": "ai-designer",
       "template": "Сценарий команды — файл .agents/commands/resume.md: прочитай его целиком и выполни. Аргументы команды целиком: $ARGUMENTS"
+    },
+    "promote": {
+      "description": "Перенести согласованный концепт из drafts/ в модуль раздела",
+      "agent": "ai-designer",
+      "template": "Сценарий команды — файл .agents/commands/promote.md: прочитай его целиком и выполни. Аргумент 1: $1. Аргумент 2: $2"
     }
   },
 

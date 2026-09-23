@@ -1,24 +1,10 @@
 # apps — приложения на дизайн-системе IBP
 
-Структура `apps/` повторяет дерево фронтенда IBP (`docs/project-tree.md`):
-разделы `core/`, `ib/`, `pretrade/`, `postrade/`, `common/`, `ui-kit/` и
-их `*-app/` с теми же вложенными папками (`pages/`, `features/`,
-`widgets/`, `shared/` …). Файлы из того дерева не переносятся — только
-папки; пустые держатся в git файлом `.gitkeep` (23.09.2026).
-
-Приложение прототипа — любая папка с записью `app.json`, на любой глубине
-`apps/`: раздел над ним — просто папка. Концепты и черновики лежат в папке
-`drafts/` своего модуля: `ib/drafts/`, `pretrade/drafts/`,
-`postrade/drafts/` (с 23.09.2026; общей папки `concepts/` больше нет).
-Проекты и концепты различает трек приложения, а не место на диске.
-
-**Внутри `drafts/` структура свободная — это папка для ресерча.** Раскладывать
-файлы там можно как угодно: приложение может лежать прямо в `drafts/` (так
-`postrade/drafts/` — это Post) или глубже, экраны — вне `pages/`, `id` в
-`app.json` — не по имени папки, страница — без записи на хабе. Сторож хаба
-там не требует П4, П6 и сверки id, но ссылки (П7) и возврат на хаб (П5)
-проверяет: страницы обязаны открываться. По полочкам — строгая форма ниже —
-раскладывается всё вне `drafts/`.
+Структура `apps/` повторяет устройство фронтенда IBP, чтобы экран
+прототипа и его блоки лежали там
+же, где их потом заведёт разработчик: **раздел → модуль `*-app` → типы
+сущностей**. Форма внутри модуля — наша, одна на весь проект (решение
+человека 23.09.2026): `pages/`, `widgets/`, `data/`, `refs/`.
 
 Открывать удобнее с хаба проектов — корневой `../index.html`: колонки
 «Дизайн-система», «Проекты», «Концепты».
@@ -27,27 +13,37 @@
 
 ```
 apps/
-├── ds-config.js        ← адрес дизайн-системы (DS_PATH) — единственное место
-├── ds-body.js          ← второй тег загрузчика ДС
-├── common/
-├── core/
-│   ├── clients-app/ · documents-app/ · employees-app/ · host-app/
-│   └── notifications-app/ · settings-app/ · tasks-app/ · userqueries-app/
-├── ib/
-│   ├── dcmecm-app/ · ib-payments-app/ · ma-opportunities-app/ · potentials-app/
-│   └── drafts/
-│       ├── ai-bankster-prototype-mvp/   ← приложение
-│       ├── ai-bankster-prototype-v01/   ← приложение
-│       └── ai-bankster-prototype-v02/   ← приложение
-├── postrade/
-│   ├── corporate-requests-app/ · deals-app/ · payments-app/ · post-reports-app/
-│   └── drafts/                          ← приложение Post (app.json прямо здесь)
-├── pretrade/
-│   ├── b3-opportunities-app/ · callreports-app/ · kfulsources-app/
-│   ├── offersources-app/ · opportunities-app/ · salesources-app/
-│   └── drafts/
-│       └── pipeline-manager-kanban/     ← приложение
-└── ui-kit/
+├── ds-config.js            ← адрес дизайн-системы (DS_PATH) — единственное место
+├── ds-body.js              ← второй тег загрузчика ДС
+├── <раздел>/               ← core · ib · pretrade · postrade · common
+│   ├── <имя>-app/          ← модуль раздела, как у фронтенда: clients-app, deals-app …
+│   │   ├── README.md       ← описание модуля + дерево (генерат) + «Имена фронтенда»
+│   │   ├── app.json        ← запись для хаба (заводится с первым экраном)
+│   │   ├── pages/
+│   │   ├── widgets/
+│   │   ├── data/
+│   │   └── refs/
+│   └── drafts/             ← концепты раздела
+│       └── <имя-концепта>/ ← та же форма, что у модуля
+```
+
+- **Раздел** — часть системы: `core/`, `ib/`, `pretrade/`, `postrade/`.
+  `common/` пока не трогаем (общих виджетов там не будет, папку, скорее
+  всего, уберём). Модули раздела заведены по дереву фронтенда заготовками.
+- **Модуль `<имя>-app/`** — работа «сразу в нужной папке»: строго по форме ниже.
+  У каждого модуля есть README.md (раздел «README модуля»).
+- **Концепт `<раздел>/drafts/<имя>/`** — прототип на согласование. Внутри та
+  же форма, что у модуля, поэтому согласованный концепт переезжает в модуль
+  одной командой (раздел «Перенос концепта в модуль»).
+- `ui-kit/` фронтенда здесь не заводится: его роль у нас играет дизайн-система
+  `../design-system/`.
+
+Сейчас в проекте:
+
+```
+postrade/deals-app/  Post — ДИД: главная, текущий портфель, страница сделки (модуль, трек product)
+ib/drafts/           ai-bankster-prototype-mvp · ai-bankster-prototype-v01 · ai-bankster-prototype-v02
+pretrade/drafts/     pipeline-manager-kanban
 ```
 
 <details>
@@ -58,1081 +54,264 @@ apps/
 ├── common/
 ├── core/
 │   ├── clients-app/
-│   │   ├── UcpClientSearchModal/
-│   │   │   ├── features/
-│   │   │   │   ├── ClientCardList/
-│   │   │   │   ├── ClientsModalActions/
-│   │   │   │   └── Views/
-│   │   │   │       └── UcpClientView/
-│   │   │   │           ├── UcpClientInformationView/
-│   │   │   │           └── UcpClientReferenceView/
-│   │   │   ├── pages/
-│   │   │   │   └── UcpClientSearchModal/
-│   │   │   └── widgets/
-│   │   │       └── Tables/
-│   │   │           └── UcpClientTeamTable/
-│   │   ├── features/
-│   │   │   ├── ControlClientModal/
-│   │   │   ├── FinancialsChartFilters/
-│   │   │   ├── FinancialsChartInfo/
-│   │   │   ├── FinancialsChartLegend/
-│   │   │   ├── GetEcmTicketModal/
-│   │   │   ├── GoalSegmentFilter/
-│   │   │   └── StratDialogueCard/
-│   │   │       ├── StratDialogueBadge/
-│   │   │       └── StratDialogueUser/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── ClientInfo/
-│   │   │   ├── ClientInfoDeals/
-│   │   │   ├── ClientInfoFinancials/
-│   │   │   ├── ClientInfoGoals/
-│   │   │   ├── Clients/
-│   │   │   ├── ClientsRnp/
-│   │   │   └── MyClients/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Charts/
-│   │       │   └── FinancialsChart/
-│   │       ├── Forms/
-│   │       │   └── ClientForm/
-│   │       ├── GoalsPopoverBadge/
-│   │       ├── HierarchicalTree/
-│   │       │   └── MyClientsHierarchicalTree/
-│   │       └── Tiles/
-│   │           ├── ClientRnpTile/
-│   │           ├── ClientTile/
-│   │           ├── ClientsRnpCacheTile/
-│   │           ├── DocumentsInfoTile/
-│   │           ├── GigaInfoTile/
-│   │           ├── GoalArchiveSection/
-│   │           ├── IndustryInfoTile/
-│   │           ├── RequisitesInfoTile/
-│   │           └── TeamInfoTile/
 │   ├── documents-app/
-│   │   ├── features/
-│   │   │   ├── DocumentResultButton/
-│   │   │   └── modals/
+│   │   ├── data/
 │   │   ├── pages/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Modals/
-│   │       │   └── DocumentResultsModal/
-│   │       ├── Tables/
-│   │       │   ├── DocumentResultsTable/
-│   │       │   ├── FolderDocumentsTileTable/
-│   │       │   ├── FoldersTable/
-│   │       │   │   └── FoldersFilters/
-│   │       │   ├── ScenariosSettingsTileTable/
-│   │       │   └── ScenariosTable/
-│   │       │       └── ScenariosFilters/
-│   │       └── Tiles/
-│   │           ├── FoldersTile/
-│   │           └── ScenariosTile/
+│   ├── drafts/
 │   ├── employees-app/
-│   │   ├── features/
-│   │   │   └── Forms/
-│   │   │       ├── CreateEmployeeSearchForm/
-│   │   │       └── UpdateEmployeeSearchForm/
+│   │   ├── data/
 │   │   ├── pages/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Modals/
-│   │       │   ├── CreateEmployeeModal/
-│   │       │   │   └── CardList/
-│   │       │   ├── EmployeeBranchesModal/
-│   │       │   ├── EmployeeDesksModal/
-│   │       │   └── UpdateEmployeesByDeskModal/
-│   │       ├── Tables/
-│   │       │   ├── BranchesTileTable/
-│   │       │   ├── DepartmentsTable/
-│   │       │   ├── DesksTable/
-│   │       │   │   └── DesksFilters/
-│   │       │   ├── DesksTileTable/
-│   │       │   ├── EmployeesTable/
-│   │       │   │   └── EmployeesFilters/
-│   │       │   ├── EmployeesTileTable/
-│   │       │   └── SearchTableByDesk/
-│   │       └── Tiles/
-│   │           ├── DesksTile/
-│   │           ├── EmployeesTile/
-│   │           └── ProfileInfoTile/
 │   ├── host-app/
-│   │   ├── features/
-│   │   │   ├── AuthorizationExpiredModal/
-│   │   │   └── Logout/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── AdminPage/
-│   │   │   ├── HomePage/
-│   │   │   ├── LoginPage/
-│   │   │   ├── MissingRightsPage/
-│   │   │   ├── NotFoundPage/
-│   │   │   ├── ServerErrorPage/
-│   │   │   └── ServiceVersionPage/
-│   │   │       └── ServiceVersionFilters/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── BreadcrumbsSection/
-│   │       ├── LinkNavigationTile/
-│   │       ├── MissingRightsSideBar/
-│   │       ├── Sidebar/
-│   │       └── SnackbarArea/
 │   ├── notifications-app/
-│   │   ├── features/
-│   │   │   └── StateMarker/
+│   │   ├── data/
 │   │   ├── pages/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Tables/
-│   │       │   ├── JournalRecipientsTileTable/
-│   │       │   ├── JournalTable/
-│   │       │   │   └── JournalFilters/
-│   │       │   ├── TemplateParametersTileTable/
-│   │       │   └── TemplatesTable/
-│   │       │       └── TemplatesFilters/
-│   │       └── Tiles/
-│   │           ├── JournalTile/
-│   │           └── TemplatesTile/
 │   ├── settings-app/
-│   │   ├── features/
-│   │   │   ├── CityForm/
-│   │   │   ├── DeskForm/
-│   │   │   ├── SettingForm/
-│   │   │   │   └── SettingFormFields/
-│   │   │   ├── SimpleSettingsForm/
-│   │   │   └── TaskTypesForm/
+│   │   ├── data/
 │   │   ├── pages/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── ContextMenus/
-│   │       ├── Modals/
-│   │       │   ├── CitiesModal/
-│   │       │   ├── DeprecatedVariantSettingsModal/
-│   │       │   ├── DeskModal/
-│   │       │   ├── SettingModal/
-│   │       │   ├── SettingsValueModal/
-│   │       │   ├── SimpleSettingsModal/
-│   │       │   └── TaskTypesModal/
-│   │       ├── Tables/
-│   │       │   ├── CitiesTable/
-│   │       │   ├── DeprecatedVariantSettingsTable/
-│   │       │   ├── Desks/
-│   │       │   │   └── DeskFilters/
-│   │       │   ├── RiskSegmentsTable/
-│   │       │   ├── Settings/
-│   │       │   │   └── SettingsFilters/
-│   │       │   ├── SettingsHistoryTable/
-│   │       │   ├── SimpleSettingsTable/
-│   │       │   │   └── SimpleSettingsFilters/
-│   │       │   └── TaskTypesTable/
-│   │       └── Tiles/
-│   │           ├── CitiesTile/
-│   │           ├── DeskTile/
-│   │           ├── SettingsTile/
-│   │           │   └── SettingsValueItem/
-│   │           ├── SimpleSettingsTile/
-│   │           └── TaskTypesTile/
 │   ├── tasks-app/
-│   │   ├── features/
-│   │   │   ├── Forms/
-│   │   │   │   └── PerformTaskActionForms/
-│   │   │   ├── Tabs/
-│   │   │   └── buttons/
-│   │   │       └── DownloadTasksReportButton/
+│   │   ├── data/
 │   │   ├── pages/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Modals/
-│   │       │   └── ChangeTaskStatusModal/
-│   │       ├── Tables/
-│   │       │   ├── TaskHistoryTable/
-│   │       │   └── TasksTable/
-│   │       │       └── TasksTableFilters/
-│   │       └── Tiles/
-│   │           └── TaskPreviewTile/
 │   └── userqueries-app/
-│       ├── features/
-│       │   ├── ChatHistory/
-│       │   ├── ChatInputs/
-│       │   ├── ChatList/
-│       │   ├── ChatTypeSelector/
-│       │   └── CreateChatButton/
+│       ├── data/
 │       ├── pages/
-│       │   └── GigaChatPage/
+│       ├── refs/
 │       └── widgets/
-│           └── GigaChatWidget/
 ├── ib/
 │   ├── dcmecm-app/
-│   │   ├── features/
-│   │   │   ├── grids/
-│   │   │   │   ├── ClientExtendedInfoTileGrid/
-│   │   │   │   ├── DealTermsTileGrid/
-│   │   │   │   ├── IssuanceConditionsTileGrid/
-│   │   │   │   └── StatusTileGrid/
-│   │   │   └── modals/
-│   │   │       ├── ClientExtendedInfoModal/
-│   │   │       ├── ClientSearchModal/
-│   │   │       ├── DealTermsModal/
-│   │   │       ├── DownloadReportModal/
-│   │   │       ├── EditClientAliasModal/
-│   │   │       ├── EditDealNameModal/
-│   │   │       ├── IssuanceConditionsModal/
-│   │   │       ├── StatusModal/
-│   │   │       └── TeamModal/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── Client/
-│   │   │   ├── Deal/
-│   │   │   ├── DetailedHistory/
-│   │   │   ├── Empty/
-│   │   │   ├── Issuer/
-│   │   │   └── Pipeline/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── tables/
-│   │       │   └── DealsPipelineTable/
-│   │       │       └── DealsPipelinePreviewTile/
-│   │       └── tiles/
-│   │           ├── ClientExtendedInfoTile/
-│   │           ├── ClientTile/
-│   │           ├── DealTermsTile/
-│   │           ├── DocumentsTile/
-│   │           ├── IssuanceConditionsTile/
-│   │           ├── IssuerTile/
-│   │           ├── LinkedPotentialTile/
-│   │           ├── PaymentScheduleTile/
-│   │           ├── StatusTile/
-│   │           └── TeamTile/
 │   ├── drafts/
 │   │   ├── ai-bankster-prototype-mvp/   ← приложение (app.json)
 │   │   ├── ai-bankster-prototype-v01/   ← приложение (app.json)
 │   │   └── ai-bankster-prototype-v02/   ← приложение (app.json)
 │   ├── ib-payments-app/
-│   │   ├── features/
-│   │   │   ├── modals/
-│   │   │   │   ├── ActReconPaymentModal/
-│   │   │   │   │   └── ActReconPaymentTable/
-│   │   │   │   ├── ApprovePaymentModal/
-│   │   │   │   ├── CancelPaymentModal/
-│   │   │   │   ├── ClientSearchModal/
-│   │   │   │   ├── DeclinePaymentModal/
-│   │   │   │   ├── DeleteDocumentModal/
-│   │   │   │   ├── DuplicatesPaymentsModal/
-│   │   │   │   ├── EditDocumentModal/
-│   │   │   │   │   └── EditDocumentForm/
-│   │   │   │   ├── ExecutionPaymentModal/
-│   │   │   │   ├── ExpectedIncomeModal/
-│   │   │   │   ├── InvoiceDownloadModal/
-│   │   │   │   ├── IssuePaymentModal/
-│   │   │   │   └── PaymentModal/
-│   │   │   │       └── PaymentModalForm/
-│   │   │   ├── tables/
-│   │   │   │   └── PaymentTransactionsTable/
-│   │   │   └── tiles/
-│   │   │       ├── PaidDateTile/
-│   │   │       ├── PaymentAccordionPreviewTile/
-│   │   │       ├── PaymentAmountTile/
-│   │   │       ├── PaymentCounterpartyTile/
-│   │   │       ├── PaymentDescriptionTile/
-│   │   │       ├── PaymentDocumentsTile/
-│   │   │       ├── PaymentEntityTile/
-│   │   │       ├── PaymentPreviewTile/
-│   │   │       ├── PaymentTaskTile/
-│   │   │       └── PaymentTransactionsTile/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── Documents/
-│   │   │   ├── Empty/
-│   │   │   ├── Payment/
-│   │   │   ├── PaymentSchedule/
-│   │   │   └── Register/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       └── tables/
-│   │           ├── DocumentsTable/
-│   │           ├── LinkedPaymentsTable/
-│   │           └── PaymentsRegisterTable/
 │   ├── ma-opportunities-app/
-│   │   ├── features/
-│   │   │   ├── Modals/
-│   │   │   │   ├── AdditionalClientInfoModal/
-│   │   │   │   ├── BranchInfoModal/
-│   │   │   │   ├── BuyerInterestModal/
-│   │   │   │   ├── CancelMeetingModal/
-│   │   │   │   │   └── CancellationForm/
-│   │   │   │   ├── ChangeLinkedOpportunityStageModal/
-│   │   │   │   ├── ClientSearchModal/
-│   │   │   │   │   └── ClientCardList/
-│   │   │   │   ├── CloneOpportunityModal/
-│   │   │   │   ├── CreateOpportunityModal/
-│   │   │   │   ├── DownloadReportModal/
-│   │   │   │   ├── EditOpportunityNameModal/
-│   │   │   │   ├── LinkingOpportunitiesModal/
-│   │   │   │   ├── MeetingProtocolModal/
-│   │   │   │   │   ├── MeetingProtocolAgreementSubForm/
-│   │   │   │   │   ├── MeetingProtocolParticipantSubForm/
-│   │   │   │   │   └── MeetingProtocolTopicSubForm/
-│   │   │   │   ├── ModalTemplate/
-│   │   │   │   ├── NotInTeamModal/
-│   │   │   │   ├── OpportunityRefusalModal/
-│   │   │   │   ├── OpportunityTermsModal/
-│   │   │   │   ├── SendToPotentialsModal/
-│   │   │   │   ├── StageInformationModal/
-│   │   │   │   ├── SuspendWorkModal/
-│   │   │   │   ├── Target/
-│   │   │   │   └── TeamModal/
-│   │   │   ├── OpportunityTitle/
-│   │   │   ├── OpportunityTitleExtraButtons/
-│   │   │   └── buttons/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── Client/
-│   │   │   ├── DetailedHistory/
-│   │   │   ├── MeetingsProtocols/
-│   │   │   ├── OpportunitiesPipeline/
-│   │   │   │   ├── OpportunitiesPipelineCancelled/
-│   │   │   │   ├── OpportunitiesPipelineDefaultPage/
-│   │   │   │   ├── OpportunitiesPipelineDueDiligence/
-│   │   │   │   ├── OpportunitiesPipelineExternal/
-│   │   │   │   ├── OpportunitiesPipelineInProgress/
-│   │   │   │   ├── OpportunitiesPipelineMarketing/
-│   │   │   │   ├── OpportunitiesPipelineOfferPreparing/
-│   │   │   │   ├── OpportunitiesPipelinePotentials/
-│   │   │   │   ├── OpportunitiesPipelinePreliminary/
-│   │   │   │   ├── OpportunitiesPipelineReview/
-│   │   │   │   ├── OpportunitiesPipelineSigningAndClosing/
-│   │   │   │   └── OpportunitiesPipelineSuccessfullyClosed/
-│   │   │   ├── OpportunityBuySide/
-│   │   │   └── OpportunitySellSide/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── MeetingUpdateActions/
-│   │       ├── MeetingsProtocolsDetails/
-│   │       ├── MeetingsProtocolsHeader/
-│   │       ├── MeetingsProtocolsList/
-│   │       ├── Tables/
-│   │       │   ├── ClientTeamTable/
-│   │       │   └── OpportunitiesPipelineTable/
-│   │       └── Tiles/
-│   │           ├── BranchInfoTile/
-│   │           ├── ClientTile/
-│   │           ├── DocumentsTile/
-│   │           ├── LinkedOpportunitiesTile/
-│   │           ├── LinkedOpportunityTile/
-│   │           ├── MeetingsProtocolsTile/
-│   │           ├── OpportunityTermsTile/
-│   │           ├── PaymentScheduleTile/
-│   │           ├── StageInformationTile/
-│   │           ├── Target/
-│   │           └── TeamTile/
 │   └── potentials-app/
-│       ├── features/
-│       │   └── modals/
-│       │       ├── CreateDealModal/
-│       │       ├── EditPotentialCommentModal/
-│       │       ├── EditPotentialNameModal/
-│       │       ├── FundsHoldersModal/
-│       │       ├── PotentialBondHoldersUploadPreviewModal/
-│       │       │   └── PotentialBondHoldersUploadPreviewTable/
-│       │       └── PotentialUploadPreviewModal/
-│       │           └── PotentialUploadPreviewTable/
+│       ├── data/
 │       ├── pages/
-│       │   ├── Empty/
-│       │   ├── Potential/
-│       │   └── PotentialRegister/
+│       ├── refs/
 │       └── widgets/
-│           ├── tables/
-│           │   ├── FundsHoldersTable/
-│           │   ├── PotentialTable/
-│           │   ├── PotentialTableFlatView/
-│           │   └── PotentialsWorkTable/
-│           └── tiles/
-│               ├── BondTermsTile/
-│               ├── ClientTile/
-│               ├── CommentTile/
-│               ├── FundsHoldersTile/
-│               ├── HoldingTile/
-│               ├── LinkedDealTile/
-│               └── LoanTermsTile/
 ├── postrade/
 │   ├── corporate-requests-app/
-│   │   ├── features/
-│   │   │   └── Modals/
-│   │   │       ├── CloseRequestModal/
-│   │   │       ├── CorporateRequestAgreementModal/
-│   │   │       ├── CorporateRequestCounterpartyModal/
-│   │   │       │   └── CounterpartyCards/
-│   │   │       ├── CorporateRequestDealModal/
-│   │   │       │   └── DealCards/
-│   │   │       ├── CorporateRequestEcmModal/
-│   │   │       ├── CorporateRequestPeriodModal/
-│   │   │       ├── CorporateRequestTeamModal/
-│   │   │       ├── EssenceRequestModal/
-│   │   │       └── ResponseToTheClientModal/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── CorporateRequest/
-│   │   │   ├── CorporateRequestNotFoundPage/
-│   │   │   ├── CorporateRequests/
-│   │   │   └── MailRegister/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── Mail/
-│   │       ├── Navigator/
-│   │       ├── Tables/
-│   │       │   ├── CorporateRequestsTable/
-│   │       │   └── MailRegisterTable/
-│   │       └── Tiles/
-│   │           ├── CorporateRequestAgreementTile/
-│   │           └── CorporateRequestCounterparty/
-│   ├── deals-app/
-│   │   ├── features/
-│   │   │   ├── DealFinancialInstrumentTile/
-│   │   │   ├── buttons/
-│   │   │   │   ├── ForecastCashFlowButton/
-│   │   │   │   ├── InstrumentContextMenuButton/
-│   │   │   │   └── TransferSchemaTileButton/
-│   │   │   └── modals/
-│   │   │       ├── AdditionalAgreementModal/
-│   │   │       │   └── AdditionalAgreementForm/
-│   │   │       ├── AgreementSbiRepresentativeModal/
-│   │   │       ├── BalanceAndCurrencyModal/
-│   │   │       ├── BaseTransferIndexHistoryModal/
-│   │   │       ├── CashBalancesModal/
-│   │   │       ├── CheckListCreationModal/
-│   │   │       ├── CheckListPatchModal/
-│   │   │       ├── CollateralAccountingModal/
-│   │   │       ├── CollateralAgreementModal/
-│   │   │       ├── CollateralBalanceModal/
-│   │   │       ├── CollateralDescriptionModal/
-│   │   │       ├── CollateralLiabilityModal/
-│   │   │       ├── CollateralLocationModal/
-│   │   │       ├── CollateralRelatedDealsModal/
-│   │   │       ├── CollateralRepaymentModal/
-│   │   │       ├── CollateralTIModal/
-│   │   │       ├── CommissionAccountingsModal/
-│   │   │       ├── CorporateAgreementModal/
-│   │   │       ├── CorrectReturnModal/
-│   │   │       ├── CounterpartiesEcmModal/
-│   │   │       │   └── EcmModal/
-│   │   │       ├── DealCollateralCreateModal/
-│   │   │       ├── DealCreateModal/
-│   │   │       ├── DealDescriptionModal/
-│   │   │       ├── DealEirIbsvFixationModal/
-│   │   │       ├── DealFinancialInstrumentCreateModal/
-│   │   │       ├── DealFinancialInstrumentEditModal/
-│   │   │       ├── DealFinancialMetricsModal/
-│   │   │       ├── DealMetricsCalculationModal/
-│   │   │       ├── DealPeriodModal/
-│   │   │       ├── DealProjectInformationModal/
-│   │   │       ├── DealTeamModal/
-│   │   │       ├── DealTitleModal/
-│   │   │       ├── DefaultDealsModal/
-│   │   │       ├── DidProductsModal/
-│   │   │       ├── DownloadReportModal/
-│   │   │       ├── EtsDictionaryModal/
-│   │   │       ├── FactualPaymentsRegisterModal/
-│   │   │       ├── FinancialDataModal/
-│   │   │       ├── FinancialDataUploadModal/
-│   │   │       ├── FixationModal/
-│   │   │       │   └── FixationModalTile/
-│   │   │       │       ├── Ets/
-│   │   │       │       └── PreliminaryCalculationButton/
-│   │   │       ├── GuaranteesInformationModal/
-│   │   │       ├── IDFIModal/
-│   │   │       ├── InitialAndAdditionalAgreementsModal/
-│   │   │       ├── InstrumentCorporateAgreementModal/
-│   │   │       ├── InstrumentRevaluationModal/
-│   │   │       ├── InstrumentTransferModal/
-│   │   │       │   ├── AccordionProductRow/
-│   │   │       │   └── ConfirmTransferGrid/
-│   │   │       ├── InstrumentsCounterpartiesModal/
-│   │   │       ├── InstrumentsModal/
-│   │   │       ├── InterestPeriodsPlanningParametersModal/
-│   │   │       ├── KPIModal/
-│   │   │       ├── LinkChangeModal/
-│   │   │       │   └── FICards/
-│   │   │       ├── LoanExternalDataModal/
-│   │   │       ├── NavigatorAppointmentOfResponsibleModal/
-│   │   │       ├── NavigatorApprovalModal/
-│   │   │       ├── NavigatorChangeReasonModal/
-│   │   │       ├── NavigatorDealCloseModal/
-│   │   │       ├── NavigatorForwardToTransferModal/
-│   │   │       ├── OneCModal/
-│   │   │       ├── OptionContractTypeModal/
-│   │   │       ├── OptionPremiumModal/
-│   │   │       ├── OptionStrikeEstimationModal/
-│   │   │       ├── OptionWindowsModal/
-│   │   │       ├── OutstandingDebtModal/
-│   │   │       │   ├── OutstandingDebtDealModal/
-│   │   │       │   └── OutstandingDebtTrancheModal/
-│   │   │       ├── PartyPaymentsModal/
-│   │   │       ├── PickMonthAndYearModal/
-│   │   │       ├── PlanningParametersDateModal/
-│   │   │       ├── PledgeCostModal/
-│   │   │       ├── ProductsModal/
-│   │   │       ├── RelatedDealsModal/
-│   │   │       ├── RepaymentModal/
-│   │   │       ├── SharesStocksAssetTypeModal/
-│   │   │       ├── SharesStocksDividendsModal/
-│   │   │       ├── SharesStocksPriceAndNominalModal/
-│   │   │       ├── TrancheInterestPaymentsModal/
-│   │   │       ├── TransferRateHistoryModal/
-│   │   │       ├── TransferSchemaModal/
-│   │   │       ├── TransferringInstrumentsToFIModal/
-│   │   │       └── TreeModal/
-│   │   ├── pages/
-│   │   │   ├── AgreementSbiRepresentatives/
-│   │   │   ├── Cashflow/
-│   │   │   ├── ChangesHistory/
-│   │   │   ├── ChangesList/
-│   │   │   ├── CheckList/
-│   │   │   ├── CheckLists/
-│   │   │   ├── Collateral/
-│   │   │   ├── CollateralAgreement/
-│   │   │   ├── CollateralRelatedInstruments/
-│   │   │   ├── CommissionAccountings/
-│   │   │   ├── Deal/
-│   │   │   ├── DealNotFoundPage/
-│   │   │   ├── Deals/
-│   │   │   ├── DefaultDeals/
-│   │   │   ├── DefiniteCycle/
-│   │   │   ├── EtsDictionary/
-│   │   │   ├── FactualPaymentsRegister/
-│   │   │   ├── FinancialData/
-│   │   │   ├── FinancialInstrument/
-│   │   │   ├── FinancialMetrics/
-│   │   │   ├── ForecastCashFlow/
-│   │   │   ├── InitialAndAdditionalAgreementsPage/
-│   │   │   ├── Instrument/
-│   │   │   ├── KPI/
-│   │   │   ├── OneCAccounts/
-│   │   │   ├── PlanPaymentsDid/
-│   │   │   ├── PledgeCost/
-│   │   │   ├── Tranche/
-│   │   │   └── TransferSchemas/
-│   │   └── widgets/
-│   │       ├── DetailedChanges/
-│   │       ├── ForecastCashFlowBar/
-│   │       ├── InitialAndAdditionalAgreementsPageBar/
-│   │       ├── Navigator/
-│   │       ├── groups/
-│   │       │   ├── DealFinancialInstrumentsGroup/
-│   │       │   └── TrancheCounterpartiesGroup/
-│   │       ├── sections/
-│   │       │   ├── AdditionalAgreementsSection/
-│   │       │   └── InstrumentPaymentSection/
-│   │       ├── tables/
-│   │       │   ├── AgreementSbiRepresentativesTable/
-│   │       │   ├── CashflowTable/
-│   │       │   ├── ChangesHistoryTable/
-│   │       │   ├── CheckListFormTable/
-│   │       │   ├── CheckListTable/
-│   │       │   ├── CurrentPortfolioDidTable/
-│   │       │   ├── DefaultDealsTable/
-│   │       │   ├── DefiniteCycleTable/
-│   │       │   ├── EtsDictionaryTable/
-│   │       │   ├── FactualPaymentsRegisterTable/
-│   │       │   ├── FinancialDataTable/
-│   │       │   ├── FinancialMetricsTable/
-│   │       │   ├── FixationHistoryTable/
-│   │       │   ├── ForecastCashFlowTable/
-│   │       │   ├── KPIMetricsTable/
-│   │       │   ├── KPITable/
-│   │       │   ├── OneCTable/
-│   │       │   └── PlanPaymentsDidTable/
-│   │       └── tiles/
-│   │           ├── AgreementSbiRepresentativesTile/
-│   │           ├── BalanceAndCurrencyTile/
-│   │           ├── CashflowTile/
-│   │           ├── CollateralAccountingTile/
-│   │           ├── CollateralAgreementOnlyTile/
-│   │           ├── CollateralAgreementsTile/
-│   │           ├── CollateralBalanceTile/
-│   │           ├── CollateralDescriptionTile/
-│   │           ├── CollateralLiabilityTile/
-│   │           ├── CollateralLocationTile/
-│   │           ├── CollateralRelatedDealsTile/
-│   │           ├── CollateralTITile/
-│   │           ├── CommissionAccountingsTile/
-│   │           ├── CommissionPaymentsTile/
-│   │           ├── CorporateAgreementTile/
-│   │           ├── CounterpartiesTile/
-│   │           ├── DealDescriptionTile/
-│   │           ├── DealEirIbsvFixationTile/
-│   │           ├── DealFinancialMetricsTile/
-│   │           ├── DealMetricsCalculationTile/
-│   │           ├── DealPeriodTile/
-│   │           ├── DealProductTreeNew/
-│   │           ├── DealRelatedCollateralsTile/
-│   │           ├── DealTeamTile/
-│   │           ├── DefaultDealsTile/
-│   │           ├── DisbursementRepaymentTile/
-│   │           ├── EarlyRepaymentsTile/
-│   │           ├── ExternalIdTile/
-│   │           ├── FinancialInstrumentTile/
-│   │           ├── ForecastOfIncomeTile/
-│   │           ├── GuaranteesInformationTile/
-│   │           ├── IDFITile/
-│   │           ├── InitialAndAdditionalAgreementsTile/
-│   │           ├── InstrumentBindingTile/
-│   │           ├── InstrumentCorporateAgreementTile/
-│   │           ├── InstrumentRevaluationTile/
-│   │           ├── InterestPaymentsTile/
-│   │           ├── InterestPeriodsTile/
-│   │           ├── InterestSchemasTile/
-│   │           ├── LoanExternalDataTile/
-│   │           ├── LoanNrlTranchesTile/
-│   │           ├── OneCTile/
-│   │           ├── OptionContractTypeTile/
-│   │           ├── OptionFinancialDataTile/
-│   │           ├── OptionLoanLimitsTile/
-│   │           ├── OptionPremiumTile/
-│   │           ├── OptionStrikeEstimationTile/
-│   │           ├── OptionWindowsTile/
-│   │           ├── PledgeCostTile/
-│   │           ├── ProjectInformationTile/
-│   │           ├── RelatedCorporateAgreementsTile/
-│   │           ├── RelationToInstrumentTile/
-│   │           ├── SharesStocksAssetTypeTile/
-│   │           ├── SharesStocksDividendsTile/
-│   │           ├── SharesStocksPriceAndNominalTile/
-│   │           ├── SharesStocksSaleTile/
-│   │           ├── SummaryTile/
-│   │           ├── TileRecalculation/
-│   │           ├── TrancheCommissionPeriodsTile/
-│   │           ├── TrancheLoanLimitsTile/
-│   │           ├── TransferRateTile/
-│   │           └── TransferSchemaTile/
-│   ├── drafts/   ← приложение (app.json)
-│   ├── payments-app/
-│   │   ├── features/
-│   │   │   ├── buttons/
-│   │   │   │   ├── CommissionPeriodsContextMenuButton/
-│   │   │   │   └── InterestSchemaTileButton/
-│   │   │   └── modals/
-│   │   │       ├── BaseIndexHistoryModal/
-│   │   │       ├── CommissionPaymentsDetailedCalculationModal/
-│   │   │       ├── CommissionPaymentsModal/
-│   │   │       ├── CommissionPeriodsModal/
-│   │   │       ├── CommissionSchemaModal/
-│   │   │       ├── ConfirmMassiveActionsModal/
-│   │   │       ├── DisbursementRepaymentModal/
-│   │   │       ├── EarlyRepaymentsModal/
-│   │   │       ├── ForecastOfIncomeModal/
-│   │   │       ├── InterestPeriodModal/
-│   │   │       ├── InterestPeriodPartitionModal/
-│   │   │       ├── InterestSchemaModal/
-│   │   │       ├── LoanLimitsModal/
-│   │   │       ├── OverpaymentModal/
-│   │   │       ├── PartyPaymentsModal/
-│   │   │       ├── PartyPlanPaymentsModal/
-│   │   │       ├── PaymentAmountChangingModal/
-│   │   │       ├── PlanPaymentsModal/
-│   │   │       ├── RateHistoryModal/
-│   │   │       ├── RulesForCalculatingInterestModal/
-│   │   │       ├── SharesStocksSaleModal/
-│   │   │       ├── UploadCommissionPeriodsModal/
-│   │   │       ├── UploadForecastOfIncomeModal/
-│   │   │       └── UploadInterestPeriodsModal/
-│   │   ├── pages/
-│   │   │   ├── CommissionPayments/
-│   │   │   ├── CommissionPeriods/
-│   │   │   ├── CommissionSchemas/
-│   │   │   ├── DisbursementRepayment/
-│   │   │   │   ├── InstrumentDisbursementRepayment/
-│   │   │   │   └── TrancheDisbursementRepayment/
-│   │   │   ├── EarlyRepayments/
-│   │   │   │   ├── EarlyOptionRepaymentsPage/
-│   │   │   │   └── EarlyTrancheRepaymentsPage/
-│   │   │   ├── ForecastOfIncome/
-│   │   │   ├── InterestPeriods/
-│   │   │   │   ├── InstrumentInterestPeriods/
-│   │   │   │   └── TrancheInterestPeriods/
-│   │   │   ├── InterestSchemas/
-│   │   │   │   ├── InstrumentInterestSchemasPage/
-│   │   │   │   └── TrancheInterestSchemasPage/
-│   │   │   ├── LoanLimits/
-│   │   │   ├── PartyPaymentsPage/
-│   │   │   ├── PlanPaymentsForDeal/
-│   │   │   ├── PlanPaymentsPage/
-│   │   │   └── SharesStocksSale/
-│   │   └── widgets/
-│   │       ├── tables/
-│   │       │   ├── CommissionPaymentsTable/
-│   │       │   ├── CommissionPeriodsTable/
-│   │       │   ├── DisbursementRepaymentTable/
-│   │       │   ├── EarlyRepaymentsTable/
-│   │       │   ├── ForecastOfIncomeTable/
-│   │       │   ├── InterestPeriodsTable/
-│   │       │   ├── LoanLimitsTable/
-│   │       │   ├── PartyPaymentsTable/
-│   │       │   ├── PlanPaymentsForDealTable/
-│   │       │   ├── PlanPaymentsTable/
-│   │       │   └── SharesStocksSaleTable/
-│   │       └── tiles/
-│   │           ├── CommissionSchemaTile/
-│   │           └── InterestSchemaTile/
-│   └── post-reports-app/
-│       ├── features/
-│       │   ├── EditOcpReportRecordModal/
-│       │   ├── FairValueContextMenuButton/
-│       │   ├── FinancialCalculationContextMenuButton/
-│       │   ├── LinkIconButton/
-│       │   ├── Modals/
-│       │   │   ├── CalculationUserMetricsModal/
-│       │   │   ├── ConfirmUploadActionModal/
-│       │   │   ├── CreateFairValueCalculationModal/
-│       │   │   ├── CreateIncomeExpensesModal/
-│       │   │   ├── CreateOcpReportModal/
-│       │   │   ├── CreateReserveModal/
-│       │   │   ├── CreateReservesCalculationModal/
-│       │   │   ├── CreateRwaReportModal/
-│       │   │   ├── EditLimitSumModal/
-│       │   │   ├── EditOcpReportRecordModal/
-│       │   │   ├── FairValueInstrumentablesUploadFileModal/
-│       │   │   ├── FinancialUploadCsvModal/
-│       │   │   ├── OcpLimitReportUserValuesModal/
-│       │   │   ├── OcpSummaryReportUserValuesModal/
-│       │   │   ├── PickMonthAndYearModal/
-│       │   │   ├── RwaReportUserMetricsModal/
-│       │   │   ├── RwaValuesModal/
-│       │   │   ├── UploadReservesModals/
-│       │   │   │   ├── ReservesFvComponentsModal/
-│       │   │   │   ├── ReservesFvModal/
-│       │   │   │   └── ReservesLgdModal/
-│       │   │   ├── UserMetricsModal/
-│       │   │   ├── _DownloadReportModal/
-│       │   │   └── _FairValueUserMetricsModal/
-│       │   ├── OcpReportContextMenuButton/
-│       │   ├── ReservesRecordApprovalButton/
-│       │   ├── ReservesRecordComparisonButton/
-│       │   ├── ReservesRecordComparisonDownloadButton/
-│       │   ├── ReservesRecordComparisonTabs/
-│       │   ├── ReservesRecordContextMenuButton/
-│       │   ├── ReservesRegisterUploadFileContextMenuButton/
-│       │   ├── RwaReportContextMenuButton/
-│       │   └── RwaValuesTabs/
-│       └── pages/
-│           ├── FairValue/
-│           │   ├── FairValueCalculation/
-│           │   └── FairValueRegister/
-│           ├── Ocp/
-│           │   ├── OcpReport/
-│           │   └── OcpReports/
-│           ├── ReportsOneCNavision/
-│           │   ├── AccrualInterestCalculation/
-│           │   ├── FinancialCalculation/
-│           │   ├── IncomeExpenses/
-│           │   ├── OneCData/
-│           │   └── OneCDataCheck/
-│           ├── Reserves/
-│           │   ├── ReservesRecordComparison/
-│           │   ├── ReservesRecordPage/
-│           │   └── ReservesRegisterPage/
-│           └── Rwa/
-│               ├── RwaReport/
-│               ├── RwaReports/
-│               └── RwaValues/
-├── pretrade/
-│   ├── b3-opportunities-app/
-│   │   ├── features/
-│   │   │   └── modals/
-│   │   │       ├── ContentIntegrationModal/
-│   │   │       ├── ResumeActivityConfirmationModal/
-│   │   │       └── SendExpertiseResultModal/
-│   │   │           └── SendExpertiseResultForm/
-│   │   ├── pages/
-│   │   │   ├── Opportunity/
-│   │   │   ├── administrationDcp/
-│   │   │   │   ├── ActivitiesDcp/
-│   │   │   │   ├── IncomingRequestsDcp/
-│   │   │   │   ├── OpportunityProcessingsDcp/
-│   │   │   │   └── OutgoingRequestsDcp/
-│   │   │   └── pipelineDcp/
-│   │   │       └── MyDeskOpportunities/
-│   │   └── widgets/
-│   │       ├── opportunity/
-│   │       │   ├── OpportunityPageBar/
-│   │       │   └── tiles/
-│   │       │       ├── ClientTile/
-│   │       │       ├── CommentsTile/
-│   │       │       ├── DescriptionTile/
-│   │       │       ├── DesksTile/
-│   │       │       ├── GeneralInfoTile/
-│   │       │       ├── ProductsTile/
-│   │       │       ├── StatusTile/
-│   │       │       └── TeamMembersTile/
-│   │       └── tables/
-│   │           ├── ActivitiesDcpTable/
-│   │           │   └── ActivitiesDcpFilters/
-│   │           ├── IncomingRequestsDcpTable/
-│   │           │   └── IncomingRequestsDcpFilters/
-│   │           ├── OpportunityProcessingsDcpTable/
-│   │           │   └── OpportunityProcessingsDcpFilters/
-│   │           ├── OutgoingRequestsDcpTable/
-│   │           │   └── OutgoingRequestsDcpFilters/
-│   │           └── PipelineDCPMyDeskOpportunitiesTable/
-│   │               └── PipelineDCPMyDeskOpportunitiesFilters/
-│   ├── callreports-app/
-│   │   ├── features/
-│   │   │   ├── AuthorizationExpiredModal/
-│   │   │   ├── CallReportMeetings/
-│   │   │   ├── CallReportRelation/
-│   │   │   └── LogoutButton/
-│   │   ├── pages/
-│   │   │   ├── CallReportsPage/
-│   │   │   ├── LoginPage/
-│   │   │   ├── MissingRightsPage/
-│   │   │   ├── ModuleNotAvailablePage/
-│   │   │   ├── NotFoundPage/
-│   │   │   └── ServerErrorPage/
-│   │   └── widgets/
-│   │       ├── BreadcrumbsSection/
-│   │       ├── CallReportTile/
-│   │       ├── CallReportsPageBar/
-│   │       ├── Sidebar/
-│   │       └── SnackbarArea/
+│   ├── deals-app/   ← приложение (app.json)
 │   ├── drafts/
-│   │   └── pipeline-manager-kanban/   ← приложение (app.json)
-│   ├── kfulsources-app/
-│   │   ├── features/
-│   │   │   ├── breadcrumbs/
-│   │   │   ├── helpers/
-│   │   │   │   └── KfulOpportunityNotifications/
-│   │   │   ├── links/
-│   │   │   │   └── NavigateToKfulTableLink/
-│   │   │   └── modals/
-│   │   │       ├── CreateKfulModal/
-│   │   │       ├── KfulDeclineToArchiveModal/
-│   │   │       ├── KfulDocumentsAnalysisModal/
-│   │   │       │   └── KfulDocumentsAnalysisView/
-│   │   │       ├── KfulMassCheckAnswersModal/
-│   │   │       └── KfulRouteToDeskModal/
+│   ├── payments-app/
+│   │   ├── data/
 │   │   ├── pages/
-│   │   │   ├── KfulOpportunities/
-│   │   │   ├── KfulOpportunity/
-│   │   │   └── KfulPipelineScanner/
+│   │   ├── refs/
 │   │   └── widgets/
-│   │       ├── KfulOpportunityActions/
-│   │       ├── tables/
-│   │       │   └── KfulOpportunitiesTable/
-│   │       │       ├── KfulOpportunitiesFilters/
-│   │       │       └── KfulOpportunitiesReportButton/
-│   │       └── tiles/
-│   │           ├── DetailInfo/
-│   │           ├── KfulDescriptionTile/
-│   │           ├── KfulDocumentsTile/
-│   │           ├── Party/
-│   │           ├── Products/
-│   │           └── Team/
-│   ├── offersources-app/
-│   │   ├── features/
-│   │   │   ├── breadcrumbs/
-│   │   │   ├── buttons/
-│   │   │   │   ├── DownloadOffersReportButton/
-│   │   │   │   └── DownloadPotentialsReportButton/
-│   │   │   ├── modals/
-│   │   │   │   ├── AddPotentialsModal/
-│   │   │   │   ├── ArchiveLeadsFilterModal/
-│   │   │   │   │   └── ArchiveLeadsCommentForm/
-│   │   │   │   ├── ChangePotentialTaskStatusModal/
-│   │   │   │   ├── CreateOpportunityModal/
-│   │   │   │   ├── CreatePotentialModal/
-│   │   │   │   │   └── CreatePotentialForm/
-│   │   │   │   ├── CreatePotentialTaskModal/
-│   │   │   │   ├── DeclineOfferModal/
-│   │   │   │   │   └── DeclineOfferForm/
-│   │   │   │   ├── GeneralInformationModal/
-│   │   │   │   │   └── GeneralInformationForm/
-│   │   │   │   ├── MeetingProtocolModal/
-│   │   │   │   ├── PotentialTeamMemberModal/
-│   │   │   │   ├── PotentialsCreateLidModal/
-│   │   │   │   │   └── PotentialsCreateLidForm/
-│   │   │   │   ├── PotentialsUploadResultModal/
-│   │   │   │   │   └── PotentialsUploadResultTable/
-│   │   │   │   ├── PreviewContentKfulDealModal/
-│   │   │   │   │   └── ContentDealView/
-│   │   │   │   ├── ProductsModals/
-│   │   │   │   │   ├── CreateOpportunityProductModal/
-│   │   │   │   │   └── UpdateOpportunityProductModal/
-│   │   │   │   ├── UpdateFinancialMetricsModal/
-│   │   │   │   │   └── UpdateFinancialMetricsForm/
-│   │   │   │   └── UpdateOffersourcesStateModal/
-│   │   │   │       └── UpdateOffersourcesStateForm/
-│   │   │   └── takeToWork/
-│   │   │       ├── LinkLeadToPotentialModal/
-│   │   │       │   └── LinkLeadToPotentialForm/
-│   │   │       └── TakeToWorkOfferModal/
-│   │   │           └── TakeToWorkOfferForm/
-│   │   ├── pages/
-│   │   │   ├── BindingLeadsPage/
-│   │   │   ├── LeadsForCmPage/
-│   │   │   ├── OfferPage/
-│   │   │   ├── OffersToProcessTablePage/
-│   │   │   ├── PossibleLeadsPage/
-│   │   │   ├── PotentialCommentsPage/
-│   │   │   ├── PotentialPage/
-│   │   │   ├── PotentialProductPage/
-│   │   │   ├── PotentialTasks/
-│   │   │   ├── PotentialTeamPage/
-│   │   │   ├── PotentialsRDTablePage/
-│   │   │   ├── ToProcessKKBindingLeadsPage/
-│   │   │   ├── ToProcessKKPossibleLeadsPage/
-│   │   │   ├── ToProcessTBBindingLeadsPage/
-│   │   │   └── ToProcessTBPossibleLeadsPage/
-│   │   └── widgets/
-│   │       ├── LeadsMenu/
-│   │       ├── OfferRouteActions/
-│   │       ├── PotentialRoutingActions/
-│   │       ├── PotentialsRDPageBar/
-│   │       ├── previewTiles/
-│   │       │   └── TaskPreviewTile/
-│   │       ├── tables/
-│   │       │   ├── LeadsTable/
-│   │       │   │   └── LeadsFilters/
-│   │       │   ├── OfferClientTable/
-│   │       │   └── PotentialsRDTable/
-│   │       │       └── PotentialsRDTableFilters/
-│   │       └── tiles/
-│   │           ├── OfferTiles/
-│   │           │   ├── OfferClientTile/
-│   │           │   ├── OfferConnectionsTile/
-│   │           │   ├── OfferDesksTile/
-│   │           │   ├── OfferGeneralInformationTile/
-│   │           │   ├── OfferProductTile/
-│   │           │   ├── OfferTeamTile/
-│   │           │   └── OfferTimingsTile/
-│   │           └── PotentialTiles/
-│   │               ├── ClientTile/
-│   │               ├── CommentsTile/
-│   │               ├── ConnectionsTile/
-│   │               ├── DescriptionTile/
-│   │               ├── DesksTile/
-│   │               ├── FinancialMetricsSummaryTile/
-│   │               ├── GeneralInformationTile/
-│   │               ├── MeetingsProtocolsTile/
-│   │               ├── PotentialProductClientTiles/
-│   │               ├── PotentialProductsTile/
-│   │               │   └── PotentialDetailedProductTile/
-│   │               ├── PotentialTasksTile/
-│   │               ├── PotentialTeamTile/
-│   │               ├── StateTile/
-│   │               └── TimingsTile/
-│   ├── opportunities-app/
-│   │   ├── features/
-│   │   │   ├── ViewableRowsTable/
-│   │   │   │   ├── OpportunityPipelineViewedTable/
-│   │   │   │   └── ViewedRowTableCellMarker/
-│   │   │   └── modals/
-│   │   │       ├── BookingOpportunityModal/
-│   │   │       ├── ChangeTaskStatusModal/
-│   │   │       ├── ClientUpdateModal/
-│   │   │       ├── ConnectKmModal/
-│   │   │       ├── CreateOpportunityTaskModal/
-│   │   │       ├── DealSearchModal/
-│   │   │       ├── GeneralInformationModal/
-│   │   │       │   └── GeneralInformationModalAlert/
-│   │   │       ├── GeneratePresentationPicModal/
-│   │   │       ├── MainSourceValidationModal/
-│   │   │       ├── MeetingProtocolModal/
-│   │   │       ├── NotificationDesksModal/
-│   │   │       ├── OpportunityTeamMemberModal/
-│   │   │       ├── ProductModals/
-│   │   │       │   ├── CreateProductModal/
-│   │   │       │   └── UpdateProductModal/
-│   │   │       ├── StateManagementModals/
-│   │   │       ├── UpdateOpportunityConnectionModal/
-│   │   │       ├── UpdateOpportunityDescriptionModal/
-│   │   │       ├── UpdateOpportunityStateModal/
-│   │   │       │   └── alerts/
-│   │   │       │       ├── UpdateOpportunityStateClientAlert/
-│   │   │       │       ├── UpdateOpportunityStateGeneralInformationAlert/
-│   │   │       │       └── UpdateOpportunityStateTimingAlert/
-│   │   │       └── UpdateOpportunityTimingModal/
-│   │   │           ├── UpdateOpportunityTimingAlert/
-│   │   │           └── UpdateOpportunityTimingForm/
-│   │   ├── pages/
-│   │   │   ├── Opportunity/
-│   │   │   │   ├── FinancialMetrics/
-│   │   │   │   ├── Opportunity/
-│   │   │   │   │   └── OpportunityPageBar/
-│   │   │   │   ├── OpportunityComments/
-│   │   │   │   ├── OpportunityHistory/
-│   │   │   │   ├── OpportunityProduct/
-│   │   │   │   ├── OpportunityTeam/
-│   │   │   │   └── opportunityTaskPages/
-│   │   │   └── root/
-│   │   │       ├── binding/
-│   │   │       ├── campaigns/
-│   │   │       ├── cib/
-│   │   │       ├── pipeline/
-│   │   │       └── possible/
-│   │   └── widgets/
-│   │       ├── tables/
-│   │       │   ├── BindingOpportunitiesTable/
-│   │       │   ├── DidOpportunitiesTable/
-│   │       │   ├── OpportunitiesPipelineTable/
-│   │       │   ├── OpportunityHistoryTable/
-│   │       │   ├── OpportunitySalesProjectsTable/
-│   │       │   ├── PossibleOpportunitiesTable/
-│   │       │   └── SalesCampaignsTable/
-│   │       └── tiles/
-│   │           ├── CommentsTile/
-│   │           ├── OpportunityHistoryPreviewTile/
-│   │           │   └── DeltaVersionBlocks/
-│   │           ├── PipelinePreviewTile/
-│   │           ├── TaskPreviewTile/
-│   │           └── opportunityTiles/
-│   │               ├── CallReportsTile/
-│   │               ├── ClientTile/
-│   │               ├── DescriptionTile/
-│   │               ├── DesksTile/
-│   │               ├── FinancialMetricsTile/
-│   │               │   ├── ChartBlock/
-│   │               │   └── ValuesBlock/
-│   │               ├── GeneralInformationTile/
-│   │               ├── MeetingsProtocolsTile/
-│   │               ├── OpportunityConnectionsTile/
-│   │               ├── OpportunityTeamMembersTile/
-│   │               ├── ProductClientTiles/
-│   │               ├── ProductsTile/
-│   │               │   ├── OpportunityDetailProducts/
-│   │               │   └── ProductAlerts/
-│   │               ├── StateInformationTile/
-│   │               ├── TasksTile/
-│   │               └── TimingTile/
-│   └── salesources-app/
-│       ├── features/
-│       │   ├── breadcrumbs/
-│       │   ├── links/
-│       │   │   └── NavigateToSalesTableLink/
-│       │   └── modals/
-│       │       ├── SalesProjectDeclineModal/
-│       │       │   └── SalesProjectDeclineForm/
-│       │       └── SalesProjectRouteToDeskModal/
-│       │           └── SalesProjectRouteToDeskForm/
+│   └── post-reports-app/
+│       ├── data/
 │       ├── pages/
-│       │   └── SalesProjectPage/
+│       ├── refs/
 │       └── widgets/
-│           ├── SalesProjectRoutingActions/
-│           ├── tables/
-│           │   └── SalesProjectsTable/
-│           │       └── SalesProjectsFilters/
-│           └── tiles/
-│               ├── SalesProjectClientTile/
-│               ├── SalesProjectDescriptionTile/
-│               ├── SalesProjectGeneralInformationTile/
-│               ├── SalesProjectOffersTile/
-│               ├── SalesProjectTeamTile/
-│               └── SalesProjectTimingTile/
-└── ui-kit/
+└── pretrade/
+    ├── b3-opportunities-app/
+    │   ├── data/
+    │   ├── pages/
+    │   ├── refs/
+    │   └── widgets/
+    ├── callreports-app/
+    │   ├── data/
+    │   ├── pages/
+    │   ├── refs/
+    │   └── widgets/
+    ├── drafts/
+    │   └── pipeline-manager-kanban/   ← приложение (app.json)
+    ├── kfulsources-app/
+    │   ├── data/
+    │   ├── pages/
+    │   ├── refs/
+    │   └── widgets/
+    ├── offersources-app/
+    │   ├── data/
+    │   ├── pages/
+    │   ├── refs/
+    │   └── widgets/
+    ├── opportunities-app/
+    │   ├── data/
+    │   ├── pages/
+    │   ├── refs/
+    │   └── widgets/
+    └── salesources-app/
+        ├── data/
+        ├── pages/
+        ├── refs/
+        └── widgets/
 ```
 
 </details>
 
 ## Форма приложения
 
-Строгая форма — для приложений вне `drafts/` (в `drafts/` — по образцу, но не обязательно).
+Одна и та же у модуля и у концепта:
 
 ```
-<раздел>/drafts/<id>/
-├── app.json            ← запись приложения: id (= имя папки), track
-├── README.md           ← что это за приложение, какой файл открывать
+<имя>-app/  или  drafts/<имя>/
+├── app.json            ← запись приложения: id (= имя папки), track, title, desc, home, icon
+├── README.md           ← у модуля обязателен: описание + дерево + «Имена фронтенда»
 ├── pages/              ← экраны и их спеки, все на одной глубине
 │   ├── <Имя>.html
 │   └── <Имя>.screen.md
-├── components/         ← фрагменты модульных экранов (если есть)
-├── data/               ← демо-данные обычными <script> (если есть)
+├── widgets/            ← крупные блоки экранов, по группам
+│   └── <группа>/<Имя>/
+│       ├── <Имя>.html  ← фрагмент разметки (без <html>, <head>, <script>)
+│       ├── <Имя>.md    ← паспорт виджета
+│       └── <Имя>.css   ← раскладка виджета, если нужна
+├── data/               ← демо-данные обычными <script>, с JSDoc-типами
 ├── refs/               ← входящие материалы: ТЗ, экспорты, pdf, скриншоты
-├── tools/              ← сборка приложения (если нужна)
+│   └── dto/            ← DTO бэкенда, когда их дают: по ним называются данные
 ├── <Имя>.handoff.md    ← контекст задачи между сессиями (/handoff)
 └── <Имя>.concept-A.md  ← текстовые концепты (/concepts)
 ```
+
+Других папок в приложении нет — это держит сторож хаба (П6). Сборка
+модульных страниц — общий инструмент оснастки, своя папка `tools/` у
+приложения не заводится (с 24.09.2026).
+
+Спеки рядом с файлами — скилл `screen-spec`: страница — `<Имя>.screen.md`
+(`../.agents/skills/screen-spec/references/template.md`), виджет — паспорт
+`<Имя>.md` (`…/references/widget-template.md`). Их читают агент
+фронтенд-разработчика и человек, который проверяет прототип, поэтому спеки —
+по-русски, а английское имя раздела стоит в скобках: разделы — как в
+дизайнерском дереве спек (Purpose, Route, Layout, Components, States, Data
+dependencies, Implementation mapping) плюс наши — поведение, тексты, открытые
+вопросы. Спеки, написанные раньше, приводятся к шаблону по задаче
+`../docs/tasks/0003-specs-to-common-template.md`.
+
+**Демо-данные** (`data/*.js`) устроены как ответ API, чтобы разработчик
+превратил их в TS-типы: у каждого типа JSDoc `@typedef`, имена в стиле API
+фронтенда (типы `…RsDto`, поля camelCase, перечисления — коды с картой
+подписей, валюта — `RUB`), у typedef строка источника — `Source: DTO <Имя>`
+(DTO-файлы лежат в `refs/dto/`) или `Source: invented (дата)`, пока
+контракта нет. Образец — `../.agents/skills/screen-spec/references/data-template.js`.
+Значения — рыба и правятся по ходу дизайна фичи, имена и типы — для
+разработки. Файлы данных, заведённые раньше, получат типы по задаче
+`../docs/tasks/0004-typed-demo-data.md`.
+
+### widgets — одна папка вместо features/ и widgets/ фронтенда
+
+У фронтенда эти блоки разложены непоследовательно (подсчёт по дереву,
+23.09.2026): модалки — 247 в `features/` и 13 в `widgets/`; тайлы — 183 в
+`widgets/` и 12 в `features/`; таблицы — 83 и 7; группы названы то `tables`,
+то `Tables`, то `modals`, то `Modals`. У нас правило одно: **всё крупное и переиспользуемое — в
+`widgets/<группа>/<Имя>/`**, `features/` и `components/` не заводятся.
+
+| Группа | Что лежит | Имя (тип в конце, как у фронтенда) |
+|---|---|---|
+| `tiles/` | тайлы страниц | `DealTeamTile` |
+| `tables/` | таблицы и реестры | `CurrentPortfolioDidTable` |
+| `modals/` | модальные окна | `ControlClientModal` |
+| `context-menus/` | контекстные меню | `InstrumentContextMenu` |
+| `popovers/` | поповеры и тултипы с содержимым | `GoalsPopover` |
+
+Список групп — `../project.json → appShape.widgetGroups`; новая группа
+заводится там, а не папкой «по месту». Мелкие элементы (кнопки, ссылки,
+фильтры, вкладки) отдельными файлами не выносятся — они живут в разметке
+страницы или виджета компонентами ДС.
+
+Имена экранов и виджетов берутся **из фронтенда**, если сущность там уже
+есть (`Deal`, `DealTeamTile`), — так разработчик находит пару без перевода.
+Пару агент ищет сам: README модуля, раздел «Имена фронтенда», и полное дерево
+фронтенда `../docs/misc/project-tree.md`, пока оно лежит. Пара — сущность с
+тем же смыслом («Связанные обеспечения» ↔ `DealRelatedCollateralsTile`); нет
+её — имя остаётся нашим, с типом в конце. Модалка или тайл, нужные одному экрану, могут жить и прямо в его
+разметке; в `widgets/` блок выносится, когда он переиспользуется или его
+отдают разработке отдельным компонентом.
+
+**Как страница подключает виджет.** Страницы открываются двойным кликом
+(`file://`), где `fetch` не работает, поэтому фрагмент вшивается до открытия:
+страница-источник ставит метку, собранную страницу пишет общий сборщик.
+
+```html
+<ds-include src="../widgets/tiles/KNRTile/KNRTile.html" class="col-3 colw-6"></ds-include>
+```
+
+```bash
+node .agents/tools/assemble.mjs          # собрать все источники apps/ → <Имя>.preview.html
+```
+
+Открывают двойным кликом собранный `<Имя>.preview.html`. На метке задаются
+место в сетке (`class`), `id`, `state` и `mode` (→ `data-state`,
+`data-mode` на корне виджета); CSS виджета (`<Имя>.css` рядом) подключается
+сам. Образец — `postrade/deals-app/pages/Deal.html` и
+`postrade/deals-app/widgets/README.md`.
+
+**Виджет общий для раздела.** Страница любого приложения раздела вшивает
+виджет соседа путём от себя: из `postrade/payments-app/pages/` —
+`../../deals-app/widgets/tiles/KNRTile/KNRTile.html`. Виджет живёт у модуля,
+где его сделали. Два ограничения держит гейт (шаг `assemble`): виджет
+другого раздела не вшивается (СБ5) — разделы не зависят друг от друга;
+модуль не берёт виджет из `drafts/` (СБ6) — сначала концепт переносят.
+Концепт может брать виджеты модулей своего раздела.
+
+## README модуля
+
+В корне каждого модуля `<имя>-app/` лежит README.md (решение человека
+24.09.2026):
+
+- **описание** — руками: что это за часть системы, какие экраны, пары во
+  фронтенде, как собирать;
+- **«Что лежит»** — дерево папки с подписями из самих файлов (`title:`
+  спеки страницы, `name:` паспорта виджета, шапка файла данных, запись
+  `app.json`). Блок между метками `@tree` генерирует
+  `node .agents/tools/module-readme.mjs` — руками не править; гейт (шаг
+  `readme`) сверяет его с диском (МР1 нет README, МР2 нет блока, МР3 дерево
+  разошлось с папкой);
+- **«Имена фронтенда»** — сущности модуля во фронтенде, разложенные по нашей
+  форме: страницы, тайлы, таблицы, модалки (у фронтенда в `features/`),
+  контекстные меню, прочее. Сняты с дерева фронтенда при создании README.
+
+## Перенос концепта в модуль
+
+Концепт согласован — команда `/promote` (`../.agents/commands/promote.md`):
+
+```bash
+node .agents/tools/promote.mjs apps/<раздел>/drafts/<имя> apps/<раздел>/<модуль>-app --dry   # план
+node .agents/tools/promote.mjs apps/<раздел>/drafts/<имя> apps/<раздел>/<модуль>-app [--track product]
+```
+
+Инструмент переносит файлы (формы одинаковые), пересчитывает пути до
+загрузчика ДС и хаба (на один `../` короче), метки виджетов и ссылки в
+концепт из других страниц, `file:` в спеках, правило прав агента;
+README концепта становится описанием модуля; реестр хаба, страницы и дерево
+README пересобираются. Конфликт (у модуля своя запись, файл с тем же путём),
+чужой раздел или не концепт — отказ без изменений (ПР1–ПР3). Упоминания
+старого пути в правилах и заметках инструмент печатает списком — их правят по
+смыслу. Первый перенос — Post: `postrade/drafts/post` → `postrade/deals-app`,
+24.09.2026.
 
 ## Дизайн-система: адрес в одном месте
 
@@ -1160,12 +339,10 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
   <script> /* экранный скрипт */ </script>
 ```
 
-| Где приложение | До `apps/` (загрузчик) | До хаба |
+| Где экран | До `apps/` (загрузчик) | До хаба |
 |---|---|---|
-| `apps/<раздел>/drafts/<id>/pages/` — ib, pretrade | `../../../../` | `../../../../../index.html` |
-| `apps/<раздел>/drafts/pages/` — приложение прямо в `drafts/` (Post) | `../../../` | `../../../../index.html` |
-| `apps/<раздел>/<id>/pages/` — приложение прямо в разделе | `../../../` | `../../../../index.html` |
-| глубже в `drafts/` | на `../` больше за каждую папку | — |
+| модуль: `apps/<раздел>/<имя>-app/pages/` | `../../../` | `../../../../index.html` |
+| концепт: `apps/<раздел>/drafts/<имя>/pages/` | `../../../../` | `../../../../../index.html` |
 
 | Файл | Что делает |
 |---|---|
@@ -1196,38 +373,41 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
 
 ## Правила
 
-- **Каждое приложение — запись `app.json`**: `id` (каталог), `track`, `title`,
-  `desc`, `home` (стартовая страница от каталога приложения), `icon`, при
-  необходимости `build` (сборка). Реестр хаба `../hub.js` собирается из них:
+- **Каждое приложение — запись `app.json`**: `id` (= имя папки), `track`,
+  `title`, `desc`, `home` (стартовая страница от каталога приложения), `icon`,
+  при необходимости `build` (сборка). Реестр хаба `../hub.js` собирается из них:
   `node .agents/tools/hub-build.mjs`, руками не правится (гейт, шаг `hub`).
   Без записи гейт красный: сторож `registry-check` видит страницу вне реестра.
+- **Место приложения** — только модуль `<раздел>/<имя>-app/` или концепт
+  `<раздел>/drafts/<имя>/` (`../project.json → appPlaces`, П8).
 - **Строка пользователя в футере меню** (`<a class="nav__user">`) ведёт на хаб:
-  относительный путь до корневого `index.html` (см. таблицу глубин),
-  `aria-label="Хаб проектов"`. Футер из
-  `IBPHome.footerHTML(...)` подменяется в экранном скрипте, образец —
-  `postrade/drafts/pages/MainPage.html`. В продукте эта строка ведёт в личный кабинет,
-  подмена действует только в макетах.
+  относительный путь до корневого `index.html` (таблица глубин выше),
+  `aria-label="Хаб проектов"`. Футер из `IBPHome.footerHTML(...)` подменяется в
+  экранном скрипте, образец — `postrade/deals-app/pages/MainPage.html`. В
+  продукте эта строка ведёт в личный кабинет, подмена действует только в макетах.
 - **Приложение трека `product` агент правит только с подтверждением**: у ролей
-  в `../.opencode/opencode.json` правило edit `apps/<путь до приложения>/**` с эффектом `ask`
-  стоит после общего разрешения `apps/**` (гейт, `agent-config` КФ7).
-- Концепт стал частью настоящей системы — меняется `track` в `app.json`
-  (реестр пересобирается, группа записи следует за треком) и права ролей.
+  в `../.opencode/opencode.json` правило edit `apps/<путь до приложения>/**` с
+  эффектом `ask` стоит после общего разрешения `apps/**` (гейт, `agent-config` КФ7).
+- Концепт согласован — `/promote` (раздел выше), трек модуля — по решению
+  человека.
 
 ## Кто проверяет
 
-Сенсор и линтер — как для любого экрана; реестр, форма приложения и возврат
-на хаб — сторож `../.agents/tools/registry-check.mjs` (шаг `registry` в
-`lessons-cli gate`):
+Сенсор и линтер — как для любого экрана; собранные страницы и правила меток —
+`assemble.mjs --check` (СБ1–СБ6); README модулей — `module-readme.mjs --check`
+(МР1–МР3); реестр, форма и место приложения, возврат на хаб — сторож
+`../.agents/tools/registry-check.mjs` (шаг `registry` в `lessons-cli gate`):
 
 | Код | Что ловит |
 |---|---|
 | П1 | реестр не читается, нет обязательного поля, повтор `id`, у приложения нет `root` |
 | П2 | иконки нет в `design-system/specs/Icons.md` |
-| П3 | `href` или `root` ведут в никуда, `href` вне `root`; `root` не каталог приложения (папка с `app.json`), трек не из манифеста, группа записи не совпадает с треком |
+| П3 | `href` или `root` ведут в никуда, `href` вне `root`; `root` не каталог приложения (папка с `app.json`), `id` не совпадает с папкой, трек не из манифеста, группа записи не совпадает с треком |
 | П4 | `.html` в `apps/` вне записей реестра; ДС не в реестре |
 | П5 | строка пользователя меню не ведёт на хаб |
-| П6 | экран вне `pages/` приложения или глубже него |
+| П6 | в приложении папка не из формы (`features/`, `components/` …); экран вне `pages/` или глубже него; виджет не в `widgets/<группа>/<Имя>/` или группа не из `appShape.widgetGroups` |
 | П7 | относительная ссылка страницы (href, src, data, `__DS_ROOT`) ведёт в никуда — двойным кликом страница откроется без неё |
+| П8 | приложение лежит не в модуле `<раздел>/<имя>-app/` и не в концепте `<раздел>/drafts/<имя>/` |
 
 Исключение — любые папки `fixtures/`. Вручную, из корня проекта:
 `node .agents/tools/registry-check.mjs`.

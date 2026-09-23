@@ -117,13 +117,27 @@ export function check(root) {
   if (m.agentKit && m.agentKit.adapter !== undefined && !str(m.agentKit.adapter)) defects.push('МФ2 agentKit.adapter — каталог адаптера агентного CLI от корня (строка)');
   onDisk(m.agentKit?.adapter, 'dir', 'agentKit.adapter');
   onDisk(m.docs, 'dir', 'docs');
+  /* scratch — черновые каталоги, которые сторожа не обходят; на диске не
+     обязательны: их периодически чистят целиком. */
+  if (m.scratch !== undefined) {
+    const list = Array.isArray(m.scratch) ? m.scratch : [m.scratch];
+    if (!list.length || !list.every(str)) defects.push('МФ2 scratch — черновой каталог от корня или список таких каталогов (строки)');
+  }
   const stateRel = typeof m.state === 'string' ? m.state : m.state?.dir;
   if (m.state !== undefined && !str(stateRel)) defects.push('МФ2 state — каталог состояния гейта от корня (строка)');
   onDisk(m.hub?.page, 'file', 'hub.page');
   onDisk(m.hub?.registry, 'file', 'hub.registry');
   onDisk(appsDir, 'dir', 'apps.dir');
   if (m.apps && m.apps.manifest !== undefined && !str(m.apps.manifest)) defects.push('МФ2 apps.manifest — имя файла записи приложения (строка)');
-  for (const [k, v] of Object.entries(m.appShape || {})) if (!str(v)) defects.push('МФ2 appShape.' + k + ' — каталог внутри приложения (строка)');
+  for (const [k, v] of Object.entries(m.appShape || {})) {
+    if (k === 'widgetGroups') {
+      if (!Array.isArray(v) || !v.length || !v.every(str)) defects.push('МФ2 appShape.widgetGroups — непустой список групп виджетов (строки)');
+    } else if (!str(v)) defects.push('МФ2 appShape.' + k + ' — каталог внутри приложения (строка)');
+  }
+  if (m.appPlaces !== undefined) {
+    const ap = m.appPlaces;
+    if (!ap || typeof ap !== 'object' || !str(ap.moduleSuffix) || !str(ap.drafts)) defects.push('МФ2 appPlaces — объект: moduleSuffix (окончание папки модуля, «-app») и drafts (папка концептов раздела)');
+  }
   tracks.forEach((t, i) => {
     if (t && t.agentEdit !== undefined && !['allow', 'ask', 'deny'].includes(t.agentEdit)) {
       defects.push('МФ2 tracks[' + i + '].agentEdit — allow | ask | deny: как агент правит приложения трека');

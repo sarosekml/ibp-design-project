@@ -5,7 +5,7 @@
    агентных инструментов в нём быть не должно: ни имён вендоров и моделей,
    ни служебных каталогов, ни абсолютных путей с машины автора. Правило
    существовало текстом и нарушалось трижды (путь к внешнему плану в
-   `apps/postrade/drafts/…/data/`, два URL в скилле композиции) — текст правилом
+   `apps/postrade/deals-app/data/`, два URL в скилле композиции) — текст правилом
    не является, пока его никто не проверяет.
    (Глоб-шаблоны в этой шапке записаны с многоточием: последовательность
    «звёздочка-слэш» закрыла бы блочный комментарий на середине файла.)
@@ -51,6 +51,9 @@
      убрать их значит сломать инструкцию по настройке. Решение владельца
      от 11.09.2026;
    - `node_modules/` — чужой код, репозиторием не авторствуется.
+   - черновые каталоги из манифеста (`scratch`, сейчас `docs/misc`) — рабочие
+     заметки и выгрузки, которые периодически чистятся целиком; решение
+     владельца от 24.09.2026.
 
    Запуск:
      node .agents/tools/vendor-scan.mjs
@@ -110,13 +113,22 @@ const PATTERNS = [
   { re: new RegExp('[A-Za-z]:(?:\\\\{1,2}|/)' + U + '(?:\\\\{1,2}|/)[^\\\\/\\s"\'`]+[\\\\/]', 'i'), what: PATH_WHAT },
 ];
 
-function walk(dir, acc, dotDirs) {
+/* Черновые каталоги из манифеста (`scratch`, решение владельца 24.09.2026):
+   заметки и выгрузки, которые периодически чистятся, — не содержимое
+   репозитория, сторож их не обходит. Пути — от корня обхода. */
+function scratchFor(root) {
+  const p = project(root);
+  return new Set(!p.error && p.root === path.resolve(root) ? p.scratch : []);
+}
+
+function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root)) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (e.name.startsWith('.') && e.isDirectory() && !dotDirs.has(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
-      walk(p, acc, dotDirs);
+      if (scratch.has(path.relative(root, p).split(path.sep).join('/'))) continue;
+      walk(p, acc, dotDirs, root, scratch);
     } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase())) {
       acc.push(p);
     }
@@ -191,6 +203,16 @@ const CASES = [
     mutate: (r) => {
       put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2', adapter: '.cli2' }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
       put(r, '.cli2/agents/role.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'черновой каталог из манифеста не обходится', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, scratch: ['docs/misc'], hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'docs/misc/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  { name: 'рядом с черновым каталогом — обходится', expect: 'docs/misc2/notes.md — ' + PATH_WHAT,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, scratch: ['docs/misc'], hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'docs/misc2/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
     } },
   { name: 'посторонний дот-каталог не обходится', expect: null,
     mutate: (r) => {

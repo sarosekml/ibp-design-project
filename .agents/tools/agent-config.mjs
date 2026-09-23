@@ -287,7 +287,7 @@ function guardedApps(P) {
   if (!P.appsDir) return null;
   const tracks = new Map(P.tracks.map((t) => [t.id, t]));
   const guarded = [];
-  /* Приложение — на любой глубине apps/ (разделы core/, postrade/drafts/ …):
+  /* Приложение — модуль `<раздел>/<имя>-app/` или концепт `<раздел>/drafts/<имя>/`:
      id здесь — путь каталога от apps/, по нему строится правило edit. */
   for (const d of findApps(P.root, P.appsDir, P.appsManifest)) {
     let app;

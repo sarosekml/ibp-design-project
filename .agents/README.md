@@ -51,7 +51,7 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 |---|---|
 | Правила процесса — читаются целиком в начале задачи | `rules/process.md` |
 | Роли: `ai-designer`, `screen-builder`, `screen-reviewer`, `ux-researcher` (выключен) | `agents/` |
-| Команды `/screen`, `/screen-check`, `/concepts`, `/handoff`, `/resume` | `commands/` |
+| Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/handoff`, `/resume` | `commands/` |
 | Скиллы — пошаговые инструкции, грузятся на своём шаге | `skills/<id>/SKILL.md` + `references/` |
 | Оснастка: сенсор, гейт, сторожа, генераторы, фикстуры | `tools/` |
 | Вход для агента | `AGENTS.md` |
@@ -69,7 +69,7 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 | Дизайн-система | `design-system/` (её вход — `design-system/AGENTS.md`) | `apps/ds-config.js` (строка `DS_PATH`, `project.json → designSystem.from`); экраны — через загрузчик |
 | Харнес агента | `.agents/` | `project.json → agentKit.mount`, оснастка — `agentKit.tools` |
 | Адаптер opencode | `.opencode/opencode.json` — **один файл**: пути до харнеса, режимы и права ролей | `project.json → agentKit.adapter` |
-| Приложения | `apps/…/<id>/` — папка с `app.json` на любой глубине (разделы `core/`, `ib/`, `pretrade/` …; концепты — в `<раздел>/drafts/`); (трек и запись хаба), экраны в `pages/`, `components/`, `data/`, `refs/` | `project.json → apps`, форма — `appShape` |
+| Приложения | модуль `apps/<раздел>/<имя>-app/` или концепт `apps/<раздел>/drafts/<имя>/` — `app.json` (трек и запись хаба), экраны в `pages/`, блоки в `widgets/<группа>/`, `data/`, `refs/` | `project.json → apps`, форма — `appShape`, места — `appPlaces` |
 | Загрузчик ДС | `apps/ds-config.js` + `apps/ds-body.js` — **строка `DS_PATH` — единственное место, где записан путь до ДС**; остальное генерируется | `project.json → boot` (см. `apps/README.md`) |
 | Реестр хаба | `hub.js` — генерируется из `app.json`; страница хаба `index.html` не правится | `project.json → hub` |
 | Состояние проверок | `.agent-state/` — журнал прогонов и снимок гейта, вне git | `project.json → state` (см. `.agent-state/README.md`) |
@@ -114,7 +114,7 @@ flowchart TB
     subgraph TOOLS["Запуск через bash: в контекст идёт только вывод"]
         T["tools/*.mjs<br/>строка ВЕРДИКТ:"]
     end
-    CMD["commands/*.md<br/>/screen /concepts /screen-check<br/>/handoff /resume"]
+    CMD["commands/*.md<br/>/screen /concepts /screen-check<br/>/promote /handoff /resume"]
 
     CFG --> RULES
     CFG --> DSR
@@ -174,6 +174,7 @@ opencode
 | Посчитать смету захода | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --stage build --tz <ТЗ> --cheat Table,Modal --out-lines 900` |
 | Посмотреть состав этапов | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --stages` |
 | Сверить смету с фактом | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --calibrate --stage build --fact <токенов>` + аргументы сметы |
+| Перенести согласованный концепт в модуль | `/promote apps/postrade/drafts/<имя> apps/postrade/deals-app` |
 | Сохранить контекст / продолжить в новой сессии | `/handoff` · `/resume DealRegistry` |
 | Закрыть заход | `node .agents/tools/lessons-cli.mjs gate` — строка `ВЕРДИКТ:` |
 | Просто спросить | словами: «есть ли в ДС компонент для…», «чем Chip отличается от Badge» |
@@ -246,6 +247,7 @@ flowchart TD
 | шкала концептов A/B/C и пометка `[ПРЕДЛОЖЕНИЕ]` | скилл `concept-design` |
 | раскатка страниц документации ДС | скилл `docs-split` |
 | перенос задачи между сессиями | `commands/handoff.md`, `commands/resume.md` |
+| перенос концепта из `drafts/` в модуль раздела | `commands/promote.md`, `tools/promote.mjs` |
 | этапы короткого и длинного маршрута | `ctx-budget.mjs --stages` (паспорт `stages.json`) |
 | порядок скиллов внутри сборки и решение вопросов вёрстки | `agents/screen-builder.md` |
 
@@ -363,6 +365,9 @@ node .agents/tools/lessons-cli.mjs gate
 | `tools/manifest-check.mjs` | `project.json` против диска (коды МФ) |
 | `tools/boot-build.mjs --check` | загрузчик ДС собран из манифеста и не правлен руками (БТ) |
 | `tools/hub-build.mjs --check` | реестр хаба собран из `app.json` (ХБ) |
+| `tools/assemble.mjs --check` | модульные страницы: собранный `*.preview.html` не устарел, метки ведут в `widgets/` своего раздела, модуль не берёт виджеты из `drafts/` (СБ) |
+| `tools/module-readme.mjs --check` | у каждого модуля `<имя>-app` есть README.md, дерево в нём сходится с папкой (МР) |
+| `tools/promote.mjs --selftest` | перенос концепта в модуль (ПР); на рабочем дереве инструмент пишет — гейт гоняет только откат |
 | `tools/registry-check.mjs` | приложения и хаб: записи, форма приложения, живые ссылки страниц, возврат на хаб (П) |
 | `tools/agent-config.mjs` | адаптер CLI: один конфиг, без модели, записи сходятся с харнесом, пути живые, продуктовые приложения закрыты (КФ) |
 | `tools/vendor-scan.mjs` | нейтральность репозитория: абсолютные пути с машины автора, имена посторонних инструментов |
@@ -571,7 +576,7 @@ API — частый случай) описывается там же блоко
 | Вид файла `kind: document` | лист-документ без каркаса приложения: Б5 и К12 не применяются, Б6 — ровно один h1 | `layout-check.mjs` (`kindOf`), скилл `screen-spec` |
 | Журнал прогонов и снимок гейта | каталог состояния `.agent-state/` вне git | `.agent-state/README.md`, шапка `runlog.mjs` |
 | Адаптер CLI | один файл `opencode.json`; записи сходятся с харнесом (КФ5), пути живые (КФ6), продуктовые приложения закрыты (КФ7) | `agent-config.mjs` |
-| Приложения и хаб | трек — поле `app.json`; экраны прямо в `pages/` (П6), ссылки страниц живые (П7); `hub.js` собирается из `app.json` | `registry-check.mjs`, `hub-build.mjs` |
+| Приложения и хаб | модуль `<раздел>/<имя>-app/` или концепт `<раздел>/drafts/<имя>/` (П8); форма — `pages/`, `widgets/<группа>/`, `data/`, `refs/` (П6); ссылки страниц живые (П7); `hub.js` собирается из `app.json`; README модуля с деревом (МР); виджеты общие в пределах раздела (СБ) | `registry-check.mjs`, `hub-build.mjs`, `module-readme.mjs`, `assemble.mjs` |
 | Путь до ДС | только строка `DS_PATH` в `apps/ds-config.js`; литерал каталога ДС в экране — блокер Б34 | `apps/README.md`, `boot-build.mjs`, `layout-check.mjs` |
 
 Что осталось по реструктуризации: разводка трёх каталогов по отдельным
@@ -591,8 +596,9 @@ API — частый случай) описывается там же блоко
 | Структура проекта и её сверка с диском | `project.json`; `manifest-check.mjs` |
 | Загрузчик ДС, реестр хаба | `apps/README.md`, `boot-build.mjs`, `hub-build.mjs` — оба с `--check` |
 | Приложения, их форма и возврат на хаб | `apps/README.md`, `registry-check.mjs` |
+| Модульные страницы, README модулей, перенос концепта | `assemble.mjs`, `module-readme.mjs`, `promote.mjs` (шапки), `commands/promote.md` |
 | Самообучение: формат урока, уровни закрепления, доказательство откатом, курация | скилл `lessons` — единственный владелец процедуры |
 | Состояние журнала уроков, долг курации, давность ритуальных прогонов | `lessons-cli.mjs state` |
 | Что случилось после закрепления (регресс, живые и исчезнувшие коды) | `lessons-cli.mjs stats` |
 | Сквозные принципы: чтение ДС, запреты, не выдумывать неизвестное, вердикт строкой, граница статики, экономия контекста | `rules/process.md` §3, §4, §7, §8, §9, §13; границы записи — §4–§5 и `agents/ai-designer.md` («Границы») |
-| Формат спеки экрана и выходные артефакты | скилл `screen-spec` + `references/template.md`; handoff — `commands/handoff.md` |
+| Формат спек (страница и виджет), демо-данные с типами и выходные артефакты | скилл `screen-spec` + `references/template.md`, `references/widget-template.md`, `references/data-template.js`; handoff — `commands/handoff.md` |

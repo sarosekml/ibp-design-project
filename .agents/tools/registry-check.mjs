@@ -27,7 +27,7 @@
         уникальны, group из списка, у записей треков есть root;
      П2 иконка записи есть в <ДС>/specs/Icons.md;
      П3 файл по href существует, папка root существует, href лежит в root;
-        root — каталог приложения (`apps/<id>`) с записью `app.json`: она
+        root — каталог приложения (папка с записью `app.json`): она
         читается, `track` — из треков манифеста, группа записи — группа
         этого трека (концепт не зарегистрировать проектом и наоборот), `id`,
         если задан, совпадает с каталогом. В манифесте прежней формы — root
@@ -40,15 +40,17 @@
         хаб — в файле есть литерал относительного пути до корневого
         index.html, нет статического nav__user с href="#", а каждый вызов
         footerHTML(…) заканчивается подменой .replace(…);
-     П6 форма приложения: .html приложения лежат только в `pages/` — прямо в
-        нём, все экраны на одной глубине — или в `components/` на любой
-        глубине (фрагменты модульных экранов); исключение — папки fixtures.
-
-   Папки `drafts/` модулей (с 23.09.2026) — ресерч, структура внутри
-   свободная: П4 (страница вне записи хаба), П6 (форма приложения) и сверка
-   id с именем папки там не действуют; приложение может лежать прямо в
-   `drafts/` или внутри другого. Ссылки (П7) и возврат на хаб (П5)
-   проверяются и там — страницы обязаны работать;
+     П6 форма приложения (`appShape` манифеста, с 23.09.2026): в приложении
+        только папки pages/, widgets/, data/, refs/ — features/ и
+        components/ фронтенда у нас не заводятся, всё это widgets/; .html
+        лежат прямо в `pages/` (все экраны на одной глубине) или в
+        `widgets/<группа>/<Имя>/` (фрагменты: тайлы, таблицы, модалки,
+        контекстные меню, поповеры), группа — из `appShape.widgetGroups`;
+        исключение — папки fixtures;
+     П8 место приложения (`appPlaces` манифеста, с 23.09.2026): модуль
+        раздела — `<раздел>/<имя>-app/`, концепт — `<раздел>/drafts/<имя>/`;
+        внутри концепта та же форма, что у модуля, — так согласованный
+        концепт переезжает в модуль без перекладки;
      П7 ссылки страниц приложений и хаба живые: каждый относительный путь в
         href, src, data и `__DS_ROOT` (вне комментариев, без склейки в
         скрипте) ведёт к существующему файлу — так страница откроется двойным
@@ -75,7 +77,7 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project, findApps, inDrafts } from './project.mjs';
+import { project, findApps } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FIELDS = ['id', 'group', 'title', 'desc', 'href', 'icon'];
@@ -136,7 +138,7 @@ export function check(from = HERE) {
   const APPS = P.appsDir ? path.join(repo, P.appsDir) : null;
   const trackById = new Map(P.tracks.map((t) => [t.id, t]));
   /* Приложения — каталоги с app.json на любой глубине apps/ (с 23.09.2026:
-     разделы core/, ib/drafts/, postrade/drafts/ … — просто папки). */
+     модули `<раздел>/<имя>-app/` и концепты `<раздел>/drafts/<имя>/`, П8). */
   const appDirs = APPS ? findApps(repo, P.appsDir, P.appsManifest).map((a) => a.abs) : [];
   const relOf = (abs) => slash(path.relative(repo, abs));
   stats.areas = AREAS;
@@ -203,7 +205,7 @@ export function check(from = HERE) {
     else if (t.hubGroup !== e.group) {
       defects.push('П3 ' + name + ' — group «' + e.group + '» не совпадает с треком приложения «' + t.id + '» (ожидается group \'' + t.hubGroup + '\')');
     }
-    if (app.id !== undefined && !inDrafts(relOf(rootAbs)) && app.id !== path.basename(rootAbs)) {
+    if (app.id !== undefined && app.id !== path.basename(rootAbs)) {
       defects.push('П3 ' + name + ' — id «' + app.id + '» в ' + relOf(mf) + ' не совпадает с каталогом приложения «' + path.basename(rootAbs) + '»');
     }
     /* С Ш9 запись хаба живёт в app.json, а hub.js собирается из неё
@@ -224,23 +226,46 @@ export function check(from = HERE) {
       const rel = slash(path.relative(repo, f));
       if (inFixtures(rel)) continue;
       stats.pages++;
-      if (inDrafts(rel)) continue;       // drafts/ — ресерч, структура свободная: страница может жить вне записи хаба
       if (roots.some((r) => inside(f, r))) continue;
       defects.push('П4 ' + rel + ' — страница вне записей реестра: ' + (APPS
         ? 'завести ' + P.appsDir + '/…/<id>/' + P.appsManifest + ' приложения и пересобрать ' + REGISTRY + ' (hub-build.mjs)'
         : 'добавить запись в ' + REGISTRY + ' (root — папка проекта или концепта)'));
     }
   }
-  /* П6 форма приложения */
+  /* П6 форма приложения и П8 его место (23.09.2026) */
   if (APPS && existsSync(APPS)) {
     const S = P.appShape;
+    const FOLDERS = [S.pages, S.widgets, S.data, S.refs, S.tools].filter(Boolean);
+    const FRONT = /^(features|components|entities|shared|modals|tiles|tables)$/;
     for (const appAbs of appDirs) {
-      if (inDrafts(relOf(appAbs))) continue;   // drafts/ — структура свободная (ресерч)
+      const appRel = relOf(appAbs);
+      if (P.places) {
+        const at = slash(path.relative(APPS, appAbs)).split('/');
+        const isModule = at.length === 2 && at[0] !== P.places.drafts && at[1] !== P.places.drafts && at[1].endsWith(P.places.moduleSuffix);
+        const isConcept = at.length === 3 && at[1] === P.places.drafts;
+        if (!isModule && !isConcept) {
+          defects.push('П8 ' + appRel + ' — приложению здесь не место: модуль раздела — ' + P.appsDir + '/<раздел>/<имя>' + P.places.moduleSuffix
+            + '/, концепт — ' + P.appsDir + '/<раздел>/' + P.places.drafts + '/<имя>/');
+        }
+      }
+      for (const d of readdirSync(appAbs, { withFileTypes: true })) {
+        if (!d.isDirectory() || d.name.startsWith('.') || d.name === 'fixtures' || FOLDERS.includes(d.name)) continue;
+        defects.push('П6 ' + appRel + '/' + d.name + '/ — такой папки в форме приложения нет (' + FOLDERS.map((x) => x + '/').join(' ') + ')'
+          + (FRONT.test(d.name) ? ': модалки, тайлы, таблицы, контекстные меню и поповеры — только в ' + S.widgets + '/<группа>/<Имя>/' : ''));
+      }
       for (const f of walk(appAbs)) {
         if (!f.endsWith('.html') || inFixtures(relOf(f))) continue;
         const parts = slash(path.relative(appAbs, f)).split('/');
-        if ((parts.length === 2 && parts[0] === S.pages) || parts[0] === S.components) continue;
-        defects.push('П6 ' + relOf(f) + ' — страница вне ' + S.pages + '/ приложения: экраны лежат прямо в ' + P.appsDir + '/…/<id>/' + S.pages + '/ на одной глубине, фрагменты — в ' + S.components + '/');
+        if (parts.length === 2 && parts[0] === S.pages) continue;
+        if (parts.length > 1 && !FOLDERS.includes(parts[0])) continue;      // папка уже названа выше
+        if (parts[0] === S.widgets) {
+          if (parts.length < 4) defects.push('П6 ' + relOf(f) + ' — виджет лежит в своей папке внутри группы: ' + S.widgets + '/<группа>/<Имя>/<Имя>.html');
+          else if (S.widgetGroups && !S.widgetGroups.includes(parts[1])) {
+            defects.push('П6 ' + relOf(f) + ' — группы виджетов «' + parts[1] + '» нет в project.json → appShape.widgetGroups (' + S.widgetGroups.join(', ') + ')');
+          }
+          continue;
+        }
+        defects.push('П6 ' + relOf(f) + ' — страница вне ' + S.pages + '/ приложения: экраны лежат прямо в ' + S.pages + '/ на одной глубине, фрагменты — в ' + S.widgets + '/<группа>/<Имя>/');
       }
     }
   }
@@ -353,7 +378,7 @@ function cleanTree(root) {
     '<script>var USER_LINK_TO = \' href="../../../index.html"\';\n'
     + 'var s = window.IBPHome.footerHTML(role, { logoutModal: \'m\' }).replace(\' href="#"\', USER_LINK_TO);</script>');
   put(root, 'apps/alpha/pages/NoNav.html', '<p>экран без меню</p>');
-  put(root, 'apps/alpha/components/Tile/Tile.html', '<section class="tile">фрагмент</section>');
+  put(root, 'apps/alpha/widgets/tiles/Tile/Tile.html', '<section class="tile">фрагмент</section>');
   put(root, 'apps/gamma/app.json', appJson('gamma', 'rnd', 'pages/Gamma.html'));
   put(root, 'apps/gamma/pages/Gamma.html',
     '<div class="nav__footer"><a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">Г</a></div>');
@@ -420,12 +445,19 @@ const CASES = [
     mutate: (r) => nestedApp(r, '../../../index.html') },
   { name: 'root — раздел, а не приложение', expect: 'П3 запись 4 «delta» — root «apps/postrade» не каталог приложения',
     mutate: (r) => { nestedApp(r, '../../../../../index.html'); put(r, 'hub.js', registryJs([...CLEAN_ENTRIES, { ...DELTA, root: 'apps/postrade' }])); } },
-  { name: 'drafts: свободная структура — страница вне записи, экран вне pages/, id ≠ папка', expect: null,
-    mutate: (r) => { put(r, 'apps/ib/drafts/notes/Loose.html', '<p>ресерч</p>'); put(r, 'apps/ib/drafts/post/app.json', appJson('delta', 'rnd', 'Screen.html'));
-      put(r, 'apps/ib/drafts/post/Screen.html', '<p>экран вне pages</p>');
-      put(r, 'hub.js', registryJs([...CLEAN_ENTRIES, { ...DELTA, href: 'apps/ib/drafts/post/Screen.html', root: 'apps/ib/drafts/post' }])); } },
-  { name: 'drafts: битая ссылка ловится и там', expect: 'П7 apps/ib/drafts/notes/Loose.html — битая ссылка',
-    mutate: (r) => put(r, 'apps/ib/drafts/notes/Loose.html', '<a href="../missing.html">нет</a>') },
+  /* Форма и место приложения по манифесту с appShape и appPlaces. */
+  { name: 'места: модуль раздела и концепт в drafts', expect: null,
+    mutate: (r) => placedTree(r) },
+  { name: 'приложение ни в модуле, ни в drafts', expect: 'П8 apps/core/misc — приложению здесь не место',
+    mutate: (r) => { placedTree(r); moveApp(r, 'apps/core/clients-app', 'apps/core/misc', 'misc'); } },
+  { name: 'концепт глубже drafts/<имя>/', expect: 'П8 apps/core/drafts/x/gamma',
+    mutate: (r) => { placedTree(r); moveApp(r, 'apps/core/drafts/gamma', 'apps/core/drafts/x/gamma', 'gamma'); } },
+  { name: 'папка features/ в приложении', expect: 'П6 apps/core/clients-app/features/ — такой папки в форме приложения нет',
+    mutate: (r) => { placedTree(r); put(r, 'apps/core/clients-app/features/ControlClientModal/ControlClientModal.html', '<div class="modal">фрагмент</div>'); } },
+  { name: 'группа виджетов не из списка', expect: 'группы виджетов «cards» нет',
+    mutate: (r) => { placedTree(r); put(r, 'apps/core/clients-app/widgets/cards/ClientCard/ClientCard.html', '<div>фрагмент</div>'); } },
+  { name: 'виджет без своей папки', expect: 'виджет лежит в своей папке внутри группы',
+    mutate: (r) => { placedTree(r); put(r, 'apps/core/drafts/gamma/widgets/modals/TeamModal.html', '<div>фрагмент</div>'); } },
   { name: 'экран в разделе вне приложения', expect: 'П4 apps/core/Loose.html',
     mutate: (r) => put(r, 'apps/core/Loose.html', '<p>экран без приложения</p>') },
   { name: 'реестр не выполняется', expect: 'не выполняется',
@@ -444,6 +476,38 @@ const CASES = [
   { name: 'манифеста нет', expect: 'П1 project.json не найден',
     mutate: (r) => rmSync(path.join(r, 'project.json')) },
 ];
+
+/* Дерево в форме 23.09.2026: манифест задаёт форму и места, модуль
+   core/clients-app (product) и концепт core/drafts/gamma (rnd). */
+const PLACED_ENTRIES = [
+  CLEAN_ENTRIES[0],
+  { id: 'clients-app', group: 'projects', title: 'Клиенты', desc: 'тест', href: 'apps/core/clients-app/pages/Clients.html', root: 'apps/core/clients-app', icon: 'folder' },
+  { id: 'gamma', group: 'concepts', title: 'Гамма', desc: 'тест', href: 'apps/core/drafts/gamma/pages/Gamma.html', root: 'apps/core/drafts/gamma', icon: 'folder' },
+];
+function placedTree(root) {
+  put(root, 'project.json', JSON.stringify({ ...MANIFEST,
+    appShape: { pages: 'pages', widgets: 'widgets', data: 'data', refs: 'refs', widgetGroups: ['tiles', 'tables', 'modals'] },
+    appPlaces: { moduleSuffix: '-app', drafts: 'drafts' } }, null, 2));
+  rmSync(path.join(root, 'apps/alpha'), { recursive: true, force: true });
+  rmSync(path.join(root, 'apps/gamma'), { recursive: true, force: true });
+  put(root, 'apps/core/clients-app/app.json', appJson('clients-app', 'product', 'pages/Clients.html'));
+  put(root, 'apps/core/clients-app/pages/Clients.html',
+    '<div class="nav__footer"><a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">К</a></div>');
+  put(root, 'apps/core/clients-app/widgets/modals/ControlClientModal/ControlClientModal.html', '<div class="modal">фрагмент</div>');
+  put(root, 'apps/core/drafts/gamma/app.json', appJson('gamma', 'rnd', 'pages/Gamma.html'));
+  put(root, 'apps/core/drafts/gamma/pages/Gamma.html',
+    '<div class="nav__footer"><a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">Г</a></div>');
+  put(root, 'hub.js', registryJs(PLACED_ENTRIES));
+}
+/* Перенос приложения со сменой записи реестра (id — имя новой папки). */
+function moveApp(root, from, to, id) {
+  mkdirSync(path.dirname(path.join(root, to)), { recursive: true });
+  renameSync(path.join(root, from), path.join(root, to));
+  const mf = path.join(root, to, 'app.json');
+  writeFileSync(mf, JSON.stringify({ ...JSON.parse(readFileSync(mf, 'utf8')), id }, null, 2), 'utf8');
+  const list = PLACED_ENTRIES.map((e) => (e.root === from ? { ...e, id, root: to, href: e.href.replace(from, to) } : e));
+  put(root, 'hub.js', registryJs(list));
+}
 
 const DELTA = { id: 'delta', group: 'concepts', title: 'Дельта', desc: 'тест', href: 'apps/postrade/drafts/delta/pages/Delta.html', root: 'apps/postrade/drafts/delta', icon: 'folder' };
 function nestedApp(root, hubLink) {

@@ -5,7 +5,8 @@
    Зачем (реструктуризация, шаг Ш9). До генератора новое приложение
    регистрировалось правкой общего файла в корне, а забывчивость сторожил
    отдельный валидатор. Теперь запись принадлежит приложению: `apps/…/<id>/app.json`
-   (каталог приложения — на любой глубине apps/, с 23.09.2026)
+   (каталог приложения — модуль `<раздел>/<имя>-app/` или концепт
+   `<раздел>/drafts/<имя>/`, с 23.09.2026; места сторожит registry-check, П8)
    (id, track, title, desc, home, icon), а `hub.js` собирается отсюда. Запись
    дизайн-системы — `project.json → hub.ds`, её href — `<ДС>/index.html`.
    Сторожу хаба остаётся проверить, что генератор отработал, и что экраны
@@ -38,7 +39,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-import { project, need, findApps, inDrafts } from './project.mjs';
+import { project, need, findApps } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'hub-build.mjs';
@@ -64,7 +65,7 @@ export function collect(P) {
   const tracks = P.tracks.filter((t) => t.id && t.hubGroup);
   const byTrack = new Map(tracks.map((t) => [t.id, []]));
   /* Приложение — каталог с app.json на любой глубине apps/: разделы
-     (core/, ib/drafts/, postrade/drafts/ …) — просто папки. */
+     (модули `<раздел>/<имя>-app/`, концепты `<раздел>/drafts/<имя>/`). */
   for (const { dir } of findApps(P.root, P.appsDir, P.appsManifest)) {
     const rel = P.appsDir + '/' + dir + '/' + P.appsManifest;
     const file = path.join(P.root, rel);
@@ -72,8 +73,7 @@ export function collect(P) {
     try { app = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { defects.push('ХБ4 ' + rel + ' не читается как JSON: ' + e.message); continue; }
     const miss = APP_FIELDS.filter((k) => typeof app[k] !== 'string' || !app[k].trim());
     if (miss.length) { defects.push('ХБ4 ' + rel + ' — нет полей записи: ' + miss.join(', ')); continue; }
-    /* В drafts/ структура свободная: id не обязан совпадать с папкой (повтор id ловит registry-check, П1). */
-    if (!inDrafts(dir) && app.id !== path.posix.basename(dir)) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + path.posix.basename(dir) + '»'); continue; }
+    if (app.id !== path.posix.basename(dir)) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + path.posix.basename(dir) + '»'); continue; }
     if (!byTrack.has(app.track)) { defects.push('ХБ4 ' + rel + ' — track «' + app.track + '» не из треков манифеста: ' + [...byTrack.keys()].join(', ')); continue; }
     byTrack.get(app.track).push({ ...app, dir });
   }
@@ -179,9 +179,9 @@ const CASES = [
       if (!readFileSync(path.join(r, 'hub.js'), 'utf8').includes("root: 'apps/postrade/drafts/delta'")) put(r, 'hub.js', 'сломан'); } },
   { name: 'id вложенного приложения не совпадает с каталогом', expect: 'ХБ4 apps/ib/eps/app.json — id «epsilon»',
     mutate: (r) => put(r, 'apps/ib/eps/app.json', app('epsilon', 'rnd')) },
-  { name: 'drafts: id не совпадает с папкой — допустимо', expect: null, build: true,
-    mutate: (r) => { put(r, 'apps/postrade/drafts/app.json', app('post', 'rnd')); put(r, 'apps/postrade/drafts/lab/x/app.json', app('lab', 'rnd')); check(project(r), true);
-      const h = readFileSync(path.join(r, 'hub.js'), 'utf8'); if (!h.includes("root: 'apps/postrade/drafts'") || !h.includes("root: 'apps/postrade/drafts/lab/x'")) put(r, 'hub.js', 'сломан'); } },
+  { name: 'модуль раздела и концепт в drafts', expect: null, build: true,
+    mutate: (r) => { put(r, 'apps/core/clients-app/app.json', app('clients-app', 'product')); put(r, 'apps/core/drafts/lab/app.json', app('lab', 'rnd')); check(project(r), true);
+      const h = readFileSync(path.join(r, 'hub.js'), 'utf8'); if (!h.includes("root: 'apps/core/clients-app'") || !h.includes("root: 'apps/core/drafts/lab'")) put(r, 'hub.js', 'сломан'); } },
   { name: 'манифест без каталога приложений', expect: 'ХБ1',
     mutate: (r) => { const { apps, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
 ];

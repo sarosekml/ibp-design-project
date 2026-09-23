@@ -35,12 +35,12 @@ window.IBPHub = [
     icon: 'layer-01'
   },
   {
-    id: 'post',
+    id: 'deals-app',
     group: 'projects',
     title: 'Post — ДИД',
     desc: 'Финансист ДИД: главная, текущий портфель, страница сделки',
-    href: 'apps/postrade/drafts/pages/MainPage.html',
-    root: 'apps/postrade/drafts',
+    href: 'apps/postrade/deals-app/pages/MainPage.html',
+    root: 'apps/postrade/deals-app',
     icon: 'folder'
   },
   {

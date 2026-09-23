@@ -28,9 +28,14 @@
 
   "state": ".agent-state",
   "docs": "docs",
+  "scratch": ["docs/misc"],
 
   "apps": { "dir": "apps", "manifest": "app.json" },
-  "appShape": { "pages": "pages", "components": "components", "data": "data", "refs": "refs" },
+  "appShape": {
+    "pages": "pages", "widgets": "widgets", "data": "data", "refs": "refs",
+    "widgetGroups": ["tiles", "tables", "modals", "context-menus", "popovers"]
+  },
+  "appPlaces": { "moduleSuffix": "-app", "drafts": "drafts" },
 
   "tracks": [
     { "id": "product", "title": "Проекты", "hubGroup": "projects", "custom": "forbidden", "agentEdit": "ask",
