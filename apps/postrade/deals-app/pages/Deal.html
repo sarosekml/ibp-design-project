@@ -57,6 +57,18 @@
      пороги по ширине РАБОЧЕЙ ОБЛАСТИ (контейнер screen из Layout): закрепление
      боковой панели сужает контент, не меняя окна. Сами пороги — выбор этого
      экрана, а не правило ДС: общих брейкпоинтов в ДС нет, порог задаёт экран. */
+  /* ---------- Минимальная высота тайла ----------
+     200px — решение человека 21.09.2026 (закрыт вопрос «H min со схемы
+     раскладки» в паспортах тайлов). Задаёт страница: это параметр раскладки,
+     а не компонента. Минимум — вид по умолчанию для всех тайлов, в том числе
+     заглушек (решение человека 22.09.2026): ряд выше только тогда, когда
+     содержимое наполненного тайла больше, и соседи по ряду тянутся за ним
+     сами (Tile). Поэтому тайл без состава полей — строка по центру, а не
+     EmptyState: его иллюстрация и отступы давали ≈324px и тянули весь ряд.
+     Карточки окна КНР (Card — тоже .tile) стоят вне .screen__content и правило
+     не получают. */
+  .screen__content .tile { min-height: 200px; }
+
   @container screen (max-width: 1560px) {
     .gen__body { flex-direction: column; }
     .gen__side { flex: 0 0 auto; }
@@ -127,9 +139,9 @@
           <div class="gen__main tile-group">
 
             <div class="tile-row">
-              <ds-include src="../widgets/tiles/KNRTile/KNRTile.html" class="col-3 colw-6"></ds-include>
-              <ds-include src="../widgets/tiles/DealPeriodTile/DealPeriodTile.html" class="col-3 colw-6"></ds-include>
-              <ds-include src="../widgets/tiles/DealTeamTile/DealTeamTile.html" class="col-6 colw-12"></ds-include>
+              <ds-include src="../widgets/tiles/KNRTile/KNRTile.html" class="col-3 colw-6" id="tile-knr" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealPeriodTile/DealPeriodTile.html" class="col-3 colw-6" id="tile-deal-terms" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealTeamTile/DealTeamTile.html" class="col-6 colw-12" id="tile-deal-team" state="loading" mode="edit"></ds-include>
             </div>
 
             <div class="tile-row">
@@ -137,10 +149,12 @@
               <ds-include src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html" class="col-6 colw-12"></ds-include>
             </div>
 
-            <!-- Третий ряд опционален: показывается только у сделок, где есть
-                 сведения о проекте. Условие не согласовано (Deal.screen.md, §6),
-                 в макете ряд показан. -->
-            <div class="tile-row">
+            <!-- Третий ряд опционален: сведения о проекте есть у сделок деска
+                 «Недвижимость» — это проекты недвижимости (заказчик
+                 23.09.2026). Деск лежит в команде сделки, поэтому ряд
+                 показывает или прячет страница (fillTeam), а не сам тайл:
+                 модули друг друга не знают. -->
+            <div class="tile-row" id="row-project-info">
               <ds-include src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.html" class="col-12"></ds-include>
             </div>
 
@@ -209,13 +223,48 @@
   </div>
 </div>
 
+<!-- Модальные окна тайла «КНР». Скримы живут в конце body, а не внутри тайла:
+     вложенный в скрытый родитель скрим не показать. Окно подтверждения —
+     отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
+<ds-include src="../widgets/modals/KNRModal/KNRModal.html"></ds-include>
+<ds-include src="../widgets/modals/KNRModal/KNRConfirmModal.html"></ds-include>
+<!-- Шаблон карточки контрагента для окна «КНР»: подчасть окна, лежит в его
+     папке. Вшивается отдельной меткой — сборщик не раскрывает метки внутри
+     фрагмента. -->
+<ds-include src="../widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.html"></ds-include>
+<!-- Окно правки тайла «Сроки сделки» — тоже в конце body, по той же причине. -->
+<ds-include src="../widgets/modals/DealPeriodModal/DealPeriodModal.html"></ds-include>
+<!-- Окно тайла «Команда сделки»: правка и просмотр — один скрим, режим ему
+     ставит скрипт окна по режиму тайла, который его открыл. -->
+<ds-include src="../widgets/modals/DealTeamModal/DealTeamModal.html"></ds-include>
+
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
+<!-- справочник сотрудников для списков окна «Команда сделки»: сами назначения
+     лежат в записи сделки, здесь только кандидаты -->
+<script src="../data/mock-team.js"></script>
+<!-- контрагенты сделки: база, адаптер хранения и стор — до рантаймов, как у
+     сделок. Стор подключается после deals-store.js: он переносит сохранённые
+     КНР в DealsStore. Хранение — data/API.md -->
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
+     автопривязки wireAll на DOMContentLoaded.
+     Рендер карточки — до модалки: она им рисует свои колонки. -->
+<script src="../widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/KNRModal/KNRModal.js"></script>
+<script src="../widgets/tiles/KNRTile/KNRTile.js"></script>
+<script src="../widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
-   меню по каталогу ролей, данные сделки, переключение панелей табов и
-   сворачивание секции (компонента «заголовок-аккордеон» в ДС нет).
+   меню по каталогу ролей, данные сделки (шапка, тайлы «КНР» и «Сроки сделки»), переключение
+   панелей табов и сворачивание секции (компонента «заголовок-аккордеон» в ДС
+   нет).
    Скрипт синхронный и стоит после ds.js — поэтому его DSTabs.tabs(...) успевает
    раньше автопривязки wireAll (она на DOMContentLoaded), и onChange не теряется. */
 (function () {
@@ -329,6 +378,105 @@
     document.getElementById('deal-crumb').textContent = num;
     document.title = num + ' — IBP';
     fillChips(deal);
+    applyMode(deal);
+    fillKnr(deal);
+    fillTerms(deal);
+    fillTeam(deal);
+  }
+
+  /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
+     допускает правку сущностей (DealsStore.isEditable), вся страница — только
+     просмотр, какой бы ни была роль. Режим — входной атрибут компонента
+     (data-mode): его ставит страница, а свой вид в просмотре каждый компонент
+     держит сам (действия правки не рисуются). Окно КНР — такой же компонент.
+     Статус правку не закрыл — режимы остаются теми, что пришли с фрагментами.
+     Кнопка переименования — разметка самого экрана, её прячет экран. */
+  function applyMode(deal) {
+    if (window.DealsStore.isEditable(deal)) return;
+    document.querySelectorAll('.screen__content .tile[data-mode], .lc-knrm[data-mode]').forEach(function (el) {
+      el.setAttribute('data-mode', 'view');
+    });
+    var rename = document.querySelector('.phead__edit');
+    if (rename) rename.hidden = true;
+  }
+
+  /* Тайл «КНР» — КНР этой сделки из CounterpartiesStore. Пока состав
+     грузится (сервер данных или localStorage, см. data/API.md), тайл стоит в
+     loading. После «Сохранить» в окне КНР тайл перерисовывается сразу —
+     таблица портфеля увидит то же при следующем открытии. */
+  function fillKnr(deal) {
+    var store = window.CounterpartiesStore;
+    var tile = document.getElementById('tile-knr');
+    if (!store || !tile || !window.PostTileKNR) return;
+    function paint() { window.PostTileKNR.render(tile, store.knr()); }
+    store.use(deal.id).then(paint);
+    store.on('commit', paint);
+  }
+
+  /* Тайл «Сроки сделки» — даты этой сделки из DealsStore (signDate, endDate,
+     firstDisb). Окно правки модули друг друга не знают — связывает их здесь
+     страница: окно берёт даты сделки при открытии и отдаёт проверенную дату
+     первой выдачи, страница пишет её в стор, тайл перерисовывается по событию
+     стора. Хранение — в памяти вкладки, как у всего DealsStore. */
+  function fillTerms(deal) {
+    var tile = document.getElementById('tile-deal-terms');
+    if (!tile || !window.PostTileDealTerms) return;
+    window.PostTileDealTerms.render(tile, deal);
+    if (window.PostDealTermsModal) {
+      window.PostDealTermsModal.bind(document.getElementById('deal-terms-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (value) { window.DealsStore.update(deal.id, { firstDisb: value }); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) window.PostTileDealTerms.render(tile, d.deal);
+    });
+  }
+
+  /* Тайл «Команда сделки» — деск и роли этой сделки из DealsStore. Тайл
+     показывает шесть ролей из тринадцати, остальные — в окне; оно же правит
+     состав. Как и со сроками, модули друг друга не знают: окно берёт команду
+     при открытии и отдаёт правку сюда, страница пишет её в стор, тайл
+     перерисовывается по событию стора.
+
+     Признак ограниченного доступа меняет только руководитель ЦУП (заказчик
+     23.09.2026). Такой роли в каталоге ролей пока нет — в IBPHome объявлена
+     одна, «Финансист ДИД», — поэтому право сейчас всегда закрыто и чекбокс в
+     окне выключен. Появится роль — условие ниже заработает само; заводить её
+     в ДС ради этого тайла не стали.
+
+     Деск управляет третьим рядом страницы: сведения о проекте есть у сделок
+     деска «Недвижимость». Решает это страница, а не тайлы — «Команда сделки»
+     про «Сведения о проекте» ничего не знает. */
+  function fillTeam(deal) {
+    var tile = document.getElementById('tile-deal-team');
+    if (!tile || !window.PostTileDealTeam) return;
+
+    function paint(d) {
+      window.PostTileDealTeam.render(tile, d);
+      applyProjectInfo(d);
+    }
+    paint(deal);
+
+    if (window.PostDealTeamModal) {
+      window.PostDealTeamModal.bind(document.getElementById('deal-team-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); },
+        canEditRestricted: role === 'Руководитель ЦУП'
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты
+     недвижимости (заказчик 23.09.2026). Ряд прячется целиком, а не пустым
+     тайлом: пустой тайл читался бы как «данных нет». */
+  function applyProjectInfo(deal) {
+    var row = document.getElementById('row-project-info');
+    if (!row) return;
+    row.hidden = String((deal && deal.desk) || '').trim() !== 'Недвижимость';
   }
 
   /* Сворачивание блока «Общая информация». Рантайм ds-tile.js сюда не подходит:
