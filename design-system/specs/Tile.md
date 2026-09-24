@@ -1,8 +1,8 @@
 ﻿---
 component: Tile
 title: "Tile"
-version: "1.012"
-updated: "10.09.2026"
+version: "1.014"
+updated: "23.09.2026"
 page: pages/organisms/Tile.html
 runtime: scripts/ds-tile.js
 css: styles/tile.css
@@ -37,12 +37,12 @@ Tile — основная плашка рабочей области стран�
 - **Состояния** — Tile собственных состояний НЕ имеет. Интерактивны только вложенные IconButton (хэдер), Button/Link (контент, алерт). AccordionTile collapsed/expanded — конфигурация, не состояние.
 - **Доступность** — Title = семантический heading; иконка-предупреждение декоративна (aria-hidden); IconButton — aria-label; шеврон — поворот на 180° красится и по `[aria-expanded="false"]` на кнопке напрямую (RulesAudit W1, 12.08.2026); рантайм `ds-tile.js` остаётся class-authoritative — сам синхронизирует атрибут с `.tile--collapsed`, атрибутный CSS — фоллбэк для случаев без класса. aria-expanded + aria-controls; Alert — role по тону; reduced-motion отключает анимацию.
 - **Типографика** — Title Tile: `--type-h5-strong`; Title Card: `--type-h6-strong`; Subtitle и метка поля: `--type-body-xs`; значение поля: `--type-body-m` (Strong — по месту, не дефолт).
-- **Цвета** — фон `--bg-tile`, бордер `--border-light`; текст `--text-primary`/`--text-secondary`/`--text-inactive`; Addition-иконка `--warning`, иконка сабтайтла `--success`, ссылка `--link`; Alert-слот `--warning-bg`/`--info-bg`.
+- **Цвета** — фон `--bg-tile`, бордер `--border-light`; текст `--text-primary`/`--text-secondary`/`--text-inactive`; Addition-иконка и иконка сабтайтла — `--secondary`, тон задаётся модификатором `--success`/`--warning`/`--error`/`--info`; ссылка `--link`; Alert-слот `--warning-bg`/`--info-bg`.
 
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Рендерятся на странице через getComputedStyle. Радиус 8 (`--radius-m`), бордер 1px `--border-light`, паддинг хэдера 20 сверху / 20 по бокам / 10 снизу, зазор Title↔Subtitle↔Chiplist 8, зазор действий в Actions 8, зазор чипов в Chiplist 4, паддинг контента 0/20/24/20 (headless 20/20/32/20), зазор строк 16 (или 24), колонок 16.
+Рендерятся на странице через getComputedStyle. Радиус 8 (`--radius-m`), бордер 1px `--border-light`, паддинг хэдера 20 сверху / 20 по бокам / 10 снизу, зазор Title↔Subtitle↔Chiplist 8 (у Card — 4), зазор действий в Actions 8, зазор чипов в Chiplist 4, паддинг контента 0/20/24/20 (headless 20/20/32/20), зазор строк 16 (или 24), колонок 16.
 
 ### Разметка · HTML (эталонная реализация ДС)
 
@@ -100,11 +100,11 @@ onToggle():                       # AccordionTile
 | `.tile--accordion` | сворачиваемый тайл |
 | `.tile--collapsed` | свёрнуто: `.tile__collapsible` скрыт (display:none) |
 | `.tile__header` | TileHeader M: header-main + actions, padding 20 20 10 |
-| `.tile__header-main` | колонка title-row · subtitle · chiplist, gap 8 |
+| `.tile__header-main` | колонка title-row · subtitle · chiplist, gap 8 (у Card — 4) |
 | `.tile__title-row` | строка Title + Addition |
 | `.tile__title` | заголовок, H5 Strong, усекается |
-| `.tile__title-add` | Addition: link/icon/chip/badge; `--icon` = warning |
-| `.tile__subtitle` | подзаголовок, Body XS, опц. `.tile__subtitle-icon` (success) |
+| `.tile__title-add` | Addition: link/icon/chip/badge; `--icon` — слот 20px, иконка в `--secondary`, тон — `--success`/`--warning`/`--error`/`--info` |
+| `.tile__subtitle` | подзаголовок, Body XS, опц. `.tile__subtitle-icon` — слот 16px (высота строки Body XS), иконка в `--secondary`, тон — `.tile__subtitle-icon--success`/`--warning`/`--error`/`--info` |
 | `.tile__chiplist` | ряд чипов-маркеров (Chip XS, зазор 4) |
 | `.tile__actions` | трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button, зазор 8 |
 | `.tile__toggle` / `.tile__chevron` | кнопка-шеврон аккордеона (aria-expanded) / поворот 180° |
@@ -115,4 +115,6 @@ onToggle():                       # AccordionTile
 | `.tile-row` | ряд нескольких тайлов — grid 12 колонок, gap 16. Ширина тайла — `style="grid-column:span N"` (ряд без перестроения) либо пара утилит Spacing `col-N` + `colw-N` (когда нужен адаптив: инлайн-стиль из CSS не переопределить). Своих классов ширины экран не заводит; узкий режим включается порогом `@container screen (max-width: …) { .tile-row > [class*="colw-"] { grid-column: span var(--colw) } }` |
 | `.tile-group` | обёртка нескольких `.tile-row` — flex-колонка, зазор 16px. Обязательна, когда рядов больше одного: `.screen__content` имеет собственный `gap: 24px`, поэтому зазор нельзя задавать `margin`'ом на `.tile-row` (сложится в 40px). Группа — один ребёнок контентной области: 24px между крупными зонами, 16px внутри группы |
 | `.tile__grid-full` | элемент на всю ширину сетки тайла (`grid-column:1/-1`) — длинное «Описание», комментарий, Alert: остаётся внутри `.tile__grid`, не выносится соседним блоком |
+| `.tile--card` | Card — карточка в модалке, списке, на канбане: хэдер 16/16/8, контент 8/16/20/16, Title H6 Strong, зазор Title↔Subtitle↔Chiplist 4; свои состояния `:hover`/`.is-hover` · `:active`/`.is-pressed` · `.is-move` · `.is-disabled`/`[aria-disabled="true"]`; alert-слота нет |
+| `.tile__grip` | грип переноса Card — IconButton M 20×20 (`<button class="ibtn ibtn--neutral ibtn--m tile__grip" aria-label="Перенести"><i data-icon="drag-dots"></i></button>`), последним в `.tile__actions`; своего только курсор grab/grabbing. Жест переноса — у потребителя |
 | `.tile-stack` | колонка/стопка внутри `.tile-row` (канбан) — flex-column, gap 16; вложенные тайлы высоту друг с другом не равняют |
