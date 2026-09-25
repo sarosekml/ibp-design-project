@@ -33,8 +33,9 @@ updated: "24.09.2026"
 | `project.json` (корень) | Манифест структуры проекта. Сверку с диском делает гейт, шаг `manifest` |
 | `.agents/` | Харнес агента: роли, команды, скиллы, правила, оснастка. Обзор — `.agents/README.md` |
 | `.agents/agents/` | Роли (`ai-designer`, `screen-builder`, `screen-reviewer`; `ux-researcher` выключен, пока не задан `KB` в `knowledge-lookup`) |
-| `.agents/commands/` | Команды `/screen`, `/screen-check`, `/concepts`, `/handoff`, `/resume` |
+| `.agents/commands/` | Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume` |
 | `.agents/tools/` | Оснастка: сенсор, гейт и журнал уроков, сторожа, фикстуры |
+| `.agents/proto-panel/` | Рантайм панели прототипа (сценарии показа и комментарии, `Alt+Shift+P` на странице прототипа) и её README — владелец описания; процедура агента — скилл `proto-panel` |
 | `.opencode/opencode.json` | Адаптер opencode — один файл: пути до харнеса (роли, команды, скиллы, правила), режимы и права ролей. Содержания в нём нет — правится `.agents/` |
 
 ## 3. Как читать ДС и не сжечь контекст
@@ -67,7 +68,10 @@ updated: "24.09.2026"
   `apps/<раздел>/drafts/<имя>/` с той же формой: согласованный концепт
   переезжает в модуль командой `/promote` (`promote.mjs`). У каждого модуля —
   README.md: описание — руками, дерево — генерат `module-readme.mjs`. Место и
-  форму держит сторож хаба (П8, П6), README — гейт (МР);
+  форму держит сторож хаба (П8, П6), README — гейт (МР). Служебная папка
+  `proto-panel/` — панель прототипа (сценарии показа и комментарии) — заводится
+  по ответу «да» на вопрос о панели; её форму и данные держит гейт (шаг
+  `panel`), процедура — скилл `proto-panel`;
 - **`widgets/<группа>/<Имя>/`** — тайлы, таблицы, модалки, контекстные меню,
   поповеры (`tiles/`, `tables/`, `modals/`, `context-menus/`, `popovers/`;
   список — `project.json → appShape.widgetGroups`). `features/` и

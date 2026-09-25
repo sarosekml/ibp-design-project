@@ -16,6 +16,7 @@
   },
 
   "boot": { "dir": "apps", "head": "apps/ds-config.js", "body": "apps/ds-body.js", "generated": true },
+  "protoPanel": { "runtime": ".agents/proto-panel", "boot": "apps/proto-panel.js", "dir": "proto-panel" },
 
   "hub": {
     "page": "index.html",
@@ -29,6 +30,7 @@
   "state": ".agent-state",
   "docs": "docs",
   "scratch": ["docs/misc"],
+  "vendorScan": { "ignore": [".zcodeignore", "tmp"] },
 
   "apps": { "dir": "apps", "manifest": "app.json" },
   "appShape": {

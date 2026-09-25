@@ -104,6 +104,10 @@ export function project(from = HERE) {
   /* Черновые каталоги (решение владельца 24.09.2026): рабочие заметки и
      выгрузки, которые периодически чистятся; сторожа их не обходят. */
   const scratch = (Array.isArray(m.scratch) ? m.scratch : typeof m.scratch === 'string' ? [m.scratch] : []).map(norm).filter(Boolean);
+  /* Игнор-лист сторожа нейтральности (решение владельца 25.09.2026): файлы и
+     каталоги от корня, которые vendor-scan не читает, — локальное машины, вне
+     репозитория (в .gitignore): конфиг стороннего инструмента, рабочие записи. */
+  const vendorIgnore = (m.vendorScan && Array.isArray(m.vendorScan.ignore) ? m.vendorScan.ignore : []).map(norm).filter(Boolean);
   const appsDir = norm(m.apps && m.apps.dir);
   const appsManifest = appsDir ? norm(m.apps.manifest) || 'app.json' : null;
   /* Форма приложения (23–24.09.2026): pages — экраны, widgets — крупные блоки
@@ -133,6 +137,14 @@ export function project(from = HERE) {
     : null;
   const hubPage = norm(m.hub && m.hub.page);
   const hubRegistry = norm(m.hub && m.hub.registry);
+  /* Панель прототипа (задача 0005): рантайм в харнесе, включатель рядом с
+     загрузчиком ДС, папка данных в приложении. Не объявлена — панели в
+     проекте нет, инструменты ведут себя как прежде. Форму сторожит
+     manifest-check (МФ2, МФ4). */
+  const pp = m.protoPanel && typeof m.protoPanel === 'object' ? m.protoPanel : null;
+  const panel = pp && norm(pp.runtime) && norm(pp.boot) && norm(pp.dir)
+    ? { runtime: norm(pp.runtime), runtimeAbs: abs(norm(pp.runtime)), boot: norm(pp.boot), bootAbs: abs(norm(pp.boot)), dir: norm(pp.dir) }
+    : null;
   return {
     error: null, root, manifest: m,
     ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
@@ -140,11 +152,13 @@ export function project(from = HERE) {
     tools, toolsAbs: abs(tools),
     adapter, adapterAbs: abs(adapter),
     state, stateAbs: abs(state),
-    docs, docsAbs: abs(docs), scratch,
+    docs, docsAbs: abs(docs), scratch, vendorIgnore,
     appsDir, appsManifest, appShape, places, tracks,
     /** Приложения на любой глубине apps/: [{ dir, abs }]. */
     apps: () => (appsDir ? findApps(root, appsDir, appsManifest) : []),
     boot, bootAbs: boot ? { head: abs(boot.head), body: abs(boot.body), dir: abs(boot.dir) } : null,
+    /** Панель прототипа: { runtime, runtimeAbs, boot, bootAbs, dir } или null. */
+    panel,
     hubPage, hubRegistry,
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),

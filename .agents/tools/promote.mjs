@@ -27,7 +27,11 @@
       перенесённых файлах и в конфиге адаптера (правило прав агента);
       остальные файлы с упоминанием печатает списком — их правят по смыслу;
    5. app.json: `id` — имя модуля, трек — прежний или `--track`;
-   6. пересобирает реестр хаба, страницы модуля и README модуля.
+   6. пересобирает реестр хаба, страницы модуля и README модуля; если у
+      концепта есть папка панели прототипа (задача 0005), она переезжает
+      вместе с остальными файлами, а включатель и зеркало панели
+      пересобираются (proto-panel.mjs → build): включатель получает путь
+      модуля, зеркало — новый id записи.
 
    Коды ПР — «перенос»:
      ПР1 цель не модуль того же раздела (`<раздел>/<имя>-app`);
@@ -40,7 +44,7 @@
      node promote.mjs --selftest   — откат на временном дереве
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync, mkdtempSync, unlinkSync, rmdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync, mkdtempSync, unlinkSync, rmdirSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -48,6 +52,7 @@ import { project, need } from './project.mjs';
 import { check as hubCheck } from './hub-build.mjs';
 import { run as assembleRun, sourcesUnder } from './assemble.mjs';
 import { check as readmeCheck, withTree, treeBlock } from './module-readme.mjs';
+import { build as panelBuild, check as panelCheck, enable as panelEnable } from './proto-panel.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
@@ -197,10 +202,17 @@ export function promote(P, conceptArg, moduleArg, opts = {}) {
   }
   /* 6. Пересборка генератов — до списка упоминаний: реестр хаба тоже их носит. */
   const defects = [];
+  const P2 = project(P.root);
   if (opts.sync !== false) {
-    const P2 = project(P.root);
     defects.push(...hubCheck(P2, true).defects, ...assembleRun(P2, sourcesUnder(path.join(P2.root, P2.appsDir)), true).defects, ...readmeCheck(P2, true).defects);
     lines.push('реестр хаба, страницы, README модуля — пересобраны');
+  }
+  /* Панель прототипа (задача 0005): её папка переехала вместе с файлами
+     концепта; включатель получает путь модуля, зеркало — новый id записи. */
+  if ((opts.sync !== false || opts.panel) && P2.panel && existsSync(path.join(moduleAbs, P2.panel.dir))) {
+    const pb = panelBuild(P2);
+    defects.push(...pb.defects);
+    lines.push('панель прототипа — зеркало и включатель пересобраны' + (pb.written.length ? ': ' + pb.written.join(', ') : ''));
   }
   /* Остальные упоминания — списком: их правят по смыслу. */
   walkFiles(P.root, [], scratch)
@@ -284,7 +296,31 @@ const CASES = [
     run: (r) => promote(project(r), 'apps/postrade/drafts/lab', 'apps/core/lab-app', { sync: false }) },
   { name: 'источник не концепт', expect: 'ПР2 apps/postrade/lab-app',
     run: (r) => promote(project(r), 'apps/postrade/lab-app', 'apps/postrade/other-app', { sync: false }) },
+  { name: 'перенос с панелью прототипа: папка переезжает, включатель и зеркало пересобраны',
+    run: (r) => { panelTree(r); return promote(project(r), 'apps/postrade/drafts/lab', 'apps/postrade/lab-app', { sync: false, panel: true }); },
+    verify: (r) => {
+      const miss = [];
+      const boot = read(r, 'apps/proto-panel.js');
+      if (!boot.includes('"postrade/lab-app"') || boot.includes('"postrade/drafts/lab"')) miss.push('включатель с путём модуля');
+      if (!existsSync(path.join(r, 'apps/postrade/lab-app/proto-panel/flows.yaml')) || existsSync(path.join(r, 'apps/postrade/drafts/lab'))) miss.push('папка панели переехала');
+      if (!read(r, 'apps/postrade/lab-app/proto-panel/panel-data.js').includes('"id": "lab-app"')) miss.push('зеркало с id модуля');
+      const pc = panelCheck(project(r)).defects.filter((d) => /^ПН[4789]/.test(d));
+      if (pc.length) miss.push(pc.join(' | '));
+      return miss;
+    } },
 ];
+
+/* Панель прототипа у концепта: манифест с protoPanel, копия рантайма, папка панели через --enable. */
+function panelTree(r) {
+  const P0 = project(HERE);
+  const runtime = P0.panel && existsSync(P0.panel.runtimeAbs) ? P0.panel.runtimeAbs : path.join(HERE, '..', 'proto-panel');
+  put(r, 'project.json', JSON.stringify({ ...MANIFEST, boot: { dir: 'apps', head: 'apps/ds-config.js', body: 'apps/ds-body.js' },
+    protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel' } }));
+  cpSync(runtime, path.join(r, '.kit/proto-panel'), { recursive: true });
+  put(r, 'apps/postrade/drafts/lab/pages/Lab.preview.html', '<section class="tile">Лаб</section>\n');
+  const res = panelEnable(project(r), 'apps/postrade/drafts/lab');
+  if (res.refused) throw new Error(res.refused.join('; '));
+}
 
 function selftest() {
   const out = ['== promote --selftest =='];
