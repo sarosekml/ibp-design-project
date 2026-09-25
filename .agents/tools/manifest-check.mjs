@@ -27,8 +27,14 @@
          (agentKit.tools) и адаптера под агентный CLI (agentKit.adapter —
          каталог, который CLI ищет сам, с его конфигом и указателями в
          харнес; Ш5), страница хаба и её реестр, каталоги треков или
-         apps.dir, каталог документов (docs). Каталог состояния (state) на
-         диске не требуется: он вне git и создаётся инструментами;
+         apps.dir, каталог документов (docs), рантайм панели прототипа
+         (protoPanel.runtime). Каталог состояния (state) на диске не
+         требуется: он вне git и создаётся инструментами;
+     (МФ2 про панель прототипа, задача 0005: protoPanel — строки runtime,
+         boot, dir; dir — простое имя, не папка формы приложения; boot — в
+         каталоге загрузчика boot.dir.)
+     (МФ2 про игнор-лист сторожа нейтральности, 25.09.2026: vendorScan.ignore —
+         непустой список путей от корня, без «..» и абсолютных путей.)
      МФ5 id треков не повторяются.
 
    Корень — каталог, где лежит project.json: поиск идёт вверх от этого файла
@@ -114,6 +120,26 @@ export function check(root) {
       onDisk(m.boot.body, 'file', 'boot.body (сгенерировать: boot-build.mjs)');
     }
   }
+  /* Панель прототипа (задача 0005): рантайм — каталог в харнесе, включатель
+     лежит рядом с загрузчиком ДС (его подключает ds-body.js по имени от
+     своего каталога), папка данных — простое имя внутри приложения, не
+     совпадающее с папками его формы. Файл включателя на диске не требуется:
+     его генерирует proto-panel.mjs, сверяет гейт (шаг panel, ПН8). */
+  if (m.protoPanel !== undefined) {
+    const pp = m.protoPanel;
+    if (!pp || typeof pp !== 'object') defects.push('МФ2 protoPanel — объект: runtime, boot, dir панели прототипа');
+    else {
+      for (const k of ['runtime', 'boot', 'dir']) if (!str(pp[k])) defects.push('МФ2 protoPanel.' + k + ' — строка');
+      const form = Object.entries(m.appShape || {}).filter(([k, v]) => k !== 'widgetGroups' && str(v)).map(([, v]) => v);
+      const shape = form.length ? form : ['pages', 'widgets', 'data', 'refs'];
+      if (str(pp.dir) && (/[\\/]/.test(pp.dir) || pp.dir.startsWith('.'))) defects.push('МФ2 protoPanel.dir «' + pp.dir + '» — простое имя папки внутри приложения, без «/» и точки в начале');
+      else if (str(pp.dir) && shape.includes(pp.dir)) defects.push('МФ2 protoPanel.dir «' + pp.dir + '» совпадает с папкой формы приложения (' + shape.join(', ') + ')');
+      if (str(pp.boot) && m.boot && str(m.boot.dir) && path.posix.dirname(pp.boot.replace(/\\/g, '/')) !== m.boot.dir.replace(/\\/g, '/').replace(/\/+$/, '')) {
+        defects.push('МФ2 protoPanel.boot «' + pp.boot + '» — включатель лежит в каталоге загрузчика boot.dir «' + m.boot.dir + '»: ds-body.js подключает его по имени от своего каталога');
+      }
+      onDisk(pp.runtime, 'dir', 'protoPanel.runtime');
+    }
+  }
   if (m.agentKit && m.agentKit.adapter !== undefined && !str(m.agentKit.adapter)) defects.push('МФ2 agentKit.adapter — каталог адаптера агентного CLI от корня (строка)');
   onDisk(m.agentKit?.adapter, 'dir', 'agentKit.adapter');
   onDisk(m.docs, 'dir', 'docs');
@@ -122,6 +148,19 @@ export function check(root) {
   if (m.scratch !== undefined) {
     const list = Array.isArray(m.scratch) ? m.scratch : [m.scratch];
     if (!list.length || !list.every(str)) defects.push('МФ2 scratch — черновой каталог от корня или список таких каталогов (строки)');
+  }
+  /* vendorScan.ignore — игнор-лист сторожа нейтральности (решение владельца
+     25.09.2026): файлы и каталоги от корня, которые vendor-scan не читает. На
+     диске не обязательны — это локальное машины, оно в .gitignore. Путь наружу
+     корня или абсолютный — дефект: список прятал бы не то, что в нём названо. */
+  if (m.vendorScan !== undefined) {
+    const vs = m.vendorScan;
+    if (!vs || typeof vs !== 'object' || Array.isArray(vs)) defects.push('МФ2 vendorScan — объект: ignore — пути от корня, которые сторож нейтральности не читает');
+    else if (!Array.isArray(vs.ignore) || !vs.ignore.length || !vs.ignore.every(str)) defects.push('МФ2 vendorScan.ignore — непустой список путей от корня (строки)');
+    else {
+      const bad = vs.ignore.filter((p) => path.isAbsolute(p) || /^[A-Za-z]:/.test(p) || p.replace(/\\/g, '/').split('/').includes('..'));
+      if (bad.length) defects.push('МФ2 vendorScan.ignore: «' + bad.join('», «') + '» — путь от корня проекта, без «..» и абсолютных путей');
+    }
   }
   const stateRel = typeof m.state === 'string' ? m.state : m.state?.dir;
   if (m.state !== undefined && !str(stateRel)) defects.push('МФ2 state — каталог состояния гейта от корня (строка)');
@@ -217,7 +256,39 @@ const CASES = [
       mkdirSync(path.join(r, 'apps'));
       put(r, MANIFEST, manifestJson({ apps: { dir: 'apps' }, tracks: CLEAN.tracks.map(({ dir, ...t }) => t) }));
     } },
+  /* Панель прототипа (задача 0005). */
+  { name: 'панель прототипа объявлена верно', expect: null,
+    mutate: (r) => withPanel(r, {}) },
+  { name: 'панель: каталога рантайма нет', expect: 'МФ4 protoPanel.runtime: «.kit/proto-panel»',
+    mutate: (r) => { withPanel(r, {}); rmSync(path.join(r, '.kit/proto-panel'), { recursive: true }); } },
+  { name: 'панель: папка данных — путь', expect: 'МФ2 protoPanel.dir «data/panel»',
+    mutate: (r) => withPanel(r, { dir: 'data/panel' }) },
+  { name: 'панель: папка данных совпадает с папкой формы', expect: 'МФ2 protoPanel.dir «pages» совпадает',
+    mutate: (r) => withPanel(r, { dir: 'pages' }) },
+  { name: 'панель: включатель не в каталоге загрузчика', expect: 'МФ2 protoPanel.boot «boot/proto-panel.js»',
+    mutate: (r) => withPanel(r, { boot: 'boot/proto-panel.js' }) },
+  { name: 'панель: нет поля', expect: 'МФ2 protoPanel.dir — строка',
+    mutate: (r) => withPanel(r, { dir: undefined }) },
+  /* Игнор-лист сторожа нейтральности (25.09.2026): пути на диске не обязательны. */
+  { name: 'игнор-лист vendor-scan объявлен верно', expect: null,
+    mutate: (r) => put(r, MANIFEST, manifestJson({ vendorScan: { ignore: ['.zcodeignore', 'tmp'] } })) },
+  { name: 'игнор-лист vendor-scan: путь наружу корня', expect: 'МФ2 vendorScan.ignore: «../outside»',
+    mutate: (r) => put(r, MANIFEST, manifestJson({ vendorScan: { ignore: ['tmp', '../outside'] } })) },
+  { name: 'игнор-лист vendor-scan: не список', expect: 'МФ2 vendorScan.ignore — непустой список',
+    mutate: (r) => put(r, MANIFEST, manifestJson({ vendorScan: { ignore: 'tmp' } })) },
 ];
+
+/* Манифест с панелью прототипа: общий apps.dir, загрузчик в apps/, рантайм в харнесе. */
+function withPanel(r, patch) {
+  for (const d of ['apps', '.kit/proto-panel']) mkdirSync(path.join(r, d), { recursive: true });
+  put(r, 'apps/ds-head.js', '');
+  put(r, 'apps/ds-body.js', '');
+  put(r, MANIFEST, manifestJson({
+    apps: { dir: 'apps' }, tracks: CLEAN.tracks.map(({ dir, ...t }) => t),
+    boot: { dir: 'apps', head: 'apps/ds-head.js', body: 'apps/ds-body.js' },
+    protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel', ...patch },
+  }));
+}
 
 function selftest() {
   const out = ['== manifest-check --selftest =='];

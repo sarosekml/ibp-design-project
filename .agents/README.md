@@ -51,9 +51,10 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 |---|---|
 | Правила процесса — читаются целиком в начале задачи | `rules/process.md` |
 | Роли: `ai-designer`, `screen-builder`, `screen-reviewer`, `ux-researcher` (выключен) | `agents/` |
-| Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/handoff`, `/resume` | `commands/` |
+| Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume` | `commands/` |
 | Скиллы — пошаговые инструкции, грузятся на своём шаге | `skills/<id>/SKILL.md` + `references/` |
 | Оснастка: сенсор, гейт, сторожа, генераторы, фикстуры | `tools/` |
+| Панель прототипа: рантайм (сценарии показа и комментарии) и её README — владелец описания | `proto-panel/` |
 | Вход для агента | `AGENTS.md` |
 | Этот документ | `README.md` |
 
@@ -114,7 +115,7 @@ flowchart TB
     subgraph TOOLS["Запуск через bash: в контекст идёт только вывод"]
         T["tools/*.mjs<br/>строка ВЕРДИКТ:"]
     end
-    CMD["commands/*.md<br/>/screen /concepts /screen-check<br/>/promote /handoff /resume"]
+    CMD["commands/*.md<br/>/screen /concepts /screen-check<br/>/promote /panel /handoff /resume"]
 
     CFG --> RULES
     CFG --> DSR
@@ -175,6 +176,7 @@ opencode
 | Посмотреть состав этапов | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --stages` |
 | Сверить смету с фактом | `node .agents/skills/session-plan/tooling/ctx-budget.mjs --calibrate --stage build --fact <токенов>` + аргументы сметы |
 | Перенести согласованный концепт в модуль | `/promote apps/postrade/drafts/<имя> apps/postrade/deals-app` |
+| Панель прототипа: включить и описать сценарии · взять комментарии в работу | `/panel ai-bankster-prototype-v02` · `/panel ai-bankster-prototype-v02 comments` |
 | Сохранить контекст / продолжить в новой сессии | `/handoff` · `/resume DealRegistry` |
 | Закрыть заход | `node .agents/tools/lessons-cli.mjs gate` — строка `ВЕРДИКТ:` |
 | Просто спросить | словами: «есть ли в ДС компонент для…», «чем Chip отличается от Badge» |
@@ -248,6 +250,7 @@ flowchart TD
 | раскатка страниц документации ДС | скилл `docs-split` |
 | перенос задачи между сессиями | `commands/handoff.md`, `commands/resume.md` |
 | перенос концепта из `drafts/` в модуль раздела | `commands/promote.md`, `tools/promote.mjs` |
+| панель прототипа: форматы, устройство, коды ПН · процедура агента | `proto-panel/README.md` · скилл `proto-panel`, `commands/panel.md` |
 | этапы короткого и длинного маршрута | `ctx-budget.mjs --stages` (паспорт `stages.json`) |
 | порядок скиллов внутри сборки и решение вопросов вёрстки | `agents/screen-builder.md` |
 
@@ -368,9 +371,10 @@ node .agents/tools/lessons-cli.mjs gate
 | `tools/assemble.mjs --check` | модульные страницы: собранный `*.preview.html` не устарел, метки ведут в `widgets/` своего раздела, модуль не берёт виджеты из `drafts/` (СБ) |
 | `tools/module-readme.mjs --check` | у каждого модуля `<имя>-app` есть README.md, дерево в нём сходится с папкой (МР) |
 | `tools/promote.mjs --selftest` | перенос концепта в модуль (ПР); на рабочем дереве инструмент пишет — гейт гоняет только откат |
+| `tools/proto-panel.mjs --check` | панель прототипа: форматы `flows.yaml` и `comments.md`, страницы и селекторы сценариев, зеркала и включатель = генератор, рантайм на токенах ДС (ПН) |
 | `tools/registry-check.mjs` | приложения и хаб: записи, форма приложения, живые ссылки страниц, возврат на хаб (П) |
 | `tools/agent-config.mjs` | адаптер CLI: один конфиг, без модели, записи сходятся с харнесом, пути живые, продуктовые приложения закрыты (КФ) |
-| `tools/vendor-scan.mjs` | нейтральность репозитория: абсолютные пути с машины автора, имена посторонних инструментов |
+| `tools/vendor-scan.mjs` | нейтральность репозитория: абсолютные пути с машины автора, имена посторонних инструментов; не читает игнор-лист `project.json → vendorScan.ignore` — локальное машины из `.gitignore` |
 | `tools/lessons-cli.mjs` | форма журнала уроков (`check`), доказательство закрепления откатом (`verify`), покрытие чек-листов (`coverage`), сигнал об эффекте (`stats`) |
 
 У каждого сторожа есть `--selftest`: он проверяет сам себя откатом на
@@ -602,3 +606,23 @@ API — частый случай) описывается там же блоко
 | Что случилось после закрепления (регресс, живые и исчезнувшие коды) | `lessons-cli.mjs stats` |
 | Сквозные принципы: чтение ДС, запреты, не выдумывать неизвестное, вердикт строкой, граница статики, экономия контекста | `rules/process.md` §3, §4, §7, §8, §9, §13; границы записи — §4–§5 и `agents/ai-designer.md` («Границы») |
 | Формат спек (страница и виджет), демо-данные с типами и выходные артефакты | скилл `screen-spec` + `references/template.md`, `references/widget-template.md`, `references/data-template.js`; handoff — `commands/handoff.md` |
+| Панель прототипа: форматы, устройство, горячие клавиши, коды ПН, кандидаты в ДС | `proto-panel/README.md`; процедура агента — скилл `proto-panel`; `proto-panel.mjs --selftest` |
+
+## 17. Панель прототипа
+
+Служебная шторка поверх прототипов из `apps/`: сценарии показа (таб «Сценарии») —
+клик по шагу приводит прототип в нужное состояние — и комментарии к прототипу
+со статусами. Открывается `Alt+Shift+P` на любой странице прототипа, у
+которого есть папка `proto-panel/`; прототипы ради неё не правятся.
+
+| Слой | Где | Что |
+|---|---|---|
+| Рантайм | `proto-panel/` (`core.js` … `panel.js`, `panel.css`) | один код на все прототипы; ядро `core.js` общее с оснасткой (UMD) |
+| Включатель | `apps/proto-panel.js` — генерат | список приложений с папкой панели; его подключает загрузчик `ds-body.js` |
+| Данные | `apps/<…>/proto-panel/` | `flows.yaml` (сценарии пишет агент), `comments.md` (пишет панель, закрывает агент), `panel-data.js` (зеркало — генерат) |
+| Инструмент | `tools/proto-panel.mjs` | сборка, проверка (ПН), `--enable`, `--disable`, `--list`, `--resolve`, `--selftest` |
+| Гейт | шаги `panel`, `panel-selftest` | поднимаются правкой данных панели, любой страницы приложения, `app.json`, включателя, рантайма, манифеста |
+| Агент | скилл `proto-panel`, команда `/panel`, маршрут «Правки по комментариям» в `agents/ai-designer.md` | включение по вопросу «включить панель?», сценарии после PASS, комментарии в работу |
+
+Всё остальное — в `proto-panel/README.md`: он владелец описания, здесь только
+указатели.

@@ -33,6 +33,11 @@
    `scripts/ibp-home.js`). Порядок тот же, что у прежних тегов: `ds.js`
    дописывает рантаймы прямо за собой, до следующего тега.
    Ограничение честное: загрузчик — обычный тег, без async/defer.
+   Если манифест объявляет панель прототипа (`protoPanel.boot`, задача
+   0005), ds-body.js последней строкой подключает её включатель — путь от
+   своего каталога: ds.js → рантаймы ДС → data-ds → включатель → экранный
+   скрипт. Включатель сам решает, есть ли у страницы панель; без
+   protoPanel строки нет.
 
    Файлы генерируются, руками не правятся: `--check` сверяет их с тем, что
    сгенерировал бы манифест (шаг гейта `boot`). Коды БТ — «загрузчик»:
@@ -52,6 +57,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, mkdtempSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { project, need } from './project.mjs';
 
@@ -74,6 +80,13 @@ export function render(P) {
     : '/* СГЕНЕРИРОВАН ' + GEN + ' из project.json → designSystem.mount. Руками не править:\n'
       + '   пересобрать — node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг boot). */\n';
   const bodyNote = '/* СГЕНЕРИРОВАН ' + GEN + '. Руками не править; адрес ДС — в ' + headName + '. */\n';
+  /* Панель прототипа (задача 0005): после тегов ДС — включатель, путь от
+     каталога загрузчика. Сам включатель решает, есть ли у страницы панель;
+     без protoPanel в манифесте строки нет. */
+  const panel = P.panel && P.panel.boot
+    ? '  /* панель прототипа: включатель (project.json → protoPanel, генерат proto-panel.mjs) */\n'
+      + '  if (me && me.src) document.write(\'<scr\' + \'ipt src="\' + new URL(' + JSON.stringify(path.posix.relative(P.boot.dir, P.panel.boot)) + ', me.src).href + \'"><\\/scr\' + \'ipt>\');\n'
+    : '';
   const head = note
     + 'var DS_PATH = ' + JSON.stringify(dsPath) + ';\n'
     + '\n'
@@ -98,6 +111,7 @@ export function render(P) {
     + '  var extra = ((me && me.getAttribute(\'data-ds\')) || \'\').split(/\\s+/).filter(Boolean);\n'
     + '  var tags = [\'scripts/ds.js\'].concat(extra);\n'
     + '  for (var i = 0; i < tags.length; i++) document.write(\'<scr\' + \'ipt src="\' + DS + tags[i] + \'"><\\/scr\' + \'ipt>\');\n'
+    + panel
     + '})();\n';
   return { [P.boot.head]: head, [P.boot.body]: body };
 }
@@ -189,6 +203,19 @@ function editPath(r, to) {
   writeFileSync(f, readFileSync(f, 'utf8').replace(/DS_PATH = "[^"]*"/, 'DS_PATH = "' + to + '"'), 'utf8');
 }
 
+/* Второй тег загрузчика, исполненный на странице: что он записал в документ. */
+function runBody(text) {
+  const written = [];
+  const ctx = {
+    URL, console,
+    document: { currentScript: { src: 'file:///p/apps/ds-body.js', getAttribute: (n) => (n === 'data-ds' ? 'scripts/ibp-home.js' : null) }, write: (s) => written.push(s) },
+  };
+  ctx.window = ctx;
+  ctx.__DS_ROOT = 'file:///p/ds/';
+  vm.runInNewContext(text, ctx, { timeout: 1000 });
+  return written;
+}
+
 function selftest() {
   const out = ['== boot-build --selftest =='];
   let failed = 0;
@@ -224,7 +251,24 @@ function selftest() {
   }
   if (parsed !== 2) failed++;
   else out.push('ok    сгенерированный загрузчик разбирается как JS (и с кавычкой в пути до ДС)');
-  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + (CASES.length + 2) + ')' : 'OK (кейсов: ' + (CASES.length + 2) + ')'));
+  /* Панель прототипа (задача 0005): включатель подключается после тегов ДС —
+     порядок доказывается исполнением второго тега в vm, а не поиском строки. */
+  const PP = { ...P, boot: CONFIG.boot, panel: { boot: 'apps/proto-panel.js' } };
+  const withPanel = runBody(render(PP)['apps/ds-body.js']);
+  const panelOk = withPanel.length === 3 && withPanel[0].includes('/ds/scripts/ds.js') && withPanel[1].includes('/ds/scripts/ibp-home.js')
+    && withPanel[2] === '<script src="file:///p/apps/proto-panel.js"></script>';
+  if (!panelOk) failed++;
+  out.push((panelOk ? 'ok    ' : 'FAIL  ') + 'панель объявлена — включатель подключается после тегов ДС (исполнение в vm)' + (panelOk ? '' : ' — ' + withPanel.join(' | ')));
+  const noPanel = runBody(render({ ...P, boot: CONFIG.boot })['apps/ds-body.js']);
+  const noPanelOk = noPanel.length === 2 && !noPanel.some((t) => t.includes('proto-panel'));
+  if (!noPanelOk) failed++;
+  out.push((noPanelOk ? 'ok    ' : 'FAIL  ') + 'панель не объявлена — строки включателя нет' + (noPanelOk ? '' : ' — ' + noPanel.join(' | ')));
+  let parsedPanel = true;
+  try { new Function(render(PP)['apps/ds-body.js']); } catch (e) { parsedPanel = false; out.push('FAIL  загрузчик со строкой панели не разбирается как JS: ' + e.message); }
+  if (!parsedPanel) failed++;
+  else out.push('ok    загрузчик со строкой панели разбирается как JS');
+  const total = CASES.length + 5;
+  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
 }

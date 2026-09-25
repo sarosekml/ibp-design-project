@@ -46,7 +46,8 @@
         лежат прямо в `pages/` (все экраны на одной глубине) или в
         `widgets/<группа>/<Имя>/` (фрагменты: тайлы, таблицы, модалки,
         контекстные меню, поповеры), группа — из `appShape.widgetGroups`;
-        исключение — папки fixtures;
+        исключение — папки fixtures; служебная папка панели прототипа
+        (`protoPanel.dir`, задача 0005) разрешена, если манифест её объявил;
      П8 место приложения (`appPlaces` манифеста, с 23.09.2026): модуль
         раздела — `<раздел>/<имя>-app/`, концепт — `<раздел>/drafts/<имя>/`;
         внутри концепта та же форма, что у модуля, — так согласованный
@@ -235,7 +236,9 @@ export function check(from = HERE) {
   /* П6 форма приложения и П8 его место (23.09.2026) */
   if (APPS && existsSync(APPS)) {
     const S = P.appShape;
-    const FOLDERS = [S.pages, S.widgets, S.data, S.refs, S.tools].filter(Boolean);
+    /* + служебная папка панели прототипа (protoPanel.dir, задача 0005): данные
+       панели лежат рядом с прототипом, её форму сторожит proto-panel.mjs (ПН9) */
+    const FOLDERS = [S.pages, S.widgets, S.data, S.refs, S.tools, P.panel && P.panel.dir].filter(Boolean);
     const FRONT = /^(features|components|entities|shared|modals|tiles|tables)$/;
     for (const appAbs of appDirs) {
       const appRel = relOf(appAbs);
@@ -458,6 +461,13 @@ const CASES = [
     mutate: (r) => { placedTree(r); put(r, 'apps/core/clients-app/widgets/cards/ClientCard/ClientCard.html', '<div>фрагмент</div>'); } },
   { name: 'виджет без своей папки', expect: 'виджет лежит в своей папке внутри группы',
     mutate: (r) => { placedTree(r); put(r, 'apps/core/drafts/gamma/widgets/modals/TeamModal.html', '<div>фрагмент</div>'); } },
+  /* Панель прототипа (задача 0005): папка данных панели — часть формы, если манифест её объявил. */
+  { name: 'папка панели прототипа — не дефект', expect: null,
+    mutate: (r) => { placedTree(r, true); put(r, 'apps/core/drafts/gamma/proto-panel/flows.yaml', 'version: 1\nflows:\n'); } },
+  { name: 'папка панели без protoPanel в манифесте — П6', expect: 'П6 apps/core/drafts/gamma/proto-panel/ — такой папки',
+    mutate: (r) => { placedTree(r); put(r, 'apps/core/drafts/gamma/proto-panel/flows.yaml', 'version: 1\nflows:\n'); } },
+  { name: 'посторонняя папка при объявленной панели — по-прежнему П6', expect: 'П6 apps/core/drafts/gamma/notes/ — такой папки',
+    mutate: (r) => { placedTree(r, true); put(r, 'apps/core/drafts/gamma/notes/a.md', 'x'); } },
   { name: 'экран в разделе вне приложения', expect: 'П4 apps/core/Loose.html',
     mutate: (r) => put(r, 'apps/core/Loose.html', '<p>экран без приложения</p>') },
   { name: 'реестр не выполняется', expect: 'не выполняется',
@@ -484,10 +494,11 @@ const PLACED_ENTRIES = [
   { id: 'clients-app', group: 'projects', title: 'Клиенты', desc: 'тест', href: 'apps/core/clients-app/pages/Clients.html', root: 'apps/core/clients-app', icon: 'folder' },
   { id: 'gamma', group: 'concepts', title: 'Гамма', desc: 'тест', href: 'apps/core/drafts/gamma/pages/Gamma.html', root: 'apps/core/drafts/gamma', icon: 'folder' },
 ];
-function placedTree(root) {
+function placedTree(root, panel = false) {
   put(root, 'project.json', JSON.stringify({ ...MANIFEST,
     appShape: { pages: 'pages', widgets: 'widgets', data: 'data', refs: 'refs', widgetGroups: ['tiles', 'tables', 'modals'] },
-    appPlaces: { moduleSuffix: '-app', drafts: 'drafts' } }, null, 2));
+    appPlaces: { moduleSuffix: '-app', drafts: 'drafts' },
+    ...(panel ? { protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel' } } : {}) }, null, 2));
   rmSync(path.join(root, 'apps/alpha'), { recursive: true, force: true });
   rmSync(path.join(root, 'apps/gamma'), { recursive: true, force: true });
   put(root, 'apps/core/clients-app/app.json', appJson('clients-app', 'product', 'pages/Clients.html'));

@@ -1,0 +1,304 @@
+/* ============================================================
+   ПАНЕЛЬ ПРОТОТИПА — свои блоки поверх ДС (panel.css).
+
+   Только токены ДС и только селекторы .pp-* и #pp-* — это стережёт ПН10
+   (proto-panel.mjs): цвет литералом, px больше 2 вне условий @media и
+   селектор без префикса — дефект. Внутренности и состояния компонентов ДС
+   здесь не переопределяются: только раскладка своих блоков — кнопка
+   панели, мини-плеер, ручка ширины шторки, липкий ряд табов, узлы и
+   соединители схемы, карточки комментариев, подсветка цели. Почему они
+   свои и что из них кандидат в ДС — README панели, «Кандидаты в ДС».
+   ============================================================ */
+
+/* ---------------- угол страницы: кнопка и мини-плеер ---------------- */
+
+.pp-root {
+  position: fixed;
+  right: var(--space-24);
+  bottom: var(--space-24);
+  z-index: calc(var(--modal-z) - 1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  pointer-events: none;
+}
+.pp-root > * { pointer-events: auto; }
+
+.pp-fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--space-48);
+  height: var(--space-48);
+  padding: 0;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-circle);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.pp-fab:hover { background: var(--bg-table-default-hover); }
+.pp-fab:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-fab :is(svg, [data-icon]) { width: var(--space-24); height: var(--space-24); }
+.pp-fab__badge { position: absolute; top: 0; right: 0; display: flex; }
+.pp-fab[hidden],
+.pp-fab__badge[hidden] { display: none; }
+
+.pp-player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  height: var(--space-48);
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--bg-popup);
+  box-shadow: var(--elevation-2);
+}
+.pp-player[hidden] { display: none; }
+.pp-player__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  max-width: var(--modal-w-2);
+  padding: var(--space-4) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-primary);
+  font: var(--type-body-s);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pp-player__label:hover { background: var(--bg-table-default-hover); }
+.pp-player__label:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-player__label:disabled { background: transparent; cursor: default; }
+.pp-player__num { flex: none; }
+.pp-player__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pp-player__warn { display: inline-flex; flex: none; color: var(--error); }
+.pp-player__warn :is(svg, [data-icon]) { width: var(--space-16); height: var(--space-16); }
+.pp-player--error .pp-player__num { color: var(--error); }
+
+/* служебное скрытое: живая область, ссылка скачивания, буфер копирования */
+.pp-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------- шторка: ручка ширины и липкий ряд табов ---------------- */
+
+.pp-drawer { position: relative; }
+
+.pp-grip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  width: var(--space-12);
+  cursor: col-resize;
+  touch-action: none;
+}
+.pp-grip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: transparent;
+  transition: background-color .15s ease;
+}
+.pp-grip:hover::after,
+.pp-grip:focus-visible::after { background: var(--primary); }
+.pp-grip:focus-visible { outline: none; }
+#pp-drawer.pp-resizing,
+#pp-drawer.pp-resizing * { cursor: col-resize; user-select: none; }
+#pp-drawer.pp-resizing .pp-drawer { animation: none; transition: none; }
+
+.pp-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 0 var(--drawer-pad-x);
+  background: var(--bg-popup);
+}
+.pp-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--drawer-body-pad-y) var(--drawer-pad-x);
+}
+.pp-pane[hidden] { display: none; }
+
+.pp-muted { color: var(--text-secondary); }
+.pp-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.pp-empty { align-self: stretch; }
+
+/* ---------------- User Flows: шапка и блок-схема ---------------- */
+
+.pp-flow { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-flow__title { color: var(--text-primary); }
+
+.pp-chart { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.pp-step { display: flex; flex-direction: column; }
+.pp-step__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-tile);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.pp-step__card:hover { border-color: var(--border-primary); box-shadow: var(--elevation-2); }
+.pp-step__go {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-12);
+  min-width: 0;
+  padding: var(--space-12) 0 var(--space-12) var(--space-16);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pp-step__go:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+.pp-step__menu { display: flex; padding: var(--space-12) var(--space-12) 0 var(--space-4); }
+.pp-step__main { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.pp-step__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-8); }
+.pp-step__title { color: var(--text-primary); }
+.pp-step__mark { color: var(--primary); }
+.pp-step__meta { display: inline-flex; align-items: center; gap: var(--space-4); min-width: 0; color: var(--text-secondary); }
+.pp-step__meta :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step__meta > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-step__note {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-secondary);
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.pp-step__note--full { display: block; -webkit-line-clamp: unset; line-clamp: none; }
+.pp-step__err { display: inline-flex; align-items: flex-start; gap: var(--space-4); color: var(--error); }
+.pp-step__err :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step--current .pp-step__card { border-color: var(--primary); background: var(--primary-bg); }
+.pp-step--error .pp-step__card { border-color: var(--error); }
+
+.pp-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-24);
+  color: var(--text-inactive);
+}
+.pp-link__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: var(--border-primary);
+  transform: translateX(-50%);
+}
+.pp-link :is(svg, [data-icon]) { position: relative; width: var(--space-16); height: var(--space-16); background: var(--bg-popup); }
+.pp-link__page { position: absolute; left: calc(50% + var(--space-16)); color: var(--text-secondary); white-space: nowrap; }
+
+/* ---------------- Комментарии ---------------- */
+
+.pp-new { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-new__row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-12); }
+.pp-new__ctx { flex: 1 1 auto; min-width: 0; align-items: center; }
+.pp-new__add { display: inline-flex; flex: none; }
+.pp-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-12); }
+
+.pp-comments { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.pp-comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16) 0;
+  border-top: 1px solid var(--border-light);
+}
+.pp-comment__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.pp-comment__who { color: var(--text-secondary); }
+.pp-comment__acts { display: flex; align-items: center; gap: var(--space-4); margin-left: auto; }
+.pp-comment__ctx,
+.pp-comment__res,
+.pp-comment__draft { margin: 0; }
+.pp-comment__res { display: flex; align-items: flex-start; gap: var(--space-4); color: var(--text-secondary); }
+.pp-comment__res :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); color: var(--success); }
+.pp-comment__draft { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); color: var(--text-secondary); }
+.pp-tipwrap { display: inline-flex; border-radius: var(--radius-control); }
+.pp-tipwrap:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+
+/* текст комментария — безопасный markdown */
+.pp-md { display: flex; flex-direction: column; gap: var(--space-8); color: var(--text-primary); overflow-wrap: anywhere; }
+.pp-md p,
+.pp-md ul,
+.pp-md ol { margin: 0; }
+.pp-md ul,
+.pp-md ol { padding-left: var(--space-24); }
+.pp-code,
+.pp-pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--bg-table-default-focus); }
+.pp-code { padding: 0 var(--space-4); border-radius: var(--radius-xs); }
+.pp-pre { margin: 0; padding: var(--space-8) var(--space-12); overflow-x: auto; border-radius: var(--radius-control); white-space: pre; }
+
+/* окно настроек */
+.pp-subtitle { margin: 0; color: var(--text-primary); }
+.pp-keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+
+/* ---------------- подсветка цели действия (только показ) ---------------- */
+
+.pp-hl {
+  position: fixed;
+  z-index: calc(var(--tip-z) - 1);
+  box-sizing: border-box;
+  border-radius: var(--radius-control);
+  outline: 2px solid var(--primary);
+  outline-offset: var(--space-2);
+  pointer-events: none;
+  animation: pp-pulse .45s ease-out;
+}
+@keyframes pp-pulse {
+  from { outline-offset: var(--space-12); opacity: 0; }
+  to { outline-offset: var(--space-2); opacity: 1; }
+}
+
+/* ---------------- узкий экран, движение, печать ---------------- */
+
+@media (max-width: 640px) {
+  .pp-grip { display: none; }
+  .pp-player__title { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-hl { animation: none; }
+  .pp-step__card,
+  .pp-grip::after { transition: none; }
+}
+@media print {
+  .pp-root,
+  .pp-hl,
+  #pp-drawer,
+  .pp-modal { display: none; }
+}
