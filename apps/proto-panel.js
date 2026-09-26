@@ -11,8 +11,8 @@
   var RUNTIME = "../.agents/proto-panel/";
   var DIR = "proto-panel", BASE = "apps", MANIFEST = "app.json"; // для записи: путь от корня проекта
   var DATA = DIR + "/panel-data.js", PAGES = "pages";
-  var FILES = ["core.js", "store.js", "runner.js", "ui.js", "tab-flows.js", "tab-comments.js", "panel.js"];
-  var KEYS = ["KeyP", "ArrowRight", "ArrowLeft"]; // core.js → HOTKEYS: одна константа на панель и включатель
+  var FILES = ["core.js", "strings.js", "store.js", "runner.js", "recorder.js", "ui.js", "tab-flows.js", "tab-comments.js", "panel.js"];
+  var KEYS = ["KeyP", "ArrowRight", "ArrowLeft", "KeyS"]; // core.js → HOTKEYS: одна константа на панель и включатель
   var me = document.currentScript;
   if (!me || !me.src || !APPS.length) return;
   var apps = new URL('./', me.src), here, base;

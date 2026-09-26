@@ -204,6 +204,37 @@
 .pp-step--current .pp-step__card { border-color: var(--primary); background: var(--primary-bg); }
 .pp-step--error .pp-step__card { border-color: var(--error); }
 
+/* Fix State (задача 0005a): надстрочная подпись STATE NN с чипами, пометки
+   записи, поле названия на месте, черновое состояние — пунктирная рамка. */
+.pp-step__over { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.pp-step__overline { color: var(--text-secondary); letter-spacing: .04em; }
+.pp-step__issue { display: inline-flex; align-items: flex-start; gap: var(--space-4); color: var(--warning); }
+.pp-step__issue :is(svg, [data-icon]) { flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-step--draft .pp-step__card { border-style: dashed; }
+.pp-step__go--edit { cursor: default; }
+.pp-rename { display: flex; flex-direction: column; gap: var(--space-8); }
+
+/* шапка таба Flows: выбор сценария, переименование, New flow */
+.pp-flow__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-8); }
+.pp-flow__pick { flex: 1 1 auto; min-width: 0; }
+.pp-flow__row > .pp-rename { flex: 1 1 100%; }
+
+/* строка рекордера: что сделает Fix State прямо сейчас */
+.pp-rec { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-rec__line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); margin: 0; color: var(--text-secondary); }
+.pp-rec__dot { display: inline-flex; flex: none; width: var(--space-16); height: var(--space-16); color: var(--error); }
+.pp-rec__dot :is(svg, [data-icon]) { width: 100%; height: 100%; }
+.pp-rec__text { flex: 1 1 0; min-width: 0; }
+.pp-rec__list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0 0 0 var(--space-24); list-style: none; color: var(--text-secondary); }
+.pp-rec__item { display: flex; align-items: flex-start; gap: var(--space-4); }
+.pp-rec__item--fragile { color: var(--warning); }
+.pp-rec__icon { display: inline-flex; flex: none; width: var(--space-16); height: var(--space-16); }
+.pp-rec__icon :is(svg, [data-icon]) { width: 100%; height: 100%; }
+
+/* Fix State в шапке шторки: у неактивной кнопки тултип живёт на обёртке */
+.pp-fix { display: inline-flex; border-radius: var(--radius-control); }
+.pp-fix:focus-visible { outline: 2px solid var(--primary); outline-offset: var(--space-2); }
+
 .pp-link {
   position: relative;
   display: flex;

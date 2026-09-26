@@ -46,16 +46,18 @@
     toggle: 'KeyP',
     next: 'ArrowRight',
     prev: 'ArrowLeft',
-    label: { toggle: 'Alt+Shift+P', next: 'Alt+Shift+→', prev: 'Alt+Shift+←' }
+    fix: 'KeyS',
+    label: { toggle: 'Alt+Shift+P', next: 'Alt+Shift+→', prev: 'Alt+Shift+←', fix: 'Alt+Shift+S' }
   };
-  HOTKEYS.codes = [HOTKEYS.toggle, HOTKEYS.next, HOTKEYS.prev];
+  HOTKEYS.codes = [HOTKEYS.toggle, HOTKEYS.next, HOTKEYS.prev, HOTKEYS.fix];
 
-  /** Какое действие панели означает нажатие: 'toggle' | 'next' | 'prev' | null. */
+  /** Какое действие панели означает нажатие: 'toggle' | 'next' | 'prev' | 'fix' | null. */
   function hotkeyOf(e) {
     if (!e || !e.altKey || !e.shiftKey || e.ctrlKey || e.metaKey) return null;
     if (e.code === HOTKEYS.toggle) return 'toggle';
     if (e.code === HOTKEYS.next) return 'next';
     if (e.code === HOTKEYS.prev) return 'prev';
+    if (e.code === HOTKEYS.fix) return 'fix';
     return null;
   }
 
@@ -68,14 +70,34 @@
 
   function spaces(n) { return new Array(n + 1).join(' '); }
 
+  /* Шапка — строки-комментарии в начале файла до первой значимой строки
+     (пустые строки между ними не в счёт); без хвостовых пробелов. */
+  function headerOf(lines) {
+    var out = { text: [], at: Object.create(null) };
+    for (var i = 0; i < lines.length; i++) {
+      var t = lines[i].trim();
+      if (t === '') continue;
+      if (t.charAt(0) !== '#') break;
+      out.text.push(lines[i].replace(/\s+$/, ''));
+      out.at[i + 1] = true;
+    }
+    return out;
+  }
+
   /**
-   * Разбор подмножества YAML. { node, error } — узлы с номерами строк:
-   * map { entries: [{ key, line, value }] } · seq { items } ·
-   * scalar { value, style: plain | quoted | block | empty }.
+   * Разбор подмножества YAML. { node, error, header, comments } — узлы с
+   * номерами строк: map { entries: [{ key, line, value }] } · seq { items } ·
+   * scalar { value, style: plain | quoted | block | empty }. header — строки
+   * шапки; comments — номера строк с комментариями внутри документа (целые
+   * строки после шапки и хвосты « #…» после значений): при переписывании
+   * файла они потерялись бы.
    */
   function parseYaml(src) {
     var lines = String(src == null ? '' : src).replace(/^﻿/, '').replace(/\r\n?/g, '\n').split('\n');
     var pos = 0;
+    var header = headerOf(lines);
+    var comments = [], noted = Object.create(null);
+    function noteComment(i) { if (!noted[i]) { noted[i] = true; comments.push(i + 1); } }
 
     function fail(i, text) { throw new YamlError(i + 1, text); }
 
@@ -86,7 +108,7 @@
 
     /* Следующая значимая строка (пустые и строки-комментарии пропускаются), без сдвига курсора дальше неё. */
     function next() {
-      while (pos < lines.length && isBlank(pos)) pos++;
+      while (pos < lines.length && isBlank(pos)) { if (lines[pos].trim()) noteComment(pos); pos++; }
       if (pos >= lines.length) return -1;
       if (/^(---|\.\.\.)( |$)/.test(lines[pos])) fail(pos, 'разделитель документов «' + lines[pos].slice(0, 3) + '»: в файле один документ, несколько документов в подмножестве нет');
       return pos;
@@ -145,6 +167,7 @@
     function afterKey(rest, keyCol, i) {
       var r = rest.replace(/^ +/, '');
       if (r === '' || /^#(\s|$)/.test(r)) {
+        if (r) noteComment(i);
         var j = next();
         if (j >= 0) {
           var lj = indentOf(j);
@@ -180,6 +203,7 @@
         var after = body.slice(1);
         var r = after.replace(/^ +/, '');
         if (r === '' || /^#(\s|$)/.test(r)) {
+          if (r) noteComment(i);
           pos = i + 1;
           var j = next();
           if (j >= 0 && indentOf(j) > ind) node.items.push(parseNode(indentOf(j)));
@@ -206,11 +230,12 @@
     }
 
     function blockScalar(h, parentCol, i) {
-      var m = /^\|(-?)(?:\s+#.*)?\s*$/.exec(h);
+      var m = /^\|(-?)(\s+#.*)?\s*$/.exec(h);
       if (!m) {
         if (/^\|[+0-9]/.test(h)) fail(i, 'у блока «|» в подмножестве есть только вариант «|-»: индикаторы «+» и отступа не поддерживаются');
         fail(i, 'после «|» — лишний текст: содержимое блока пишется со следующей строки');
       }
+      if (m[2]) noteComment(i);
       pos = i + 1;
       var out = [], blockInd = -1;
       while (pos < lines.length) {
@@ -237,6 +262,7 @@
 
     function tail(rest, i, value) {
       if (!/^(\s+#.*|\s*)$/.test(rest)) fail(i, 'после закрывающей кавычки — лишний текст');
+      if (rest.indexOf('#') >= 0) noteComment(i);
       return { kind: 'scalar', line: i + 1, value: value, style: 'quoted' };
     }
 
@@ -293,11 +319,14 @@
       if (c === '%' || c === '@' || c === '`') fail(i, 'значение начинается с «' + c + '»: возьмите его в кавычки');
       if (/^[-?:]( |$)/.test(r)) fail(i, 'значение начинается с «' + c + ' »: возьмите его в кавычки');
       var cut = r.search(/\s#/);
+      if (cut >= 0) noteComment(i);
       var text = (cut >= 0 ? r.slice(0, cut) : r).replace(/\s+$/, '');
       if (/:( |$)/.test(text)) fail(i, 'в значении «: » — так начинается словарь; возьмите значение в кавычки');
       return { kind: 'scalar', line: i + 1, value: typed(text), style: 'plain' };
     }
 
+    /* комментарии внутри — всё, что не шапка */
+    function inner() { return comments.filter(function (n) { return !header.at[n]; }).sort(function (a, b) { return a - b; }); }
     try {
       var root = null;
       var i0 = next();
@@ -307,9 +336,9 @@
         var rest = next();
         if (rest >= 0) fail(rest, 'строка вне структуры документа: лишний отступ или ключ после списка верхнего уровня');
       }
-      return { node: root, error: null };
+      return { node: root, error: null, header: header.text, comments: inner() };
     } catch (e) {
-      if (e instanceof YamlError) return { node: null, error: { line: e.line, text: e.text } };
+      if (e instanceof YamlError) return { node: null, error: { line: e.line, text: e.text }, header: header.text, comments: inner() };
       throw e;
     }
   }
@@ -330,18 +359,20 @@
 
   var VERBS = ['click', 'fill', 'press', 'hover', 'focus', 'scroll', 'waitFor', 'wait'];
   var PARAMS = {
-    click: ['target', 'index', 'timeout'],
+    click: ['target', 'text', 'index', 'timeout'],
     fill: ['target', 'value', 'index', 'timeout'],
     press: ['key', 'target', 'alt', 'shift', 'ctrl', 'meta'],
-    hover: ['target', 'index', 'timeout'],
-    focus: ['target', 'index', 'timeout'],
-    scroll: ['target', 'block', 'index'],
-    waitFor: ['target', 'state', 'timeout'],
+    hover: ['target', 'text', 'index', 'timeout'],
+    focus: ['target', 'text', 'index', 'timeout'],
+    scroll: ['target', 'text', 'block', 'index'],
+    waitFor: ['target', 'text', 'state', 'timeout'],
     wait: []
   };
   var NEEDS_TARGET = { click: 1, fill: 1, hover: 1, focus: 1, scroll: 1, waitFor: 1 };
   var STATES = ['visible', 'hidden', 'present', 'absent'];
   var BLOCKS = ['start', 'center', 'end'];
+  /* Пометки записи (задача 0005a, §5.6): подсказка агенту, не дефект. */
+  var ISSUES = ['fragile', 'frame', 'drag', 'file', 'truncated'];
   var ID_RX = /^[a-z0-9]+(-[a-z0-9]+)*$/;
   var LIMITS = { timeout: 4000, timeoutMax: 15000, waitMax: 5000 };
 
@@ -365,21 +396,43 @@
     return best;
   }
 
-  /** Действие в полной форме — как его показывают сообщения: click '#btnBuilder'. */
+  /** Действие в полной форме со значениями по умолчанию — модель сценария. Порядок ключей постоянный: зеркало детерминировано. */
+  function makeAction(p) {
+    var verb = p.verb;
+    var a = { verb: verb, target: null, text: null, index: 0, timeout: verb === 'wait' ? null : LIMITS.timeout, value: null, key: null,
+      mods: { alt: false, shift: false, ctrl: false, meta: false },
+      state: verb === 'waitFor' ? 'visible' : null, block: verb === 'scroll' ? 'center' : null, ms: null };
+    Object.keys(p).forEach(function (k) {
+      if (k === 'mods') { Object.keys(p.mods || {}).forEach(function (m) { if (m in a.mods) a.mods[m] = !!p.mods[m]; }); }
+      else if (k in a) a[k] = p[k];
+    });
+    return a;
+  }
+
+  /** Действие в полной форме — как его показывают сообщения: click '#btnBuilder', click '.menu__item' “Краткий — PDF”. */
   function describeAction(a) {
     if (a.verb === 'wait') return 'wait ' + a.ms;
     if (a.verb === 'press') return 'press ' + a.key + (a.target ? ' → \'' + a.target + '\'' : '');
-    return a.verb + ' \'' + a.target + '\'';
+    return a.verb + ' \'' + a.target + '\'' + (a.text ? ' “' + a.text + '”' : '');
   }
 
   /**
-   * flows.yaml → { flows, errors: [{ code: ПН1|ПН2, line, text }], meta }.
-   * При любой ошибке flows пуст: панель показывает ошибки, а не половину
-   * сценария. meta — номера строк (для сообщений оснастки), в зеркало не идёт.
+   * flows.yaml → { flows, errors: [{ code: ПН1|ПН2, line, text }], meta, doc,
+   * header, innerComments, numbering }.
+   * При любой ошибке flows пуст (и doc — null): панель показывает ошибки, а не
+   * половину сценария. meta — номера строк (для сообщений оснастки), в зеркало
+   * не идёт. doc — документ для канонической записи: { header, version,
+   * lastState, flows }. innerComments — строки с комментариями внутри файла:
+   * при переписывании они потерялись бы (ПН11). numbering — шаги без номера,
+   * повторы, негодные номера, lastState меньше максимума (ПН11, ПН12): файл
+   * при этом читается, нумерацию чинит сборка.
    */
   function readFlows(src) {
-    var res = { flows: [], errors: [], meta: [] };
+    var numbering = { missing: [], duplicates: [], bad: [], low: null };
+    var res = { flows: [], errors: [], meta: [], doc: null, header: [], innerComments: [], numbering: numbering };
     var parsed = parseYaml(src);
+    res.header = parsed.header || [];
+    res.innerComments = parsed.comments || [];
     if (parsed.error) {
       res.errors.push({ code: 'ПН1', line: parsed.error.line, text: parsed.error.text });
       return res;
@@ -438,6 +491,15 @@
       return n.value;
     }
 
+    /* Номер состояния и lastState: негодное значение — не ошибка схемы, а
+       нумерация (ПН12): файл читается, сборка выдаёт номер заново. */
+    function number(entry, what, min) {
+      var n = entry.value;
+      if (n.kind === 'scalar' && typeof n.value === 'number' && n.value >= min) return n.value;
+      numbering.bad.push({ what: what, line: entry.line, value: n.kind === 'scalar' ? n.value : kindName(n) });
+      return null;
+    }
+
     function readAction(node, where) {
       if (node.kind !== 'map') { err(node, where + ': действие — словарь «глагол: цель», например click: \'#btn\''); return null; }
       var verbs = node.entries.filter(function (e) { return VERBS.indexOf(e.key) >= 0; });
@@ -451,9 +513,7 @@
       }
       var ve = verbs[0], verb = ve.key;
       if (other.length) { err(node, where + ': «' + other[0].key + '» рядом с глаголом ' + verb + ' — параметры действия пишутся под глаголом (полная форма: ' + verb + ': с новой строки target, index…)', other[0].line); return null; }
-      var a = { verb: verb, target: null, index: 0, timeout: verb === 'wait' ? null : LIMITS.timeout, value: null, key: null,
-        mods: { alt: false, shift: false, ctrl: false, meta: false },
-        state: verb === 'waitFor' ? 'visible' : null, block: verb === 'scroll' ? 'center' : null, ms: null };
+      var a = makeAction({ verb: verb });
       var v = ve.value;
       var at = where + ', ' + verb;
       if (v.kind === 'scalar') {
@@ -475,6 +535,7 @@
       if (verb === 'wait') { err(v, at + ': у wait только короткая форма — wait: 300', ve.line); return null; }
       var f = fields(v, PARAMS[verb], at);
       if (f.target) a.target = str(f.target, at + ', target', true, true);
+      if (f.text) a.text = str(f.text, at + ', text', true, true);
       if (f.value) a.value = str(f.value, at + ', value', false, false) || '';
       if (f.key) a.key = str(f.key, at + ', key', true, true);
       if (f.index) { var ix = int(f.index, at + ', index'); if (ix !== null) a.index = ix; }
@@ -502,9 +563,10 @@
 
     var root = parsed.node;
     if (!root || root.kind !== 'map') { err(root, 'в корне файла ожидается словарь с ключами version и flows'); return res; }
-    var top = fields(root, ['version', 'flows'], 'корень файла');
+    var top = fields(root, ['version', 'lastState', 'flows'], 'корень файла');
     if (!top.version) err(root, 'нет version: 1 — версии формата');
     else if (top.version.value.kind !== 'scalar' || top.version.value.value !== 1) err(top.version.value, 'version — 1: другой версии формата нет', top.version.line);
+    var lastState = top.lastState ? number(top.lastState, 'lastState', 0) : null;
     if (!top.flows) { err(root, 'нет flows — списка сценариев (может быть пустым)'); return res; }
     var fl = top.flows.value;
     var flowItems = [];
@@ -528,14 +590,17 @@
       var desc = ff.desc ? str(ff.desc, where + ', desc', false, true) : null;
       var flow = { id: id, title: title, desc: desc, steps: [] };
       var fmeta = { line: fn.line, steps: [] };
-      if (!ff.steps) { err(fn, where + ': нет steps — шагов сценария'); }
-      else if (ff.steps.value.kind !== 'seq' || !ff.steps.value.items.length) { err(ff.steps.value, where + ': steps — непустой список шагов', ff.steps.line); }
+      var sv = ff.steps && ff.steps.value;
+      if (!ff.steps) { err(fn, where + ': нет steps — шагов сценария (пустой сценарий — «steps:» без значения)'); }
+      else if (sv.kind === 'scalar' && sv.value === null) { /* пустой сценарий: создан кнопкой New flow, шагов ещё нет */ }
+      else if (sv.kind !== 'seq') { err(sv, where + ': steps — список шагов', ff.steps.line); }
       else {
         var stepIds = Object.create(null);
-        ff.steps.value.items.forEach(function (sn, si) {
+        sv.items.forEach(function (sn, si) {
           if (sn.kind !== 'map') { err(sn, where + ', шаг ' + (si + 1) + ' — словарь с полями id, title'); return; }
           var sw = named(sn, where + ', шаг', si + 1);
-          var sf = fields(sn, ['id', 'title', 'page', 'note', 'do'], sw);
+          var sf = fields(sn, ['state', 'id', 'title', 'page', 'note', 'recorded', 'issues', 'do'], sw);
+          var num = sf.state ? number(sf.state, sw + ', state', 1) : null;
           var sid = sf.id ? str(sf.id, sw + ', id', true, true) : null;
           if (!sf.id) err(sn, sw + ': нет id');
           if (sid !== null) {
@@ -549,8 +614,20 @@
           if (si === 0 && !sf.page) err(sn, sw + ': у первого шага сценария обязателен page — с него сценарий открывается');
           var note = sf.note ? str(sf.note, sw + ', note', false, false) : null;
           if (note !== null) note = note.replace(/\s+$/, '');
-          var step = { id: sid, title: stitle, page: page, note: note || null, do: [] };
-          var smeta = { line: sn.line, page: sf.page ? sf.page.line : null, actions: [] };
+          var recorded = sf.recorded ? str(sf.recorded, sw + ', recorded', true, true) : null;
+          if (recorded !== null && !validWhen(recorded)) { err(sf.recorded.value, sw + ': recorded «' + recorded + '» — ожидается ДД.ММ.ГГГГ ЧЧ:ММ', sf.recorded.line); recorded = null; }
+          var issues = [];
+          if (sf.issues) {
+            var iv = sf.issues.value;
+            if (iv.kind === 'seq') {
+              iv.items.forEach(function (it) {
+                if (it.kind !== 'scalar' || ISSUES.indexOf(it.value) < 0) err(it, sw + ': issues — пометка «' + (it.kind === 'scalar' ? it.value : kindName(it)) + '», известны: ' + ISSUES.join(', '), it.line);
+                else if (issues.indexOf(it.value) < 0) issues.push(it.value);
+              });
+            } else if (!(iv.kind === 'scalar' && iv.value === null)) err(iv, sw + ': issues — список пометок', sf.issues.line);
+          }
+          var step = { state: num, id: sid, title: stitle, page: page, note: note || null, recorded: recorded, issues: issues, do: [] };
+          var smeta = { line: sn.line, state: sf.state ? sf.state.line : null, badState: !!sf.state && num === null, page: sf.page ? sf.page.line : null, actions: [] };
           if (sf.do) {
             var dn = sf.do.value;
             if (dn.kind === 'seq') {
@@ -568,8 +645,352 @@
       res.meta.push(fmeta);
     });
     if (errs.length) { res.flows = []; res.meta = []; }
+    else {
+      var seen = Object.create(null), max = 0;
+      res.flows.forEach(function (f, fi) {
+        f.steps.forEach(function (s, si) {
+          var sm = res.meta[fi].steps[si];
+          if (s.state === null) { if (!sm.badState) numbering.missing.push({ flow: f.id, step: s.id, line: sm.line }); return; }
+          if (seen[s.state]) numbering.duplicates.push({ state: s.state, flow: f.id, step: s.id, line: sm.state, first: seen[s.state] });
+          else seen[s.state] = sm.state;
+          max = Math.max(max, s.state);
+        });
+      });
+      if (lastState !== null && lastState < max) numbering.low = { lastState: lastState, max: max, line: top.lastState.line };
+      res.doc = { header: res.header, version: 1, lastState: lastState, flows: res.flows };
+    }
     errs.sort(function (a, b) { return a.line - b.line; });
     return res;
+  }
+
+  /* ---------------- flows.yaml: каноническая запись ---------------- */
+
+  var PARAM_ORDER = ['target', 'text', 'value', 'key', 'index', 'state', 'block', 'timeout', 'alt', 'shift', 'ctrl', 'meta'];
+
+  /** Шапка flows.yaml по умолчанию — как у заготовки --enable. */
+  function defaultFlowsHeader(title) {
+    return [
+      '# Сценарии показа прототипа' + (title ? ' ' + title : '') + ' — панель прототипа.',
+      '# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».',
+      '# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).'
+    ];
+  }
+
+  function ySingle(s) { return "'" + String(s).replace(/'/g, "''") + "'"; }
+  function yDouble(s) {
+    return '"' + String(s).replace(/[\\"]|[\u0000-\u001f\u007f]/g, function (c) {
+      if (c === '\\' || c === '"') return '\\' + c;
+      if (c === '\n') return '\\n';
+      if (c === '\t') return '\\t';
+      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4);
+    }) + '"';
+  }
+  /* Простой скаляр — только если разбор подмножества вернёт ту же строку. */
+  function yPlainOk(s) {
+    return s !== '' && !/[\u0000-\u001f\u007f]/.test(s) && !/^\s|\s$/.test(s)
+      && !/^[\[\]{}&*!|>'"%@#`]/.test(s) && !/^[-?:](\s|$)/.test(s)
+      && !/:(\s|$)/.test(s) && !/\s#/.test(s) && !/^(-?\d+|true|false|null|~)$/.test(s);
+  }
+  /* Строка: простым скаляром, иначе в одинарных кавычках; перевод строки и
+     прочие управляющие символы — только в двойных (с экранированием). */
+  function yStr(s) {
+    s = String(s);
+    if (/[\u0000-\u0008\u000a-\u001f\u007f]/.test(s)) return yDouble(s);
+    return yPlainOk(s) ? s : ySingle(s);
+  }
+  /* Многострочную note можно записать блоком «|», если разбор вернёт её же:
+     отступ блока задаёт первая строка, строки из одних пробелов схлопнулись бы. */
+  function canBlock(s) {
+    var ls = s.split('\n');
+    return ls[0] !== '' && !/^[ \t]/.test(ls[0]) && !/[\u0000-\u0008\u000b-\u001f\u007f]/.test(s)
+      && ls.every(function (l) { return l === '' || l.trim() !== ''; });
+  }
+
+  function isDefaultParam(a, p) {
+    if (p === 'target') return a.target == null;
+    if (p === 'text') return a.text == null || a.text === '';
+    if (p === 'value') return a.verb !== 'fill';   // у fill значение пишется всегда, даже пустое
+    if (p === 'key') return a.key == null;
+    if (p === 'index') return !a.index;
+    if (p === 'state') return a.state == null || a.state === 'visible';
+    if (p === 'block') return a.block == null || a.block === 'center';
+    if (p === 'timeout') return a.timeout == null || a.timeout === LIMITS.timeout;
+    return !(a.mods && a.mods[p]);   // alt, shift, ctrl, meta
+  }
+
+  /* Действие — минимальная форма: короткая, если кроме цели (клавиши) всё по умолчанию. */
+  function actionLines(a, ind) {
+    var pad = spaces(ind);
+    if (a.verb === 'wait') return [pad + '- wait: ' + a.ms];
+    var allowed = PARAMS[a.verb] || [];
+    var set = PARAM_ORDER.filter(function (p) { return allowed.indexOf(p) >= 0 && !isDefaultParam(a, p); });
+    var main = a.verb === 'press' ? 'key' : 'target';
+    if (a.verb !== 'fill' && set.length === 1 && set[0] === main) {
+      return [pad + '- ' + a.verb + ': ' + (main === 'target' ? ySingle(a.target) : yStr(a.key))];
+    }
+    var out = [pad + '- ' + a.verb + ':'], inner = spaces(ind + 4);
+    set.forEach(function (p) {
+      var v;
+      if (p === 'target') v = ySingle(a.target);
+      else if (p === 'value') v = yStr(a.value == null ? '' : a.value);
+      else if (p === 'text' || p === 'key' || p === 'state' || p === 'block') v = yStr(a[p]);
+      else if (p === 'index' || p === 'timeout') v = String(a[p]);
+      else v = 'true';
+      out.push(inner + p + ': ' + (p === 'value' && v === '' ? "''" : v));
+    });
+    return out;
+  }
+
+  /* Шаг: поля в постоянном порядке, пустые не пишутся. ind — отступ «- ». */
+  function stepLines(s, ind) {
+    var head = spaces(ind) + '- ', body = spaces(ind + 2), out = [], first = true;
+    function field(line) { out.push((first ? head : body) + line); first = false; }
+    if (s.state != null) field('state: ' + s.state);
+    field('id: ' + yStr(s.id));
+    if (s.title != null) field('title: ' + yStr(s.title));
+    if (s.page) field('page: ' + yStr(s.page));
+    if (s.note) {
+      if (s.note.indexOf('\n') >= 0 && canBlock(s.note)) {
+        field('note: |');
+        s.note.split('\n').forEach(function (l) { out.push(l ? body + '  ' + l : ''); });
+      } else field('note: ' + yStr(s.note));
+    }
+    if (s.recorded) field('recorded: ' + yStr(s.recorded));
+    if (s.issues && s.issues.length) {
+      field('issues:');
+      s.issues.forEach(function (x) { out.push(body + '  - ' + yStr(x)); });
+    }
+    if (s.do && s.do.length) {
+      field('do:');
+      s.do.forEach(function (a) { actionLines(a, ind + 4).forEach(function (l) { out.push(l); }); });
+    }
+    return out;
+  }
+
+  /**
+   * Каноническая запись flows.yaml (задача 0005a, §4.3): её пишут и панель, и
+   * сборка, поэтому запись из браузера не даёт шумного диффа. Комментарии —
+   * только шапкой. opts.header — шапка, если своей у файла нет (иначе
+   * стандартная defaultFlowsHeader(opts.title)).
+   */
+  function serializeFlows(doc, opts) {
+    opts = opts || {};
+    var header = doc.header && doc.header.length ? doc.header : opts.header && opts.header.length ? opts.header : defaultFlowsHeader(opts.title);
+    var out = header.map(function (l) { return String(l).replace(/\s+$/, ''); });
+    out.push('version: ' + (doc.version || 1));
+    if (doc.lastState != null) out.push('lastState: ' + doc.lastState);
+    out.push('flows:');
+    (doc.flows || []).forEach(function (f, fi) {
+      if (fi) out.push('');
+      out.push('  - id: ' + yStr(f.id));
+      if (f.title != null) out.push('    title: ' + yStr(f.title));
+      if (f.desc) out.push('    desc: ' + yStr(f.desc));
+      out.push('    steps:');
+      (f.steps || []).forEach(function (s) { stepLines(s, 6).forEach(function (l) { out.push(l); }); });
+    });
+    return out.join('\n') + '\n';
+  }
+
+  /* ---------------- номера состояний ---------------- */
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  /** Подпись номера: State 07, State 12, State 105. */
+  function stateLabel(n) { return 'State ' + pad2(n); }
+  /** Номер из ссылки: 07 · 7 · State 07 · state-07 → 7; иначе null. */
+  function parseStateRef(s) {
+    if (typeof s === 'number') return s > 0 && Math.floor(s) === s ? s : null;
+    var m = /^\s*(?:state[\s-]*)?0*(\d+)\s*$/i.exec(String(s == null ? '' : s));
+    return m && +m[1] > 0 ? +m[1] : null;
+  }
+
+  /**
+   * Номера шагам без номера и повторам (у повтора номер меняет второй и
+   * следующие, первый сохраняет), lastState — не меньше наибольшего номера.
+   * Номера выдаются подряд после max(lastState, наибольший): удалённые не
+   * возвращаются. → { changes: [{ flow, step, from, to, why }], lastState: { from, to } }
+   */
+  function numberStates(doc) {
+    var seen = Object.create(null), max = 0, marks = [];
+    (doc.flows || []).forEach(function (f) {
+      (f.steps || []).forEach(function (s) {
+        var ok = typeof s.state === 'number' && s.state > 0 && Math.floor(s.state) === s.state;
+        if (ok && !seen[s.state]) { seen[s.state] = true; max = Math.max(max, s.state); }
+        else marks.push({ flow: f, step: s, why: ok ? 'duplicate' : s.state == null ? 'missing' : 'bad', from: s.state == null ? null : s.state });
+      });
+    });
+    var before = typeof doc.lastState === 'number' ? doc.lastState : null;
+    var last = Math.max(before !== null && before >= 0 ? before : 0, max);
+    var changes = marks.map(function (m) {
+      m.step.state = ++last;
+      return { flow: m.flow.id, step: m.step.id, from: m.from, to: m.step.state, why: m.why };
+    });
+    doc.lastState = last;
+    return { changes: changes, lastState: { from: before, to: last } };
+  }
+
+  function findState(doc, n) {
+    for (var fi = 0; fi < (doc.flows || []).length; fi++) {
+      var f = doc.flows[fi];
+      for (var si = 0; si < f.steps.length; si++) if (f.steps[si].state === n) return { flow: f, step: f.steps[si], index: si };
+    }
+    return null;
+  }
+
+  /** Удалить шаг можно, если от него ничего не зависит: он последний или следующий шаг — точка входа. */
+  function canDeleteState(flow, index) {
+    var next = flow.steps[index + 1];
+    return !next || !!next.page;
+  }
+
+  /**
+   * Правки схемы из браузера (задача 0005a, §6.1) — одна функция для записи и
+   * для превью черновиков. ops: addFlow { ref, title? } · renameFlow { flow, title } ·
+   * addState { ref, flow, step } · renameState { state, title } · deleteState { state }.
+   * addState: номер — lastState + 1, но не меньше step.state (номер черновика).
+   * flow и state могут ссылаться на ref операций того же журнала.
+   * → { states: { ref: { flow, id, state } }, flows: { ref: id }, errors: [{ op, ref, code }] },
+   * коды ошибок: no-flow, no-state, entry-required, dependents, empty-title.
+   * Документ должен быть пронумерован (numberStates). opts.dedupe — повтор
+   * записи и журнал черновиков: addState, чей шаг уже есть в сценарии (то же
+   * время записи, страница и действия), не добавляет второй, а отдаёт номер
+   * имеющегося.
+   */
+  function stateSig(s) { return JSON.stringify([s.recorded || null, s.page || null, (s.do || []).map(makeAction)]); }
+  function applyFlowOps(doc, ops, opts) {
+    opts = opts || {};
+    var res = { states: {}, flows: {}, errors: [] };
+    doc.flows = doc.flows || [];
+    function fail(op, code) { res.errors.push({ op: op.op, ref: op.ref || null, code: code }); }
+    function flowOf(ref) {
+      var id = Object.prototype.hasOwnProperty.call(res.flows, ref) ? res.flows[ref] : ref;
+      return doc.flows.filter(function (f) { return f.id === id; })[0] || null;
+    }
+    function stateOf(ref) {
+      var n = Object.prototype.hasOwnProperty.call(res.states, ref) ? res.states[ref].state : parseStateRef(ref);
+      return n ? findState(doc, n) : null;
+    }
+    (ops || []).forEach(function (op) {
+      var title = op.title == null ? '' : String(op.title).replace(/\s+/g, ' ').trim();
+      if (op.op === 'addFlow') {
+        /* номер — порядковый: третий сценарий — Flow 03 (§3, §4.2); занят — следующий свободный */
+        var k = doc.flows.length + 1, id;
+        do { id = 'flow-' + pad2(k++); } while (doc.flows.some(function (f) { return f.id === id; }));
+        doc.flows.push({ id: id, title: title || 'Flow ' + id.slice(5), desc: null, steps: [] });
+        if (op.ref) res.flows[op.ref] = id;
+      } else if (op.op === 'renameFlow') {
+        var rf = flowOf(op.flow);
+        if (!rf) fail(op, 'no-flow');
+        else if (!title) fail(op, 'empty-title');
+        else rf.title = title;
+      } else if (op.op === 'addState') {
+        var af = flowOf(op.flow);
+        var src = op.step || {};
+        if (!af) { fail(op, 'no-flow'); return; }
+        if (opts.dedupe && src.recorded) {
+          var sig = stateSig(src);
+          var same = af.steps.filter(function (s) { return s.recorded && stateSig(s) === sig; })[0];
+          if (same) { if (op.ref) res.states[op.ref] = { flow: af.id, id: same.id, state: same.state }; return; }
+        }
+        if (!af.steps.length && !src.page) { fail(op, 'entry-required'); return; }
+        /* Номер — lastState + 1 по свежему файлу, но не меньше того, что человек
+           видел на черновике (step.state): удалённый черновик не сдвигает номера
+           следующих; пропуск в номерах допустим — номера не выдаются повторно. */
+        var n = Math.max((typeof doc.lastState === 'number' ? doc.lastState : 0) + 1, typeof src.state === 'number' && src.state > 0 ? src.state : 0);
+        var base = 'state-' + pad2(n), sid = base, j = 2;
+        while (af.steps.some(function (s) { return s.id === sid; })) sid = base + '-' + j++;
+        var step = JSON.parse(JSON.stringify(src));
+        step.state = n;
+        step.id = sid;
+        step.title = step.title || stateLabel(n);
+        step.page = step.page || null;
+        step.note = step.note || null;
+        step.recorded = step.recorded || null;
+        step.issues = step.issues || [];
+        step.do = (step.do || []).map(makeAction);
+        af.steps.push({ state: step.state, id: step.id, title: step.title, page: step.page, note: step.note, recorded: step.recorded, issues: step.issues, do: step.do });
+        doc.lastState = n;
+        if (op.ref) res.states[op.ref] = { flow: af.id, id: sid, state: n };
+      } else if (op.op === 'renameState') {
+        var rs = stateOf(op.state);
+        if (!rs) fail(op, 'no-state');
+        else if (!title) fail(op, 'empty-title');
+        else rs.step.title = title;
+      } else if (op.op === 'deleteState') {
+        var ds = stateOf(op.state);
+        if (!ds) fail(op, 'no-state');
+        else if (!canDeleteState(ds.flow, ds.index)) fail(op, 'dependents');
+        else ds.flow.steps.splice(ds.index, 1);
+      }
+    });
+    return res;
+  }
+
+  /* ---------------- Fix State: шаг из журнала действий ---------------- */
+
+  function cut(s, n) { s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+  /* Автоназвание (§5.5): подпись цели последнего действия человека в шаге;
+     у ввода — «подпись поля: значение», у клавиши без подписи — имя клавиши;
+     точка входа без действий — заголовок страницы до первого « — », « | », « - ». */
+  function autoTitle(picked, mode, pageTitle) {
+    /* ожидания — не действия человека: подписи у них нет */
+    var acts = picked.filter(function (p) { var v = p.e.action && p.e.action.verb; return v !== 'waitFor' && v !== 'wait'; });
+    var pool = acts.filter(function (p) { return !p.e.replayed; });
+    if (!pool.length) pool = acts;
+    if (pool.length) {
+      var e = pool[pool.length - 1].e, a = e.action;
+      if (a.verb === 'fill') return cut((e.label ? e.label + ': ' : '') + (a.value == null ? '' : a.value), 40) || null;
+      if (e.label) return cut(e.label, 40);
+      if (a.verb === 'press' && a.key) return cut(a.key, 40);
+      return null;
+    }
+    if (mode === 'entry' && pageTitle) return cut(String(pageTitle).split(/ — | \| | - /)[0], 40) || null;
+    return null;
+  }
+
+  /**
+   * Шаг из журнала загрузки страницы (задача 0005a, §5.4) — чистая функция.
+   * input: { trail, flow, n, when, pageTitle, title? }; trail: { page,
+   * log: [{ action, replayed, at, label, fragile }], mark, flagMark, lastFix,
+   * base: { flow, step, at, flags }, flags: [{ code }] }.
+   * → { step, mode: 'increment' | 'entry', count, user } или { error: 'nothing-changed', mode }.
+   */
+  function composeState(o) {
+    var trail = o.trail || {}, flow = o.flow || { id: null, steps: [] };
+    var log = trail.log || [], flags = trail.flags || [];
+    var last = flow.steps && flow.steps.length ? flow.steps[flow.steps.length - 1] : null;
+    var mode = 'entry', from = 0, flagsFrom = 0;
+    if (last && trail.lastFix && trail.lastFix.flow === flow.id && trail.lastFix.state === last.state) {
+      mode = 'increment'; from = trail.mark || 0; flagsFrom = trail.flagMark || 0;
+    } else if (last && trail.base && trail.base.flow === flow.id && trail.base.step === last.id) {
+      mode = 'increment'; from = trail.base.at || 0; flagsFrom = trail.base.flags || 0;
+    }
+    var picked = [];
+    for (var i = from; i < log.length; i++) if (mode === 'entry' || !log[i].replayed) picked.push({ e: log[i], i: i });
+    if (mode === 'increment' && !picked.length) return { error: 'nothing-changed', mode: mode, after: last };
+    /* Ожидания: каждое действие само ждёт цель до timeout; если человек ждал
+       результата дольше 3,5 с, у его действия timeout = пауза + 1,5 с, вверх до 500 мс.
+       Пауза — между действиями журнала (и через границу фиксации: ждали итога
+       прошлого шага); первое действие после открытия страницы не ждёт ничего —
+       время до него человек осматривался (у точки входа — короткая форма, §4.2). */
+    var acts = picked.map(function (p) {
+      var a = makeAction(p.e.action);
+      var pause = p.i > 0 ? (p.e.at || 0) - (log[p.i - 1].at || 0) : 0;
+      if (!p.e.replayed && pause > 3500 && (PARAMS[a.verb] || []).indexOf('timeout') >= 0) {
+        var want = Math.min(LIMITS.timeoutMax, Math.ceil((pause + 1500) / 500) * 500);
+        if (want > (a.timeout || LIMITS.timeout)) a.timeout = want;
+      }
+      return a;
+    });
+    var codes = {};
+    flags.slice(mode === 'entry' ? 0 : flagsFrom).forEach(function (f) { codes[f.code] = true; });
+    picked.forEach(function (p) { if (p.e.fragile) codes.fragile = true; });
+    var n = o.n;
+    var title = o.title != null ? o.title : autoTitle(picked, mode, o.pageTitle);
+    var step = { state: n, id: 'state-' + pad2(n), title: title || null, page: mode === 'entry' ? trail.page || null : null, note: null,
+      recorded: o.when || stamp(), issues: ISSUES.filter(function (c) { return codes[c]; }), do: acts };
+    return { step: step, mode: mode, count: acts.length, user: picked.filter(function (p) { return !p.e.replayed; }).length, after: mode === 'increment' ? last : null,
+      entries: picked.map(function (p) { return { label: p.e.label || null, replayed: !!p.e.replayed, fragile: !!p.e.fragile }; }) };
   }
 
   /* ---------------- comments.md ---------------- */
@@ -586,6 +1007,7 @@
   var META_RX = /^- (Когда|Автор|Страница|Шаг|Решение):[ \t]*(.*?)\s*$/;
   var WHEN_RX = /^(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2})$/;
   var STEP_RX = /^([a-z0-9]+(?:-[a-z0-9]+)*)\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+  var STATE_RX = /^state[\s-]*0*(\d+)$/i;
   var FENCE_RX = /^(```|~~~)/;
   var PREAMBLE = '# Комментарии к прототипу\n\n'
     + 'Комментарии пишет панель прототипа (Alt+Shift+P на любой странице прототипа)\n'
@@ -647,9 +1069,13 @@
       else if (!validWhen(meta.created)) err(c.line, 'у К-' + c.n + ' «Когда: ' + meta.created + '» — ожидается ДД.ММ.ГГГГ ЧЧ:ММ');
       var step = null;
       if (meta.step) {
+        /* Ссылка на состояние (задача 0005a, §9): State 07 или state-07; прежняя
+           форма <сценарий>/<шаг> читается, сборка переводит её в номер. */
+        var sn = STATE_RX.exec(meta.step);
         var sm = STEP_RX.exec(meta.step);
-        if (!sm) err(c.line, 'у К-' + c.n + ' «Шаг: ' + meta.step + '» — ожидается <сценарий>/<шаг>, например report-from-builder/waiting');
-        else step = { flow: sm[1], step: sm[2] };
+        if (sn && +sn[1] > 0) step = { state: +sn[1] };
+        else if (sm) step = { flow: sm[1], step: sm[2] };
+        else err(c.line, 'у К-' + c.n + ' «Шаг: ' + meta.step + '» — ожидается номер состояния State 07 (прежняя форма — <сценарий>/<шаг>)');
       }
       if (!body) err(c.line, 'у К-' + c.n + ' пустой текст');
       if (c.status === null) return;
@@ -713,7 +1139,7 @@
     var meta = [];
     META_ORDER.forEach(function (p) {
       var v = c[p[0]];
-      if (p[0] === 'step') v = v ? v.flow + '/' + v.step : null;
+      if (p[0] === 'step') v = v ? stepRefText(v) : null;
       if (v !== null && v !== undefined && String(v).trim() !== '') meta.push('- ' + p[1] + ': ' + oneLine(v));
     });
     return '## К-' + c.n + ' · ' + STATUS.word[c.status] + '\n\n' + meta.join('\n') + '\n\n' + cleanBody(c.body);
@@ -735,6 +1161,30 @@
   /** Следующий номер: максимум + 1 по переданному (свежему) списку. */
   function nextNumber(comments) {
     return (comments || []).reduce(function (m, c) { return Math.max(m, c.n); }, 0) + 1;
+  }
+
+  /** Ссылка комментария на шаг текстом файла: { state: 7 } → State 07; прежняя { flow, step } → сценарий/шаг. */
+  function stepRefText(ref) {
+    if (!ref) return '';
+    return ref.state != null ? stateLabel(ref.state) : ref.flow + '/' + ref.step;
+  }
+
+  /**
+   * Прежние ссылки комментариев <сценарий>/<шаг> → номер состояния, если шаг
+   * нашёлся и пронумерован (задача 0005a, §9). Не нашёлся — ссылка остаётся
+   * как есть (у открытого комментария это ПН6). → [{ n, from, to }]
+   */
+  function migrateCommentRefs(model, flows) {
+    var changes = [];
+    (model.comments || []).forEach(function (c) {
+      if (!c.step || c.step.state != null) return;
+      var f = (flows || []).filter(function (x) { return x.id === c.step.flow; })[0];
+      var s = f && f.steps.filter(function (x) { return x.id === c.step.step; })[0];
+      if (!s || !s.state) return;
+      changes.push({ n: c.n, from: c.step.flow + '/' + c.step.step, to: stateLabel(s.state) });
+      c.step = { state: s.state };
+    });
+    return changes;
   }
 
   /** Дата и время в формате файла: ДД.ММ.ГГГГ ЧЧ:ММ (по часам машины). */
@@ -778,6 +1228,9 @@
       format: 1,
       app: { id: String(o.app && o.app.id || ''), title: String(o.app && o.app.title || '') },
       sources: { flows: hash(o.flowsText), comments: hash(o.commentsText) },
+      /* шапка и lastState — для «Download flows.yaml» из браузера (задача 0005a, §6.3) */
+      flowsHeader: f.header,
+      lastState: f.doc ? f.doc.lastState : null,
       flows: f.flows,
       flowErrors: fmtErrors('flows.yaml', f.errors),
       comments: c.model.comments,
@@ -932,8 +1385,23 @@
     readFlows: readFlows,
     describeAction: describeAction,
     STATUS: STATUS,
+    ISSUES: ISSUES,
+    PARAMS: PARAMS,
+    makeAction: makeAction,
+    serializeFlows: serializeFlows,
+    defaultFlowsHeader: defaultFlowsHeader,
+    numberStates: numberStates,
+    applyFlowOps: applyFlowOps,
+    canDeleteState: canDeleteState,
+    findState: findState,
+    composeState: composeState,
+    pad2: pad2,
+    stateLabel: stateLabel,
+    parseStateRef: parseStateRef,
     parseComments: parseComments,
     serializeComments: serializeComments,
+    stepRefText: stepRefText,
+    migrateCommentRefs: migrateCommentRefs,
     cleanBody: cleanBody,
     oneLine: oneLine,
     emptyComments: emptyComments,

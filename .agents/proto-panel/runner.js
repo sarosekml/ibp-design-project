@@ -1,12 +1,12 @@
 /* ============================================================
    ПАНЕЛЬ ПРОТОТИПА — проигрыватель сценариев (runner.js).
 
-   Шаг сценария — одно состояние интерфейса. Шаг с page — точка входа:
-   страница открывается заново и выполняет свои действия. Шаг без page —
-   приращение поверх предыдущего. Чтобы прийти в шаг N, проигрыватель берёт
-   ближайшую точку входа k ≤ N, открывает её страницу и выполняет действия
-   шагов k…N. «Вперёд» по той же странице — без перезагрузки; «назад» —
-   всегда с точки входа: обратных действий нет.
+   Шаг сценария — одно состояние интерфейса (State NN). Шаг с page — точка
+   входа: страница открывается заново и выполняет свои действия. Шаг без
+   page — приращение поверх предыдущего. Чтобы прийти в шаг N, проигрыватель
+   берёт ближайшую точку входа k ≤ N, открывает её страницу и выполняет
+   действия шагов k…N. «Вперёд» по той же странице — без перезагрузки;
+   «назад» — всегда с точки входа: обратных действий нет.
 
    Состояние — в sessionStorage вкладки: pp.state:<app> — сценарий, шаг,
    «изменено вручную», ошибка; pp.pending — продолжение после перезагрузки;
@@ -14,6 +14,14 @@
    ловится на следующей загрузке. События действий синтетические:
    то, что требует настоящего жеста (буфер обмена страницы, выбор файла,
    полноэкранный режим), проигрыватель не воспроизводит — это в README.
+
+   Задача 0005a: цель действия может уточнять текст (text — aria-label или
+   видимая подпись); свои элементы панели целью не бывают; о каждом
+   выполненном действии проигрыватель сообщает шиной (replay-start,
+   replay-target — цель перед действием, replay-action, step) — по ним
+   рекордер знает, до какого шага страницу довела панель; адрес шага — по
+   номеру состояния (#pp=07). Сценарии —
+   зеркало плюс черновые операции (store.flows).
    ============================================================ */
 (function () {
   'use strict';
@@ -21,38 +29,53 @@
   var core = window.ProtoPanelCore;
   var ctx = window.__PROTO_PANEL || {};
   if (!PP || !PP._store || !core) return;
+  var t = PP._strings ? PP._strings.t : function (k) { return k; };
 
   var store = PP._store, bus = PP._bus, session = store.session;
   var APP = ctx.app;
   var K_STATE = 'pp.state:' + APP, K_PENDING = 'pp.pending', K_GUARD = 'pp.guard';
   var PENDING_TTL = 20000, GUARD_TTL = 5000, SHOW_PAUSE = 450, POLL = 50;
-  var LOG = '[панель прототипа]';
+  var LOG = '[proto panel]';
+  /* свои элементы панели: не цель действий, не «изменено вручную», не запись */
+  var PANEL_SEL = '.pp-root, #pp-drawer, .pp-modal, .pp-hl, .snackbar-layer, .toast-layer';
   var busy = null;   // { flow, from, to, phase } — пока идёт переход
   var last = null;   // последний прогон: { flow, from, to, start, end, ok } — время от начала загрузки страницы, мс (диагностика)
 
   /* ---------------- сценарии ---------------- */
 
-  function flows() { var d = store.data(); return d && Array.isArray(d.flows) ? d.flows : []; }
+  function flows() { return store.flows(); }
   function flowById(id) { return flows().filter(function (f) { return f.id === id; })[0] || null; }
   function stepIdx(flow, ref) {
     if (typeof ref === 'number') return ref >= 0 && ref < flow.steps.length ? ref : -1;
     for (var i = 0; i < flow.steps.length; i++) if (flow.steps[i].id === ref) return i;
     return -1;
   }
+  /** Шаг по номеру состояния: { flow, index } | null. */
+  function byState(n) {
+    var list = flows();
+    for (var fi = 0; fi < list.length; fi++) {
+      for (var si = 0; si < list[fi].steps.length; si++) if (list[fi].steps[si].state === n) return { flow: list[fi], index: si };
+    }
+    return null;
+  }
   function entryIdx(flow, j) { for (var m = j; m >= 0; m--) if (flow.steps[m].page) return m; return -1; }
   function decode(s) { try { return decodeURIComponent(s); } catch (e) { return s; } }
   function urlKey(u) { var x = new URL(u, location.href); return decode(x.pathname) + x.search; }
   function here() { return decode(location.pathname) + location.search; }
   function entryUrl(flow, k) { return new URL(flow.steps[k].page, ctx.pagesUrl).href; }
+  /** Имя шага: State 07; шаг без номера (файл ещё не собран) — Step 3. */
+  function stepName(flow, i) { var s = flow.steps[i]; return s && s.state ? core.stateLabel(s.state) : t('run.stepN', { n: i + 1 }); }
 
-  /** Адрес шага: страница точки входа + #pp=<сценарий>/<шаг>. */
+  /** Адрес шага: страница точки входа + #pp=07 (без номера — #pp=<сценарий>/<шаг>). */
   function stepUrl(flowId, stepRef) {
     var flow = flowById(flowId);
     if (!flow) return null;
     var j = stepIdx(flow, stepRef);
     if (j < 0) return null;
     var k = entryIdx(flow, j);
-    return entryUrl(flow, k).split('#')[0] + '#pp=' + encodeURIComponent(flow.id) + '/' + encodeURIComponent(flow.steps[j].id);
+    var s = flow.steps[j];
+    var hash = s.state ? core.pad2(s.state) : encodeURIComponent(flow.id) + '/' + encodeURIComponent(s.id);
+    return entryUrl(flow, k).split('#')[0] + '#pp=' + hash;
   }
 
   /* ---------------- состояние ---------------- */
@@ -70,20 +93,38 @@
     session.set(K_STATE, st);
     bus.emit('state', st);
   }
+  /** Поставить состояние сессии на шаг (после Fix State): текущий, не изменён.
+      fixed — записан, но ещё не проверен: первый клик по узлу не пропускается как
+      «уже здесь», а открывает страницу заново и проигрывает запись (§7.2). */
+  function setAt(flowId, stepRef) {
+    var flow = flowById(flowId);
+    var j = flow ? stepIdx(flow, stepRef) : -1;
+    if (j < 0) return false;
+    setState({ flow: flow.id, step: flow.steps[j].id, dirty: false, error: null, fixed: true });
+    return true;
+  }
 
   function current() {
     var st = state();
     if (!st) return null;
     var flow = flowById(st.flow), i = stepIdx(flow, st.step);
-    return { flow: st.flow, step: st.step, index: i, total: flow.steps.length, title: flow.steps[i].title, dirty: !!st.dirty, error: st.error || null };
+    return { flow: st.flow, step: st.step, index: i, total: flow.steps.length, state: flow.steps[i].state || null, title: flow.steps[i].title,
+      dirty: !!st.dirty, error: st.error || null };
   }
 
-  function sec(ms) { return String(Math.round(ms / 100) / 10).replace('.', ',') + ' с'; }
+  function sec(ms) { return t('run.sec', { n: String(Math.round(ms / 100) / 10) }); }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   var frames = store.frames;
 
   /* ---------------- поиск цели ---------------- */
 
+  function isOwn(el) { return !!(el && el.closest && el.closest(PANEL_SEL)); }
+  /** Подпись элемента для цели по тексту: aria-label, иначе видимый текст; пробелы схлопнуты, края обрезаны. */
+  function textOf(el) {
+    var a = el && el.getAttribute ? el.getAttribute('aria-label') : null;
+    var s = a && a.trim() ? a : el ? (el.innerText != null ? el.innerText : el.textContent) : '';
+    return String(s || '').replace(/\s+/g, ' ').trim();
+  }
   function visible(el) {
     if (!el || !el.isConnected) return false;
     if (typeof el.checkVisibility === 'function') return el.checkVisibility({ checkOpacity: false, checkVisibilityCSS: true, visibilityProperty: true });
@@ -100,19 +141,26 @@
     return i >= 0 && i < list.length ? list[i] : null;
   }
 
-  function find(sel, index, timeout, want, needEnabled) {
+  /* Совпадения селектора без своих элементов панели (скрытая шторка лежит в
+     DOM и сбила бы index), при text — только с такой подписью. */
+  function matches(sel, text) {
+    var all = document.querySelectorAll(sel);
+    return Array.prototype.filter.call(all, function (el) { return !isOwn(el) && (!text || textOf(el) === text); });
+  }
+
+  function find(sel, index, timeout, want, needEnabled, text) {
     var deadline = Date.now() + timeout;
     return new Promise(function (resolve, reject) {
       (function poll() {
         var list;
-        try { list = document.querySelectorAll(sel); } catch (e) { reject(new Error('селектор не разбирается: ' + e.message)); return; }
+        try { list = matches(sel, text); } catch (e) { reject(new Error(t('run.badSelector', { msg: e.message }))); return; }
         var el = pick(list, index || 0), ok = false, why = '';
-        if (want === 'absent') { ok = list.length === 0; why = 'элемент не исчез за ' + sec(timeout); }
-        else if (want === 'hidden') { ok = !el || !visible(el); why = 'элемент не скрылся за ' + sec(timeout); }
-        else if (want === 'present') { ok = !!el; why = 'элемент не найден за ' + sec(timeout); }
-        else if (!el) why = 'элемент не найден за ' + sec(timeout);
-        else if (!visible(el)) why = 'элемент есть, но скрыт';
-        else if (needEnabled && !enabled(el)) why = 'элемент заблокирован';
+        if (want === 'absent') { ok = list.length === 0; why = t('run.notGone', { sec: sec(timeout) }); }
+        else if (want === 'hidden') { ok = !el || !visible(el); why = t('run.notHidden', { sec: sec(timeout) }); }
+        else if (want === 'present') { ok = !!el; why = t('run.notFound', { sec: sec(timeout) }); }
+        else if (!el) why = t('run.notFound', { sec: sec(timeout) });
+        else if (!visible(el)) why = t('run.hidden');
+        else if (needEnabled && !enabled(el)) why = t('run.disabled');
         else ok = true;
         if (ok) { resolve(el || null); return; }
         if (Date.now() >= deadline) { reject(new Error(why)); return; }
@@ -163,7 +211,7 @@
       : el instanceof HTMLSelectElement ? HTMLSelectElement.prototype : null;
     if (proto) Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, value);
     else if (el.isContentEditable) el.textContent = value;
-    else throw new Error('элемент — не поле ввода');
+    else throw new Error(t('run.notField'));
     var InputEv = window.InputEvent || Event;
     el.dispatchEvent(new InputEv('input', { bubbles: true, inputType: 'insertText', data: value }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
@@ -176,10 +224,10 @@
     if (/^\d$/.test(key)) return 'Digit' + key;
     return key;
   }
-  function press(t, a) {
+  function press(tg, a) {
     var key = a.key === 'Space' ? ' ' : a.key;
     ['keydown', 'keyup'].forEach(function (type) {
-      t.dispatchEvent(new KeyboardEvent(type, { key: key, code: codeOf(a.key), bubbles: true, cancelable: true, composed: true,
+      tg.dispatchEvent(new KeyboardEvent(type, { key: key, code: codeOf(a.key), bubbles: true, cancelable: true, composed: true,
         altKey: !!a.mods.alt, shiftKey: !!a.mods.shift, ctrlKey: !!a.mods.ctrl, metaKey: !!a.mods.meta }));
     });
   }
@@ -198,14 +246,16 @@
     return sleep(SHOW_PAUSE).then(function () { return hl; });
   }
 
+  /* Выполнить действие. → элемент-цель (для записи и подписи) или null. */
   function exec(a, show) {
-    if (a.verb === 'wait') return sleep(a.ms);
-    if (a.verb === 'waitFor') return find(a.target, a.index, a.timeout, a.state || 'visible', false);
+    if (a.verb === 'wait') return sleep(a.ms).then(function () { return null; });
+    if (a.verb === 'waitFor') return find(a.target, a.index, a.timeout, a.state || 'visible', false, a.text);
     var need = a.verb === 'click' || a.verb === 'fill';
-    var target = a.target ? find(a.target, a.index, a.timeout, 'visible', need) : Promise.resolve(document.activeElement || document.body);
+    var target = a.target ? find(a.target, a.index, a.timeout, 'visible', need, a.text) : Promise.resolve(document.activeElement || document.body);
     return target.then(function (el) {
       if (a.verb !== 'scroll' && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       return (show && a.target ? highlight(el) : Promise.resolve(null)).then(function (hl) {
+        bus.emit('replay-target', { el: el });   // до действия: рекордер берёт подпись такой, какой её видел человек
         if (a.verb === 'click') click(el);
         else if (a.verb === 'fill') fill(el, a.value == null ? '' : a.value);
         else if (a.verb === 'hover') hover(el);
@@ -213,6 +263,7 @@
         else if (a.verb === 'scroll') el.scrollIntoView({ block: a.block || 'center', inline: 'nearest' });
         else if (a.verb === 'press') press(el, a);
         if (hl) setTimeout(function () { hl.remove(); }, 250);
+        return el;
       });
     });
   }
@@ -221,7 +272,8 @@
 
   function message(flow, s, ai, why) {
     var step = flow.steps[s];
-    return 'Шаг ' + (s + 1) + ' «' + step.title + '»' + (ai == null ? '' : ', действие ' + (ai + 1) + ' (' + core.describeAction(step.do[ai]) + ')') + ': ' + why;
+    var act = ai == null ? '' : t('run.action', { n: ai + 1, what: core.describeAction(step.do[ai]) });
+    return t('run.message', { state: stepName(flow, s), title: step.title, action: act, why: why });
   }
 
   function fail(flow, lastOk, s, ai, text) {
@@ -229,7 +281,7 @@
     var st = { flow: flow.id, step: flow.steps[Math.max(0, lastOk)].id, dirty: true, error: { step: flow.steps[s].id, action: ai, message: text } };
     setState(st);
     console.warn(LOG + ' ' + text);
-    bus.emit('error', { flow: flow.id, step: flow.steps[s].id, index: s, action: ai, message: text });
+    bus.emit('error', { flow: flow.id, step: flow.steps[s].id, index: s, state: flow.steps[s].state || null, action: ai, message: text });
   }
 
   function run(flow, a, b, opts) {
@@ -237,6 +289,7 @@
     busy = { flow: flow.id, from: a, to: b, phase: 'run' };
     last = { flow: flow.id, from: a, to: b, start: Math.round(performance.now()), end: null, ok: null };
     bus.emit('busy', busy);
+    bus.emit('replay-start', { flow: flow.id, from: a, to: b, reload: !!opts.reload });
     var ui = PP._ui;
     var s = a, ai = null;
     return (ui ? ui.releasePage() : Promise.resolve()).then(function loop() {
@@ -248,7 +301,8 @@
         ai = i;
         session.set(K_GUARD, { app: APP, flow: flow.id, step: step.id, action: i, url: here(), at: Date.now() });
         var act = step.do[i];
-        return exec(act, !!opts.show && s === b).then(function () {
+        return exec(act, !!opts.show && s === b).then(function (el) {
+          bus.emit('replay-action', { flow: flow.id, step: step.id, action: act, el: el });
           i++;
           return frames(2).then(nextAction);
         });
@@ -260,7 +314,7 @@
       busy = null;
       bus.emit('busy', null);
       last.end = Math.round(performance.now()); last.ok = true;
-      bus.emit('step', { flow: flow.id, step: flow.steps[b].id, index: b, total: flow.steps.length, title: flow.steps[b].title });
+      bus.emit('step', { flow: flow.id, step: flow.steps[b].id, index: b, total: flow.steps.length, state: flow.steps[b].state || null, title: flow.steps[b].title });
       if (opts.reopen && ui) ui.open('flows');
       return true;
     }, function (e) {
@@ -277,9 +331,9 @@
     opts = opts || {};
     if (busy) return Promise.resolve(false);
     var flow = flowById(flowId);
-    if (!flow) return Promise.reject(new Error('Сценария «' + flowId + '» нет'));
+    if (!flow) return Promise.reject(new Error(t('run.noFlow', { id: flowId })));
     var j = stepIdx(flow, stepRef);
-    if (j < 0) return Promise.reject(new Error('Шага «' + stepRef + '» в сценарии «' + flow.title + '» нет'));
+    if (j < 0) return Promise.reject(new Error(t('run.noState', { ref: stepRef, title: flow.title })));
     var k = entryIdx(flow, j);
     var url = entryUrl(flow, k);
     var onPage = urlKey(url) === here();
@@ -291,9 +345,9 @@
     /* Документ только что загружен (адрес шага): DOM свежий, сохранённое
        состояние к нему не относится — оптимизации по нему недействительны,
        путь проигрывается с точки входа (ревью 0005, R4). */
-    if (opts.fresh && onPage) return run(flow, k, j, { show: show, reopen: reopen });
+    if (opts.fresh && onPage) return run(flow, k, j, { show: show, reopen: reopen, reload: true });
     if (clean && onPage && cur >= k && cur < j) return run(flow, cur + 1, j, { show: show, reopen: reopen });
-    if (clean && onPage && cur === j) {
+    if (clean && onPage && cur === j && !st.fixed) {
       if (PP._ui && !reopen) PP._ui.close();
       return Promise.resolve(true);
     }
@@ -302,6 +356,13 @@
     bus.emit('busy', busy);
     if (onPage) location.reload(); else location.href = url.split('#')[0];
     return Promise.resolve(true);
+  }
+
+  /** Перейти к состоянию по номеру. */
+  function goToState(n, opts) {
+    var hit = byState(n);
+    if (!hit) return Promise.reject(new Error(t('run.noStateN', { state: core.stateLabel(n) })));
+    return goTo(hit.flow.id, hit.index, opts);
   }
 
   function step(delta) {
@@ -327,14 +388,17 @@
 
   /* ---------------- после загрузки страницы ---------------- */
 
-  /* Адрес шага #pp=<сценарий>/<шаг>: хеш убирается, панель идёт к шагу. */
+  /* Адрес шага #pp=07 (номер состояния) или прежний #pp=<сценарий>/<шаг>: хеш убирается, панель идёт к шагу. */
   function fromHash(fresh) {
     var m = /(?:^#|&)pp=([^&]+)/.exec(location.hash || '');
     if (!m) return null;
     history.replaceState(history.state, '', location.pathname + location.search);
-    var parts = decode(m[1]).split('/');
-    return goTo(parts[0], parts[1] || 0, { fresh: !!fresh }).catch(function (e) {
-      bus.emit('error', { message: 'Адрес шага: ' + e.message });
+    var ref = decode(m[1]);
+    var go;
+    if (ref.indexOf('/') < 0 && core.parseStateRef(ref)) go = goToState(core.parseStateRef(ref), { fresh: !!fresh });
+    else { var parts = ref.split('/'); go = goTo(parts[0], parts[1] || 0, { fresh: !!fresh }); }
+    return go.catch(function (e) {
+      bus.emit('error', { message: t('run.hash', { msg: e.message }) });
     });
   }
   /* та же страница, другой хеш — документ не перезагружается */
@@ -352,14 +416,13 @@
     if (valid) {
       var flow = flowById(p.flow);
       var a = flow ? stepIdx(flow, p.from) : -1, b = flow ? stepIdx(flow, p.to) : -1;
-      if (flow && a >= 0 && b >= a) return run(flow, a, b, { show: p.show, reopen: p.reopen });
+      if (flow && a >= 0 && b >= a) return run(flow, a, b, { show: p.show, reopen: p.reopen, reload: true });
     }
     if (g && g.app === APP && now - g.at < GUARD_TTL) {
       var gf = flowById(g.flow);
       var gs = gf ? stepIdx(gf, g.step) : -1;
       if (gf && gs >= 0) {
-        fail(gf, gs - 1 >= entryIdx(gf, gs) ? gs - 1 : entryIdx(gf, gs), gs, g.action,
-          message(gf, gs, g.action, 'увело на другую страницу — переход задаётся полем page следующего шага'));
+        fail(gf, gs - 1 >= entryIdx(gf, gs) ? gs - 1 : entryIdx(gf, gs), gs, g.action, message(gf, gs, g.action, t('run.leftPage')));
         return Promise.resolve(false);
       }
     }
@@ -371,14 +434,13 @@
   /* ---------------- «изменено вручную» ---------------- */
 
   var QUIET_KEYS = { Alt: 1, Shift: 1, Control: 1, Meta: 1, AltGraph: 1, CapsLock: 1, Tab: 1, Fn: 1 };
-  var PANEL_SEL = '.pp-root, #pp-drawer, .pp-modal, .pp-hl, .snackbar-layer, .toast-layer';
   ['pointerdown', 'keydown', 'input'].forEach(function (type) {
     document.addEventListener(type, function (e) {
       if (!e.isTrusted || busy) return;
       if (type === 'keydown' && (QUIET_KEYS[e.key] || core.hotkeyOf(e))) return;
-      var t = e.target;
-      if (t && t.nodeType !== 1) t = t.parentElement;
-      if (t && t.closest && t.closest(PANEL_SEL)) return;
+      var tg = e.target;
+      if (tg && tg.nodeType !== 1) tg = tg.parentElement;
+      if (isOwn(tg)) return;
       var st = state();
       if (!st || st.dirty) return;
       st.dirty = true;
@@ -386,10 +448,20 @@
     }, true);
   });
 
+  /* После записи схемы черновые id могли смениться — состояние сессии идёт следом. */
+  bus.on('flows-saved', function (x) {
+    var st = rawState();
+    if (!st || !x || !x.map) return;
+    Object.keys(x.map.states).forEach(function (ref) {
+      var m = x.map.states[ref];
+      if (m.from && m.from.flow === st.flow && m.from.id === st.step) { st.flow = m.to.flow; st.step = m.to.id; session.set(K_STATE, st); }
+    });
+  });
+
   PP._runner = {
-    flows: flows, flowById: flowById, stepIdx: stepIdx, entryIdx: entryIdx, entryUrl: entryUrl, stepUrl: stepUrl,
-    state: state, current: current, busy: function () { return busy; },
-    goTo: goTo, next: next, prev: prev, stop: stop, start: start, resume: resume,
-    here: here, lastRun: function () { return last; }
+    flows: flows, flowById: flowById, stepIdx: stepIdx, entryIdx: entryIdx, entryUrl: entryUrl, stepUrl: stepUrl, byState: byState, stepName: stepName,
+    state: state, current: current, busy: function () { return busy; }, setAt: setAt,
+    goTo: goTo, goToState: goToState, next: next, prev: prev, stop: stop, start: start, resume: resume,
+    here: here, lastRun: function () { return last; }, textOf: textOf, isOwn: isOwn, matches: matches, PANEL_SEL: PANEL_SEL
   };
 })();
