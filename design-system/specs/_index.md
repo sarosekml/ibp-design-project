@@ -26,7 +26,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Drawer | specs/Drawer.md | styles/drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.000 |
 | Entity | specs/Entity.md | styles/entity.css | avatar, chip, icon-button, button, badge | 1.008 |
 | IconButton | specs/IconButton.md | styles/icon-button.css | badge, spinner | 1.011 |
-| Icons | specs/Icons.md | — | — | 1.001 |
+| Icons | specs/Icons.md | — | — | 1.002 |
 | Illustrations | specs/Illustrations.md | styles/illustration.css | — | 1.004 |
 | Layout | specs/Layout.md | styles/layout.css | nav-panel, breadcrumbs, spacing | 1.012 |
 | InputAmountRange | specs/InputAmountRange.md | styles/input-range.css | input, label-helper, tooltip | 1.007 |
