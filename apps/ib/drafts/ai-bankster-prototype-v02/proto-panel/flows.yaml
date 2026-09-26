@@ -2,81 +2,93 @@
 # Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
 # После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
 version: 1
+lastState: 11
 flows:
   - id: report-from-builder
     title: Отчёт из конструктора
     desc: Новый чат → конструктор → подготовка → готовый отчёт → просмотр в split view → выгрузка
     steps:
-      - id: home
+      - state: 1
+        id: home
         title: Главная
         page: index.html
         note: Точка входа — плитка «AI Pitcher» в группе Origination.
-      - id: new-chat
+      - state: 2
+        id: new-chat
         title: Новый чат
         page: RequestThread.html
         note: Пустая нить — точка входа в раздел. Слева недавние запросы, по центру поле запроса.
-      - id: builder-open
+      - state: 3
+        id: builder-open
         title: Открыть конструктор
         note: Конструктор выезжает внутри поля запроса и не уводит со страницы.
         do:
-          - click: "#btnBuilder"
-          - waitFor: "#cmpDrawer.is-open"
-      - id: builder-filled
+          - click: '#btnBuilder'
+          - waitFor: '#cmpDrawer.is-open'
+      - state: 4
+        id: builder-filled
         title: Заполнить конструктор
         note: |
           Объект — ГК «Северный агрохолдинг», фокусы — долговая нагрузка и идеи к встрече.
           Каждый выбор дописывает готовый фрагмент в текст запроса.
         do:
           - fill:
-              target: "#bldFind"
+              target: '#bldFind'
               value: Северный
           - click: '[data-obj="sah"]'
           - click: '[data-focus="debt"]'
           - click: '[data-focus="ideas"]'
-      - id: waiting
+      - state: 5
+        id: waiting
         title: Ожидание отчёта
         note: Запрос отправлен, идёт подготовка — до 30 минут. В прототипе её завершает клик по индикатору.
         do:
-          - click: "#btnSend"
+          - click: '#btnSend'
           - waitFor: '[data-act="finish"]'
-      - id: report-ready
+      - state: 6
+        id: report-ready
         title: Отчёт готов
         note: В нити — карточка материала, справа вверху — уведомление «Материал готов».
         do:
           - click: '[data-act="finish"]'
           - waitFor: '.doc [data-act="open"]'
-      - id: split-view
+      - state: 7
+        id: split-view
         title: Просмотр в split view
         note: Материал открывается панелью справа от нити; её ширину можно тянуть и развернуть.
         do:
           - click:
               target: '.doc .btn[data-act="open"]'
               index: -1
-          - waitFor: "#pv:not([hidden])"
-      - id: export
+          - waitFor: '#pv:not([hidden])'
+      - state: 8
+        id: export
         title: Выгрузка отчёта
         note: Меню форматов. «Краткий — PDF» скачивает файл-пример из refs/.
         do:
           - click: '#pv [data-menu="doc-menu"]'
-          - waitFor: "#doc-menu.is-open"
+          - waitFor: '#doc-menu.is-open'
 
   - id: report-from-history
     title: Готовый отчёт из истории
     desc: Запрос с готовым материалом → просмотр → просмотр на всю ширину
     steps:
-      - id: ready-thread
+      - state: 9
+        id: ready-thread
         title: Запрос с готовым материалом
         page: RequestThread.html?id=1
         note: ГК «Северный агрохолдинг» — выход миноритария, две версии материала.
-      - id: preview
+      - state: 10
+        id: preview
         title: Просмотр материала
         do:
           - click:
               target: '.doc .btn[data-act="open"]'
               index: -1
-          - waitFor: "#pv:not([hidden])"
-      - id: preview-wide
+          - waitFor: '#pv:not([hidden])'
+      - state: 11
+        id: preview-wide
         title: Просмотр на всю ширину
         do:
-          - click: "#pvWide"
+          - click: '#pvWide'
           - wait: 300

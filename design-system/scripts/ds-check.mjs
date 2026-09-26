@@ -14,7 +14,8 @@
        1. ds-lint-cli.mjs                       — глобальные правила и реестры
        2. ds-lint-cli.mjs --parity              — документация = код
        3. spec-audit.mjs                        — обещания спек против кода
-       4. ds-lint-cli.mjs <все страницы pages/> — одним вызовом
+       4. ds-icon.mjs --selftest                — рантайм иконок: уникальные id копий (задача 0007)
+       5. ds-lint-cli.mjs <все страницы pages/> — одним вызовом
 
    Раскатка docs-split — инструмент харнеса агента: где он лежит, говорит
    манифест проекта (kit-link.mjs). ДС без проекта — шаг печатается строкой
@@ -35,6 +36,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const NODE = process.execPath;
 const DS_LINT = path.join(ROOT, 'scripts', 'ds-lint-cli.mjs');
 const SPEC_AUDIT = path.join(ROOT, 'scripts', 'spec-audit.mjs');
+const DS_ICON = path.join(ROOT, 'scripts', 'ds-icon.mjs');
 const DOCS_SPLIT = kitFile('skills/docs-split/tooling/docs-split.mjs');
 
 const argv = process.argv.slice(2);
@@ -60,6 +62,7 @@ if (all) {
   steps.push(['линтер, глобальные правила', [DS_LINT]]);
   steps.push(['линтер --parity', [DS_LINT, '--parity']]);
   steps.push(['spec-audit', [SPEC_AUDIT]]);
+  steps.push(['иконки --selftest', [DS_ICON, '--selftest']]);
   const pages = await pagesOf(path.join(ROOT, 'pages'));
   steps.push(['линтер, страницы — ' + pages.length, [DS_LINT, ...pages]]);
 } else {

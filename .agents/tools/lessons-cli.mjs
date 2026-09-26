@@ -1144,6 +1144,7 @@ const GATE_SNAPSHOT = path.join(PRJ.stateAbs, 'gate-snapshot.json');
 const TOOL_REL = PRJ.rel(HERE);
 const VENDOR = path.join(HERE, 'vendor-scan.mjs');
 const SPEC_AUDIT = path.join(DS, 'scripts/spec-audit.mjs');
+const DS_ICON = path.join(DS, 'scripts/ds-icon.mjs');
 const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
 const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
 const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
@@ -1270,6 +1271,9 @@ function gateStep(id, paths = null) {
     case 'lint-global': return { title: 'линтер, глобальные правила', args: ['scripts/ds-lint-cli.mjs'], cwd: DS };
     case 'parity': return { title: 'линтер --parity (доки = код)', args: ['scripts/ds-lint-cli.mjs', '--parity'], cwd: DS };
     case 'spec-audit': return { title: 'spec-audit', args: [SPEC_AUDIT], cwd: DS };
+    /* Рантайм иконок ДС (задача 0007): у каждой копии глифа свои id внутри SVG,
+       DS_ICONS после ds-icons.js отдаёт копии, ds.js грузит его раньше читателей. */
+    case 'icons-selftest': return { title: 'ds-icon --selftest (рантайм иконок: уникальные id копий)', args: [DS_ICON, '--selftest'], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1376,6 +1380,9 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel === TOOL_REL + '/proto-panel.mjs') add('panel-selftest', 'panel', 'promote-selftest');
 
+  /* рантайм иконок ДС, их данные, порядок загрузки рантаймов, сам инструмент — в том числе удалённые */
+  if (['ds-icons.js', 'icons-data.js', 'ds.js', 'ds-icon.mjs'].some((f) => rel === DS_REL + '/scripts/' + f)) add('icons-selftest');
+
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
     return s;
@@ -1459,9 +1466,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

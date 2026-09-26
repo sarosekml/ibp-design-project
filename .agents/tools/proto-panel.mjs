@@ -28,23 +28,40 @@
           модульной страницы вместо собранной <Имя>.preview.html;
      ПН5  селектор действия не разбирается или его имена не найдены в тексте
           страницы точки входа и её локальных скриптах (классы — ещё и в ДС);
-     ПН6  открытый комментарий ссылается на несуществующую страницу или шаг;
+     ПН6  открытый комментарий ссылается на несуществующую страницу, шаг или
+          номер состояния;
      ПН7  зеркала panel-data.js нет или оно разошлось с исходниками;
      ПН8  включателя нет или он разошёлся со списком приложений и рантаймом;
      ПН9  состав папки панели: нет flows.yaml или comments.md, посторонний файл;
      ПН10 рантайм: нет файла, файл не разбирается как JS, файл зовёт глобальную
-          закрывашку слоёв ДС (closeAll, hideAll); в panel.css цвет литералом,
-          px больше 2 вне условий @media, селектор без pp-.
+          закрывашку слоёв ДС (closeAll, hideAll), кириллица в строке кода вне
+          core.js и strings.js (интерфейс английский, строки — в strings.js);
+          в panel.css цвет литералом, px больше 2 вне условий @media, селектор
+          без pp-;
+     ПН11 форма (задача 0005a): flows.yaml или comments.md не в канонической
+          форме, у шагов нет номеров, прежняя ссылка комментария на шаг — это
+          чинит сборка; комментарий внутри flows.yaml — сборка его не перенесёт;
+     ПН12 нумерация: номер состояния повторяется, негодный номер, lastState
+          меньше наибольшего номера.
+   Пометки записи шагов (issues) печатаются заметками — вердикт не меняют.
    Нет protoPanel в манифесте — панели в проекте нет: `--check` пишет это
    строкой и выходит с OK.
 
-   Использование (<app> — путь от корня, от apps/ или id из app.json):
-     node proto-panel.mjs                         — сборка зеркал и включателя, затем проверка
+   Сборка по каждому приложению: flows.yaml — номера шагам без номера и
+   каноническая форма (с ошибками или комментариями внутри файл не трогается),
+   comments.md — прежние ссылки на шаги → номера и каноническая форма, затем
+   зеркало; в конце — включатель.
+
+   Использование (<app> — путь от корня, от apps/ или id из app.json;
+   <state> — 07, 7, State 07 или state-07):
+     node proto-panel.mjs                         — сборка данных, зеркал и включателя, затем проверка
      node proto-panel.mjs --check                 — сверка без записи (гейт, шаг panel)
      node proto-panel.mjs --enable <app>          — заготовка папки панели и сборка
      node proto-panel.mjs --disable <app> [--force] — выключить: удалить папку панели
      node proto-panel.mjs --list <app> [--open]   — комментарии коротко
      node proto-panel.mjs --resolve <app> <К-N> --status сделан|отклонён|открыт [--note "…"]
+     node proto-panel.mjs --states <app>          — состояния списком
+     node proto-panel.mjs --state <app> <state> [--title "…"] [--note "…"] [--clear-issues]
      node proto-panel.mjs --selftest              — откат на временном дереве
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1; без манифеста — 2.
    ============================================================ */
@@ -61,7 +78,10 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
 const GEN = 'proto-panel.mjs';
 /** Файлы рантайма в порядке подключения: его пишет включатель, его же сверяет ПН10. */
-export const FILES = ['core.js', 'store.js', 'runner.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'panel.js'];
+export const FILES = ['core.js', 'strings.js', 'store.js', 'runner.js', 'recorder.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'panel.js'];
+/* Файлы рантайма, где кириллица в строках допустима (ПН10): ядро — диагностика
+   форматов для гейта и агента, strings.js — единственный словарь интерфейса. */
+const CYRILLIC_OK = ['core.js', 'strings.js'];
 const CSS = 'panel.css';
 const DATA = { flows: 'flows.yaml', comments: 'comments.md', mirror: 'panel-data.js' };
 const req = createRequire(import.meta.url);
@@ -152,14 +172,50 @@ export function renderBoot(P, apps, core) {
     + '})();\n';
 }
 
-/** Сборка: зеркала всех приложений с папкой панели и включатель. { written, defects } */
+/** Сборка: номера и каноническая форма данных, зеркала всех приложений с папкой панели и включатель. { written, defects, lines } */
 export function build(P) {
-  const written = [];
-  if (!P.panel) return { written, defects: [] };
+  const written = [], lines = [];
+  if (!P.panel) return { written, defects: [], lines };
   let core;
-  try { core = loadCore(P); } catch (e) { return { written, defects: ['ПН10 ' + P.panel.runtime + '/core.js — ядро не загружается: ' + e.message] }; }
+  try { core = loadCore(P); } catch (e) { return { written, lines, defects: ['ПН10 ' + P.panel.runtime + '/core.js — ядро не загружается: ' + e.message] }; }
   const apps = panelApps(P);
   for (const a of apps) {
+    /* 1. flows.yaml (задача 0005a): номера шагам без номера и повторам,
+       каноническая форма. С ошибками разбора или комментариями внутри файл не
+       трогается — причину показывает проверка (ПН1, ПН2, ПН11). */
+    const flowsFile = path.join(a.panelAbs, DATA.flows);
+    const ft = readData(a, DATA.flows);
+    if (ft !== null) {
+      const fr = core.readFlows(ft);
+      if (fr.errors.length) lines.push(P.rel(flowsFile) + ' не тронут: ошибки разбора (ПН1, ПН2)');
+      else if (fr.innerComments.length) lines.push(P.rel(flowsFile) + ' не тронут: комментарии внутри, строки ' + fr.innerComments.join(', ') + ' (ПН11)');
+      else {
+        const nr = core.numberStates(fr.doc);
+        const text = core.serializeFlows(fr.doc, { header: headerFor(P, a) });
+        if (text !== ft) {
+          writeFileSync(flowsFile, text, 'utf8');
+          written.push(P.rel(flowsFile));
+          const why = (c) => (c.why === 'duplicate' ? ' (номер ' + c.from + ' повторялся)' : c.why === 'bad' ? ' (номер «' + c.from + '» негодный)' : '');
+          lines.push(P.rel(flowsFile) + ': ' + (nr.changes.length ? 'пронумеровано ' + nr.changes.length + ' — ' + nr.changes.map((c) => c.flow + '/' + c.step + ' → ' + core.stateLabel(c.to) + why(c)).join(', ') + '; ' : '') + 'форма приведена');
+        }
+      }
+    }
+    /* 2. comments.md: прежние ссылки <сценарий>/<шаг> → номер состояния, каноническая форма. */
+    const commentsFile = path.join(a.panelAbs, DATA.comments);
+    const ct = readData(a, DATA.comments);
+    if (ct !== null) {
+      const cr = core.parseComments(ct);
+      if (!cr.errors.length) {
+        const mig = core.migrateCommentRefs(cr.model, core.readFlows(readData(a, DATA.flows) || '').flows);
+        const text = core.serializeComments(cr.model);
+        if (text !== ct) {
+          writeFileSync(commentsFile, text, 'utf8');
+          written.push(P.rel(commentsFile));
+          lines.push(P.rel(commentsFile) + ': ' + (mig.length ? 'ссылки на шаги → номера: ' + mig.map((m) => 'К-' + m.n + ' ' + m.from + ' → ' + m.to).join(', ') : 'форма приведена'));
+        }
+      }
+    }
+    /* 3. зеркало */
     const file = path.join(a.panelAbs, DATA.mirror);
     const text = mirrorFor(core, a);
     if (!existsSync(file) || readFileSync(file, 'utf8') !== text) { writeFileSync(file, text, 'utf8'); written.push(P.rel(file)); }
@@ -171,7 +227,7 @@ export function build(P) {
     writeFileSync(boot, text, 'utf8');
     written.push(P.panel.boot);
   }
-  return { written, defects: [] };
+  return { written, defects: [], lines };
 }
 
 /* ---------------- проверка ---------------- */
@@ -300,6 +356,61 @@ export function cssDefects(src) {
    Свои слои панель закрывает по одному, сверяясь, что они её. */
 const GLOBAL_CLOSE = /\bDS(?:Menu|Tooltip|DropdownList|Modal|Popover|Snack|Toast)\s*\.\s*(closeAll|hideAll|dismissAll|clear)\s*\(/g;
 
+/* Строковые литералы JS с номерами строк — без парсера: комментарии и
+   регулярные выражения пропускаются. Регулярное выражение от деления
+   отличается по предыдущему значимому знаку или ключевому слову — эвристика,
+   которой хватает рантайму панели (ES5, без шаблонных строк с вложениями). */
+export function stringLiterals(src) {
+  const out = [];
+  const n = src.length;
+  const REGEX_AFTER = '(,=:[!&|?{};+-*%<>~^';
+  const REGEX_WORDS = new Set(['return', 'typeof', 'case', 'do', 'else', 'in', 'of', 'void', 'delete', 'new', 'instanceof', 'throw']);
+  let i = 0, line = 1, prev = '', word = '';
+  while (i < n) {
+    const c = src[i];
+    if (c === '\n') { line++; i++; continue; }
+    if (c === '/' && src[i + 1] === '/') { while (i < n && src[i] !== '\n') i++; continue; }
+    if (c === '/' && src[i + 1] === '*') {
+      const e = src.indexOf('*/', i + 2), end = e < 0 ? n : e + 2;
+      for (let k = i; k < end; k++) if (src[k] === '\n') line++;
+      i = end;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      const at = line;
+      let j = i + 1, text = '';
+      while (j < n && src[j] !== c) {
+        if (src[j] === '\\') { text += src.slice(j, j + 2); j += 2; continue; }
+        if (src[j] === '\n') { if (c !== '`') break; line++; }
+        text += src[j];
+        j++;
+      }
+      out.push({ line: at, text });
+      i = j + 1;
+      prev = c; word = '';
+      continue;
+    }
+    if (c === '/' && (prev === '' || REGEX_AFTER.includes(prev) || (/[\w$]/.test(prev) && REGEX_WORDS.has(word)))) {
+      let j = i + 1, cls = false;
+      while (j < n && src[j] !== '\n') {
+        if (src[j] === '\\') { j += 2; continue; }
+        if (src[j] === '[') cls = true;
+        else if (src[j] === ']') cls = false;
+        else if (src[j] === '/' && !cls) break;
+        j++;
+      }
+      i = j + 1;
+      while (i < n && /[a-z]/i.test(src[i])) i++;
+      prev = '/'; word = '';
+      continue;
+    }
+    if (/[\w$]/.test(c)) { word = i > 0 && /[\w$]/.test(src[i - 1]) ? word + c : c; prev = c; i++; continue; }
+    if (!/\s/.test(c)) { prev = c; word = ''; }
+    i++;
+  }
+  return out;
+}
+
 function runtimeDefects(P, defects) {
   const dir = P.panel.runtimeAbs;
   for (const f of FILES) {
@@ -311,13 +422,31 @@ function runtimeDefects(P, defects) {
     for (const m of code.matchAll(GLOBAL_CLOSE)) {
       defects.push('ПН10 ' + P.panel.runtime + '/' + f + ':' + code.slice(0, m.index).split('\n').length + ' — «' + m[0].replace(/\s+/g, '') + '…)» закрывает слои всей страницы: панель закрывает только свои (current() и проверка, что слой её)');
     }
+    /* Интерфейс панели — английский (задача 0005a): строки только в strings.js,
+       комментарии кода остаются русскими и не проверяются. */
+    if (!CYRILLIC_OK.includes(f)) {
+      for (const s of stringLiterals(text)) {
+        if (!/[Ѐ-ӿ]/.test(s.text)) continue;
+        const shown = s.text.length > 40 ? s.text.slice(0, 39) + '…' : s.text;
+        defects.push('ПН10 ' + P.panel.runtime + '/' + f + ':' + s.line + ' — кириллица в строке «' + shown + '»: строки интерфейса — только в strings.js (t(key))');
+      }
+    }
   }
   const css = path.join(dir, CSS);
   if (!existsSync(css)) defects.push('ПН10 ' + P.panel.runtime + '/' + CSS + ' — нет файла стилей панели');
   else for (const d of cssDefects(readFileSync(css, 'utf8'))) defects.push('ПН10 ' + P.panel.runtime + '/' + CSS + ':' + d.line + ' — ' + d.text);
 }
 
-function appDefects(P, a, core, defects, lazyDs) {
+/* Пометки записи (задача 0005a, §5.6) для заметок проверки — подсказка агенту, не дефект. */
+const ISSUE_NOTE = {
+  fragile: 'хрупкий селектор (структурный путь) — дать элементу id или data-* и поправить селектор',
+  frame: 'действия во фрейме превью не записаны',
+  drag: 'перетаскивание не записано',
+  file: 'выбор файла не записан',
+  truncated: 'запись остановлена на 300 действиях — перезаписать короче или разбить',
+};
+
+function appDefects(P, a, core, defects, lazyDs, notes = []) {
   const dirRel = P.rel(a.panelAbs);
   const st = { rel: bootRel(P, a), flows: 0, steps: 0, open: 0 };
   const entries = readdirSync(a.panelAbs, { withFileTypes: true }).filter((e) => !e.name.startsWith('.'));
@@ -334,6 +463,33 @@ function appDefects(P, a, core, defects, lazyDs) {
   if (flowsText !== null) for (const e of fr.errors) defects.push(e.code + ' ' + dirRel + '/' + DATA.flows + ':' + e.line + ' — ' + e.text);
   const cr = core.parseComments(commentsText || '');
   if (commentsText !== null) for (const e of cr.errors) defects.push('ПН3 ' + dirRel + '/' + DATA.comments + ':' + e.line + ' — ' + e.text);
+  const rebuild = 'запустите сборку: node ' + P.tools + '/' + GEN;
+
+  /* ПН11 — форма, ПН12 — нумерация (задача 0005a). Нумерацию и форму чинит
+     сборка; комментарий внутри файла — нет: его пояснение переносят руками. */
+  if (flowsText !== null && !fr.errors.length) {
+    const file = dirRel + '/' + DATA.flows;
+    const nb = fr.numbering;
+    for (const n of fr.innerComments) defects.push('ПН11 ' + file + ':' + n + ' — комментарий внутри flows.yaml: сборка и панель переписывают файл целиком и его не перенесут — пояснение перенесите в note шага или в шапку файла');
+    if (nb.missing.length) defects.push('ПН11 ' + file + ':' + nb.missing[0].line + ' — у шагов нет номеров состояний (' + nb.missing.map((m) => m.flow + '/' + m.step).join(', ') + '): ' + rebuild);
+    for (const d of nb.duplicates) defects.push('ПН12 ' + file + ':' + d.line + ' — номер ' + core.stateLabel(d.state) + ' повторяется (впервые — строка ' + d.first + '): сборка выдаст повтору новый номер');
+    for (const b of nb.bad) defects.push('ПН12 ' + file + ':' + b.line + ' — ' + b.what + ' «' + b.value + '»: ' + (b.what === 'lastState' ? 'lastState — целое число, не меньше 0' : 'номер состояния — целое число больше нуля'));
+    if (nb.low) defects.push('ПН12 ' + file + ':' + nb.low.line + ' — lastState ' + nb.low.lastState + ' меньше наибольшего номера ' + nb.low.max + ': номера удалённых состояний выдавались бы снова');
+    if (!fr.innerComments.length && !nb.missing.length && !nb.duplicates.length && !nb.bad.length && !nb.low) {
+      const canon = JSON.parse(JSON.stringify(fr.doc));
+      core.numberStates(canon);
+      if (core.serializeFlows(canon, { header: headerFor(P, a) }) !== flowsText) defects.push('ПН11 ' + file + ' — не в канонической форме: ' + rebuild);
+    }
+    fr.flows.forEach((flow, fi) => flow.steps.forEach((s, si) => {
+      for (const code of s.issues || []) notes.push('заметка: ' + file + ':' + fr.meta[fi].steps[si].line + ' — ' + (s.state ? core.stateLabel(s.state) : flow.id + '/' + s.id) + ' — ' + ISSUE_NOTE[code]);
+    }));
+  }
+  if (commentsText !== null && !cr.errors.length) {
+    const file = dirRel + '/' + DATA.comments;
+    const copy = JSON.parse(JSON.stringify(cr.model));
+    for (const m of core.migrateCommentRefs(copy, fr.flows)) defects.push('ПН11 ' + file + ':' + (cr.lines[m.n] || 1) + ' — К-' + m.n + ': прежняя ссылка на шаг «' + m.from + '» (станет ' + m.to + '): ' + rebuild);
+    if (core.serializeComments(cr.model) !== commentsText) defects.push('ПН11 ' + file + ' — не в канонической форме: ' + rebuild);
+  }
   st.flows = fr.flows.length;
   st.steps = fr.flows.reduce((n, f) => n + f.steps.length, 0);
   st.open = cr.model.comments.filter((c) => c.status === 'open').length;
@@ -373,6 +529,7 @@ function appDefects(P, a, core, defects, lazyDs) {
   });
 
   const flowsById = fr.errors.length ? null : new Map(fr.flows.map((f) => [f.id, f]));
+  const stateNums = new Set(fr.flows.flatMap((f) => f.steps.map((s) => s.state)).filter(Boolean));
   for (const c of cr.model.comments) {
     if (c.status !== 'open') continue;
     const where = 'ПН6 ' + dirRel + '/' + DATA.comments + ':' + (cr.lines[c.n] || 1) + ' — К-' + c.n + ' (открыт): ';
@@ -380,7 +537,9 @@ function appDefects(P, a, core, defects, lazyDs) {
       const file = pageFile(c.page);
       if (!file || /[\\/]/.test(file) || !existsSync(path.join(pagesAbs, file))) defects.push(where + 'страницы «' + c.page + '» нет в pages/ приложения — поправьте ссылку');
     }
-    if (c.step && flowsById) {
+    if (c.step && flowsById && c.step.state != null) {
+      if (!stateNums.has(c.step.state)) defects.push(where + 'состояния ' + core.stateLabel(c.step.state) + ' нет в ' + DATA.flows + ' — его удалили или номер записан неверно: поправьте ссылку');
+    } else if (c.step && flowsById) {
       const f = flowsById.get(c.step.flow);
       if (!f || !f.steps.some((s) => s.id === c.step.step)) defects.push(where + 'шага «' + c.step.flow + '/' + c.step.step + '» нет в ' + DATA.flows + ' — сценарий или шаг переименовали: поправьте ссылку');
     }
@@ -392,20 +551,21 @@ function appDefects(P, a, core, defects, lazyDs) {
   return st;
 }
 
-/** Проверка без записи: { defects, stats }. */
+/** Проверка без записи: { defects, stats, notes } — notes (пометки записи) вердикт не меняют. */
 export function check(P) {
   const defects = [];
   const stats = [];
-  if (!P.panel) return { defects, stats, none: true };
+  const notes = [];
+  if (!P.panel) return { defects, stats, notes, none: true };
   let core;
-  try { core = loadCore(P); } catch (e) { return { defects: ['ПН10 ' + P.panel.runtime + '/core.js — ядро не загружается: ' + e.message], stats }; }
+  try { core = loadCore(P); } catch (e) { return { defects: ['ПН10 ' + P.panel.runtime + '/core.js — ядро не загружается: ' + e.message], stats, notes }; }
   runtimeDefects(P, defects);
   const apps = panelApps(P);
   let ds = null;
   const lazyDs = () => (ds === null ? (ds = dsCorpus(P)) : ds);
   for (const a of apps) {
     if (bootRel(P, a).startsWith('..')) defects.push('ПН8 ' + a.rel + ' — приложение вне каталога включателя ' + path.posix.dirname(P.panel.boot) + '/: страница не найдёт свою панель');
-    stats.push(appDefects(P, a, core, defects, lazyDs));
+    stats.push(appDefects(P, a, core, defects, lazyDs, notes));
   }
   const boot = path.join(P.root, P.panel.boot);
   const want = renderBoot(P, apps.filter((a) => !bootRel(P, a).startsWith('..')), core);
@@ -413,18 +573,19 @@ export function check(P) {
   else if (readFileSync(boot, 'utf8') !== want) {
     defects.push('ПН8 ' + P.panel.boot + ' — включатель разошёлся со списком приложений с папкой панели (' + (apps.map((a) => a.rel).join(', ') || 'нет') + '), путём до рантайма и порядком файлов: node ' + P.tools + '/' + GEN);
   }
-  return { defects, stats };
+  return { defects, stats, notes };
 }
 
 function statsLine(stats) {
   return 'приложений с панелью: ' + stats.length + (stats.length ? ' — ' + stats.map((s) => s.rel + ' (сценариев ' + s.flows + ', шагов ' + s.steps + ', комментариев: открытых ' + s.open + ')').join('; ') : '');
 }
 
-function report(title, { written = [], lines = [], defects = [], stats = null, refused = [] }) {
+function report(title, { written = [], lines = [], defects = [], stats = null, refused = [], notes = [] }) {
   const out = ['== ' + title + ' =='];
   for (const w of written) out.push('записан ' + w);
   out.push(...lines);
   if (stats) out.push(statsLine(stats));
+  out.push(...notes);   // пометки записи — строки без FAIL, вердикт не меняют
   for (const r of refused) out.push('ОТКАЗ  ' + r);
   for (const d of defects) out.push('FAIL  ' + d);
   const bad = defects.length + refused.length;
@@ -450,7 +611,17 @@ export function resolveApp(P, arg) {
   return { app: decorate(P, hit[0]) };
 }
 
-function flowsScaffold(P, a) {
+/* Шапка flows.yaml: у файла без шапки её дописывают заготовка и сборка — пути из манифеста. */
+function headerFor(P, a) {
+  return [
+    '# Сценарии показа прототипа ' + a.meta.title + ' — панель прототипа.',
+    '# Формат — ' + P.panel.runtime + '/README.md, раздел «flows.yaml».',
+    '# После правки: node ' + P.tools + '/' + GEN + ' (пересобрать зеркало).',
+  ];
+}
+
+/* Заготовка сразу каноническая (задача 0005a): у шага start — State 01, lastState: 1. */
+function flowsScaffold(P, a, core) {
   let page = String(a.meta.home || '').replace(/\\/g, '/');
   if (page.startsWith(P.appShape.pages + '/')) page = page.slice(P.appShape.pages.length + 1);
   if (!page || page.includes('/')) page = path.posix.basename(page) || 'index.html';
@@ -458,17 +629,8 @@ function flowsScaffold(P, a) {
   const abs = path.join(a.abs, P.appShape.pages, page);
   const built = page.replace(/\.html?$/i, '.preview.html');
   if (existsSync(abs) && includesOf(readFileSync(abs, 'utf8')).length && existsSync(path.join(a.abs, P.appShape.pages, built))) page = built;
-  return '# Сценарии показа прототипа ' + a.meta.title + ' — панель прототипа.\n'
-    + '# Формат — ' + P.panel.runtime + '/README.md, раздел «flows.yaml».\n'
-    + '# После правки: node ' + P.tools + '/' + GEN + ' (пересобрать зеркало).\n'
-    + 'version: 1\n'
-    + 'flows:\n'
-    + '  - id: main\n'
-    + '    title: Основной путь\n'
-    + '    steps:\n'
-    + '      - id: start\n'
-    + '        title: Стартовая страница\n'
-    + '        page: ' + page + '\n';
+  return core.serializeFlows({ header: headerFor(P, a), version: 1, lastState: 1, flows: [{ id: 'main', title: 'Основной путь', desc: null,
+    steps: [{ state: 1, id: 'start', title: 'Стартовая страница', page, note: null, recorded: null, issues: [], do: [] }] }] });
 }
 
 export function enable(P, arg) {
@@ -478,16 +640,16 @@ export function enable(P, arg) {
   if (existsSync(a.panelAbs)) return { refused: ['панель у ' + a.rel + ' уже включена: папка ' + P.rel(a.panelAbs) + '/ есть'] };
   const core = loadCore(P);
   mkdirSync(a.panelAbs, { recursive: true });
-  writeFileSync(path.join(a.panelAbs, DATA.flows), flowsScaffold(P, a), 'utf8');
+  writeFileSync(path.join(a.panelAbs, DATA.flows), flowsScaffold(P, a, core), 'utf8');
   writeFileSync(path.join(a.panelAbs, DATA.comments), core.emptyComments(), 'utf8');
   const b = build(P);
   return { written: [P.rel(path.join(a.panelAbs, DATA.flows)) + ' (заготовка)', P.rel(path.join(a.panelAbs, DATA.comments)) + ' (заготовка)', ...b.written],
-    lines: ['панель включена у ' + a.rel + ': Alt+Shift+P на любой странице прототипа; сценарии — ' + P.rel(path.join(a.panelAbs, DATA.flows))] };
+    lines: ['панель включена у ' + a.rel + ': Alt+Shift+P на любой странице прототипа; сценарии — ' + P.rel(path.join(a.panelAbs, DATA.flows)), ...b.lines] };
 }
 
 function commentLine(c, core) {
   const first = String(c.body).split('\n').find((l) => l.trim()) || '';
-  const ctx = [c.page, c.step ? c.step.flow + '/' + c.step.step : null].filter(Boolean).join(' · ');
+  const ctx = [c.page, c.step ? core.stepRefText(c.step) : null].filter(Boolean).join(' · ');
   const text = first.length > 90 ? first.slice(0, 89) + '…' : first;
   return 'К-' + c.n + '  ' + core.STATUS.word[c.status].padEnd(8) + ' ' + (ctx ? ctx + ' — ' : '') + text;
 }
@@ -552,6 +714,73 @@ export function resolveComment(P, arg, num, statusArg, note) {
   return { written: [P.rel(file), ...b.written], lines: ['К-' + n + ': ' + core.STATUS.word[was] + ' → ' + core.STATUS.word[code] + (c.resolution ? '; Решение: ' + c.resolution : '')] };
 }
 
+/* flows.yaml приложения, пригодный к правке: без ошибок разбора и комментариев внутри. { a, core, fr, text } | { refused } */
+function flowsForEdit(P, arg) {
+  const r = resolveApp(P, arg);
+  if (r.error) return { refused: [r.error] };
+  const a = r.app;
+  if (!existsSync(a.panelAbs)) return { refused: ['панель у ' + a.rel + ' не включена'] };
+  const core = loadCore(P);
+  const text = readData(a, DATA.flows);
+  if (text === null) return { refused: ['у ' + a.rel + ' нет ' + DATA.flows] };
+  const fr = core.readFlows(text);
+  const file = P.rel(path.join(a.panelAbs, DATA.flows));
+  if (fr.errors.length) return { refused: [file + ' не читается — сначала поправьте ошибки'], defects: fr.errors.map((e) => e.code + ' ' + file + ':' + e.line + ' — ' + e.text) };
+  if (fr.innerComments.length) return { refused: [file + ': комментарии внутри (строки ' + fr.innerComments.join(', ') + ') — запись их потеряет; перенесите пояснения в note шага или в шапку (ПН11)'] };
+  return { a, core, fr, text, file };
+}
+
+/** --states: состояния списком — номер, сценарий, название, страница, действия, запись, пометки. */
+export function states(P, arg) {
+  const e = flowsForEdit(P, arg);
+  if (e.refused) return e;
+  const { core, fr } = e;
+  const lines = [];
+  let total = 0;
+  for (const f of fr.flows) {
+    let page = null;
+    for (const s of f.steps) {
+      if (s.page) page = s.page;
+      total++;
+      const parts = [s.state ? core.stateLabel(s.state) : 'без номера', f.id, s.title, page || '—', s.do.length + ' ' + (s.do.length === 1 ? 'action' : 'actions')];
+      if (s.recorded) parts.push('recorded ' + s.recorded);
+      if (s.issues && s.issues.length) parts.push('issues: ' + s.issues.join(', '));
+      lines.push(parts.join(' · '));
+    }
+  }
+  lines.push('состояний: ' + total + ' · сценариев: ' + fr.flows.length + ' · lastState: ' + (fr.doc.lastState == null ? '—' : fr.doc.lastState));
+  return { lines };
+}
+
+/** --state <app> <state> [--title "…"] [--note "…"] [--clear-issues]: правка состояния — каноническая запись и зеркало. */
+export function editState(P, arg, ref, o = {}) {
+  const e = flowsForEdit(P, arg);
+  if (e.refused) return e;
+  const { a, core, fr } = e;
+  const n = core.parseStateRef(ref);
+  if (!n) return { refused: ['состояние — номер: 07, 7, State 07 или state-07'] };
+  if (o.title === undefined && o.note === undefined && !o.clearIssues) return { refused: ['что поменять: --title "…", --note "…" или --clear-issues'] };
+  core.numberStates(fr.doc);
+  const hit = core.findState(fr.doc, n);
+  if (!hit) return { refused: [core.stateLabel(n) + ' в ' + e.file + ' нет'] };
+  const s = hit.step, done = [];
+  if (o.title !== undefined) {
+    const t = String(o.title).replace(/\s+/g, ' ').trim();
+    if (!t) return { refused: ['--title — непустое название'] };
+    done.push('название «' + s.title + '» → «' + t + '»');
+    s.title = t;
+  }
+  if (o.note !== undefined) {
+    const nt = String(o.note).replace(/\r\n?/g, '\n').replace(/\s+$/, '');
+    done.push(nt ? 'заметка записана' : 'заметка снята');
+    s.note = nt || null;
+  }
+  if (o.clearIssues) { done.push(s.issues.length ? 'пометки сняты: ' + s.issues.join(', ') : 'пометок не было'); s.issues = []; }
+  writeFileSync(path.join(a.panelAbs, DATA.flows), core.serializeFlows(fr.doc, { header: headerFor(P, a) }), 'utf8');
+  const b = build(P);
+  return { written: [e.file, ...b.written.filter((w) => w !== e.file)], lines: [core.stateLabel(n) + ' (' + hit.flow.id + '): ' + done.join('; '), ...b.lines] };
+}
+
 /* ---------------- selftest: откат на временном дереве ---------------- */
 
 function put(root, rel, text) {
@@ -571,6 +800,10 @@ const MANIFEST = {
 };
 const LAB = 'apps/core/drafts/lab';
 const PANEL = LAB + '/proto-panel';
+/* Сценарий так, как его пишет агент: без номеров и шапки. Файл без ошибок
+   сборка нумерует и приводит к канонической форме (шапка в 3 строки,
+   lastState, state у шагов) — строки ПН4–ПН5 ниже считаются по ней; файл с
+   ошибками (ПН1, ПН2) сборка не трогает — строки по FLOWS. */
 const FLOWS = [
   'version: 1',
   'flows:',
@@ -611,20 +844,21 @@ function tree(root, runtime) {
   put(root, 'apps/core/drafts/other/pages/B.html', '<p>без панели</p>\n');
 }
 
-/* Включатель, исполненный на странице по адресу: что записал и что навесил. */
+/* Включатель, исполненный на странице по адресу: что записал, что навесил и
+   что переслал хозяйке фрейма (posted). */
 function runBoot(text, scriptSrc, pageHref, frame) {
-  const written = [], listeners = [];
+  const written = [], listeners = [], posted = [];
   const ctx = {
     URL, decodeURIComponent, encodeURIComponent,
     location: new URL(pageHref),
-    document: { currentScript: { src: scriptSrc }, write: (s) => written.push(s), addEventListener: (type, fn, capture) => listeners.push({ type, capture }) },
+    document: { currentScript: { src: scriptSrc }, write: (s) => written.push(s), addEventListener: (type, fn, capture) => listeners.push({ type, capture, fn }) },
   };
   ctx.window = ctx;
   ctx.self = ctx;
   ctx.top = frame ? {} : ctx;
-  ctx.parent = frame ? { postMessage() {} } : ctx;
+  ctx.parent = frame ? { postMessage: (m) => posted.push(m) } : ctx;
   vm.runInNewContext(text, ctx, { timeout: 1000 });
-  return { written, listeners, panel: ctx.__PROTO_PANEL || null };
+  return { written, listeners, posted, panel: ctx.__PROTO_PANEL || null };
 }
 
 const CANON = [
@@ -638,6 +872,109 @@ const CANON = [
   '- Когда: 24.09.2026 14:07', '- Страница: A.html?id=1', '- Решение: 25.09.2026 — поправлено', '',
   'Текст второго.', '', '- пункт', '',
 ].join('\n');
+
+/* Задача 0005a (§10.4, п. 5): канонический файл со всеми глаголами и
+   параметрами — note блоком, issues, пропуск в номерах, пустой сценарий. */
+const FLOWS_ALL = [
+  '# Шапка файла: сохраняется как есть.',
+  '# Вторая строка шапки.',
+  'version: 1',
+  'lastState: 4',
+  'flows:',
+  '  - id: all',
+  '    title: Все глаголы',
+  "    desc: 'Проверка: формы'",
+  '    steps:',
+  '      - state: 1',
+  '        id: entry',
+  '        title: Вход',
+  '        page: A.html',
+  '        note: |',
+  '          Первая строка',
+  '          Вторая строка',
+  '',
+  '          После пустой',
+  '        recorded: 24.09.2026 18:40',
+  '        issues:',
+  '          - fragile',
+  '          - frame',
+  '        do:',
+  "          - click: '#go'",
+  '          - click:',
+  "              target: '.menu__item'",
+  '              text: Краткий — PDF',
+  '              index: -1',
+  '              timeout: 7500',
+  '          - fill:',
+  "              target: '#q'",
+  '              value: Северный',
+  '          - fill:',
+  "              target: '#empty'",
+  "              value: ''",
+  '          - press: Enter',
+  '          - press:',
+  "              target: '#q'",
+  '              key: k',
+  '              alt: true',
+  '              shift: true',
+  '              ctrl: true',
+  '              meta: true',
+  '          - hover:',
+  "              target: '#go'",
+  '              text: Пуск',
+  "          - focus: '#q'",
+  '          - scroll:',
+  "              target: '#pv'",
+  '              block: start',
+  '          - waitFor:',
+  "              target: '#pv'",
+  '              text: Готово',
+  '              state: hidden',
+  '              timeout: 8000',
+  '          - wait: 300',
+  '      - state: 4',
+  '        id: next',
+  "        title: 'Шаг: дальше'",
+  '        do:',
+  "          - waitFor: '[data-x=\"y\"]'",
+  '',
+  '  - id: empty',
+  '    title: Пустой сценарий',
+  '    steps:',
+  '',
+].join('\n');
+
+/* §10.4, п. 4: пронумерованный файл в прежней форме пилота — двойные кавычки. */
+const FLOWS_DQ = [
+  '# Сценарии показа прототипа Лаборатория — панель прототипа.',
+  'version: 1',
+  'lastState: 2',
+  'flows:',
+  '  - id: main',
+  '    title: "Основной путь"',
+  '    steps:',
+  '      - state: 1',
+  '        id: start',
+  '        title: "Старт"',
+  '        page: "A.html"',
+  '        do:',
+  '          - click: "#go"',
+  '          - waitFor: "[data-x=\\"y\\"]"',
+  '      - state: 2',
+  '        id: next',
+  '        title: "Дальше"',
+  '        do:',
+  '          - click: "#late"',
+  '          - waitFor: "#pv:not([hidden])"',
+  '',
+].join('\n');
+
+/* Первая расходящаяся строка двух текстов — для сообщения кейса. */
+function firstDiff(a, b) {
+  const x = a.split('\n'), y = b.split('\n');
+  for (let i = 0; i < Math.max(x.length, y.length); i++) if (x[i] !== y[i]) return 'строка ' + (i + 1) + ': «' + x[i] + '» ≠ «' + y[i] + '»';
+  return '';
+}
 
 const P_ = (r) => project(r);
 const enableLab = (r) => enable(P_(r), LAB);
@@ -668,16 +1005,16 @@ const CASES = [
   { name: '4в comments.md: повтор номера', expect: 'ПН3 ' + PANEL + '/comments.md:18 — номер К-1 повторяется', setup: (r) => { enableLab(r); setFlows(r, FLOWS); setComments(r, CANON.replace('## К-2 · сделан', '## К-1 · сделан')); } },
   { name: '4г comments.md: пустой текст', expect: 'ПН3 ' + PANEL + '/comments.md:9 — у К-1 пустой текст', setup: (r) => { enableLab(r); setFlows(r, FLOWS); setComments(r, CANON.replace('Поменять подпись кнопки.\n', '')); } },
   { name: '4д comments.md: нет шапки', expect: 'ПН3 ' + PANEL + '/comments.md:1 — нет шапки', setup: (r) => { enableLab(r); setFlows(r, FLOWS); setComments(r, CANON.replace('---\ntype: proto-comments\n---\n', '')); } },
-  { name: '5а page: нет файла', expect: 'ПН4 ' + PANEL + '/flows.yaml:8 — сценарий main, шаг start: страницы «Z.html» нет', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: Z.html')); } },
-  { name: '5б page: путь с ..', expect: 'ПН4 ' + PANEL + '/flows.yaml:8 — сценарий main, шаг start: путь «../x.html»', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: ../x.html')); } },
-  { name: '5в page: источник модульной страницы', expect: 'ПН4 ' + PANEL + '/flows.yaml:8 — сценарий main, шаг start: «M.html» — источник модульной страницы', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: M.html')); } },
+  { name: '5а page: нет файла', expect: 'ПН4 ' + PANEL + '/flows.yaml:13 — сценарий main, шаг start: страницы «Z.html» нет', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: Z.html')); } },
+  { name: '5б page: путь с ..', expect: 'ПН4 ' + PANEL + '/flows.yaml:13 — сценарий main, шаг start: путь «../x.html»', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: ../x.html')); } },
+  { name: '5в page: источник модульной страницы', expect: 'ПН4 ' + PANEL + '/flows.yaml:13 — сценарий main, шаг start: «M.html» — источник модульной страницы', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('page: A.html', 'page: M.html')); } },
   { name: '5г page: собранная M.preview.html — не дефект', expect: null, setup: (r) => { enableLab(r); setFlows(r, 'version: 1\nflows:\n  - id: m\n    title: М\n    steps:\n      - id: s\n        title: С\n        page: M.preview.html\n        do:\n          - click: \'#m\'\n'); } },
-  { name: '6а селектор: имени нет в разметке', expect: "ПН5 " + PANEL + "/flows.yaml:15 — сценарий main, шаг next, действие 1 (click '#gone'): «gone» не встречается в A.html и её скриптах", setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#gone'\n")); } },
+  { name: '6а селектор: имени нет в разметке', expect: "ПН5 " + PANEL + "/flows.yaml:21 — сценарий main, шаг next, действие 1 (click '#gone'): «gone» не встречается в A.html и её скриптах", setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#gone'\n")); } },
   { name: '6б селектор: имя только в локальном скрипте и :not() — не дефект', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); } },
-  { name: '6в селектор: класс состояния из ДС — не дефект, чужой класс — дефект', expect: 'ПН5 ' + PANEL + '/flows.yaml:16 — сценарий main, шаг next, действие 2 (waitFor \'#go.is-gone\'): класс «is-gone»',
+  { name: '6в селектор: класс состояния из ДС — не дефект, чужой класс — дефект', expect: 'ПН5 ' + PANEL + '/flows.yaml:22 — сценарий main, шаг next, действие 2 (waitFor \'#go.is-gone\'): класс «is-gone»',
     setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go.is-open'\n          - waitFor: '#go.is-gone'\n")); },
     extra: (r) => (check(P_(r)).defects.some((d) => d.includes('is-open')) ? ['класс из ДС принят за дефект'] : []) },
-  { name: '6г селектор не разбирается', expect: 'ПН5 ' + PANEL + '/flows.yaml:15 — сценарий main, шаг next, действие 1 (click \'#go:hovr\'): селектор не разбирается', setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go:hovr'\n")); } },
+  { name: '6г селектор не разбирается', expect: 'ПН5 ' + PANEL + '/flows.yaml:21 — сценарий main, шаг next, действие 1 (click \'#go:hovr\'): селектор не разбирается', setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go:hovr'\n")); } },
   { name: '7а открытый комментарий на удалённый шаг', expect: 'ПН6 ' + PANEL + '/comments.md:9 — К-1 (открыт): шага «main/next» нет', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON); } },
   { name: '7б тот же комментарий сделан — не дефект', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON.replace('## К-1 · открыт', '## К-1 · сделан')); } },
   { name: '8а зеркало правлено руками', expect: 'ПН7 ' + PANEL + '/panel-data.js — зеркало разошлось', setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, PANEL + '/panel-data.js', read(r, PANEL + '/panel-data.js') + '// правка\n'); } },
@@ -826,6 +1163,9 @@ function pageEnv({ files, locks, href, storage, session, idb }) {
   return ctx;
 }
 
+/* Ядро, словарь и хранилище — основа рантайма в vm: без strings.js t() отдаёт ключи. */
+const RT_BASE = ['core.js', 'strings.js', 'store.js'];
+
 function loadRuntime(ctx, runtime, names) {
   for (const n of names) vm.runInNewContext(readFileSync(path.join(runtime, n), 'utf8'), ctx, { timeout: 5000 });
   return ctx.window.ProtoPanel;
@@ -889,6 +1229,14 @@ async function selftest() {
     const frame = runBoot(boot, src, base + 'apps/core/drafts/lab/pages/A.html', true);
     pass(!frame.written.length && frame.listeners.length === 1 && frame.listeners[0].type === 'keydown' && frame.listeners[0].capture === true && !frame.panel,
       '12д включатель: фрейм приложения с панелью — только пересылка клавиш');
+    /* 20.12 (задача 0005a, §10.4, п. 12): Fix State работает и из фрейма превью */
+    const press = (code, extra) => Object.assign({ altKey: true, shiftKey: true, ctrlKey: false, metaKey: false, code, preventDefault() {}, stopPropagation() {} }, extra);
+    for (const code of core.HOTKEYS.codes) frame.listeners[0].fn(press(code));
+    frame.listeners[0].fn(press('KeyX'));
+    frame.listeners[0].fn(press('KeyS', { ctrlKey: true }));
+    pass(frame.posted.length === core.HOTKEYS.codes.length && frame.posted.some((m) => m.code === 'KeyS' && m.source === 'proto-panel' && m.type === 'key')
+      && frame.posted.every((m) => core.HOTKEYS.codes.includes(m.code)),
+      '20.12 включатель во фрейме пересылает все клавиши панели, и KeyS (Fix State); чужую клавишу и Ctrl — нет', JSON.stringify(frame.posted));
     const hub = runBoot(boot, src, base + 'index.html', false);
     pass(!hub.written.length && !hub.listeners.length, '12е включатель: хаб — ничего');
     const cyr = runBoot(boot, src, base + 'apps/core/drafts/%D0%BB%D0%B0%D0%B1%202/pages/A.html', false);
@@ -985,7 +1333,7 @@ async function selftest() {
     const core18 = req(path.join(runtime, 'core.js'));
     const A = 'file:///proj/apps/core/drafts/lab/pages/A.html';
     const link = async (ctx, files, hooks) => {
-      await loadRuntime(ctx, runtime, ['core.js', 'store.js'])._store.linkHandle(fakeDir(files, hooks));
+      await loadRuntime(ctx, runtime, RT_BASE)._store.linkHandle(fakeDir(files, hooks));
       return ctx.window.ProtoPanel._store;
     };
 
@@ -1068,7 +1416,7 @@ async function selftest() {
     /* R5: хранилище отказало после старта — черновики читаются и удаляются */
     const ls = leakyStorage();
     const c8 = pageEnv({ files: panelFiles(core18), href: A, storage: ls });
-    loadRuntime(c8, runtime, ['core.js', 'store.js']);
+    loadRuntime(c8, runtime, RT_BASE);
     const s8 = c8.window.ProtoPanel._store;
     ls.breakNow();
     const id8 = s8.addDraft('Do not lose me');
@@ -1156,7 +1504,7 @@ async function selftest() {
 
     /* R7: «нужно разрешение» + черновик — запись не ждёт сама себя */
     const filesH = panelFiles(core18);
-    const sH = loadRuntime(pageEnv({ files: filesH, href: A }), runtime, ['core.js', 'store.js'])._store;
+    const sH = loadRuntime(pageEnv({ files: filesH, href: A }), runtime, RT_BASE)._store;
     sH.addDraft('Черновик до разрешения');
     sH.state.status = 'needs-permission';
     sH.state.saved = { handle: fakeDir(filesH), key: 'app:core/drafts/lab' };
@@ -1190,7 +1538,7 @@ async function selftest() {
     const lsJ = fakeStorage();
     const idbJ = fakeIdb();
     idbJ.data.set('app:core/drafts/lab', fakeDir(filesJ));
-    const pageJ = () => loadRuntime(pageEnv({ files: filesJ, href: A, storage: lsJ, idb: idbJ }), runtime, ['core.js', 'store.js'])._store;
+    const pageJ = () => loadRuntime(pageEnv({ files: filesJ, href: A, storage: lsJ, idb: idbJ }), runtime, RT_BASE)._store;
     const sJ0 = pageJ();
     sJ0.addDraft('## Что поправить\nкнопка');
     sJ0.addDraft('обычный черновик');
@@ -1201,7 +1549,7 @@ async function selftest() {
     sJ.addDraft('ещё черновик');
     const sJ2 = pageJ();
     const stJ2 = await sJ2.init();
-    pass(okJ && stJ2 === 'linked' && sJ2.drafts().length === 1 && /не по формату/.test(sJ2.state.error || ''),
+    pass(okJ && stJ2 === 'linked' && sJ2.drafts().length === 1 && /has format errors/.test(sJ2.state.error || ''),
       '19в R8: старт с черновиком-заголовком — папка подключена, черновик записан; сломанный comments.md — папка подключена, черновик ждёт, ошибка видна',
       'старт 1: ' + stJ + ', старт 2: ' + stJ2 + ', ошибка: ' + sJ2.state.error);
 
@@ -1214,7 +1562,7 @@ async function selftest() {
     breakFlows = true;
     const rK = await within(sK.save([{ op: 'add', text: 'Один раз' }]), 2000);
     const memK = (sK.data() && sK.data().comments || []).map((c) => c.body);
-    pass(rK.done && !rK.error && rK.v[0] === 1 && bodies(filesK).length === 1 && /flows\.yaml не прочитан/.test(sK.state.mirrorError || '') && memK.length === 1,
+    pass(rK.done && !rK.error && rK.v[0] === 1 && bodies(filesK).length === 1 && /flows\.yaml not read/.test(sK.state.mirrorError || '') && memK.length === 1,
       '19г R9: flows.yaml не прочитался после записи — сохранение состоялось, зеркало — предупреждением, данные в памяти обновлены',
       JSON.stringify(rK) + ' · ' + sK.state.mirrorError);
 
@@ -1242,14 +1590,14 @@ async function selftest() {
     /* R10: хранилище закрыто со старта — черновики временные с первого ввода;
        отказ записи другого ключа сохранённые черновики временными не делает */
     const deadLs = { setItem() { throw Object.assign(new Error('запрещено'), { name: 'SecurityError' }); }, getItem: () => null, removeItem() {} };
-    const sM = loadRuntime(pageEnv({ files: panelFiles(core18), href: A, storage: deadLs }), runtime, ['core.js', 'store.js'])._store;
+    const sM = loadRuntime(pageEnv({ files: panelFiles(core18), href: A, storage: deadLs }), runtime, RT_BASE)._store;
     const volM = sM.draftsVolatile();
     sM.addDraft('до перезагрузки');
     const okM = sM.local.usable === false && volM && sM.drafts().length === 1 && sM.draftsVolatile();
     const baseN = fakeStorage();
     const pickyLs = { setItem(k, v) { if (k.startsWith('pp.ui:')) throw Object.assign(new Error('квота'), { name: 'QuotaExceededError' }); baseN.setItem(k, v); },
       getItem: (k) => baseN.getItem(k), removeItem: (k) => baseN.removeItem(k) };
-    const sN = loadRuntime(pageEnv({ files: panelFiles(core18), href: A, storage: pickyLs }), runtime, ['core.js', 'store.js'])._store;
+    const sN = loadRuntime(pageEnv({ files: panelFiles(core18), href: A, storage: pickyLs }), runtime, RT_BASE)._store;
     sN.setUi({ tab: 'comments' });
     sN.addDraft('в localStorage');
     pass(okM && sN.drafts().length === 1 && !sN.draftsVolatile() && sN.local.volatile('pp.ui:core/drafts/lab'),
@@ -1257,8 +1605,8 @@ async function selftest() {
 
     /* R11: снятый чип убирает только свой ключ; стёртый текст снимает фиксацию */
     const cO = pageEnv({ files: panelFiles(core18), href: A });
-    const PPO = loadRuntime(cO, runtime, ['core.js', 'store.js']);
-    stubUi(PPO, { flow: 'demo', step: 'a', dirty: false, error: null });
+    const PPO = loadRuntime(cO, runtime, RT_BASE);
+    stubUi(PPO, { flow: 'demo', step: 'a', state: 1, index: 0, dirty: false, error: null });
     loadRuntime(cO, runtime, ['tab-comments.js']);
     const chipPage = { id: '', closest: (s) => (s === '#pp-drawer' ? {} : null), matches: (s) => s === '[data-pp-ctx]', getAttribute: () => 'page' };
     (cO.__ppListeners.keydown || []).forEach((fn) => fn({ target: chipPage, key: 'Backspace', ctrlKey: false, metaKey: false, preventDefault() {} }));
@@ -1269,7 +1617,7 @@ async function selftest() {
     typeO('');
     cO.location = new URL('file:///proj/apps/core/drafts/lab/pages/B.html');
     const fO2 = PPO._comments.form();
-    pass(fO.page === null && !!fO.step && fO.step.step === 'a' && fO2.text === '' && fO2.page === 'B.html',
+    pass(fO.page === null && !!fO.step && fO.step.state === 1 && fO2.text === '' && fO2.page === 'B.html',
       '19ж R11: снятый чип страницы не снимает шаг; стёртый текст — форма снова берёт текущую страницу', JSON.stringify({ fO, fO2 }));
 
     /* R12: повтор после перезаписи файла другой вкладкой — номер своего комментария */
@@ -1292,14 +1640,293 @@ async function selftest() {
     const locksQ = fakeLocks();
     let armQ = true, sQ2 = null;
     const hooksQ = { beforeClose: (name) => { if (armQ && name === 'comments.md' && sQ2) { armQ = false; sQ2.addDraft('Во время записи'); } } };
-    const sQ1 = loadRuntime(pageEnv({ files: filesQ, href: A, storage: lsQ, locks: locksQ }), runtime, ['core.js', 'store.js'])._store;
-    sQ2 = loadRuntime(pageEnv({ files: filesQ, href: A, storage: lsQ, locks: locksQ }), runtime, ['core.js', 'store.js'])._store;
+    const sQ1 = loadRuntime(pageEnv({ files: filesQ, href: A, storage: lsQ, locks: locksQ }), runtime, RT_BASE)._store;
+    sQ2 = loadRuntime(pageEnv({ files: filesQ, href: A, storage: lsQ, locks: locksQ }), runtime, RT_BASE)._store;
     sQ1.addDraft('Черновик прошлой сессии');
     await within(Promise.all([sQ1.linkHandle(fakeDir(filesQ, hooksQ)), sQ2.linkHandle(fakeDir(filesQ, hooksQ))]), 3000);
     const bQ = bodies(filesQ), leftQ = sQ1.drafts().map((d) => d.text);
     const once = (t) => bQ.filter((b) => b === t).length === 1;
     pass(once('Черновик прошлой сессии') && (once('Во время записи') ? !leftQ.includes('Во время записи') : leftQ.includes('Во время записи') && !bQ.includes('Во время записи')),
       '19и R13: две вкладки пишут общие черновики один раз, черновик другой вкладки не теряется', JSON.stringify({ bQ, leftQ }));
+
+    /* 20.14–20.16 (задача 0005a): запись flows.yaml из браузера — журнал без
+       папки, номер по свежему файлу, ссылка черновика комментария на черновое
+       состояние; файл с комментарием внутри и логическая ошибка операции. */
+    const labData = (flowsText, commentsText) => core18.mirrorData({ app: { id: 'lab', title: 'lab' }, flowsText, commentsText: commentsText || core18.emptyComments() });
+    const canonFlows = (() => { const d = core18.readFlows(FLOWS).doc; core18.numberStates(d); return core18.serializeFlows(d, { title: 'lab' }); })();
+    const filesS = panelFiles(core18);
+    filesS.set('flows.yaml', canonFlows);
+    const cS = pageEnv({ files: filesS, href: A });
+    cS.window.ProtoPanelData = labData(canonFlows);
+    const PPS = loadRuntime(cS, runtime, RT_BASE);
+    const sS = PPS._store;
+    const savedS = [];
+    PPS._bus.on('flows-saved', (x) => savedS.push(x));
+    const toastS = [];
+    PPS._bus.on('states-saved', (x) => toastS.push(x));
+    const stepS = { title: 'Черновое', recorded: '25.09.2026 10:00', page: null, do: [{ verb: 'click', target: '#go' }] };
+    const dS = await within(sS.saveFlows([{ op: 'addState', ref: 'rS', flow: 'main', step: stepS }]), 2000);
+    const draftS = sS.flows()[0].steps[2];
+    const exportS = sS.exportFlowsText();
+    const exportOk = core18.serializeFlows(core18.readFlows(exportS).doc) === exportS && /\n {6}- state: 3\n {8}id: state-03\n {8}title: Черновое\n/.test(exportS);
+    sS.addDraft('К черновому состоянию', 'A.html', { state: 3, ref: 'rS' });
+    pass(dS.done && dS.v && dS.v.draft === true && dS.v.res.states.rS.state === 3 && draftS && draftS.draft === 'rS' && draftS.state === 3 && exportOk,
+      '20.14а без папки Fix State — черновик в журнале: State 03 на схеме (Unsaved), «Download flows.yaml» канонический', JSON.stringify(dS) + ' · ' + exportS.split('\n').slice(-6).join(' ⏎ '));
+    /* снаружи (агент, вторая вкладка) дописали State 12 — черновик получит 13 */
+    const outS = core18.readFlows(canonFlows).doc;
+    outS.flows[0].steps.push({ state: 12, id: 'outside', title: 'Снаружи', page: 'A.html', note: null, recorded: null, issues: [], do: [] });
+    outS.lastState = 12;
+    filesS.set('flows.yaml', core18.serializeFlows(outS));
+    const lS = await within(sS.linkHandle(fakeDir(filesS)), 3000);
+    const diskS = filesS.get('flows.yaml');
+    const frS = core18.readFlows(diskS);
+    const mineS = frS.flows[0] && frS.flows[0].steps.find((s) => s.title === 'Черновое');
+    const mapS = savedS.length && savedS[0].map.states.rS;
+    const cmS = core18.parseComments(filesS.get('comments.md')).model.comments;
+    pass(lS.done && !lS.error && mineS && mineS.state === 13 && frS.doc.lastState === 13 && sS.flowOps().length === 0
+      && core18.serializeFlows(frS.doc) === diskS && filesS.get('panel-data.js') === core18.mirrorText({ app: { id: 'lab', title: 'lab' }, flowsText: diskS, commentsText: filesS.get('comments.md') })
+      && !!mapS && mapS.from.state === 3 && mapS.to.state === 13 && toastS.length === 1 && toastS[0].count === 1 && JSON.stringify(toastS[0].moved) === '[{"from":3,"to":13}]',
+      '20.14б подключение папки: журнал записан одной правкой, номер по свежему файлу (13, не 03) и назван, запись каноническая, зеркало байт в байт',
+      JSON.stringify(lS) + ' · ' + JSON.stringify(mapS) + ' · ' + JSON.stringify(toastS));
+    pass(cmS.length === 1 && cmS[0].step && cmS[0].step.state === 13 && filesS.get('comments.md').includes('\n- Шаг: State 13\n') && sS.drafts().length === 0,
+      '20.14в черновик комментария к черновому состоянию записан после него — «Шаг: State 13»', JSON.stringify(cmS));
+
+    /* комментарий внутри flows.yaml: запись отказана, файл цел, операция — в журнале с ошибкой */
+    const filesT = panelFiles(core18);
+    const innerT = canonFlows.replace('      - state: 2\n', '      # пояснение агента\n      - state: 2\n');
+    filesT.set('flows.yaml', innerT);
+    const sT = await link(pageEnv({ files: filesT, href: A }), filesT);
+    const rT = await within(sT.saveFlows([{ op: 'renameState', state: 1, title: 'Новое' }]), 2000);
+    pass(rT.done && rT.v && rT.v.draft === true && filesT.get('flows.yaml') === innerT && /comment inside the file/.test(sT.state.error || '') && sT.state.flowsError === true && sT.flowOps().length === 1,
+      '20.15 комментарий внутри flows.yaml — запись из браузера отказана, файл цел, правка ждёт в журнале, ошибка видна', JSON.stringify(rT) + ' · ' + sT.state.error);
+
+    /* логическая ошибка операции — не журнал, а отказ с английским текстом */
+    const filesU = panelFiles(core18);
+    filesU.set('flows.yaml', canonFlows);
+    const sU = await link(pageEnv({ files: filesU, href: A }), filesU);
+    const rU = await within(sU.saveFlows([{ op: 'deleteState', state: 1 }]), 2000);
+    pass(rU.done && /later states depend on this one/.test(rU.error || '') && filesU.get('flows.yaml') === canonFlows && sU.flowOps().length === 0,
+      '20.16 удалить State 01, от которого зависит State 02, — отказ без записи и без журнала', JSON.stringify(rU));
+  }
+
+  /* 20. Задача 0005a (§10.4; номер после точки — пункт §10.4): номера
+         состояний, каноническая форма, Fix State из журнала действий, правки
+         схемы из браузера, ссылки комментариев, команды, сторож кириллицы,
+         словарь интерфейса. */
+  withTree((r) => {
+    enableLab(r);
+    put(r, PANEL + '/flows.yaml', FLOWS + '  - id: second\n    title: Второй\n    steps:\n      - id: x\n        title: Икс\n        page: A.html\n');
+    const b1 = build(P_(r));
+    const fr = core0(r).readFlows(read(r, PANEL + '/flows.yaml'));
+    const nums = fr.flows.map((f) => f.steps.map((s) => s.state).join(',')).join(' | ');
+    const b2 = build(P_(r));
+    pass(nums === '1,2 | 3' && fr.doc.lastState === 3 && b1.lines.some((l) => l.includes('пронумеровано 3 — main/start → State 01, main/next → State 02, second/x → State 03'))
+      && !b2.written.length && check(P_(r)).defects.length === 0,
+      '20.1 нумерация: номера по порядку в файле, lastState; повторная сборка ничего не меняет', nums + ' · ' + b1.lines.join(' | '));
+  });
+  withTree((r) => {
+    enableLab(r);
+    setFlows(r, FLOWS);
+    const canon = read(r, PANEL + '/flows.yaml');
+    put(r, PANEL + '/flows.yaml', canon.replace('      - state: 2\n', '      - state: 1\n').replace('lastState: 2', 'lastState: 1'));
+    const d1 = check(P_(r)).defects;
+    const b = build(P_(r));
+    const fr = core0(r).readFlows(read(r, PANEL + '/flows.yaml'));
+    pass(d1.some((d) => d.startsWith('ПН12 ' + PANEL + '/flows.yaml:17 — номер State 01 повторяется (впервые — строка 10)'))
+      && b.lines.some((l) => l.includes('main/next → State 02 (номер 1 повторялся)'))
+      && fr.flows[0].steps.map((s) => s.state).join(',') === '1,2' && check(P_(r)).defects.length === 0,
+      '20.2 повтор номера — ПН12; сборка даёт второму новый номер и называет его', [...d1, ...b.lines].join(' | '));
+    put(r, PANEL + '/flows.yaml', canon.replace('lastState: 2', 'lastState: 1'));
+    const d2 = check(P_(r)).defects;
+    build(P_(r));
+    pass(d2.some((d) => d.startsWith('ПН12 ' + PANEL + '/flows.yaml:5 — lastState 1 меньше наибольшего номера 2')) && check(P_(r)).defects.length === 0
+      && read(r, PANEL + '/flows.yaml') === canon,
+      '20.3 lastState меньше наибольшего номера — ПН12; после сборки чисто', d2.join(' | '));
+  });
+  withTree((r) => {
+    enableLab(r);
+    put(r, PANEL + '/flows.yaml', FLOWS_DQ);
+    const d1 = check(P_(r)).defects;
+    const core = core0(r);
+    build(P_(r));
+    const after = read(r, PANEL + '/flows.yaml');
+    pass(d1.some((d) => d.startsWith('ПН11 ' + PANEL + '/flows.yaml — не в канонической форме')) && check(P_(r)).defects.length === 0
+      && JSON.stringify(core.readFlows(FLOWS_DQ).flows) === JSON.stringify(core.readFlows(after).flows) && after.includes("- click: '#go'") && !after.includes('"Старт"'),
+      '20.4 форма: двойные кавычки — ПН11; после сборки чисто, модели до и после равны', d1.join(' | '));
+  });
+  {
+    const core = req(path.join(runtime, 'core.js'));
+    const fr = core.readFlows(FLOWS_ALL);
+    const back = fr.doc ? core.serializeFlows(fr.doc) : '';
+    const nb = fr.numbering;
+    pass(!fr.errors.length && !fr.innerComments.length && !nb.missing.length && !nb.duplicates.length && !nb.bad.length && !nb.low && back === FLOWS_ALL
+      && fr.flows[1].steps.length === 0 && fr.flows[0].steps[0].do.length === 11 && fr.flows[0].steps[0].do[3].value === '',
+      '20.5 serializeFlows(readFlows(x)) === x: все глаголы и параметры, note блоком, issues, пустой сценарий', fr.errors.map((e) => e.line + ' ' + e.text).join(' | ') || firstDiff(back, FLOWS_ALL));
+  }
+  withTree((r) => {
+    enableLab(r);
+    const text = FLOWS.replace('      - id: start\n', '      # вход\n      - id: start\n').replace("- click: '#go'", "- click: '#go'  # хвост");
+    put(r, PANEL + '/flows.yaml', text);
+    const b = build(P_(r));
+    const d = check(P_(r)).defects;
+    pass(read(r, PANEL + '/flows.yaml') === text && b.lines.some((l) => l.includes('не тронут: комментарии внутри, строки 6, 11 (ПН11)'))
+      && d.some((x) => x.startsWith('ПН11 ' + PANEL + '/flows.yaml:6 — комментарий внутри')) && d.some((x) => x.startsWith('ПН11 ' + PANEL + '/flows.yaml:11 — комментарий внутри')),
+      '20.6 комментарий внутри flows.yaml — ПН11 со строкой; сборка файл не переписывает', [...b.lines, ...d].join(' | '));
+  });
+  {
+    const core = req(path.join(runtime, 'core.js'));
+    const flow = { id: 'main', steps: [
+      { state: 1, id: 'start', title: 'Старт', page: 'A.html', do: [] },
+      { state: 2, id: 'next', title: 'Дальше', page: null, do: [] },
+    ] };
+    const L = (verb, target, at, o = {}) => ({ action: Object.assign({ verb, target }, o.action), at, label: o.label || null, replayed: !!o.replayed, fragile: !!o.fragile });
+    const log = [L('click', '#a', 1000, { replayed: true }), L('click', '#b', 2000, { replayed: true }), L('click', '#c', 3000, { label: 'Кнопка C', fragile: true }),
+      L('fill', '#q', 4000, { action: { value: 'Северный' }, label: 'Поиск' })];
+    const trail0 = { page: 'A.html', log, mark: 0, flagMark: 0, lastFix: null, base: null, flags: [] };
+    const cs = (trail, fl = flow) => core.composeState({ trail: Object.assign({}, trail0, trail), flow: fl, n: 3, when: '25.09.2026 10:00', pageTitle: 'Запрос — AI Pitcher' });
+    const tg = (x) => (x.step ? x.step.do.map((a) => a.target).join(' ') : x.error);
+    const a = cs({});
+    const b = cs({ lastFix: { flow: 'main', state: 2 }, mark: 3 });
+    const c = cs({ base: { flow: 'main', step: 'next', at: 2, flags: 0 } });
+    const d = cs({ base: { flow: 'main', step: 'start', at: 2, flags: 0 } });
+    const e = cs({ lastFix: { flow: 'main', state: 2 }, mark: 4 });
+    const f = core.composeState({ trail: Object.assign({}, trail0, { log: [L('click', '#a', 9000), L('click', '#b', 15000)] }), flow, n: 3, when: '25.09.2026 10:00' });
+    const g = cs({ lastFix: { flow: 'main', state: 2 }, mark: 3, flagMark: 1, flags: [{ code: 'frame' }, { code: 'drag' }] });
+    const g2 = cs({ flags: [{ code: 'frame' }, { code: 'drag' }] });
+    const h = cs({ lastFix: { flow: 'main', state: 2 }, mark: 3 }, { id: 'empty', steps: [] });
+    const i = cs({ log: [] });
+    const j = cs({ log: [L('click', '#a', 1000, { replayed: true, label: 'Конструктор' }), L('waitFor', '#b', 1500, { replayed: true })] });
+    const checks = [
+      ['точка входа при свежей загрузке', a.mode === 'entry' && a.step.page === 'A.html' && tg(a) === '#a #b #c #q' && a.step.state === 3 && a.step.id === 'state-03' && a.step.recorded === '25.09.2026 10:00' && a.step.title === 'Поиск: Северный'],
+      ['приращение после своей фиксации', b.mode === 'increment' && b.step.page === null && tg(b) === '#q' && b.after.state === 2],
+      ['приращение после проигрывания до последнего шага', c.mode === 'increment' && tg(c) === '#c #q' && c.user === 2],
+      ['точка входа, если проигран не последний шаг — проигранные и свои', d.mode === 'entry' && tg(d) === '#a #b #c #q'],
+      ['nothing-changed', e.error === 'nothing-changed' && e.mode === 'increment' && !e.step],
+      ['пауза 6 с → timeout 7500; первое действие после открытия страницы — без поправки', f.step.do[0].timeout === 4000 && f.step.do[1].timeout === 7500],
+      ['пометки только из своего диапазона', g.step.issues.join(',') === 'drag' && g2.step.issues.join(',') === 'fragile,frame,drag'],
+      ['пустой сценарий → точка входа', h.mode === 'entry' && h.step.page === 'A.html'],
+      ['точка входа без действий — название по заголовку страницы', i.mode === 'entry' && i.step.title === 'Запрос' && !i.step.do.length],
+      ['ожидание — не подпись: название по последнему действию', j.step.title === 'Конструктор'],
+    ];
+    const bad = checks.filter((x) => !x[1]).map((x) => x[0]);
+    pass(!bad.length, '20.7 composeState: точка входа, приращение, nothing-changed, timeout по паузе, пометки, пустой сценарий', bad.join('; '));
+  }
+  {
+    const core = req(path.join(runtime, 'core.js'));
+    const mk = () => ({ header: [], version: 1, lastState: 12, flows: [
+      { id: 'main', title: 'Основной', desc: null, steps: [
+        { state: 1, id: 'start', title: 'Старт', page: 'A.html', note: null, recorded: null, issues: [], do: [] },
+        { state: 2, id: 'state-13', title: 'Занятый id', page: null, note: null, recorded: null, issues: [], do: [] },
+      ] },
+      { id: 'empty', title: 'Пустой', desc: null, steps: [] },
+    ] });
+    const d1 = mk();
+    const r1 = core.applyFlowOps(d1, [{ op: 'addState', ref: 's1', flow: 'main', step: { title: 'Новое', recorded: '25.09.2026 10:00', do: [{ verb: 'click', target: '#go' }] } }]);
+    const ok1 = r1.states.s1.state === 13 && r1.states.s1.id === 'state-13-2' && d1.lastState === 13 && d1.flows[0].steps[2].do[0].timeout === 4000;   // до следующих операций
+    const r2 = core.applyFlowOps(d1, [{ op: 'deleteState', state: 1 }]);
+    const r3 = core.applyFlowOps(d1, [{ op: 'deleteState', state: 13 }, { op: 'addState', ref: 's2', flow: 'main', step: { title: 'Ещё' } }]);
+    const r4 = core.applyFlowOps(d1, [{ op: 'addState', ref: 's3', flow: 'empty', step: { title: 'Без страницы' } }]);
+    const d2 = mk();
+    const r5 = core.applyFlowOps(d2, [{ op: 'addFlow', ref: 'f1' }, { op: 'addState', ref: 's4', flow: 'f1', step: { page: 'A.html', title: 'Вход' } },
+      { op: 'renameState', state: 's4', title: 'Переименован' }, { op: 'renameFlow', flow: 'f1', title: 'Сценарий 3' }]);
+    const d3 = mk();
+    core.applyFlowOps(d3, [{ op: 'addFlow', ref: 'f' }]);
+    const d3b = mk();
+    d3b.flows[1].id = 'flow-03';
+    core.applyFlowOps(d3b, [{ op: 'addFlow', ref: 'f' }]);
+    const r6 = core.applyFlowOps(mk(), [{ op: 'renameFlow', flow: 'nope', title: 'x' }, { op: 'renameState', state: 99, title: 'x' }, { op: 'renameState', state: 1, title: '  ' }]);
+    const d7 = mk(), same = { page: null, recorded: '25.09.2026 10:00', do: [{ verb: 'click', target: '#x' }] };
+    core.applyFlowOps(d7, [{ op: 'addState', ref: 'a', flow: 'main', step: same }], { dedupe: true });
+    const r7 = core.applyFlowOps(d7, [{ op: 'addState', ref: 'b', flow: 'main', step: same }], { dedupe: true });
+    const d8 = mk();
+    const r8 = core.applyFlowOps(d8, [{ op: 'addState', ref: 'a', flow: 'main', step: { state: 15, title: 'Черновик 15' } },
+      { op: 'addState', ref: 'b', flow: 'main', step: { state: 13, title: 'Черновик 13' } }]);
+    const d9 = mk();
+    d9.lastState = 20;
+    const r9 = core.applyFlowOps(d9, [{ op: 'addState', ref: 'a', flow: 'main', step: { state: 15, title: 'Черновик 15' } }]);
+    const codes = (x) => x.errors.map((e) => e.code).join(',');
+    const checks = [
+      ['номер по свежему lastState, занятый id — с суффиксом', ok1],
+      ['deleteState с зависимым шагом → dependents', codes(r2) === 'dependents' && d1.flows[0].steps[0].state === 1],
+      ['удалённый номер не выдаётся снова', !codes(r3) && r3.states.s2.state === 14 && !d1.flows[0].steps.some((s) => s.state === 13)],
+      ['addState без page в пустой сценарий → entry-required', codes(r4) === 'entry-required' && d1.flows[1].steps.length === 0],
+      ['ref черновых операций сопоставляются', !codes(r5) && r5.flows.f1 === 'flow-03' && r5.states.s4.flow === 'flow-03' && r5.states.s4.state === 13
+        && d2.flows[2].title === 'Сценарий 3' && d2.flows[2].steps[0].title === 'Переименован'],
+      ['новый сценарий без названия — порядковый Flow 03, занятый номер — следующий', d3.flows[2].id === 'flow-03' && d3.flows[2].title === 'Flow 03' && d3.flows[2].steps.length === 0
+        && d3b.flows[2].id === 'flow-04' && d3b.flows[2].title === 'Flow 04'],
+      ['коды no-flow, no-state, empty-title', codes(r6) === 'no-flow,no-state,empty-title'],
+      ['dedupe: тот же записанный шаг второй раз не добавляется', r7.states.b.state === 13 && d7.flows[0].steps.length === 3 && d7.lastState === 13],
+      ['номер черновика сохраняется (удалённый черновик не сдвигает следующие), но не ниже свежего lastState', r8.states.a.state === 15 && r8.states.b.state === 16
+        && d8.lastState === 16 && r9.states.a.state === 21],
+    ];
+    const bad = checks.filter((x) => !x[1]).map((x) => x[0]);
+    pass(!bad.length, '20.8 applyFlowOps: номера, id, зависимости, точка входа, ref, коды ошибок, dedupe', bad.join('; '));
+  }
+  withTree((r) => {
+    enableLab(r);
+    setFlows(r, FLOWS);
+    put(r, PANEL + '/comments.md', CANON);
+    const before = check(P_(r)).defects;
+    const b = build(P_(r));
+    const text = read(r, PANEL + '/comments.md');
+    const clean = check(P_(r)).defects;
+    pass(before.some((d) => d.startsWith('ПН11 ' + PANEL + '/comments.md:9 — К-1: прежняя ссылка на шаг «main/next» (станет State 02)'))
+      && text.includes('\n- Шаг: State 02\n') && !text.includes('main/next') && b.lines.some((l) => l.includes('ссылки на шаги → номера: К-1 main/next → State 02')) && !clean.length,
+      '20.9а комментарии: прежняя ссылка main/next — ПН11, сборка пишет «Шаг: State 02»', [...before, ...b.lines, ...clean].join(' | '));
+    setComments(r, CANON.replace('- Шаг: main/next', '- Шаг: State 07'));
+    const d = check(P_(r)).defects;
+    pass(d.length === 1 && d[0].startsWith('ПН6 ' + PANEL + '/comments.md:9 — К-1 (открыт): состояния State 07 нет'),
+      '20.9б открытый комментарий ссылается на номер, которого нет, — ПН6', d.join(' | '));
+  });
+  withTree((r) => {
+    enableLab(r);
+    setFlows(r, FLOWS);
+    const core = core0(r);
+    const fr = core.readFlows(read(r, PANEL + '/flows.yaml'));
+    Object.assign(fr.doc.flows[0].steps[1], { recorded: '24.09.2026 18:40', issues: ['fragile'] });
+    put(r, PANEL + '/flows.yaml', core.serializeFlows(fr.doc));
+    build(P_(r));
+    const list1 = states(P_(r), 'lab').lines;
+    const notes1 = check(P_(r)).notes;
+    const e1 = editState(P_(r), 'lab', '02', { title: 'Новое название' });
+    const e2 = editState(P_(r), 'lab', 'State 2', { clearIssues: true });
+    const e3 = editState(P_(r), 'lab', 'state-09', { title: 'x' });
+    const after = core.readFlows(read(r, PANEL + '/flows.yaml')).flows[0].steps[1];
+    const c2 = check(P_(r));
+    pass(list1[0] === 'State 01 · main · Старт · A.html · 2 actions' && list1[1] === 'State 02 · main · Дальше · A.html · 2 actions · recorded 24.09.2026 18:40 · issues: fragile'
+      && list1[2] === 'состояний: 2 · сценариев: 1 · lastState: 2' && notes1.some((n) => n.includes('State 02 — хрупкий селектор')),
+      '20.10а --states: строки по формату §10.2; пометка — заметкой проверки', list1.join(' | '));
+    pass(!e1.refused && !e2.refused && after.title === 'Новое название' && !after.issues.length && !c2.defects.length && !c2.notes.length
+      && e1.lines[0] === 'State 02 (main): название «Дальше» → «Новое название»' && e2.lines[0].includes('пометки сняты: fragile')
+      && !!e3.refused && e3.refused[0].startsWith('State 09 в '),
+      '20.10б --state: название и --clear-issues — каноническая запись и зеркало; нет номера — отказ', [...(e1.lines || []), ...(e2.lines || []), ...(e3.refused || []), ...c2.defects].join(' | '));
+  });
+  withTree((r) => {
+    enableLab(r);
+    setFlows(r, FLOWS);
+    const ui = '.kit/proto-panel/ui.js';
+    const at = read(r, ui).split('\n').length + 1;
+    put(r, ui, read(r, ui) + "\nvar ppX = 'Привет';\n/* 'строка в комментарии' */\n// 'ещё строка'\nvar ppRe = /'[а-я]+'/;\n");
+    for (const f of ['core.js', 'strings.js']) put(r, '.kit/proto-panel/' + f, read(r, '.kit/proto-panel/' + f) + "\nvar ppY = 'Кириллица допустима';\n");
+    const cyr = check(P_(r)).defects.filter((d) => d.includes('кириллица в строке'));
+    pass(cyr.length === 1 && cyr[0].startsWith('ПН10 ' + ui + ':' + at + ' — кириллица в строке «Привет»'),
+      '20.11 ПН10: кириллица в строке ui.js — дефект; в core.js, strings.js, комментарии и регулярном выражении — нет', cyr.join(' | ') || 'дефекта нет');
+  });
+  {
+    const ctxS = { window: {} };
+    vm.runInNewContext(readFileSync(path.join(runtime, 'strings.js'), 'utf8'), ctxS, { timeout: 1000 });
+    const S = ctxS.window.ProtoPanel._strings;
+    const core = req(path.join(runtime, 'core.js'));
+    const missing = [];
+    for (const f of FILES.filter((x) => x !== 'strings.js')) {
+      for (const m of readFileSync(path.join(runtime, f), 'utf8').matchAll(/\bt\(\s*'([^']+)'/g)) {
+        const k = m[1];
+        if (!(k.endsWith('.') ? S.keys().some((x) => x.startsWith(k)) : S.has(k))) missing.push(f + ': ' + k);
+      }
+    }
+    for (const code of core.ISSUES) if (!S.has('issue.' + code)) missing.push('issue.' + code);
+    for (const code of ['no-flow', 'no-state', 'entry-required', 'dependents', 'empty-title']) if (!S.has('err.ops.' + code)) missing.push('err.ops.' + code);
+    pass(!missing.length, '20.13 словарь: каждый ключ t(…) рантайма есть в strings.js (и пометки issue.*, ошибки err.ops.*)', missing.join(', '));
   }
 
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
@@ -1333,12 +1960,18 @@ function main() {
     const i = args.indexOf('--resolve');
     res = resolveComment(P, args[i + 1], args[i + 2], val('--status'), val('--note'));
     if (!res.refused) { const c = check(P); res.defects = [...(res.defects || []), ...c.defects]; }
+  } else if (args.includes('--states')) {
+    res = states(P, val('--states'));
+  } else if (args.includes('--state')) {
+    const i = args.indexOf('--state');
+    res = editState(P, args[i + 1], args[i + 2], { title: val('--title'), note: val('--note'), clearIssues: args.includes('--clear-issues') });
+    if (!res.refused) { const c = check(P); res.defects = [...(res.defects || []), ...c.defects]; res.notes = c.notes; }
   } else if (args.includes('--check')) {
     res = check(P);
   } else {
     const b = build(P);
     const c = check(P);
-    res = { written: b.written, defects: [...b.defects, ...c.defects], stats: c.stats };
+    res = { written: b.written, lines: b.lines, defects: [...b.defects, ...c.defects], stats: c.stats, notes: c.notes };
   }
   console.log(report(title.trim(), res));
   process.exit((res.defects && res.defects.length) || (res.refused && res.refused.length) ? 1 : 0);

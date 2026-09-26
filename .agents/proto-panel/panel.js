@@ -10,11 +10,12 @@
    Публичный API — для будущих табов и проверки из консоли:
      ProtoPanel = { version, app: { dir, id, title }, open(tabId?), close(), toggle(),
        tab({ id, title, icon, badge, render, onShow }),
-       flows: { list(), current(), goTo(flowId, stepId, { show }?), next(), prev(), stop() },
+       flows: { list(), current(), goTo(flowId, stepId, { show }?), next(), prev(), stop(),
+                fix(), rename(n, title), remove(n), newFlow(title?) },   // n — номер State NN
        comments: { list({ status?, page? }?), add(text, { page?, step? }?), edit(n, text),
                    setStatus(n, status, resolution?), remove(n) },
        store: { status(), link(), unlink(), linkHandle(dirHandle), refresh() },
-       on(event, fn) }   // 'step' | 'error' | 'saved' | 'open' | 'close'
+       on(event, fn) }   // 'step' | 'error' | 'saved' | 'flows-saved' | 'fixed' | 'open' | 'close'
    ============================================================ */
 (function () {
   'use strict';
@@ -23,6 +24,7 @@
   if (!ctx || !PP || !PP._ui || !PP._store || !PP._runner) return;
   var store = PP._store, runner = PP._runner, ui = PP._ui, bus = PP._bus;
   var core = window.ProtoPanelCore;
+  var t = PP._strings ? PP._strings.t : function (k) { return k; };
   var d = store.data();
 
   PP.version = 1;
@@ -33,13 +35,57 @@
   PP.tab = ui.tab;
   PP.on = bus.on;
 
+  /* Состояние по номеру: черновое правится в своей операции журнала, записанное — операцией схемы. */
+  function stateOf(n) {
+    var num = core.parseStateRef(n);
+    var hit = num ? runner.byState(num) : null;
+    if (!hit) return Promise.reject(new Error(t('api.noState', { state: num ? core.stateLabel(num) : String(n) })));
+    return Promise.resolve({ n: num, flow: hit.flow, index: hit.index, step: hit.flow.steps[hit.index] });
+  }
+
   PP.flows = {
     list: function () { return runner.flows(); },
-    current: function () { var c = runner.current(); return c ? { flow: c.flow, step: c.step, dirty: c.dirty, error: c.error } : null; },
+    current: function () {
+      var c = runner.current();
+      return c ? { flow: c.flow, step: c.step, state: c.state, dirty: c.dirty, error: c.error } : null;
+    },
     goTo: function (flowId, stepId, opts) { return runner.goTo(flowId, stepId, opts); },
     next: function () { return runner.next(); },
     prev: function () { return runner.prev(); },
-    stop: function () { runner.stop(); }
+    stop: function () { runner.stop(); },
+    /** Fix State: как кнопка в шапке шторки (в выбранный сценарий таба Flows). */
+    fix: function () { return ui.fix(); },
+    rename: function (n, title) {
+      var tt = String(title || '').replace(/\s+/g, ' ').trim();
+      if (!tt) return Promise.reject(new Error(t('api.emptyTitle')));
+      return stateOf(n).then(function (s) {
+        if (s.step.draft) {
+          var ops = store.flowOps();
+          ops.forEach(function (op) { if (op.ref === s.step.draft && op.step) op.step.title = tt; });
+          store.setFlowOps(ops);
+          return { draft: true };
+        }
+        return store.saveFlows([{ op: 'renameState', state: s.n, title: tt }]);
+      });
+    },
+    remove: function (n) {
+      return stateOf(n).then(function (s) {
+        if (!core.canDeleteState(s.flow, s.index)) throw new Error(t('node.deleteDeps'));
+        if (s.step.draft) {
+          store.setFlowOps(store.flowOps().filter(function (op) { return op.ref !== s.step.draft && op.state !== s.step.draft; }));
+          return { draft: true };
+        }
+        return store.saveFlows([{ op: 'deleteState', state: s.n }]);
+      });
+    },
+    newFlow: function (title) {
+      var ref = store.newRef('f');
+      return store.saveFlows([{ op: 'addFlow', ref: ref, title: title || '' }]).then(function (out) {
+        var id = out.res && out.res.flows[ref];
+        if (id) store.setUi({ flow: id });
+        return id || null;
+      });
+    }
   };
 
   function writable() { var s = store.status(); return s === 'linked' || s === 'needs-permission'; }
@@ -54,17 +100,18 @@
     /** С подключённой папкой — запись в comments.md (номер К-N), без неё — черновик (id черновика). */
     add: function (text, o) {
       o = o || {};
-      if (!String(text || '').trim()) return Promise.reject(new Error('Пустой текст'));
-      if (writable()) return store.save([{ op: 'add', text: String(text).trim(), page: o.page || null, step: o.step || null }]).then(function (a) { return a[0]; });
-      return Promise.resolve(store.addDraft(String(text).trim(), o.page || null, o.step || null));
+      if (!String(text || '').trim()) return Promise.reject(new Error(t('api.emptyText')));
+      var step = o.step != null && typeof o.step !== 'object' ? { state: core.parseStateRef(o.step) } : o.step || null;
+      if (writable() && !(step && step.ref)) return store.save([{ op: 'add', text: String(text).trim(), page: o.page || null, step: step }]).then(function (a) { return a[0]; });
+      return Promise.resolve(store.addDraft(String(text).trim(), o.page || null, step));
     },
     edit: function (n, text) {
-      if (!String(text || '').trim()) return Promise.reject(new Error('Пустой текст'));
+      if (!String(text || '').trim()) return Promise.reject(new Error(t('api.emptyText')));
       return store.save([{ op: 'edit', n: n, text: String(text).trim() }]);
     },
     setStatus: function (n, status, resolution) {
       var code = core.STATUS.byWord[status] || status;
-      if (core.STATUS.codes.indexOf(code) < 0) return Promise.reject(new Error('Статус — open | done | rejected'));
+      if (core.STATUS.codes.indexOf(code) < 0) return Promise.reject(new Error(t('api.status')));
       return store.save([{ op: 'status', n: n, status: code, resolution: resolution }]);
     },
     remove: function (n) { return store.save([{ op: 'delete', n: n }]); }

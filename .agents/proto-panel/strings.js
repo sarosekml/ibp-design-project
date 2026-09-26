@@ -1,0 +1,330 @@
+/* ============================================================
+   ПАНЕЛЬ ПРОТОТИПА — строки интерфейса (strings.js).
+
+   Интерфейс панели — английский (задача 0005a, §2.4, §7.6): все тексты
+   здесь, остальные файлы рантайма берут их через t(key, vars) — сторож ПН10
+   не пускает кириллицу в их строки. Подстановки — {name}; множественное
+   число — count(n, 'state', 'states').
+
+   Не переводятся: форматы файлов (ключи и статусы comments.md, номер
+   комментария К-3 — он выглядит латиницей), содержимое (названия
+   сценариев и состояний, заметки, тексты комментариев) и диагностика ядра
+   (ПН1–ПН3): её же видят гейт и агент, в панели она стоит под английским
+   заголовком. Стиль — sentence case; собственные имена — Fix State, State 07.
+   ============================================================ */
+(function () {
+  'use strict';
+  var PP = window.ProtoPanel = window.ProtoPanel || {};
+
+  var S = {
+    /* панель */
+    'panel.name': 'Prototype panel',
+    'panel.hotkeyTip': 'Prototype panel · {key}',
+    'panel.noDataTip': 'No panel data — rebuild: {tool}',
+    'panel.actions': 'Panel actions',
+    'panel.close': 'Close panel',
+    'panel.closeTip': 'Close · Esc',
+    'panel.tabs': 'Panel sections',
+    'panel.width': 'Panel width',
+    'fab.labelCount': 'Prototype panel, open comments on this page: {n}',
+
+    /* кнопки */
+    'btn.allow': 'Allow access',
+    'btn.cancel': 'Cancel',
+    'btn.close': 'Close',
+    'btn.connect': 'Connect project folder',
+    'btn.connectShort': 'Connect folder',
+    'btn.copy': 'Copy text',
+    'btn.delete': 'Delete',
+    'btn.discardFlows': 'Discard unsaved flow changes',
+    'btn.done': 'Done',
+    'btn.downloadComments': 'Download comments.md',
+    'btn.downloadFlows': 'Download flows.yaml',
+    'btn.hide': 'Hide',
+    'btn.openPanel': 'Open panel',
+    'btn.rename': 'Rename',
+    'btn.retry': 'Retry',
+    'btn.save': 'Save',
+    'btn.show': 'Show',
+
+    /* меню шапки */
+    'menu.allow': 'Allow access to the folder',
+    'menu.connect': 'Connect project folder…',
+    'menu.disconnect': 'Disconnect folder',
+    'menu.reload': 'Reload from disk',
+    'menu.settings': 'Settings…',
+
+    /* Alert шторки */
+    'alert.nodata.title': 'No panel data',
+    'alert.nodata.text': 'The mirror {file} did not load — rebuild: {tool}',
+    'alert.error.title': 'Couldn’t save to disk',
+    'alert.error.draft': 'The comment stayed as a draft in this browser.',
+    'alert.error.flowDraft': 'Unsaved flow changes stay in this browser.',
+    'alert.mirror.title': 'Panel mirror not updated',
+    'alert.volatile.title': 'Drafts live only until reload',
+    'alert.volatile.text': 'Browser storage {why} — drafts will not survive a page reload. {next}',
+    'alert.volatile.why.failed': 'failed (full or blocked)',
+    'alert.volatile.why.off': 'is unavailable',
+    'alert.volatile.next.link': 'Connect the project folder or download the files.',
+    'alert.volatile.next.allow': 'Allow access to the project folder or download the files.',
+    'alert.volatile.next.download': 'Download the files.',
+    'alert.perm.title': 'Access to the project folder is needed',
+    'alert.perm.text': 'The browser asks again in a new session — one click.',
+    'alert.note.title': 'Panel data reloaded from disk',
+    'alert.note.text': 'flows.yaml or comments.md changed after the build: the panel reread them and rebuilt the mirror.',
+    'alert.local.title': 'Changes are saved only in this browser',
+    'alert.local.text.link': 'To keep them next to the prototype, connect the project root folder (the one with {base}/ and project.json) — once for all prototypes.',
+    'alert.local.text.unsupported': 'This browser can’t write to a folder: download the files and put them into the prototype folder, or hand them to the agent.',
+
+    /* тосты и снекбары */
+    'toast.allowed': 'Folder access allowed',
+    'toast.allowedDrafts': 'Folder access allowed · drafts saved: {n}',
+    'toast.chooseRoot': 'Choose the project root folder (the one with {base}/ and project.json) — once for all prototypes',
+    'toast.connected': 'Project folder connected',
+    'toast.connectedDrafts': 'Project folder connected · drafts saved: {n}',
+    'toast.copied': 'comments.md text copied',
+    'toast.disconnected': 'Folder disconnected: changes are saved only in this browser again',
+    'toast.draftsSaved': 'Drafts saved: {n}',
+    'toast.flowsDiscarded': 'Unsaved flow changes discarded',
+    'toast.noDrafts': 'Nothing to save',
+    'toast.nothingChanged': 'Nothing changed since {state}',
+    'toast.reloaded': 'Panel data reloaded from disk',
+    'toast.same': 'The disk has the same data as the panel',
+    'toast.savedAs': 'Saved as {state}',
+    'toast.stateLink': 'State link copied',
+    'toast.statesSaved': 'Saved: {count}',
+    'toast.statesSavedMoved': 'Saved: {count} · {list}',
+    'toast.movedItem': '{from} saved as {to}',
+    'snack.copyFailed': 'Not copied',
+    'snack.linkFailed': 'Link not copied',
+    'snack.noAccess': 'Access not granted',
+    'snack.notConnected': 'Folder not connected',
+    'snack.reloadFailed': 'Couldn’t reload',
+    'snack.saveFailed': 'Couldn’t save',
+    'snack.stateNotOpened': 'State not opened',
+    'snack.stepFailed': 'State failed to replay',
+
+    /* Fix State */
+    'fix.label': 'Fix State',
+    'fix.tip': 'Save the current prototype state to “{flow}” · {key}',
+    'fix.tipNew': 'Save the current prototype state to a new flow · {key}',
+    'fix.busy': 'Wait until the flow finishes',
+    'fix.flowsErrors': 'flows.yaml has errors — ask the agent: /panel {app} flows',
+    'fix.noData': 'No panel data — rebuild: {tool}',
+    'fix.fixed': '{state} fixed',
+    'fix.fixedText': '{title} · {flow}',
+    'fix.local': '{state} saved in this browser only',
+    'discard.title': 'Discard unsaved flow changes?',
+    'discard.text': 'States and flows that were not written to flows.yaml will be removed from this browser.',
+    'discard.ok': 'Discard',
+
+    /* таб Flows */
+    'flows.tab': 'Flows',
+    'flows.flow': 'Flow',
+    'flows.renameFlow': 'Rename flow',
+    'flows.newFlow': 'New flow',
+    'flows.showList': 'Show flows',
+    'flows.play': 'Play from start',
+    'flows.stop': 'Stop flow',
+    'flows.chart': 'States of flow “{title}”',
+    'flows.error.title': 'Flows could not be read',
+    'flows.error.more': '…and {n} more',
+    'flows.error.fix': 'Fix {file} and rebuild: {tool}',
+    'flows.none.title': 'No flows yet',
+    'flows.none.text': 'Press Fix State to start one, or ask the agent: /panel {app} flows',
+    'flows.empty.title': 'No states yet',
+    'flows.empty.text': 'Work with the prototype and press Fix State ({key}) to save the current state here.',
+    'rename.state': 'State name',
+    'rename.flow': 'Flow name',
+
+    /* строка рекордера */
+    'rec.entry': 'Since {page} opened: {count} · Fix State adds them as {state} (new entry point)',
+    'rec.entryOne': 'Since {page} opened: {count} · Fix State adds it as {state} (new entry point)',
+    'rec.entryEmpty': 'Since {page} opened: no actions · Fix State adds {state} (new entry point)',
+    'rec.increment': '{count} since {after} · Fix State adds {state} (continues {after})',
+    'rec.nothing': 'No actions since {after}',
+    'rec.replayed': 'replayed',
+    'rec.act.click': 'Click “{label}”',
+    'rec.act.clickAt': 'Click {target}',
+    'rec.act.fill': 'Type “{value}” in “{label}”',
+    'rec.act.fillAt': 'Type “{value}” in {target}',
+    'rec.act.outside': 'Click outside to close a menu',
+    'rec.act.press': 'Press {key}',
+    'rec.act.wait': 'Wait {ms} ms',
+    'rec.act.waitFor': 'Wait for {target}',
+
+    /* узел схемы */
+    'node.overline': 'STATE {n}',
+    'node.unnumbered': 'NOT NUMBERED',
+    'node.recorded': 'Recorded',
+    'node.unsaved': 'Unsaved',
+    'node.current': 'current',
+    'node.currentChanged': 'current · changed',
+    'node.noActions': 'no actions',
+    'node.go': 'Go to state',
+    'node.copy': 'Copy state link',
+    'node.comment': 'Comment on state',
+    'node.rename': 'Rename',
+    'node.delete': 'Delete state',
+    'node.deleteDeps': 'Later states depend on this one — ask the agent to restructure the flow',
+    'node.menu': '{state} actions',
+    'node.goAria': '{state}: {title}',
+    'node.ariaCurrent': ', current',
+    'node.ariaError': ', error',
+    'del.title': 'Delete {state}?',
+    'del.text': 'It will be removed from flows.yaml; the previous version stays in git history. The number {n} will not be reused.',
+    'del.draftText': 'The unsaved state will be removed from this browser.',
+
+    /* пометки записи (§5.6) */
+    'issue.fragile': 'Selector may break',
+    'issue.frame': 'Actions in the preview frame were not recorded',
+    'issue.drag': 'A drag gesture was not recorded',
+    'issue.file': 'A file chooser was not recorded',
+    'issue.truncated': 'Recording stopped after 300 actions',
+
+    /* мини-плеер и озвучивание */
+    'player.label': 'Flow player',
+    'player.prev': 'Previous state',
+    'player.prevTip': 'Previous state · {key}',
+    'player.next': 'Next state',
+    'player.nextTip': 'Next state · {key}',
+    'player.stop': 'Stop flow',
+    'player.going': 'Going to {state}…',
+    'player.failed': '{state} failed to replay',
+    'player.changed': ' · changed',
+    'live.going': 'Going to {state}…',
+    'live.step': '{state}, {i} of {total}: {title}',
+    'live.stopped': 'Flow stopped',
+
+    /* проигрыватель */
+    'run.message': '{state} “{title}”{action}: {why}',
+    'run.action': ', action {n} ({what})',
+    'run.notFound': 'element not found in {sec}',
+    'run.hidden': 'element is hidden',
+    'run.disabled': 'element is disabled',
+    'run.notGone': 'element did not disappear in {sec}',
+    'run.notHidden': 'element did not hide in {sec}',
+    'run.badSelector': 'selector does not parse: {msg}',
+    'run.notField': 'element is not an input field',
+    'run.leftPage': 'left the page — navigation belongs in the page field of the next state',
+    'run.noFlow': 'Flow “{id}” not found',
+    'run.noState': 'State “{ref}” not found in flow “{title}”',
+    'run.noStateN': '{state} not found',
+    'run.hash': 'State link: {msg}',
+    'run.sec': '{n} s',
+    'run.stepN': 'Step {n}',
+
+    /* комментарии */
+    'comments.tab': 'Comments',
+    'comments.num': 'К-{n}',
+    'comments.new': 'New comment',
+    'comments.placeholder': 'What to fix or discuss…',
+    'comments.add': 'Add',
+    'comments.hint': 'Ctrl+Enter — add',
+    'comments.context': 'Comment context',
+    'comments.whole': 'Whole prototype',
+    'comments.removePage': 'Remove page from context',
+    'comments.removeState': 'Remove state from context',
+    'comments.stateChip': '{state} · {title}',
+    'comments.stateGone': 'state removed from the flow',
+    'comments.filter': 'Which comments to show',
+    'comments.open': 'Open',
+    'comments.all': 'All',
+    'comments.thisPage': 'This page only',
+    'comments.status.open': 'Open',
+    'comments.status.done': 'Done',
+    'comments.status.rejected': 'Rejected',
+    'comments.markDone': 'Mark as done',
+    'comments.reopen': 'Reopen',
+    'comments.reject': 'Reject',
+    'comments.delete': 'Delete',
+    'comments.edit': 'Edit',
+    'comments.editAria': 'Edit {what}',
+    'comments.menuAria': 'Actions for {what}',
+    'comments.draft': 'Draft',
+    'comments.draftNote': 'Not saved — draft in this browser',
+    'comments.deleteDraft': 'Delete draft',
+    'comments.resolution': 'Resolution: {text}',
+    'comments.textLabel': 'Comment text',
+    'comments.locked': 'Connect the project folder',
+    'comments.none.title': 'No comments yet',
+    'comments.none.text': 'Write what to fix in the prototype — the comment is saved next to it.',
+    'comments.noneHere': 'No comments on this page',
+    'comments.noneOpen': 'No open comments',
+    'comments.noneOpenAll': ' — the rest are under “All”',
+    'comments.errors.title': 'comments.md has format errors — saving stopped',
+    'comments.errors.text': 'To avoid overwriting the file, new comments stay drafts. Fix the file and rebuild: {tool}',
+    'comments.saved': 'Saved to {file}: {n}',
+    'comments.draftSaved': 'Draft saved in this browser',
+    'comments.updated': '{n} saved',
+    'comments.statusSet': '{n}: {status}',
+    'comments.deleted': '{n} deleted',
+    'comments.delTitle': 'Delete comment {n}?',
+    'comments.delText': 'It will be removed from comments.md; the previous version stays in git history.',
+
+    /* настройки */
+    'settings.title': 'Panel settings',
+    'settings.author': 'Comment author',
+    'settings.authorPh': 'How to sign comments',
+    'settings.authorHelp': 'Empty — no “Автор” line in the file',
+    'settings.showFab': 'Show the panel button',
+    'settings.showFabHelp': 'Bottom right on every prototype page; without it the panel opens with {key}',
+    'settings.showPlayer': 'Show the mini player during a flow',
+    'settings.showPlayerHelp': 'Without the player, states are switched with {next} / {prev}',
+    'settings.closeOnGo': 'Close the panel when going to a state',
+    'settings.showActions': 'Show actions when going to a state',
+    'settings.showActionsHelp': 'Highlights the target and pauses before each action of the last state',
+    'settings.keys': 'Keyboard shortcuts',
+    'keys.toggle': 'Open or close the panel',
+    'keys.fix': 'Fix State',
+    'keys.nav': 'Next / previous state',
+    'keys.esc': 'Close the panel',
+
+    /* ошибки записи */
+    'err.notConnected': 'The project folder is not connected',
+    'err.needPermission': 'Access to the project folder is needed — “Allow access”',
+    'err.denied': 'The browser did not grant access to the project folder',
+    'err.unsupported': 'This browser can’t save to a folder: folder picking is available in Chromium browsers',
+    'err.wrongFolder': 'The chosen folder has no {path} — choose the project root folder (the one with {base}/ and project.json)',
+    'err.format': '{file} has format errors — saving stopped so the file is not overwritten: {list}',
+    'err.formatLine': 'line {line} — {text}',
+    'err.innerComment': 'comment inside the file — the write would lose it (ПН11)',
+    'err.gone': '{n} is no longer in comments.md — the file was edited; reload from disk',
+    'err.reparse': 'reparsing the write failed: line {line} — {text}',
+    'err.count': 'the write has {b} comments, the model {a}',
+    'err.differs': '{n} in the write differs from the model',
+    'err.roundTrip': 'The write would change the set of comments — saving stopped: {why}',
+    'err.flowsRoundTrip': 'The write would change the flows — saving stopped',
+    'err.changedBeforeWrite': '{file} changed while the write was being prepared',
+    'err.overwritten': '{file} was overwritten by a parallel write',
+    'err.notReread': '{file} could not be reread after writing ({why})',
+    'err.unconfirmed': 'The write to {file} was not confirmed: {why} — try again',
+    'err.unread': '{file} not read: {why}',
+    'err.mirror': 'Mirror {mirror} not written ({why}) — the data files are in place, panel data updated in memory; the mirror will be rebuilt on the next open or with “Reload from disk”',
+    'err.clipboard': 'The clipboard is unavailable',
+    'err.ops': 'Couldn’t apply flow changes: {list}',
+    'err.ops.no-flow': 'the flow no longer exists',
+    'err.ops.no-state': 'the state no longer exists',
+    'err.ops.entry-required': 'the first state of a flow needs a page',
+    'err.ops.dependents': 'later states depend on this one',
+    'err.ops.empty-title': 'the name is empty',
+
+    /* публичный API */
+    'api.emptyText': 'Empty text',
+    'api.emptyTitle': 'Empty name',
+    'api.noState': '{state} not found',
+    'api.status': 'Status — open | done | rejected'
+  };
+
+  function has(key) { return Object.prototype.hasOwnProperty.call(S, key); }
+  /** Строка по ключу с подстановками {name}; нет ключа — сам ключ (его увидит селфтест). */
+  function t(key, vars) {
+    var s = has(key) ? S[key] : key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? String(vars[k]) : m; });
+    return s;
+  }
+  function plural(n, one, many) { return n === 1 ? one : many; }
+  function count(n, one, many) { return n + ' ' + plural(n, one, many); }
+
+  PP._strings = { t: t, has: has, plural: plural, count: count, keys: function () { return Object.keys(S); } };
+})();
