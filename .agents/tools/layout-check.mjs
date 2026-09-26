@@ -13,6 +13,13 @@
                    из токенов styles/*.css + эвристика ширины
                    символа (~8px body-m кириллица, ~7px body-xs).
 
+   Стили экрана — как их применяет браузер (задача 0008): встроенный
+   <style> и локальные файлы, подключённые <link rel="stylesheet"> (CSS
+   тайлов и модалок модульной страницы — widgets/…/<Имя>.css, их подключает
+   ассемблер). Классы из этих файлов для Б4 существуют, колонки сетки полей
+   тайла читаются и из класса в них. Страничное правило З10 смотрит только
+   <style> экрана. Подробно — функция screenStyles.
+
    ФАКТИЧЕСКИЙ СОСТАВ ПРОВЕРОК ЗДЕСЬ НЕ ПЕРЕЧИСЛЯЕТСЯ — его печатает
    сам сенсор: `layout-check.mjs --rules`. Прозаическое перечисление уже
    разъезжалось с кодом в трёх файлах сразу (урок Л43).
@@ -146,11 +153,93 @@ function isLiteralAttr(v) {
   return !/['"+?()]/.test(v);
 }
 
+/* ---------------- стили экрана ---------------- */
+
+/* Стили экрана так, как их применяет браузер (задача 0008): встроенные
+   <style> и локальные файлы, подключённые <link rel="stylesheet">. Модульная
+   страница держит CSS каждого тайла и модалки в его файле
+   (widgets/<группа>/<Имя>/<Имя>.css), ассемблер подключает их в собранную
+   страницу (метка @lc-css). Пока сенсор читал только <style>, на каждой такой
+   странице классы тайлов были для Б4 «выдуманными», а колонки сетки полей не
+   читались — хотя браузер применяет эти файлы наравне со встроенным стилем.
+
+   own — встроенные <style>, как прежний вход styleSrc (из разметки с
+   комментариями, без гашения). linked — файлы из <link rel="stylesheet"> вне
+   HTML-комментариев: href относительный (без схемы, без // и / в начале),
+   файл внутри проекта, не в ДС (её стили подключает загрузчик, поштучные
+   styles/* — дефект Б1) и существует. Файл, лежащий рядом, но не
+   подключённый, стилем экрана не считается: его классы браузер не применит. */
+function screenStyles(html, pagePath) {
+  const own = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
+  const linked = [];
+  if (pagePath) {
+    const src = html.replace(/<!--[\s\S]*?-->/g, '');
+    const seen = new Set();
+    for (const m of src.matchAll(/<link\b[^>]*>/gi)) {
+      if (!/\brel\s*=\s*["']?stylesheet\b/i.test(m[0])) continue;
+      const href = (m[0].match(/\bhref\s*=\s*["']([^"']+)["']/i) || [])[1];
+      if (!href || /^(?:[a-z][\w+.-]*:|\/)/i.test(href)) continue;
+      const file = path.resolve(path.dirname(pagePath), href.split(/[?#]/)[0]);
+      if (seen.has(file) || !file.startsWith(ROOT + path.sep) || file.startsWith(DS + path.sep) || !existsSync(file)) continue;
+      seen.add(file);
+      linked.push({ href, file, text: readFileSync(file, 'utf8') });
+    }
+  }
+  return { own, linked, all: [own, ...linked.map((l) => l.text)].join('\n') };
+}
+
+/* CSS верхнего уровня: без комментариев и без блоков @media / @container /
+   @supports (и прочих @-правил) — геометрия сенсора считается для широкой
+   раскладки, адаптивные правила её не задают. */
+function topLevelCss(css) {
+  const src = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  let out = '', i = 0;
+  while (i < src.length) {
+    const at = src.indexOf('@', i);
+    if (at < 0) { out += src.slice(i); break; }
+    out += src.slice(i, at);
+    const open = src.indexOf('{', at), semi = src.indexOf(';', at);
+    if (open < 0 || (semi >= 0 && semi < open)) { i = semi < 0 ? src.length : semi + 1; continue; }   // @import …; — без блока
+    let depth = 0, j = open;
+    for (; j < src.length; j++) { if (src[j] === '{') depth++; else if (src[j] === '}' && --depth === 0) break; }
+    i = j + 1;
+  }
+  return out;
+}
+
+/* Колонки сетки полей по классам — из CSS экрана (задача 0008). Правило
+   подходит, если последний составной селектор несёт только классы самой
+   сетки, а классы остальных частей селектора есть у тайла (или у сетки);
+   атрибуты и псевдоклассы не учитываются. Из подходящих правил с
+   `grid-template-columns: repeat(N …)` берётся последнее — каскад при равной
+   специфичности. → (gridClasses[], tileClasses[]) => N | null */
+function gridColsResolver(css) {
+  const rules = [];
+  for (const r of topLevelCss(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const rep = r[2].match(/grid-template-columns\s*:\s*repeat\(\s*(\d+)/);
+    if (rep) rules.push({ selectors: r[1].split(',').map((s) => s.trim()).filter(Boolean), cols: parseInt(rep[1], 10) });
+  }
+  const classesOf = (compound) => [...compound.matchAll(/\.(-?[a-zA-Z_][\w-]*)/g)].map((m) => m[1]);
+  return (gridClasses, tileClasses) => {
+    const own = new Set(gridClasses), around = new Set([...tileClasses, ...gridClasses]);
+    let cols = null;
+    for (const r of rules) {
+      const hit = r.selectors.some((sel) => {
+        const parts = sel.split(/\s*[>+~]\s*|\s+/).filter(Boolean);
+        const last = classesOf(parts.pop() || '');
+        return last.length > 0 && last.every((c) => own.has(c)) && parts.every((p) => classesOf(p).every((c) => around.has(c)));
+      });
+      if (hit) cols = r.cols;
+    }
+    return cols;
+  };
+}
+
 /* ---------------- разбор разметки ---------------- */
 
-/* все тайлы (класс-токен ровно «tile»); opts: inRange, fullText, baseOffset, stackRanges */
+/* все тайлы (класс-токен ровно «tile»); opts: inRange, fullText, baseOffset, stackRanges, colsOf */
 function extractTiles(html, opts = {}) {
-  const { inRange, fullText, baseOffset = 0, stackRanges = [], offGridRanges = [] } = opts;
+  const { inRange, fullText, baseOffset = 0, stackRanges = [], offGridRanges = [], colsOf = null } = opts;
   const tiles = [];
   const tagRe = /<([a-z]+)\s[^>]*class="([^"]*)"[^>]*>/g;
   let m;
@@ -164,7 +253,7 @@ function extractTiles(html, opts = {}) {
     const absIdx = baseOffset + m.index;
     const inStack = stackRanges.some((r) => absIdx >= r.idx && absIdx < r.idx + r.html.length);
     const offGrid = offGridRanges.some((r) => absIdx >= r.idx && absIdx < r.idx + r.html.length);
-    tiles.push(analyzeTile(el, lineOf(fullText || html, absIdx), inStack, offGrid));
+    tiles.push(analyzeTile(el, lineOf(fullText || html, absIdx), inStack, offGrid, colsOf));
   }
   return tiles;
 }
@@ -192,7 +281,9 @@ function spanOfClassAttr(openTag) {
   return c ? parseInt(c[1], 10) : null;
 }
 
-function parseTiles(html) {
+/* opts.colsOf — колонки сетки полей из CSS экрана (gridColsResolver), задача 0008 */
+function parseTiles(html, opts = {}) {
+  const { colsOf = null } = opts;
   /* Стопки считаются ДО рядов: по спеке Tile `.tile-stack` живёт внутри
      `.tile-row` (колонка тайлов, каждый со своей высотой). Раньше ряды
      разбирались с пустым stackRanges — тайлы в стопке теряли признак inStack,
@@ -217,7 +308,7 @@ function parseTiles(html) {
       .map((s) => ({ span: spanOfClassAttr(s.open), line: lineOf(html, s.idx) }));
     rows.push({
       html: rowHtml, idx, line: lineOf(html, idx), stacks,
-      tiles: extractTiles(rowHtml, { fullText: html, baseOffset: idx, stackRanges, offGridRanges }),
+      tiles: extractTiles(rowHtml, { fullText: html, baseOffset: idx, stackRanges, offGridRanges, colsOf }),
     });
   }
   const standalone = extractTiles(html, {
@@ -226,11 +317,12 @@ function parseTiles(html) {
     baseOffset: 0,
     stackRanges,
     offGridRanges,
+    colsOf,
   });
   return { rows, standalone, stackRanges };
 }
 
-function analyzeTile(el, line, inStack = false, offGrid = false) {
+function analyzeTile(el, line, inStack = false, offGrid = false, colsOf = null) {
   const open = el.match(/^<[a-z]+\s[^>]*class="([^"]*)"/);
   const cls = open ? open[1] : '';
   const styleM = el.match(/<[a-z]+\s[^>]*style="([^"]*)"/);
@@ -254,6 +346,9 @@ function analyzeTile(el, line, inStack = false, offGrid = false) {
   if (gm) {
     const rep = gm[2].match(/grid-template-columns\s*:\s*repeat\((\d+)/);
     if (rep) cols = parseInt(rep[1], 10);
+    /* инлайн-стиля нет — колонки из класса сетки в CSS экрана: встроенном
+       <style> или файле тайла (задача 0008) */
+    else if (colsOf) cols = colsOf(['tile__grid', ...gm[1].split(/\s+/).filter(Boolean)], cls.split(/\s+/).filter(Boolean));
     const g = sliceTag(el, gm.index, 'div');
     if (g) gridHtml = g;
   }
@@ -373,7 +468,7 @@ function kindOf(spec) {
 
 /* ---------------- механика (Б-блокеры) ---------------- */
 
-function checkMechanics(html, icons, pagePath) {
+function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pagePath)) {
   const res = [];
   const ok = (cond, label, line) => res.push({ ok: !!cond, label, line, level: cond ? 'ok' : 'fail' });
   const warn = (label, line) => res.push({ ok: false, label, line, level: 'warn' });
@@ -392,11 +487,16 @@ function checkMechanics(html, icons, pagePath) {
      употребление, его надо валидировать по Icons.md; имя в комментарии —
      нет. Промежуточный срез нужен именно для этого (Б2). */
   const noComments = html;
-  /* Собственный <style> экрана — общий вход нескольких правил (Б4, Б29, З10,
-     K12). Берётся из `raw`: <style> целиком, без гашения. Объявлен здесь, а не
+  /* Собственный <style> экрана — общий вход нескольких правил (З10 и др.).
+     Берётся из `raw`: <style> целиком, без гашения. Объявлен здесь, а не
      у первого потребителя: правило, которому вход понадобился вторым, иначе
-     заводит свою копию разбора, и копии расходятся (Л43). */
-  const styleSrc = [...raw.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
+     заводит свою копию разбора, и копии расходятся (Л43).
+     `screenCss` — все стили экрана, как их применяет браузер: <style> и
+     подключённые файлы тайлов (задача 0008, `screenStyles`). Правило про
+     классы и оформление берёт `screenCss`; правило про страницу целиком
+     (перестроение рядов, З10) — только <style> экрана. */
+  const styleSrc = styles.own;
+  const screenCss = styles.all;
   /* Содержимое <script> — тоже не разметка. JS-шаблон
      `'<div class="tbl__row" style="grid-template-columns:' + GRID + '">'`
      выглядел для сторожа готовой строкой таблицы, а `data-table` в строке
@@ -908,6 +1008,8 @@ function checkMechanics(html, icons, pagePath) {
   /* З10 — на экране больше одного ряда тайлов, а правила перестроения нет:
      на узкой раскладке ряды останутся в 12 колонок и уедут за кромку. */
   const tileRows = [...html.matchAll(/class="[^"]*\btile-row\b[^"]*"/g)].length;
+  /* только <style> экрана: @container в файле тайла перестраивает поля внутри
+     тайла, а ряды страницы — нет (задача 0008) */
   if (tileRows > 1 && !/@container\s+screen\s*\(/.test(styleSrc)) {
     warn(`З10 рядов тайлов ${tileRows}, а правила перестроения нет — нужен @container screen (max-width: …) в <style> экрана`);
   }
@@ -1017,7 +1119,9 @@ function checkMechanics(html, icons, pagePath) {
       for (const m of readFileSync(path.join(stylesDir, f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
     }
   }
-  for (const m of styleSrc.matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
+  /* свои стили экрана — <style> и подключённые файлы тайлов (задача 0008):
+     класс из файла, который страница не подключила, по-прежнему выдуман */
+  for (const m of screenCss.matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
 
   /* Хуки рантаймов: класс без собственных правил в CSS, по которому работает
      скрипт ДС, — не опечатка. `.nav__burger` правил не имеет вовсе, но его
@@ -1059,8 +1163,8 @@ function checkMechanics(html, icons, pagePath) {
   }
   if (dsClasses.size) {
     ok(invented.length === 0, invented.length
-      ? `Б4 классов нет ни в styles/*.css, ни в <style> экрана: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
-      : `Б4 все классы разметки существуют в ДС или в <style> экрана (${seenCls.size})`);
+      ? `Б4 классов нет ни в styles/*.css, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
+      : `Б4 все классы разметки существуют в ДС, в <style> экрана или в подключённых CSS-файлах (${seenCls.size}${styles.linked.length ? '; файлов экрана: ' + styles.linked.length : ''})`);
   }
 
   /* Б12 — рядом с экраном лежит `<Имя>.screen.md` с заполненной YAML-шапкой.
@@ -1137,8 +1241,8 @@ function checkMechanics(html, icons, pagePath) {
   /* K12 — адаптивное правило, перебитое инлайн-стилем на том же элементе,
      не сработает никогда: инлайн выигрывает у любого селектора без
      !important. Узкая раскладка тихо не отрабатывает. */
-  for (const at of [...styleSrc.matchAll(/@container[^{]*\{/g)]) {
-    const body = braceBody(styleSrc, at.index + at[0].length - 1);
+  for (const at of [...screenCss.matchAll(/@container[^{]*\{/g)]) {   // и в файлах тайлов (задача 0008)
+    const body = braceBody(screenCss, at.index + at[0].length - 1);
     for (const rule of body.matchAll(/\.([\w-]+)[^{}]*\{([^{}]*)\}/g)) {
       const cls = rule[1];
       for (const decl of rule[2].matchAll(/([a-z-]+)\s*:/g)) {
@@ -1443,8 +1547,10 @@ function checkOne(pageArg, width) {
   const iconsSection = iconsText.slice(iconsText.indexOf('## Все глифы'));
   const icons = new Set(iconsSection.split('·').map((s) => s.trim()).filter(Boolean));
 
-  const mech = checkMechanics(html, icons, p);
-  const { rows, standalone } = parseTiles(html);
+  /* стили экрана один раз — механике и геометрии (задача 0008) */
+  const styles = screenStyles(html, p);
+  const mech = checkMechanics(html, icons, p, styles);
+  const { rows, standalone } = parseTiles(html, { colsOf: gridColsResolver(styles.all) });
   const geo = runGeometry(rows, standalone, width);
 
   const all = [...mech, ...geo.results];
