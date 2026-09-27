@@ -1255,6 +1255,102 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     }
   }
 
+  /* Б35 — пункт-родитель аккордеона в панели навигации не ссылка. Контракт
+     рантайма: `ds-nav-panel.js` перехватывает клик по `.nav__item--acc` и
+     вызывает `preventDefault()` безусловно — в rail разворачивает панель, в
+     остальных режимах переключает `aria-expanded`. Адрес на таком пункте
+     недостижим, а разметка выглядит рабочей: страница компонента, на которую
+     «вёл» родитель, оказалась недоступной из панели (20.09.2026, урок Л137).
+
+     Вход двойной — разметка и литералы скриптов: панели кита и страницы
+     сделки строятся JS-шаблоном (как у Б31 и Б33). */
+  const accHref = [];
+  for (const src of [html, markupInScripts]) {
+    for (const m of src.matchAll(/<a\b[^>]*>/gi)) {
+      const tag = m[0];
+      if (!/class="[^"]*\bnav__item--acc\b/.test(tag)) continue;
+      const href = (tag.match(/\shref="([^"]*)"/) || [])[1];
+      if (href === undefined || href === '' || href === '#') continue;
+      if (!isLiteralAttr(href)) continue;
+      accHref.push(`${href} (строка ${lineOf(src, m.index)})`);
+    }
+  }
+  if (/nav__item--acc/.test(html + markupInScripts)) {
+    ok(accHref.length === 0, accHref.length
+      ? `Б35 у родителя аккордеона адрес ${accHref.join(', ')} — ds-nav-panel.js отменяет по нему переход; страница открывается под-пунктом, а не родителем`
+      : 'Б35 родители аккордеонов панели не ведут ссылкой');
+  }
+
+  /* З12 — разметка с хуком рантайма, собранная скриптом. Рантаймы ДС связывают
+     хуки один раз, на DOMContentLoaded: разметка, нарисованная позже (ответ
+     стора, перерисовка демо, смена фильтра), остаётся мёртвой — ничего не
+     падает, клик просто не работает (Л93).
+
+     Это ЗАМЕЧАНИЕ, а не блокер, и понижение осознанное: статикой не отличить
+     разметку, собранную при разборе страницы (её свяжет штатный проход
+     рантайма), от перерисованной по событию. Блокер на этом различении был бы
+     сторожем на угадывании — он дороже отсутствия сторожа (класс Л72).
+     Сенсор называет случай и цену, решение остаётся за автором — тот же
+     жанр, что З11. */
+  /* хук · как связывают поддерево · что засчитывается вызовом. Третий столбец
+     короче второго намеренно: связать можно и поштучно (`DSModal.bind(trigger)`
+     на реестре сделок) — это тот же ответ на вопрос правила. */
+  const HOOK_BINDS = [
+    ['data-modal', 'DSModal.bindAll', 'DSModal.bind'],
+    ['data-menu', 'DSMenu.bindAll', 'DSMenu.bind'],
+    ['data-drawer', 'DSDrawer.bindAll', 'DSDrawer.bind'],
+    ['data-tabs', 'DSTabs.wireAll', 'DSTabs.wire'],
+    ['data-icon', 'dsIcons.apply', 'dsIcons.apply'],
+  ];
+  if (pagePath) {
+    const pageDir = path.dirname(pagePath);
+    /* Скрипты страницы: инлайновые и подключённые локальные, каждый ОТДЕЛЬНО.
+       Рантаймы ДС сюда не входят — в них хук и привязка лежат рядом по
+       устройству, и любой экран выглядел бы связанным.
+
+       Хук и вставку сводим в пределах ОДНОГО скрипта: разметка с хуком в одном
+       файле и `innerHTML` в другом — разные конструкции, и пара из них ложная.
+       Проверено на ките: футер панели с `data-modal` собирает страница, а
+       `innerHTML` зовёт `kit-nav.js`; в объединении это выглядело дефектом,
+       которого нет. Вызов привязки при этом ищется по ВСЕМ скриптам страницы —
+       связать поддерево может и соседний файл. */
+    const parts = [...raw.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]);
+    for (const m of raw.matchAll(/<script\b[^>]*\ssrc="([^"]+)"/gi)) {
+      const href = m[1];
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
+      const abs = path.resolve(pageDir, href);
+      if (!existsSync(abs) || abs.startsWith(path.join(DS, 'scripts'))) continue;
+      parts.push(readFileSync(abs, 'utf8'));
+    }
+    const allSrc = parts.join('\n');
+    const missed = new Map();
+    for (const src of parts) {
+      /* `innerHTML = ''` — это очистка контейнера, а не вставка разметки:
+         связывать в ней нечего. Без этой оговорки правило сводило очистку
+         в одном месте скрипта с хуком в другом (витрина карточки).
+         Пустота проверяется РАЗБОРОМ найденного, а не отрицательным
+         просмотром вперёд: `\s*` перед ним отступает на пробел, и `= ''`
+         проходит как непустое присваивание. */
+      const writes = [...src.matchAll(/\.innerHTML\s*\+?=\s*(\S{0,2})/g)].map((m) => m[1]);
+      const insertsMarkup = writes.some((w) => !/^(?:''|""|``)/.test(w)) || /insertAdjacentHTML\s*\(/.test(src);
+      if (!insertsMarkup) continue;
+      /* Литералы достаются тем же разбором, что у Б15 и Б31: второй разбор
+         строк JS завёл бы вторую границу «что считать разметкой». */
+      const markup = collectScriptMarkup('<script>' + src + '</script>');
+      for (const [hook, bind, accepted] of HOOK_BINDS) {
+        /* Хук засчитывается только В РАЗМЕТКЕ — после открывающего тега.
+           Строка-селектор `'[data-modal="new-deal-scrim"]'` содержит ту же
+           подстроку, но разметкой не является и связывать в ней нечего
+           (реестр сделок, ложная пара 21.09.2026). */
+        const inMarkup = new RegExp('<[a-zA-Z][^<>]{0,400}' + hook + '=').test(markup);
+        if (inMarkup && !allSrc.includes(accepted)) missed.set(hook, bind);
+      }
+    }
+    if (missed.size) {
+      warn(`З12 скрипт страницы собирает и вставляет разметку с хуками ${[...missed.keys()].join(', ')}, а вызова ${[...missed.values()].join(', ')} на странице нет — если разметка рисуется после загрузки, рантайм её не свяжет (Л93)`);
+    }
+  }
+
   return res;
 }
 

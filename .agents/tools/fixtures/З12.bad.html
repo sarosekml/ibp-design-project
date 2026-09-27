@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- ФИКСТУРА <З12>: база + ровно одно изменение — убран вызов
+     DSModal.bindAll рядом со вставкой разметки, несущей data-modal.
+     Рантаймы ДС связывают хуки один раз, на DOMContentLoaded: разметка,
+     нарисованная позже, остаётся мёртвой — ничего не падает, клик просто
+     не работает (Л93). Эталон без дефекта — _base.ok.html. -->
 <!-- ФИКСТУРА сенсора layout-check. Это НЕ экран продукта и не открывается в
      браузере: файл существует только как вход для проверки самого сторожа,
      поэтому относительные пути до загрузчика ДС (apps/) не разрешаются.
@@ -128,7 +133,6 @@
     var host = document.getElementById('fx-actions');
     if (host) {
       host.innerHTML = '<button type="button" class="ibtn ibtn--m" aria-label="Открыть настройку" data-modal="fx-modal"><i data-icon="settings"></i></button>';
-      if (window.DSModal) window.DSModal.bindAll(host);
       if (window.dsIcons) window.dsIcons.apply(host);
     }
   </script>

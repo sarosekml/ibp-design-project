@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- ФИКСТУРА <Б35>: база + ровно один дефект — у пункта-родителя аккордеона
+     осмысленный адрес вместо «#». ds-nav-panel.js отменяет по нему переход
+     (preventDefault на .nav__item--acc), и страница недостижима, хотя
+     разметка выглядит рабочей. Эталон без дефекта — _base.ok.html. -->
 <!-- ФИКСТУРА сенсора layout-check. Это НЕ экран продукта и не открывается в
      браузере: файл существует только как вход для проверки самого сторожа,
      поэтому относительные пути до загрузчика ДС (apps/) не разрешаются.
@@ -39,7 +43,7 @@
              под-пунктами. Вход правила Б35 — ds-nav-panel.js отменяет переход
              по родителю, поэтому осмысленный href на нём недостижим. Эталон
              обязан нести этот вход исправным (Л116). -->
-        <a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="fx-sub"><i class="nav__ico" data-icon="folder"></i><span class="nav__label">Отчёты</span><i class="nav__caret" data-icon="chevron-down"></i></a>
+        <a class="nav__item nav__item--acc" href="_base.ok.html" aria-expanded="false" aria-controls="fx-sub"><i class="nav__ico" data-icon="folder"></i><span class="nav__label">Отчёты</span><i class="nav__caret" data-icon="chevron-down"></i></a>
         <div class="nav__sub" id="fx-sub"><div class="nav__sub-in">
           <a class="nav__item" href="#"><span class="nav__label">Сводный</span></a>
         </div></div>
