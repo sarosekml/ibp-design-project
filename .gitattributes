@@ -1,2 +1,6 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Текстовые файлы — всегда LF, и в репозитории, и на диске, на любой ОС.
+# Генераторы оснастки (hub-build, assemble, module-readme) пишут LF и
+# сверяют файлы побайтно: при выкладке с CRLF (Windows, core.autocrlf=true)
+# их проверки краснели на актуальных файлах, а после каждого запуска
+# генератора файл выглядел изменённым без изменений в тексте.
+* text=auto eol=lf
