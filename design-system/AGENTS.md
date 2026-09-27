@@ -238,7 +238,7 @@ JavaScript вместо рантайма ДС не пишется.** Табли�
 
 ```bash
 node scripts/ds-check.mjs pages/<категория>/<Имя>.html   # гейт страницы: линтер + структура docs-split
-node scripts/ds-check.mjs --all                          # вся ДС: глобальные правила, --parity, spec-audit, все страницы
+node scripts/ds-check.mjs --all                          # вся ДС: глобальные правила, --parity, spec-audit, иконки --selftest, все страницы
 ```
 
 Вердикт — строка `ВЕРДИКТ:`, а не код выхода. Правила линтера и порядок

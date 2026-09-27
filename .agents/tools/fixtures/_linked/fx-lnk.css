@@ -1,0 +1,14 @@
+/* ФИКСТУРА сенсора layout-check (задача 0008): CSS локального компонента в
+   отдельном файле — так у модульной страницы лежат стили каждого тайла
+   (widgets/<группа>/<Имя>/<Имя>.css), а ассемблер подключает их
+   <link rel="stylesheet">. Классы и сетка полей тайла объявлены только здесь:
+   эталон варианта `_linked.ok.html` подключает файл, `Б4@linked.bad.html` —
+   нет, `K5@linked.bad.html` добавляет сетке класс плотной раскладки. */
+.fx-lnk { min-width: 0; }
+.fx-lnk__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fx-lnk__grid--dense { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* узкая раскладка — вне геометрии сенсора (она считается для широкой) */
+@container (max-width: 480px) {
+  .fx-lnk__grid { grid-template-columns: minmax(0, 1fr); }
+}

@@ -48,6 +48,12 @@ const OPEN_RX = /<!-- @tree\b[^>]*-->/;
 const CLOSE = '<!-- /@tree -->';
 const SCAFFOLD = '<!-- @scaffold — заготовка: прототипов пока нет. С первым экраном опишите здесь модуль: что это за часть системы, какие экраны и виджеты в нём, откуда требования. Пометку тогда удалите. -->';
 const GROUP_TITLE = { tiles: 'тайлы', tables: 'таблицы', modals: 'модальные окна', 'context-menus': 'контекстные меню', popovers: 'поповеры и тултипы' };
+const PANEL_NOTES = {
+  '': 'панель прототипа: сценарии показа и комментарии',
+  'flows.yaml': 'сценарии показа',
+  'comments.md': 'комментарии к прототипу',
+  'panel-data.js': 'генерат панели — руками не править',
+};
 const DEFAULT_NAMES = 'docs/misc/project-tree.md';
 const slash = (p) => p.split(path.sep).join('/');
 
@@ -109,6 +115,12 @@ function noteFor(moduleAbs, abs, isDir, P) {
       return 'запись хаба: «' + (app.title || app.id) + '», трек ' + app.track;
     } catch { return 'запись хаба (не читается как JSON)'; }
   }
+  /* Папка панели прототипа (задача 0005). Подписи статичные: число сценариев
+     и комментариев в дереве дёргало бы README на каждом комментарии. */
+  if (P.panel && parts[0] === P.panel.dir) {
+    if (parts.length === 1) return isDir ? PANEL_NOTES[''] : null;
+    if (parts.length === 2 && !isDir) return PANEL_NOTES[name] || null;
+  }
   if (isDir) {
     if (!readdirSync(abs).some(visible)) return 'пусто';
     if (parts[0] === S.widgets && parts.length === 2) return GROUP_TITLE[parts[1]] || null;
@@ -131,7 +143,7 @@ function noteFor(moduleAbs, abs, isDir, P) {
 /* Строки дерева модуля: [{ text, note }]. */
 function treeLines(moduleAbs, P) {
   const S = P.appShape;
-  const form = [S.pages, S.widgets, S.data, S.refs, S.tools].filter(Boolean);
+  const form = [S.pages, S.widgets, S.data, S.refs, S.tools, P.panel && P.panel.dir].filter(Boolean);
   const lines = [{ text: path.basename(moduleAbs) + '/', note: null }];
   const walk = (dir, prefix, top) => {
     let entries = readdirSync(dir, { withFileTypes: true }).filter((e) => visible(e.name) && e.name !== '.gitkeep');
@@ -382,7 +394,24 @@ function selftest() {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-  const total = CASES.length + 1;
+  /* Панель прототипа (задача 0005): папка стоит после папок формы, подписи —
+     статичные, без чисел. */
+  const proot = mkdtempSync(path.join(os.tmpdir(), 'module-readme-'));
+  try {
+    tree(proot);
+    put(proot, 'project.json', JSON.stringify({ ...MANIFEST, protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel' } }));
+    for (const f of ['flows.yaml', 'comments.md', 'panel-data.js']) put(proot, 'apps/postrade/deals-app/proto-panel/' + f, '');
+    check(project(proot), true);
+    const text = readFileSync(path.join(proot, 'apps/postrade/deals-app/README.md'), 'utf8');
+    const want = ['proto-panel/', '← панель прототипа: сценарии показа и комментарии', 'flows.yaml', '← сценарии показа', '← комментарии к прототипу', '← генерат панели — руками не править'];
+    const miss = want.filter((w) => !text.includes(w));
+    const order = text.indexOf('refs/') < text.indexOf('proto-panel/');
+    if (miss.length || !order) failed++;
+    out.push((miss.length || !order ? 'FAIL  ' : 'ok    ') + 'папка панели прототипа: подписи и место после папок формы' + (miss.length ? ' — нет: ' + miss.join(' | ') : !order ? ' — стоит раньше refs/' : ''));
+  } finally {
+    rmSync(proot, { recursive: true, force: true });
+  }
+  const total = CASES.length + 2;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);

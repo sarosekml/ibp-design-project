@@ -51,6 +51,11 @@
      убрать их значит сломать инструкцию по настройке. Решение владельца
      от 11.09.2026;
    - `node_modules/` — чужой код, репозиторием не авторствуется.
+   - игнор-лист из манифеста (`vendorScan.ignore`, сейчас `.zcodeignore` и
+     `tmp`) — файлы и каталоги машины, которых нет в репозитории (они в
+     `.gitignore`): конфиг стороннего инструмента разработки и рабочие
+     записи экрана; решение владельца от 25.09.2026. Игнор-лист прятал бы и
+     настоящие следы, поэтому в нём только то, что не попадает в git;
    - черновые каталоги из манифеста (`scratch`, сейчас `docs/misc`) — рабочие
      заметки и выгрузки, которые периодически чистятся целиком; решение
      владельца от 24.09.2026.
@@ -128,6 +133,14 @@ function scratchFor(root) {
   return new Set(!p.error && p.root === path.resolve(root) ? p.scratch : []);
 }
 
+/* Игнор-лист из манифеста (`vendorScan.ignore`, решение владельца 25.09.2026):
+   файлы и каталоги машины вне репозитория, сторож их не читает. Пути — от
+   корня обхода. */
+function ignoreFor(root) {
+  const p = project(root);
+  return new Set(!p.error && p.root === path.resolve(root) ? p.vendorIgnore || [] : []);
+}
+
 /* Неотслеживаемые пути, которые git игнорирует, — от корня обхода (см. шапку).
    Каталог, игнорируемый целиком, git отдаёт одной строкой со слэшем на конце. */
 function ignoredFor(root) {
@@ -140,15 +153,16 @@ function ignoredFor(root) {
   }
 }
 
-function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root), ignored = ignoredFor(root)) {
+function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root), ignore = ignoreFor(root), ignored = ignoredFor(root)) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (e.name.startsWith('.') && e.isDirectory() && !dotDirs.has(e.name)) continue;
     const p = path.join(dir, e.name);
     const rel = path.relative(root, p).split(path.sep).join('/');
+    if (ignore.has(rel)) continue;
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
       if (scratch.has(rel) || ignored.has(rel + '/')) continue;
-      walk(p, acc, dotDirs, root, scratch, ignored);
+      walk(p, acc, dotDirs, root, scratch, ignore, ignored);
     } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase()) && !ignored.has(rel)) {
       acc.push(p);
     }
@@ -233,6 +247,19 @@ const CASES = [
     mutate: (r) => {
       put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, scratch: ['docs/misc'], hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
       put(r, 'docs/misc2/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  /* Игнор-лист из манифеста (25.09.2026): названные файл и каталог не читаются,
+     соседний каталог — читается. */
+  { name: 'игнор-лист из манифеста: файл и каталог не читаются', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, vendorScan: { ignore: ['local.md', 'tmp'] }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'local.md', 'Сделано в ' + A + '.\n');
+      put(r, 'tmp/notes.md', 'Исходник — `' + POSIX_HOME + '`.\n');
+    } },
+  { name: 'рядом с игнор-листом — читается', expect: 'tmp2/notes.md — имя вендора',
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ contract: 1, id: 't', designSystem: { mount: 'ds' }, agentKit: { mount: '.kit2' }, vendorScan: { ignore: ['local.md', 'tmp'] }, hub: { page: 'index.html', registry: 'hub.js' }, tracks: [] }));
+      put(r, 'tmp2/notes.md', 'Сделано в ' + A + '.\n');
     } },
   { name: 'посторонний дот-каталог не обходится', expect: null,
     mutate: (r) => {

@@ -27,7 +27,8 @@
 пользователем и распределяет работу по ролям `screen-builder` (сборка) и
 `screen-reviewer` (приёмка); `ux-researcher` выключен, пока нет базы знаний.
 Команды — `.agents/commands/`: `/screen`, `/screen-check`, `/concepts`,
-`/promote <концепт> <модуль>`, `/handoff`, `/resume <Задача>`.
+`/promote <концепт> <модуль>`, `/panel <приложение> [on|flows|states|comments|off]`,
+`/handoff`, `/resume <Задача>`.
 
 **Если инструмент не подхватывает роли, команды и скиллы сам — роль, команда
 и скилл берутся чтением файла из `.agents/`, и работа идёт по нему в той же

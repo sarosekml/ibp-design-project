@@ -1144,6 +1144,7 @@ const GATE_SNAPSHOT = path.join(PRJ.stateAbs, 'gate-snapshot.json');
 const TOOL_REL = PRJ.rel(HERE);
 const VENDOR = path.join(HERE, 'vendor-scan.mjs');
 const SPEC_AUDIT = path.join(DS, 'scripts/spec-audit.mjs');
+const DS_ICON = path.join(DS, 'scripts/ds-icon.mjs');
 const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
 const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
 const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
@@ -1156,6 +1157,7 @@ const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const ASSEMBLE = path.join(HERE, 'assemble.mjs');
 const MODULE_README = path.join(HERE, 'module-readme.mjs');
 const PROMOTE = path.join(HERE, 'promote.mjs');
+const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
 const KIT_BUILD = path.join(HERE, 'kit-build.mjs');
 /* Витрина локальных компонентов (25.09.2026): каталог из манифеста
    (`localKit.dir`, project.mjs → showcase). Не путать с KIT_REL — это каталог
@@ -1277,6 +1279,9 @@ function gateStep(id, paths = null) {
     case 'lint-global': return { title: 'линтер, глобальные правила', args: ['scripts/ds-lint-cli.mjs'], cwd: DS };
     case 'parity': return { title: 'линтер --parity (доки = код)', args: ['scripts/ds-lint-cli.mjs', '--parity'], cwd: DS };
     case 'spec-audit': return { title: 'spec-audit', args: [SPEC_AUDIT], cwd: DS };
+    /* Рантайм иконок ДС (задача 0007): у каждой копии глифа свои id внутри SVG,
+       DS_ICONS после ds-icons.js отдаёт копии, ds.js грузит его раньше читателей. */
+    case 'icons-selftest': return { title: 'ds-icon --selftest (рантайм иконок: уникальные id копий)', args: [DS_ICON, '--selftest'], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1343,6 +1348,11 @@ function gateStep(id, paths = null) {
     /* Перенос концепта в модуль (/promote): сам инструмент гоняется только
        откатом на временном дереве — на рабочем дереве он пишет. */
     case 'promote-selftest': return { title: 'promote --selftest (перенос концепта в модуль)', args: [PROMOTE, '--selftest'], cwd: ROOT };
+    /* Панель прототипа (задача 0005): форматы flows.yaml и comments.md,
+       страницы и селекторы сценариев, зеркала и включатель = генератор,
+       рантайм на токенах ДС (коды ПН, шапка proto-panel.mjs). */
+    case 'panel': return { title: 'proto-panel --check (панель прототипа: сценарии, комментарии, зеркала, включатель)', args: [PROTO_PANEL, '--check'], cwd: ROOT };
+    case 'panel-selftest': return { title: 'proto-panel --selftest', args: [PROTO_PANEL, '--selftest'], cwd: ROOT };
     default: throw new Error('неизвестный шаг гейта: ' + id);
   }
 }
@@ -1370,6 +1380,22 @@ function gateStepsFor(rel, deleted) {
 
   // манифест: правка самого файла; удаление любого пути — мог пропасть объявленный каталог
   if (rel === 'project.json' || deleted) add('manifest');
+
+  /* Панель прототипа — до раннего выхода для удалённых путей: удалённая папка
+     панели или страница тоже расходятся с включателем и сценариями. Данные
+     панели, любая страница приложения (селекторы и страницы шагов), запись
+     приложения (название в зеркале), включатель, манифест → panel; рантайм и
+     сам инструмент → ещё и его селфтест. */
+  if (PRJ.panel) {
+    const inApp = PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/');
+    if (inApp && (rel.includes('/' + PRJ.panel.dir + '/') || rel.includes('/' + PRJ.appShape.pages + '/') || rel.endsWith('/' + PRJ.appsManifest))) add('panel');
+    if (rel === PRJ.panel.boot || rel === 'project.json') add('panel');
+    if (rel.startsWith(PRJ.panel.runtime + '/')) add('panel-selftest', 'panel');
+  }
+  if (rel === TOOL_REL + '/proto-panel.mjs') add('panel-selftest', 'panel', 'promote-selftest');
+
+  /* рантайм иконок ДС, их данные, порядок загрузки рантаймов, сам инструмент — в том числе удалённые */
+  if (['ds-icons.js', 'icons-data.js', 'ds.js', 'ds-icon.mjs'].some((f) => rel === DS_REL + '/scripts/' + f)) add('icons-selftest');
 
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
@@ -1438,7 +1464,7 @@ function gateStepsFor(rel, deleted) {
   // приложения: любой файл может сдвинуть дерево README модуля; .html — источник или виджет модульной страницы
   if ((screenArea && !inFixtures) || rel === 'project.json') add('readme');
   if ((screenArea && !inFixtures && html) || rel === 'project.json') add('assemble');
-  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'kit-selftest', 'kit');
+  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'panel-selftest', 'kit-selftest', 'kit');
   // витрина: паспорт, фрагмент, CSS/JS, фикстуры виджета, страница-хозяин и данные приложения, сама витрина
   if (SHOWCASE_REL && ((screenArea && !inFixtures) || inShowcase(rel) || rel === 'project.json')) add('kit');
   if (rel === TOOL_REL + '/kit-build.mjs') add('kit-selftest', 'kit');
@@ -1446,7 +1472,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
-    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest',
+    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1459,9 +1485,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

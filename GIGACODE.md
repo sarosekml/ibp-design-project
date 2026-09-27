@@ -50,7 +50,7 @@ HTML-прототипов. Это инструментарий, а не прод
 | `.agents/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
 | `.agents/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
 | `.agents/agents/ux-researcher.md` | Исследование по базе знаний продукта — выключено, пока база не подключена (`KB` в `knowledge-lookup`) |
-| `.agents/commands/*.md` | `/screen`, `/concepts`, `/promote`, `/handoff`, `/resume`, `/screen-check` |
+| `.agents/commands/*.md` | `/screen`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume`, `/screen-check` |
 | `.agents/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
 | `.agents/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
 | `.agents/skills/screen-review/SKILL.md` | Полная приёмка экрана |
@@ -88,7 +88,9 @@ HTML-прототипов. Это инструментарий, а не прод
 спеки в `pages/` (все на одной глубине), крупные блоки (тайлы, таблицы,
 модалки, контекстные меню, поповеры) в `widgets/<группа>/<Имя>/`, демо-данные
 в `data/`, входящие материалы в `refs/`; `features/` и `components/` не
-заводятся.
+заводятся. Служебная папка `proto-panel/` — панель прототипа (сценарии показа
+и комментарии, `Alt+Shift+P`); заводится командой `/panel`, описание —
+`.agents/proto-panel/README.md`.
 Трек — свойство приложения, а не место на диске:
 
 - **`product`** — **актуальные версии продуктовых экранов**, строго на
