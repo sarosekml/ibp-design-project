@@ -655,7 +655,7 @@
 
       <!-- ВБС по продуктам — AllocationBar ДС. Хост — контейнер бара
            (container-type у .albar-host), бар растянут на ширину тайла. -->
-      <div class="albar-host lc-deal-metrics__vbs">
+      <div class="albar-host" data-fin-bar="vbs">
         <div class="albar albar--stretch" data-albar="vbs">
           <div class="albar__head">
             <div class="albar__titles"><div class="albar__label" title="ВБС по сделке на 25.02.2026, RUB">ВБС по сделке на 25.02.2026, RUB</div></div>
@@ -1909,7 +1909,7 @@
      ниже — пример. -->
 
 <div class="modal-scrim" id="deal-ecm-docs-scrim" hidden>
-  <div class="modal modal--w8 lc-deal-ecm-docs" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
+  <div class="modal modal--w8" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
     <header class="modal__head">
       <h2 class="modal__title" id="deal-ecm-docs-title">Документы по сделке</h2>
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
@@ -1953,7 +1953,7 @@
 
      Ссылки ниже — пример (сделка 1024). На странице сделки их заменяет
      RelatedDealsPopover.js данными сделки. -->
-<div id="related-deals-pop" class="pop pop--w-m pop--bottom pop--start pop--floating lc-related-deals" role="dialog" aria-modal="false" aria-labelledby="related-deals-pop-title">
+<div id="related-deals-pop" class="pop pop--w-m pop--bottom pop--start pop--floating" role="dialog" aria-modal="false" aria-labelledby="related-deals-pop-title">
   <div class="pop__head">
     <div class="pop__head-main">
       <h3 class="pop__title" id="related-deals-pop-title">Связанные сделки</h3>
@@ -2107,7 +2107,7 @@
         </div>
         <div class="tile__collapsible" id="dfm-reserves-table">
           <div class="tile__body">
-            <div class="dtable lc-deal-metrics-modal__table">
+            <div class="dtable">
               <div class="dtable__body">
                 <div class="tbl" data-table data-fin-table="reserves">
                   <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-reserves">
@@ -2167,7 +2167,7 @@
         </div>
         <div class="tile__collapsible" id="dfm-pe-table">
           <div class="tile__body">
-            <div class="dtable lc-deal-metrics-modal__table">
+            <div class="dtable">
               <div class="dtable__body">
                 <div class="tbl" data-table data-fin-table="pe">
                   <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-pe">

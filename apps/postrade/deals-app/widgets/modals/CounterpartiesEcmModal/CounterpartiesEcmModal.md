@@ -5,8 +5,8 @@ file: apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/Counterparti
 module: postrade/deals-app
 frontend: postrade/deals-app/widgets/modals/CounterpartiesEcmModal
 name: Модальное окно «Документы по сделке»
-version: 1.001
-updated: "25.09.2026"
+version: 1.002
+updated: "27.09.2026"
 rulesVersion: 1.006
 owner: не решено (24.09.2026)
 designer: Роман Эсэф

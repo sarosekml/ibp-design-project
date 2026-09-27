@@ -264,7 +264,7 @@
     tile.setAttribute('data-pe', hasPe(metrics) ? 'yes' : 'no');
 
     if (state === 'data') {
-      var host = tile.querySelector('.lc-deal-metrics__vbs');
+      var host = tile.querySelector('[data-fin-bar="vbs"]');
       if (host) host.innerHTML = albarHTML(barCfg('vbs', metrics.vbs, cur));
       var grid = tile.querySelector('.lc-deal-metrics__grid');
       if (grid) grid.innerHTML = fieldsHTML(metrics.reserves, cur);

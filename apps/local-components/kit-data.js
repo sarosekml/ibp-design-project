@@ -31,8 +31,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/CounterpartiesEcmModal.doc.html",
       "owner": "DealDescriptionTile",
       "stub": false,
-      "version": "1.001",
-      "updated": "25.09.2026"
+      "version": "1.002",
+      "updated": "27.09.2026"
     },
     {
       "id": "CounterpartiesTile",
@@ -115,8 +115,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialMetricsModal.doc.html",
       "owner": "DealFinancialMetricsTile",
       "stub": false,
-      "version": "1.001",
-      "updated": "25.09.2026"
+      "version": "1.002",
+      "updated": "27.09.2026"
     },
     {
       "id": "DealFinancialMetricsTile",
@@ -129,8 +129,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialMetricsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.001",
-      "updated": "25.09.2026"
+      "version": "1.002",
+      "updated": "27.09.2026"
     },
     {
       "id": "DealMetricsCalculationTile",
@@ -311,8 +311,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RelatedDealsPopover.doc.html",
       "owner": "DealDescriptionTile",
       "stub": false,
-      "version": "1.001",
-      "updated": "25.09.2026"
+      "version": "1.002",
+      "updated": "27.09.2026"
     }
   ]
 };
