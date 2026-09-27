@@ -49,6 +49,7 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 
 | Что | Где |
 |---|---|
+| Карта всей документации проекта — для человека; агенту целиком не читать | [docs/index.md](../docs/index.md) |
 | Правила процесса — читаются целиком в начале задачи | `rules/process.md` |
 | Роли: `ai-designer`, `screen-builder`, `screen-reviewer`, `ux-researcher` (выключен) | `agents/` |
 | Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume` | `commands/` |

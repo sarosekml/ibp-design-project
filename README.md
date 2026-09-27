@@ -284,6 +284,7 @@ node .agents/tools/layout-check.mjs <экран.html>  # сенсор одног
 
 | Что | Где |
 |---|---|
+| Карта всей документации — для человека | [`docs/index.md`](docs/index.md) |
 | Приложения: форма, модули, концепты, виджеты, данные | [`apps/README.md`](apps/README.md) |
 | Витрина локальных компонентов: как собирается и правится | [`apps/local-components/README.md`](apps/local-components/README.md) |
 | Агентная система целиком: роли, маршруты, приёмка, проверки | [`.agents/README.md`](.agents/README.md) |
