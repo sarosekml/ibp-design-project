@@ -38,7 +38,7 @@
                (`../home/…`) находками не считаются;
      windows — `C:\Users\`, за ним имя и каталог; то же с удвоенными
                слэшами (строка JSON) и с прямыми.
-   Путь без имени пользователя (`/Users/…` в прозе) находкой не считается:
+   Путь без имени пользователя (`/Users/…` в тексте) находкой не считается:
    он ничего не выдаёт и нужен, чтобы описывать само правило. Примеры в этой
    шапке записаны именно так — полный пример стал бы находкой в первой же
    копии файла, которую обходит не он сам.
@@ -54,6 +54,12 @@
    - черновые каталоги из манифеста (`scratch`, сейчас `docs/misc`) — рабочие
      заметки и выгрузки, которые периодически чистятся целиком; решение
      владельца от 24.09.2026.
+   - пути, которые git игнорирует (.gitignore, исключения репозитория и
+     глобальные) и которые не отслеживаются, — не содержимое репозитория: в
+     коммит они не попадают и на рабочий контур не уезжают. Список отдаёт сам
+     git; нет git или корень не репозиторий — обход прежний. Отслеживаемый
+     файл сторож видит, даже если он подпадает под шаблон игнора. Решение
+     владельца от 24.09.2026.
 
    Запуск:
      node .agents/tools/vendor-scan.mjs
@@ -62,6 +68,7 @@
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
 import { readFileSync, readdirSync, mkdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -121,15 +128,28 @@ function scratchFor(root) {
   return new Set(!p.error && p.root === path.resolve(root) ? p.scratch : []);
 }
 
-function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root)) {
+/* Неотслеживаемые пути, которые git игнорирует, — от корня обхода (см. шапку).
+   Каталог, игнорируемый целиком, git отдаёт одной строкой со слэшем на конце. */
+function ignoredFor(root) {
+  try {
+    const out = execFileSync('git', ['-C', root, 'ls-files', '--others', '--ignored', '--exclude-standard', '--directory', '-z'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return new Set(out.split('\0').filter(Boolean));
+  } catch {
+    return new Set();
+  }
+}
+
+function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root), ignored = ignoredFor(root)) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (e.name.startsWith('.') && e.isDirectory() && !dotDirs.has(e.name)) continue;
     const p = path.join(dir, e.name);
+    const rel = path.relative(root, p).split(path.sep).join('/');
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
-      if (scratch.has(path.relative(root, p).split(path.sep).join('/'))) continue;
-      walk(p, acc, dotDirs, root, scratch);
-    } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase())) {
+      if (scratch.has(rel) || ignored.has(rel + '/')) continue;
+      walk(p, acc, dotDirs, root, scratch, ignored);
+    } else if (TEXT_EXT.has(path.extname(e.name).toLowerCase()) && !ignored.has(rel)) {
       acc.push(p);
     }
   }
@@ -172,7 +192,7 @@ const WIN = 'C:' + '\\' + U + '\\someone\\Work\\file.md';
 const CASES = [
   { name: 'чистое дерево и почти-совпадения', expect: null,
     mutate: (r) => put(r, 'docs/near.md', [
-      'Путь вида `/' + U + '/…` в прозе ничего не выдаёт.',
+      'Путь вида `/' + U + '/…` в тексте ничего не выдаёт.',
       'Ссылка https://example.com/' + U + '/someone/page/ — путь на чужом хосте.',
       'Относительный путь ../' + H + '/someone/x/ — не абсолютный.',
       'Windows без имени: `C:\\' + U + '\\…`.',
@@ -223,10 +243,36 @@ const CASES = [
     mutate: (r) => put(r, 'node_modules/pkg/readme.md', 'source: ' + POSIX_USER + '\n') },
 ];
 
+/* Игнор git — только если git есть: без него сторож обходит всё, и кейсы
+   проверяли бы не то. Проверка git — в селфтесте, не при импорте. */
+const GIT_CASES = [
+  { name: 'каталог из .gitignore не обходится', expect: null,
+    mutate: (r) => {
+      gitInit(r, '/local/\n');
+      put(r, 'local/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  { name: 'рядом с каталогом из .gitignore — обходится', expect: 'local2/notes.md — имя вендора',
+    mutate: (r) => {
+      gitInit(r, '/local/\n');
+      put(r, 'local2/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+];
+
+function hasGit() {
+  try { execFileSync('git', ['--version'], { stdio: 'ignore' }); return true; } catch { return false; }
+}
+
+function gitInit(root, ignore) {
+  execFileSync('git', ['init', '-q'], { cwd: root, stdio: 'ignore' });
+  writeFileSync(path.join(root, '.gitignore'), ignore, 'utf8');
+}
+
 function selftest() {
   const out = ['== vendor-scan --selftest =='];
+  const cases = hasGit() ? CASES.concat(GIT_CASES) : CASES;
+  if (cases === CASES) out.push('git не найден — кейсы игнора git пропущены');
   let failed = 0;
-  for (const c of CASES) {
+  for (const c of cases) {
     const root = mkdtempSync(path.join(os.tmpdir(), 'vendor-scan-'));
     try {
       put(root, 'AGENTS.md', '# Правила проекта\n\nТекст без следов.\n');
@@ -242,7 +288,7 @@ function selftest() {
       rmSync(root, { recursive: true, force: true });
     }
   }
-  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + CASES.length + ')' : 'OK (кейсов: ' + CASES.length + ')'));
+  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + cases.length + ')' : 'OK (кейсов: ' + cases.length + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
 }

@@ -26,6 +26,13 @@
     "ds": { "id": "ds-ibp", "title": "Дизайн-система IBP", "desc": "Документация основ и компонентов", "icon": "layer-01" }
   },
 
+  "localKit": {
+    "dir": "apps/local-components", "registry": "apps/local-components/kit-data.js", "id": "local-kit",
+    "title": "Локальные компоненты", "desc": "Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем",
+    "icon": "layout-grid-01",
+    "categories": ["Общие", "Сделка", "Инструменты", "Отчёты", "Другое"]
+  },
+
   "state": ".agent-state",
   "docs": "docs",
   "scratch": ["docs/misc"],

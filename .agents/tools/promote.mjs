@@ -56,7 +56,7 @@ const TEXT = /\.(html?|m?js|css|md|json)$/i;
 const SKIP = new Set(['node_modules', '.git']);
 /* Относительный путь в тексте: цепочка `../` и хвост до кавычки, пробела
    или скобки. Пересчитывается только путь, который ведёт в существующий
-   файл, — «../» в прозе не трогается. */
+   файл, — «../» в тексте не трогается. */
 const REL_RX = /(?<![\w/.-])((?:\.\.\/)+[^\s"'`<>()[\]{}|,;*]*)/g;
 const inside = (file, dir) => file === dir || file.startsWith(dir + path.sep);
 
@@ -199,7 +199,7 @@ export function promote(P, conceptArg, moduleArg, opts = {}) {
   const defects = [];
   if (opts.sync !== false) {
     const P2 = project(P.root);
-    defects.push(...hubCheck(P2, true).defects, ...assembleRun(P2, sourcesUnder(path.join(P2.root, P2.appsDir)), true).defects, ...readmeCheck(P2, true).defects);
+    defects.push(...hubCheck(P2, true).defects, ...assembleRun(P2, sourcesUnder(path.join(P2.root, P2.appsDir), [], P2.showcaseAbs), true).defects, ...readmeCheck(P2, true).defects);
     lines.push('реестр хаба, страницы, README модуля — пересобраны');
   }
   /* Остальные упоминания — списком: их правят по смыслу. */

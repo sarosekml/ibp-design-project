@@ -1,0 +1,44 @@
+/* Окна «Документы по сделке» — связанный артефакт тайла DealDescriptionTile.
+   Здесь заголовок тела, стопка карточек и переключение состояния данных
+   (data-state на .modal первого окна). Карточку и её состояния (наведение,
+   выбрана) даёт CounterpartyCard на Card из ДС, отступы тела — Modal. */
+
+/* Подзаголовок тела: «Выберите участника сделки» в первом окне, полное
+   наименование контрагента во втором (макет). Ступень — H6 Strong. */
+.lc-deal-ecm__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Карточки участников — стопкой, зазор как у карточек в колонках окна КНР. */
+.lc-deal-ecm__list,
+.lc-deal-ecm__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Каркас карточки при загрузке — в габарите карточки участника: шапка с
+   сабхедером и три строки реквизитов (≈ 144px). */
+.lc-deal-ecm__loading-card {
+  --sk-h: calc(var(--space-80) + var(--space-64));
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+.lc-deal-ecm .lc-deal-ecm__loading,
+.lc-deal-ecm__empty { display: none; }
+
+.lc-deal-ecm[data-state="loading"] .lc-deal-ecm__list,
+.lc-deal-ecm[data-state="empty"] .lc-deal-ecm__list { display: none; }
+
+.lc-deal-ecm[data-state="loading"] .lc-deal-ecm__loading { display: flex; }
+.lc-deal-ecm[data-state="empty"] .lc-deal-ecm__empty { display: block; }
+
+/* Участников нет — одна строка причины, как «Не заполнено» в тайлах сделки. */
+.lc-deal-ecm__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}

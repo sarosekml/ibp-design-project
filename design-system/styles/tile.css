@@ -184,11 +184,13 @@
   flex-wrap: wrap;
 }
 
-/* Actions — трейлинг-группа: 1..3 действия (IconButton и/или Button), зазор 8 */
+/* Actions — трейлинг-группа: 1..3 действия (IconButton и/или Button), зазор 12
+   (было 8 до 1.015: кнопка с подписью и IconButton рядом сливались в одно
+   действие — решение человека 25.09.2026) */
 .tile__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: none;
 }
 
@@ -299,8 +301,9 @@
    Alert-слот у Card не предполагается.
 
    Состояния (набор объявлен в документации Tile с самого начала):
-   Default · Hover · Active · Move · Disabled. Move — состояние
-   перетаскивания: карточка схвачена и следует за указателем.
+   Default · Hover · Active · Move · Disabled, с 1.015 — Selected. Move —
+   состояние перетаскивания: карточка схвачена и следует за указателем.
+   Selected — карточка выбрана в списке с выбором.
    Имена служебных классов — как у IconButton (.is-hover / .is-pressed):
    они нужны, чтобы показать состояние статично в документации.
    ------------------------------------------------------------ */
@@ -354,6 +357,18 @@
 .tile--card.is-pressed {
   background: var(--bg-table-default-focus);
   border-color: var(--border-dark);
+}
+/* Selected — карточка выбрана в списке с выбором (одной или нескольких).
+   Постоянное состояние, в отличие от Active (нажатие). Реальный выбор несёт
+   aria-checked="true" (роль radio/checkbox) или aria-selected="true" (роль
+   option) на самой карточке; .is-selected — форс-состояние витрины. Тон — как
+   у выбора Entity: подложка --primary-bg, рамка --primary. */
+.tile--card:is(.is-selected, [aria-checked="true"], [aria-selected="true"]) {
+  background: var(--primary-bg);
+  border-color: var(--primary);
+}
+.tile--card:is(.is-selected, [aria-checked="true"], [aria-selected="true"]):hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 .tile--card:focus-visible {
   outline: 2px solid var(--primary);

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/DealDescriptionModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно описания сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно описания сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Описание сделки»: окно правки и просмотра.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно работает в двух режимах, атрибут data-mode на самой модалке:
+       edit — правка: поля ввода, списки и чекбоксы, подвал с «Сохранить»;
+       view — просмотр: те же поля как ReadOnlyField, чекбоксы выключены,
+              подвал с «Закрыть».
+     Режим ставит DealDescriptionModal.js по режиму тайла, который окно
+     открыл: из правки — карандашом или «Заполнить», из просмотра —
+     «Развернуть». Переключает вид DealDescriptionModal.css, разметка держит
+     оба сразу — как тайлы.
+
+     Раскладка — как на макете: две колонки с вертикальным разделителем.
+     Слева текстовые поля и ГСЗ, справа признаки и два списка. Порядок полей в
+     разметке — порядок чтения внутри колонки.
+
+     Опции списков пусты в разметке: их подставляет DealDescriptionModal.js
+     из справочников DEALS_ENUMS (runtime-hooks: динамический список у
+     DropdownList собирается кодом). Значения ниже — пример, их заменяет
+     скрипт данными сделки. «Сохранить» без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла. -->
+
+<div id="deal-description-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w7 lc-deal-description-modal" role="dialog" aria-modal="true" aria-labelledby="deal-description-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-description-title">Описание сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <!-- ── Правка ──────────────────────────────────────────────────── -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__edit">
+        <div class="lc-deal-description-modal__col">
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-description"><span class="ds-label__text">Суть сделки</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-description" name="description" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-operations-comment"><span class="ds-label__text">Комментарий Operations</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-operations-comment" name="operationsComment" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-additional-income"><span class="ds-label__text">Дополнительные доходы</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="dd-additional-income" name="additionalIncome" autocomplete="off">
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-gsz"><span class="ds-label__text">Группа связанных заемщиков</span></label>
+            <div class="inp__field" data-ddl="dd-gsz-list">
+              <input class="inp__control" id="dd-gsz" name="gsz" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-gsz-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-ce" name="ceParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-if-desk" name="ifDeskParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-restructured" name="restructured">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-jointness"><span class="ds-label__text">Совместность</span></label>
+            <div class="inp__field" data-ddl="dd-jointness-list">
+              <input class="inp__control" id="dd-jointness" name="jointness" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-jointness-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-risk"><span class="ds-label__text">Категория риска ЦУП</span></label>
+            <div class="inp__field" data-ddl="dd-risk-list">
+              <input class="inp__control" id="dd-risk" name="riskCategory" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-risk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" id="dd-fin-tpl" name="finTpl">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Просмотр ────────────────────────────────────────────────── -->
+      <!-- Состав и порядок полей те же, что в правке — правило локальных
+           компонентов для состояния «Только просмотр». Текст здесь не
+           усекается: окно и открывают, чтобы прочесть описание целиком.
+           Признаки остаются чекбоксами, выключенными: выключенный чекбокс
+           показывает значение честнее строки «Да» / «Нет» (так же в окне
+           «Команда сделки», решение человека 23.09.2026). -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__view">
+        <div class="lc-deal-description-modal__col">
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Суть сделки</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="description">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий Operations</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="operationsComment">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительные доходы</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="additionalIncome">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="gsz">—</span></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ceParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ifDeskParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="restructured" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Совместность</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="jointness">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Категория риска ЦУП</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="riskCategory">—</span></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" data-dd-view-flag="finTpl" disabled>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Подвал у модалки обязателен, поэтому в просмотре он не прячется, а
+         меняет кнопку: править нечего — окно закрывают. «Закрыть»
+         аутлайновая, как в окне «Команда сделки»: подтверждать нечего. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m lc-deal-description-modal__save" data-dd-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-deal-description-modal__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>25.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Модальное окно описания сделки</h1>
+  <p class="lead">Заполнить и поправить описание сделки, её признаки и группу связанных заемщиков</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal">apps/postrade/deals-app/widgets/modals/DealDescriptionModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/modals/DealDescriptionModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 25.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/pages/molecules/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/pages/atoms/Checkbox.html">Checkbox</a> · <a class="inl" href="../../../../design-system/pages/atoms/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/pages/molecules/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.css">DealDescriptionModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.html">DealDescriptionModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js">DealDescriptionModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md">DealDescriptionModal.md</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealDescriptionTile.doc.html">Описание сделки (DealDescriptionTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Описание сделки» — IconButton «Редактировать» и кнопка «Заполнить» в пустом состоянии (правка), IconButton «Развернуть» (просмотр)</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Артефакт тайла «Описание сделки». Не компонент: сам по себе не существует и в плоском списке кита не числится — живёт подпунктом своего тайла.</p>
+<p class="desc">Одно окно на два режима. В правке — всё, что показывает тайл, плюс дополнительные доходы: их тайл не показывает. В просмотре окно — место, где длинное описание и комментарий читаются целиком, без усечения тайла.</p>
+<p class="desc">Ширина — <code class="tok">modal--w7</code> (1053px на 1920), ровно ширина макета. Две колонки с вертикальным разделителем в пропорции 7 : 3 — с макета.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal w7 «Описание сделки»
+├── тело: две колонки + Divider vertical
+│   ├── слева: Суть сделки · Комментарий Operations · Дополнительные доходы · Группа связанных заемщиков
+│   └── справа: Участие ЦЭ · Участие Деска ИФ · Реструктуризация · Совместность · Категория риска ЦУП · Фин. расчеты в Excel
+└── подвал: «Сохранить» (правка) | «Закрыть» (просмотр)</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w7</code>; скрим <code class="tok">deal-description-scrim</code>, открытие с <code class="tok">data-modal-guarded</code> в правке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">суть и комментарий — <code class="tok">inp--multiline</code>, 4 строки; дополнительные доходы — строка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/InputAutocomplete.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одиночный выбор: ГСЗ, совместность (под кодом — полное имя банка), категория риска (под буквой — пояснение)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Checkbox</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Checkbox.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">три признака группой (<code class="tok">cb-group</code>) и «Фин. расчеты в Excel» отдельно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Divider</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Divider.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dvd--v</code> между колонками</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/ReadOnlyField.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля в просмотре, текст без усечения</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Колонка</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Запись сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Суть сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">левая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">многострочный текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">description</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий Operations</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">левая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">многострочный текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">operationsComment</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дополнительные доходы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">левая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">additionalIncome</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа связанных заемщиков</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">левая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор из <code class="tok">DEALS_ENUMS.gsz</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">gsz</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участие ЦЭ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ceParticipation</code> (да / нет)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участие Деска ИФ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ifDeskParticipation</code> (да / нет)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Реструктуризация</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">restructured</code> (да / нет)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Совместность</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор из <code class="tok">DEALS_ENUMS.jointness</code> — ЦА, ЦЧБ, УБ, МБ, ЮЗБ, СРБ, ВВБ, СБ, ПВБ, СЗБ, ДБ (порядок текущей системы); под кодом — полное имя банка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">jointness</code>; пусто — совместности нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Категория риска ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор: Не определена · Категория A · Категория B · Категория C · Категория D (порядок текущей системы); под категорией — пояснение, длинное переносится</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">riskCategory</code> (код; пусто — <code class="tok">null</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фин. расчеты в Excel</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">finTpl</code> («Да» / «Нет» — поле реестра)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<p class="desc">Окно роль не вычисляет: режим приходит с тайла, который его открыл (<code class="tok">data-mode</code> тайла → <code class="tok">data-mode</code> модалки). Матрица ролей — в паспорте тайла.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля ввода со значениями сделки, подвал «Сохранить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же поля в том же порядке как ReadOnlyField (прочерк у пустого), признаки — выключенные чекбоксы, подвал с аутлайновой «Закрыть»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка ввода</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">значение списка, набранное руками и не найденное в справочнике: поле <code class="tok">inp--error</code>, под ним «Выберите значение из списка»; окно не закрывается, фокус — на первое поле с ошибкой</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно заполняется из записи сделки, уже загруженной страницей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранение (Обновление)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки в прототипе мгновенная, в памяти вкладки</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Проверка и сохранение">
+<h2>Проверка и сохранение</h2>
+<ul class="bullets"><li>Обязательных полей нет: окно сохраняет любой набор, в том числе пустой — тайл тогда встаёт в «Данных нет».</li><li>Значение списка — только из справочника. Пустое допустимо.</li><li>«Сохранить» закрывает окно само, когда проверка прошла; крестик и Esc закрывают без сохранения, клик мимо окна в правке не закрывает (<code class="tok">data-modal-guarded</code>).</li><li>Правка уходит странице одним патчем (<code class="tok">opts.save</code>), страница пишет его в <code class="tok">DealsStore</code>, тайл и поповер «Связанные сделки» перерисовываются по событию стора.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новые значения в записи сделки и в тайле; фокус — на кнопку, открывшую окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc, «Закрыть»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/DealDescriptionModal/DealDescriptionModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/DealDescriptionModal/DealDescriptionModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка и режимы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealDescriptionModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнение, проверка, сохранение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealDescriptionModal.js</code> (<code class="tok">PostDealDescriptionModal.bind</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<ol class="kit-md__ol"><li>Кто может править комментарий Operations — <code class="tok">не решено (24.09.2026)</code>; сейчас поле доступно всем, у кого есть правка.</li><li>Можно ли вписать ГСЗ, которой нет в справочнике, — <code class="tok">не решено (24.09.2026)</code>; сейчас нельзя, как и у совместности и категории риска.</li><li>Подпись «Фин. расчеты в Excel» против «Фин.расчеты в шаблоне» в тайле — паспорт тайла, вопрос 4.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/DealDescriptionModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealDescriptionModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":["edit","view"],"state":null,"mode":"edit","width":null,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Описание сделки»: окно правки и просмотра.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно работает в двух режимах, атрибут data-mode на самой модалке:
+       edit — правка: поля ввода, списки и чекбоксы, подвал с «Сохранить»;
+       view — просмотр: те же поля как ReadOnlyField, чекбоксы выключены,
+              подвал с «Закрыть».
+     Режим ставит DealDescriptionModal.js по режиму тайла, который окно
+     открыл: из правки — карандашом или «Заполнить», из просмотра —
+     «Развернуть». Переключает вид DealDescriptionModal.css, разметка держит
+     оба сразу — как тайлы.
+
+     Раскладка — как на макете: две колонки с вертикальным разделителем.
+     Слева текстовые поля и ГСЗ, справа признаки и два списка. Порядок полей в
+     разметке — порядок чтения внутри колонки.
+
+     Опции списков пусты в разметке: их подставляет DealDescriptionModal.js
+     из справочников DEALS_ENUMS (runtime-hooks: динамический список у
+     DropdownList собирается кодом). Значения ниже — пример, их заменяет
+     скрипт данными сделки. «Сохранить» без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла. -->
+
+<div class="modal-scrim" id="deal-description-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-description-modal" role="dialog" aria-modal="true" aria-labelledby="deal-description-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-description-title">Описание сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <!-- ── Правка ──────────────────────────────────────────────────── -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__edit">
+        <div class="lc-deal-description-modal__col">
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-description"><span class="ds-label__text">Суть сделки</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-description" name="description" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-operations-comment"><span class="ds-label__text">Комментарий Operations</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-operations-comment" name="operationsComment" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-additional-income"><span class="ds-label__text">Дополнительные доходы</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="dd-additional-income" name="additionalIncome" autocomplete="off">
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-gsz"><span class="ds-label__text">Группа связанных заемщиков</span></label>
+            <div class="inp__field" data-ddl="dd-gsz-list">
+              <input class="inp__control" id="dd-gsz" name="gsz" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-gsz-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-ce" name="ceParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-if-desk" name="ifDeskParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-restructured" name="restructured">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-jointness"><span class="ds-label__text">Совместность</span></label>
+            <div class="inp__field" data-ddl="dd-jointness-list">
+              <input class="inp__control" id="dd-jointness" name="jointness" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-jointness-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-risk"><span class="ds-label__text">Категория риска ЦУП</span></label>
+            <div class="inp__field" data-ddl="dd-risk-list">
+              <input class="inp__control" id="dd-risk" name="riskCategory" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-risk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" id="dd-fin-tpl" name="finTpl">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Просмотр ────────────────────────────────────────────────── -->
+      <!-- Состав и порядок полей те же, что в правке — правило локальных
+           компонентов для состояния «Только просмотр». Текст здесь не
+           усекается: окно и открывают, чтобы прочесть описание целиком.
+           Признаки остаются чекбоксами, выключенными: выключенный чекбокс
+           показывает значение честнее строки «Да» / «Нет» (так же в окне
+           «Команда сделки», решение человека 23.09.2026). -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__view">
+        <div class="lc-deal-description-modal__col">
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Суть сделки</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="description">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий Operations</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="operationsComment">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительные доходы</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="additionalIncome">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="gsz">—</span></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ceParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ifDeskParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="restructured" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Совместность</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="jointness">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Категория риска ЦУП</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="riskCategory">—</span></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" data-dd-view-flag="finTpl" disabled>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Подвал у модалки обязателен, поэтому в просмотре он не прячется, а
+         меняет кнопку: править нечего — окно закрывают. «Закрыть»
+         аутлайновая, как в окне «Команда сделки»: подтверждать нечего. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m lc-deal-description-modal__save" data-dd-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-deal-description-modal__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Описание сделки» — связанный артефакт тайла DealDescriptionTile.
+   Здесь раскладка двух колонок с разделителем и переключение режима — правка
+   или просмотр. Отступы тела окна даёт Modal, зазоры — токены ДС.
+
+   Режим ставит DealDescriptionModal.js атрибутом data-mode на .modal: из
+   какого тайла окно открыли, в таком режиме оно и открывается. Разметка
+   держит оба вида сразу, как в тайлах компонента. */
+
+/* ── Две колонки с разделителем ─────────────────────────────────────── */
+/* Пропорция колонок — с макета окна на ширине --modal-w-7: слева поле
+   ≈ 680px, справа ≈ 290px, то есть 7 : 3. Колонки сжимаемые (minmax(0, …)):
+   длинное значение переносится внутри колонки, а не распирает соседнюю.
+   Разделитель — Divider из ДС, отдельной дорожкой сетки; по высоте его тянет
+   сетка (align-items: stretch по умолчанию). */
+.lc-deal-description-modal__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) auto minmax(0, 3fr);
+  gap: var(--space-16);
+}
+
+.lc-deal-description-modal__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* ── Правка или просмотр ────────────────────────────────────────────── */
+.lc-deal-description-modal__view { display: none; }
+
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__edit { display: none; }
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__view { display: grid; }
+
+/* ── Кнопка подвала ─────────────────────────────────────────────────── */
+/* Подвал модалки обязателен и всегда несёт кнопку справа (правило Modal),
+   поэтому он не прячется, а меняет кнопку: в правке — «Сохранить», в
+   просмотре править нечего и окно закрывают. */
+.lc-deal-description-modal__close { display: none; }
+
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__save { display: none; }
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__close { display: inline-flex; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealDescriptionModal.js — окно «Описание сделки».
+
+   Фрагмент DealDescriptionModal.html держит оба режима окна. Скрипт делает
+   то, чего нет в рантаймах ДС:
+
+     1. Режим окна. Из какого тайла окно открыли, в таком режиме оно и
+        открывается: data-mode переносится с тайла на .modal, дальше вид
+        переключает DealDescriptionModal.css.
+     2. Списки. ГСЗ, Совместность и Категория риска ЦУП — опции из
+        справочников DEALS_ENUMS (mock-deals.js); у банка под кодом полное
+        имя, у категории — пояснение с макета. Открытие, клавиатуру и выбор
+        ведёт DSDropdownList — своей копии этой логики тут нет.
+     3. Проверка и сохранение. Значение списка — только из списка: введённое
+        руками и не найденное в справочнике не сохраняется, поле помечается
+        ошибкой. «Сохранить» закрывает окно само, когда проверка прошла.
+
+   Окно роль не вычисляет, как и тайл не вычисляет режим: режим приходит с
+   тайла, а что сохранить — решает страница (opts.save).
+
+   API:
+     PostDealDescriptionModal.bind(scrim, opts) → api
+       opts.get()         → запись сделки (typedef DealDescriptionFields)
+       opts.save(patch)   ← правка: description, operationsComment,
+                            additionalIncome, gsz, jointness, riskCategory
+                            (код или null), ceParticipation,
+                            ifDeskParticipation, restructured (да/нет) и
+                            finTpl («Да» / «Нет» — поле реестра)
+       opts.enums         — справочники, по умолчанию window.DEALS_ENUMS
+       api.setMode(mode) · api.refresh() · api.validate()
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'deal-description-scrim';
+
+  var TEXTS = [
+    { key: 'description', id: 'dd-description' },
+    { key: 'operationsComment', id: 'dd-operations-comment' },
+    { key: 'additionalIncome', id: 'dd-additional-income' }
+  ];
+
+  /* Признаки окна: ключ записи → чекбокс. finTpl — поле реестра, хранится
+     строкой «Да» / «Нет»; остальные — да/нет. */
+  var FLAGS = [
+    { key: 'ceParticipation', id: 'dd-ce' },
+    { key: 'ifDeskParticipation', id: 'dd-if-desk' },
+    { key: 'restructured', id: 'dd-restructured' },
+    { key: 'finTpl', id: 'dd-fin-tpl', legacy: true }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function str(src, key) {
+    return String((src && src[key]) || '').trim();
+  }
+
+  function yes(src, key) {
+    var v = src && src[key];
+    return v === true || v === 'Да';
+  }
+
+  /* ---------- справочники ---------- */
+
+  /* Список поля: опция — подпись, под ней пояснение (если есть). Код едет на
+     опции атрибутом, чтобы выбор не разбирал текст обратно. */
+  function lists(enums) {
+    enums = enums || {};
+    var banks = enums.jointnessNames || {};
+    var riskNames = enums.riskCategoryNames || {};
+    var riskHints = enums.riskCategoryHints || {};
+    return {
+      gsz: {
+        id: 'dd-gsz',
+        options: (enums.gsz || []).map(function (v) { return { code: v, label: v }; })
+      },
+      jointness: {
+        id: 'dd-jointness',
+        options: (enums.jointness || []).map(function (v) { return { code: v, label: v, hint: banks[v] || '' }; })
+      },
+      riskCategory: {
+        id: 'dd-risk',
+        options: (enums.riskCategory || []).map(function (v) {
+          return { code: v, label: riskNames[v] || v, hint: riskHints[v] || '' };
+        })
+      }
+    };
+  }
+
+  function optionHTML(o) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="false" data-code="' + esc(o.code) + '">'
+      + '<span class="ddl__item-body">'
+      + '<span class="ddl__item-label">' + esc(o.label) + '</span>'
+      + (o.hint ? '<span class="ds-helper"><span class="ds-helper__text">' + esc(o.hint) + '</span></span>' : '')
+      + '</span></button>';
+  }
+
+  function labelOf(list, code) {
+    for (var i = 0; i < list.options.length; i++) if (list.options[i].code === code) return list.options[i].label;
+    return '';
+  }
+
+  /* Обратно: подпись в поле → код. Ввод без совпадения — undefined, это
+     ошибка; пустое поле — '' (значение не выбрано). */
+  function codeOf(list, label) {
+    var s = String(label == null ? '' : label).trim();
+    if (!s) return '';
+    for (var i = 0; i < list.options.length; i++) {
+      if (list.options[i].label.toLowerCase() === s.toLowerCase()) return list.options[i].code;
+    }
+    return undefined;
+  }
+
+  /* ---------- заполнение ---------- */
+
+  function fillEdit(scrim, deal, L) {
+    TEXTS.forEach(function (f) {
+      var el = scrim.querySelector('#' + f.id);
+      if (el) el.value = str(deal, f.key);
+    });
+    Object.keys(L).forEach(function (key) {
+      var el = scrim.querySelector('#' + L[key].id);
+      if (el) el.value = labelOf(L[key], str(deal, key));
+      setError(scrim, L[key].id, '');
+    });
+    FLAGS.forEach(function (f) {
+      var el = scrim.querySelector('#' + f.id);
+      if (el) el.checked = yes(deal, f.key);
+    });
+    /* Значения поставлены присваиванием, а оно событий не шлёт: без этого
+       вызова рантайм поля считал бы все поля пустыми и не показал крестик
+       очистки (правило InputText). */
+    if (window.DSInput) window.DSInput.syncAll(scrim);
+  }
+
+  function fillView(scrim, deal, L) {
+    scrim.querySelectorAll('[data-dd-view]').forEach(function (el) {
+      var key = el.getAttribute('data-dd-view');
+      var v = L[key] ? labelOf(L[key], str(deal, key)) : str(deal, key);
+      /* Прочерк — значение, а не подсказка: своего цвета у него нет
+         (ReadOnlyField 1.010). */
+      el.textContent = v || '—';
+    });
+    scrim.querySelectorAll('[data-dd-view-flag]').forEach(function (el) {
+      el.checked = yes(deal, el.getAttribute('data-dd-view-flag'));
+    });
+  }
+
+  /* ---------- проверка ---------- */
+
+  /* Ошибку показывает сам компонент поля: .inp--error + хелпер под полем. */
+  function setError(scrim, id, message) {
+    var input = scrim.querySelector('#' + id);
+    var box = input && input.closest('.inp');
+    if (!box) return;
+    var helper = box.querySelector('.ds-helper--error');
+    if (message) {
+      box.classList.add('inp--error');
+      input.setAttribute('aria-invalid', 'true');
+      if (!helper) {
+        helper = document.createElement('span');
+        helper.className = 'ds-helper ds-helper--error';
+        box.appendChild(helper);
+      }
+      helper.innerHTML = '<span class="ds-helper__text">' + esc(message) + '</span>';
+    } else {
+      box.classList.remove('inp--error');
+      input.removeAttribute('aria-invalid');
+      if (helper) helper.parentNode.removeChild(helper);
+    }
+  }
+
+  /* ---------- связывание ---------- */
+
+  function bind(scrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__dealDescriptionApi) return scrim.__dealDescriptionApi;
+    opts = opts || {};
+
+    var modal = scrim.querySelector('.lc-deal-description-modal');
+    var L = lists(opts.enums || window.DEALS_ENUMS);
+
+    /* Опции — один раз на окно: справочники за время сессии не меняются. */
+    Object.keys(L).forEach(function (key) {
+      var list = scrim.querySelector('#' + L[key].id + '-list');
+      var field = scrim.querySelector('[data-ddl="' + L[key].id + '-list"]');
+      if (!list) return;
+      list.innerHTML = L[key].options.map(optionHTML).join('');
+      if (!field || !window.DSDropdownList) return;
+      window.DSDropdownList.bind(field, {
+        list: list,
+        onSelect: function (it) {
+          var input = scrim.querySelector('#' + L[key].id);
+          var label = it.querySelector('.ddl__item-label');
+          if (!input || !label) return;
+          input.value = label.textContent.trim();
+          setError(scrim, L[key].id, '');
+        }
+      });
+    });
+
+    function refresh() {
+      var mode = modal ? (modal.getAttribute('data-mode') || 'edit') : 'edit';
+      var deal = opts.get ? opts.get() : null;
+      if (mode === 'view') fillView(scrim, deal, L);
+      else fillEdit(scrim, deal, L);
+    }
+
+    function setMode(mode) {
+      if (modal) modal.setAttribute('data-mode', mode === 'view' ? 'view' : 'edit');
+      refresh();
+    }
+
+    /* Открытие: режим и значения берутся в момент клика по триггеру — окно
+       живёт в разметке постоянно, а сделка и режим тайла могли измениться. */
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-modal="' + SCRIM_ID + '"]');
+      if (!trigger) return;
+      var tile = trigger.closest('.lc-deal-description');
+      setMode(tile ? (tile.getAttribute('data-mode') || 'edit') : 'edit');
+    });
+
+    /* Значение списка — только из справочника. Пустое поле допустимо:
+       обязательных полей у окна нет (паспорт, «Обязательность»). */
+    function validate() {
+      var ok = true;
+      Object.keys(L).forEach(function (key) {
+        var input = scrim.querySelector('#' + L[key].id);
+        var code = codeOf(L[key], input ? input.value : '');
+        setError(scrim, L[key].id, code === undefined ? 'Выберите значение из списка' : '');
+        if (code === undefined) ok = false;
+      });
+      return ok;
+    }
+
+    function collect() {
+      var patch = {};
+      TEXTS.forEach(function (f) {
+        var el = scrim.querySelector('#' + f.id);
+        patch[f.key] = el ? el.value.trim() : '';
+      });
+      Object.keys(L).forEach(function (key) {
+        var input = scrim.querySelector('#' + L[key].id);
+        var code = codeOf(L[key], input ? input.value : '');
+        /* Категории риска нет — null, как в записи сделки; у ГСЗ и
+           совместности пустая строка — поля реестра. */
+        patch[key] = key === 'riskCategory' ? (code || null) : (code || '');
+      });
+      FLAGS.forEach(function (f) {
+        var el = scrim.querySelector('#' + f.id);
+        var on = !!(el && el.checked);
+        patch[f.key] = f.legacy ? (on ? 'Да' : 'Нет') : on;
+      });
+      return patch;
+    }
+
+    var save = scrim.querySelector('[data-dd-save]');
+    if (save) {
+      save.addEventListener('click', function () {
+        if (!validate()) {
+          var bad = scrim.querySelector('.inp--error .inp__control');
+          if (bad) bad.focus();
+          return;
+        }
+        if (opts.save) opts.save(collect());
+        if (scrim.classList.contains('modal-scrim--inline')) return;
+        if (window.DSModal) window.DSModal.closeTop();
+      });
+    }
+
+    var api = { setMode: setMode, refresh: refresh, validate: validate };
+    scrim.__dealDescriptionApi = api;
+    return api;
+  }
+
+  window.PostDealDescriptionModal = {
+    bind: bind,
+    TEXTS: TEXTS,
+    FLAGS: FLAGS
+  };
+})();
+</script>
+</body>
+</html>

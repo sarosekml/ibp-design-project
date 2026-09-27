@@ -67,6 +67,51 @@
 /* ------------------------------------------------------------------ */
 .dtable__body { position: relative; overflow: auto; }
 .dtable__body .tbl { border: none; border-radius: 0; overflow: visible; }
+
+/* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
+   скругление полное, цвет --secondary, без дорожки, уголка и стрелок; в покое
+   скрыт, появляется при прокрутке и гаснет. Отличие от .ds-scroll — обе оси:
+   у таблицы бывает и горизонтальный скролл (колонки шире контейнера). Класс
+   .is-scrolling ставит и снимает ds-table.js (bind), тайминг тот же, что у
+   ds-scroll.js. Бегунок берёт цвет из border-color тела (переход у
+   псевдоэлемента скроллбара браузеры не поддерживают): своей видимой рамки у
+   .dtable__body не бывает — рамку держит .dtable. scrollbar-gutter не
+   ставится: зарезервированная полоса легла бы пустым столбцом справа от
+   строк. 1.019; до этого у таблицы был системный скроллбар. */
+.dtable__body {
+  --scroll-w: 8px;
+  --scroll-show: .1s;
+  --scroll-fade: .3s;
+  border-color: transparent;
+  transition: border-color var(--scroll-fade) ease;
+}
+.dtable__body.is-scrolling {
+  border-color: var(--secondary);
+  transition-duration: var(--scroll-show);
+}
+.dtable__body::-webkit-scrollbar { width: var(--scroll-w); height: var(--scroll-w); background: transparent; }
+.dtable__body::-webkit-scrollbar-track,
+.dtable__body::-webkit-scrollbar-corner { background: transparent; }
+.dtable__body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.dtable__body::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-color: inherit;
+  border-width: 0 calc(100vw + 100vh) 0 0;
+}
+/* Firefox: псевдоэлементов скроллбара нет — тонкая системная полоса того же
+   цвета и с тем же появлением (как у .ds-scroll). */
+@supports not selector(::-webkit-scrollbar) {
+  .dtable__body {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color var(--scroll-fade) ease;
+  }
+  .dtable__body.is-scrolling {
+    scrollbar-color: var(--secondary) transparent;
+    transition-duration: var(--scroll-show);
+  }
+}
 /* Липкая шапка держится НА СТРОКЕ, а не на ячейках. .th — grid-элемент строки
    .tbl__row (display:grid), и блок-контейнер для его position:sticky — сама
    строка: ходить по вертикали ячейке негде, шапка уезжала вместе с контентом

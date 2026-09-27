@@ -76,6 +76,7 @@ python3 -m http.server 8765    # затем http://localhost:8765
 | поправить экран руками | `apps/<раздел>/<модуль>/pages/`, затем [проверки](#проверки) |
 | забрать экран в разработку | [передача в разработку](#передача-в-разработку) |
 | найти компонент или токен | [`design-system/index.html`](design-system/index.html), спеки — [`design-system/specs/`](design-system/specs/) |
+| посмотреть или поправить тайл, окно, поповер модуля | витрина [`apps/local-components/`](apps/local-components/README.md) |
 | доработать агента | [`.agents/README.md`](.agents/README.md) |
 
 ## Как устроен репозиторий
@@ -91,6 +92,7 @@ python3 -m http.server 8765    # затем http://localhost:8765
 ├── apps/               прототипы
 │   ├── ds-config.js    адрес дизайн-системы — одна строка DS_PATH
 │   ├── ds-body.js      второй тег загрузчика ДС
+│   ├── local-components/  витрина локальных компонентов — страницы собираются из widgets/
 │   ├── core/           разделы системы, как у фронтенда
 │   ├── ib/
 │   ├── pretrade/
@@ -223,6 +225,7 @@ node .agents/tools/lessons-cli.mjs gate --full   # проверить всё
 | хаб, форма и место приложений, живые ссылки страниц | `registry-check` |
 | модульные страницы собраны из актуальных виджетов | `assemble --check` |
 | README модулей совпадает с их папками | `module-readme --check` |
+| витрина локальных компонентов собрана из актуальных виджетов | `kit-build --check` |
 | реестр хаба и загрузчик ДС не правлены руками | `hub-build`, `boot-build` |
 | в репозитории нет абсолютных путей и посторонних имён | `vendor-scan` |
 
@@ -232,6 +235,7 @@ node .agents/tools/lessons-cli.mjs gate --full   # проверить всё
 ```bash
 node .agents/tools/hub-build.mjs                  # пересобрать реестр хаба после правки app.json
 node .agents/tools/assemble.mjs                   # собрать модульные страницы из виджетов
+node .agents/tools/kit-build.mjs                  # пересобрать витрину локальных компонентов
 node .agents/tools/module-readme.mjs              # обновить деревья в README модулей
 node .agents/tools/promote.mjs <концепт> <модуль> --dry   # показать план переноса концепта
 node .agents/tools/layout-check.mjs <экран.html>  # сенсор одного экрана
@@ -249,7 +253,7 @@ node .agents/tools/layout-check.mjs <экран.html>  # сенсор одног
 - Страницы открываются по `file://`: данные — обычными `<script>`, без `fetch`.
 - Валюта — кодом (`RUB`), а не «руб.» или «₽».
 - Своё поверх ДС — только на токенах и с записью в «Открытые вопросы» спеки.
-- Реестр хаба `hub.js`, загрузчик ДС и деревья в README модулей руками не правятся —
+- Реестр хаба `hub.js`, загрузчик ДС, деревья в README модулей и страницы витрины `apps/local-components/` руками не правятся —
   их собирают генераторы, проверяет гейт.
 - В файлах нет абсолютных путей с машины автора.
 
@@ -258,6 +262,7 @@ node .agents/tools/layout-check.mjs <экран.html>  # сенсор одног
 | Что | Где |
 |---|---|
 | Приложения: форма, модули, концепты, виджеты, данные | [`apps/README.md`](apps/README.md) |
+| Витрина локальных компонентов: как собирается и правится | [`apps/local-components/README.md`](apps/local-components/README.md) |
 | Агентная система целиком: роли, маршруты, приёмка, проверки | [`.agents/README.md`](.agents/README.md) |
 | Правила процесса | [`.agents/rules/process.md`](.agents/rules/process.md) |
 | Вход для агентов | [`AGENTS.md`](AGENTS.md) |

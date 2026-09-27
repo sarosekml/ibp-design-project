@@ -1,7 +1,7 @@
 ---
 name: Команда сделки
-version: 1.000
-updated: "23.09.2026"
+version: 1.001
+updated: "25.09.2026"
 rulesVersion: 1.006
 owner: не решено (19.09.2026)
 designer: Роман Эсэф

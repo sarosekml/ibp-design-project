@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно «Документы по сделке» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно «Документы по сделке»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету refs/описание/«Документы по сделке (ЭКД).png» модуля
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div id="deal-ecm-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.001</b></span><span>Обновлено: <b>25.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Модальное окно «Документы по сделке»</h1>
+  <p class="lead">Выбрать участника сделки и открыть его документы ЭКД</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal">apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/modals/CounterpartiesEcmModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.001 · обновлено 25.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/molecules/EmptyState.html">EmptyState</a> · <a class="inl" href="../../../../design-system/pages/atoms/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">CounterpartiesEcmModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html">CounterpartiesEcmModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js">CounterpartiesEcmModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md">CounterpartiesEcmModal.md</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Подчасти</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/EcmModal">EcmModal/</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealDescriptionTile.doc.html">Описание сделки (DealDescriptionTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Описание сделки» — кнопка «Документы ЭКД по сделке» в шапке, в любом режиме и состоянии, кроме загрузки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">CounterpartyCard — режим select</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Артефакт тайла «Описание сделки». Документы ЭКД ведутся по контрагенту, поэтому просмотр идёт в два шага, двумя окнами одного сценария — оба с заголовком «Документы по сделке»:</p>
+<ol class="kit-md__ol"><li><b>Выбор участника</b> (<code class="tok">CounterpartiesEcmModal.html</code>) — «Выберите участника сделки» и карточки участников. Выбранная карточка подсвечена, «Открыть» недоступна, пока участник не выбран.</li><li><b>Документы</b> (подчасть окна — <code class="tok">EcmModal/EcmModal.html</code>, свой скрим) — полное наименование участника и его документы. «К списку контрагентов» возвращает к первому шагу с тем же выбором.</li></ol>
+<p class="desc">Паспорт общий для обоих шагов — подчасть отдельного паспорта не получает, как окно подтверждения в окне «КНР».</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal w4 «Документы по сделке»
+├── тело: «Выберите участника сделки» (H6 Strong) · стопка карточек CounterpartyCard (select), зазор 8
+└── подвал справа: «Открыть» (accent, недоступна без выбора)
+
+Modal w8 «Документы по сделке»
+├── тело: наименование участника (H6 Strong) · документы (в прототипе — EmptyState)
+└── подвал: слева «К списку контрагентов» (transparent, иконка arrow-left слева) · справа «Закрыть» (outline)</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w4</code> (выбор), <code class="tok">modal--w8</code> (документы)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модуль — <code class="tok">widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим <code class="tok">select</code>: без переноса и отметки «КНР», вся карточка — радиокнопка; выбранная — состояние Selected у Card из ДС (Tile 1.015)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">EmptyState</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/EmptyState.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">es--m</code>, иллюстрация <code class="tok">empty-folder</code> — на месте документов</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Skeleton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас двух карточек при загрузке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Открыть» — accent; «К списку контрагентов» — transparent с иконкой; «Закрыть» — outline</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Карточка показывает то же, что в окне «КНР» у участника сделки: наименование, сабхедер, реквизиты (состав у разных контрагентов разный), ГСЗ, контакты физлица, риск-метрику. Источник — <code class="tok">CounterpartiesStore.members()</code>, участники текущей сделки; окно перечитывает состав при каждом открытии, поэтому правка в окне «КНР» видна сразу. Паспорт полей — <code class="tok">CounterpartyCard.md</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение выбора">
+<h2>Поведение выбора</h2>
+<ul class="bullets"><li>Список — <code class="tok">role=&quot;radiogroup&quot;</code>, карточка — <code class="tok">role=&quot;radio&quot;</code> с <code class="tok">aria-checked</code>.</li><li>Выбор — клик по карточке, Enter или Space на ней; стрелки переводят выбор на соседнюю карточку. В порядке Tab одна карточка — выбранная, без выбора первая.</li><li>Клик по чипу риск-метрики открывает её поповер и выбора не делает.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав сделки ещё читается (<code class="tok">data/API.md</code>) — каркас двух карточек; «Открыть» недоступна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть, выбора нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки, «Открыть» недоступна (макет, первый кадр)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участник выбран</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка в состоянии Selected, «Открыть» доступна (макет, второй кадр)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «У сделки пока нет участников — документы смотреть не по кому» серым Body M; «Открыть» недоступна. Действия нет: состав правят в окне «КНР»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Документы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">второе окно: наименование участника и пустое состояние «Просмотр документов» — в прототипе просмотра нет (макет, третий кадр)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<p class="desc">Окно открывается в обоих режимах тайла: смотреть документы — не правка. Кому документы ЭКД недоступны — <code class="tok">не решено (24.09.2026)</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Открыть»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первое окно закрывается, открывается второе с наименованием участника</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«К списку контрагентов»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">второе окно закрывается, первое открывается с тем же выбором</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc, «Закрыть», клик мимо окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается, в данных ничего не меняется</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal: у формы просмотра справа Primary — «Закрыть»; слева — «Изменить» или «Удалить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">во втором окне справа аутлайновая «Закрыть», слева — шаг назад «К списку контрагентов» (transparent, стрелка влево)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 25.09.2026. Подтверждать во втором окне нечего — залитая кнопка обещала бы действие, которого нет (так же «Закрыть» в просмотре окна «Команда сделки»); шаг назад — вторичное действие формы, его место слева</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбор участника</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Документы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/CounterpartiesEcmModal/EcmModal/EcmModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка и состояния данных обоих окон</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">CounterpartiesEcmModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список, выбор, переходы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">CounterpartiesEcmModal.js</code> (<code class="tok">PostDealEcmModal.bind</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/</code> (<code class="tok">PostCardCounterparty.render</code>, режим <code class="tok">select</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<ol class="kit-md__ol"><li>Всех ли участников сделки показывать в списке или только юрлица (и есть ли роли участников, у которых документов ЭКД не бывает) — <code class="tok">не решено (24.09.2026)</code>.</li><li>Что показывает второй шаг в продукте и как выглядит его загрузка — <code class="tok">не решено (24.09.2026)</code>; в прототипе на месте документов пустое состояние.</li><li>Состояние «Ошибка» — <code class="tok">не решено (24.09.2026)</code>.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- Подчасть окна «Документы по сделке» (CounterpartiesEcmModal): документы
+     выбранного участника сделки — второй шаг. Лежит в папке окна-владельца,
+     как у фронтенда (CounterpartiesEcmModal/EcmModal); паспорт общий с
+     владельцем, стили — его же (CounterpartiesEcmModal.css). Вшивается своей
+     меткой рядом с ним — у фрагмента один корневой элемент, и сборщик не
+     раскрывает метки внутри фрагмента.
+
+     Вид — по макету «Документы по сделке (ЭКД).png» (refs/описание модуля):
+     в теле полное наименование контрагента, под ним документы. В продукте
+     документы открываются из внешней системы хранения; в прототипе её нет,
+     поэтому на их месте — пустое состояние с объяснением.
+
+     Подвал (решение человека 25.09.2026): слева «К списку контрагентов» со
+     стрелкой — шаг назад к выбору, справа аутлайновая «Закрыть».
+     Открывает и возвращает к списку CounterpartiesEcmModal.js; наименование
+     ниже — пример. -->
+
+<div class="modal-scrim" id="deal-ecm-docs-scrim" hidden>
+  <div class="modal modal--w8 lc-deal-ecm-docs" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-docs-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" data-ecm-party-name>КГ Самолёт</p>
+      <div class="es es--m">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Просмотр документов</p>
+          <p class="es__text">Здесь открываются документы выбранного участника сделки. В прототипе просмотра документов нет.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг назад — слева, как вторичное действие формы; закрытие — справа.
+         «Закрыть» аутлайновая: подтверждать в окне нечего, залитая обещала бы
+         действие, которого нет. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-ecm-back><i data-icon="arrow-left"></i><span class="btn__label">К списку контрагентов</span></button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"CounterpartiesEcmModal","type":"modal","base":"../..","hub":"../../../../index.html","states":["data","loading","empty"],"modes":[],"state":"data","mode":null,"width":null,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету refs/описание/«Документы по сделке (ЭКД).png» модуля
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div class="modal-scrim" id="deal-ecm-scrim" hidden>
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окна «Документы по сделке» — связанный артефакт тайла DealDescriptionTile.
+   Здесь заголовок тела, стопка карточек и переключение состояния данных
+   (data-state на .modal первого окна). Карточку и её состояния (наведение,
+   выбрана) даёт CounterpartyCard на Card из ДС, отступы тела — Modal. */
+
+/* Подзаголовок тела: «Выберите участника сделки» в первом окне, полное
+   наименование контрагента во втором (макет). Ступень — H6 Strong. */
+.lc-deal-ecm__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Карточки участников — стопкой, зазор как у карточек в колонках окна КНР. */
+.lc-deal-ecm__list,
+.lc-deal-ecm__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Каркас карточки при загрузке — в габарите карточки участника: шапка с
+   сабхедером и три строки реквизитов (≈ 144px). */
+.lc-deal-ecm__loading-card {
+  --sk-h: calc(var(--space-80) + var(--space-64));
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+.lc-deal-ecm .lc-deal-ecm__loading,
+.lc-deal-ecm__empty { display: none; }
+
+.lc-deal-ecm[data-state="loading"] .lc-deal-ecm__list,
+.lc-deal-ecm[data-state="empty"] .lc-deal-ecm__list { display: none; }
+
+.lc-deal-ecm[data-state="loading"] .lc-deal-ecm__loading { display: flex; }
+.lc-deal-ecm[data-state="empty"] .lc-deal-ecm__empty { display: block; }
+
+/* Участников нет — одна строка причины, как «Не заполнено» в тайлах сделки. */
+.lc-deal-ecm__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   CounterpartiesEcmModal.js — окна «Документы по сделке».
+
+   Два шага одного сценария: выбрать участника сделки → посмотреть его
+   документы. Окна — два скрима (CounterpartiesEcmModal.html и подчасть
+   EcmModal/EcmModal.html); слой, фокус и закрытие ведёт рантайм ДС
+   (ds-modal.js). Скрипт делает то, чего рантаймы не делают:
+
+     1. Список участников. Состав сделки держит CounterpartiesStore; окно
+        перечитывает его при каждом открытии — после правки в окне «КНР»
+        список уже новый. Пока состав грузится — loading, участников нет —
+        empty. Карточки рисует CounterpartyCard (PostCardCounterparty) в
+        режиме select, риск-метрику на них собирает рантайм ДС.
+     2. Выбор. Карточка — пункт радиогруппы (role="radio", aria-checked);
+        вид выбранной даёт Card из ДС (Selected). Выбор — клик по карточке,
+        Enter / Space, стрелки двигают выбор по списку. В табуляции одна
+        карточка — выбранная, без выбора первая. «Открыть» доступна, только
+        когда участник выбран.
+     3. Переход между шагами. «Открыть» закрывает первое окно и открывает
+        второе с наименованием участника; «К списку контрагентов» — обратно,
+        с тем же выбором.
+
+   API:
+     PostDealEcmModal.bind(scrim, docsScrim, opts) → api
+       opts.members() → запись[] | null — участники текущей сделки (формат
+                        mock-counterparties.js); null — состав ещё грузится
+       api.refresh()  — перечитать участников
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'deal-ecm-scrim';
+
+  function bind(scrim, docsScrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__dealEcmApi) return scrim.__dealEcmApi;
+    opts = opts || {};
+
+    var modal = scrim.querySelector('.lc-deal-ecm');
+    var items = scrim.querySelector('[data-ecm-items]');
+    var next = scrim.querySelector('[data-ecm-next]');
+    var parties = [];
+    var selected = null;
+
+    function cards() {
+      return items ? Array.prototype.slice.call(items.querySelectorAll('[role="radio"]')) : [];
+    }
+
+    /* Отметка выбора и табуляция: выбранная карточка (или первая) в порядке
+       Tab, остальные — только стрелками, как у радиогруппы. */
+    function sync() {
+      var list = cards();
+      list.forEach(function (card, i) {
+        var on = card.getAttribute('data-knr-card') === selected;
+        card.setAttribute('aria-checked', on ? 'true' : 'false');
+        card.setAttribute('tabindex', (on || (!selected && i === 0)) ? '0' : '-1');
+      });
+      if (next) next.disabled = !selected;
+    }
+
+    function choose(card, focus) {
+      if (!card) return;
+      selected = card.getAttribute('data-knr-card');
+      sync();
+      if (focus) card.focus();
+    }
+
+    function refresh() {
+      var list = opts.members ? opts.members() : [];
+      if (list == null) {
+        if (modal) modal.setAttribute('data-state', 'loading');
+        if (next) next.disabled = true;
+        return;
+      }
+      parties = list;
+      /* Выбор переживает повторное открытие, пока контрагент остаётся
+         участником: вернулись из документов — выделение на месте. */
+      if (selected && !parties.some(function (p) { return p.id === selected; })) selected = null;
+      if (items) {
+        items.innerHTML = '';
+        if (window.PostCardCounterparty) {
+          parties.forEach(function (p) {
+            var card = window.PostCardCounterparty.render(p, { mode: 'select', selected: p.id === selected });
+            if (card) items.appendChild(card);
+          });
+        }
+        if (window.DSRiskMetric) window.DSRiskMetric.mount(items);
+      }
+      if (modal) modal.setAttribute('data-state', parties.length ? 'data' : 'empty');
+      sync();
+    }
+
+    if (items) {
+      /* Клик по карточке выбирает её. Чип риск-метрики — своё действие
+         (поповер рейтинга), выбора он не делает. */
+      items.addEventListener('click', function (e) {
+        if (e.target.closest('button, a, [data-riskmetric]')) return;
+        choose(e.target.closest('[role="radio"]'), false);
+      });
+      items.addEventListener('keydown', function (e) {
+        var card = e.target.closest('[role="radio"]');
+        if (!card || e.target !== card) return;
+        var list = cards();
+        var i = list.indexOf(card);
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          choose(card, false);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          choose(list[(i + 1) % list.length], true);
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          choose(list[(i - 1 + list.length) % list.length], true);
+        }
+      });
+    }
+
+    function partyById(id) {
+      for (var i = 0; i < parties.length; i++) if (parties[i].id === id) return parties[i];
+      return null;
+    }
+
+    /* Открытие по кнопке тайла: список — на момент клика. Слушатель на фазе
+       перехвата: карточки должны встать ДО того, как рантайм откроет окно и
+       поставит фокус, — иначе перерисовка снесла бы элемент с фокусом. */
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-modal="' + SCRIM_ID + '"]')) refresh();
+    }, true);
+
+    if (next) {
+      next.addEventListener('click', function () {
+        var party = partyById(selected);
+        if (!party || !docsScrim || !window.DSModal) return;
+        var name = docsScrim.querySelector('[data-ecm-party-name]');
+        if (name) name.textContent = party.name;
+        window.DSModal.closeTop();
+        window.DSModal.open(docsScrim);
+      });
+    }
+
+    var back = docsScrim && docsScrim.querySelector('[data-ecm-back]');
+    if (back) {
+      back.addEventListener('click', function () {
+        if (!window.DSModal) return;
+        window.DSModal.closeTop();
+        refresh();
+        window.DSModal.open(scrim);
+      });
+    }
+
+    var api = { refresh: refresh };
+    scrim.__dealEcmApi = api;
+    return api;
+  }
+
+  window.PostDealEcmModal = { bind: bind };
+})();
+</script>
+</body>
+</html>

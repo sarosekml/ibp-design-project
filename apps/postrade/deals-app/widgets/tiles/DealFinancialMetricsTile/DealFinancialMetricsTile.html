@@ -1,21 +1,148 @@
 <!-- Локальный компонент «Финансовые метрики сделки» — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealFinancialMetricsTile.css). -->
-<section class="tile lc-deal-metrics" data-state="empty" data-mode="view">
+
+     data-state — состояние данных: loading | data | empty | error
+     data-mode  — режим прав: всегда view. Метрики считает система, править в
+                  тайле нечего ни одной роли (макет: «Редактирование
+                  недоступно»); атрибут стоит для общего правила страницы.
+     data-pe    — yes | no: у сделки есть Private Equity — внизу блок
+                  «Переоценка по PE». Без PE блока нет совсем.
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     DealFinancialMetricsTile.css по этим атрибутам — как у тайлов «КНР»,
+     «Сроки сделки», «Команда сделки».
+
+     Значения ниже — пример с макета (refs/финансовые метрики/Tile-fin-metrics.png).
+     На странице сделки их заменяет DealFinancialMetricsTile.js
+     (PostTileDealFinMetrics.render) метриками сделки: бар ВБС, четыре поля и
+     блок PE. Им же рисуются бары окна — разметка AllocationBar одна.
+
+     Действие шапки одно — «Развернуть»: окно DealFinancialMetricsModal
+     показывает ОСЗ, резервы по ФИ и переоценку по PE, которых в тайле нет.
+     Это не действие правки, поэтому оно есть и в просмотре. -->
+<section class="tile lc-deal-metrics" data-state="data" data-mode="view" data-pe="yes">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Финансовые метрики сделки</h3></div>
     </div>
     <div class="tile__actions">
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Развернуть"><i data-icon="maximize"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Развернуть"
+              data-modal="deal-fin-metrics-scrim"><i data-icon="maximize"></i></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-deal-metrics__stub">Данные ещё не заведены</p>
+
+    <!-- ── Данные есть ────────────────────────────────────────────────── -->
+    <div class="lc-deal-metrics__data">
+
+      <!-- ВБС по продуктам — AllocationBar ДС. Хост — контейнер бара
+           (container-type у .albar-host), бар растянут на ширину тайла. -->
+      <div class="albar-host lc-deal-metrics__vbs">
+        <div class="albar albar--stretch" data-albar="vbs">
+          <div class="albar__head">
+            <div class="albar__titles"><div class="albar__label" title="ВБС по сделке на 25.02.2026, RUB">ВБС по сделке на 25.02.2026, RUB</div></div>
+            <div class="albar__total"><span>1 000 000 000,00</span></div>
+          </div>
+          <div class="albar__bar" role="img" aria-label="Распределение: Кредит 35,00%, Акции 35,00%, РЕПО 30,00%">
+            <div class="albar__seg" data-id="vbs-LOAN" style="background:var(--ch-indigo);flex-grow:35"></div>
+            <div class="albar__seg" data-id="vbs-SHARES" style="background:var(--ch-shiny-green);flex-grow:35"></div>
+            <div class="albar__seg" data-id="vbs-REPO" style="background:var(--ch-light-blue);flex-grow:30"></div>
+          </div>
+          <div class="albar__list">
+            <div class="albar__row" data-id="vbs-LOAN"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Кредит</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+            <div class="albar__row" data-id="vbs-SHARES"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Акции</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+            <div class="albar__row" data-id="vbs-REPO"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">РЕПО</span><span class="albar__pct">30,00%</span><span class="albar__val">300 000 000,00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Резерв, RWA, обесценение — ReadOnlyField с пояснением в подписи.
+           Порядок с макета: три поля в ряд, «Ставка обесценения» — вторым
+           рядом. Единица — постфиксом, серым. -->
+      <div class="tile__grid lc-deal-metrics__grid">
+        <div class="rof" data-fin-field="reserveAmount">
+          <span class="ds-label"><span class="ds-label__text">Сумма резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Сумма резерва" data-tooltip="Общая сумма по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+          <div class="rof__row"><span class="rof__value">1 000 000 000,00</span><span class="rof__affix">RUB</span></div>
+        </div>
+        <div class="rof" data-fin-field="reserveRate">
+          <span class="ds-label"><span class="ds-label__text">Ставка резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка резерва" data-tooltip="Среднее значение по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+          <div class="rof__row"><span class="rof__value">62</span><span class="rof__affix">%</span></div>
+        </div>
+        <div class="rof" data-fin-field="rwa">
+          <span class="ds-label"><span class="ds-label__text">RWA</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: RWA" data-tooltip="Среднее значение по всем ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+          <div class="rof__row"><span class="rof__value">150</span><span class="rof__affix">%</span></div>
+        </div>
+        <div class="rof" data-fin-field="impairmentRate">
+          <span class="ds-label"><span class="ds-label__text">Ставка обесценения</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка обесценения" data-tooltip="Общая сумма по всем кредитным ФИ для «Типа учета» = «FV»" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+          <div class="rof__row"><span class="rof__value">13</span><span class="rof__affix">%</span></div>
+        </div>
+      </div>
+
+      <!-- Переоценка по PE — только у сделок с Private Equity (data-pe).
+           Плашка на фоне страницы: итог слева с датой, сумма и Δ справа. -->
+      <div class="lc-deal-metrics__pe">
+        <div class="lc-deal-metrics__pe-main">
+          <p class="lc-deal-metrics__pe-title">Переоценка по PE, <span class="lc-deal-metrics__pe-unit">RUB</span></p>
+          <p class="lc-deal-metrics__pe-date">на 21.12.2025</p>
+        </div>
+        <div class="lc-deal-metrics__pe-values">
+          <p class="lc-deal-metrics__pe-amount">1 234 567,89</p>
+          <p class="lc-deal-metrics__pe-delta">+234 567,89</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ───────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах данных: скелетон бара ДС (итог, бар, три строки)
+         и сетка полей — подпись и значение каждого, чтобы раскладка не
+         прыгнула после ответа. -->
+    <div class="lc-deal-metrics__loading" aria-busy="true">
+      <div class="albar-host">
+        <div class="albar albar--stretch">
+          <div class="albar__head">
+            <div class="albar__titles"><div class="albar__label">ВБС по сделке, RUB</div></div>
+            <div class="albar__sk albar__sk--total"></div>
+          </div>
+          <div class="albar__sk albar__sk--bar"></div>
+          <div class="albar__list">
+            <div class="albar__row albar__row--sk"><span class="albar__dot albar__dot--sk"></span><span class="albar__sk albar__sk--name"></span><span class="albar__sk albar__sk--num"></span></div>
+            <div class="albar__row albar__row--sk"><span class="albar__dot albar__dot--sk"></span><span class="albar__sk albar__sk--name"></span><span class="albar__sk albar__sk--num"></span></div>
+            <div class="albar__row albar__row--sk"><span class="albar__dot albar__dot--sk"></span><span class="albar__sk albar__sk--name"></span><span class="albar__sk albar__sk--num"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tile__grid lc-deal-metrics__grid">
+        <div class="rof"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:160px" aria-hidden="true"></span></div>
+        <div class="rof"><span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:40px" aria-hidden="true"></span></div>
+        <div class="rof"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:48px" aria-hidden="true"></span></div>
+        <div class="rof"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:40px" aria-hidden="true"></span></div>
+      </div>
+    </div>
+
+    <!-- ── Данных нет ─────────────────────────────────────────────────── -->
+    <!-- Одна строка под заголовком, как на макете. Действия нет: метрики
+         не заполняют руками, их считает система. -->
+    <p class="lc-deal-metrics__empty">Нет данных</p>
+
+    <!-- ── Ошибка ─────────────────────────────────────────────────────── -->
+    <!-- Подпись бара и Alert error ДС. Без «Повторить» — как на макете
+         «Состояния лайн чарта» (решение человека 25.09.2026, паспорт). -->
+    <div class="albar-host lc-deal-metrics__error">
+      <div class="albar albar--stretch" data-albar="vbs">
+        <div class="albar__head">
+          <div class="albar__titles"><div class="albar__label" title="ВБС по сделке, RUB">ВБС по сделке, RUB</div></div>
+        </div>
+        <div class="albar__foot">
+          <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+            <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>

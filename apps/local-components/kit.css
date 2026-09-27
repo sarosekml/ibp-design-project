@@ -1,0 +1,61 @@
+/* ============================================================
+   kit.css — витрина локальных компонентов: только раскладка на токенах ДС.
+   Общий для обзора (index.html витрины) и страниц компонентов, которые
+   собирает kit-build.mjs. Своих компонентов здесь нет: панель — NavPanel,
+   карточки — Tile, каркас страницы компонента — docs-split ДС.
+   ============================================================ */
+body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); }
+
+/* ---------- обзор: группа категории — заголовок + карточки ---------- */
+.kit-groups { display: flex; flex-direction: column; gap: 32px; }
+.kit-group { display: flex; flex-direction: column; gap: 16px; }
+.kit-group__head { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+.kit-group__count { color: var(--text-secondary); font: var(--type-body-m); margin-left: 8px; }
+
+/* Карточки — штатная сетка .grid12 из ДС, ширину задаёт пара col-N/colw-N
+   на самой карточке. Своей сетки обзор не строит. */
+.kit-card { min-width: 0; text-decoration: none; color: inherit; }
+.kit-card .tile__title { text-decoration: none; }
+.kit-card__purpose { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+.kit-card__meta { margin: 12px 0 0; font: var(--type-body-xs); color: var(--text-secondary); }
+.kit-card__empty { margin: 0; font: var(--type-body-s); color: var(--text-inactive); }
+
+/* Перестроение — тот же приём, что на хабе: пара col-N/colw-N, ниже неё
+   одна колонка. Специфичность (0,2,0) совпадает с правилом пары. */
+@container screen (max-width: 1560px) { .grid12 > [class*="colw-"] { grid-column: span var(--colw); } }
+@container screen (max-width: 900px)  { .grid12 > .kit-card { grid-column: span 12; } }
+
+/* ---------- страница компонента: стенд демо ---------- */
+.pg__stage { display: flex; justify-content: center; padding: 32px 24px; min-width: 0; }
+/* Ширину тайла и таблицы крутит слайдер конструктора; окно и поповер — своей ширины. */
+.kit-stage { max-width: 100%; min-width: 0; }
+.kit-stage--modal, .kit-stage--popover { width: auto; }
+/* Окно на своей странице — статичный слой стенда (.modal-scrim--inline ДС),
+   поверх страницы не встаёт; сцена прокручивается, если окно не влезает, а
+   isolation держит слой вложенного подтверждения внутри сцены. Копии окна в
+   «Все состояния» — так же статичны. */
+.pg__stage:has(> .kit-stage--modal) { flex: 1; min-height: 0; width: 100%; box-sizing: border-box; padding: 0; align-items: flex-start; position: relative; overflow: auto; isolation: isolate; }
+.kit-stage--modal > .modal-scrim--inline:not(.modal-scrim--nested),
+.kit-case > .modal-scrim--inline { position: static; flex: none; padding: 0; background: transparent; }
+.pg__controls input[type=range] { width: 100%; accent-color: var(--primary); }
+.pg__controls .lbl b { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.kit-controls__empty { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+
+/* все состояния рядом: тайлы — по нескольку в ряд, широкое — по одному */
+.kit-cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 24px; margin: 16px 0 8px; align-items: start; }
+.kit-cases--wide { grid-template-columns: minmax(0, 1fr); }
+.kit-case { min-width: 0; }
+.kit-case__label { margin: 0 0 8px; font: var(--type-body-s-strong); color: var(--text-primary); }
+
+/* ---------- текст паспорта ---------- */
+.kit-md > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin: 0 0 16px; max-width: 82ch; text-wrap: pretty; }
+.kit-md__h3 { font: var(--type-h4-strong); color: var(--text-primary); margin: 32px 0 8px; }
+.kit-md__h4 { font: var(--type-h5-strong); color: var(--text-primary); margin: 24px 0 8px; }
+.kit-md ul.bullets, .kit-md .kit-md__ol { margin: 0 0 16px; max-width: 82ch; }
+.kit-md .kit-md__ol { padding-left: 22px; font: var(--type-body-m); color: var(--text-secondary); }
+.kit-md .kit-md__ol li + li { margin-top: 8px; }
+.kit-md ul.kit-md__sub { margin: 8px 0 0; }
+.kit-md .kit-tbl { margin: 8px 0 24px; }
+.kit-md__pre { margin: 0 0 16px; padding: 16px 20px; overflow: auto; border-radius: var(--radius-xs); background: var(--bg-table-default-focus); font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.kit-md__note { margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--border-primary); background: var(--bg-tile); }
+.kit-md__note p { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Описание сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Описание сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Описание сделки» — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав: edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     DealDescriptionTile.css по этим атрибутам — как тайлы «КНР», «Сроки
+     сделки» и «Команда сделки».
+
+     Значения ниже — пример (сделка 1024). На странице сделки их заменяет
+     DealDescriptionTile.js (PostTileDealDescription.render) данными сделки.
+
+     Три окна тайла живут в конце body страницы, а не здесь:
+       карандаш и «Заполнить» — окно правки (deal-description-scrim, guarded:
+         в нём ввод, клик мимо окна не должен его сбросить);
+       «Развернуть» — то же окно в просмотре;
+       «Документы ЭКД по сделке» — окно выбора контрагента (deal-ecm-scrim);
+       ссылка «Связанные сделки» — поповер (related-deals-pop). -->
+<section class="tile lc-deal-description" data-state="data" data-mode="edit" id="tile-deal-description">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Описание сделки</h3></div>
+    </div>
+    <!-- «Документы ЭКД» — не правка: документы смотрят и в просмотре, поэтому
+         кнопка есть в обоих режимах и в пустом тайле (макет). Карандаш и
+         «Развернуть» — только когда есть что править или смотреть. -->
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-modal="deal-ecm-scrim">
+        <i data-icon="folder"></i><span class="btn__label">Документы ЭКД по сделке</span>
+      </button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--edit"
+              aria-label="Редактировать" data-modal="deal-description-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--view"
+              aria-label="Развернуть" data-modal="deal-description-scrim"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- ── Данные есть / заполнено частично ─────────────────────────── -->
+    <!-- Порядок блоков постоянный. Незаполненное поле — прочерк, поле с места
+         не уходит: пропавшее поле читалось бы как отсутствие сущности. -->
+    <div class="tile__rows lc-deal-description__content">
+
+      <!-- Суть сделки — ведущий текст тайла, без подписи (макет). До четырёх
+           строк, дальше многоточие и тултип с полным текстом (ReadOnlyField). -->
+      <div class="rof" role="group" aria-label="Суть сделки">
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="description">Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.</span></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Комментарий Operations</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="operationsComment">Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.</span></div>
+      </div>
+
+      <!-- Признаки сделки: текст с иконкой на подложке, три колонки. Колонки —
+           группы, а не сетка ячеек: порядок идёт по колонкам (решение
+           человека 25.09.2026):
+             1 — Категория риска ЦУП, Фин.расчеты в шаблоне (+ Связанные сделки);
+             2 — Совместность, Реструктуризация;
+             3 — Участие Деска ИФ, Участие ЦЭ.
+           Иконка показывает значение признака, тон иконки — категорию риска
+           (см. паспорт, «Признаки»). -->
+      <div class="lc-deal-description__flags" role="group" aria-label="Признаки сделки">
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="riskCategory">
+            <span class="lc-deal-description__icon lc-deal-description__icon--success" data-dd-icon><i data-icon="alert-triangle-filled"></i></span>
+            <span data-dd-text>Категория риска ЦУП: C</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="finTpl">
+            <span class="lc-deal-description__icon lc-deal-description__icon--warning" data-dd-icon><i data-icon="bar-chart-square"></i></span>
+            <span data-dd-text>Фин.расчеты в шаблоне</span>
+          </span>
+          <!-- Связанные сделки есть — третья строка первой колонки: галочка и
+               ссылка, ссылка открывает поповер со списком; нет — строки нет
+               вовсе (решение человека 25.09.2026). Присутствие ставит скрипт
+               атрибутом hidden: разметка не пересоздаётся, поэтому триггер
+               поповера, который привязал рантайм ДС при загрузке, остаётся
+               рабочим. -->
+          <span class="lc-deal-description__flag" data-dd-flag="relatedDeals">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <a class="link link--accent link--m" href="#" data-popover="related-deals-pop" data-popover-placement="bottom" data-popover-align="start">Связанные сделки</a>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="jointness">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="link"></i></span>
+            <span data-dd-text>Совместность: МБ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="restructured">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Реструктуризация</span>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="ifDeskParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Участие Деска ИФ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="ceParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="circle"></i></span>
+            <span data-dd-text>Участие ЦЭ</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-dd-field="gsz">Группа «СтройИнвест»</span></div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ─────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах итогового содержимого: две строки описания, подпись
+         и значение комментария, подложка признаков, подпись и значение ГСЗ. -->
+    <div class="tile__rows lc-deal-description__loading" aria-busy="true">
+      <div class="sk-group">
+        <span class="sk-line sk-line--title" style="--sk-w:92%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:64%" aria-hidden="true"></span>
+      </div>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span>
+      </div>
+      <span class="sk-block sk-block--rounded lc-deal-description__loading-flags" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:36%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- ── Не заполнено, право на правку есть ───────────────────────── -->
+    <div class="lc-deal-description__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-description-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- ── Не заполнено, права нет: одна строка причины, действия нет ── -->
+    <p class="lc-deal-description__empty">Не заполнено</p>
+
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.003</b></span><span>Обновлено: <b>25.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Описание сделки</h1>
+  <p class="lead">Суть сделки, комментарий Operations, признаки сделки и группа связанных заемщиков</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile">apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/tiles/DealDescriptionTile</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">apps/postrade/deals-app/pages/Deal.html — «Общая информация», второй ряд, 6 колонок</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.003 · обновлено 25.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/molecules/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/atoms/Link.html">Link</a> · <a class="inl" href="../../../../design-system/pages/atoms/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.css">DealDescriptionTile.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.html">DealDescriptionTile.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js">DealDescriptionTile.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md">DealDescriptionTile.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealDescriptionModal.doc.html">Модальное окно описания сделки (DealDescriptionModal)</a><br><a class="inl" href="CounterpartiesEcmModal.doc.html">Модальное окно «Документы по сделке» (CounterpartiesEcmModal)</a><br><a class="inl" href="RelatedDealsPopover.doc.html">Поповер связанных сделок (RelatedDealsPopover)</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Тайл страницы сделки: о чём сделка и по каким правилам её ведут. Сверху — суть сделки свободным текстом и комментарий Operations, ниже — признаки сделки на подложке и группа связанных заемщиков. Всё, что видно в тайле, правится в одном окне; дополнительные доходы тайл не показывает — они видны только в окне (так на макете).</p>
+<p class="desc">Признаки — не поля ввода, а короткие строки «иконка + текст»: значение несёт иконка (отмечено / нет, тон категории риска), текст подписывает признак. У двух признаков текст несёт и значение: «Категория риска ЦУП: C», «Совместность: МБ».</p>
+<p class="desc">Кроме правки у тайла два входа в соседние данные: «Документы ЭКД по сделке» в шапке — документы участников сделки, ссылка «Связанные сделки» — список связанных сделок клиента (строка есть, только когда связанные сделки есть).</p>
+<p class="desc">Место на странице и ширина в колонках задаются экраном (<code class="tok">pages/Deal.html</code>), не компонентом. Значения приходят из записи сделки (<code class="tok">data/deals-store.js</code>, typedef <code class="tok">DealDescriptionFields</code> в <code class="tok">data/mock-deals.js</code>).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «Описание сделки»)
+├── шапка: Button XS outline «Документы ЭКД по сделке» · IconButton «Редактировать» | «Развернуть»
+└── стопка блоков (.tile__rows, зазор 16)
+    ├── Суть сделки — ReadOnlyField без подписи, до 4 строк
+    ├── Комментарий Operations — ReadOnlyField, до 4 строк
+    ├── Признаки — подложка, три колонки «иконка + текст»
+    │   ├── Категория риска ЦУП · Фин.расчеты в шаблоне · Связанные сделки (ссылка → поповер; строка — только когда они есть)
+    │   ├── Совместность · Реструктуризация
+    │   └── Участие Деска ИФ · Участие ЦЭ
+    └── Группа связанных заемщиков — ReadOnlyField, одна строка</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Tile.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шапка с действиями, тело — <code class="tok">.tile__rows</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/ReadOnlyField.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">суть сделки — без подписи, <code class="tok">rof__value--clamp-n</code> (4 строки); комментарий — с подписью, 4 строки; ГСЗ — <code class="tok">rof__value--clamp-1</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Документы ЭКД по сделке» — <code class="tok">btn--outline btn--xs</code> с иконкой <code class="tok">folder</code>; «Заполнить» — <code class="tok">btn--accent btn--s</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> в правке, <code class="tok">maximize</code> в просмотре</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Link</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Link.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Связанные сделки» — <code class="tok">link--accent link--m</code>, триггер поповера</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Skeleton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас загрузки</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Признаки на подложке — своя разметка тайла на токенах ДС (раздел «Осознанные отклонения»).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Параметры метки (Props)">
+<h2>Параметры метки (Props)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне виджета</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-6 colw-12</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tile-deal-description</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница находит тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">partial</code> · <code class="tok">empty</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных; после загрузки его ставит <code class="tok">DealDescriptionTile.js</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,2.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав; ставит страница</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Порядок строк — порядок отображения. Источник у всех один — запись сделки.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Суть сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">О чём сделка — свободный текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.description</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий Operations</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий сопровождения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.operationsComment</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Категория риска ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Категория риска по оценке ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код A · B · C · D · UNDEFINED; в тайле — «Категория риска ЦУП: C», «…: не определена», нет значения — «…: отсутствует»; в окне — «Категория A» … «Категория D», «Не определена»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.riskCategory</code> (<code class="tok">DEALS_ENUMS.riskCategory</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участие Деска ИФ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участвует ли деск ИФ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да / нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.ifDeskParticipation</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участие ЦЭ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участвует ли ЦЭ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да / нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.ceParticipation</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Реструктуризация</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сделка реструктурирована</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да / нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.restructured</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанные сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Есть ли у сделки связанные сделки клиента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список; строка признака только у непустого списка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.relatedDeals</code> — приходит из системы, в окне не правится</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Совместность</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">С каким территориальным банком ведётся сделка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код банка: ЦА, ЦЧБ, УБ, МБ, ЮЗБ, СРБ, ВВБ, СБ, ПВБ, СЗБ, ДБ (полные имена — <code class="tok">DEALS_ENUMS.jointnessNames</code>, в окне хелпером); нет — «отсутствует»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.jointness</code> (<code class="tok">DEALS_ENUMS.jointness</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фин.расчеты в шаблоне</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сделка ручная: расчёты ведутся в Excel, а не в системе</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Да» / «Нет»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.finTpl</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа связанных заемщиков</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ГСЗ, в которую входит клиент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка из справочника</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.gsz</code> (<code class="tok">DEALS_ENUMS.gsz</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc"><code class="tok">gsz</code>, <code class="tok">jointness</code> и <code class="tok">finTpl</code> — поля реестра «Текущий портфель ДИД»: их же показывает таблица и фильтр портфеля (<code class="tok">refs/Текущий портфель.md</code>). Остальные добавлены 24.09.2026 вместе с тайлом. Незаполненное текстовое поле — прочерк, поле с места не уходит.</p>
+<h3 class="kit-md__h3">Признаки</h3>
+<p class="desc">Значение признака — иконка (<code class="tok">Section 1.png</code>). Иконка по умолчанию — <code class="tok">--secondary</code>; тон — только там, где он несёт смысл.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Признак</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Иконка</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тон</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Категория риска ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">A</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert-triangle-filled</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--error</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">B</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert-triangle-filled</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--warning</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">C</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert-triangle-filled</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--success</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">D</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert-triangle-filled</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--text-primary</code> (тёмный)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отсутствует · не определена</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">circle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Участие Деска ИФ · Участие ЦЭ · Реструктуризация</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">check-circle-filled</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">circle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Совместность</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">банк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">link</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отсутствует</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">circle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фин.расчеты в шаблоне</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">bar-chart-square</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--warning</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.2fr) minmax(0,2.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">circle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Смысл категорий риска (пояснение макета): A — сделка с повышенным риском, требуется регулярный анализ; B — потенциально рисковая, требуется экспертная оценка; C — высоких рисков нет; D — венчурное финансирование или Residential RE, дифференцированный подход к мониторингу. Пояснения видны в окне правки под вариантами списка.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит на компонент атрибутом <code class="tok">data-mode</code> — его ставит страница сделки:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label"><code class="tok">data-mode</code></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что в шапке</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Документы ЭКД по сделке» и IconButton «Редактировать» — окно на правку</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Документы ЭКД по сделке» и IconButton «Развернуть» — то же окно на просмотр</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Статус сделки сильнее роли: в статусах «Активная», «Погашена», «Ожидает подтверждения» и «Подтверждение изменений» страница ставит <code class="tok">view</code> при любой роли (<code class="tok">DealsStore.isEditable</code>, решение человека 21.09.2026).</p>
+<p class="desc"><b>Почему в просмотре действия остаются.</b> «Документы ЭКД» и «Развернуть» — не правка. Документы смотрят при любом режиме, а окно в просмотре — единственное место, где видны дополнительные доходы и полный текст длинного описания.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетоны в габаритах итогового содержимого: две строки описания, подпись и значение комментария, блок подложки признаков, подпись и значение ГСЗ; действий в шапке нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">суть, комментарий, признаки и ГСЗ заполнены (макет, «Заполнено»)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">та же раскладка; незаполненное текстовое поле — прочерк цветом обычного текста (ReadOnlyField 1.010), признак без значения — пустой круг</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окне правки не заполнено ничего и не отмечен ни один признак. С правом правки — accent-кнопка «Заполнить» слева вверху тела; без права — строка «Не заполнено» серым Body M. «Документы ЭКД по сделке» в шапке есть в обоих случаях, карандаша и «Развернуть» нет (макет, «Не заполнено»). Без иллюстрации — «Осознанные отклонения»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (24.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карандаш в шапке и «Заполнить» в пустом тайле открывают окно на правку; после сохранения тайл показывает новые значения (перерисовка по событию стора)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав и порядок полей те же; вместо карандаша — «Развернуть», окно на просмотр</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка временно запрещена (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запрет по статусу сделки — тот же «Только просмотр» (правило модуля, <code class="tok">widgets/README.md</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Что считается пустым тайлом: пусты суть, комментарий, дополнительные доходы, ГСЗ, совместность и категория риска, сняты все четыре галочки окна. Связанные сделки на это не влияют — они приходят из системы, а не заполняются.</p>
+<p class="desc">Демо на странице сделки: 1024 — данные есть, просмотр, три связанные сделки; 1027 — данные есть, правка, длинное описание, связанных сделок нет; 1025, 1026, 1029 — заполнено частично (категории D, B, «не определена»); 1028 — пусто, правка; 1033 — пусто, просмотр.</p>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанных сделок нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки «Связанные сделки» нет вовсе (решение человека 25.09.2026); во всех трёх колонках признаков по две строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанные сделки есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">третья строка первой колонки: <code class="tok">check-circle-filled</code> и ссылка «Связанные сделки» — открывает поповер</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Виджет обязателен к заполнению целиком: не решено (24.09.2026).</li><li>Обязательных полей внутри нет: окно сохраняет любой набор, в том числе пустой.</li><li>Признак «обязательное не заполнено» наружу не отдаётся — нечего отдавать.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">суть сделки и комментарий — до четырёх строк, дальше многоточие и тултип с полным текстом (ReadOnlyField, <code class="tok">ds-readonlyfield.js</code>); целиком текст виден в окне. ГСЗ — одна строка с тем же тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не бывает: признаков шесть или семь (строка «Связанные сделки» — только когда они есть). Длинный список связанных сделок живёт в поповере</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись признака переносится внутри своей колонки, иконка остаётся на первой строке. Ниже 720px ширины тайла признаки встают в две колонки, ниже 380px — в одну (<code class="tok">@container</code>). На странице сделки: окно 1920 — тайл ≈ 732px, три колонки; 1366–1680 — тайл 610–660px, две; окно до 1296 — тайл на всю ширину, три (решение человека 25.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">три колонки признаков, подложка тянется на всю ширину тела</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,2.4fr) minmax(0,2.7fr) minmax(0,1.7fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,2.4fr) minmax(0,2.7fr) minmax(0,1.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Редактировать» (режим <code class="tok">edit</code>) и «Заполнить» в пустом тайле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно <code class="tok">DealDescriptionModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">суть, комментарий, дополнительные доходы, ГСЗ, три галочки, совместность, категория риска, «Фин. расчеты в Excel»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">при сохранении — новые значения в тайле и в записи сделки; при отмене ничего. Фокус возвращается на кнопку, открывшую окно (рантайм Modal)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,2.4fr) minmax(0,2.7fr) minmax(0,1.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Развернуть» (режим <code class="tok">view</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же окно в режиме просмотра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же поля как ReadOnlyField, признаки — выключенные чекбоксы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,2.4fr) minmax(0,2.7fr) minmax(0,1.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Button «Документы ЭКД по сделке» в шапке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно «Документы по сделке» <code class="tok">CounterpartiesEcmModal</code> → «Открыть» → второе окно (подчасть <code class="tok">EcmModal</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор участника сделки карточкой, затем документы по нему</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,2.4fr) minmax(0,2.7fr) minmax(0,1.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ссылка «Связанные сделки» (есть связанные сделки)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поповер <code class="tok">RelatedDealsPopover</code>, ширина M, без подвала</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список ссылок «№ · наименование»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Паспорта артефактов: <code class="tok">widgets/modals/DealDescriptionModal/DealDescriptionModal.md</code>, <code class="tok">widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md</code>, <code class="tok">widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные (Data dependencies)">
+<h2>Данные (Data dependencies)</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Поля — раздел «Поля». Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.4fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.4fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-deals.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_DEALS</code>, <code class="tok">window.DEALS_ENUMS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealDescriptionFields</code>, <code class="tok">RiskCategoryCode</code>, <code class="tok">RelatedDealRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (24.09.2026) — заменить, когда придёт DTO</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.4fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/deals-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.DealsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">помощник: сделка по id, правка, событие <code class="tok">change</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Виджет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/DealDescriptionTile/DealDescriptionTile.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/DealDescriptionTile/DealDescriptionTile.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили раскладки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/DealDescriptionTile/DealDescriptionTile.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка значений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/DealDescriptionTile/DealDescriptionTile.js</code> (<code class="tok">PostTileDealDescription</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно правки и просмотра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/DealDescriptionModal/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/DealDescriptionModal/</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно участников и документов ЭКД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/CounterpartiesEcmModal/</code> (+ <code class="tok">EcmModal/</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/CounterpartiesEcmModal/</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанные сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/popovers/RelatedDealsPopover/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пара — окно <code class="tok">RelatedDealsModal</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет элемента в ДС — сначала завести компонент ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">признаки — своя разметка тайла: строка «иконка 20px + текст Body M», подложка — контейнер с фоном <code class="tok">--bg-table-pinned</code> и скруглением <code class="tok">--radius-m</code>; тона иконок — <code class="tok">--error</code>, <code class="tok">--warning</code>, <code class="tok">--success</code>, <code class="tok">--text-primary</code>. Только токены ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 24.09.2026: «это просто текст с иконками, не компонент, а подложка — окрашенный контейнер со скруглением». У ReadOnlyField из тонов иконки есть только warning</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пустота в компоненте шире четырёх колонок собирается EmptyState</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка причины и кнопка, без иллюстрации и без центрирования</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайлы страницы сделки стоят в минимальной высоте 200px (решение человека 21.09.2026), EmptyState с иллюстрацией растянул бы ряд до ≈324px; так же у «Команды сделки». На макете в этом состоянии тоже только кнопка «Заполнить»</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<ol class="kit-md__ol"><li>Владелец компонента — <code class="tok">не решено (19.09.2026)</code>.</li><li>Матрица ролей на просмотр и правку — <code class="tok">не решено (19.09.2026)</code>. Отдельно: всем ли ролям виден комментарий Operations и кто его правит.</li><li>Чем «Категория риска ЦУП: отсутствует» отличается от «не определена» — <code class="tok">не решено (24.09.2026)</code>, у владельца продукта. Сейчас: нет значения — «отсутствует», значение «Не определена» выбирают в окне.</li><li>Подпись признака: в тайле «Фин.расчеты в шаблоне», в окне «Фин. расчеты в Excel» — так на макетах; одна ли это формулировка — <code class="tok">не решено (24.09.2026)</code>.</li><li>В ТЗ реестра (<code class="tok">refs/Текущий портфель.md</code>) в тайле «Описание сделки» названы ещё «Обеспечение» и «Корпоративное управление». На макете тайла их нет, и в тайл они не поставлены — <code class="tok">не решено (24.09.2026)</code>, подтвердить у заказчика.</li><li>«Документы ЭКД по сделке» у сделки без участников: кнопка доступна, окно показывает «У сделки пока нет участников» (допущение 24.09.2026).</li><li>Состояния «Ошибка» и «Обновление» — <code class="tok">не решено (24.09.2026)</code>.</li><li>Подтверждение после сохранения (Toast) — <code class="tok">не решено (24.09.2026)</code>: у соседних тайлов его тоже нет.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «Описание сделки»: окно правки и просмотра.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно работает в двух режимах, атрибут data-mode на самой модалке:
+       edit — правка: поля ввода, списки и чекбоксы, подвал с «Сохранить»;
+       view — просмотр: те же поля как ReadOnlyField, чекбоксы выключены,
+              подвал с «Закрыть».
+     Режим ставит DealDescriptionModal.js по режиму тайла, который окно
+     открыл: из правки — карандашом или «Заполнить», из просмотра —
+     «Развернуть». Переключает вид DealDescriptionModal.css, разметка держит
+     оба сразу — как тайлы.
+
+     Раскладка — как на макете: две колонки с вертикальным разделителем.
+     Слева текстовые поля и ГСЗ, справа признаки и два списка. Порядок полей в
+     разметке — порядок чтения внутри колонки.
+
+     Опции списков пусты в разметке: их подставляет DealDescriptionModal.js
+     из справочников DEALS_ENUMS (runtime-hooks: динамический список у
+     DropdownList собирается кодом). Значения ниже — пример, их заменяет
+     скрипт данными сделки. «Сохранить» без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла. -->
+
+<div class="modal-scrim" id="deal-description-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-description-modal" role="dialog" aria-modal="true" aria-labelledby="deal-description-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-description-title">Описание сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <!-- ── Правка ──────────────────────────────────────────────────── -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__edit">
+        <div class="lc-deal-description-modal__col">
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-description"><span class="ds-label__text">Суть сделки</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-description" name="description" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-operations-comment"><span class="ds-label__text">Комментарий Operations</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-operations-comment" name="operationsComment" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-additional-income"><span class="ds-label__text">Дополнительные доходы</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="dd-additional-income" name="additionalIncome" autocomplete="off">
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-gsz"><span class="ds-label__text">Группа связанных заемщиков</span></label>
+            <div class="inp__field" data-ddl="dd-gsz-list">
+              <input class="inp__control" id="dd-gsz" name="gsz" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-gsz-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-ce" name="ceParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-if-desk" name="ifDeskParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-restructured" name="restructured">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-jointness"><span class="ds-label__text">Совместность</span></label>
+            <div class="inp__field" data-ddl="dd-jointness-list">
+              <input class="inp__control" id="dd-jointness" name="jointness" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-jointness-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-risk"><span class="ds-label__text">Категория риска ЦУП</span></label>
+            <div class="inp__field" data-ddl="dd-risk-list">
+              <input class="inp__control" id="dd-risk" name="riskCategory" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-risk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" id="dd-fin-tpl" name="finTpl">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Просмотр ────────────────────────────────────────────────── -->
+      <!-- Состав и порядок полей те же, что в правке — правило локальных
+           компонентов для состояния «Только просмотр». Текст здесь не
+           усекается: окно и открывают, чтобы прочесть описание целиком.
+           Признаки остаются чекбоксами, выключенными: выключенный чекбокс
+           показывает значение честнее строки «Да» / «Нет» (так же в окне
+           «Команда сделки», решение человека 23.09.2026). -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__view">
+        <div class="lc-deal-description-modal__col">
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Суть сделки</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="description">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий Operations</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="operationsComment">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительные доходы</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="additionalIncome">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="gsz">—</span></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ceParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ifDeskParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="restructured" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Совместность</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="jointness">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Категория риска ЦУП</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="riskCategory">—</span></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" data-dd-view-flag="finTpl" disabled>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Подвал у модалки обязателен, поэтому в просмотре он не прячется, а
+         меняет кнопку: править нечего — окно закрывают. «Закрыть»
+         аутлайновая, как в окне «Команда сделки»: подтверждать нечего. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m lc-deal-description-modal__save" data-dd-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-deal-description-modal__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету refs/описание/«Документы по сделке (ЭКД).png» модуля
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div class="modal-scrim" id="deal-ecm-scrim" hidden>
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Подчасть окна «Документы по сделке» (CounterpartiesEcmModal): документы
+     выбранного участника сделки — второй шаг. Лежит в папке окна-владельца,
+     как у фронтенда (CounterpartiesEcmModal/EcmModal); паспорт общий с
+     владельцем, стили — его же (CounterpartiesEcmModal.css). Вшивается своей
+     меткой рядом с ним — у фрагмента один корневой элемент, и сборщик не
+     раскрывает метки внутри фрагмента.
+
+     Вид — по макету «Документы по сделке (ЭКД).png» (refs/описание модуля):
+     в теле полное наименование контрагента, под ним документы. В продукте
+     документы открываются из внешней системы хранения; в прототипе её нет,
+     поэтому на их месте — пустое состояние с объяснением.
+
+     Подвал (решение человека 25.09.2026): слева «К списку контрагентов» со
+     стрелкой — шаг назад к выбору, справа аутлайновая «Закрыть».
+     Открывает и возвращает к списку CounterpartiesEcmModal.js; наименование
+     ниже — пример. -->
+
+<div class="modal-scrim" id="deal-ecm-docs-scrim" hidden>
+  <div class="modal modal--w8 lc-deal-ecm-docs" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-docs-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-docs-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" data-ecm-party-name>КГ Самолёт</p>
+      <div class="es es--m">
+        <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <div class="es__body">
+          <p class="es__title">Просмотр документов</p>
+          <p class="es__text">Здесь открываются документы выбранного участника сделки. В прототипе просмотра документов нет.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг назад — слева, как вторичное действие формы; закрытие — справа.
+         «Закрыть» аутлайновая: подтверждать в окне нечего, залитая обещала бы
+         действие, которого нет. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-left">
+        <button type="button" class="btn btn--transparent btn--m" data-ecm-back><i data-icon="arrow-left"></i><span class="btn__label">К списку контрагентов</span></button>
+      </div>
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Связанный артефакт тайла «Описание сделки»: поповер «Связанные сделки».
+     Вшивается ассемблером отдельной меткой ds-include в конце body. Триггер —
+     ссылка «Связанные сделки» в признаках тайла (data-popover="related-deals-pop");
+     рантайм ДС (ds-popover.js) находит поповер по id, выносит его в плавающий
+     слой и ставит у триггера — поэтому поповер не обязан лежать рядом с ним.
+
+     Пара во фронтенде — окно RelatedDealsModal (дерево фронтенда). Здесь —
+     поповер по решению человека 24.09.2026: список короткий, контекст
+     страницы не теряется. Вид — решение человека 25.09.2026: ширина M, без
+     подвала, в теле список ссылок; каждая связанная сделка — одна ссылка
+     «№ <номер сделки клиента> · <наименование>», длинное переносится.
+
+     Ссылки ниже — пример (сделка 1024). На странице сделки их заменяет
+     RelatedDealsPopover.js данными сделки. -->
+<div id="related-deals-pop" class="pop pop--w-m pop--bottom pop--start pop--floating lc-related-deals" role="dialog" aria-modal="false" aria-labelledby="related-deals-pop-title">
+  <div class="pop__head">
+    <div class="pop__head-main">
+      <h3 class="pop__title" id="related-deals-pop-title">Связанные сделки</h3>
+    </div>
+    <span class="pop__close"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть"><i data-icon="close"></i></button></span>
+  </div>
+  <div class="pop__body">
+    <ul class="lc-related-deals__list" data-related-list>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041187 · Финансирование складского комплекса «Север»</a></li>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041203 · Рефинансирование кредитного портфеля ООО «ЮгСтрой»</a></li>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041318 · Бридж-финансирование второй очереди логистического хаба</a></li>
+    </ul>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealDescriptionTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty"],"modes":["edit","view"],"state":"data","mode":"edit","width":800,"scenario":false,"fixtures":{"_":"Демо-данные витрины: по объекту на состояние. Ключи — поля записи сделки (data/mock-deals.js, typedef DealDescriptionFields) плюс поля реестра gsz, jointness и finTpl («Да» / «Нет»). Отсутствующее поле читается как пустое. additionalIncome тайл не показывает — только окно.","data":{"_":"Всё заполнено — базовый вид, он же эталонный снимок. Значения признаков — с макета (refs/описание/Tile-Deal-Description.png, «Заполнено»): категория C, Участие Деска ИФ, Реструктуризация, связанные сделки есть, совместность МБ, фин. расчёты в шаблоне.","description":"Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.","operationsComment":"Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.","additionalIncome":"Комиссия за организацию финансирования — 0,5 % от лимита","gsz":"Группа «СтройИнвест»","jointness":"МБ","finTpl":"Да","ceParticipation":false,"ifDeskParticipation":true,"restructured":true,"riskCategory":"C","relatedDeals":[{"name":"Финансирование складского комплекса «Север»","opportunityId":"2041187"},{"name":"Рефинансирование кредитного портфеля ООО «ЮгСтрой»","opportunityId":"2041203"}]},"partial":{"_":"Комментария и ГСЗ нет — поля на месте, значения прочерком. Категория «не определена», совместности нет, связанных сделок нет — строки «Связанные сделки» нет вовсе.","description":"Приобретение контрольного пакета горнодобывающей компании с последующей модернизацией обогатительной фабрики.","operationsComment":"","additionalIncome":"","gsz":"","jointness":"","finTpl":"Нет","ceParticipation":true,"ifDeskParticipation":false,"restructured":false,"riskCategory":"UNDEFINED","relatedDeals":[]},"long":{"_":"Переполнение: описание длиннее четырёх строк — многоточие и тултип; длинная ГСЗ — одна строка с многоточием; категория A (тон error).","description":"Проектное финансирование строительства жилого комплекса бизнес-класса из четырёх корпусов общей площадью 86 тыс. кв. м. Финансирование открывается по мере распродаж: лимит выдачи привязан к доле проданных квартир в каждом корпусе, а средства дольщиков поступают на эскроу-счета и раскрываются после ввода корпуса. Залоговое обеспечение — права на земельный участок и имущественные права на строящиеся помещения; поручительство материнской компании застройщика.","operationsComment":"Условия раскрытия эскроу пересматриваются по итогам аудита.","additionalIncome":"","gsz":"ООО «ГАЗПРОМ ДОБЫЧА ШЕЛЬФ ЮЖНО-САХАЛИНСК» и аффилированные лица","jointness":"ЦЧБ","finTpl":"Нет","ceParticipation":true,"ifDeskParticipation":false,"restructured":false,"riskCategory":"A","relatedDeals":[]},"empty":{"_":"Ничего не заполнено и не отмечено: в правке — «Заполнить», в просмотре — «Не заполнено».","description":"","operationsComment":"","additionalIncome":"","gsz":"","jointness":"","finTpl":"Нет","ceParticipation":false,"ifDeskParticipation":false,"restructured":false,"riskCategory":null,"relatedDeals":[]}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Описание сделки» — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав: edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     DealDescriptionTile.css по этим атрибутам — как тайлы «КНР», «Сроки
+     сделки» и «Команда сделки».
+
+     Значения ниже — пример (сделка 1024). На странице сделки их заменяет
+     DealDescriptionTile.js (PostTileDealDescription.render) данными сделки.
+
+     Три окна тайла живут в конце body страницы, а не здесь:
+       карандаш и «Заполнить» — окно правки (deal-description-scrim, guarded:
+         в нём ввод, клик мимо окна не должен его сбросить);
+       «Развернуть» — то же окно в просмотре;
+       «Документы ЭКД по сделке» — окно выбора контрагента (deal-ecm-scrim);
+       ссылка «Связанные сделки» — поповер (related-deals-pop). -->
+<section class="tile lc-deal-description" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Описание сделки</h3></div>
+    </div>
+    <!-- «Документы ЭКД» — не правка: документы смотрят и в просмотре, поэтому
+         кнопка есть в обоих режимах и в пустом тайле (макет). Карандаш и
+         «Развернуть» — только когда есть что править или смотреть. -->
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-modal="deal-ecm-scrim">
+        <i data-icon="folder"></i><span class="btn__label">Документы ЭКД по сделке</span>
+      </button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--edit"
+              aria-label="Редактировать" data-modal="deal-description-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--view"
+              aria-label="Развернуть" data-modal="deal-description-scrim"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- ── Данные есть / заполнено частично ─────────────────────────── -->
+    <!-- Порядок блоков постоянный. Незаполненное поле — прочерк, поле с места
+         не уходит: пропавшее поле читалось бы как отсутствие сущности. -->
+    <div class="tile__rows lc-deal-description__content">
+
+      <!-- Суть сделки — ведущий текст тайла, без подписи (макет). До четырёх
+           строк, дальше многоточие и тултип с полным текстом (ReadOnlyField). -->
+      <div class="rof" role="group" aria-label="Суть сделки">
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="description">Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.</span></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Комментарий Operations</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="operationsComment">Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.</span></div>
+      </div>
+
+      <!-- Признаки сделки: текст с иконкой на подложке, три колонки. Колонки —
+           группы, а не сетка ячеек: порядок идёт по колонкам (решение
+           человека 25.09.2026):
+             1 — Категория риска ЦУП, Фин.расчеты в шаблоне (+ Связанные сделки);
+             2 — Совместность, Реструктуризация;
+             3 — Участие Деска ИФ, Участие ЦЭ.
+           Иконка показывает значение признака, тон иконки — категорию риска
+           (см. паспорт, «Признаки»). -->
+      <div class="lc-deal-description__flags" role="group" aria-label="Признаки сделки">
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="riskCategory">
+            <span class="lc-deal-description__icon lc-deal-description__icon--success" data-dd-icon><i data-icon="alert-triangle-filled"></i></span>
+            <span data-dd-text>Категория риска ЦУП: C</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="finTpl">
+            <span class="lc-deal-description__icon lc-deal-description__icon--warning" data-dd-icon><i data-icon="bar-chart-square"></i></span>
+            <span data-dd-text>Фин.расчеты в шаблоне</span>
+          </span>
+          <!-- Связанные сделки есть — третья строка первой колонки: галочка и
+               ссылка, ссылка открывает поповер со списком; нет — строки нет
+               вовсе (решение человека 25.09.2026). Присутствие ставит скрипт
+               атрибутом hidden: разметка не пересоздаётся, поэтому триггер
+               поповера, который привязал рантайм ДС при загрузке, остаётся
+               рабочим. -->
+          <span class="lc-deal-description__flag" data-dd-flag="relatedDeals">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <a class="link link--accent link--m" href="#" data-popover="related-deals-pop" data-popover-placement="bottom" data-popover-align="start">Связанные сделки</a>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="jointness">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="link"></i></span>
+            <span data-dd-text>Совместность: МБ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="restructured">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Реструктуризация</span>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="ifDeskParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Участие Деска ИФ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="ceParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="circle"></i></span>
+            <span data-dd-text>Участие ЦЭ</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-dd-field="gsz">Группа «СтройИнвест»</span></div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ─────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах итогового содержимого: две строки описания, подпись
+         и значение комментария, подложка признаков, подпись и значение ГСЗ. -->
+    <div class="tile__rows lc-deal-description__loading" aria-busy="true">
+      <div class="sk-group">
+        <span class="sk-line sk-line--title" style="--sk-w:92%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:64%" aria-hidden="true"></span>
+      </div>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span>
+      </div>
+      <span class="sk-block sk-block--rounded lc-deal-description__loading-flags" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:36%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- ── Не заполнено, право на правку есть ───────────────────────── -->
+    <div class="lc-deal-description__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-description-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- ── Не заполнено, права нет: одна строка причины, действия нет ── -->
+    <p class="lc-deal-description__empty">Не заполнено</p>
+
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Описание сделки».
+   Только внутренняя раскладка. Цвета, шрифты, отступы, радиусы — токены ДС;
+   своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: переключается только
+   присутствие собственных блоков .lc-deal-description__* и слотов тайла.
+   Режим (data-mode) ставит страница: edit | view. В просмотре действие правки
+   не рисуется вовсе, а не выключается; вместо него — «Развернуть». */
+
+/* Компонент перестраивается по СВОЕЙ ширине, а не по ширине окна: он стоит на
+   6 колонках из 12, а на узкой странице — на 12. */
+.lc-deal-description { container-type: inline-size; }
+
+/* ── Признаки: текст с иконкой на подложке ──────────────────────────── */
+/* Подложка — окрашенный контейнер со скруглением (макет; решение человека
+   24.09.2026: это не компонент, а текст с иконками на фоне). Фон — тот же
+   нейтральный серый, что у шапки поповера и закреплённой колонки таблицы. */
+.lc-deal-description__flags {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-16);
+  padding: var(--space-12);
+  border-radius: var(--radius-m);
+  background: var(--bg-table-pinned);
+}
+
+/* Колонка признаков — стопка строк. Порядок в макете идёт по колонкам, поэтому
+   колонки — группы, а не ячейки одной сетки. */
+.lc-deal-description__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Строка признака: иконка и текст Body M. Длинный текст переносится внутри
+   своей колонки, иконка остаётся на первой строке. */
+.lc-deal-description__flag {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Иконка признака — 20px, в высоту строки Body M (20px). Цвет по умолчанию —
+   secondary (правило ДС «иконки по умолчанию — secondary»); тон несёт смысл
+   значения: категория риска ЦУП и признак «Фин.расчеты в шаблоне». */
+.lc-deal-description__icon {
+  flex: none;
+  display: inline-flex;
+  width: var(--space-20);
+  height: var(--space-20);
+  color: var(--secondary);
+}
+.lc-deal-description__icon :is(svg, [data-icon]) { width: 100%; height: 100%; display: block; }
+
+.lc-deal-description__icon--error   { color: var(--error); }        /* риск A */
+.lc-deal-description__icon--warning { color: var(--warning); }      /* риск B, фин. расчёты в шаблоне */
+.lc-deal-description__icon--success { color: var(--success); }      /* риск C */
+.lc-deal-description__icon--dark    { color: var(--text-primary); } /* риск D */
+
+/* Строку признака убирают атрибутом hidden («Связанные сделки», когда их нет).
+   Пара к нему обязательна: display:flex у класса иначе перебил бы браузерное
+   правило [hidden] (соглашение ДС, правило B11). */
+.lc-deal-description__flag[hidden] { display: none; }
+
+/* ── Не заполнено ───────────────────────────────────────────────────── */
+/* Без права правки — одна строка причины слева вверху тела, как у «Команды
+   сделки»: EmptyState с иллюстрацией растянул бы ряд (см. паспорт). */
+.lc-deal-description__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}
+
+/* ── Загрузка ───────────────────────────────────────────────────────── */
+/* Каркас подложки — в её итоговой высоте: три строки признаков по 20px, два
+   зазора по 16px и поля подложки по 12px. */
+.lc-deal-description__loading-flags {
+  --sk-h: calc(3 * var(--space-20) + 2 * var(--space-16) + 2 * var(--space-12));
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» и «заполнено частично» (незаполненные поля прочерком);
+   остальные блоки появляются по data-state. Каркас загрузки несёт и класс
+   стопки тайла (.tile__rows, display:flex), поэтому скрывается правилом
+   с корнем — иначе исход решал бы порядок подключения CSS. */
+.lc-deal-description .lc-deal-description__loading,
+.lc-deal-description__fill,
+.lc-deal-description__empty { display: none; }
+
+.lc-deal-description[data-state="loading"] .lc-deal-description__content,
+.lc-deal-description[data-state="empty"] .lc-deal-description__content { display: none; }
+
+.lc-deal-description[data-state="loading"] .lc-deal-description__loading { display: flex; }
+.lc-deal-description[data-state="empty"][data-mode="edit"] .lc-deal-description__fill { display: block; }
+.lc-deal-description[data-state="empty"][data-mode="view"] .lc-deal-description__empty { display: block; }
+
+/* ── Действия шапки ─────────────────────────────────────────────────── */
+/* «Документы ЭКД по сделке» — во всех состояниях, кроме загрузки: документы
+   смотрят и в просмотре, и у незаполненного описания (макет). Карандаш и
+   «Развернуть» — по одному на режим и только когда есть что показать: пустой
+   тайл заполняют кнопкой в теле. */
+.lc-deal-description__act { display: none; }
+.lc-deal-description[data-mode="edit"] .lc-deal-description__act--edit,
+.lc-deal-description[data-mode="view"] .lc-deal-description__act--view { display: inline-flex; }
+
+.lc-deal-description[data-state="empty"] .lc-deal-description__act { display: none; }
+.lc-deal-description[data-state="loading"] .tile__actions { display: none; }
+
+/* ── Перестроение по своей ширине ───────────────────────────────────── */
+/* Три колонки признаков — от 720px ширины тайла: колонка тогда ≈ 210px
+   ((720 − поля тела 40 − поля подложки 24 − зазоры 2 × 16) / 3), и в одну
+   строку встают «Категория риска ЦУП: C» и «Фин.расчеты в шаблоне» (Body M
+   ≈ 180px + иконка 20 + зазор 8). Ниже — две колонки, третья группа уходит в
+   следующий ряд; ниже 380px — одна. Длинные подписи («Категория риска ЦУП:
+   не определена») переносятся внутри колонки при любой ширине.
+   На странице сделки тайл стоит на 6 колонках из 12: окно 1920 — тайл ≈ 732px,
+   три колонки; 1366–1680 — тайл 610–660px, две; окно до 1296 — тайл на всю
+   ширину, снова три (решение человека 25.09.2026: на меньших экранах —
+   две колонки). */
+@container (max-width: 719px) {
+  .lc-deal-description__flags { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 379px) {
+  .lc-deal-description__flags { grid-template-columns: minmax(0, 1fr); }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealDescriptionTile.js — тайл «Описание сделки» из данных.
+
+   Фрагмент DealDescriptionTile.html держит эталон всех состояний, а значения
+   в нём — пример. Страница сделки берёт запись своей сделки из DealsStore и
+   отдаёт сюда. Разметка не пересоздаётся: скрипт меняет текст, иконку и тон
+   на местах. Так триггер поповера «Связанные сделки», который рантайм ДС
+   привязал при загрузке, переживает любую перерисовку.
+
+   Поля записи (mock-deals.js, typedef DealDescriptionFields): description ·
+   operationsComment · gsz — текстом; ceParticipation · ifDeskParticipation
+   · restructured — да/нет; finTpl — «Да» / «Нет» (поле реестра); jointness —
+   код территориального банка; riskCategory — код категории риска ЦУП;
+   relatedDeals — список связанных сделок. additionalIncome тайл не
+   показывает — только окно (макет).
+
+   API:
+     PostTileDealDescription.render(tile, deal)
+       Раскладывает значения, ставит data-state по stateOf.
+     PostTileDealDescription.stateOf(deal) → 'data' | 'partial' | 'empty'
+       empty — в окне правки не заполнено ничего и не отмечен ни один
+       признак; data — заполнены все три текстовых поля; иначе partial.
+       Связанные сделки на состояние не влияют: они приходят из системы, а
+       не заполняются.
+     PostTileDealDescription.flags(deal) → [{ key, icon, tone, text }]
+       Признаки в порядке отображения — чем их рисовать. Отдано наружу,
+       чтобы вид признака читался из одного места. «Связанные сделки» в
+       списке только тогда, когда они есть: без них строки в тайле нет
+       (решение человека 25.09.2026).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var TEXT_FIELDS = ['description', 'operationsComment', 'gsz'];
+
+  function str(deal, key) {
+    return String((deal && deal[key]) || '').trim();
+  }
+
+  function yes(deal, key) {
+    var v = deal && deal[key];
+    return v === true || v === 'Да';
+  }
+
+  /* Категория риска ЦУП: тон иконки по категории (макет, «Пояснение»).
+     Нет категории и «не определена» — пустой круг без тона. */
+  var RISK_TONE = { A: 'error', B: 'warning', C: 'success', D: 'dark' };
+
+  function riskFlag(deal) {
+    var code = str(deal, 'riskCategory');
+    if (RISK_TONE[code]) {
+      return { icon: 'alert-triangle-filled', tone: RISK_TONE[code], text: 'Категория риска ЦУП: ' + code };
+    }
+    return { icon: 'circle', tone: '', text: 'Категория риска ЦУП: ' + (code === 'UNDEFINED' ? 'не определена' : 'отсутствует') };
+  }
+
+  /* Признак да/нет: отмечен — залитый круг с галочкой, нет — пустой круг.
+     Текст один в обоих случаях — значение несёт иконка. */
+  function checkFlag(on, text) {
+    return { icon: on ? 'check-circle-filled' : 'circle', tone: '', text: text };
+  }
+
+  function hasRelated(deal) {
+    return ((deal && deal.relatedDeals) || []).length > 0;
+  }
+
+  function flags(deal) {
+    var joint = str(deal, 'jointness');
+    function flag(key, f) { f.key = key; return f; }
+    /* Порядок — по колонкам подложки: 1 — категория риска, фин. расчёты и
+       связанные сделки; 2 — совместность и реструктуризация; 3 — Деск ИФ и
+       ЦЭ (решение человека 25.09.2026). */
+    var list = [flag('riskCategory', riskFlag(deal))];
+    /* Фин.расчеты в шаблоне: сделка ведётся в Excel, а не в системе. */
+    list.push(flag('finTpl', yes(deal, 'finTpl')
+      ? { icon: 'bar-chart-square', tone: 'warning', text: 'Фин.расчеты в шаблоне' }
+      : { icon: 'circle', tone: '', text: 'Фин.расчеты в шаблоне' }));
+    /* Связанные сделки — строка только когда они есть; текст — ссылка на
+       поповер, в разметке он постоянный. */
+    if (hasRelated(deal)) list.push(flag('relatedDeals', checkFlag(true, '')));
+    /* Совместность — с каким территориальным банком ведётся сделка. */
+    list.push(flag('jointness', joint
+      ? { icon: 'link', tone: '', text: 'Совместность: ' + joint }
+      : { icon: 'circle', tone: '', text: 'Совместность: отсутствует' }));
+    list.push(flag('restructured', checkFlag(yes(deal, 'restructured'), 'Реструктуризация')));
+    list.push(flag('ifDeskParticipation', checkFlag(yes(deal, 'ifDeskParticipation'), 'Участие Деска ИФ')));
+    list.push(flag('ceParticipation', checkFlag(yes(deal, 'ceParticipation'), 'Участие ЦЭ')));
+    return list;
+  }
+
+  function stateOf(deal) {
+    var anyText = TEXT_FIELDS.concat(['additionalIncome', 'jointness', 'riskCategory'])
+      .some(function (k) { return str(deal, k); });
+    var anyFlag = ['ceParticipation', 'ifDeskParticipation', 'restructured', 'finTpl']
+      .some(function (k) { return yes(deal, k); });
+    if (!anyText && !anyFlag) return 'empty';
+    var allText = TEXT_FIELDS.every(function (k) { return str(deal, k); });
+    return allText ? 'data' : 'partial';
+  }
+
+  function setIcon(host, name, tone) {
+    host.className = 'lc-deal-description__icon' + (tone ? ' lc-deal-description__icon--' + tone : '');
+    host.innerHTML = '<i data-icon="' + name + '"></i>';
+    if (window.dsIcons) window.dsIcons.apply(host);
+  }
+
+  function render(tile, deal) {
+    if (!tile) return;
+
+    /* Незаполненное текстовое поле — прочерк цветом обычного текста: прочерк
+       — значение, а не подсказка (ReadOnlyField 1.010). */
+    tile.querySelectorAll('[data-dd-field]').forEach(function (el) {
+      el.textContent = str(deal, el.getAttribute('data-dd-field')) || '—';
+    });
+
+    /* Строка признака, которого нет в списке, прячется целиком — так уходит
+       «Связанные сделки» у сделки без них. */
+    var shown = {};
+    flags(deal).forEach(function (f) {
+      shown[f.key] = true;
+      var row = tile.querySelector('[data-dd-flag="' + f.key + '"]');
+      if (!row) return;
+      var icon = row.querySelector('[data-dd-icon]');
+      if (icon) setIcon(icon, f.icon, f.tone);
+      var text = row.querySelector('[data-dd-text]');
+      if (text) text.textContent = f.text;
+    });
+    tile.querySelectorAll('[data-dd-flag]').forEach(function (row) {
+      row.hidden = !shown[row.getAttribute('data-dd-flag')];
+    });
+
+    tile.setAttribute('data-state', stateOf(deal));
+  }
+
+  window.PostTileDealDescription = {
+    flags: flags,
+    stateOf: stateOf,
+    render: render
+  };
+})();
+</script>
+</body>
+</html>

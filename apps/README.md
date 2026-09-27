@@ -15,6 +15,7 @@
 apps/
 ├── ds-config.js            ← адрес дизайн-системы (DS_PATH) — единственное место
 ├── ds-body.js              ← второй тег загрузчика ДС
+├── local-components/       ← витрина локальных компонентов: не раздел, генерат kit-build
 ├── <раздел>/               ← core · ib · pretrade · postrade · common
 │   ├── <имя>-app/          ← модуль раздела, как у фронтенда: clients-app, deals-app …
 │   │   ├── README.md       ← описание модуля + дерево (генерат) + «Имена фронтенда»
@@ -37,6 +38,13 @@ apps/
   одной командой (раздел «Перенос концепта в модуль»).
 - `ui-kit/` фронтенда здесь не заводится: его роль у нас играет дизайн-система
   `../design-system/`.
+- **`local-components/`** — витрина локальных компонентов (пункт хаба «Локальные
+  компоненты»): страница на каждый виджет модулей. Это не раздел и не приложение —
+  в ней нет `app.json`, `pages/` и спек; страницы собирает
+  `node .agents/tools/kit-build.mjs` из `widgets/`, руками они не правятся.
+  Каталог записан в `../project.json → localKit.dir`, по нему витрину обходят
+  сторож хаба, сборщик страниц, сенсор и линтер. Как с ней работать —
+  [`local-components/README.md`](local-components/README.md).
 
 Сейчас в проекте:
 
@@ -119,6 +127,9 @@ apps/
 │       ├── pages/
 │       ├── refs/
 │       └── widgets/
+├── local-components/   ← витрина локальных компонентов (не раздел)
+│   └── postrade/
+│       └── deals-app/
 ├── postrade/
 │   ├── corporate-requests-app/
 │   │   ├── data/
@@ -256,7 +267,7 @@ dependencies, Implementation mapping) плюс наши — поведение, 
 страница-источник ставит метку, собранную страницу пишет общий сборщик.
 
 ```html
-<ds-include src="../widgets/tiles/KNRTile/KNRTile.html" class="col-3 colw-6"></ds-include>
+<ds-include src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.html" class="col-3 colw-6"></ds-include>
 ```
 
 ```bash
@@ -271,7 +282,7 @@ node .agents/tools/assemble.mjs          # собрать все источни�
 
 **Виджет общий для раздела.** Страница любого приложения раздела вшивает
 виджет соседа путём от себя: из `postrade/payments-app/pages/` —
-`../../deals-app/widgets/tiles/KNRTile/KNRTile.html`. Виджет живёт у модуля,
+`../../deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.html`. Виджет живёт у модуля,
 где его сделали. Два ограничения держит гейт (шаг `assemble`): виджет
 другого раздела не вшивается (СБ5) — разделы не зависят друг от друга;
 модуль не берёт виджет из `drafts/` (СБ6) — сначала концепт переносят.
@@ -409,5 +420,6 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
 | П7 | относительная ссылка страницы (href, src, data, `__DS_ROOT`) ведёт в никуда — двойным кликом страница откроется без неё |
 | П8 | приложение лежит не в модуле `<раздел>/<имя>-app/` и не в концепте `<раздел>/drafts/<имя>/` |
 
-Исключение — любые папки `fixtures/`. Вручную, из корня проекта:
+Исключение — любые папки `fixtures/` и витрина `local-components/` (её сверяет
+`kit-build.mjs --check`, шаг гейта `kit`). Вручную, из корня проекта:
 `node .agents/tools/registry-check.mjs`.

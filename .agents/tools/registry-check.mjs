@@ -5,7 +5,7 @@
    Зачем. Хаб строит меню и три колонки (дизайн-система, проекты, концепты)
    из реестра hub.js в корне. По file:// страница не может сама обойти
    папки, поэтому реестр ведётся руками — а правило «добавь запись в реестр»
-   прозой не держится: забытый проект или концепт просто молча не появляется
+   без проверки не держится: забытый проект или концепт просто молча не появляется
    на хабе. Сторож делает забывание видимым: гейт краснеет.
 
    Имена — из манифеста project.json (project.mjs; реструктуризация, шаг Ш4):
@@ -33,7 +33,8 @@
         если задан, совпадает с каталогом. В манифесте прежней формы — root
         лежит в каталоге своего трека;
      П4 полнота: каждый .html в каталогах треков лежит внутри root
-        какой-нибудь записи (исключение — любая папка fixtures);
+        какой-нибудь записи (исключение — любая папка fixtures и витрина
+        локальных компонентов, см. ниже);
         витрина ДС (<ДС>/index.html) зарегистрирована;
      П5 возврат в хаб: экран внутри root проекта или концепта, где есть
         строка пользователя меню (nav__user или вызов footerHTML), ведёт ею на
@@ -58,6 +59,12 @@
         дерево ДС, путь наружу он пропускает (A5). До 22.09.2026 битую ссылку
         на экране не ловил никто: на переезде Ш7 так уехали семь ссылок на
         pdf-пример и ссылка со страницы ДС на экран проекта (урок Л127).
+
+   Витрина локальных компонентов (`project.json → localKit.dir`, с 25.09.2026
+   — `apps/local-components/`) лежит в каталоге приложений, но это не
+   приложение и не экран: её страницы собирает kit-build.mjs из виджетов, у
+   неё своя запись хаба в группе ДС, без root. П4 и П7 её пропускают, как
+   пропускали, пока она лежала в корне; сверяет её шаг гейта `kit`.
 
    Честная граница П5: проверка статическая. Разметку, склеенную из кусков
    без литерала пути, и подмену, которая ничего не находит, она не видит —
@@ -141,6 +148,8 @@ export function check(from = HERE) {
      модули `<раздел>/<имя>-app/` и концепты `<раздел>/drafts/<имя>/`, П8). */
   const appDirs = APPS ? findApps(repo, P.appsDir, P.appsManifest).map((a) => a.abs) : [];
   const relOf = (abs) => slash(path.relative(repo, abs));
+  /* Витрина локальных компонентов — генерат kit-build, не страница приложения (шапка). */
+  const inShowcase = (f) => Boolean(P.showcaseAbs) && inside(f, P.showcaseAbs);
   stats.areas = AREAS;
   const regFile = path.join(repo, REGISTRY);
 
@@ -224,7 +233,7 @@ export function check(from = HERE) {
     for (const f of walk(path.join(repo, area))) {
       if (!f.endsWith('.html')) continue;
       const rel = slash(path.relative(repo, f));
-      if (inFixtures(rel)) continue;
+      if (inFixtures(rel) || inShowcase(f)) continue;
       stats.pages++;
       if (roots.some((r) => inside(f, r))) continue;
       defects.push('П4 ' + rel + ' — страница вне записей реестра: ' + (APPS
@@ -272,7 +281,7 @@ export function check(from = HERE) {
 
   /* П7 битые относительные ссылки на страницах приложений и хаба */
   const linkPages = AREAS.flatMap((a) => walk(path.join(repo, a)))
-    .filter((f) => f.endsWith('.html') && !inFixtures(relOf(f)));
+    .filter((f) => f.endsWith('.html') && !inFixtures(relOf(f)) && !inShowcase(f));
   if (existsSync(path.join(repo, HUB))) linkPages.push(path.join(repo, HUB));
   for (const f of linkPages) {
     const code = codeOf(readFileSync(f, 'utf8'));
@@ -460,6 +469,16 @@ const CASES = [
     mutate: (r) => { placedTree(r); put(r, 'apps/core/drafts/gamma/widgets/modals/TeamModal.html', '<div>фрагмент</div>'); } },
   { name: 'экран в разделе вне приложения', expect: 'П4 apps/core/Loose.html',
     mutate: (r) => put(r, 'apps/core/Loose.html', '<p>экран без приложения</p>') },
+  /* Витрина локальных компонентов в apps/ (25.09.2026): её страницы — генерат
+     kit-build, П4 и П7 их не сверяют; исключение держится на localKit.dir. */
+  { name: 'витрина в apps/ — не страница вне реестра', expect: null,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, localKit: { dir: 'apps/showcase' } }, null, 2));
+      put(r, 'apps/showcase/index.html', '<script src="../missing.js"></script><p>обзор</p>');
+      put(r, 'apps/showcase/core/x-app/XTile.doc.html', '<a href="../../../gone/XTile.html">виджет</a>');
+    } },
+  { name: 'та же папка без localKit — страница вне реестра', expect: 'П4 apps/showcase/index.html',
+    mutate: (r) => put(r, 'apps/showcase/index.html', '<p>обзор</p>') },
   { name: 'реестр не выполняется', expect: 'не выполняется',
     mutate: (r) => put(r, 'hub.js', 'window.IBPHub = [ {;') },
   /* Имена — из манифеста, а не литералами: то же дерево под другими именами

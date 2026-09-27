@@ -131,8 +131,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>2.021</b></span>
-    <span>Обновлено <b>21.09.2026</b></span>
+    <span>Версия <b>2.023</b></span>
+    <span>Обновлено <b>25.09.2026</b></span>
     <span>CSS <b>styles/table-cell.css</b></span>
     <span>Зависимости <b>checkbox, chip, icon-button, button, input, dropdown-list, tooltip, chart</b></span>
   </div>
@@ -405,7 +405,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <p class="subhead" style="margin-top:0;">Правила по типам</p>
     <ul class="bullets">
       <li><b>Текст</b> — по левому краю; по умолчанию усекается в одну строку (<code class="tok">.tc__text--truncate</code>) с Tooltip по наведению; если важно показать значение целиком — выключите усечение, ячейка перенесёт текст и вырастет по высоте.</li>
-      <li><b>Числа, суммы</b> — включите настройку «Числовое значение»: выравнивание справа, табулярные цифры и разбивка разрядов (<code class="tok">.tc--numbers</code>). Форматировать через <code class="tok">Intl.NumberFormat('ru-RU')</code>, не вручную.</li>
+      <li><b>Числа, суммы</b> — включите настройку «Числовое значение»: выравнивание справа, табулярные цифры и разбивка разрядов (<code class="tok">.tc--numbers</code>). Форматировать через <code class="tok">Intl.NumberFormat('ru-RU')</code>, не вручную. Сумма не переносится на вторую строку: не помещается в колонку — многоточие, полное значение тултипом (2.023).</li>
       <li><b>Иконки слева и справа</b> — независимые опции. Левая (<code class="tok">.tc__icon--lead</code>) — тип или статус объекта, правая (<code class="tok">.tc__icon</code>) — признак значения (предупреждение, проверено). Обе 16px и идут <b>сразу за текстом</b>, а не у границы ячейки.</li>
       <li><b>Вторая строка</b> — опциональная мелкая строка под значением (<code class="tok">.tc__subtext</code>), доступна для любого типа ячейки с текстом: название + ИНН, сумма + валюта и т.п.</li>
       <li><b>Prefix / Postfix</b> — независимые настройки, включаются по отдельности в любом сочетании.</li>
@@ -1184,6 +1184,15 @@ DSTable.wireAll(document);
 .tc--numbers .tc__body  { justify-content: flex-end; align-items: flex-end; }
 .tc--numbers .tc__row,
 .tc--numbers .tc__text { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+/* Сумма в ячейке не переносится на вторую строку: число, разорванное
+   переносом, читается как два значения. Не помещается — многоточие, полное
+   значение тултипом (ds-table.js, DSTooltip.truncated). Перенос остаётся
+   только по явному .tc--wrap. 2.023 (решение человека 25.09.2026). */
+.tc--numbers:not(.tc--wrap) .tc__text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* пустое значение «—».
    ПРАВИЛО (23.09.2026): прочерк — ЗНАЧЕНИЕ, а не подсказка, поэтому цвет у него

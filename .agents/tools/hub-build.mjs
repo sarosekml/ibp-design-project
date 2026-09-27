@@ -9,6 +9,9 @@
    `<раздел>/drafts/<имя>/`, с 23.09.2026; места сторожит registry-check, П8)
    (id, track, title, desc, home, icon), а `hub.js` собирается отсюда. Запись
    дизайн-системы — `project.json → hub.ds`, её href — `<ДС>/index.html`.
+   Витрина локальных компонентов (с 25.09.2026) — `project.json → localKit`,
+   вторая запись колонки ДС, href — `<localKit.dir>/index.html`: это второй
+   вход в документацию, а не экран продукта.
    Сторожу хаба остаётся проверить, что генератор отработал, и что экраны
    ведут обратно в хаб.
 
@@ -16,7 +19,7 @@
    открывается двойным кликом (`file://`), где `fetch` не работает. Страница
    хаба (`index.html`) не меняется (решение владельца Р6).
 
-   Порядок записей: дизайн-система, затем треки в порядке манифеста, внутри
+   Порядок записей: дизайн-система, витрина, затем треки в порядке манифеста, внутри
    трека — приложения по id. Группа записи — `hubGroup` трека приложения.
 
    Коды ХБ — «хаб»:
@@ -45,6 +48,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'hub-build.mjs';
 const APP_FIELDS = ['id', 'track', 'title', 'desc', 'home', 'icon'];
 const DS_FIELDS = ['id', 'title', 'desc', 'icon'];
+const KIT_FIELDS = ['id', 'title', 'desc', 'icon'];
 
 const js = (v) => (v === null ? 'null' : "'" + String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n') + "'");
 
@@ -61,6 +65,12 @@ export function collect(P) {
     const miss = DS_FIELDS.filter((k) => typeof ds[k] !== 'string' || !ds[k].trim());
     if (miss.length) defects.push('ХБ4 project.json → hub.ds — нет полей: ' + miss.join(', '));
     else entries.push({ id: ds.id, group: 'ds', title: ds.title, desc: ds.desc, href: P.ds + '/index.html', root: null, icon: ds.icon });
+  }
+  const kit = P.manifest.localKit || null;
+  if (kit) {
+    const miss = KIT_FIELDS.filter((k) => typeof kit[k] !== 'string' || !kit[k].trim());
+    if (miss.length) defects.push('ХБ4 project.json → localKit — нет полей: ' + miss.join(', '));
+    else entries.push({ id: kit.id, group: 'ds', title: kit.title, desc: kit.desc, href: (kit.dir || 'kit') + '/index.html', root: null, icon: kit.icon });
   }
   const tracks = P.tracks.filter((t) => t.id && t.hubGroup);
   const byTrack = new Map(tracks.map((t) => [t.id, []]));
@@ -93,7 +103,7 @@ export function render(P, entries) {
   const head = [
     '/* Реестр хаба проектов — источник меню и списка на корневой странице ' + P.hubPage + '.',
     '',
-    '   СГЕНЕРИРОВАН ' + GEN + ' из ' + P.appsDir + '/<id>/' + P.appsManifest + ' и project.json → hub.ds. Руками не',
+    '   СГЕНЕРИРОВАН ' + GEN + ' из ' + P.appsDir + '/<id>/' + P.appsManifest + ' и project.json → hub.ds' + (P.manifest.localKit ? ', localKit' : '') + '. Руками не',
     '   править: запись приложения — его ' + P.appsManifest + ', пересобрать — node ' + P.tools + '/' + GEN,
     '   (гейт сверяет, шаг hub). Хаб строит из реестра и меню, и три колонки; сама',
     '   страница не правится.',
@@ -102,7 +112,7 @@ export function render(P, entries) {
     '   file:// с кириллическим путём не работает.',
     '',
     '   Группы (колонки хаба, в этом порядке):',
-    '     ds       — дизайн-система (запись — project.json → hub.ds);',
+    '     ds       — дизайн-система (запись — project.json → hub.ds)' + (P.manifest.localKit ? ' и витрина локальных компонентов (project.json → localKit)' : '') + ';',
     ...groups,
     '   Группа приложения — hubGroup его трека (project.json → tracks).',
     '',
@@ -238,7 +248,26 @@ function selftest() {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-  const total = CASES.length + 2;
+  /* Витрина локальных компонентов — вторая запись колонки ДС, до приложений. */
+  {
+    const r = mkdtempSync(path.join(os.tmpdir(), 'hub-build-'));
+    try {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, localKit: { dir: 'kit', id: 'kit', title: 'Кит', desc: 'тест', icon: 'layout-grid-01' } }));
+      put(r, 'apps/alpha/app.json', app('alpha', 'product'));
+      const got = collect(project(r)).entries.map((e) => e.id + ':' + e.group + ':' + e.href).join(' ');
+      const pass = got === 'ds:ds:ds/index.html kit:ds:kit/index.html alpha:projects:apps/alpha/pages/Start.html';
+      if (!pass) failed++;
+      out.push((pass ? 'ok    ' : 'FAIL  ') + 'витрина — вторая запись колонки ДС — ' + got);
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, localKit: { dir: 'kit', id: 'kit', title: 'Кит' } }));
+      const { defects } = collect(project(r));
+      const pass2 = defects.some((d) => d.includes('ХБ4 project.json → localKit — нет полей: desc, icon'));
+      if (!pass2) failed++;
+      out.push((pass2 ? 'ok    ' : 'FAIL  ') + 'в записи витрины нет полей — ' + (defects.join(' | ') || 'дефектов нет'));
+    } finally {
+      rmSync(r, { recursive: true, force: true });
+    }
+  }
+  const total = CASES.length + 4;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
