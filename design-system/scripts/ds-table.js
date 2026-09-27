@@ -65,7 +65,9 @@
                      Хук — ключ колонки data-col на .th и .tc; без ключей
                      адаптация не делается (позиционная разметка верна, пока
                      состав колонок не трогали)
-      усечение      — .tc__text--truncate и .th__label получают тултип с полным
+      усечение      — .tc__text--truncate, .th__label и значение числовой
+                     ячейки (.tc--numbers .tc__text, с 2.023 не переносится,
+                     а усекается) получают тултип с полным
                      текстом, показываемый только при реальном усечении.
                      Реализация — общий DSTooltip.truncated() (см. регистрацию
                      внизу): делегирование по наведению/фокусу, новые строки
@@ -86,11 +88,28 @@
     if (!root) return;
     root.classList.toggle('dtable--scrolled', body.scrollTop > 0);
   }
+  /* ---------- бегунок полосы прокрутки ---------- */
+  /* Вид — table.css (.dtable__body, как .ds-scroll): в покое скрыт вертикальный
+     бегунок, горизонтальный виден всегда (класс на него не влияет).
+     Пока тело прокручивается, на нём стоит .is-scrolling; через SCROLL_HIDE мс
+     после остановки класс снимается, затухание делает переход в CSS. Тайминг
+     тот же, что у ds-scroll.js. Только на событии scroll: на ResizeObserver
+     бегунок мигал бы при каждом изменении размера. */
+  var SCROLL_HIDE = 800;
+  function flashScroll(body) {
+    body.classList.add('is-scrolling');
+    clearTimeout(body.__dsTableScrollTimer);
+    body.__dsTableScrollTimer = setTimeout(function () {
+      body.classList.remove('is-scrolling');
+    }, SCROLL_HIDE);
+  }
+
   function bind(body) {
     if (!body || body.__dsTableBound) return;
     body.__dsTableBound = true;
     var handler = function () { sync(body); };
     body.addEventListener('scroll', handler);
+    body.addEventListener('scroll', function () { flashScroll(body); }, { passive: true });
     if (window.ResizeObserver) new ResizeObserver(handler).observe(body);
     else window.addEventListener('resize', handler);
     handler();
@@ -692,7 +711,7 @@
        на сам элемент (ячейка с интерактивом) или на строку; хост не задан —
        focusin берёт ближайший усечённый элемент от цели, hover — всегда
        сам элемент. Делегирование подхватывает новые строки без перескана. */
-    window.DSTooltip.truncated('.tc__text--truncate, .th__label');
+    window.DSTooltip.truncated('.tc__text--truncate, .th__label, .tc--numbers:not(.tc--wrap) .tc__text');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerTrunc);
   else registerTrunc();

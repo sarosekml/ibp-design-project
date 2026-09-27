@@ -3,7 +3,7 @@
    LESSONS-CLI — инструмент самообучения: проверяет не то, что урок ЗАПИСАН,
    а то, что он во что-то превратился.
 
-   Зачем. Журнал уроков накапливал правила прозой: на 06.09.2026 закрепление
+   Зачем. Журнал уроков накапливал правила без проверок: на 06.09.2026 закрепление
    объявили 2 записи из 38, а из 67 пунктов чек-листов сторожем закрыт 21.
    Проверка «в файле есть строка про правило» ничего не доказывает — это тот
    же дефект, что урок Л42 («правило записано, кода нет»), только применённый
@@ -18,7 +18,7 @@
      verify    — прогон фикстур: каждая пара «дефект/эталон» доказывает, что
                  сторож живой. Код выхода 1, если хоть один не доказан.
                  `--only <ID>` — одно правило, `--corpus sensor|lint` — один корпус.
-     coverage  — какие пункты чек-листов закрыты сторожем, какие живут прозой,
+     coverage  — какие пункты чек-листов закрыты сторожем, какие живут только в тексте,
                  какие признаны неизмеримыми. Код выхода 1, если пункт не
                  классифицирован (не закрыт и не объявлен суждением).
      anchors   — реестр живых идентификаторов сторожей: сверка `anchors.json`
@@ -239,7 +239,7 @@ function verify(only = null, corpus = null) {
    отвечает «такая строка написана», а нужен ответ «такой сторож жив».
    Идентификаторы берутся из ТОЧКИ ОТЧЁТА каждого инструмента — там, где он
    печатает находку, — а не из комментариев: наивный греп по `ds-lint.js`
-   даёт 56 идентификаторов, из них пять живут только в прозе шапки. */
+   даёт 56 идентификаторов, из них пять живут только в комментарии-шапке. */
 
 function lintIds() {
   const src = rd(path.join(DS, 'scripts/ds-lint.js'));
@@ -285,6 +285,18 @@ function sensorIds() {
   return [...new Set([...out.matchAll(/([БЗКK]\d{1,2}(?:\.\d)?)(?![0-9.])/gu)].map((m) => m[1]))];
 }
 
+/* Структурные проверки страницы документации. Свой инструмент, свой ряд
+   идентификаторов — и своё пространство имён: якорь `док-сплит:ДС17` иначе
+   не проверяется ничем. Имя пространства кириллическое намеренно — разбор
+   неизвестных пространств в `check` читает только кириллицу, и латинское имя
+   прошло бы молча (то же, за что написан Л100). docs-split.mjs обещал это
+   пространство с 24.09.2026, а реестр его не заводил: якорь `док-сплит:…`
+   в журнале ловился бы как Л-ПРОСТРАНСТВО. */
+function docsSplitIds() {
+  const out = execFileSync(process.execPath, [DOCS_SPLIT, '--rules'], { encoding: 'utf8' });
+  return [...new Set([...out.matchAll(/(ДС\d{1,2})(?!\d)/gu)].map((m) => m[1]))];
+}
+
 function auditIds() {
   const src = rd(path.join(DS, 'scripts/spec-audit.mjs'));
   return [...new Set([...src.matchAll(/section\('Проход (\d)/g)].map((m) => m[1]))];
@@ -311,6 +323,7 @@ function anchorsFromCode() {
       'линтер': { источник: DS_REL + '/scripts/ds-lint.js', алфавит: 'латиница', ids: lintIds() },
       'сенсор': { источник: PRJ.rel(SENSOR) + ' --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
       'аудит': { источник: DS_REL + '/scripts/spec-audit.mjs', алфавит: 'номер прохода', ids: auditIds() },
+      'док-сплит': { источник: PRJ.rel(DOCS_SPLIT) + ' --rules', алфавит: 'кириллица ДС', ids: docsSplitIds() },
       'чек-лист': { источник: 'SKILL.md screen-review и composition-review', алфавит: 'кириллица Б/З/К, латинская K — композиция', ids: checkIds() },
     },
   };
@@ -647,7 +660,7 @@ function cmdCheck() {
          считается: так велит скилл lessons. До 13.09.2026 соглашение было
          записано, а регулярка ёлочки не исключала — первая же такая цитата
          дала ложный Л-ЯКОРЬ (класс Л42: правило записано, кода нет). */
-      for (const m of text.matchAll(/(?<!«)(линтер|сенсор|чек-лист|аудит):\s*([^\s`,;)]+)/gu)) {
+      for (const m of text.matchAll(/(?<!«)(линтер|сенсор|чек-лист|аудит|док-сплит):\s*([^\s`,;)]+)/gu)) {
         const ns = m[1];
         let id = m[2].replace(/[.,;:)»]+$/u, '');
         if (ns === 'аудит') { const d = id.match(/(\d)\s*$/); id = d ? d[1] : id; }
@@ -791,7 +804,7 @@ function ritualFreshness() {
 }
 
 /* ---------------- state ----------------
-   Состояние журнала печатается, а не пересказывается прозой: любая записанная
+   Состояние журнала печатается, а не переписывается вручную: любая записанная
    в текст цифра устаревает на следующей же правке (этот файл появился ровно
    потому, что абзац «38 записей / 228 строк» устарел через час). */
 
@@ -937,7 +950,7 @@ function journalFiles() {
    объявляет СВЕРШИВШЕЕСЯ закрытие, после которого урок перестали держать в
    памяти. Ровно эти записи и должны сторожиться на регресс — а первая версия
    разбора читала только «Закрепление» и не увидела ни одной из 14 выведенных:
-   у выведенного урока правило живёт в поле «Правило» прозой, а якорь — в
+   у выведенного урока правило записано текстом в поле «Правило», а якорь — в
    «Промоуте». Проверка регресса молчала бы всегда, и молчание читалось бы как
    «регресса нет» (тот же класс, что Л56).
 
@@ -1160,6 +1173,14 @@ const MODULE_README = path.join(HERE, 'module-readme.mjs');
 const DOCS_INDEX = path.join(HERE, 'docs-index.mjs');
 const PROMOTE = path.join(HERE, 'promote.mjs');
 const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
+const KIT_BUILD = path.join(HERE, 'kit-build.mjs');
+/* Витрина локальных компонентов (25.09.2026): каталог из манифеста
+   (`localKit.dir`, project.mjs → showcase). Не путать с KIT_REL — это каталог
+   харнеса. С переезда в `apps/local-components/` витрина лежит в каталоге
+   треков, но её страницы — генерат docs-split, а не экраны: в матрице ниже она
+   не «экранная область» и поднимает только свой шаг `kit`. */
+const SHOWCASE_REL = PRJ.showcase;
+const inShowcase = (rel) => Boolean(SHOWCASE_REL) && rel.startsWith(SHOWCASE_REL + '/');
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1176,7 +1197,7 @@ const SELF = fileURLToPath(import.meta.url);
    состояния в отпечаток не входит — его меняет сам гейт. Адаптер агентного
    CLI — тоже корень отпечатка (Ш5): это отдельный каталог, и без него правка
    конфига или указателя на роль шла бы мимо гейта. */
-const GATE_ROOTS = [DS_REL, KIT_REL, ADAPTER_REL, ...TRACK_DIRS, PRJ.docs, BOOT_DIR].filter(Boolean);
+const GATE_ROOTS = [DS_REL, KIT_REL, ADAPTER_REL, ...TRACK_DIRS, PRJ.docs, BOOT_DIR, SHOWCASE_REL].filter(Boolean);
 /* Конфиг агентного CLI живёт в каталоге адаптера — любой его файл гонит
    agent-config (матрица ниже). Здесь — места, где конфига быть не должно:
    корень (второй слой, КФ1) и каталог харнеса (мёртвый конфиг, КФ2). */
@@ -1336,6 +1357,11 @@ function gateStep(id, paths = null) {
        drafts/. Сборщик общий для всех приложений (шапка assemble.mjs). */
     case 'assemble': return { title: 'assemble --check (собранные страницы = источники и виджеты)', args: [ASSEMBLE, '--check'], cwd: ROOT };
     case 'assemble-selftest': return { title: 'assemble --selftest', args: [ASSEMBLE, '--selftest'], cwd: ROOT };
+    /* Витрина локальных компонентов (25.09.2026): страницы `localKit.dir`
+       (apps/local-components/) и реестр собраны из паспортов и файлов виджетов
+       и не устарели, лишних страниц нет (шапка kit-build.mjs). */
+    case 'kit': return { title: 'kit-build --check (витрина = виджеты приложений)', args: [KIT_BUILD, '--check'], cwd: ROOT };
+    case 'kit-selftest': return { title: 'kit-build --selftest', args: [KIT_BUILD, '--selftest'], cwd: ROOT };
     /* README модуля: есть у каждого <имя>-app, дерево в нём сходится с
        папкой (24.09.2026, шапка module-readme.mjs). */
     case 'readme': return { title: 'module-readme --check (README модулей = их папки)', args: [MODULE_README, '--check'], cwd: ROOT };
@@ -1354,7 +1380,7 @@ function gateStep(id, paths = null) {
   }
 }
 
-/* Матрица «изменилось → что гонять». Прозой не пересказывается — состав для
+/* Матрица «изменилось → что гонять». Вручную не пересказывается — состав для
    любого пути печатает `gate --dry --changed <путь>` (Л43). */
 function gateStepsFor(rel, deleted) {
   const s = [];
@@ -1366,8 +1392,9 @@ function gateStepsFor(rel, deleted) {
   if (isDocPath(rel, PRJ, true) || rel === 'project.json') add('docs-index');
   if (rel === TOOL_REL + '/docs-index.mjs' || rel === TOOL_REL + '/lessons-cli.mjs') add('docs-index-selftest', 'docs-index');
 
-  // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками
-  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/'));
+  // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками;
+  // витрина локальных компонентов внутри apps/ — не экраны (SHOWCASE_REL выше)
+  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/')) && !inShowcase(rel);
   if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('registry');
   // конфиг, в том числе удалённый или появившийся в корне; шапка скилла — КФ4 (видим ли скилл модели);
   // файл адаптера, роль или команда харнеса, в том числе удалённые, — КФ5 (указатели не разошлись с харнесом)
@@ -1399,6 +1426,8 @@ function gateStepsFor(rel, deleted) {
 
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
+    // удалённый виджет оставляет в витрине лишнюю страницу (КТ5)
+    if (SHOWCASE_REL && (screenArea || inShowcase(rel))) add('kit');
     return s;
   }
   // экран: в репозитории — каталоги треков из манифеста (TRACK_DIRS) и хаб; вне репозитория — только через --changed (проверка откатом на копии)
@@ -1422,10 +1451,13 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/fixtures/')) add('verify-lint', 'anchors');
 
-  if (underDs('pages/.+\\.html$').test(rel)) {
-    add('lint:' + rel);
-    if (isDocsSplit(rel)) add('split:' + rel);
-  }
+  if (underDs('pages/.+\\.html$').test(rel)) add('lint:' + rel);
+  /* Структурная проверка паттерна «сплиттер + табы» — по ПРИЗНАКУ СТРАНИЦЫ, а
+     не по её папке (урок Л135). Пока шаг звался только для страниц ДС, 21
+     страница витрины локальных компонентов на том же паттерне не получала его
+     вовсе: сенсор витрину пропускает (SHOWCASE_REL), шаг `kit` сверяет её с
+     генератором, а не каркас, — у класса файлов не было читателя (Л115). */
+  if (html && !inFixtures && isDocsSplit(rel)) add('split:' + rel);
   if (underDs('scripts/[^/]+\\.page\\.js$').test(rel)) {
     const pages = pageForScript(rel);
     if (!pages.length) add('lint-global');
@@ -1453,7 +1485,7 @@ function gateStepsFor(rel, deleted) {
   if (rel.startsWith(KIT_REL + '/skills/session-plan/')) add('ctx-budget');
   if (rel === TOOL_REL + '/registry-check.mjs') add('registry-selftest', 'registry');
   // загрузчик: его файлы, генератор, манифест (designSystem.mount, boot)
-  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/')) || rel === 'project.json') add('boot');
+  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/') && !inShowcase(rel)) || rel === 'project.json') add('boot');
   if (rel === TOOL_REL + '/boot-build.mjs') add('boot-selftest', 'boot');
   // реестр хаба: записи приложений, сам реестр, манифест (треки, hub.ds, каталог приложений)
   if (rel === PRJ.hubRegistry || rel === 'project.json'
@@ -1462,12 +1494,15 @@ function gateStepsFor(rel, deleted) {
   // приложения: любой файл может сдвинуть дерево README модуля; .html — источник или виджет модульной страницы
   if ((screenArea && !inFixtures) || rel === 'project.json') add('readme');
   if ((screenArea && !inFixtures && html) || rel === 'project.json') add('assemble');
-  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'panel-selftest');
+  if (rel === TOOL_REL + '/assemble.mjs') add('assemble-selftest', 'assemble', 'readme-selftest', 'promote-selftest', 'panel-selftest', 'kit-selftest', 'kit');
+  // витрина: паспорт, фрагмент, CSS/JS, фикстуры виджета, страница-хозяин и данные приложения, сама витрина
+  if (SHOWCASE_REL && ((screenArea && !inFixtures) || inShowcase(rel) || rel === 'project.json')) add('kit');
+  if (rel === TOOL_REL + '/kit-build.mjs') add('kit-selftest', 'kit');
   if (rel === TOOL_REL + '/module-readme.mjs') add('readme-selftest', 'readme', 'promote-selftest');
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
-    'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
+    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1480,9 +1515,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

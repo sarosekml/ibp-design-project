@@ -1,19 +1,98 @@
 /* Локальный компонент «Финансовые метрики сделки».
-   Пока модуль — заглушка, его CSS держит только строку-заглушку. */
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС;
+   своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: переключается только
+   присутствие собственных блоков .lc-deal-metrics__* и слотов тайла.
+   Режим всегда view: действий правки у тайла нет ни в каком режиме. */
 
-/* Заглушка: состав полей не согласован. Строка по центру тела тайла, без
-   иллюстрации: помещается в минимальную высоту тайла, которую задаёт
-   страница, и не растягивает ряд (решение человека 22.09.2026). Тело
-   занимает свободную высоту тайла — тайл колонка флексом (Tile). */
-.lc-deal-metrics[data-state="empty"] .tile__body {
-  flex: 1;
+/* Компонент перестраивается по СВОЕЙ ширине, а не по ширине окна: он стоит на
+   6 колонках из 12, а на узкой странице — на 12. У бара свой контейнер
+   (.albar-host), его брейкпоинты считает ДС. */
+.lc-deal-metrics { container-type: inline-size; }
+
+/* ── Данные есть: бар → поля → PE, сверху вниз ─────────────────────── */
+/* Зазор между блоками — 24, как на макете: бар, сетка полей и плашка PE
+   читаются тремя группами, а не одним списком. */
+.lc-deal-metrics__data,
+.lc-deal-metrics__loading {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-24);
 }
-.lc-deal-metrics__stub {
+
+/* Поля: «Сумма резерва» шире остальных — в ней сумма с копейками и
+   валютой, в остальных ставка в пару знаков (макет). Колонки сжимаемые:
+   длинное значение усекает сам ReadOnlyField, а не распирает соседа.
+   «Ставка обесценения» четвёртым полем встаёт во второй ряд под первой
+   колонкой. Колонки заданы здесь, а не инлайном: инлайн перебил бы
+   перестроение ниже. */
+.lc-deal-metrics__grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); }
+
+/* ── Переоценка по PE ───────────────────────────────────────────────── */
+/* Плашка на фоне страницы, как подложки разделов окна. Слева итог с
+   единицей и датой оценки, справа сумма и Δ. Своего компонента под такую
+   плашку в ДС нет (паспорт, «Открытые вопросы»). */
+.lc-deal-metrics__pe {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-control);
+  background: var(--bg-page);
+}
+.lc-deal-metrics__pe-main,
+.lc-deal-metrics__pe-values {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.lc-deal-metrics__pe-values { align-items: flex-end; text-align: right; flex: none; }
+.lc-deal-metrics__pe-title,
+.lc-deal-metrics__pe-date,
+.lc-deal-metrics__pe-amount,
+.lc-deal-metrics__pe-delta { margin: 0; }
+.lc-deal-metrics__pe-title { font: var(--type-body-m-strong); color: var(--text-primary); }
+.lc-deal-metrics__pe-unit { color: var(--text-inactive); }
+.lc-deal-metrics__pe-date { font: var(--type-body-xs); color: var(--text-inactive); }
+.lc-deal-metrics__pe-amount { font: var(--type-body-m-strong); color: var(--text-primary); font-variant-numeric: tabular-nums; }
+/* Δ — цвет динамики, как у ReadOnlyField (--positive / --negative). */
+.lc-deal-metrics__pe-delta { font: var(--type-body-xs); color: var(--success-dark); font-variant-numeric: tabular-nums; }
+.lc-deal-metrics__pe-delta--negative { color: var(--error-dark); }
+
+/* ── Данных нет ─────────────────────────────────────────────────────── */
+/* Одна строка под заголовком, слева — как на макете. */
+.lc-deal-metrics__empty {
   margin: 0;
   font: var(--type-body-m);
   color: var(--text-inactive);
-  text-align: center;
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть»; остальные блоки появляются по data-state. */
+.lc-deal-metrics__loading,
+.lc-deal-metrics__empty,
+.lc-deal-metrics__error { display: none; }
+
+.lc-deal-metrics:not([data-state="data"]) .lc-deal-metrics__data { display: none; }
+.lc-deal-metrics[data-state="loading"] .lc-deal-metrics__loading { display: flex; }
+.lc-deal-metrics[data-state="empty"] .lc-deal-metrics__empty { display: block; }
+.lc-deal-metrics[data-state="error"] .lc-deal-metrics__error { display: block; }
+
+/* Без PE плашки нет совсем: пустая плашка читалась бы как «переоценки нет». */
+.lc-deal-metrics[data-pe="no"] .lc-deal-metrics__pe { display: none; }
+
+/* «Развернуть» — только когда есть что разворачивать. */
+.lc-deal-metrics:not([data-state="data"]) .tile__actions { display: none; }
+
+/* ── Перестроение по своей ширине ───────────────────────────────────── */
+/* Три колонки держатся, пока в первую помещается сумма с валютой: «1 000 000
+   000,00 RUB» в Body M ≈ 170px; 2/4 ширины тела ≥ 170 при теле от ~380px
+   (тайл ≈ 420 с полями 2×20). Уже — поля в две колонки, сумма резерва на всю
+   строку. На странице сделки тайл уже порога не бывает (6 колонок из 12) —
+   правило для узкой витрины и других мест. */
+@container (max-width: 419px) {
+  .lc-deal-metrics__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lc-deal-metrics__grid > [data-fin-field="reserveAmount"] { grid-column: 1 / -1; }
 }

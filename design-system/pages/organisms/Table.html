@@ -112,8 +112,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>1.018</b></span>
-    <span>Обновлено <b>21.09.2026</b></span>
+    <span>Версия <b>1.020</b></span>
+    <span>Обновлено <b>27.09.2026</b></span>
     <span>CSS <b>styles/table.css</b></span>
     <span>Зависимости <b>table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu</b></span>
   </div>
@@ -197,7 +197,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   </div>
   <div class="subsec" data-screen-label="ScrollEdges">
     <h3>Горизонтальный скролл и закрепление колонок</h3>
-    <p class="desc">Когда колонки не помещаются по ширине, тело скроллится горизонтально; закреплённые колонки (свойство TableCell) остаются на месте. Теней-градиентов по краям тела нет — скрытый контент по бокам обозначает сам скроллбар (решение 27.08.2026: прежние <code class="tok">.dtable__edge</code> позиционировались внутри скролл-контейнера и уезжали вместе с колонками).</p>
+    <p class="desc">Когда колонки не помещаются по ширине, тело скроллится горизонтально; закреплённые колонки (свойство TableCell) остаются на месте. Теней-градиентов по краям тела нет (решение 27.08.2026: прежние <code class="tok">.dtable__edge</code> позиционировались внутри скролл-контейнера и уезжали вместе с колонками).</p>
+    <p class="desc">Полоса прокрутки тела — та же, что у внутренних областей (<code class="tok">.ds-scroll</code>, Layout), по обеим осям: только бегунок 8px в цвете <code class="tok">--secondary</code>, без дорожки и стрелок. Вертикальный бегунок в покое скрыт, появляется при прокрутке и гаснет через 800 мс — класс <code class="tok">.is-scrolling</code> ставит <code class="tok">ds-table.js</code>. Горизонтальный бегунок виден всегда: по нему сразу понятно, что колонки уходят за правый край (1.020; в Firefox цвет полосы один на обе оси, там он появляется только при прокрутке). Своей рамки у тела нет — рамку держит <code class="tok">.dtable</code> (1.019).</p>
   </div>
   <div class="subsec" data-screen-label="FillHeight">
     <h3>На всю высоту</h3>
@@ -599,6 +600,56 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 /* ------------------------------------------------------------------ */
 .dtable__body { position: relative; overflow: auto; }
 .dtable__body .tbl { border: none; border-radius: 0; overflow: visible; }
+
+/* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
+   скругление полное, цвет --secondary, без дорожки, уголка и стрелок.
+   Отличие от .ds-scroll — обе оси: у таблицы бывает и горизонтальный скролл
+   (колонки шире контейнера). Вертикальный бегунок в покое скрыт, появляется
+   при прокрутке и гаснет: класс .is-scrolling ставит и снимает ds-table.js
+   (bind), тайминг тот же, что у ds-scroll.js. Бегунок берёт цвет из
+   border-color тела (переход у псевдоэлемента скроллбара браузеры не
+   поддерживают): своей видимой рамки у .dtable__body не бывает — рамку держит
+   .dtable. Горизонтальный бегунок виден всегда (:horizontal, цвет задан
+   напрямую): иначе не видно, что колонки уходят за правый край (1.020).
+   scrollbar-gutter не ставится: зарезервированная полоса легла бы пустым
+   столбцом справа от строк. 1.019; до этого у таблицы был системный скроллбар. */
+.dtable__body {
+  --scroll-w: 8px;
+  --scroll-show: .1s;
+  --scroll-fade: .3s;
+  border-color: transparent;
+  transition: border-color var(--scroll-fade) ease;
+}
+.dtable__body.is-scrolling {
+  border-color: var(--secondary);
+  transition-duration: var(--scroll-show);
+}
+.dtable__body::-webkit-scrollbar { width: var(--scroll-w); height: var(--scroll-w); background: transparent; }
+.dtable__body::-webkit-scrollbar-track,
+.dtable__body::-webkit-scrollbar-corner { background: transparent; }
+.dtable__body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.dtable__body::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-color: inherit;
+  border-width: 0 calc(100vw + 100vh) 0 0;
+}
+.dtable__body::-webkit-scrollbar-thumb:horizontal { border-color: var(--secondary); }
+/* Firefox: псевдоэлементов скроллбара нет — тонкая системная полоса того же
+   цвета и с тем же появлением (как у .ds-scroll). scrollbar-color задаёт один
+   цвет на обе оси, развести их нельзя: здесь и горизонтальная полоса
+   появляется только при прокрутке. */
+@supports not selector(::-webkit-scrollbar) {
+  .dtable__body {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color var(--scroll-fade) ease;
+  }
+  .dtable__body.is-scrolling {
+    scrollbar-color: var(--secondary) transparent;
+    transition-duration: var(--scroll-show);
+  }
+}
 /* Липкая шапка держится НА СТРОКЕ, а не на ячейках. .th — grid-элемент строки
    .tbl__row (display:grid), и блок-контейнер для его position:sticky — сама
    строка: ходить по вертикали ячейке негде, шапка уезжала вместе с контентом

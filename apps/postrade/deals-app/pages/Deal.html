@@ -139,14 +139,14 @@
           <div class="gen__main tile-group">
 
             <div class="tile-row">
-              <ds-include src="../widgets/tiles/KNRTile/KNRTile.html" class="col-3 colw-6" id="tile-knr" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.html" class="col-3 colw-6" id="tile-knr" state="loading" mode="edit"></ds-include>
               <ds-include src="../widgets/tiles/DealPeriodTile/DealPeriodTile.html" class="col-3 colw-6" id="tile-deal-terms" state="loading" mode="edit"></ds-include>
               <ds-include src="../widgets/tiles/DealTeamTile/DealTeamTile.html" class="col-6 colw-12" id="tile-deal-team" state="loading" mode="edit"></ds-include>
             </div>
 
             <div class="tile-row">
-              <ds-include src="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.html" class="col-6 colw-12"></ds-include>
-              <ds-include src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html" class="col-6 colw-12"></ds-include>
+              <ds-include src="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.html" class="col-6 colw-12" id="tile-deal-description" state="loading" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html" class="col-6 colw-12" id="tile-deal-fin-metrics" state="loading" mode="view"></ds-include>
             </div>
 
             <!-- Третий ряд опционален: сведения о проекте есть у сделок деска
@@ -208,7 +208,7 @@
       <!-- Контрагенты -->
       <div class="tile-group" id="panel-cpt" role="tabpanel" aria-labelledby="tab-cpt" data-tabpanel hidden>
         <div class="tile-row">
-          <ds-include src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.html" class="col-12"></ds-include>
+          <ds-include src="../widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.html" class="col-12"></ds-include>
         </div>
       </div>
 
@@ -223,20 +223,32 @@
   </div>
 </div>
 
-<!-- Модальные окна тайла «КНР». Скримы живут в конце body, а не внутри тайла:
+<!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
      вложенный в скрытый родитель скрим не показать. Окно подтверждения —
      отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
-<ds-include src="../widgets/modals/KNRModal/KNRModal.html"></ds-include>
-<ds-include src="../widgets/modals/KNRModal/KNRConfirmModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html"></ds-include>
 <!-- Шаблон карточки контрагента для окна «КНР»: подчасть окна, лежит в его
-     папке. Вшивается отдельной меткой — сборщик не раскрывает метки внутри
-     фрагмента. -->
-<ds-include src="../widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.html"></ds-include>
+     папке. Им же рисует карточки участников окно «Документы по сделке»
+     (режим select). Вшивается отдельной меткой — сборщик не раскрывает метки
+     внутри фрагмента. -->
+<ds-include src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.html"></ds-include>
 <!-- Окно правки тайла «Сроки сделки» — тоже в конце body, по той же причине. -->
 <ds-include src="../widgets/modals/DealPeriodModal/DealPeriodModal.html"></ds-include>
 <!-- Окно тайла «Команда сделки»: правка и просмотр — один скрим, режим ему
      ставит скрипт окна по режиму тайла, который его открыл. -->
 <ds-include src="../widgets/modals/DealTeamModal/DealTeamModal.html"></ds-include>
+<!-- Артефакты тайла «Описание сделки»: окно правки и просмотра (один скрим,
+     режим по тайлу), два шага документов ЭКД — выбор участника и документы
+     (подчасть окна, своя метка), поповер «Связанные сделки» (его ставит у
+     ссылки-триггера рантайм ДС, место в разметке роли не играет). -->
+<ds-include src="../widgets/modals/DealDescriptionModal/DealDescriptionModal.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.html"></ds-include>
+<ds-include src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html"></ds-include>
+<ds-include src="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.html"></ds-include>
+<!-- Окно тайла «Финансовые метрики сделки»: только просмотр — ОСЗ, резервы
+     по ФИ и переоценка по PE, которых в тайле нет. -->
+<ds-include src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.html"></ds-include>
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
@@ -249,17 +261,26 @@
 <script src="../data/mock-counterparties.js"></script>
 <script src="../data/post-api.js"></script>
 <script src="../data/counterparties-store.js"></script>
+<!-- финансовые метрики сделок для тайла и окна «Финансовые метрики сделки» -->
+<script src="../data/mock-financial-metrics.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
      Рендер карточки — до модалки: она им рисует свои колонки. -->
-<script src="../widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.js"></script>
-<script src="../widgets/modals/KNRModal/KNRModal.js"></script>
-<script src="../widgets/tiles/KNRTile/KNRTile.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
 <script src="../widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
 <script src="../widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
 <script src="../widgets/modals/DealTeamModal/DealTeamModal.js"></script>
 <script src="../widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<!-- тайл раньше окна: окно рисует бары функцией тайла -->
+<script src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
    меню по каталогу ролей, данные сделки (шапка, тайлы «КНР» и «Сроки сделки»), переключение
@@ -382,6 +403,8 @@
     fillKnr(deal);
     fillTerms(deal);
     fillTeam(deal);
+    fillDescription(deal);
+    fillFinMetrics(deal);
   }
 
   /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
@@ -468,6 +491,69 @@
     window.DealsStore.on('change', function (d) {
       if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
     });
+  }
+
+  /* Тайл «Описание сделки» — поля описания этой сделки из DealsStore. Как со
+     сроками и командой, модули друг друга не знают, связывает их страница:
+       окно правки берёт запись при открытии и отдаёт правку сюда, страница
+         пишет её в стор, тайл перерисовывается по событию стора;
+       поповер «Связанные сделки» получает список сделки вместе с тайлом;
+       окно «Документы ЭКД» берёт участников из CounterpartiesStore — того же
+         состава, что правит окно «КНР». Пока состав этой сделки не загружен,
+         окно показывает загрузку (members → null). */
+  function fillDescription(deal) {
+    var tile = document.getElementById('tile-deal-description');
+    if (!tile || !window.PostTileDealDescription) return;
+    var pop = document.getElementById('related-deals-pop');
+
+    function paint(d) {
+      window.PostTileDealDescription.render(tile, d);
+      if (pop && window.PostRelatedDealsPopover) window.PostRelatedDealsPopover.render(pop, d.relatedDeals);
+    }
+    paint(deal);
+
+    if (window.PostDealDescriptionModal) {
+      window.PostDealDescriptionModal.bind(document.getElementById('deal-description-scrim'), {
+        get: function () { return window.DealsStore.byId(deal.id) || deal; },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); }
+      });
+    }
+    if (window.PostDealEcmModal) {
+      var store = window.CounterpartiesStore;
+      window.PostDealEcmModal.bind(
+        document.getElementById('deal-ecm-scrim'),
+        document.getElementById('deal-ecm-docs-scrim'),
+        {
+          members: function () {
+            if (!store) return [];
+            return String(store.dealId()) === String(deal.id) ? store.members() : null;
+          }
+        });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Финансовые метрики сделки» — метрики этой сделки из
+     mock-financial-metrics.js. Метрики считает система, в прототипе их
+     никто не правит, поэтому стора и событий нет: страница один раз отдаёт
+     метрики тайлу и окну. Нет записи — «Нет данных»; сделка из списка
+     MOCK_DEAL_FIN_METRICS_FAILED — ошибка запроса. Окно берёт метрики при
+     открытии тем же путём. */
+  function fillFinMetrics(deal) {
+    var tile = document.getElementById('tile-deal-fin-metrics');
+    if (!tile || !window.PostTileDealFinMetrics) return;
+    var all = window.MOCK_DEAL_FIN_METRICS || {};
+    var failed = (window.MOCK_DEAL_FIN_METRICS_FAILED || []).some(function (id) { return String(id) === String(deal.id); });
+    var metrics = failed ? null : (all[String(deal.id)] || null);
+
+    window.PostTileDealFinMetrics.render(tile, metrics, { failed: failed });
+    if (window.PostDealFinMetricsModal && metrics) {
+      window.PostDealFinMetricsModal.bind(document.getElementById('deal-fin-metrics-scrim'), {
+        get: function () { return metrics; }
+      });
+    }
   }
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

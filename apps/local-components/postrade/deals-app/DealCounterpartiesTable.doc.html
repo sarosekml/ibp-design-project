@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контрагенты сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Контрагенты сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--table" id="pg-stage">
+<!-- Локальный компонент «Контрагенты сделки» — таблица таба «Контрагенты»
+     страницы сделки. Пары во фронтенде нет: это новая сущность.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     По снимку текущей системы это таблица на всю ширину панели, без шапки-тайла,
+     поэтому корень — TileHeadless: он даёт только подложку и отступы.
+     Сейчас компонент в состоянии empty: состав колонок не согласован (см. паспорт).
+     Пока состав не согласован — строка по центру тела, без EmptyState:
+     помещается в минимальную высоту тайла и не растягивает ряд (DealCounterpartiesTable.css). -->
+<section class="tile tile--headless lc-deal-counterparties" data-state="empty" data-mode="view">
+  <div class="tile__body">
+    <p class="lc-deal-counterparties__stub">Контрагенты ещё не заведены</p>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>таблица</b></span><span>Версия: <b>0.003</b></span><span>Обновлено: <b>24.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Контрагенты сделки</h1>
+  <p class="lead">Реестр контрагентов сделки с ролями, связанными инструментами и обеспечениями, ОСЗ, ВБС и зоной проблемности</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/DealCounterpartiesTable">apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в паспорте не указана</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — таб «Контрагенты», единственный блок панели</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.003 · обновлено 24.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/organisms/Table.html">Table</a> · <a class="inl" href="../../../../design-system/pages/organisms/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/pages/atoms/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/pages/molecules/Pagination.html">Pagination</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.css">DealCounterpartiesTable.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.html">DealCounterpartiesTable.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md">DealCounterpartiesTable.md</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Единственный блок панели таба «Контрагенты». Пары во фронтенде у компонента нет — это новая сущность, отсюда и своё имя с типом в конце (решение человека 24.09.2026). До 24.09.2026 лежал в <code class="tok">widgets/tiles/CounterpartiesTile/</code>, но это имя во фронтенде у тайла контрагентов (на странице сделки — «КНР»), поэтому компонент переехал в группу таблиц.</p>
+<p class="desc">По снимку текущей системы это таблица на всю ширину контентной области: без шапки-тайла, с сортируемыми колонками, чипами ролей и пагинацией. На этом шаге собрана только оболочка — TileHeadless с состоянием «Данных нет»; состав колонок, их порядок и источники значений не согласованы.</p>
+<p class="desc">Корень — <code class="tok">tile tile--headless</code>, а не голая таблица: подложку и отступы панели должен давать компонент, а не экран. Окончательная форма обёртки — не решено (19.09.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">Колонки по снимку текущей системы; состав и порядок не подтверждены владельцем.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">№</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Порядковый номер строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">расчёт</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ссылка на карточку контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст, ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роль</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КНР, Заемщик, Поручитель, Эмитент, Залогодатель</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип-список</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанные инструменты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Инструменты, где участвует контрагент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип-список + «+N»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Связанные обеспечения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номера договоров обеспечения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип-список</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОСЗ по контрагенту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, валюта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ВБС по контрагенту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, валюта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рейтинг</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рейтинг контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата утверждения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата утверждения рейтинга</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зона проблемности</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зелёная, WatchList, Красная, Чёрная</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чип</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица со строками и пагинацией — не собрано</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пока компонент — заглушка: строка «Контрагенты ещё не заведены» по центру тела тайла, серым Body M, без иллюстрации — помещается в минимальную высоту тайла страницы и не растягивает ряд (решение человека 22.09.2026). Вид с согласованным составом полей — не решено</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав колонок тот же, действия строк не рисуются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не решено (19.09.2026).</li><li>Обязательные поля внутри: не решено (19.09.2026).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">усечение + тултип (рантайм Table вешает сам)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пагинация; размер страницы — не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный скролл тела таблицы, у экрана скролла не появляется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонки тянутся, минимум колонки 96px (TableCell)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты">
+<h2>Связанные артефакты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">переход на экран</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка контрагента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">контекст сделки теряется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Документы ЭКД (кнопка в строке)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Состав и порядок колонок, источники значений — от владельца продукта.</li><li>Нужна ли обёртка-тайл вокруг таблицы или таблица лежит прямо на панели.</li><li>Счётчик в бейдже таба «Контрагенты»: откуда берётся число.</li><li>Действия по строке (контекстное меню, кнопка «Документы ЭКД») — от владельца продукта.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealCounterpartiesTable","type":"table","base":"../..","hub":"../../../../index.html","states":["empty"],"modes":["view"],"state":"empty","mode":"view","width":1600,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Контрагенты сделки» — таблица таба «Контрагенты»
+     страницы сделки. Пары во фронтенде нет: это новая сущность.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     По снимку текущей системы это таблица на всю ширину панели, без шапки-тайла,
+     поэтому корень — TileHeadless: он даёт только подложку и отступы.
+     Сейчас компонент в состоянии empty: состав колонок не согласован (см. паспорт).
+     Пока состав не согласован — строка по центру тела, без EmptyState:
+     помещается в минимальную высоту тайла и не растягивает ряд (DealCounterpartiesTable.css). -->
+<section class="tile tile--headless lc-deal-counterparties" data-state="empty" data-mode="view">
+  <div class="tile__body">
+    <p class="lc-deal-counterparties__stub">Контрагенты ещё не заведены</p>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Контрагенты сделки».
+   Пока модуль — заглушка, его CSS держит только строку-заглушку. */
+
+/* Заглушка: состав полей не согласован. Строка по центру тела тайла, без
+   иллюстрации: помещается в минимальную высоту тайла, которую задаёт
+   страница, и не растягивает ряд (решение человека 22.09.2026). Тело
+   занимает свободную высоту тайла — тайл колонка флексом (Tile). */
+.lc-deal-counterparties[data-state="empty"] .tile__body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lc-deal-counterparties__stub {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+  text-align: center;
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* У компонента нет своего скрипта: поведение дают рантаймы ДС. */
+</script>
+</body>
+</html>

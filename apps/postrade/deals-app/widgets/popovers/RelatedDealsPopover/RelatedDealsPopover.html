@@ -1,0 +1,29 @@
+<!-- Связанный артефакт тайла «Описание сделки»: поповер «Связанные сделки».
+     Вшивается ассемблером отдельной меткой ds-include в конце body. Триггер —
+     ссылка «Связанные сделки» в признаках тайла (data-popover="related-deals-pop");
+     рантайм ДС (ds-popover.js) находит поповер по id, выносит его в плавающий
+     слой и ставит у триггера — поэтому поповер не обязан лежать рядом с ним.
+
+     Пара во фронтенде — окно RelatedDealsModal (дерево фронтенда). Здесь —
+     поповер по решению человека 24.09.2026: список короткий, контекст
+     страницы не теряется. Вид — решение человека 25.09.2026: ширина M, без
+     подвала, в теле список ссылок; каждая связанная сделка — одна ссылка
+     «№ <номер сделки клиента> · <наименование>», длинное переносится.
+
+     Ссылки ниже — пример (сделка 1024). На странице сделки их заменяет
+     RelatedDealsPopover.js данными сделки. -->
+<div id="related-deals-pop" class="pop pop--w-m pop--bottom pop--start pop--floating" role="dialog" aria-modal="false" aria-labelledby="related-deals-pop-title">
+  <div class="pop__head">
+    <div class="pop__head-main">
+      <h3 class="pop__title" id="related-deals-pop-title">Связанные сделки</h3>
+    </div>
+    <span class="pop__close"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть"><i data-icon="close"></i></button></span>
+  </div>
+  <div class="pop__body">
+    <ul class="lc-related-deals__list" data-related-list>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041187 · Финансирование складского комплекса «Север»</a></li>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041203 · Рефинансирование кредитного портфеля ООО «ЮгСтрой»</a></li>
+      <li><a class="link link--accent link--m" href="#" data-opportunity-link>№ 2041318 · Бридж-финансирование второй очереди логистического хаба</a></li>
+    </ul>
+  </div>
+</div>

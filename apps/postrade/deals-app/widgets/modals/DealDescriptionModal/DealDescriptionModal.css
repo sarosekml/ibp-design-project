@@ -1,0 +1,41 @@
+/* Окно «Описание сделки» — связанный артефакт тайла DealDescriptionTile.
+   Здесь раскладка двух колонок с разделителем и переключение режима — правка
+   или просмотр. Отступы тела окна даёт Modal, зазоры — токены ДС.
+
+   Режим ставит DealDescriptionModal.js атрибутом data-mode на .modal: из
+   какого тайла окно открыли, в таком режиме оно и открывается. Разметка
+   держит оба вида сразу, как в тайлах компонента. */
+
+/* ── Две колонки с разделителем ─────────────────────────────────────── */
+/* Пропорция колонок — с макета окна на ширине --modal-w-7: слева поле
+   ≈ 680px, справа ≈ 290px, то есть 7 : 3. Колонки сжимаемые (minmax(0, …)):
+   длинное значение переносится внутри колонки, а не распирает соседнюю.
+   Разделитель — Divider из ДС, отдельной дорожкой сетки; по высоте его тянет
+   сетка (align-items: stretch по умолчанию). */
+.lc-deal-description-modal__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) auto minmax(0, 3fr);
+  gap: var(--space-16);
+}
+
+.lc-deal-description-modal__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* ── Правка или просмотр ────────────────────────────────────────────── */
+.lc-deal-description-modal__view { display: none; }
+
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__edit { display: none; }
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__view { display: grid; }
+
+/* ── Кнопка подвала ─────────────────────────────────────────────────── */
+/* Подвал модалки обязателен и всегда несёт кнопку справа (правило Modal),
+   поэтому он не прячется, а меняет кнопку: в правке — «Сохранить», в
+   просмотре править нечего и окно закрывают. */
+.lc-deal-description-modal__close { display: none; }
+
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__save { display: none; }
+.lc-deal-description-modal[data-mode="view"] .lc-deal-description-modal__close { display: inline-flex; }

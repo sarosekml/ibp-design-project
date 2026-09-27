@@ -164,7 +164,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.013</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>DropdownList</h1>
     <p class="lead">Выпадающий список — всплывающая поверхность со списком опций, которая раскрывается под полем <b>Select</b> или <a class="inl" href="../molecules/InputAutocomplete.html">InputAutocomplete</a>. Служит для выбора значения из перечня: одиночного (подсветка выбранной строки), множественного (ведущие чекбоксы) или с поиском по мере набора (подсветка совпадения). В отличие от <a class="inl" href="../molecules/ContextMenu.html">Context Menu</a> — это выбор данных, а не список команд.</p>
@@ -587,6 +587,9 @@
   align-items: center;
   gap: var(--ddl-item-gap);
   width: 100%;
+  /* опция — <button>: без min-width:0 её ширина не опускается ниже
+     содержимого, и длинный текст распирает строку за край списка */
+  min-width: 0;
   min-height: var(--ddl-item-h);
   padding: 0 var(--ddl-item-px);
   border: 0;
@@ -617,11 +620,14 @@
   white-space: nowrap;
 }
 /* helper — общий компонент подкачки (.ds-helper из label-helper.css:
-   Body XS · Text-Inactive); внутри опции сокращается многоточием */
+   Body XS · Text-Inactive); внутри опции переносится на следующие строки,
+   опция растёт по высоте. До 1.015 хелпер держался в одну строку
+   (nowrap + многоточие): длинное пояснение не переносилось и уходило за
+   край списка (решение человека 25.09.2026). Подпись опции по-прежнему
+   одна строка с многоточием, перенос подписи — .ddl__item--wrap. */
 .ddl__item .ds-helper {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* перенос длинных опций на 2+ строки */

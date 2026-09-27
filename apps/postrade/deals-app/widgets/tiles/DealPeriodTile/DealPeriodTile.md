@@ -1,7 +1,7 @@
 ---
 name: Сроки сделки
-version: 0.005
-updated: "22.09.2026"
+version: 0.006
+updated: "25.09.2026"
 rulesVersion: 1.006
 owner: не решено (19.09.2026)
 designer: Роман Эсэф

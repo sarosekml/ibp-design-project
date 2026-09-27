@@ -35,6 +35,14 @@
     <aside class="nav nav--rail">
       <div class="nav__list">
         <a class="nav__item nav__item--selected"><i class="nav__ico" data-icon="folder"></i><span class="nav__label">Сделки</span></a>
+        <!-- Пункт-аккордеон в НОРМАЛЬНОМ виде: адрес `#`, страницы открываются
+             под-пунктами. Вход правила Б35 — ds-nav-panel.js отменяет переход
+             по родителю, поэтому осмысленный href на нём недостижим. Эталон
+             обязан нести этот вход исправным (Л116). -->
+        <a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="fx-sub"><i class="nav__ico" data-icon="folder"></i><span class="nav__label">Отчёты</span><i class="nav__caret" data-icon="chevron-down"></i></a>
+        <div class="nav__sub" id="fx-sub"><div class="nav__sub-in">
+          <a class="nav__item" href="#"><span class="nav__label">Сводный</span></a>
+        </div></div>
       </div>
       <button class="ibtn ibtn--neutral ibtn--m nav__pin" type="button" aria-label="Закрепить панель"><i data-icon="pin"></i></button>
       <div class="nav__footer"><span class="nav__user-text">Иванов И. И.</span></div>
@@ -112,6 +120,17 @@
        было бы — и фикстура стала бы фикцией. */
     var railSize = 'm';
     var railPin = '<button class="ibtn ibtn--neutral ibtn--' + railSize + ' nav__pin" type="button" aria-label="Закрепить панель"><i data-icon="pin"></i></button>';
+
+    /* Разметка с хуком рантайма, собранная и вставленная скриптом, — В НОРМЕ:
+       рядом стоит привязка поддерева. Вход правила З12; без него замечание
+       доказывалось бы только дефектом, а молчание на норме не проверялось бы
+       (Л116). Дефекта здесь нет — эталон обязан молчать. */
+    var host = document.getElementById('fx-actions');
+    if (host) {
+      host.innerHTML = '<button type="button" class="ibtn ibtn--m" aria-label="Открыть настройку" data-modal="fx-modal"><i data-icon="settings"></i></button>';
+      if (window.DSModal) window.DSModal.bindAll(host);
+      if (window.dsIcons) window.dsIcons.apply(host);
+    }
   </script>
   <script src="../../../ds-body.js"></script>
 </body>

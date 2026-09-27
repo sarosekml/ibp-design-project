@@ -27,42 +27,47 @@
 
 ## Виджеты
 
-13 тайлов страницы сделки и три их модальных окна. Наполнены три тайла —
-«КНР», «Сроки сделки», «Команда сделки», у каждого своё окно; остальные
-10 — заглушки (`data-state="empty"`): оболочка есть, состав полей не
+12 тайлов и таблица страницы сделки, шесть модальных окон и поповер. Наполнены пять
+тайлов — «КНР», «Сроки сделки», «Команда сделки», «Описание сделки», «Финансовые метрики
+сделки», у каждого своё окно; остальные 7 тайлов и таблица — заглушки (`data-state="empty"`): оболочка есть, состав полей не
 согласован. Имена сверены с деревом фронтенда 24.09.2026: где пара нашлась,
 имя — как у фронтенда; где нет — осталось нашим, с типом в конце.
 
 | Виджет | Где стоит на странице сделки | Пара во фронтенде |
 |---|---|---|
-| `widgets/tiles/KNRTile` — наполнен | Общая информация, первый ряд (3) | нет |
+| `widgets/tiles/CounterpartiesTile` — наполнен | Общая информация, первый ряд (3) | `CounterpartiesTile` (было `KNRTile`). Универсальный тайл контрагентов, заголовок по странице: на сделке «КНР», на обеспечении «Залогодатель» / «Поручитель» / «Гарант», на инструменте «Контрагент»; собран вариант сделки |
 | `widgets/tiles/DealPeriodTile` — наполнен | Общая информация, первый ряд (3) | `DealPeriodTile` (было `DealTermsTile`) |
 | `widgets/tiles/DealTeamTile` — наполнен | Общая информация, первый ряд (6) | `DealTeamTile` |
-| `widgets/tiles/DealDescriptionTile` | Общая информация, второй ряд (6) | `DealDescriptionTile` |
-| `widgets/tiles/DealFinancialMetricsTile` | Общая информация, второй ряд (6) | `DealFinancialMetricsTile` (было `DealMetricsTile`) |
+| `widgets/tiles/DealDescriptionTile` — наполнен | Общая информация, второй ряд (6) | `DealDescriptionTile` |
+| `widgets/tiles/DealFinancialMetricsTile` — наполнен | Общая информация, второй ряд (6) | `DealFinancialMetricsTile` (было `DealMetricsTile`) |
 | `widgets/tiles/ProjectInformationTile` | Общая информация, третий ряд (12, опциональный) | `ProjectInformationTile` (было `ProjectInfoTile`) |
 | `widgets/tiles/DealSetupTile` | Общая информация, правая колонка 320px | ближайшее — виджет `Navigator` (у фронтенда не тайл) — имя оставлено |
 | `widgets/tiles/DealProductTreeTile` | «Финансовые данные», первый ряд (6) | `DealProductTreeTile` (было `DealProductsTile`) |
 | `widgets/tiles/FinInstrumentsTile` | «Финансовые данные», первый ряд (6) | ближайшее — группа `DealFinancialInstrumentsGroup` из `DealFinancialInstrumentTile` — имя оставлено |
 | `widgets/tiles/EpsVbsImpactTile` | «Финансовые данные», второй ряд (6) | точной нет; рядом по теме `DealEirIbsvFixationTile` (фиксация, а не влияние) — имя оставлено |
 | `widgets/tiles/DealMetricsCalculationTile` | «Финансовые данные», второй ряд (6) | `DealMetricsCalculationTile` (было `FinMetricsTile`) |
-| `widgets/tiles/CounterpartiesTile` | вкладка «Контрагенты» (12) | `CounterpartiesTile` (было `widgets/tables/CounterpartiesTable`; корень — тайл без шапки) |
+| `widgets/tables/DealCounterpartiesTable` | вкладка «Контрагенты» (12) | нет — новая сущность, имя наше (было `widgets/tiles/CounterpartiesTile`, до того `widgets/tables/CounterpartiesTable`; корень — тайл без шапки) |
 | `widgets/tiles/DealRelatedCollateralsTile` | вкладка «Обеспечения» (12) | `DealRelatedCollateralsTile` (было `CollateralsTile`) |
-| `widgets/modals/KNRModal` | конец `body`; окно тайла «КНР» (+ `KNRConfirmModal.html` — подтверждение, `CounterpartyCard/` — шаблон карточки контрагента) | нет (было `TileKNRModal`, карточка — `CardCounterparty`) |
+| `widgets/modals/InstrumentsCounterpartiesModal` | конец `body`; окно тайла «КНР» (+ `KNRConfirmModal.html` — подтверждение, `CounterpartyCard/` — шаблон карточки контрагента) | `InstrumentsCounterpartiesModal` (было `KNRModal`, до того `TileKNRModal`; карточка — `CardCounterparty`) |
 | `widgets/modals/DealPeriodModal` | конец `body`; окно тайла «Сроки сделки» | `DealPeriodModal` (было `TileDealTermsModal`) |
 | `widgets/modals/DealTeamModal` | конец `body`; окно тайла «Команда сделки» | `DealTeamModal` (было `TileDealTeamModal`) |
+| `widgets/modals/DealDescriptionModal` | конец `body`; окно тайла «Описание сделки» — правка и просмотр | `DealDescriptionModal` |
+| `widgets/modals/DealFinancialMetricsModal` | конец `body`; окно тайла «Финансовые метрики сделки» — только просмотр | `DealFinancialMetricsModal` |
+| `widgets/modals/CounterpartiesEcmModal` | конец `body`; «Документы ЭКД по сделке» тайла «Описание сделки»: выбор участника (+ `EcmModal/` — второй шаг, документы) | `CounterpartiesEcmModal` (+ `EcmModal`) |
+| `widgets/popovers/RelatedDealsPopover` | конец `body`; поповер ссылки «Связанные сделки» тайла «Описание сделки» | пара — окно `RelatedDealsModal`; у нас поповер (решение человека 24.09.2026), имя наше |
 
 Тайл и его окно лежат в разных группах, как у фронтенда; подчасть окна — в
 его папке. JS наполненных виджетов (`<Имя>.js`) подключает страница после
 `ds-body.js`: сборщик вшивает разметку и CSS, но не скрипты. Страницы
-документации виджетов и витрина локальных компонентов из прототипа сюда пока
-не перенесены (`widgets/README.md`, «Документация модулей»).
+документации виджетов — в витрине локальных компонентов `apps/local-components/`
+(пункт хаба «Локальные компоненты»): их собирает `kit-build.mjs` из папок виджетов
+(`widgets/README.md`, «Документация модулей»).
 
 Как устроены виджеты и их связи — `widgets/README.md`.
 
 **Виджеты общие для раздела `postrade`.** Страница любого модуля раздела
 может вшить виджет отсюда: из `pages/` соседнего модуля —
-`<ds-include src="../../deals-app/widgets/tiles/KNRTile/KNRTile.html" class="col-6"></ds-include>`,
+`<ds-include src="../../deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.html" class="col-6"></ds-include>`,
 из концепта `postrade/drafts/<имя>/pages/` — на один `../` длиннее. Виджет
 остаётся здесь, у своего модуля; из другого раздела его не берут (сборщик,
 СБ5), модуль не берёт виджеты из `drafts/` (СБ6).
@@ -97,33 +102,60 @@ node .agents/tools/module-readme.mjs
 `data/API.md`; настоящий бэкенд реализует его же, и тогда меняется только
 адаптер.
 
+Финансовые метрики сделок — `mock-financial-metrics.js`
+(`window.MOCK_DEAL_FIN_METRICS`, ключ — id сделки): ВБС и ОСЗ по составляющим,
+резервы и переоценка по PE по ФИ. Только чтение — метрики считает система,
+стора и сохранения у них нет. Какая демо-сделка какое состояние тайла
+показывает — в шапке файла. В продукте метрики складываются из финансовых
+инструментов сделки; здесь — демо-данные, с деревом ФИ (`mock-deal-trees.js`)
+не связанные. Привязка к бэкенду и мок-данным ФИ — следующий шаг (решение
+человека 25.09.2026).
+
 ## Что лежит
 
 <!-- @tree — дерево генерирует .agents/tools/module-readme.mjs, руками не править -->
 ```
 deals-app/
-├── app.json                             ← запись хаба: «Post — ДИД», трек product
+├── app.json                                 ← запись хаба: «Post — ДИД», трек product
 ├── README.md
 ├── pages/
-│   ├── Deal.html                        ← Сделка — источник, собирается в Deal.preview.html
-│   ├── Deal.preview.html                ← собранная страница — открывать её
-│   ├── Deal.screen.md                   ← спека
-│   ├── MainPage.html                    ← Главная страница
-│   ├── MainPage.screen.md               ← спека
-│   ├── Portfolio.html                   ← Текущий портфель ДИД
-│   └── Portfolio.screen.md              ← спека
+│   ├── Deal.html                            ← Сделка — источник, собирается в Deal.preview.html
+│   ├── Deal.preview.html                    ← собранная страница — открывать её
+│   ├── Deal.screen.md                       ← спека
+│   ├── MainPage.html                        ← Главная страница
+│   ├── MainPage.screen.md                   ← спека
+│   ├── Portfolio.html                       ← Текущий портфель ДИД
+│   └── Portfolio.screen.md                  ← спека
 ├── widgets/
-│   ├── modals/                          ← модальные окна
-│   │   ├── DealPeriodModal/             ← Модальное окно сроков сделки
+│   ├── modals/                              ← модальные окна
+│   │   ├── CounterpartiesEcmModal/          ← Модальное окно «Документы по сделке»
+│   │   │   ├── CounterpartiesEcmModal.css
+│   │   │   ├── CounterpartiesEcmModal.html
+│   │   │   ├── CounterpartiesEcmModal.js
+│   │   │   ├── CounterpartiesEcmModal.md
+│   │   │   └── EcmModal/
+│   │   │       └── EcmModal.html
+│   │   ├── DealDescriptionModal/            ← Модальное окно описания сделки
+│   │   │   ├── DealDescriptionModal.css
+│   │   │   ├── DealDescriptionModal.html
+│   │   │   ├── DealDescriptionModal.js
+│   │   │   └── DealDescriptionModal.md
+│   │   ├── DealFinancialMetricsModal/       ← Модальное окно финансовых метрик сделки
+│   │   │   ├── DealFinancialMetricsModal.css
+│   │   │   ├── DealFinancialMetricsModal.html
+│   │   │   ├── DealFinancialMetricsModal.js
+│   │   │   ├── DealFinancialMetricsModal.md
+│   │   │   └── fixtures.json
+│   │   ├── DealPeriodModal/                 ← Модальное окно сроков сделки
 │   │   │   ├── DealPeriodModal.html
 │   │   │   ├── DealPeriodModal.js
 │   │   │   └── DealPeriodModal.md
-│   │   ├── DealTeamModal/               ← Модальное окно команды сделки
+│   │   ├── DealTeamModal/                   ← Модальное окно команды сделки
 │   │   │   ├── DealTeamModal.css
 │   │   │   ├── DealTeamModal.html
 │   │   │   ├── DealTeamModal.js
 │   │   │   └── DealTeamModal.md
-│   │   └── KNRModal/                    ← Модальное окно КНР
+│   │   └── InstrumentsCounterpartiesModal/  ← Модальное окно контрагентов
 │   │       ├── CounterpartyCard/
 │   │       │   ├── CHANGELOG.md
 │   │       │   ├── CounterpartyCard.css
@@ -131,83 +163,97 @@ deals-app/
 │   │       │   ├── CounterpartyCard.js
 │   │       │   ├── CounterpartyCard.md
 │   │       │   └── fixtures.json
-│   │       ├── KNRConfirmModal.html
-│   │       ├── KNRModal.css
-│   │       ├── KNRModal.html
-│   │       ├── KNRModal.js
-│   │       └── KNRModal.md
+│   │       ├── InstrumentsCounterpartiesModal.css
+│   │       ├── InstrumentsCounterpartiesModal.html
+│   │       ├── InstrumentsCounterpartiesModal.js
+│   │       ├── InstrumentsCounterpartiesModal.md
+│   │       └── KNRConfirmModal.html
+│   ├── popovers/                            ← поповеры и тултипы
+│   │   └── RelatedDealsPopover/             ← Поповер связанных сделок
+│   │       ├── RelatedDealsPopover.css
+│   │       ├── RelatedDealsPopover.html
+│   │       ├── RelatedDealsPopover.js
+│   │       └── RelatedDealsPopover.md
 │   ├── README.md
-│   └── tiles/                           ← тайлы
-│       ├── CounterpartiesTile/          ← Контрагенты сделки
+│   ├── tables/                              ← таблицы
+│   │   └── DealCounterpartiesTable/         ← Контрагенты сделки
+│   │       ├── DealCounterpartiesTable.css
+│   │       ├── DealCounterpartiesTable.html
+│   │       └── DealCounterpartiesTable.md
+│   └── tiles/                               ← тайлы
+│       ├── CounterpartiesTile/              ← Контрагенты
+│       │   ├── CHANGELOG.md
 │       │   ├── CounterpartiesTile.css
 │       │   ├── CounterpartiesTile.html
-│       │   └── CounterpartiesTile.md
-│       ├── DealDescriptionTile/         ← Описание сделки
+│       │   ├── CounterpartiesTile.js
+│       │   ├── CounterpartiesTile.md
+│       │   └── fixtures.json
+│       ├── DealDescriptionTile/             ← Описание сделки
+│       │   ├── CHANGELOG.md
 │       │   ├── DealDescriptionTile.css
 │       │   ├── DealDescriptionTile.html
-│       │   └── DealDescriptionTile.md
-│       ├── DealFinancialMetricsTile/    ← Финансовые метрики сделки
+│       │   ├── DealDescriptionTile.js
+│       │   ├── DealDescriptionTile.md
+│       │   └── fixtures.json
+│       ├── DealFinancialMetricsTile/        ← Финансовые метрики сделки
+│       │   ├── CHANGELOG.md
 │       │   ├── DealFinancialMetricsTile.css
 │       │   ├── DealFinancialMetricsTile.html
-│       │   └── DealFinancialMetricsTile.md
-│       ├── DealMetricsCalculationTile/  ← Финансовые метрики
+│       │   ├── DealFinancialMetricsTile.js
+│       │   ├── DealFinancialMetricsTile.md
+│       │   └── fixtures.json
+│       ├── DealMetricsCalculationTile/      ← Финансовые метрики
 │       │   ├── DealMetricsCalculationTile.css
 │       │   ├── DealMetricsCalculationTile.html
 │       │   └── DealMetricsCalculationTile.md
-│       ├── DealPeriodTile/              ← Сроки сделки
+│       ├── DealPeriodTile/                  ← Сроки сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealPeriodTile.css
 │       │   ├── DealPeriodTile.html
 │       │   ├── DealPeriodTile.js
 │       │   ├── DealPeriodTile.md
 │       │   └── fixtures.json
-│       ├── DealProductTreeTile/         ← Продукты сделки
+│       ├── DealProductTreeTile/             ← Продукты сделки
 │       │   ├── DealProductTreeTile.css
 │       │   ├── DealProductTreeTile.html
 │       │   └── DealProductTreeTile.md
-│       ├── DealRelatedCollateralsTile/  ← Связанные обеспечения
+│       ├── DealRelatedCollateralsTile/      ← Связанные обеспечения
 │       │   ├── DealRelatedCollateralsTile.css
 │       │   ├── DealRelatedCollateralsTile.html
 │       │   └── DealRelatedCollateralsTile.md
-│       ├── DealSetupTile/               ← Заведение сделки
+│       ├── DealSetupTile/                   ← Заведение сделки
 │       │   ├── DealSetupTile.css
 │       │   ├── DealSetupTile.html
 │       │   └── DealSetupTile.md
-│       ├── DealTeamTile/                ← Команда сделки
+│       ├── DealTeamTile/                    ← Команда сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealTeamTile.css
 │       │   ├── DealTeamTile.html
 │       │   ├── DealTeamTile.js
 │       │   ├── DealTeamTile.md
 │       │   └── fixtures.json
-│       ├── EpsVbsImpactTile/            ← Влияние на ЭПС/ВБС
+│       ├── EpsVbsImpactTile/                ← Влияние на ЭПС/ВБС
 │       │   ├── EpsVbsImpactTile.css
 │       │   ├── EpsVbsImpactTile.html
 │       │   └── EpsVbsImpactTile.md
-│       ├── FinInstrumentsTile/          ← Финансовые инструменты
+│       ├── FinInstrumentsTile/              ← Финансовые инструменты
 │       │   ├── FinInstrumentsTile.css
 │       │   ├── FinInstrumentsTile.html
 │       │   └── FinInstrumentsTile.md
-│       ├── KNRTile/                     ← КНР
-│       │   ├── CHANGELOG.md
-│       │   ├── fixtures.json
-│       │   ├── KNRTile.css
-│       │   ├── KNRTile.html
-│       │   ├── KNRTile.js
-│       │   └── KNRTile.md
-│       └── ProjectInformationTile/      ← Сведения о проекте
+│       └── ProjectInformationTile/          ← Сведения о проекте
 │           ├── ProjectInformationTile.css
 │           ├── ProjectInformationTile.html
 │           └── ProjectInformationTile.md
 ├── data/
 │   ├── API.md
-│   ├── counterparties-store.js          ← CounterpartiesStore — база контрагентов и состав участников сделки.
-│   ├── deals-store.js                   ← DealsStore — единственная точка доступа к базе сделок ДИД (мок).
-│   ├── mock-counterparties.js           ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
-│   ├── mock-deal-trees.js               ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
-│   ├── mock-deals.js                    ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
-│   ├── mock-team.js                     ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
-│   └── post-api.js                      ← PostApi — адаптер хранения данных направления Post.
+│   ├── counterparties-store.js              ← CounterpartiesStore — база контрагентов и состав участников сделки.
+│   ├── deals-store.js                       ← DealsStore — единственная точка доступа к базе сделок ДИД (мок).
+│   ├── mock-counterparties.js               ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
+│   ├── mock-deal-trees.js                   ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
+│   ├── mock-deals.js                        ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
+│   ├── mock-financial-metrics.js            ← Финансовые метрики сделок — демо-данные (window.MOCK_DEAL_FIN_METRICS).
+│   ├── mock-team.js                         ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
+│   └── post-api.js                          ← PostApi — адаптер хранения данных направления Post.
 └── refs/
     ├── Post _ DEAL _ R&D/
     │   ├── Tile-Deal-KNR.png
@@ -216,12 +262,23 @@ deals-app/
     ├── команда/
     │   ├── Modal_.png
     │   └── Tile-Deal-Team.png
+    ├── описание/
+    │   ├── Modal_Tile_Deal_Description.png
+    │   ├── Section 1.png
+    │   ├── Tile-Deal-Description.png
+    │   └── Документы по сделке (ЭКД).png
     ├── пример страницы/
     │   ├── Контрагенты.png
     │   ├── Обеспечения.png
     │   ├── Схематичное расположение тайлов на странице.png
     │   └── Финансовые данные.png
-    └── Текущий портфель.md
+    ├── Текущий портфель.md
+    └── финансовые метрики/
+        ├── Tile-fin-metrics.png
+        ├── Модальное окно.png
+        ├── Привязанные к легенде цветовые стили.png
+        ├── Состояния лайн чарта.png
+        └── Текст тултипов.png
 ```
 <!-- /@tree -->
 

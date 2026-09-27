@@ -15,6 +15,7 @@
 | Приложения: экраны и их спеки, трек в `app.json` | `apps/` (обзор — `apps/README.md`) | перед сборкой экрана |
 | Адрес ДС — строка `DS_PATH` в `apps/ds-config.js`; загрузчик и реестр хаба генерируются, руками не правятся | `apps/ds-config.js`, `apps/ds-body.js`, `hub.js` (`.agents/tools/boot-build.mjs`, `hub-build.mjs`) | когда меняется путь до ДС или приложение |
 | Адаптер opencode — один файл: пути до харнеса, режимы и права ролей | `.opencode/opencode.json` | правится вместе с `.agents/` |
+| Витрина локальных компонентов: страница на каждый виджет, собирается из `widgets/`, руками не правится | `apps/local-components/` (`.agents/tools/kit-build.mjs`, `apps/local-components/README.md`) | когда меняется виджет |
 
 ## Главное правило
 

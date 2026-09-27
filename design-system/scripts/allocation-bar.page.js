@@ -164,7 +164,7 @@ function make(cfg) {
     var dot = el('span', 'albar__dot');
     dot.style.background = it.color;
     row.appendChild(dot);
-    var nm = el('span', 'albar__name', it.label); nm.title = it.label;
+    var nm = el('span', 'albar__name', it.label); /* полное имя при усечении — тултипом ДС (ds-allocationbar.js), без title */
     row.appendChild(nm);
     if (cfg.showPercent !== false) row.appendChild(el('span', 'albar__pct', fmtPercent(it.percent)));
     row.appendChild(el('span', 'albar__val', fmtNumber(it.value, 2, 2)));

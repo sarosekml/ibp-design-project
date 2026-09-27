@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 213.
+Документов: 220.
 
 ## Корень (4)
 
@@ -225,7 +225,7 @@
 | [.agents/skills/screen-spec/references/widget-template.md](../.agents/skills/screen-spec/references/widget-template.md) | Widget: DealTeamTile — Команда сделки |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (81)
+## Приложения (88)
 
 | Документ | Аннотация |
 |---|---|
@@ -357,6 +357,12 @@
 |---|---|
 | [apps/ib/potentials-app/README.md](../apps/ib/potentials-app/README.md) | potentials-app — модуль раздела ib |
 
+### apps/local-components
+
+| Документ | Аннотация |
+|---|---|
+| [apps/local-components/README.md](../apps/local-components/README.md) | — |
+
 ### apps/postrade/corporate-requests-app
 
 | Документ | Аннотация |
@@ -374,13 +380,21 @@
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
 | [apps/postrade/deals-app/refs/Текущий портфель.md](../apps/postrade/deals-app/refs/Текущий%20портфель.md) | Новая страница "Текущий портфель ДИД" |
 | [apps/postrade/deals-app/widgets/README.md](../apps/postrade/deals-app/widgets/README.md) | widgets — виджеты модуля deals-app |
+| [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md) | Widget: CounterpartiesEcmModal — Модальное окно «Документы по сделке» |
+| [apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md](../apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md) | Widget: DealDescriptionModal — Модальное окно описания сделки |
+| [apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md](../apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md) | Модальное окно финансовых метрик сделки |
 | [apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md](../apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md) | Модальное окно сроков сделки |
 | [apps/postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.md](../apps/postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.md) | Модальное окно команды сделки |
-| [apps/postrade/deals-app/widgets/modals/KNRModal/CounterpartyCard/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/KNRModal/CounterpartyCard/CHANGELOG.md) | Карточка контрагента — журнал изменений |
-| [apps/postrade/deals-app/widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.md](../apps/postrade/deals-app/widgets/modals/KNRModal/CounterpartyCard/CounterpartyCard.md) | Карточка контрагента |
-| [apps/postrade/deals-app/widgets/modals/KNRModal/KNRModal.md](../apps/postrade/deals-app/widgets/modals/KNRModal/KNRModal.md) | Модальное окно КНР |
-| [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты сделки |
-| [apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md](../apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md) | Описание сделки |
+| [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CHANGELOG.md) | Карточка контрагента — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md) | Карточка контрагента |
+| [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md) | Модальное окно контрагентов (InstrumentsCounterpartiesModal) |
+| [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
+| [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md) | Контрагенты сделки |
+| [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.md) | Контрагенты (CounterpartiesTile) |
+| [apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/CHANGELOG.md) | Описание сделки — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md](../apps/postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.md) | Widget: DealDescriptionTile — Описание сделки |
+| [apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/CHANGELOG.md) | Финансовые метрики сделки — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md](../apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.md) | Финансовые метрики сделки |
 | [apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md](../apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md) | Финансовые метрики |
 | [apps/postrade/deals-app/widgets/tiles/DealPeriodTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealPeriodTile/CHANGELOG.md) | Сроки сделки — журнал изменений |
@@ -392,8 +406,6 @@
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
 | [apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md](../apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md) | Влияние на ЭПС/ВБС |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты |
-| [apps/postrade/deals-app/widgets/tiles/KNRTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/KNRTile/CHANGELOG.md) | КНР — журнал изменений |
-| [apps/postrade/deals-app/widgets/tiles/KNRTile/KNRTile.md](../apps/postrade/deals-app/widgets/tiles/KNRTile/KNRTile.md) | КНР |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Сведения о проекте |
 
 ### apps/postrade/payments-app

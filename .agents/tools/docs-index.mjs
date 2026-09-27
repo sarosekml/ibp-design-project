@@ -36,7 +36,8 @@ const GEN = 'docs-index.mjs';
 const OPEN = '<!-- @docs-index -->';
 const CLOSE = '<!-- /@docs-index -->';
 const IGNORE_DIR_NAMES = new Set(['node_modules', '.git']);
-const IGNORE_LOCAL = ['tmp', '.zcodeignore', '.obsidian', ('cla' + 'ude').toUpperCase() + '.md'];
+// Корневые refs/ в main стали локальными материалами; refs/ приложений входят.
+const IGNORE_LOCAL = ['tmp', 'refs', '.zcodeignore', '.obsidian', ('cla' + 'ude').toUpperCase() + '.md'];
 const slash = (p) => p.split(path.sep).join('/');
 const under = (rel, base) => Boolean(base) && (rel === base || rel.startsWith(base + '/'));
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;

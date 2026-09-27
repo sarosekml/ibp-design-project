@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tiles/DealTeamTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Команда сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Команда сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Команда сделки» — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-state      — состояние данных: loading | data | partial | empty
+     data-mode       — режим прав: edit | view. Ставит страница: статус сделки,
+                       не допускающий правку, даёт view при любой роли
+     data-restricted — yes: сделка ограниченного доступа, в шапке строка-признак
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное DealTeamTile.css по
+     этим атрибутам — так же, как тайлы «КНР» и «Сроки сделки».
+
+     Тайл показывает шесть ролей из тринадцати — остальные видны в окне. Поэтому
+     в просмотре действие в шапке есть («Развернуть»): без него роль без права
+     правки не увидела бы остальных участников. Это не действие правки, и
+     правило «в просмотре действия правки не рисуются» им не нарушено.
+
+     ФИО ниже — пример. На странице сделки их заменяет DealTeamTile.js
+     (PostTileDealTeam.render) данными сделки; пока они грузятся, тайл стоит в
+     loading. Окно открывается с data-modal-guarded: в нём ввод, и клик мимо
+     окна не должен его сбросить. В просмотре сбрасывать нечего — там без
+     guarded. -->
+<section class="tile lc-deal-team" data-state="data" data-mode="edit" id="tile-deal-team">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Команда сделки</h3></div>
+      <!-- Признак сделки ограниченного доступа. Тон иконки — модификатор Tile
+           1.014; раньше слот красил иконку зелёным независимо от смысла. -->
+      <p class="tile__subtitle lc-deal-team__restricted">
+        <span class="tile__subtitle-icon tile__subtitle-icon--warning" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        Сделка ограниченного доступа
+      </p>
+    </div>
+    <!-- Действия шапки — только когда есть что показывать (data, partial).
+         Пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-team__act lc-deal-team__act--edit"
+              aria-label="Редактировать" data-modal="deal-team-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-team__act lc-deal-team__act--view"
+              aria-label="Развернуть" data-modal="deal-team-scrim"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Шесть ролей: две колонки, порядок полей постоянный. Незаполненная роль —
+         прочерк, поле с места не уходит: пропавшее поле читалось бы как
+         отсутствие роли, а не значения. Лейбл переносится до двух строк, если
+         колонка уже подписи. -->
+    <div class="tile__grid lc-deal-team__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Деск</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="desk">Телекоммуникации</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник ЦУП</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="tsupEmployee">—</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Директор</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="director">Андреев М.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Клиентский менеджер</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="clientManager">Смирнов А.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Менеджер сделки</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="manager">Андреев М.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Кредитный инспектор</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="creditInspector">Смирнов А.А.</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в
+         габаритах строк (подпись 16px, значение 20px), чтобы раскладка не
+         прыгнула после ответа. -->
+    <div class="tile__grid lc-deal-team__grid lc-deal-team__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:38%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:136px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:60%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:46%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:78%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-deal-team__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-team-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-deal-team__empty">Не заполнено</p>
+
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.001</b></span><span>Обновлено: <b>25.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Команда сделки</h1>
+  <p class="lead">Ответственные по сделке — деск и роли участников, с точкой входа в правку состава</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile">apps/postrade/deals-app/widgets/tiles/DealTeamTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в паспорте не указана</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — блок «Общая информация», первый ряд</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.001 · обновлено 25.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/molecules/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.css">DealTeamTile.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.html">DealTeamTile.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js">DealTeamTile.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md">DealTeamTile.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/DealTeamTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealTeamModal.doc.html">Модальное окно команды сделки (DealTeamModal)</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайл страницы сделки: кто ведёт сделку. Показывает деск и пять ролей — обзор, а не весь состав: всего ролей тринадцать, остальные видны в окне. Окно же их и правит.</p>
+<p class="desc"><b>Деск</b> — направление деятельности, по которому ведётся сделка (Недвижимость, Телекоммуникации, M&amp;A, ECM, DCM, Природные ресурсы, Промышленность, Розничная торговля и другие). У каждого деска своя команда, разбирающаяся в направлении: кто силён в телекоммуникациях, не ведёт сделки по недвижимости — там свои нюансы, правила и процессы. Деск — не отрасль клиента, хотя и близок к ней; точное определение и полный список заказчик уточняет.</p>
+<p class="desc">Место на странице и ширина в колонках задаются экраном (<code class="tok">apps/postrade/deals-app/pages/Deal.html</code>), не компонентом. Значения приходят из записи сделки (<code class="tok">apps/postrade/deals-app/data/deals-store.js</code>), справочник сотрудников для списков окна — <code class="tok">apps/postrade/deals-app/data/mock-team.js</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<p class="desc">В тайле — шесть строк, в порядке отображения (сетка заполняется построчно, в одну, две или три колонки по ширине тайла — см. «Переполнение»). Источник у всех один: запись сделки.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Деск</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Направление, по которому ведётся сделка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значение из справочника десков (<code class="tok">DEALS_ENUMS.desk</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.desk</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сотрудник ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сотрудник центра управления процессами по этой сделке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИО «Фамилия И.О.»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.tsupEmployee</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зависит от деска</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Директор</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Директор, отвечающий за сделку</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.director</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зависит от деска</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клиентский менеджер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Менеджер, ведущий клиента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.clientManager</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зависит от деска</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Менеджер сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Менеджер, ведущий саму сделку</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.manager</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зависит от деска</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кредитный инспектор</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Инспектор, сопровождающий кредитную часть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">deal.creditInspector</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зависит от деска</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc"><b>Тайл показывает только ФИО, без табельных номеров</b> — так на макете. Номер каждой роли лежит в записи сделки отдельным полем <code class="tok">&lt;роль&gt;Tab</code> и нужен там, где сотрудника выбирают: в окне он виден за именем и различает однофамильцев.</p>
+<p class="desc">Ещё семь ролей — Региональный директор, Сотрудник Рисков, Сотрудник Мониторинга, Сотрудник ПМЗ, Сотрудник ПРПА, Сотрудник Юридической службы, Строительный эксперт — и поле «Другие участники» в тайле не показываются, но входят в состав команды: их состав, смысл и правила — в паспорте окна (<code class="tok">DealTeamModal.md</code>).</p>
+<p class="desc">Признак <b>«Сделка ограниченного доступа»</b> (<code class="tok">deal.restricted</code>, «Да» / «Нет») — не поле, а свойство сделки: показывается строкой в шапке тайла.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Руководитель ЦУП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (23.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только он меняет признак ограниченного доступа (заказчик 23.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит на компонент атрибутом <code class="tok">data-mode</code> — его ставит страница сделки:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label"><code class="tok">data-mode</code></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что в шапке</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Редактировать» — открывает окно на правку</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Развернуть» — открывает то же окно на просмотр</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Статус сделки сильнее роли: в статусах «Активная», «Погашена», «Ожидает подтверждения» и «Подтверждение изменений» страница ставит <code class="tok">view</code> при любой роли (<code class="tok">DealsStore.isEditable</code>, решение человека 21.09.2026).</p>
+<p class="desc"><b>Почему в просмотре действие остаётся.</b> Правило «в просмотре действия правки не рисуются» соблюдено: «Развернуть» — не правка. Оно нужно потому, что тайл показывает шесть ролей из тринадцати: без него роль без права правки остальных участников не увидела бы вовсе.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетоны на месте подписей и значений всех шести полей, в габаритах строк (подпись 16px, значение 20px) — раскладка не прыгает после ответа; действий в шапке нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сетка шести полей, колонок одна–три по ширине тайла; действие шапки по режиму</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">та же сетка, незаполненная роль — прочерк цветом обычного текста (правило ReadOnlyField 1.010: прочерк — значение, а не подсказка). Поле с места не уходит: пропавшее поле читалось бы как отсутствие роли, а не значения. <b>Штатный вид, а не дефект:</b> заполнять все роли не нужно, у разных сделок свой обязательный состав (заказчик 23.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">с правом на правку — кнопка «Заполнить» слева вверху тела; без права — строка «Не заполнено» серым Body M. Без иллюстрации — см. «Осознанные отклонения». Действий в шапке нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (23.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у соседнего тайла «Сроки сделки» состояния «Ошибка» нет по решению человека 22.09.2026; по этому тайлу такого решения не было</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (23.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в шапке карандаш, открывает окно на правку; после сохранения тайл показывает новые значения (перерисовка по событию стора)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состав и порядок полей те же, карандаша нет; вместо него «Развернуть» — окно на просмотр</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сделка ограниченного доступа (<code class="tok">data-restricted=&quot;yes&quot;</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">под заголовком — строка <code class="tok">tile__subtitle</code> с оранжевым треугольником (<code class="tok">alert-triangle-filled</code>, тон <code class="tok">--warning</code>) и текстом «Сделка ограниченного доступа». Накладывается на любое состояние данных и прав; на состав полей не влияет</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет. Заполнять все роли не нужно — у разных сделок свой обязательный состав (заказчик 23.09.2026).</li><li>Обязательные поля внутри: <b>деск обязателен всегда</b>. Какие роли обязательны вдобавок — зависит от выбранного деска: у одного деска одно поле, у другого несколько. Конкретные пары — <code class="tok">не решено (23.09.2026)</code>, у владельца продукта; до них в <code class="tok">data/mock-team.js</code> лежит один демо-случай, помеченный как демо.</li><li>Показ обязательности живёт в окне (звёздочка у подписи), а не в тайле: в тайле поля не правят, и помеченное там обязательное поле не вело бы никуда.</li><li>Признак «обязательное не заполнено» наружу компонент пока не отдаёт: <code class="tok">не решено (23.09.2026)</code> — блокирует ли незаполненная команда переход по шагу, решает экран, и правила для него нет.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">усекает ReadOnlyField, полное значение — тултипом (<code class="tok">ds-readonlyfield.js</code>). Поле не переносится на вторую строку и не распирает колонку</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не бывает: полей ровно шесть, состав постоянный. Роли сверх шести живут в окне</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись роли переносится до двух строк внутри своей колонки (<code class="tok">ds-label--wrap</code>). Ниже 320px ширины тайла поля встают в одну колонку в том же порядке (<code class="tok">@container</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">от 940px ширины тайла — три колонки (<code class="tok">@container</code>): шесть ролей встают в два ряда, и тайл перестаёт быть вдвое выше соседей по ряду. Ячейка при этом ≈289px — выше минимума 240px. Порог назначен человеком 23.09.2026 и консервативнее расчётного (по минимуму ячейки три колонки помещаются уже с ~760px). На странице сделки тайл стоит на 6 колонках из 12 и на 1920 порога не достигает (900px) — правило работает на широких экранах, на тайле во всю ширину и в витрине</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты">
+<h2>Связанные артефакты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1fr) minmax(0,2.9fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1fr) minmax(0,2.9fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Редактировать» в шапке (режим <code class="tok">edit</code>) и кнопка «Заполнить» в пустом тайле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">деск, двенадцать ролей, «Другие участники», признак ограниченного доступа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">при сохранении — новые значения в тайле и в записи сделки; при отмене ничего. Фокус возвращается на кнопку, открывшую окно (рантайм Modal)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1fr) minmax(0,2.9fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton «Развернуть» в шапке (режим <code class="tok">view</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же окно в режиме просмотра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же поля как ReadOnlyField, признак — выключенный чекбокс, подвал с аутлайновой «Закрыть»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">никто</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Модальное окно команды сделки</h3>
+<p class="desc">Паспорт — <code class="tok">widgets/modals/DealTeamModal/DealTeamModal.md</code>; страница документации в этот репозиторий ещё не перенесена. Окно одно на оба триггера: режим ему ставит скрипт окна по режиму тайла, который его открыл.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Связи с другими модулями">
+<h2>Связи с другими модулями</h2>
+<p class="desc"><b>Деск управляет тайлом «Сведения о проекте».</b> У сделок деска «Недвижимость» на странице показывается ряд «Сведения о проекте» — это проекты недвижимости (заказчик 23.09.2026). Зависимость односторонняя и записана у зависимого: <code class="tok">ProjectInformationTile</code> объявляет <code class="tok">dependsOn: [DealTeamTile]</code>, здесь <code class="tok">dependsOn</code> пуст. Решение о показе принимает страница (<code class="tok">Deal.html</code>, <code class="tok">applyProjectInfo</code>) — модули друг друга не знают.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.4fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пустота в компоненте шире четырёх колонок собирается EmptyState</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка причины и кнопка, без иллюстрации и без центрирования — как в узком компоненте</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл стоит на шести колонках, то есть по букве правила ему полагается EmptyState. Но тайлы страницы сделки стоят в минимальной высоте 200px (решение человека 21.09.2026), а EmptyState с иллюстрацией 96px даёт ≈324px и растянул бы весь ряд — ту же причину человек признал для заглушек 22.09.2026. На макете <code class="tok">Tile-Deal-Team.png</code> в этом состоянии тоже только заголовок и кнопка «Заполнить». Состав пустоты правилу соответствует: причина плюс действие по праву роли</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Владелец компонента — <code class="tok">не решено (19.09.2026)</code>.</li><li>Матрица ролей на просмотр и правку целиком — <code class="tok">не решено (19.09.2026)</code>; известен один пункт: признак ограниченного доступа меняет только руководитель ЦУП. Такой роли в каталоге <code class="tok">IBPHome.ROLES</code> нет — там объявлена одна, «Финансист ДИД», — поэтому на странице сделки чекбокс признака выключен всегда.</li><li>Карта «деск → обязательные роли» — <code class="tok">не решено (23.09.2026)</code>, у владельца продукта. Механика в окне готова, дописываются только пары.</li><li>Полный список десков и точное определение деска — заказчик уточняет (23.09.2026). В <code class="tok">DEALS_ENUMS.desk</code> лежит то, что названо.</li><li>Состояния «Ошибка» и «Обновление» — <code class="tok">не решено (23.09.2026)</code>.</li><li>Подтверждение после сохранения (Toast) — <code class="tok">не решено (23.09.2026)</code>: ни у «Сроков сделки», ни у «КНР» его нет, общего решения по странице не было.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tiles/DealTeamTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «Команда сделки»: модальное окно состава команды.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно работает в двух режимах, атрибут data-mode на самой модалке:
+       edit — правка: деск и двенадцать ролей списками, «Другие участники»
+              строкой, подвал с «Сохранить»;
+       view — просмотр: те же поля как ReadOnlyField, подвал с «Закрыть».
+     Признак ограниченного доступа в обоих режимах остаётся чекбоксом и стоит
+     рядом с блоками режимов, а не внутри: читаемой строкой «Да» / «Нет» его не
+     подменяют, выключенный чекбокс показывает состояние честнее.
+     Режим ставит DealTeamModal.js по режиму тайла, который окно открыл:
+     из правки — карандашом, из просмотра — «Развернуть». Второй режим нужен
+     потому, что тайл показывает шесть ролей из тринадцати: без окна роль без
+     права правки остальных не увидела бы. Переключает вид
+     DealTeamModal.css, разметка держит оба сразу — как тайлы.
+
+     Раскладка: штатная сетка ДС .grid12, поле — .col-4, три колонки, как на
+     макете. Порядок полей в разметке построчный, он же порядок чтения.
+     Своего CSS раскладки у окна нет.
+
+     Списки сотрудников пусты в разметке намеренно: справочник — 35 человек на
+     каждое из тринадцати полей, это 455 строк разметки на один и тот же
+     список. Опции подставляет DealTeamModal.js из mock-team.js —
+     динамический список у DropdownList и полагается собирать кодом
+     (runtime-hooks, «Чего рантаймы не делают»).
+
+     Значения ниже — пример. Их заменяет DealTeamModal.js данными сделки.
+     «Сохранить» без data-modal-close: окно закрывает скрипт, когда проверка
+     прошла. Крестик и Esc закрывают без сохранения, клик мимо окна не
+     закрывает (триггеры стоят с data-modal-guarded). -->
+
+<div class="modal-scrim" id="deal-team-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-team-modal" role="dialog" aria-modal="true" aria-labelledby="deal-team-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-team-title">Команда сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <!-- ── Правка ──────────────────────────────────────────────────── -->
+      <!-- Поля во всю ширину («Другие участники», признак) стоят НЕ в сетке, а
+           рядом с ней — как в окне «Сроки сделки». В сетке они переполнили бы
+           последний ряд: в нём одно поле из трёх, и col-12 следом даёт 16
+           колонок при 12 (линтер L1). -->
+      <div class="lc-deal-team-modal__edit">
+      <div class="grid12">
+
+        <!-- Ряд 1 -->
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-desk"><span class="ds-label__text">Деск</span><span class="ds-label__req">*</span></label>
+          <div class="inp__field" data-ddl="dt-desk-list">
+            <input class="inp__control" id="dt-desk" name="desk" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-desk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-client-manager"><span class="ds-label__text">Клиентский менеджер</span></label>
+          <div class="inp__field" data-ddl="dt-client-manager-list">
+            <input class="inp__control" id="dt-client-manager" name="clientManager" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-client-manager-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-pmz"><span class="ds-label__text">Сотрудник ПМЗ</span></label>
+          <div class="inp__field" data-ddl="dt-pmz-list">
+            <input class="inp__control" id="dt-pmz" name="pmzEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-pmz-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Ряд 2 -->
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-director"><span class="ds-label__text">Директор</span></label>
+          <div class="inp__field" data-ddl="dt-director-list">
+            <input class="inp__control" id="dt-director" name="director" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-director-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-credit-inspector"><span class="ds-label__text">Кредитный инспектор</span></label>
+          <div class="inp__field" data-ddl="dt-credit-inspector-list">
+            <input class="inp__control" id="dt-credit-inspector" name="creditInspector" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-credit-inspector-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-prpa"><span class="ds-label__text">Сотрудник ПРПА</span></label>
+          <div class="inp__field" data-ddl="dt-prpa-list">
+            <input class="inp__control" id="dt-prpa" name="prpaEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-prpa-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Ряд 3 -->
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-regional-director"><span class="ds-label__text">Региональный директор</span></label>
+          <div class="inp__field" data-ddl="dt-regional-director-list">
+            <input class="inp__control" id="dt-regional-director" name="regionalDirector" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-regional-director-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-risk"><span class="ds-label__text">Сотрудник Рисков</span></label>
+          <div class="inp__field" data-ddl="dt-risk-list">
+            <input class="inp__control" id="dt-risk" name="riskEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-risk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-legal"><span class="ds-label__text">Сотрудник Юридической службы</span></label>
+          <div class="inp__field" data-ddl="dt-legal-list">
+            <input class="inp__control" id="dt-legal" name="legalEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-legal-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Ряд 4 -->
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-manager"><span class="ds-label__text">Менеджер сделки</span></label>
+          <div class="inp__field" data-ddl="dt-manager-list">
+            <input class="inp__control" id="dt-manager" name="manager" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-manager-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-monitoring"><span class="ds-label__text">Сотрудник Мониторинга</span></label>
+          <div class="inp__field" data-ddl="dt-monitoring-list">
+            <input class="inp__control" id="dt-monitoring" name="monitoringEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-monitoring-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-construction"><span class="ds-label__text">Строительный эксперт</span></label>
+          <div class="inp__field" data-ddl="dt-construction-list">
+            <input class="inp__control" id="dt-construction" name="constructionExpert" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-construction-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- Ряд 5: в правой части ряда полей нет, как на макете -->
+        <div class="inp inp--m inp--fullwidth col-4">
+          <label class="ds-label" for="dt-tsup"><span class="ds-label__text">Сотрудник ЦУП</span></label>
+          <div class="inp__field" data-ddl="dt-tsup-list">
+            <input class="inp__control" id="dt-tsup" name="tsupEmployee" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="dt-tsup-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+      </div>
+
+        <!-- Другие участники — не список: сюда вписывают людей не из банка,
+             несколько через запятую. Справочника для них нет и быть не может. -->
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="dt-others"><span class="ds-label__text">Другие участники</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="dt-others" name="otherParticipants" autocomplete="off">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Просмотр ────────────────────────────────────────────────── -->
+      <!-- Состав и порядок полей те же, что в правке — правило локальных
+           компонентов для состояния «Только просмотр». -->
+      <div class="lc-deal-team-modal__view">
+      <div class="grid12">
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Деск</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="desk">Телекоммуникации</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Клиентский менеджер</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="clientManager">Смирнов А.А. 100127</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник ПМЗ</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="pmzEmployee">—</span></div>
+        </div>
+
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Директор</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="director">Андреев М.А. 100101</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Кредитный инспектор</span></span>
+          <!-- Второй Смирнов А.А. — не опечатка: однофамилец, и различает их
+               только табельный номер -->
+          <div class="rof__row"><span class="rof__value" data-team-view="creditInspector">Смирнов А.А. 100241</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник ПРПА</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="prpaEmployee">—</span></div>
+        </div>
+
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Региональный директор</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="regionalDirector">—</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник Рисков</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="riskEmployee">—</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник Юридической службы</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="legalEmployee">—</span></div>
+        </div>
+
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Менеджер сделки</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="manager">Андреев М.А. 100101</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник Мониторинга</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="monitoringEmployee">—</span></div>
+        </div>
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Строительный эксперт</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="constructionExpert">—</span></div>
+        </div>
+
+        <div class="rof col-4">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник ЦУП</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="tsupEmployee">—</span></div>
+        </div>
+
+      </div>
+
+        <!-- «Другие участники» — во всю ширину рядом с сеткой, как в правке -->
+        <div class="rof">
+          <span class="ds-label ds-label--wrap"><span class="ds-label__text">Другие участники</span></span>
+          <div class="rof__row"><span class="rof__value" data-team-view="otherParticipants">—</span></div>
+        </div>
+
+      </div>
+
+      <!-- Признак ограниченного доступа — общий для обоих режимов, поэтому
+           стоит РЯДОМ с ними, а не внутри. Видимый блок всегда один, и чекбокс
+           встаёт под ним и в правке, и в просмотре.
+           Читаемым полем его не подменяем: чекбокс сам показывает состояние —
+           отмечен или нет, — и выключенный чекбокс честнее строки «Да» / «Нет»
+           (решение человека 23.09.2026). Видят его все роли, меняет только
+           руководитель ЦУП; в просмотре он выключен всегда. Состояние ставит
+           DealTeamModal.js. -->
+      <label class="cb">
+        <input type="checkbox" class="cb__input" id="dt-restricted" name="restricted" disabled>
+        <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+        <span class="cb__content"><span class="cb__label">Сделка ограниченного доступа</span></span>
+      </label>
+
+    </div>
+
+    <!-- Подвал у модалки обязателен, поэтому в просмотре он не прячется, а
+         меняет кнопку: править нечего — окно закрывают. «Закрыть» аутлайновая,
+         как у окна КНР (InstrumentsCounterpartiesModal): в просмотре подтверждать нечего, и
+         залитая Primary обещала бы действие, которого нет. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m lc-deal-team-modal__save" data-team-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-deal-team-modal__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealTeamTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty"],"modes":["edit","view"],"state":"data","mode":"edit","width":800,"scenario":false,"fixtures":{"_":"Демо-данные витрины: по объекту на состояние. Ключи — поля записи сделки (data/mock-deals.js): деск, двенадцать ролей, у каждой роли пара \u003cроль>Tab с табельным номером, otherParticipants и признак restricted («Да» / «Нет»). Пустая строка = роль не назначена, в тайле и в окне прочерк. Тайл показывает шесть ролей из тринадцати — desk, tsupEmployee, director, clientManager, manager, creditInspector — и только ФИО, без номеров: номер нужен там, где сотрудника выбирают, то есть в окне. Номера сверены со справочником mock-team.js.","data":{"_":"Все шесть ролей тайла заполнены — базовый вид, он же эталонный снимок. Деск «Телекоммуникации» и ФИО — с макета (apps/postrade/deals-app/refs/команда/Tile-Deal-Team.png). Клиентский менеджер и кредитный инспектор — два разных «Смирнов А.А.»: различает их только табельный номер.","desk":"Телекоммуникации","director":"Андреев М.А.","directorTab":"100101","regionalDirector":"Соколов С.С.","regionalDirectorTab":"100129","manager":"Андреев М.А.","managerTab":"100101","tsupEmployee":"Комаров К.К.","tsupEmployeeTab":"100114","clientManager":"Смирнов А.А.","clientManagerTab":"100127","creditInspector":"Смирнов А.А.","creditInspectorTab":"100241","riskEmployee":"Орлов О.О.","riskEmployeeTab":"100123","monitoringEmployee":"Титов Т.Т.","monitoringEmployeeTab":"100132","pmzEmployee":"Белов Б.Б.","pmzEmployeeTab":"100103","prpaEmployee":"Гусев Г.Г.","prpaEmployeeTab":"100108","legalEmployee":"Зайцев З.З.","legalEmployeeTab":"100110","constructionExpert":"","constructionExpertTab":"","otherParticipants":"","restricted":"Нет"},"partial":{"_":"Сотрудник ЦУП не назначен — ровно случай с макета: поле на месте, значение прочерком. Заполнять все роли не нужно, у разных сделок свой обязательный состав (заказчик 23.09.2026), поэтому partial — штатный вид тайла, а не недозаполнение.","desk":"Телекоммуникации","director":"Андреев М.А.","directorTab":"100101","regionalDirector":"","regionalDirectorTab":"","manager":"Андреев М.А.","managerTab":"100101","tsupEmployee":"","tsupEmployeeTab":"","clientManager":"Смирнов А.А.","clientManagerTab":"100127","creditInspector":"Смирнов А.А.","creditInspectorTab":"100241","riskEmployee":"","riskEmployeeTab":"","monitoringEmployee":"","monitoringEmployeeTab":"","pmzEmployee":"","pmzEmployeeTab":"","prpaEmployee":"","prpaEmployeeTab":"","legalEmployee":"","legalEmployeeTab":"","constructionExpert":"","constructionExpertTab":"","otherParticipants":"","restricted":"Нет"},"empty":{"_":"Команду не заводили. С правом на правку — кнопка «Заполнить», без права — строка «Не заполнено».","desk":"","director":"","directorTab":"","regionalDirector":"","regionalDirectorTab":"","manager":"","managerTab":"","tsupEmployee":"","tsupEmployeeTab":"","clientManager":"","clientManagerTab":"","creditInspector":"","creditInspectorTab":"","riskEmployee":"","riskEmployeeTab":"","monitoringEmployee":"","monitoringEmployeeTab":"","pmzEmployee":"","pmzEmployeeTab":"","prpaEmployee":"","prpaEmployeeTab":"","legalEmployee":"","legalEmployeeTab":"","constructionExpert":"","constructionExpertTab":"","otherParticipants":"","restricted":"Нет"},"restricted":{"_":"Сделка ограниченного доступа: в шапке тайла появляется строка-признак с оранжевым треугольником. Состав ролей тот же, что в partial — признак к заполненности отношения не имеет.","desk":"Телекоммуникации","director":"Андреев М.А.","directorTab":"100101","regionalDirector":"","regionalDirectorTab":"","manager":"Андреев М.А.","managerTab":"100101","tsupEmployee":"","tsupEmployeeTab":"","clientManager":"Смирнов А.А.","clientManagerTab":"100127","creditInspector":"Смирнов А.А.","creditInspectorTab":"100241","riskEmployee":"","riskEmployeeTab":"","monitoringEmployee":"","monitoringEmployeeTab":"","pmzEmployee":"","pmzEmployeeTab":"","prpaEmployee":"","prpaEmployeeTab":"","legalEmployee":"","legalEmployeeTab":"","constructionExpert":"","constructionExpertTab":"","otherParticipants":"","restricted":"Да"},"realty":{"_":"Деск «Недвижимость»: на странице сделки к этому деску привязан ряд «Сведения о проекте», а в окне правки обязательным становится «Строительный эксперт» (демо-случай карты MOCK_DESK_REQUIRED). На виде тайла деск больше ни на что не влияет.","desk":"Недвижимость","director":"Иванов И.И.","directorTab":"100112","regionalDirector":"Соколов С.С.","regionalDirectorTab":"100129","manager":"Павлов П.П.","managerTab":"100124","tsupEmployee":"Комаров К.К.","tsupEmployeeTab":"100114","clientManager":"Смирнов А.А.","clientManagerTab":"100127","creditInspector":"Морозов М.М.","creditInspectorTab":"100121","riskEmployee":"Орлов О.О.","riskEmployeeTab":"100123","monitoringEmployee":"Титов Т.Т.","monitoringEmployeeTab":"100132","pmzEmployee":"Белов Б.Б.","pmzEmployeeTab":"100103","prpaEmployee":"Гусев Г.Г.","prpaEmployeeTab":"100108","legalEmployee":"Зайцев З.З.","legalEmployeeTab":"100110","constructionExpert":"Крылов К.К.","constructionExpertTab":"100116","otherParticipants":"Разумовский А.П. (ООО «Технадзор Плюс»), Федотова М.С. (независимый оценщик)","restricted":"Нет"},"long":{"_":"Данные предельной длины: самая длинная подпись роли («Сотрудник Юридической службы»), двойная фамилия в значении и перечисление внешних участников на несколько строк. На этом объекте проверяется переполнение — усечение значения ReadOnlyField в тайле и перенос в окне, где к имени прибавляется ещё и номер.","desk":"Агропромышленный комплекс","director":"Константинопольский-Ржевский В.В.","directorTab":"100115","regionalDirector":"Константинопольский-Ржевский В.В.","regionalDirectorTab":"100115","manager":"Константинопольский-Ржевский В.В.","managerTab":"100115","tsupEmployee":"Константинопольский-Ржевский В.В.","tsupEmployeeTab":"100115","clientManager":"Константинопольский-Ржевский В.В.","clientManagerTab":"100115","creditInspector":"Константинопольский-Ржевский В.В.","creditInspectorTab":"100115","riskEmployee":"Константинопольский-Ржевский В.В.","riskEmployeeTab":"100115","monitoringEmployee":"Константинопольский-Ржевский В.В.","monitoringEmployeeTab":"100115","pmzEmployee":"Константинопольский-Ржевский В.В.","pmzEmployeeTab":"100115","prpaEmployee":"Константинопольский-Ржевский В.В.","prpaEmployeeTab":"100115","legalEmployee":"Константинопольский-Ржевский В.В.","legalEmployeeTab":"100115","constructionExpert":"Константинопольский-Ржевский В.В.","constructionExpertTab":"100115","otherParticipants":"Разумовский А.П. (ООО «Технадзор Плюс»), Федотова М.С. (независимый оценщик), Оболенский-Нелидов К.Г. (АО «Межрегиональная строительная экспертиза»), Виноградова-Успенская Л.Н. (независимый юридический консультант)","restricted":"Да"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Команда сделки» — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-state      — состояние данных: loading | data | partial | empty
+     data-mode       — режим прав: edit | view. Ставит страница: статус сделки,
+                       не допускающий правку, даёт view при любой роли
+     data-restricted — yes: сделка ограниченного доступа, в шапке строка-признак
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное DealTeamTile.css по
+     этим атрибутам — так же, как тайлы «КНР» и «Сроки сделки».
+
+     Тайл показывает шесть ролей из тринадцати — остальные видны в окне. Поэтому
+     в просмотре действие в шапке есть («Развернуть»): без него роль без права
+     правки не увидела бы остальных участников. Это не действие правки, и
+     правило «в просмотре действия правки не рисуются» им не нарушено.
+
+     ФИО ниже — пример. На странице сделки их заменяет DealTeamTile.js
+     (PostTileDealTeam.render) данными сделки; пока они грузятся, тайл стоит в
+     loading. Окно открывается с data-modal-guarded: в нём ввод, и клик мимо
+     окна не должен его сбросить. В просмотре сбрасывать нечего — там без
+     guarded. -->
+<section class="tile lc-deal-team" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Команда сделки</h3></div>
+      <!-- Признак сделки ограниченного доступа. Тон иконки — модификатор Tile
+           1.014; раньше слот красил иконку зелёным независимо от смысла. -->
+      <p class="tile__subtitle lc-deal-team__restricted">
+        <span class="tile__subtitle-icon tile__subtitle-icon--warning" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        Сделка ограниченного доступа
+      </p>
+    </div>
+    <!-- Действия шапки — только когда есть что показывать (data, partial).
+         Пустой тайл заполняют кнопкой в теле. -->
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-team__act lc-deal-team__act--edit"
+              aria-label="Редактировать" data-modal="deal-team-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-team__act lc-deal-team__act--view"
+              aria-label="Развернуть" data-modal="deal-team-scrim"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body">
+
+    <!-- Шесть ролей: две колонки, порядок полей постоянный. Незаполненная роль —
+         прочерк, поле с места не уходит: пропавшее поле читалось бы как
+         отсутствие роли, а не значения. Лейбл переносится до двух строк, если
+         колонка уже подписи. -->
+    <div class="tile__grid lc-deal-team__grid">
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Деск</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="desk">Телекоммуникации</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Сотрудник ЦУП</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="tsupEmployee">—</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Директор</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="director">Андреев М.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Клиентский менеджер</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="clientManager">Смирнов А.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Менеджер сделки</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="manager">Андреев М.А.</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label ds-label--wrap"><span class="ds-label__text">Кредитный инспектор</span></span>
+        <div class="rof__row"><span class="rof__value" data-team-field="creditInspector">Смирнов А.А.</span></div>
+      </div>
+    </div>
+
+    <!-- Загрузка: каркас в той же сетке — подпись и значение каждого поля в
+         габаритах строк (подпись 16px, значение 20px), чтобы раскладка не
+         прыгнула после ответа. -->
+    <div class="tile__grid lc-deal-team__grid lc-deal-team__loading" aria-busy="true">
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:38%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:136px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:60%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:46%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:64%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+      <div class="rof">
+        <span class="sk-line" style="--sk-w:78%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:104px" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Не заполнено, право на правку есть -->
+    <div class="lc-deal-team__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-team-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-deal-team__empty">Не заполнено</p>
+
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Команда сделки».
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС;
+   своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: переключается только
+   присутствие собственных блоков .lc-deal-team__* и слотов тайла.
+   Режим (data-mode) ставит страница: edit | view. В просмотре действие правки
+   не рисуется вовсе, а не выключается; вместо него — «Развернуть». */
+
+/* Компонент перестраивается по СВОЕЙ ширине, а не по ширине окна: он стоит на
+   6 колонках из 12, а на узкой странице — на 12. */
+.lc-deal-team { container-type: inline-size; }
+
+/* ── Роли: две колонки по умолчанию ─────────────────────────────────── */
+/* Колонки сжимаемые (minmax(0,1fr)): длинный лейбл переносится внутри своей
+   колонки (ds-label--wrap), а не распирает соседнюю. Длинное ФИО усекает сам
+   ReadOnlyField. Зазоры — сетки тайла.
+   Две колонки — середина шкалы: пороги ширины ниже, в @container. */
+.lc-deal-team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* ── Не заполнено, прав на правку нет ───────────────────────────────── */
+.lc-deal-team__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» и «заполнено частично» (та же сетка, незаполненные роли
+   прочерком); остальные блоки появляются по data-state. Сетка загрузки несёт
+   два класса сетки сразу, поэтому скрывается правилом с двумя классами. */
+.lc-deal-team__grid.lc-deal-team__loading,
+.lc-deal-team__fill,
+.lc-deal-team__empty { display: none; }
+
+.lc-deal-team[data-state="loading"] .lc-deal-team__grid,
+.lc-deal-team[data-state="empty"] .lc-deal-team__grid { display: none; }
+
+.lc-deal-team[data-state="loading"] .lc-deal-team__grid.lc-deal-team__loading { display: grid; }
+.lc-deal-team[data-state="empty"][data-mode="edit"] .lc-deal-team__fill { display: block; }
+.lc-deal-team[data-state="empty"][data-mode="view"] .lc-deal-team__empty { display: block; }
+
+/* ── Признак ограниченного доступа ──────────────────────────────────── */
+/* Строка в шапке появляется только у сделки ограниченного доступа. Вид строки
+   держит Tile (.tile__subtitle), здесь только её присутствие. */
+.lc-deal-team__restricted { display: none; }
+.lc-deal-team[data-restricted="yes"] .lc-deal-team__restricted { display: flex; }
+
+/* ── Действия шапки ─────────────────────────────────────────────────── */
+/* Одно действие на режим: в правке — «Редактировать», в просмотре —
+   «Развернуть» (тайл показывает 6 ролей из 13, остальные только в окне).
+   Пустой тайл заполняют кнопкой в теле, пока данные грузятся — смотреть
+   нечего: в обоих состояниях действий нет. */
+.lc-deal-team__act { display: none; }
+.lc-deal-team[data-mode="edit"] .lc-deal-team__act--edit,
+.lc-deal-team[data-mode="view"] .lc-deal-team__act--view { display: inline-flex; }
+
+.lc-deal-team[data-state="loading"] .tile__actions,
+.lc-deal-team[data-state="empty"] .tile__actions { display: none; }
+
+/* ── Перестроение по своей ширине ───────────────────────────────────── */
+/* Две колонки держатся, пока в каждую помещается подпись роли. Порог — 320px
+   ширины тайла: самая длинная подпись «Кредитный инспектор» набрана Body XS
+   (12px) и занимает ≈114px, две колонки 2×114 + зазор 16 + поля тела тайла
+   2×20 = 284px; запас до 320 — на подписи длиннее, которые перенесутся на две
+   строки, а не обрежутся. На странице сделки тайл уже порога не бывает (он
+   стоит на 6 колонках из 12) — правило для других мест и для узкой витрины.
+   Ниже порога роли встают в одну колонку в том же порядке. Колонки заданы
+   здесь, а не инлайном на .tile__grid: инлайн перебил бы это правило. */
+@container (max-width: 319px) {
+  .lc-deal-team__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Третья колонка — от 940px (решение человека 23.09.2026). Шесть ролей встают
+   в два ряда по три вместо трёх по два, и тайл перестаёт быть вдвое выше
+   соседей по ряду. Порог считает ячейку: (940 − 40 паддинга тела − 32 зазора)
+   / 3 ≈ 289px, выше минимума ячейки 240px, которым меряет сенсор.
+   Порог консервативнее сенсорного: K5 предложил бы три колонки уже с ~760px.
+   Мерится content box тайла (container-type: inline-size на .lc-deal-team);
+   своего паддинга у .tile нет, только рамка 1px, поэтому 940 по содержимому —
+   это ~942 габаритной ширины. На странице сделки тайл стоит на 6 колонках из
+   12 и порога не достигает (на 1920 это 900px) — правило для широких экранов,
+   для тайла на всю ширину и для витрины. */
+@container (min-width: 940px) {
+  .lc-deal-team__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealTeamTile.js — роли тайла «Команда сделки» из данных.
+
+   Фрагмент DealTeamTile.html держит эталон всех состояний, а ФИО в нём —
+   пример. Страница сделки показывает команду своей сделки: берёт её из
+   DealsStore и отдаёт сюда. Витрина компонента строит поля этой же функцией —
+   разметка полей одна на оба места.
+
+   Тайл показывает ШЕСТЬ ролей из тринадцати (паспорт, «Поля»): это обзор, а
+   не весь состав. Остальные роли, «Другие участники» и признак ограниченного
+   доступа правятся и читаются в окне (DealTeamModal).
+
+   API:
+     PostTileDealTeam.fieldsHTML(team) → строка
+       team — запись сделки: ФИО по ключу роли, '' или отсутствует — не назначен.
+       Шесть полей в постоянном порядке; неназначенная роль — прочерк, поле с
+       места не уходит.
+     PostTileDealTeam.stateOf(team) → 'data' | 'partial' | 'empty'
+       Ни одной роли — empty, часть — partial, все шесть — data. Заполнять все
+       роли не требуется: у разных сделок свой обязательный состав, поэтому
+       partial — штатное состояние тайла, а не дефект.
+     PostTileDealTeam.render(tile, team)
+       Заменяет поля в сетке ролей, ставит data-state по stateOf и
+       data-restricted по признаку сделки.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* Порядок полей — порядок отображения (паспорт, «Поля»). Сетка тайла в две
+     колонки заполняется построчно, поэтому порядок здесь — как читается:
+     слева направо, сверху вниз. */
+  var FIELDS = [
+    { key: 'desk', label: 'Деск' },
+    { key: 'tsupEmployee', label: 'Сотрудник ЦУП' },
+    { key: 'director', label: 'Директор' },
+    { key: 'clientManager', label: 'Клиентский менеджер' },
+    { key: 'manager', label: 'Менеджер сделки' },
+    { key: 'creditInspector', label: 'Кредитный инспектор' }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function val(team, key) {
+    return String((team && team[key]) || '').trim();
+  }
+
+  function fieldsHTML(team) {
+    return FIELDS.map(function (f) {
+      var v = val(team, f.key);
+      /* Незаполненная роль — прочерк, и прочерк набирается как обычное
+         значение: он не подсказка, а то, что известно о роли (ReadOnlyField
+         1.010). Приглушённый прочерк читался бы как выключенное поле. */
+      return '<div class="rof">'
+        + '<span class="ds-label ds-label--wrap"><span class="ds-label__text">' + f.label + '</span></span>'
+        + '<div class="rof__row"><span class="rof__value" data-team-field="' + f.key + '">'
+        + (v ? esc(v) : '—') + '</span></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function stateOf(team) {
+    var filled = FIELDS.filter(function (f) { return val(team, f.key); }).length;
+    if (!filled) return 'empty';
+    return filled === FIELDS.length ? 'data' : 'partial';
+  }
+
+  /* Признак сделки ограниченного доступа хранится строкой «Да» / «Нет»
+     (mock-deals.js, поле restricted) — как остальные да/нет реестра. */
+  function isRestricted(team) {
+    return String((team && team.restricted) || '').trim() === 'Да';
+  }
+
+  function render(tile, team) {
+    if (!tile) return;
+    var grid = tile.querySelector('.lc-deal-team__grid:not(.lc-deal-team__loading)');
+    if (grid) grid.innerHTML = fieldsHTML(team);
+    tile.setAttribute('data-state', stateOf(team));
+    if (isRestricted(team)) tile.setAttribute('data-restricted', 'yes');
+    else tile.removeAttribute('data-restricted');
+  }
+
+  window.PostTileDealTeam = {
+    FIELDS: FIELDS,
+    fieldsHTML: fieldsHTML,
+    stateOf: stateOf,
+    isRestricted: isRestricted,
+    render: render
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!-- Связанный артефакт тайла «Описание сделки»: окно правки и просмотра.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла.
+
+     Окно работает в двух режимах, атрибут data-mode на самой модалке:
+       edit — правка: поля ввода, списки и чекбоксы, подвал с «Сохранить»;
+       view — просмотр: те же поля как ReadOnlyField, чекбоксы выключены,
+              подвал с «Закрыть».
+     Режим ставит DealDescriptionModal.js по режиму тайла, который окно
+     открыл: из правки — карандашом или «Заполнить», из просмотра —
+     «Развернуть». Переключает вид DealDescriptionModal.css, разметка держит
+     оба сразу — как тайлы.
+
+     Раскладка — как на макете: две колонки с вертикальным разделителем.
+     Слева текстовые поля и ГСЗ, справа признаки и два списка. Порядок полей в
+     разметке — порядок чтения внутри колонки.
+
+     Опции списков пусты в разметке: их подставляет DealDescriptionModal.js
+     из справочников DEALS_ENUMS (runtime-hooks: динамический список у
+     DropdownList собирается кодом). Значения ниже — пример, их заменяет
+     скрипт данными сделки. «Сохранить» без data-modal-close: окно закрывает
+     скрипт, когда проверка прошла. -->
+
+<div class="modal-scrim" id="deal-description-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-description-modal" role="dialog" aria-modal="true" aria-labelledby="deal-description-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-description-title">Описание сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <!-- ── Правка ──────────────────────────────────────────────────── -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__edit">
+        <div class="lc-deal-description-modal__col">
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-description"><span class="ds-label__text">Суть сделки</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-description" name="description" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth inp--multiline">
+            <label class="ds-label" for="dd-operations-comment"><span class="ds-label__text">Комментарий Operations</span></label>
+            <div class="inp__field">
+              <textarea class="inp__control" id="dd-operations-comment" name="operationsComment" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-additional-income"><span class="ds-label__text">Дополнительные доходы</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="dd-additional-income" name="additionalIncome" autocomplete="off">
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-gsz"><span class="ds-label__text">Группа связанных заемщиков</span></label>
+            <div class="inp__field" data-ddl="dd-gsz-list">
+              <input class="inp__control" id="dd-gsz" name="gsz" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-gsz-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-ce" name="ceParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-if-desk" name="ifDeskParticipation">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="dd-restructured" name="restructured">
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-jointness"><span class="ds-label__text">Совместность</span></label>
+            <div class="inp__field" data-ddl="dd-jointness-list">
+              <input class="inp__control" id="dd-jointness" name="jointness" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-jointness-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="dd-risk"><span class="ds-label__text">Категория риска ЦУП</span></label>
+            <div class="inp__field" data-ddl="dd-risk-list">
+              <input class="inp__control" id="dd-risk" name="riskCategory" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="dd-risk-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" id="dd-fin-tpl" name="finTpl">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Просмотр ────────────────────────────────────────────────── -->
+      <!-- Состав и порядок полей те же, что в правке — правило локальных
+           компонентов для состояния «Только просмотр». Текст здесь не
+           усекается: окно и открывают, чтобы прочесть описание целиком.
+           Признаки остаются чекбоксами, выключенными: выключенный чекбокс
+           показывает значение честнее строки «Да» / «Нет» (так же в окне
+           «Команда сделки», решение человека 23.09.2026). -->
+      <div class="lc-deal-description-modal__cols lc-deal-description-modal__view">
+        <div class="lc-deal-description-modal__col">
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Суть сделки</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="description">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Комментарий Operations</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="operationsComment">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительные доходы</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="additionalIncome">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="gsz">—</span></div>
+          </div>
+        </div>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <div class="lc-deal-description-modal__col">
+          <div class="cb-group" role="group" aria-label="Признаки сделки">
+            <div class="cb-group__items">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ceParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие ЦЭ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="ifDeskParticipation" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Участие Деска ИФ</span></span>
+              </label>
+              <label class="cb">
+                <input type="checkbox" class="cb__input" data-dd-view-flag="restructured" disabled>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Реструктуризация</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Совместность</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="jointness">—</span></div>
+          </div>
+          <div class="rof">
+            <span class="ds-label ds-label--wrap"><span class="ds-label__text">Категория риска ЦУП</span></span>
+            <div class="rof__row"><span class="rof__value" data-dd-view="riskCategory">—</span></div>
+          </div>
+          <label class="cb">
+            <input type="checkbox" class="cb__input" data-dd-view-flag="finTpl" disabled>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Фин. расчеты в Excel</span></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Подвал у модалки обязателен, поэтому в просмотре он не прячется, а
+         меняет кнопку: править нечего — окно закрывают. «Закрыть»
+         аутлайновая, как в окне «Команда сделки»: подтверждать нечего. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m lc-deal-description-modal__save" data-dd-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-deal-description-modal__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

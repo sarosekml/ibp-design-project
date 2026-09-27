@@ -20,7 +20,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | ContextMenu | specs/ContextMenu.md | styles/context-menu.css | button | 1.010 |
 | DatePicker | specs/DatePicker.md | styles/datepicker.css | icon-button, button | 1.008 |
 | Divider | specs/Divider.md | styles/divider.css | button | 2.001 |
-| DropdownList | specs/DropdownList.md | styles/dropdown-list.css | checkbox, label-helper, spinner | 1.014 |
+| DropdownList | specs/DropdownList.md | styles/dropdown-list.css | checkbox, label-helper, spinner | 1.015 |
 | EmptyState | specs/EmptyState.md | styles/empty-state.css | illustration, button | 1.002 |
 | Elevation | specs/Elevation.md | styles/shadow.css | — | 1.002 |
 | Drawer | specs/Drawer.md | styles/drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.000 |
@@ -30,10 +30,10 @@ purpose: Манифест спек компонентов. Читай нужну
 | Illustrations | specs/Illustrations.md | styles/illustration.css | — | 1.004 |
 | Layout | specs/Layout.md | styles/layout.css | nav-panel, breadcrumbs, spacing | 1.012 |
 | InputAmountRange | specs/InputAmountRange.md | styles/input-range.css | input, label-helper, tooltip | 1.007 |
-| InputAutocomplete | specs/InputAutocomplete.md | styles/input.css | label-helper, checkbox, chip, tooltip, dropdown-list | 1.016 |
-| InputDate | specs/InputDate.md | styles/input.css | label-helper, tooltip | 1.014 |
+| InputAutocomplete | specs/InputAutocomplete.md | styles/input.css | label-helper, checkbox, chip, tooltip, dropdown-list | 1.017 |
+| InputDate | specs/InputDate.md | styles/input.css | label-helper, tooltip | 1.015 |
 | InputDateRange | specs/InputDateRange.md | styles/input-range.css | input, label-helper, tooltip | 1.010 |
-| InputText | specs/InputText.md | styles/input.css | label-helper, tooltip, chip | 1.014 |
+| InputText | specs/InputText.md | styles/input.css | label-helper, tooltip, chip | 1.015 |
 | Kanban | specs/Kanban.md | styles/kanban.css | tile, chip, badge, avatar, icon-button, button, context-menu, modal, drawer, tooltip, snackbar, empty-state, skeleton, illustration | 1.005 |
 | LabelHelper | specs/LabelHelper.md | styles/label-helper.css | checkbox, radio, switch | 1.007 |
 | Link | specs/Link.md | styles/link.css | breadcrumbs | 1.007 |
@@ -56,11 +56,11 @@ purpose: Манифест спек компонентов. Читай нужну
 | Splitter | specs/Splitter.md | styles/splitter.css | button | 1.004 |
 | SubTab | specs/SubTab.md | styles/sub-tab.css | badge | 1.001 |
 | Switch | specs/Switch.md | styles/switch.css | label-helper, spinner | 1.008 |
-| Table | specs/Table.md | styles/table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.018 |
+| Table | specs/Table.md | styles/table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.020 |
 | TableCell | specs/TableCell.md | styles/table-cell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.022 |
 | TableFilter | specs/TableFilter.md | styles/table-filter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | specs/Tab.md | styles/tab.css | — | 1.012 |
-| Tile | specs/Tile.md | styles/tile.css | icon-button, button, link, chip, badge, alert, divider | 1.014 |
+| Tile | specs/Tile.md | styles/tile.css | icon-button, button, link, chip, badge, alert, divider | 1.015 |
 | Toast | specs/Toast.md | styles/toast.css | button, spinner | 1.007 |
 | Tooltip | specs/Tooltip.md | styles/tooltip.css | button | 2.011 |
 | Typography | specs/Typography.md | — | — | 1.001 |

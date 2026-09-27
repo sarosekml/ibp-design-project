@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+  Обзор витрины локальных компонентов. Состав меню и карточек — из реестра
+  kit-data.js (его собирает .agents/tools/kit-build.mjs из паспортов виджетов);
+  новый виджет появляется здесь после пересборки, эта страница не правится.
+-->
+<html lang="ru">
+<head>
+<script src="../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Локальные компоненты — IBP</title>
+<link rel="stylesheet" href="kit.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- Левая панель — NavPanel. Постоянная часть (шапка) стоит здесь, группы и
+       пункты наполняет IBPKitNav из kit-data.js: группы — категории паспортов,
+       пункты — компоненты, окна и поповеры — под своим тайлом. -->
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../index.html">Хаб проектов</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Локальные компоненты</span>
+      </li>
+    </nav>
+    <main class="screen__content">
+
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Локальные компоненты</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- карточки групп строит IBPKitNav из того же kit-data.js -->
+      <div class="kit-groups" id="kit-groups"></div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="kit-data.js"></script>
+<script src="kit-nav.js"></script>
+<script>
+/* Экранный скрипт: панель и карточки рисует IBPKitNav; строка пользователя в
+   футере ведёт на хаб проектов, как на всех экранах проекта. */
+(function () {
+  'use strict';
+  window.IBPKitNav.render({
+    nav: document.getElementById('nav'),
+    groups: document.getElementById('kit-groups'),
+    base: '.',
+    current: null,
+    hub: '../../index.html'
+  });
+})();
+</script>
+</body>
+</html>

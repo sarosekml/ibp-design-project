@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно финансовых метрик сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно финансовых метрик сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Финансовые метрики сделки»: окно просмотра
+     метрик целиком. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include — скрим должен лежать в конце body, а не внутри тайла.
+
+     Окно только для просмотра: метрики считает система, править их негде и
+     некому. Поэтому режима правки у окна нет, а в подвале одна кнопка
+     «Закрыть» — аутлайновая, как у окон просмотра «КНР» и «Команда сделки»:
+     подтверждать нечего, и залитая Primary обещала бы действие, которого нет
+     (решение человека 25.09.2026; на макете кнопка залитая — паспорт).
+
+     Состав сверху вниз (макет refs/финансовые метрики/Модальное окно.png):
+       1. два AllocationBar ДС рядом — ВБС по продуктам и ОСЗ по частям долга,
+          каждый на подложке. У ОСЗ бывают плашка «Данные рассчитываются» и
+          иконка-предупреждение о просрочке с тултипом;
+       2. раздел «Резервы на …» — сводка тремя карточками всегда видна,
+          таблица по ФИ раскрывается;
+       3. раздел «Переоценка по PE» — сводка четырьмя полями, таблица по ФИ
+          раскрывается. Только у сделки с PE (data-pe на .modal): без PE
+          раздела нет совсем (решение человека 25.09.2026).
+     Разделы — Tile Accordion ДС (частичный коллапс: .tile__body — сводка,
+     .tile__collapsible — таблица), сворачивает их рантайм ds-tile.js. При
+     каждом открытии окна оба свёрнуты — так на макете.
+
+     Значения ниже — пример с макета. Их заменяет DealFinancialMetricsModal.js
+     метриками сделки при открытии; бары рисует функция тайла
+     (PostTileDealFinMetrics.albarHTML) — разметка бара одна на тайл и окно. -->
+
+<div id="deal-fin-metrics-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w7 lc-deal-metrics-modal" role="dialog" aria-modal="true" aria-labelledby="deal-fin-metrics-title" data-pe="yes">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-fin-metrics-title">Финансовые метрики сделки</h2>
+      <!-- autofocus: начальный фокус окна — на крестике. Иначе рантайм Modal
+           ставит его на первый интерактивный элемент тела — иконку просрочки
+           ОСЗ, а тултип по фокусу показывается сразу, и окно открывалось с
+           поднятой подсказкой (урок ДС Л149). Иконка остаётся в таб-порядке. -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close autofocus><i data-icon="close"></i></button>
+    </header>
+
+    <!-- Разделы окна — Tile на всю ширину тела модалки, а не в колонках сетки
+         страницы: тело помечено data-off-grid с причиной (Spacing). -->
+    <div class="modal__body lc-deal-metrics-modal__body" data-off-grid="Разделы окна — на всю ширину тела модалки, вне сетки страницы">
+
+      <!-- ── ВБС и ОСЗ ────────────────────────────────────────────────── -->
+      <div class="lc-deal-metrics-modal__bars">
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="vbs">
+          <div class="albar albar--stretch" data-albar="vbs">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ВБС по сделке на 25.02.2026, RUB">ВБС по сделке на 25.02.2026, RUB</div></div>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Кредит 35,00%, Акции 35,00%, РЕПО 30,00%">
+              <div class="albar__seg" data-id="vbs-LOAN" style="background:var(--ch-indigo);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-SHARES" style="background:var(--ch-shiny-green);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-REPO" style="background:var(--ch-light-blue);flex-grow:30"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="vbs-LOAN"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Кредит</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-SHARES"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Акции</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-REPO"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">РЕПО</span><span class="albar__pct">30,00%</span><span class="albar__val">300 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="osz">
+          <div class="albar albar--stretch" data-albar="osz">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ОСЗ по сделке на 12.03.2026, RUB">ОСЗ по сделке на 12.03.2026, RUB</div></div>
+              <span class="albar__warn" tabindex="0" role="img" aria-label="Просроченная задолженность на сумму 123 млн RUB"
+                    data-tooltip="Просроченная задолженность на сумму 123 млн RUB" data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Основной долг 55,00%, Проценты 40,00%, Комиссии 5,00%">
+              <div class="albar__seg" data-id="osz-PRINCIPAL" style="background:var(--ch-indigo);flex-grow:55"></div>
+              <div class="albar__seg" data-id="osz-INTEREST" style="background:var(--ch-shiny-green);flex-grow:40"></div>
+              <div class="albar__seg" data-id="osz-COMMISSIONS" style="background:var(--ch-light-blue);flex-grow:5"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="osz-PRINCIPAL"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Основной долг</span><span class="albar__pct">55,00%</span><span class="albar__val">550 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-INTEREST"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Проценты</span><span class="albar__pct">40,00%</span><span class="albar__val">400 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-COMMISSIONS"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">Комиссии</span><span class="albar__pct">5,00%</span><span class="albar__val">50 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Резервы ──────────────────────────────────────────────────── -->
+      <!-- Сводка — три карточки: резерв (сумма и ставка), обесценение, RWA; у
+           каждой своя дата расчёта. Подписи с пояснениями — те же, что в
+           тайле. Таблица по ФИ под сводкой раскрывается. -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section" data-fin-section="reserves">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" data-fin-text="reservesTitle">Резервы на 25.02.2026</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-reserves-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="lc-deal-metrics-modal__cards">
+            <div class="lc-deal-metrics-modal__card lc-deal-metrics-modal__card--wide">
+              <div class="rof" data-fin-field="reserveAmount">
+                <span class="ds-label"><span class="ds-label__text">Сумма резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Сумма резерва" data-tooltip="Общая сумма по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">217 000 000,00</span><span class="rof__affix">RUB</span></div>
+              </div>
+              <div class="rof" data-fin-field="reserveRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка резерва" data-tooltip="Среднее значение по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">62</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="impairmentRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка обесценения</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка обесценения" data-tooltip="Общая сумма по всем кредитным ФИ для «Типа учета» = «FV»" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">13</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="rwa">
+                <span class="ds-label"><span class="ds-label__text">RWA</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: RWA" data-tooltip="Среднее значение по всем ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">150</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-reserves-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="reserves">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-reserves">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">ФИ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Сумма резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка обесценения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">RWA</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-reserves">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1024-Кредит-01</a></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">120 000 000,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">62</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">10</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">150</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Переоценка по PE ─────────────────────────────────────────── -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section lc-deal-metrics-modal__pe" data-fin-section="pe">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title">Переоценка по PE</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-pe-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="tile__grid lc-deal-metrics-modal__pe-grid">
+            <div class="rof" data-fin-field="revaluationAmount">
+              <span class="ds-label"><span class="ds-label__text">Сумма переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value">1 234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="revaluationDelta">
+              <span class="ds-label"><span class="ds-label__text">Δ переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value rof__value--positive">+234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="lastValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата последней оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2025</span></div>
+            </div>
+            <div class="rof" data-fin-field="nextValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата ближайшей оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2026</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-pe-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="pe">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-pe">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">Финансовый инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Дата оценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Периодичность</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Оценка на дату</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Δ переоценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Кем определена</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-pe">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1025-Акции-01</a></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text">21.12.2025</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Ежемесячно</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 456 789,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text lc-deal-metrics-modal__delta">+56 789,00</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Независимый оценщик</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Подвал обязателен: одна аутлайновая «Закрыть» справа. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.002</b></span><span>Обновлено: <b>27.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Модальное окно финансовых метрик сделки</h1>
+  <p class="lead">Финансовые метрики сделки целиком — ВБС и ОСЗ, резервы по ФИ, переоценка по PE по ФИ</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal">apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/DealFinancialMetricsModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.002 · обновлено 27.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (25.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/organisms/AllocationBar.html">AllocationBar</a> · <a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/molecules/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/pages/organisms/Table.html">Table</a> · <a class="inl" href="../../../../design-system/pages/organisms/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/pages/atoms/Link.html">Link</a> · <a class="inl" href="../../../../design-system/pages/molecules/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.css">DealFinancialMetricsModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.html">DealFinancialMetricsModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js">DealFinancialMetricsModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md">DealFinancialMetricsModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealFinancialMetricsTile.doc.html">Финансовые метрики сделки (DealFinancialMetricsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Финансовые метрики сделки» — IconButton «Развернуть» (только просмотр)</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Артефакт тайла «Финансовые метрики сделки». Не компонент: сам по себе не существует и в плоском списке кита не числится — живёт подпунктом своего тайла.</p>
+<p class="desc">Тайл — сводка: ВБС, резерв, обесценение, RWA и итог переоценки по PE. Окно показывает то же целиком: рядом с ВБС — ОСЗ, под ними резервы по каждому ФИ и переоценку по PE по каждому ФИ. Окно только для просмотра: метрики считает система, править их негде и некому.</p>
+<p class="desc">Ширина — <code class="tok">modal--w7</code> (1053px на 1920), ровно ширина макета. Окно, шапку, подвал, бары, аккордеон разделов, поля и таблицы рисует ДС; в <code class="tok">DealFinancialMetricsModal.css</code> — подложки, раскладка баров и карточек, колонки таблиц.</p>
+<p class="desc">Значения приходят из метрик сделки (<code class="tok">apps/postrade/deals-app/data/mock-financial-metrics.js</code>, <code class="tok">DealFinancialMetricsRsDto</code>). <code class="tok">DealFinancialMetricsModal.js</code> перерисовывает окно при каждом открытии; бары рисует функция тайла (<code class="tok">PostTileDealFinMetrics.albarHTML</code>) — бар ВБС в тайле и в окне один.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состав">
+<h2>Состав</h2>
+<p class="desc">Сверху вниз, как на макете.</p>
+<h3 class="kit-md__h3">1. ВБС и ОСЗ</h3>
+<p class="desc">Два AllocationBar ДС рядом, поровну, каждый на подложке (<code class="tok">--bg-page</code>). Итог над баром — сумма значений строк, как в тайле; строки — колонки 50 / 20 / 30% (AllocationBar 1.003).</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Бар</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Подпись</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Позиции</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ВБС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«ВБС по сделке на {дата}, RUB»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">продукты сделки, цвета — постоянные по продукту (таблица в паспорте тайла)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">vbs</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОСЗ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«ОСЗ по сделке на {дата}, RUB»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Основной долг (<code class="tok">--ch-indigo</code>), Проценты (<code class="tok">--ch-shiny-green</code>), Комиссии (<code class="tok">--ch-light-blue</code>) — цвета с макета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">osz</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">У ОСЗ два своих состояния:</p>
+<ul class="bullets"><li><b>рассчитывается</b> (<code class="tok">osz.calcStatus = CALCULATING</code>) — подпись без итога и плашка ДС «Данные рассчитываются / Это может занять несколько секунд» (первый вариант окна на макете);</li><li><b>просрочка</b> (<code class="tok">osz.overdueAmount &gt; 0</code>) — сразу за подписью иконка <code class="tok">alert-triangle-filled</code> в тоне <code class="tok">--warning</code> с тултипом «Просроченная задолженность на сумму {сумма коротко} RUB» (второй и третий варианты; место иконки — AllocationBar 1.003). Иконка в таб-порядке, тултип открывается и по фокусу. Начальный фокус окна — на крестике (<code class="tok">autofocus</code>): иначе рантайм Modal ставил его на иконку, и окно открывалось с поднятым тултипом (урок ДС Л149).</li></ul>
+<p class="desc">ОСЗ нет в ответе — пустой бар ДС («—» и «Нет данных»), а не пропавшая подложка.</p>
+<h3 class="kit-md__h3">2. Резервы на {дата}</h3>
+<p class="desc">Раздел — Tile Accordion ДС с частичным коллапсом: сводка видна всегда, таблица раскрывается шевроном в шапке. При каждом открытии окна раздел свёрнут — так на макете.</p>
+<p class="desc"><b>Сводка</b> — три карточки с обычной рамкой <code class="tok">--border-primary</code> (решение человека 25.09.2026), у каждой своя «Дата расчета»:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Карточка</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Поля</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Резерв (шире других)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма резерва (RUB), Ставка резерва (%)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обесценение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ставка обесценения (%)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">RWA</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">RWA (%)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Подписи с пояснениями — те же тексты, что в тайле (паспорт тайла, «Поля»).</p>
+<p class="desc"><b>Таблица по ФИ</b> (<code class="tok">reserves.instruments</code>): ФИ | Сумма резерва | Ставка резерва | Ставка обесценения | RWA. ФИ — Link ДС на страницу финансового инструмента (в прототипе её нет — <code class="tok">href=&quot;#&quot;</code>). Числа справа, единица — постфиксом ячейки.</p>
+<h3 class="kit-md__h3">3. Переоценка по PE</h3>
+<p class="desc">Только у сделки с Private Equity (<code class="tok">data-pe</code> на <code class="tok">.modal</code>). Без PE раздела нет совсем (решение человека 25.09.2026): пустой раздел читался бы как «переоценки нет», а у сделки без PE её не бывает.</p>
+<p class="desc">Тот же Tile Accordion, свёрнут при открытии. <b>Сводка</b> — четыре поля в ряд: Сумма переоценки по PE (RUB), Δ переоценки по PE (RUB, зелёным при росте, красным при падении — тон ReadOnlyField), Дата последней оценки, Дата ближайшей оценки.</p>
+<p class="desc">Таблицы обоих разделов — Table ДС: полоса прокрутки тела — бегунок, в покое скрыт (Table 1.019), суммы в ячейках не переносятся, а усекаются с тултипом (TableCell 2.023).</p>
+<p class="desc"><b>Таблица по ФИ</b> (<code class="tok">peRevaluation.instruments</code>): Финансовый инструмент (Link) | Дата оценки | Периодичность | Оценка на дату (RUB) | Δ переоценки (со знаком, зелёным / красным) | Кем определена. Подписи периодичности и оценщика — по кодам из <code class="tok">DEAL_FIN_METRICS_LABELS</code>.</p>
+<h3 class="kit-md__h3">Подвал</h3>
+<p class="desc">Одна кнопка «Закрыть» справа — <code class="tok">btn--outline</code>, аутлайновая. См. «Осознанные отклонения».</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно открывается по метрикам, которые уже пришли для тайла; «Развернуть» есть только в состоянии тайла «Данные есть»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОСЗ рассчитывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">плашка «Данные рассчитываются» вместо бара ОСЗ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Просрочка ОСЗ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">иконка-предупреждение с тултипом после подписи ОСЗ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Разделы свёрнуты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид при открытии: видны сводки, таблиц нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Разделы развёрнуты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">под сводкой — таблица по ФИ; шеврон вверх</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сделка без PE</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">раздела «Переоценка по PE» нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (25.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибка загрузки строк таблиц — в прототипе строки приходят вместе с метриками</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — метрики считает система</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Кто видит ОСЗ — <code class="tok">не решено (25.09.2026)</code>: если ОСЗ видна не всем ролям, бар ВБС остаётся один на всю ширину.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много продуктов в ВБС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">как в тайле: пять строк и «Показать ещё N» (AllocationBar)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много ФИ в таблице</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки идут подряд, тело окна прокручивается (Modal); шапка и подвал окна на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Колонки таблицы шире окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный скролл тела таблицы, бегунок ДС (Table 1.019)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинная сумма в ячейке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одна строка, многоточие, полное значение тултипом (TableCell 2.023)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинное имя ФИ, оценщика, периодичности</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">усечение с троеточием в ячейке, полный текст — тултипом (TableCell)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно фиксированной ширины <code class="tok">modal--w7</code>; подписи баров и полей усекаются внутри своих колонок</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Витрина">
+<h2>Витрина</h2>
+<p class="desc">Окно в витрине локальных компонентов — «Конструктор» с переключателями (<code class="tok">apps/local-components/postrade/deals-app/DealFinancialMetricsModal.demo.js</code>, данные — <code class="tok">fixtures.json</code> окна; решение человека 25.09.2026): есть Private Equity или нет, число строк в баре ВБС (1–5, 7), ОСЗ рассчитывается, Δ переоценки отрицательная, есть просроченная задолженность. Отрисовка — <code class="tok">PostDealFinMetricsModal.render</code>, та же, что на странице сделки.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: «Закрыть» залитая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">btn--outline</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в окнах просмотра модуля «Закрыть» аутлайновая (КНР, «Команда сделки»): подтверждать нечего, залитая Primary обещала бы действие, которого нет (решение человека 25.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile — не для модалок (там Card)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">разделы — Tile Accordion на подложке окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">раскрывающегося раздела-подложки в ДС нет, а у Card нет коллапса. Рантайм сворачивания — <code class="tok">ds-tile.js</code>, свой код не нужен</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Валюта — кодом (сенсор Б26)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«RUB» в подписях баров и тултипе просрочки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете «руб.»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,1.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: шапка таблицы PE «Периодичн-ость»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонки шире, подписи не рвутся посреди слова</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на макете перенос — от узкой колонки</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Владелец окна — <code class="tok">не решено (25.09.2026)</code>.</li><li>Кто видит ОСЗ — <code class="tok">не решено (25.09.2026)</code>.</li><li>Коды и цвета частей ОСЗ (<code class="tok">PRINCIPAL</code>, <code class="tok">INTEREST</code>, <code class="tok">COMMISSIONS</code>) названы в прототипе; цвета — с макета, в доменном маппинге спеки AllocationBar их нет.</li><li>Плашка «Данные рассчитываются» в ДС залита <code class="tok">--bg-page</code> — тем же, что подложка бара, и на подложке пропадает. В CSS окна она внутри подложки залита <code class="tok">--cgrey-100</code> (ближайший к макету токен) — до правки ДС.</li><li>Подложка бара и подложка раздела — своего компонента в ДС нет, собраны на токенах (<code class="tok">--bg-page</code>, <code class="tok">--radius-m</code>). Карточки сводки резервов — рамка <code class="tok">--border-primary</code> на подложке; Card ДС не подошла: у неё свои интерактивные состояния, а карточки не нажимаются.</li><li>Тон текста в ячейке таблицы (Δ зелёным / красным) — у TableCell его нет, цвет задан классом окна на токенах <code class="tok">--success-dark</code> / <code class="tok">--error-dark</code>, как у ReadOnlyField.</li><li>Ссылка ФИ ведёт на страницу финансового инструмента — в прототипе её нет, <code class="tok">href=&quot;#&quot;</code>.</li><li>В ДС нет правила для ячейки-ссылки таблицы — стоит Link ДС внутри ячейки.</li><li>Привязка к данным — следующий шаг, как у тайла (паспорт тайла, «Открытые вопросы»).</li></ol>
+<p class="desc">Закрыт 25.09.2026 правкой ДС: иконка просрочки стоит сразу за подписью ОСЗ, как на макете (AllocationBar 1.003).</p>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">DealFinancialMetricsModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="DealFinancialMetricsModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealFinancialMetricsModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины окна. Форма — DealFinancialMetricsRsDto (data/mock-financial-metrics.js). База — сделка с PE, ОСЗ посчитана и с просрочкой (второй и третий варианты окна на макете apps/postrade/deals-app/refs/финансовые метрики/Модальное окно.png). Переключатели сценария DealFinancialMetricsModal.demo.js меняют её: PE, число строк ВБС (segments), ОСЗ рассчитывается, знак Δ переоценки, просрочка (overdueAmount, 0 — нет). Рисует DealFinancialMetricsModal.js (PostDealFinMetricsModal.render) — та же функция, что на странице сделки.","data":{"dealId":1025,"currencyCode":"RUB","vbs":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":350000000},{"code":"SHARES","amount":350000000},{"code":"REPO","amount":300000000}]},"osz":{"calcStatus":"READY","reportDate":"2026-03-12","overdueAmount":123000000,"items":[{"code":"PRINCIPAL","amount":550000000},{"code":"INTEREST","amount":400000000},{"code":"COMMISSIONS","amount":50000000}]},"reserves":{"reportDate":"2026-02-25","reserveAmount":217000000,"reserveRate":62,"impairmentRate":13,"rwa":150,"calcDate":"2026-02-25","instruments":[{"financialInstrumentId":"1025-LOAN-01","financialInstrumentTitle":"1025-Кредит-01","reserveAmount":120000000,"reserveRate":62,"impairmentRate":10,"rwa":150},{"financialInstrumentId":"1025-LOAN-02","financialInstrumentTitle":"1025-Кредит-02","reserveAmount":55000000,"reserveRate":62,"impairmentRate":12,"rwa":150},{"financialInstrumentId":"1025-LOAN-03","financialInstrumentTitle":"1025-Кредит-03","reserveAmount":30000000,"reserveRate":62,"impairmentRate":14,"rwa":140},{"financialInstrumentId":"1025-LOAN-04","financialInstrumentTitle":"1025-Кредит-04","reserveAmount":12000000,"reserveRate":62,"impairmentRate":16,"rwa":160}]},"peRevaluation":{"revaluationAmount":1234567.89,"revaluationDelta":234567.89,"lastValuationDate":"2025-12-21","nextValuationDate":"2026-12-21","instruments":[{"financialInstrumentId":"1025-SHARES-01","financialInstrumentTitle":"1025-Акции-01","valuationDate":"2025-12-21","periodicityCode":"MONTHLY","valuationAmount":123456789,"revaluationDelta":56789,"valuerCode":"INDEPENDENT_VALUER"},{"financialInstrumentId":"1025-SHARES-02","financialInstrumentTitle":"1025-Акции-02","valuationDate":"2025-12-21","periodicityCode":"MONTHLY","valuationAmount":124456789,"revaluationDelta":60000,"valuerCode":"INDEPENDENT_VALUER"},{"financialInstrumentId":"1025-SHARES-03","financialInstrumentTitle":"1025-Акции-03","valuationDate":"2025-12-21","periodicityCode":"MONTHLY","valuationAmount":125456789,"revaluationDelta":58889.45,"valuerCode":"INDEPENDENT_VALUER"},{"financialInstrumentId":"1025-SHARES-04","financialInstrumentTitle":"1025-Акции-04","valuationDate":"2025-12-21","periodicityCode":"QUARTERLY","valuationAmount":126456789,"revaluationDelta":58889.44,"valuerCode":"INDEPENDENT_VALUER"}]}},"overdueAmount":123000000,"segments":{"1":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":1000000000}]},"2":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":600000000},{"code":"SHARES","amount":400000000}]},"3":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":350000000},{"code":"SHARES","amount":350000000},{"code":"REPO","amount":300000000}]},"4":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":350000000},{"code":"SHARES","amount":350000000},{"code":"REPO","amount":150000000},{"code":"CORPORATE_CONTROL","amount":150000000}]},"5":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":350000000},{"code":"SHARES","amount":350000000},{"code":"REPO","amount":100000000},{"code":"CORPORATE_CONTROL","amount":100000000},{"code":"COMMISSION","amount":100000000}]},"7":{"calcStatus":"READY","reportDate":"2026-02-25","items":[{"code":"LOAN","amount":300000000},{"code":"LOAN_LIABILITY","amount":150000000},{"code":"INTRA_GROUP_LOAN","amount":120000000},{"code":"REPO","amount":110000000},{"code":"SHARES","amount":100000000},{"code":"BONDS","amount":120000000},{"code":"ACCOUNTS_RECEIVABLE","amount":100000000}]},"_":"Бар ВБС с 1–5 и 7 продуктами — макет «Состояния лайн чарта»; семь — больше пяти, «Показать ещё 2». Подставляются в vbs базового объекта. Итога в данных нет: над баром — сумма строк."},"labels":{"vbs":{"LOAN":"Кредит","LOAN_LIABILITY":"Фондирующий кредит","INTRA_GROUP_LOAN":"Внутригрупповой кредит","REPO":"РЕПО","SHARES":"Акции","BONDS":"Облигации","CORPORATE_CONTROL":"Корп. контроль","ADD_INCOME":"Доп. доходность","COMMISSION":"Комиссия","ACCOUNTS_RECEIVABLE":"Дебиторская задолженность"},"osz":{"PRINCIPAL":"Основной долг","INTEREST":"Проценты","COMMISSIONS":"Комиссии"},"periodicity":{"MONTHLY":"Ежемесячно","QUARTERLY":"Ежеквартально","ANNUALLY":"Ежегодно"},"valuer":{"INDEPENDENT_VALUER":"Независимый оценщик","INTERNAL":"Внутренняя оценка"}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Финансовые метрики сделки»: окно просмотра
+     метрик целиком. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include — скрим должен лежать в конце body, а не внутри тайла.
+
+     Окно только для просмотра: метрики считает система, править их негде и
+     некому. Поэтому режима правки у окна нет, а в подвале одна кнопка
+     «Закрыть» — аутлайновая, как у окон просмотра «КНР» и «Команда сделки»:
+     подтверждать нечего, и залитая Primary обещала бы действие, которого нет
+     (решение человека 25.09.2026; на макете кнопка залитая — паспорт).
+
+     Состав сверху вниз (макет refs/финансовые метрики/Модальное окно.png):
+       1. два AllocationBar ДС рядом — ВБС по продуктам и ОСЗ по частям долга,
+          каждый на подложке. У ОСЗ бывают плашка «Данные рассчитываются» и
+          иконка-предупреждение о просрочке с тултипом;
+       2. раздел «Резервы на …» — сводка тремя карточками всегда видна,
+          таблица по ФИ раскрывается;
+       3. раздел «Переоценка по PE» — сводка четырьмя полями, таблица по ФИ
+          раскрывается. Только у сделки с PE (data-pe на .modal): без PE
+          раздела нет совсем (решение человека 25.09.2026).
+     Разделы — Tile Accordion ДС (частичный коллапс: .tile__body — сводка,
+     .tile__collapsible — таблица), сворачивает их рантайм ds-tile.js. При
+     каждом открытии окна оба свёрнуты — так на макете.
+
+     Значения ниже — пример с макета. Их заменяет DealFinancialMetricsModal.js
+     метриками сделки при открытии; бары рисует функция тайла
+     (PostTileDealFinMetrics.albarHTML) — разметка бара одна на тайл и окно. -->
+
+<div class="modal-scrim" id="deal-fin-metrics-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-metrics-modal" role="dialog" aria-modal="true" aria-labelledby="deal-fin-metrics-title" data-pe="yes">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-fin-metrics-title">Финансовые метрики сделки</h2>
+      <!-- autofocus: начальный фокус окна — на крестике. Иначе рантайм Modal
+           ставит его на первый интерактивный элемент тела — иконку просрочки
+           ОСЗ, а тултип по фокусу показывается сразу, и окно открывалось с
+           поднятой подсказкой (урок ДС Л149). Иконка остаётся в таб-порядке. -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close autofocus><i data-icon="close"></i></button>
+    </header>
+
+    <!-- Разделы окна — Tile на всю ширину тела модалки, а не в колонках сетки
+         страницы: тело помечено data-off-grid с причиной (Spacing). -->
+    <div class="modal__body lc-deal-metrics-modal__body" data-off-grid="Разделы окна — на всю ширину тела модалки, вне сетки страницы">
+
+      <!-- ── ВБС и ОСЗ ────────────────────────────────────────────────── -->
+      <div class="lc-deal-metrics-modal__bars">
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="vbs">
+          <div class="albar albar--stretch" data-albar="vbs">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ВБС по сделке на 25.02.2026, RUB">ВБС по сделке на 25.02.2026, RUB</div></div>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Кредит 35,00%, Акции 35,00%, РЕПО 30,00%">
+              <div class="albar__seg" data-id="vbs-LOAN" style="background:var(--ch-indigo);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-SHARES" style="background:var(--ch-shiny-green);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-REPO" style="background:var(--ch-light-blue);flex-grow:30"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="vbs-LOAN"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Кредит</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-SHARES"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Акции</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-REPO"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">РЕПО</span><span class="albar__pct">30,00%</span><span class="albar__val">300 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="osz">
+          <div class="albar albar--stretch" data-albar="osz">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ОСЗ по сделке на 12.03.2026, RUB">ОСЗ по сделке на 12.03.2026, RUB</div></div>
+              <span class="albar__warn" tabindex="0" role="img" aria-label="Просроченная задолженность на сумму 123 млн RUB"
+                    data-tooltip="Просроченная задолженность на сумму 123 млн RUB" data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Основной долг 55,00%, Проценты 40,00%, Комиссии 5,00%">
+              <div class="albar__seg" data-id="osz-PRINCIPAL" style="background:var(--ch-indigo);flex-grow:55"></div>
+              <div class="albar__seg" data-id="osz-INTEREST" style="background:var(--ch-shiny-green);flex-grow:40"></div>
+              <div class="albar__seg" data-id="osz-COMMISSIONS" style="background:var(--ch-light-blue);flex-grow:5"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="osz-PRINCIPAL"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Основной долг</span><span class="albar__pct">55,00%</span><span class="albar__val">550 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-INTEREST"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Проценты</span><span class="albar__pct">40,00%</span><span class="albar__val">400 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-COMMISSIONS"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">Комиссии</span><span class="albar__pct">5,00%</span><span class="albar__val">50 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Резервы ──────────────────────────────────────────────────── -->
+      <!-- Сводка — три карточки: резерв (сумма и ставка), обесценение, RWA; у
+           каждой своя дата расчёта. Подписи с пояснениями — те же, что в
+           тайле. Таблица по ФИ под сводкой раскрывается. -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section" data-fin-section="reserves">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" data-fin-text="reservesTitle">Резервы на 25.02.2026</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-reserves-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="lc-deal-metrics-modal__cards">
+            <div class="lc-deal-metrics-modal__card lc-deal-metrics-modal__card--wide">
+              <div class="rof" data-fin-field="reserveAmount">
+                <span class="ds-label"><span class="ds-label__text">Сумма резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Сумма резерва" data-tooltip="Общая сумма по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">217 000 000,00</span><span class="rof__affix">RUB</span></div>
+              </div>
+              <div class="rof" data-fin-field="reserveRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка резерва" data-tooltip="Среднее значение по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">62</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="impairmentRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка обесценения</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка обесценения" data-tooltip="Общая сумма по всем кредитным ФИ для «Типа учета» = «FV»" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">13</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="rwa">
+                <span class="ds-label"><span class="ds-label__text">RWA</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: RWA" data-tooltip="Среднее значение по всем ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">150</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-reserves-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="reserves">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-reserves">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">ФИ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Сумма резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка обесценения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">RWA</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-reserves">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1024-Кредит-01</a></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">120 000 000,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">62</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">10</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">150</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Переоценка по PE ─────────────────────────────────────────── -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section lc-deal-metrics-modal__pe" data-fin-section="pe">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title">Переоценка по PE</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-pe-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="tile__grid lc-deal-metrics-modal__pe-grid">
+            <div class="rof" data-fin-field="revaluationAmount">
+              <span class="ds-label"><span class="ds-label__text">Сумма переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value">1 234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="revaluationDelta">
+              <span class="ds-label"><span class="ds-label__text">Δ переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value rof__value--positive">+234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="lastValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата последней оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2025</span></div>
+            </div>
+            <div class="rof" data-fin-field="nextValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата ближайшей оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2026</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-pe-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="pe">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-pe">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">Финансовый инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Дата оценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Периодичность</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Оценка на дату</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Δ переоценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Кем определена</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-pe">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1025-Акции-01</a></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text">21.12.2025</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Ежемесячно</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 456 789,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text lc-deal-metrics-modal__delta">+56 789,00</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Независимый оценщик</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Подвал обязателен: одна аутлайновая «Закрыть» справа. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Финансовые метрики сделки» — связанный артефакт тайла.
+   Только внутренняя раскладка на токенах ДС; своих значений здесь нет.
+   Окно, шапку, подвал, бары, аккордеон, поля и таблицы рисует ДС. Здесь —
+   подложки блоков, раскладка баров и карточек, колонки таблиц и
+   присутствие раздела PE. Чего в ДС нет и что собрано поверх на токенах —
+   паспорт окна, «Открытые вопросы». */
+
+/* Зазор между блоками тела — 16, как на макете (бары → резервы → PE). */
+.lc-deal-metrics-modal__body { gap: var(--space-16); }
+
+/* ── ВБС и ОСЗ ──────────────────────────────────────────────────────── */
+/* Два бара поровну в ряд. Колонки сжимаемые: длинная подпись бара
+   усекается внутри своей подложки (AllocationBar), а не распирает соседа. */
+.lc-deal-metrics-modal__bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* Подложка бара и раздела — фон страницы, скругление плашки. Своего
+   компонента «подложка блока в окне» в ДС нет. */
+.lc-deal-metrics-modal__panel {
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-m);
+  background: var(--bg-page);
+}
+
+/* Плашка «Данные рассчитываются» в ДС залита --bg-page — тем же цветом, что
+   подложка бара, и на подложке пропадает целиком. На макете она темнее
+   подложки; ближе всего к ней --cgrey-100 (им же ДС заливает скелетон бара).
+   Только внутри подложки окна и до правки ДС (паспорт, «Открытые вопросы»). */
+.lc-deal-metrics-modal__panel .albar__calc { background: var(--cgrey-100); }
+
+/* ── Разделы «Резервы» и «Переоценка по PE» ─────────────────────────── */
+/* Tile Accordion ДС на подложке окна: фон страницы вместо фона плашки и
+   без рамки — на макете раздел лежит серой подложкой, а белое внутри него
+   — карточки и таблица. */
+.lc-deal-metrics-modal__section {
+  background: var(--bg-page);
+  border-color: transparent;
+}
+
+/* Без PE раздела нет совсем (решение человека 25.09.2026). */
+.lc-deal-metrics-modal[data-pe="no"] .lc-deal-metrics-modal__pe { display: none; }
+
+/* Сводка резервов — три карточки: резерв (сумма и ставка) шире, обесценение
+   и RWA — по одной ставке. Пропорции с макета. Рамка — обычная
+   (--border-primary), не светлая (решение человека 25.09.2026). */
+.lc-deal-metrics-modal__cards {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
+}
+.lc-deal-metrics-modal__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--space-16) var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-m);
+}
+/* Широкая карточка: сумма и ставка в ряд, дата расчёта — под суммой. */
+.lc-deal-metrics-modal__card--wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.lc-deal-metrics-modal__card--wide > [data-fin-field="calcDate"] { grid-column: 1; }
+
+/* Сводка PE — четыре поля в ряд. */
+.lc-deal-metrics-modal__pe-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* ── Таблицы по ФИ ──────────────────────────────────────────────────── */
+/* Таблица ДС без тулбара. Колонки — на строке (шапка и данные одним
+   классом): ФИ резиновая, числа фиксированной ширины под «1 000 000 000,00
+   RUB» и ставки; крайние — структурные ячейки ДС. Ширины подобраны так,
+   чтобы «Периодичность» и «Δ переоценки» в шапке не рвались посреди слова,
+   а «Независимый оценщик» и «123 456 789,00 RUB» помещались целиком (суммы
+   в ячейках ДС не переносятся, а усекаются — TableCell 2.023; на макете
+   шапка рвётся — «Периодичн-ость»). */
+.lc-deal-metrics-modal__cols-reserves {
+  grid-template-columns: 8px minmax(160px, 1fr) 220px 120px 140px 110px 8px;
+}
+.lc-deal-metrics-modal__cols-pe {
+  grid-template-columns: 8px minmax(140px, 1fr) 110px 150px 200px 140px 200px 8px;
+}
+
+/* Δ переоценки в таблице — цвет динамики, как у ReadOnlyField
+   (--positive / --negative). У TableCell тона текста нет. */
+.lc-deal-metrics-modal__delta { color: var(--success-dark); }
+.lc-deal-metrics-modal__delta--negative { color: var(--error-dark); }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealFinancialMetricsModal.js — окно «Финансовые метрики сделки».
+
+   Фрагмент DealFinancialMetricsModal.html держит пример с макета. Скрипт
+   при каждом открытии перерисовывает окно метриками сделки — окно живёт в
+   разметке постоянно, а метрики могли смениться. Режима правки у окна нет:
+   оно только показывает.
+
+   Бары ВБС и ОСЗ и поля с пояснениями рисуют функции тайла
+   (PostTileDealFinMetrics.albarHTML / fieldHTML): бар в тайле и в окне один
+   и тот же, разметка у него одна. Поэтому DealFinancialMetricsTile.js
+   подключается раньше этого файла.
+
+   Что делает скрипт (рантаймы ДС этого не делают):
+     1. Бары: ВБС и ОСЗ из метрик; у ОСЗ — плашка «Данные рассчитываются»
+        и предупреждение о просрочке.
+     2. Сводки и таблицы: «Резервы на …» и «Переоценка по PE», строки по ФИ.
+     3. Раздел PE — только у сделки с PE (data-pe на .modal).
+     4. Оба раздела при открытии свёрнуты (DSTile.toggle) — так на макете.
+        Сворачивает открытие (bind), а не render: витрина перерисовывает
+        окно переключателями, и раскрытый раздел остаётся раскрытым.
+
+   API:
+     PostDealFinMetricsModal.render(scrim, metrics)
+       metrics — DealFinancialMetricsRsDto (data/mock-financial-metrics.js).
+     PostDealFinMetricsModal.bind(scrim, opts) → api
+       opts.get() → metrics сделки в момент открытия.
+       api.refresh()
+     PostDealFinMetricsModal.collapse(scrim) — свернуть оба раздела.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'deal-fin-metrics-scrim';
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function T() { return window.PostTileDealFinMetrics; }
+
+  function setField(root, key, text, tone) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-fin-field="' + key + '"] .rof__value'), function (v) {
+      v.textContent = text;
+      if (tone !== undefined) {
+        v.classList.toggle('rof__value--positive', tone === 'positive');
+        v.classList.toggle('rof__value--negative', tone === 'negative');
+      }
+    });
+  }
+  function setAffix(root, key, text) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-fin-field="' + key + '"] .rof__affix'), function (a) {
+      a.textContent = text;
+    });
+  }
+
+  /* Строки таблиц. Разметка строки — TableCell ДС; колонки задаёт класс
+     строки (DealFinancialMetricsModal.css), один на шапку и данные. Имя ФИ —
+     Link ДС: ведёт на страницу ФИ, пока её нет в прототипе — href="#". */
+  function linkCell(title) {
+    return '<div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">'
+      + esc(title) + '</a></span></div>';
+  }
+  function textCell(text) {
+    return '<div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(text) + '</span></span></div>';
+  }
+  function numCell(text, postfix, cls) {
+    return '<div class="tc tc--numbers"><span class="tc__row"><span class="tc__text' + (cls ? ' ' + cls : '') + '">' + esc(text) + '</span>'
+      + (postfix ? '<span class="tc__postfix">' + esc(postfix) + '</span>' : '') + '</span></div>';
+  }
+  var SEP = '<div class="tc tc--separator"></div>';
+
+  function reserveRows(list, cur) {
+    var f = T().fmt;
+    return (list || []).map(function (r) {
+      return '<div class="tbl__row lc-deal-metrics-modal__cols-reserves">' + SEP
+        + linkCell(r.financialInstrumentTitle)
+        + numCell(f.amount(r.reserveAmount), cur)
+        + numCell(f.rate(r.reserveRate), '%')
+        + numCell(f.rate(r.impairmentRate), '%')
+        + numCell(f.rate(r.rwa), '%')
+        + SEP + '</div>';
+    }).join('');
+  }
+
+  function peRows(list, cur) {
+    var f = T().fmt;
+    var L = window.DEAL_FIN_METRICS_LABELS || {};
+    var per = L.periodicity || {};
+    var val = L.valuer || {};
+    return (list || []).map(function (r) {
+      var cls = 'lc-deal-metrics-modal__delta' + (r.revaluationDelta < 0 ? ' lc-deal-metrics-modal__delta--negative' : '');
+      return '<div class="tbl__row lc-deal-metrics-modal__cols-pe">' + SEP
+        + linkCell(r.financialInstrumentTitle)
+        + textCell(f.date(r.valuationDate))
+        + textCell(per[r.periodicityCode] || r.periodicityCode || '—')
+        + numCell(f.amount(r.valuationAmount), cur)
+        + numCell(f.signed(r.revaluationDelta), '', cls)
+        + textCell(val[r.valuerCode] || r.valuerCode || '—')
+        + SEP + '</div>';
+    }).join('');
+  }
+
+  /* Строку шапки оставляем, строки данных — заменяем. */
+  function fillTable(root, name, rowsHTML) {
+    var tbl = root.querySelector('[data-fin-table="' + name + '"]');
+    if (!tbl) return;
+    Array.prototype.slice.call(tbl.children).forEach(function (row) {
+      if (!row.classList.contains('tbl__row--head')) tbl.removeChild(row);
+    });
+    tbl.insertAdjacentHTML('beforeend', rowsHTML);
+  }
+
+  function render(scrim, metrics) {
+    if (!scrim || !T() || !metrics) return;
+    var t = T();
+    var f = t.fmt;
+    var cur = metrics.currencyCode || 'RUB';
+    var modal = scrim.querySelector('.lc-deal-metrics-modal') || scrim;
+
+    /* 1. Бары. ОСЗ нет в ответе — пустой бар ДС («Нет данных»), а не пропавшая
+       подложка: пропавший блок читался бы как отсутствие показателя. */
+    var vbsHost = scrim.querySelector('[data-fin-bar="vbs"]');
+    var oszHost = scrim.querySelector('[data-fin-bar="osz"]');
+    if (vbsHost) vbsHost.innerHTML = t.albarHTML(t.barCfg('vbs', metrics.vbs, cur));
+    if (oszHost) {
+      oszHost.innerHTML = t.albarHTML(metrics.osz
+        ? t.barCfg('osz', metrics.osz, cur)
+        : { kind: 'osz', label: 'ОСЗ по сделке, ' + cur, status: 'ready', items: [] });
+    }
+
+    /* 2. Резервы. */
+    var r = metrics.reserves || {};
+    var title = scrim.querySelector('[data-fin-text="reservesTitle"]');
+    if (title) title.textContent = r.reportDate ? 'Резервы на ' + f.date(r.reportDate) : 'Резервы';
+    setField(modal, 'reserveAmount', f.amount(r.reserveAmount));
+    setAffix(modal, 'reserveAmount', cur);
+    setField(modal, 'reserveRate', f.rate(r.reserveRate));
+    setField(modal, 'impairmentRate', f.rate(r.impairmentRate));
+    setField(modal, 'rwa', f.rate(r.rwa));
+    setField(modal, 'calcDate', f.date(r.calcDate));
+    fillTable(modal, 'reserves', reserveRows(r.instruments, cur));
+
+    /* 3. Переоценка по PE — только у сделки с PE. */
+    var pe = metrics.peRevaluation;
+    modal.setAttribute('data-pe', pe ? 'yes' : 'no');
+    if (pe) {
+      setField(modal, 'revaluationAmount', f.amount(pe.revaluationAmount));
+      setAffix(modal, 'revaluationAmount', cur);
+      setField(modal, 'revaluationDelta', f.signed(pe.revaluationDelta),
+        pe.revaluationDelta > 0 ? 'positive' : pe.revaluationDelta < 0 ? 'negative' : '');
+      setAffix(modal, 'revaluationDelta', cur);
+      setField(modal, 'lastValuationDate', f.date(pe.lastValuationDate));
+      setField(modal, 'nextValuationDate', f.date(pe.nextValuationDate));
+      fillTable(modal, 'pe', peRows(pe.instruments, cur));
+    }
+
+    if (window.dsIcons) window.dsIcons.apply(scrim);
+    if (window.DSTooltip) window.DSTooltip.bindAll(scrim);
+    if (window.DSTable) window.DSTable.bindAll(scrim);
+  }
+
+  /* Разделы «Резервы» и «Переоценка по PE» — свёрнуты. */
+  function collapse(scrim) {
+    if (!scrim || !window.DSTile) return;
+    Array.prototype.forEach.call(scrim.querySelectorAll('.lc-deal-metrics-modal__section'), function (s) {
+      window.DSTile.toggle(s, true);
+    });
+  }
+
+  function bind(scrim, opts) {
+    opts = opts || {};
+    scrim = scrim || document.getElementById(SCRIM_ID);
+    function refresh() { render(scrim, opts.get ? opts.get() : null); }
+
+    /* Открытие: метрики берутся в момент клика по «Развернуть» — до того, как
+       рантайм модалки покажет окно; разделы при каждом открытии свёрнуты. */
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('[data-modal="' + SCRIM_ID + '"]')) {
+        refresh();
+        collapse(scrim);
+      }
+    });
+    refresh();
+    return { refresh: refresh };
+  }
+
+  window.PostDealFinMetricsModal = { render: render, bind: bind, collapse: collapse };
+})();
+</script>
+</body>
+</html>

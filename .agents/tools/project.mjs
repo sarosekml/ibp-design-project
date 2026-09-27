@@ -145,6 +145,12 @@ export function project(from = HERE) {
   const panel = pp && norm(pp.runtime) && norm(pp.boot) && norm(pp.dir)
     ? { runtime: norm(pp.runtime), runtimeAbs: abs(norm(pp.runtime)), boot: norm(pp.boot), bootAbs: abs(norm(pp.boot)), dir: norm(pp.dir) }
     : null;
+  /* Витрина локальных компонентов (`localKit.dir`, 25.09.2026): с переезда в
+     `apps/local-components/` лежит среди приложений, но экраном не является —
+     сторож хаба, сборщик страниц и матрица гейта обходят её по этому пути,
+     сверяет её только kit-build. null — манифест витрину не объявляет. */
+  const lk = m.localKit && typeof m.localKit === 'object' ? m.localKit : null;
+  const showcase = lk ? norm(lk.dir) || 'kit' : null;
   return {
     error: null, root, manifest: m,
     ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
@@ -160,6 +166,8 @@ export function project(from = HERE) {
     /** Панель прототипа: { runtime, runtimeAbs, boot, bootAbs, dir } или null. */
     panel,
     hubPage, hubRegistry,
+    /** Каталог витрины локальных компонентов от корня и абсолютный, или null. */
+    showcase, showcaseAbs: abs(showcase),
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),
   };
