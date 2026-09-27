@@ -284,6 +284,18 @@ function sensorIds() {
   return [...new Set([...out.matchAll(/([БЗКK]\d{1,2}(?:\.\d)?)(?![0-9.])/gu)].map((m) => m[1]))];
 }
 
+/* Структурные проверки страницы документации. Свой инструмент, свой ряд
+   идентификаторов — и своё пространство имён: якорь `док-сплит:ДС17` иначе
+   не проверяется ничем. Имя пространства кириллическое намеренно — разбор
+   неизвестных пространств в `check` читает только кириллицу, и латинское имя
+   прошло бы молча (то же, за что написан Л100). docs-split.mjs обещал это
+   пространство с 24.09.2026, а реестр его не заводил: якорь `док-сплит:…`
+   в журнале ловился бы как Л-ПРОСТРАНСТВО. */
+function docsSplitIds() {
+  const out = execFileSync(process.execPath, [DOCS_SPLIT, '--rules'], { encoding: 'utf8' });
+  return [...new Set([...out.matchAll(/(ДС\d{1,2})(?!\d)/gu)].map((m) => m[1]))];
+}
+
 function auditIds() {
   const src = rd(path.join(DS, 'scripts/spec-audit.mjs'));
   return [...new Set([...src.matchAll(/section\('Проход (\d)/g)].map((m) => m[1]))];
@@ -310,6 +322,7 @@ function anchorsFromCode() {
       'линтер': { источник: DS_REL + '/scripts/ds-lint.js', алфавит: 'латиница', ids: lintIds() },
       'сенсор': { источник: PRJ.rel(SENSOR) + ' --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
       'аудит': { источник: DS_REL + '/scripts/spec-audit.mjs', алфавит: 'номер прохода', ids: auditIds() },
+      'док-сплит': { источник: PRJ.rel(DOCS_SPLIT) + ' --rules', алфавит: 'кириллица ДС', ids: docsSplitIds() },
       'чек-лист': { источник: 'SKILL.md screen-review и composition-review', алфавит: 'кириллица Б/З/К, латинская K — композиция', ids: checkIds() },
     },
   };
@@ -646,7 +659,7 @@ function cmdCheck() {
          считается: так велит скилл lessons. До 13.09.2026 соглашение было
          записано, а регулярка ёлочки не исключала — первая же такая цитата
          дала ложный Л-ЯКОРЬ (класс Л42: правило записано, кода нет). */
-      for (const m of text.matchAll(/(?<!«)(линтер|сенсор|чек-лист|аудит):\s*([^\s`,;)]+)/gu)) {
+      for (const m of text.matchAll(/(?<!«)(линтер|сенсор|чек-лист|аудит|док-сплит):\s*([^\s`,;)]+)/gu)) {
         const ns = m[1];
         let id = m[2].replace(/[.,;:)»]+$/u, '');
         if (ns === 'аудит') { const d = id.match(/(\d)\s*$/); id = d ? d[1] : id; }
@@ -1424,10 +1437,13 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/fixtures/')) add('verify-lint', 'anchors');
 
-  if (underDs('pages/.+\\.html$').test(rel)) {
-    add('lint:' + rel);
-    if (isDocsSplit(rel)) add('split:' + rel);
-  }
+  if (underDs('pages/.+\\.html$').test(rel)) add('lint:' + rel);
+  /* Структурная проверка паттерна «сплиттер + табы» — по ПРИЗНАКУ СТРАНИЦЫ, а
+     не по её папке (урок Л135). Пока шаг звался только для страниц ДС, 21
+     страница витрины локальных компонентов на том же паттерне не получала его
+     вовсе: сенсор витрину пропускает (SHOWCASE_REL), шаг `kit` сверяет её с
+     генератором, а не каркас, — у класса файлов не было читателя (Л115). */
+  if (html && !inFixtures && isDocsSplit(rel)) add('split:' + rel);
   if (underDs('scripts/[^/]+\\.page\\.js$').test(rel)) {
     const pages = pageForScript(rel);
     if (!pages.length) add('lint-global');
