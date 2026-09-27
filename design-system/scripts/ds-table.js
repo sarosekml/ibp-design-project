@@ -89,7 +89,8 @@
     root.classList.toggle('dtable--scrolled', body.scrollTop > 0);
   }
   /* ---------- бегунок полосы прокрутки ---------- */
-  /* Вид — table.css (.dtable__body, как .ds-scroll): в покое бегунок скрыт.
+  /* Вид — table.css (.dtable__body, как .ds-scroll): в покое скрыт вертикальный
+     бегунок, горизонтальный виден всегда (класс на него не влияет).
      Пока тело прокручивается, на нём стоит .is-scrolling; через SCROLL_HIDE мс
      после остановки класс снимается, затухание делает переход в CSS. Тайминг
      тот же, что у ds-scroll.js. Только на событии scroll: на ResizeObserver

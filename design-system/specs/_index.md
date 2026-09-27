@@ -56,7 +56,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Splitter | specs/Splitter.md | styles/splitter.css | button | 1.004 |
 | SubTab | specs/SubTab.md | styles/sub-tab.css | badge | 1.001 |
 | Switch | specs/Switch.md | styles/switch.css | label-helper, spinner | 1.008 |
-| Table | specs/Table.md | styles/table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.018 |
+| Table | specs/Table.md | styles/table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.020 |
 | TableCell | specs/TableCell.md | styles/table-cell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.022 |
 | TableFilter | specs/TableFilter.md | styles/table-filter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | specs/Tab.md | styles/tab.css | — | 1.012 |
