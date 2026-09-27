@@ -14,3 +14,6 @@
 # игнор-лист project.json → vendorScan.ignore (решение владельца 25.09.2026).
 .zcodeignore
 tmp/
+
+# Локальный vault Obsidian: настройки графа, панелей и закреплённых заметок.
+.obsidian/

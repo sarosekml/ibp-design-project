@@ -280,6 +280,7 @@ node .agents/tools/layout-check.mjs <экран.html>  # сенсор одног
 
 | Что | Где |
 |---|---|
+| Карта всей документации — для человека | [`docs/index.md`](docs/index.md) |
 | Приложения: форма, модули, концепты, виджеты, данные | [`apps/README.md`](apps/README.md) |
 | Агентная система целиком: роли, маршруты, приёмка, проверки | [`.agents/README.md`](.agents/README.md) |
 | Правила процесса | [`.agents/rules/process.md`](.agents/rules/process.md) |

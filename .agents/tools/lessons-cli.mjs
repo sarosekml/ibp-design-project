@@ -43,6 +43,7 @@ import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
 import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate } from './runlog.mjs';
 import { need } from './project.mjs';
+import { documentationPaths, isDocPath } from './docs-index.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -1156,6 +1157,7 @@ const RUNLOG = path.join(HERE, 'runlog.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const ASSEMBLE = path.join(HERE, 'assemble.mjs');
 const MODULE_README = path.join(HERE, 'module-readme.mjs');
+const DOCS_INDEX = path.join(HERE, 'docs-index.mjs');
 const PROMOTE = path.join(HERE, 'promote.mjs');
 const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
 const SELF = fileURLToPath(import.meta.url);
@@ -1208,6 +1210,12 @@ function fingerprint() {
   for (const r of GATE_ROOTS) walk(path.join(ROOT, r));
   for (const e of readdirSync(ROOT, { withFileTypes: true })) {
     if (e.isFile() && TEXT_EXT.test(e.name)) walk(path.join(ROOT, e.name));
+  }
+  /* Каталог охватывает все md, включая README состояния и новые папки вне
+     корней манифеста. Обход и исключения общие с генератором (задача 0006). */
+  for (const rel of documentationPaths(PRJ, true)) {
+    const st = statSync(path.join(ROOT, rel));
+    out[rel] = Math.round(st.mtimeMs) + ':' + st.size;
   }
   return out;
 }
@@ -1332,6 +1340,8 @@ function gateStep(id, paths = null) {
        папкой (24.09.2026, шапка module-readme.mjs). */
     case 'readme': return { title: 'module-readme --check (README модулей = их папки)', args: [MODULE_README, '--check'], cwd: ROOT };
     case 'readme-selftest': return { title: 'module-readme --selftest', args: [MODULE_README, '--selftest'], cwd: ROOT };
+    case 'docs-index': return { title: 'docs-index --check (карта документации = md на диске)', args: [DOCS_INDEX, '--check'], cwd: ROOT };
+    case 'docs-index-selftest': return { title: 'docs-index --selftest', args: [DOCS_INDEX, '--selftest'], cwd: ROOT };
     /* Перенос концепта в модуль (/promote): сам инструмент гоняется только
        откатом на временном дереве — на рабочем дереве он пишет. */
     case 'promote-selftest': return { title: 'promote --selftest (перенос концепта в модуль)', args: [PROMOTE, '--selftest'], cwd: ROOT };
@@ -1351,6 +1361,10 @@ function gateStepsFor(rel, deleted) {
   const add = (...ids) => s.push(...ids);
   const inFixtures = rel.split('/').includes('fixtures');
   const html = rel.endsWith('.html');
+
+  // До раннего выхода для удалений: переезд — это удалённый и новый путь.
+  if (isDocPath(rel, PRJ, true) || rel === 'project.json') add('docs-index');
+  if (rel === TOOL_REL + '/docs-index.mjs' || rel === TOOL_REL + '/lessons-cli.mjs') add('docs-index-selftest', 'docs-index');
 
   // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками
   const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/'));
@@ -1453,7 +1467,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
-    'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel',
+    'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1466,9 +1480,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1536,6 +1550,9 @@ function gate() {
   if (!changedArg && !isFull) {
     for (const id of prevFailed) {
       if (byStep.has(id)) continue;
+      // Устаревший каталог блокирует и повторный запуск без новых правок.
+      // Перенос в информационный долг сделал бы второй прогон ложно зелёным.
+      if (id === 'docs-index') { want(id, null); continue; }
       const target = id.includes(':') ? id.slice(id.indexOf(':') + 1) : '';
       if (target && !(target in now)) continue;          // файл удалён — долга больше нет
       if (target) { carried.push(id); continue; }

@@ -31,6 +31,7 @@ updated: "24.09.2026"
 | `index.html` (корень) | Хаб проектов: одна точка входа в ДС, проекты и концепты. Страница не правится — меню и колонки строятся из реестра |
 | `hub.js` (корень) | Реестр хаба: собирается `hub-build.mjs` из `app.json` приложений, руками не правится (гейт, шаг `hub`). Полноту и возврат на хаб проверяет гейт, шаг `registry` |
 | `project.json` (корень) | Манифест структуры проекта. Сверку с диском делает гейт, шаг `manifest` |
+| `docs/` | Задачи и заметки; [docs/index.md](../../docs/index.md) — карта всей документации для человека, агенту целиком не читать (§13). Таблицы генерирует `.agents/tools/docs-index.mjs`, актуальность проверяет гейт |
 | `.agents/` | Харнес агента: роли, команды, скиллы, правила, оснастка. Обзор — `.agents/README.md` |
 | `.agents/agents/` | Роли (`ai-designer`, `screen-builder`, `screen-reviewer`; `ux-researcher` выключен, пока не задан `KB` в `knowledge-lookup`) |
 | `.agents/commands/` | Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume` |
