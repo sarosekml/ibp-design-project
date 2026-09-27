@@ -55,7 +55,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.013</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>InputText</h1>
     <p class="lead">Базовое поле ввода произвольного текста. Собирается из компонентов подкачки <a class="inl" href="../atoms/LabelHelper.html">LabelHelper</a> (метка и хелпер) и Input_Content (поле с рамкой: префикс / текст / постфикс, иконки и действия). На той же базе построены <a class="inl" href="InputDate.html">InputDate</a> и <a class="inl" href="InputAutocomplete.html">InputAutocomplete</a>, а также числовой вариант InputAmount.</p>
@@ -438,7 +438,7 @@ const spec = {
 .inp__field {
   display: flex;
   align-items: center;
-  box-sizing: border-box; /* 2px-бордер фокуса не меняет габариты поля */
+  box-sizing: border-box;
   gap: var(--inp-gap);
   height: var(--inp-h);
   padding: 0 var(--inp-px);
@@ -451,11 +451,15 @@ const spec = {
 }
 .inp__field:hover,
 .inp.is-hover .inp__field { border-color: var(--primary); }
+/* Фокус — обводка 2px (общая для всех состояний *-focus): бордер остаётся
+   1px, второй пиксель рисует внутренняя тень того же цвета. Толщину бордера
+   фокус не меняет — иначе поле с высотой по содержимому (многострочное,
+   чипы) вырастало на 2px и толкало соседей, а у поля фиксированной высоты
+   сдвигался текст на 1px (до 1.015, решение человека 25.09.2026). */
 .inp__field:focus-within,
 .inp.is-focus .inp__field {
   border-color: var(--primary);
-  border-width: 2px; /* фокус — бордер 2px (общий для всех состояний *-focus) */
-  box-shadow: 0 0 0 3px var(--primary-bg-light);
+  box-shadow: inset 0 0 0 1px var(--primary), 0 0 0 3px var(--primary-bg-light);
 }
 
 /* многострочный вариант (InputText) */
@@ -473,13 +477,13 @@ const spec = {
 .inp--error .inp__field:focus-within,
 .inp--error.is-focus .inp__field {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--error), 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent);
 }
 .inp--warning .inp__field { border-color: var(--warning); }
 .inp--warning .inp__field:focus-within,
 .inp--warning.is-focus .inp__field {
   border-color: var(--warning);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent);
+  box-shadow: inset 0 0 0 1px var(--warning), 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent);
 }
 .inp--disabled { pointer-events: none; }
 .inp--disabled .inp__field {

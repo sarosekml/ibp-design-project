@@ -1,8 +1,8 @@
 ---
 component: InputDate
 title: "InputDate"
-version: "1.013"
-updated: "06.09.2026"
+version: "1.015"
+updated: "25.09.2026"
 page: pages/molecules/InputDate.html
 page_js: scripts/input-date.page.js
 runtime: scripts/ds-datepicker.js, scripts/ds-input.js

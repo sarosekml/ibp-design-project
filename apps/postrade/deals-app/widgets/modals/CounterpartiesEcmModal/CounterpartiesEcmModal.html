@@ -1,0 +1,50 @@
+<!-- Связанный артефакт тайла «Описание сделки»: окно «Документы по сделке» —
+     первый шаг просмотра документов ЭКД. Открывается кнопкой «Документы ЭКД
+     по сделке» в шапке тайла. Документы ведутся по контрагенту, поэтому
+     сначала выбирают участника сделки, «Открыть» открывает окно документов
+     (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
+     Вид — по макету refs/описание/«Документы по сделке (ЭКД).png» модуля
+     (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
+     карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
+
+     Карточки рисует CounterpartiesEcmModal.js по шаблону CounterpartyCard
+     (режим select) из участников сделки CounterpartiesStore — того же
+     состава, что правит окно «КНР». В разметке список пуст.
+
+     data-state на .modal — состояние данных: loading | data | empty. -->
+
+<div class="modal-scrim" id="deal-ecm-scrim" hidden>
+  <div class="modal modal--w4 lc-deal-ecm" role="dialog" aria-modal="true" aria-labelledby="deal-ecm-title" data-state="data">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-ecm-title">Документы по сделке</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="lc-deal-ecm__heading" id="deal-ecm-pick">Выберите участника сделки</p>
+
+      <!-- Список карточек — радиогруппа: карточка в режиме select сама
+           пункт группы (role="radio"). Выбор и клавиатуру ведёт скрипт окна. -->
+      <div class="lc-deal-ecm__list" role="radiogroup" aria-labelledby="deal-ecm-pick" data-ecm-items></div>
+
+      <!-- Загрузка: состав сделки ещё читается (сервер данных или localStorage,
+           data/API.md) — каркас двух карточек в их габаритах. -->
+      <div class="lc-deal-ecm__loading" aria-busy="true">
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded lc-deal-ecm__loading-card" aria-hidden="true"></span>
+      </div>
+
+      <!-- Участников нет: одна строка причины. Действия здесь нет — состав
+           правят в окне «КНР», а не отсюда. -->
+      <p class="lc-deal-ecm__empty">У сделки пока нет участников — документы смотреть не по кому.</p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-ecm-next disabled><span class="btn__label">Открыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

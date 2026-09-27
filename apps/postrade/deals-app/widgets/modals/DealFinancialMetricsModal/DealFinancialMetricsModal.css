@@ -1,0 +1,88 @@
+/* Окно «Финансовые метрики сделки» — связанный артефакт тайла.
+   Только внутренняя раскладка на токенах ДС; своих значений здесь нет.
+   Окно, шапку, подвал, бары, аккордеон, поля и таблицы рисует ДС. Здесь —
+   подложки блоков, раскладка баров и карточек, колонки таблиц и
+   присутствие раздела PE. Чего в ДС нет и что собрано поверх на токенах —
+   паспорт окна, «Открытые вопросы». */
+
+/* Зазор между блоками тела — 16, как на макете (бары → резервы → PE). */
+.lc-deal-metrics-modal__body { gap: var(--space-16); }
+
+/* ── ВБС и ОСЗ ──────────────────────────────────────────────────────── */
+/* Два бара поровну в ряд. Колонки сжимаемые: длинная подпись бара
+   усекается внутри своей подложки (AllocationBar), а не распирает соседа. */
+.lc-deal-metrics-modal__bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* Подложка бара и раздела — фон страницы, скругление плашки. Своего
+   компонента «подложка блока в окне» в ДС нет. */
+.lc-deal-metrics-modal__panel {
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-m);
+  background: var(--bg-page);
+}
+
+/* Плашка «Данные рассчитываются» в ДС залита --bg-page — тем же цветом, что
+   подложка бара, и на подложке пропадает целиком. На макете она темнее
+   подложки; ближе всего к ней --cgrey-100 (им же ДС заливает скелетон бара).
+   Только внутри подложки окна и до правки ДС (паспорт, «Открытые вопросы»). */
+.lc-deal-metrics-modal__panel .albar__calc { background: var(--cgrey-100); }
+
+/* ── Разделы «Резервы» и «Переоценка по PE» ─────────────────────────── */
+/* Tile Accordion ДС на подложке окна: фон страницы вместо фона плашки и
+   без рамки — на макете раздел лежит серой подложкой, а белое внутри него
+   — карточки и таблица. */
+.lc-deal-metrics-modal__section {
+  background: var(--bg-page);
+  border-color: transparent;
+}
+
+/* Без PE раздела нет совсем (решение человека 25.09.2026). */
+.lc-deal-metrics-modal[data-pe="no"] .lc-deal-metrics-modal__pe { display: none; }
+
+/* Сводка резервов — три карточки: резерв (сумма и ставка) шире, обесценение
+   и RWA — по одной ставке. Пропорции с макета. Рамка — обычная
+   (--border-primary), не светлая (решение человека 25.09.2026). */
+.lc-deal-metrics-modal__cards {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
+}
+.lc-deal-metrics-modal__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--space-16) var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-m);
+}
+/* Широкая карточка: сумма и ставка в ряд, дата расчёта — под суммой. */
+.lc-deal-metrics-modal__card--wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.lc-deal-metrics-modal__card--wide > [data-fin-field="calcDate"] { grid-column: 1; }
+
+/* Сводка PE — четыре поля в ряд. */
+.lc-deal-metrics-modal__pe-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* ── Таблицы по ФИ ──────────────────────────────────────────────────── */
+/* Таблица ДС без тулбара. Колонки — на строке (шапка и данные одним
+   классом): ФИ резиновая, числа фиксированной ширины под «1 000 000 000,00
+   RUB» и ставки; крайние — структурные ячейки ДС. Ширины подобраны так,
+   чтобы «Периодичность» и «Δ переоценки» в шапке не рвались посреди слова,
+   а «Независимый оценщик» и «123 456 789,00 RUB» помещались целиком (суммы
+   в ячейках ДС не переносятся, а усекаются — TableCell 2.023; на макете
+   шапка рвётся — «Периодичн-ость»). */
+.lc-deal-metrics-modal__cols-reserves {
+  grid-template-columns: 8px minmax(160px, 1fr) 220px 120px 140px 110px 8px;
+}
+.lc-deal-metrics-modal__cols-pe {
+  grid-template-columns: 8px minmax(140px, 1fr) 110px 150px 200px 140px 200px 8px;
+}
+
+/* Δ переоценки в таблице — цвет динамики, как у ReadOnlyField
+   (--positive / --negative). У TableCell тона текста нет. */
+.lc-deal-metrics-modal__delta { color: var(--success-dark); }
+.lc-deal-metrics-modal__delta--negative { color: var(--error-dark); }

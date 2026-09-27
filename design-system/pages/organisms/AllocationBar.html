@@ -92,7 +92,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.002</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.003</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>AllocationBar</h1>
     <p class="lead">Итоговое числовое значение и его разбивка по составляющим: заголовок с суммой, стек-бар распределения и список позиций с долями. Компонент не знает предметной области — «Кредит», «РЕПО» и «Комиссия» приходят снаружи как данные. Служебные состояния собраны из <a class="inl" href="../molecules/Alert.html">Alert</a>, кнопка раскрытия — <a class="inl" href="../atoms/Buttons.html">Button</a> Transparent XS, цвета сегментов — только токены <code class="tok">--chart-*</code> из <a class="inl" href="../foundations/Colors.html">Colors</a>.</p>
@@ -139,7 +139,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
           <li><span class="n"></span><span class="t"><span class="k">.albar__head</span><span class="d"> — заголовок (+ опц. подзаголовок и иконка предупреждения) слева, итог справа; выравнивание по базовой линии</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">.albar__total</span><span class="d"> — итог, Body M Strong; единица измерения (<code class="tok">.albar__unit</code>) — Body XS, цвет <code class="tok">--text-inactive</code></span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">.albar__bar</span><span class="d"> — стек-бар 8px, радиус pill, зазор сегментов 2px, трек <code class="tok">--st-grey-light</code>. <code class="tok">role="img"</code> + текстовая сводка в <code class="tok">aria-label</code></span></span></li>
-          <li><span class="n"></span><span class="t"><span class="k">.albar__row</span><span class="d"> — строка позиции: маркер 8px · название · процент · значение. Числовые колонки выровнены по правому краю, tabular-nums</span></span></li>
+          <li><span class="n"></span><span class="t"><span class="k">.albar__row</span><span class="d"> — строка позиции: три колонки с постоянными долями — наименование с маркером 50% · процент 20% · сумма 30%. Треки одинаковы у всех строк: проценты и суммы стоят друг под другом, правый край сумм совпадает с итогом. Числа по правому краю, tabular-nums; длинное значение — многоточие и тултип</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">.albar__foot</span><span class="d"> — подвал: Alert ДС при partial (warning) или overflow (error). В штатном случае отсутствует</span></span></li>
         </ul>
       </div>
@@ -185,7 +185,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
       <div class="demo">
         <p class="demo__cap">Средний — 320–480px</p>
         <div class="cbox" style="max-width:400px;"><span class="cbox__tag">container: 400px</span><div id="size-mid"></div></div>
-        <p class="demo__note">Итог Body S Strong (14/16), строки Body XS (12/16); числовые колонки ужимаются до 56 / 80px.</p>
+        <p class="demo__note">Итог Body S Strong (14/16), строки Body XS (12/16); доли колонок строки те же — 50 / 20 / 30%.</p>
       </div>
       <div class="demo">
         <p class="demo__cap">Узкий — &lt; 320px</p>
@@ -200,7 +200,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
     </div>
 
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Брейкпоинт</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Итог</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Строки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&gt; 480px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body M Strong · 16/20</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Базовая раскладка, % 64px, значение 96px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">320–480px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body XS · 12/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Числовые колонки 56 / 80px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&lt; 320px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body XS · 12/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">% скрыт, строка в два ряда, значение — Secondary</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&lt; 200px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бар и список скрыты, шапка в колонку</span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Брейкпоинт</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Итог</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Строки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&gt; 480px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body M Strong · 16/20</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Базовая раскладка, колонки 50 / 20 / 30%</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">320–480px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body XS · 12/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Шрифты компактнее, доли колонок те же</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&lt; 320px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body XS · 12/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">% скрыт, строка в два ряда, значение — Secondary</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.9fr 1.4fr 1.13fr 2.61fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">&lt; 200px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Body S Strong · 14/16</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Бар и список скрыты, шапка в колонку</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
   
 <div class="subsec" data-screen-label="Radius">
@@ -230,7 +230,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
     <div class="panel">
       <ul class="rules">
         <li><b>Маркер позиции</b> — круг 8px в цвете сегмента, не иконка. Единственная графика внутри строки.</li>
-        <li><b>Иконка предупреждения в шапке</b> (<code class="tok">.albar__warn</code>) — <code class="tok">alert-triangle-filled</code> 16px в тоне <code class="tok">--warning</code>, между заголовком и итогом; всегда с тултипом, объясняющим причину. Пример — «Просроченная задолженность на сумму 123 млн. RUB».</li>
+        <li><b>Иконка предупреждения в шапке</b> (<code class="tok">.albar__warn</code>) — <code class="tok">alert-triangle-filled</code> 16px в тоне <code class="tok">--warning</code>, сразу за подписью (зазор 8px), итог прижат вправо; всегда с тултипом, объясняющим причину. Пример — «Просроченная задолженность на сумму 123 млн. RUB».</li>
         <li><b>Иконки состояний</b> приходят из Alert ДС и отдельно не настраиваются.</li>
       </ul>
     </div>
@@ -257,7 +257,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
     </div>
 
     <h3>Растяжение</h3>
-    <p class="desc tight">По умолчанию <code class="tok">max-width: 600px</code>. В резиновой сетке включайте <code class="tok">.albar--stretch</code>: бар и шапка занимают всю ширину, а содержимое строк остаётся в окне 600px от левого края — иначе название и значение расходятся по краям и связь между ними теряется.</p>
+    <p class="desc tight">По умолчанию <code class="tok">max-width: 600px</code>. В резиновой сетке включайте <code class="tok">.albar--stretch</code>: шапка, бар и строки занимают всю ширину контейнера. Связь названия со значением держат колонки строки (50 / 20 / 30%): проценты и суммы стоят столбцами под итогом, а не расходятся по краям. До 1.003 строки ограничивались окном 600px от левого края, и в широком контейнере суммы уходили левее итога.</p>
     <div class="demo__box demo__box--page" style="margin-bottom:8px;" id="beh-stretch"></div>
 
     <h3>Динамическое изменение размера</h3>
@@ -522,11 +522,15 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .albar{display:flex;flex-direction:column;gap:8px;max-width:var(--albar-max-w,600px);font:var(--type-body-s);color:var(--text-primary);font-variant-numeric:tabular-nums}
 
 /* ---------- шапка ---------- */
-.albar__head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
-.albar__titles{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto}
+/* Порядок шапки: подпись → предупреждение → итог. Иконка-предупреждение стоит
+   сразу за подписью (зазор 8px), итог прижат вправо (margin-left:auto) и
+   держит от подписи не меньше 16px — 8px зазора + 8px своего отступа.
+   1.003: до этого подпись тянулась (flex:1), и иконка уезжала к итогу. */
+.albar__head{display:flex;align-items:baseline;justify-content:flex-start;gap:8px}
+.albar__titles{display:flex;flex-direction:column;gap:2px;min-width:0;flex:0 1 auto}
 .albar__label{font:var(--type-body-xs);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .albar__sublabel{font:var(--type-body-xs);color:var(--text-inactive);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.albar__total{display:flex;align-items:baseline;gap:4px;flex:0 0 auto;white-space:nowrap;font:var(--type-body-m-strong);color:var(--text-primary)}
+.albar__total{display:flex;align-items:baseline;gap:4px;flex:0 0 auto;margin-left:auto;padding-left:8px;white-space:nowrap;font:var(--type-body-m-strong);color:var(--text-primary)}
 .albar__unit{font:var(--type-body-xs);color:var(--text-inactive)}
 .albar__total--empty{font:var(--type-body-m);color:var(--text-inactive)}
 .albar__warn{display:inline-flex;align-items:center;align-self:center;flex:0 0 auto;color:var(--warning)}
@@ -538,12 +542,22 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .albar__seg--rest{background:var(--st-grey-midlight)}
 
 /* ---------- список позиций ---------- */
+/* Строка — три колонки с постоянными долями ширины: наименование с маркером
+   50%, процент 20%, сумма 30%. Треки одинаковы у всех строк, поэтому проценты
+   и суммы стоят друг под другом столбцами, а правый край сумм совпадает с
+   итогом в шапке. Ячейка — явной колонкой: без процентов (showPercent:false)
+   сумма остаётся в своей колонке 30%. Длинное значение — одна строка с
+   многоточием, полное — тултипом (ds-allocationbar.js). 1.003: до этого
+   колонки % и суммы были auto с min-width 64/96 и расходились от строки к
+   строке. */
 .albar__list{display:flex;flex-direction:column}
-.albar__row{display:grid;grid-template-columns:8px 1fr auto auto;align-items:center;gap:8px;min-height:24px;padding:2px 0;border-radius:var(--radius-xs)}
-.albar__dot{width:8px;height:8px;border-radius:var(--radius-round);justify-self:center}
-.albar__name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.albar__pct{min-width:64px;text-align:right;color:var(--text-secondary)}
-.albar__val{min-width:96px;text-align:right;color:var(--text-primary)}
+.albar__row{display:grid;grid-template-columns:16px minmax(0,calc(50% - 16px)) minmax(0,20%) minmax(0,30%);align-items:center;column-gap:0;min-height:24px;padding:2px 0;border-radius:var(--radius-xs)}
+.albar__row[hidden]{display:none}
+.albar__dot{grid-column:1;width:8px;height:8px;border-radius:var(--radius-round);justify-self:start}
+.albar__name{grid-column:2;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.albar__pct,.albar__val{min-width:0;padding-left:8px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.albar__pct{grid-column:3;color:var(--text-secondary)}
+.albar__val{grid-column:4;color:var(--text-primary)}
 .albar__row:hover{background:var(--bg-table-default-hover)}
 .albar__more{align-self:flex-start;margin-top:4px}
 
@@ -565,32 +579,32 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .albar__sk--bar{height:8px;border-radius:var(--radius-pill)}
 .albar__sk--name{height:12px;width:56%}
 .albar__sk--num{height:12px;width:96px;justify-self:end}
-.albar__row--sk{grid-template-columns:8px 1fr auto;pointer-events:none}
+.albar__row--sk{grid-template-columns:16px minmax(0,1fr) minmax(0,30%);pointer-events:none}
 .albar__dot--sk{background:var(--cgrey-100)}
 @media (prefers-reduced-motion:reduce){.albar__sk{animation:none}.albar__seg{transition:none}}
 
 /* ---------- контейнерные запросы ---------- */
-/* Средний — 320–480px: компактнее шрифты и числовые колонки */
+/* Средний — 320–480px: компактнее шрифты; доли колонок те же 50/20/30 */
 @container albar (max-width:480px){
   .albar{font:var(--type-body-xs)}
   .albar__total{font:var(--type-body-s-strong)}
   .albar__total--empty{font:var(--type-body-s)}
-  .albar__pct{min-width:56px}
-  .albar__val{min-width:80px}
 }
 /* Узкий — <320px: колонка процентов скрыта, строка в два ряда */
 @container albar (max-width:320px){
-  .albar__row{grid-template-columns:8px 1fr;grid-template-rows:auto auto;row-gap:2px;padding:6px 0}
+  .albar__row{grid-template-columns:8px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;row-gap:2px;padding:6px 0}
+  .albar__dot{justify-self:center}
   .albar__name{grid-column:2;grid-row:1}
   .albar__pct{display:none}
-  .albar__val{grid-column:2;grid-row:2;min-width:0;text-align:left;color:var(--text-secondary)}
-  .albar__row--sk{grid-template-columns:8px 1fr}
+  .albar__val{grid-column:2;grid-row:2;min-width:0;padding-left:0;text-align:left;color:var(--text-secondary)}
+  .albar__row--sk{grid-template-columns:8px minmax(0,1fr)}
   .albar__sk--num{width:72px;justify-self:start}
 }
 /* Очень узкий — <200px: только шапка + триггер разворота */
 @container albar (max-width:200px){
   .albar__bar,.albar__list,.albar__foot{display:none}
   .albar__head{flex-direction:column;align-items:stretch;gap:4px}
+  .albar__total{margin-left:0;padding-left:0}
   .albar__expand{display:inline-flex}
 }
 .albar__expand{display:none;align-self:flex-start}
@@ -606,8 +620,9 @@ window.DS_SPLIT_SWITCH_LABELS = {
 .albar-host[data-height="C"] .albar__list,.albar-host[data-height="C"] .albar__bar,.albar-host[data-height="C"] .albar__foot{display:none}
 
 /* ---------- растяжение ---------- */
+/* Бар, шапка и строки занимают всю ширину контейнера. 1.003: строки больше
+   не ограничены 600px — в широком тайле проценты и суммы уходили левее итога. */
 .albar--stretch{max-width:none}
-.albar--stretch .albar__row{padding-right:max(0px,calc(100% - 600px))}
 
 /* ---------- печать ---------- */
 @media print{.albar__bar{display:none!important}.albar__more{display:none!important}.albar__row{break-inside:avoid}}</script>

@@ -1,22 +1,129 @@
 /* Локальный компонент «Описание сделки».
-   Пока модуль — заглушка, его CSS держит режим прав и строку-заглушку. Режим (data-mode)
-   ставит страница: edit | view. В просмотре — в том числе когда статус сделки
-   не допускает правку — действия правки не рисуются вовсе, а не выключаются. */
-.lc-deal-description[data-mode="view"] .tile__actions { display: none; }
+   Только внутренняя раскладка. Цвета, шрифты, отступы, радиусы — токены ДС;
+   своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: переключается только
+   присутствие собственных блоков .lc-deal-description__* и слотов тайла.
+   Режим (data-mode) ставит страница: edit | view. В просмотре действие правки
+   не рисуется вовсе, а не выключается; вместо него — «Развернуть». */
 
-/* Заглушка: состав полей не согласован. Строка по центру тела тайла, без
-   иллюстрации: помещается в минимальную высоту тайла, которую задаёт
-   страница, и не растягивает ряд (решение человека 22.09.2026). Тело
-   занимает свободную высоту тайла — тайл колонка флексом (Tile). */
-.lc-deal-description[data-state="empty"] .tile__body {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Компонент перестраивается по СВОЕЙ ширине, а не по ширине окна: он стоит на
+   6 колонках из 12, а на узкой странице — на 12. */
+.lc-deal-description { container-type: inline-size; }
+
+/* ── Признаки: текст с иконкой на подложке ──────────────────────────── */
+/* Подложка — окрашенный контейнер со скруглением (макет; решение человека
+   24.09.2026: это не компонент, а текст с иконками на фоне). Фон — тот же
+   нейтральный серый, что у шапки поповера и закреплённой колонки таблицы. */
+.lc-deal-description__flags {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-16);
+  padding: var(--space-12);
+  border-radius: var(--radius-m);
+  background: var(--bg-table-pinned);
 }
-.lc-deal-description__stub {
+
+/* Колонка признаков — стопка строк. Порядок в макете идёт по колонкам, поэтому
+   колонки — группы, а не ячейки одной сетки. */
+.lc-deal-description__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Строка признака: иконка и текст Body M. Длинный текст переносится внутри
+   своей колонки, иконка остаётся на первой строке. */
+.lc-deal-description__flag {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Иконка признака — 20px, в высоту строки Body M (20px). Цвет по умолчанию —
+   secondary (правило ДС «иконки по умолчанию — secondary»); тон несёт смысл
+   значения: категория риска ЦУП и признак «Фин.расчеты в шаблоне». */
+.lc-deal-description__icon {
+  flex: none;
+  display: inline-flex;
+  width: var(--space-20);
+  height: var(--space-20);
+  color: var(--secondary);
+}
+.lc-deal-description__icon :is(svg, [data-icon]) { width: 100%; height: 100%; display: block; }
+
+.lc-deal-description__icon--error   { color: var(--error); }        /* риск A */
+.lc-deal-description__icon--warning { color: var(--warning); }      /* риск B, фин. расчёты в шаблоне */
+.lc-deal-description__icon--success { color: var(--success); }      /* риск C */
+.lc-deal-description__icon--dark    { color: var(--text-primary); } /* риск D */
+
+/* Строку признака убирают атрибутом hidden («Связанные сделки», когда их нет).
+   Пара к нему обязательна: display:flex у класса иначе перебил бы браузерное
+   правило [hidden] (соглашение ДС, правило B11). */
+.lc-deal-description__flag[hidden] { display: none; }
+
+/* ── Не заполнено ───────────────────────────────────────────────────── */
+/* Без права правки — одна строка причины слева вверху тела, как у «Команды
+   сделки»: EmptyState с иллюстрацией растянул бы ряд (см. паспорт). */
+.lc-deal-description__empty {
   margin: 0;
   font: var(--type-body-m);
   color: var(--text-inactive);
-  text-align: center;
+}
+
+/* ── Загрузка ───────────────────────────────────────────────────────── */
+/* Каркас подложки — в её итоговой высоте: три строки признаков по 20px, два
+   зазора по 16px и поля подложки по 12px. */
+.lc-deal-description__loading-flags {
+  --sk-h: calc(3 * var(--space-20) + 2 * var(--space-16) + 2 * var(--space-12));
+}
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» и «заполнено частично» (незаполненные поля прочерком);
+   остальные блоки появляются по data-state. Каркас загрузки несёт и класс
+   стопки тайла (.tile__rows, display:flex), поэтому скрывается правилом
+   с корнем — иначе исход решал бы порядок подключения CSS. */
+.lc-deal-description .lc-deal-description__loading,
+.lc-deal-description__fill,
+.lc-deal-description__empty { display: none; }
+
+.lc-deal-description[data-state="loading"] .lc-deal-description__content,
+.lc-deal-description[data-state="empty"] .lc-deal-description__content { display: none; }
+
+.lc-deal-description[data-state="loading"] .lc-deal-description__loading { display: flex; }
+.lc-deal-description[data-state="empty"][data-mode="edit"] .lc-deal-description__fill { display: block; }
+.lc-deal-description[data-state="empty"][data-mode="view"] .lc-deal-description__empty { display: block; }
+
+/* ── Действия шапки ─────────────────────────────────────────────────── */
+/* «Документы ЭКД по сделке» — во всех состояниях, кроме загрузки: документы
+   смотрят и в просмотре, и у незаполненного описания (макет). Карандаш и
+   «Развернуть» — по одному на режим и только когда есть что показать: пустой
+   тайл заполняют кнопкой в теле. */
+.lc-deal-description__act { display: none; }
+.lc-deal-description[data-mode="edit"] .lc-deal-description__act--edit,
+.lc-deal-description[data-mode="view"] .lc-deal-description__act--view { display: inline-flex; }
+
+.lc-deal-description[data-state="empty"] .lc-deal-description__act { display: none; }
+.lc-deal-description[data-state="loading"] .tile__actions { display: none; }
+
+/* ── Перестроение по своей ширине ───────────────────────────────────── */
+/* Три колонки признаков — от 720px ширины тайла: колонка тогда ≈ 210px
+   ((720 − поля тела 40 − поля подложки 24 − зазоры 2 × 16) / 3), и в одну
+   строку встают «Категория риска ЦУП: C» и «Фин.расчеты в шаблоне» (Body M
+   ≈ 180px + иконка 20 + зазор 8). Ниже — две колонки, третья группа уходит в
+   следующий ряд; ниже 380px — одна. Длинные подписи («Категория риска ЦУП:
+   не определена») переносятся внутри колонки при любой ширине.
+   На странице сделки тайл стоит на 6 колонках из 12: окно 1920 — тайл ≈ 732px,
+   три колонки; 1366–1680 — тайл 610–660px, две; окно до 1296 — тайл на всю
+   ширину, снова три (решение человека 25.09.2026: на меньших экранах —
+   две колонки). */
+@container (max-width: 719px) {
+  .lc-deal-description__flags { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 379px) {
+  .lc-deal-description__flags { grid-template-columns: minmax(0, 1fr); }
 }

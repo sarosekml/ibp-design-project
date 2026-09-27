@@ -98,8 +98,10 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 ## 6. Данные
 
 Источник — `hub.js` в корне, `window.IBPHub`, одна запись на приложение. Реестр
-собирается генератором `hub-build.mjs` из `apps/<раздел>/<id>/app.json` и
-`project.json → hub.ds` (запись ДС) и руками не правится.
+собирается генератором `hub-build.mjs` из `apps/<раздел>/<id>/app.json`,
+`project.json → hub.ds` (запись ДС) и `project.json → localKit` (витрина локальных
+компонентов — вторая запись колонки «Дизайн-система», `apps/local-components/index.html`) и руками
+не правится.
 
 | Поле | Тип | Обязательное | Примечание |
 |---|---|---|---|

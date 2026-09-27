@@ -1,6 +1,6 @@
 /* Реестр хаба проектов — источник меню и списка на корневой странице index.html.
 
-   СГЕНЕРИРОВАН hub-build.mjs из apps/<id>/app.json и project.json → hub.ds. Руками не
+   СГЕНЕРИРОВАН hub-build.mjs из apps/<id>/app.json и project.json → hub.ds, localKit. Руками не
    править: запись приложения — его app.json, пересобрать — node .agents/tools/hub-build.mjs
    (гейт сверяет, шаг hub). Хаб строит из реестра и меню, и три колонки; сама
    страница не правится.
@@ -9,7 +9,7 @@
    file:// с кириллическим путём не работает.
 
    Группы (колонки хаба, в этом порядке):
-     ds       — дизайн-система (запись — project.json → hub.ds);
+     ds       — дизайн-система (запись — project.json → hub.ds) и витрина локальных компонентов (project.json → localKit);
      projects — приложения трека product: соответствует настоящей системе, строго на ДС;
      concepts — приложения трека rnd: R&D: кастом допустим, если ТЗ прямо просит;
    Группа приложения — hubGroup его трека (project.json → tracks).
@@ -33,6 +33,15 @@ window.IBPHub = [
     href: 'design-system/index.html',
     root: null,
     icon: 'layer-01'
+  },
+  {
+    id: 'local-kit',
+    group: 'ds',
+    title: 'Локальные компоненты',
+    desc: 'Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/index.html',
+    root: null,
+    icon: 'layout-grid-01'
   },
   {
     id: 'deals-app',

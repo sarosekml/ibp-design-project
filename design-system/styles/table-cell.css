@@ -134,6 +134,15 @@
 .tc--numbers .tc__body  { justify-content: flex-end; align-items: flex-end; }
 .tc--numbers .tc__row,
 .tc--numbers .tc__text { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+/* Сумма в ячейке не переносится на вторую строку: число, разорванное
+   переносом, читается как два значения. Не помещается — многоточие, полное
+   значение тултипом (ds-table.js, DSTooltip.truncated). Перенос остаётся
+   только по явному .tc--wrap. 2.023 (решение человека 25.09.2026). */
+.tc--numbers:not(.tc--wrap) .tc__text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* пустое значение «—».
    ПРАВИЛО (23.09.2026): прочерк — ЗНАЧЕНИЕ, а не подсказка, поэтому цвет у него

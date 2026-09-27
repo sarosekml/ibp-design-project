@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно контрагентов — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно контрагентов">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- InstrumentsCounterpartiesModal — окно выбора контрагентов, артефакт тайла
+     CounterpartiesTile. Собран вариант страницы сделки: там тайл называется «КНР»,
+     а окно — поиск и выбор ключевого носителя риска. Фрагмент вшивается ассемблером отдельной меткой ds-include —
+     скрим должен лежать в конце body, а не внутри тайла.
+
+     Два таба: юрлица и физлица. Под каждым — три колонки: форма поиска,
+     результаты поиска и участники сделки.
+
+     Карточек в разметке нет. Разметку карточки даёт локальный компонент
+     «Карточка контрагента» (его шаблон страница вшивает рядом с окном), а данные приходят
+     из CounterpartiesStore — так же, как реестр портфеля рисует сделки из
+     mock-deals.js. Раскладывает одно по другому InstrumentsCounterpartiesModal.js: он же
+     переключает панели табов (рантайма показа панели в ДС нет), ищет по базе
+     контрагентов, переносит карточки между колонками (кнопкой со стрелками и
+     двойным кликом) и ведёт черновик: «Сохранить» применяет правки к сделке,
+     крестик и Esc их отменяют.
+
+     Формы поиска — <form>: Enter в любом поле запускает поиск так же, как
+     «Найти». Колонки «Найдено» и «Физические лица» пусты, пока поиск не задан.
+
+     Что различает колонки: пока контрагент не участник сделки, у него нет ни
+     чекбокса «КНР», ни строки ГСЗ, ни риск-метрики — их показывает только
+     третья колонка. Правило живёт в сторе и в CSS карточки, не здесь.
+
+     Раскладка: окно шириной 8 колонок (modal--w8) и фиксированной высоты
+     (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
+     Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
+     бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области. -->
+
+<div id="knr-scrim" hidden class="modal-scrim modal-scrim--inline">
+
+  <!-- эталон карточки (CounterpartyCard/, единственный источник её разметки)
+       вшивает страница рядом с этим окном: общий сборщик метки внутри
+       фрагмента не раскрывает. Шаблону место в DOM не важно — скрипт берёт
+       его по id. -->
+
+  <!-- data-mode — режим прав окна: edit | view. Ставит страница: статус сделки,
+       не допускающий правку, даёт view при любой роли. В view поиск работает,
+       но карточки не переносятся, отметка «КНР» не меняется, а вместо
+       «Сохранить» — «Закрыть» (InstrumentsCounterpartiesModal.css, InstrumentsCounterpartiesModal.js). -->
+  <div class="modal modal--w8 lc-knrm" data-mode="edit" role="dialog" aria-modal="true" aria-labelledby="knr-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="knr-title">Ключевой носитель риска</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="knr-tabs">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0">
+          <span class="tab__label">Юридические лица</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1">
+          <span class="tab__label">Физические лица</span></button>
+      </div>
+
+      <!-- ══ Панель: юридические лица ══════════════════════════════════ -->
+      <div class="lc-knrm__cols" data-knr-panel>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-name" name="name"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kpp"><span class="ds-label__text">КПП</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kpp" name="kpp" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-ogrn"><span class="ds-label__text">ОГРН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-ogrn" name="ogrn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kio"><span class="ds-label__text">КИО</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kio" name="kio" inputmode="numeric"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Найдено</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
+            <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
+              Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ══ Панель: физические лица ═══════════════════════════════════ -->
+      <!-- Поиск физлиц возможен только среди юрлиц — участников сделки,
+           поэтому первое поле формы — выбор юрлица из уже перенесённых.
+           Опции списка собирает InstrumentsCounterpartiesModal.js из участников сделки. -->
+      <div class="lc-knrm__cols" data-knr-panel hidden>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="knr-fl-ul-list" data-ddl="knr-fl-ul-list">
+                <input class="inp__control" id="knr-fl-ul" placeholder="Поиск…" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+              <div id="knr-fl-ul-list" class="ddl ddl--floating" role="listbox"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-bd"><span class="ds-label__text">Дата рождения</span></label>
+              <div class="inp__field">
+                <input class="inp__control" id="knr-fl-bd" name="birthDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-pass"><span class="ds-label__text">Номер паспорта</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-pass" name="passport" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-tel"><span class="ds-label__text">Номер телефона</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-tel" name="phone" inputmode="tel"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Физические лица</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
+               рисуются недоступными (Disabled у Card). Зеркально на вкладке
+               юрлиц недоступны физлица. Удаление юрлица не тянет за собой
+               удаление входящих в него физлиц. -->
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-members">
+            <p class="lc-knrm__hint">Перенесите выбранных физических лиц сюда</p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-knr-save data-modal-close><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-knrm__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>0.007</b></span><span>Обновлено: <b>24.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Модальное окно контрагентов</h1>
+  <p class="lead">Найти контрагентов, перенести их в участники сделки и отметить среди них ключевых носителей риска</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в паспорте не указана</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">0.007 · обновлено 24.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/molecules/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputDate.html">InputDate</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/pages/molecules/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/pages/atoms/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/pages/foundations/Typography.html">Typography</a> · <a class="inl" href="../../../../design-system/pages/foundations/Layout.html">Layout</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/molecules/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">Карточка контрагента (CounterpartyCard/CounterpartyCard.md)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.css">InstrumentsCounterpartiesModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.html">InstrumentsCounterpartiesModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js">InstrumentsCounterpartiesModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md">InstrumentsCounterpartiesModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html">KNRConfirmModal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Подчасти</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartyCard.doc.html">CounterpartyCard</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="CounterpartiesTile.doc.html">Контрагенты (CounterpartiesTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл контрагентов (на странице сделки — «КНР») — IconButton edit/maximize в шапке и кнопка «Заполнить» в пустом состоянии</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Имя — как во фронтенде, <code class="tok">InstrumentsCounterpartiesModal</code> (дерево фронтенда): у фронтенда это одно окно выбора для тайла контрагентов <code class="tok">CounterpartiesTile</code> на всех страницах, где он стоит. До 24.09.2026 окно называлось <code class="tok">KNRModal</code>. Ниже описан собранный вариант — со страницы сделки, где тайл называется «КНР». Заголовок окна и подписи из других контекстов (обеспечение, инструмент) — не решено (24.09.2026).</p>
+<p class="desc">Артефакт тайла «КНР». Не компонент: сам по себе не существует и в плоском списке кита его нет — он принадлежит своему тайлу и живёт под-пунктом его навигации. В ките и документации оно называется «Модальное окно КНР», заголовок самого окна — «Ключевой носитель риска» (решение человека 21.09.2026).</p>
+<p class="desc">Окно решает одну задачу: собрать состав участников сделки и отметить среди них ключевых носителей риска. Два таба — юрлица и физлица; под каждым три колонки: параметры поиска, результаты и участники сделки. Контрагента находят поиском, переносят в участники кнопкой со стрелками на карточке или двойным кликом по ней, и там он получает отметку «КНР».</p>
+<p class="desc">Карточки окно не рисует само: разметку даёт локальный компонент <a class="inl" href="CounterpartyCard.doc.html">Карточка контрагента</a>, данные — стор <code class="tok">CounterpartiesStore</code> (<code class="tok">apps/postrade/deals-app/data/counterparties-store.js</code>): база контрагентов, поиск по ней и состав участников сделки. Перенос меняет данные, а не разметку: колонки перерисовываются по событию стора.</p>
+<p class="desc"><b>Черновик.</b> Правки в окне — черновик. «Сохранить» применяет их к сделке: стор сохраняет состав через <code class="tok">PostApi</code> (сервер данных или localStorage, <code class="tok">apps/postrade/deals-app/data/API.md</code>), тайл «КНР» перерисовывается, колонка «КНР» реестра показывает новый состав. Крестик и Esc закрывают окно без сохранения. Триггеры окна стоят с <code class="tok">data-modal-guarded</code>: клик мимо окна его не закрывает (решение человека 21.09.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состав">
+<h2>Состав</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Зона</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Чем собрана</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Шапка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.modal__head</code>, заголовок + IconButton L «Закрыть»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Табы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.tabs--horiz[data-tabs]</code>, два таба S. Показ панели — экранный скрипт: рантайма для этого в ДС нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Колонка «Параметры поиска»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">&lt;form data-knr-search&gt;</code>: поля InputText M — у юрлиц Наименование · ИНН · КПП · ОГРН · КИО; у физлиц — InputAutocomplete «Юридическое лицо» (<code class="tok">data-ddl</code>, опции — юрлица-участники), ИНН, InputDate, паспорт, телефон; кнопка «Найти» outline <code class="tok">type=&quot;submit&quot;</code> — Enter в любом поле тоже ищет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Колонки карточек</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.lc-knrm__drop</code>; заголовок H6 Strong (<code class="tok">h3.ds-h6-strong</code>) и 16px до области прокрутки; подсказка <code class="tok">.lc-knrm__hint[data-knr-hint]</code> — пока карточек нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Прокрутка колонок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.ds-scroll</code> из ДС (Layout 1.011) на <code class="tok">.lc-knrm__form</code> и <code class="tok">.lc-knrm__drop</code>: только бегунок, появляется при прокрутке и гаснет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Между колонками</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вертикальные Divider (<code class="tok">.dvd--v</code>). 16px после линии — отступ разделителя; 16px перед следующей — полоса внутри колонки: в ней кончается заголовок, а прокручиваемая область доходит до разделителя (8px отступа + 8px под бегунок), и бегунок стоит вплотную к линии</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подвал</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.modal__foot</code>: в <code class="tok">edit</code> — кнопка «Сохранить» accent (<code class="tok">data-knr-save</code> — применить черновик), в <code class="tok">view</code> — «Закрыть» outline (<code class="tok">.lc-knrm__close</code>, <code class="tok">data-modal-close</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Ширина — <code class="tok">modal--w8</code> (1205px), 8 колонок: решение человека 21.09.2026 (было <code class="tok">--w6</code>, 900px). Три колонки окна — равной ширины (решение человека 23.09.2026): каждый трек сетки — <code class="tok">minmax(0, 1fr)</code>, поля формы тянутся за колонкой (<code class="tok">inp--fullwidth</code>).</p>
+<p class="desc">Высота фиксирована — 60% экрана (<code class="tok">.lc-knrm { height: 60vh }</code> в <code class="tok">InstrumentsCounterpartiesModal.css</code>): вкладки юрлиц и физлиц разной длины, и по контенту окно прыгало бы при каждом переключении. Скролла у тела окна нет — у каждой колонки свой, а заголовок колонки стоит на месте: он вне прокручиваемой области. Полоса прокрутки — <code class="tok">.ds-scroll</code> из ДС, её бегунок стоит у разделителя; у последней колонки справа разделителя нет, и бегунок встаёт у края тела окна.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Правила состава">
+<h2>Правила состава</h2>
+<ol class="kit-md__ol"><li>У разных контрагентов состав заполненных полей отличается: карточка показывает то, что есть, и не держит места под отсутствующее.</li><li>Сабхедер карточки необязателен. Варианты у юрлица: «Нерезидент», «Консолидированная группа»; у физлица сабхедер — дата рождения, и он есть всегда.</li><li>Пока контрагент не участник сделки (колонка «Найдено»), у него нет чекбокса «КНР».</li><li>После переноса в участники сделки чекбокс «КНР» появляется.</li><li>Там же появляется строка ГСЗ (группа связанных заёмщиков) — но есть не у всех контрагентов.</li><li>Риск-метрика показывается только в колонке «Участники сделки».</li><li>Поиск физлиц возможен только среди юрлиц — участников сделки (в мок-базе у каждого юрлица 2–3 физлица). Третья колонка на обеих вкладках показывает всех участников, но трогать с вкладки можно только свой вид: на вкладке юрлиц физлица недоступны, на вкладке физлиц — юрлица. Недоступность — состояние Disabled у Card (<code class="tok">aria-disabled=&quot;true&quot;</code> + <code class="tok">inert</code>, <code class="tok">opts.disabled</code> карточки), а не режим прав.</li><li>Удаление юрлица не тянет за собой удаление входящих в него физлиц.</li><li>Найденные физлица показываются без контактных данных; у физлица-участника при повторном открытии окна видны доступные контакты.</li><li>Карточку переносят в соседнюю колонку кнопкой со стрелками (<code class="tok">data-knr-move</code>) или двойным кликом по карточке (решение человека 21.09.2026: перетаскивания нет). Двойной клик не срабатывает на кнопке, чекбоксе «КНР», чипе метрики и у заблокированной карточки. Добавленная карточка встаёт в конец участников, убранная — в конец «Найдено» своей вкладки, даже если под последний поиск не подходит. Фокус после переноса — на кнопке той же карточки в новой колонке. Текст карточки выделяется протяжкой мыши.</li><li>Возврат контрагента в «Найдено» снимает отметку КНР: носителем риска не может быть тот, кто в сделке не участвует.</li><li><b>Поиск.</b> Заполненные поля соединяются по «И». Наименование — подстрокой, без регистра, кавычек и разницы ё/е; коды — подстрокой по цифрам. Все поля пусты — поиск не выполняется. Участники сделки в результаты не попадают. Физлица — только юрлиц-участников; выбранное юрлицо сужает поиск до своих, дата рождения сверяется точно. Результаты — по вкладке, сбрасываются при следующем открытии окна.</li></ol>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Найдено» — результаты поиска, «Участники сделки» — состав сделки из стора</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">участники есть, поиск не задан: вторая колонка показывает подсказку, третья — карточки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказка в колонке: «Поиск осуществляется по любому из параметров» / «Перенесите выбранных участников сделки сюда»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ничего не найдено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст подсказки колонки «Найдено» меняется на «По заданным параметрам ничего не найдено» (решение человека 21.09.2026: не Alert — это пустой результат, а не ошибка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (21.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сервис поиска не ответил</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопки переноса у карточек, чекбоксы «КНР» активны</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">те же два таба и три колонки, поиск работает. Карточки без кнопки переноса, двойной клик ничего не делает — добавить в участники и убрать из них нельзя. Отметка «КНР» у участника видна, но не переключается. В подвале вместо «Сохранить» — «Закрыть» (outline)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается; решает тайл</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (20.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав окна — атрибут <code class="tok">data-mode</code> на <code class="tok">.lc-knrm</code> (<code class="tok">edit</code> | <code class="tok">view</code>), его ставит страница. Из тайла в режиме <code class="tok">view</code> окно открывается иконкой «Развернуть» — тем же окном в режиме просмотра (вид — строка «Только просмотр» выше; решение человека 21.09.2026). Статус сделки сильнее роли: в статусах «Активная», «Погашена», «Ожидает подтверждения» и «Подтверждение изменений» окно — всегда <code class="tok">view</code> (<code class="tok">DealsStore.isEditable</code>).</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label"><code class="tok">data-mode</code></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки переносятся кнопкой со стрелками и двойным кликом, отметка «КНР» переключается, в подвале «Сохранить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поиск работает; карточки в режиме просмотра (без переноса, отметка «КНР» выключена); в подвале «Закрыть» <code class="tok">btn--outline</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значение реквизита переносится по буквам; заголовок карточки клэмпится в 2 строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Каждая колонка скроллится сама: <code class="tok">flex:1; min-height:0</code> + <code class="tok">.ds-scroll</code>, ряд сетки — <code class="tok">minmax(0,1fr)</code>. Заголовок колонки не уезжает. Скролла у тела модалки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: ширина окна фиксирована шагом ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Вложенный артефакт: «Подтверждение действия»">
+<h2>Вложенный артефакт: «Подтверждение действия»</h2>
+<p class="desc">Отдельной страницы не получает: само по себе окно подтверждения не существует. Показано в документации окна (раздел «Вложенное окно подтверждения») копией фрагмента.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Что</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Когда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">из участников убирают контрагента, уже отмеченного как КНР</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Чем</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">KNRConfirmModal.html</code> — <code class="tok">.modal-scrim--nested</code> + <code class="tok">modal--w3</code>, <code class="tok">role=&quot;alertdialog&quot;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что внутри</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одним текстом в две строки: «Удаление контрагента, который задействован в:» и перечень; пара «Отменить» transparent / «Подтвердить» accent в тоне Error (<code class="tok">btn--accent btn--error</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Механика</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">перенос отмеченного КНР из участников не выполняется сразу: окно подтверждения поднимается поверх (<code class="tok">DSModal.open</code>), «Подтвердить» убирает контрагента. Если окно показано статично (<code class="tok">.modal-scrim--inline</code>, витрина), подтверждение показывается атрибутом <code class="tok">hidden</code> внутри той же демо-зоны, а не слоем <code class="tok">DSModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">После</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">контрагент убран из участников; при отмене остаётся на месте</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Тон «Подтвердить» — Error, по правилу ДС для необратимого подтверждения (решение человека 21.09.2026; на макете кнопка была бирюзовой).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Владелец</b> — не назначен (20.09.2026).</li><li><b>Поиск</b> — закрыт 21.09.2026: ищет по базе контрагентов (мок), правила — «Правила состава», п. 12. Ожидание и ошибка сервиса поиска — не решено (21.09.2026).</li><li><b>Тон кнопки подтверждения</b> — закрыт 21.09.2026: Error.</li><li><b>Порядок даты.</b> На макете поле «Дата рождения» подписано <code class="tok">ММ.ДД.ГГГГ</code>; маска ДС — <code class="tok">ДД.ММ.ГГГГ</code>. Взят порядок ДС.</li><li><b>Свой JavaScript переноса</b> — закрыт 21.09.2026: перетаскивания нет, перенос — кнопкой и двойным кликом (см. <code class="tok">CounterpartiesTile.md</code>, «Осознанные отклонения», п. 1).</li><li><b>Фиксированная высота 60vh</b> — осознанное отклонение от правила Modal «высота по контенту до 80vh», решение человека 21.09.2026: высота окна не должна меняться при переключении вкладок. Потолок ДС (80vh) не превышен. Если такое окно понадобится ещё где-то — кандидат в модификатор Modal.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «КНР»: подтверждение удаления контрагента из
+     участников сделки. Открывается ПОВЕРХ модального окна КНР,
+     когда убирают контрагента, уже выбранного как КНР.
+
+     Отдельный файл, потому что у фрагмента один корневой элемент, а вложенный
+     скрим должен быть соседом основного, а не его потомком: иначе он
+     наследует hidden родителя и не покажется.
+
+     Вложение держит ds-modal.js: класс --nested на скриме поднимает слой, не
+     закрывая нижний, и снимает блокировку прокрутки только на последнем. -->
+<div class="modal-scrim modal-scrim--nested" id="knr-confirm-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="knr-confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="knr-confirm-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- один текст в две строки: без зазора между абзацами -->
+      <p class="ds-body-m">Удаление контрагента, который задействован в:<br>1234.1.1.2. Договор займа (НКЛ)</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-knr-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-knr-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Карточка контрагента» — переиспользуемый.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include.
+
+     Корень фрагмента — <template>: карточек на странице много и содержимое у
+     них разное (наименование, состав полей), а через метку ds-include
+     передаются только id/class/state/mode. Поэтому компонент отдаёт ЭТАЛОН
+     разметки, а карточки по нему рисует потребитель из своего стора — так же,
+     как реестр портфеля рисует 50 строк из mock-deals.js.
+
+     data-state — где карточка лежит: found найден | member участник сделки
+     data-mode  — режим прав:         edit (кнопка переноса есть) | view (её нет)
+
+     Недоступность — не data-mode, а состояние Card из ДС: aria-disabled="true"
+     плюс inert (ставит рендер по opts.disabled). Так показываются участники
+     сделки другого вида в окне КНР: видны, но с текущей вкладки не трогаются.
+
+     Что чем управляется. Риск-метрика, строка ГСЗ и чекбокс «КНР» осмыслены
+     только у участника сделки — у найденного контрагента их нет. Сабхедер у
+     юрлица необязателен («Нерезидент», «Консолидированная группа»), у физлица
+     это дата рождения и он есть всегда. Состав полей — контент, а не вариант:
+     у разных контрагентов он разный, и пустых строк под отсутствующее не
+     резервируется.
+
+     Раскладка тела — две колонки: слева реквизиты и чекбокс «КНР», справа
+     риск-метрика. Колонки — flex-ряд, а не сетка: у найденного контрагента
+     метрики нет, и пустая колонка со своим зазором не остаётся.
+
+     Префикс классов lc-knrm__ исторический: карточка выросла из модалки КНР и
+     эти классы держит её скрипт. Переименование стоило бы правок в окне без
+     пользы для вида. -->
+
+<!-- Корень — пустой скрытый контейнер вокруг шаблона. Он нужен по двум
+     причинам: у фрагмента должен быть один корневой элемент, а приёмка читает
+     разметку текстом и видит карточку внутри <template> как обычный тайл —
+     поэтому зона помечена data-off-grid: ширину карточке задаёт колонка
+     потребителя, а не 12-колоночная сетка страницы. -->
+<div hidden
+     data-off-grid="Эталон карточки контрагента: ширину задаёт колонка потребителя, а не сетка страницы">
+<template id="lc-cpcard-tpl">
+  <article class="tile tile--card lc-knrm__card" data-state="found" data-mode="edit">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__title-row"><h3 class="tile__title" data-cp="name"></h3></div>
+        <p class="tile__subtitle" data-cp="subheader"></p>
+      </div>
+      <div class="tile__actions">
+        <!-- Перенос в соседнюю колонку — действие Card (IconButton M 20×20).
+             Карточку не перетаскивают: её переносят этой кнопкой или двойным
+             кликом. Подпись и подсказку («Перенести в участники сделки» /
+             «Убрать из участников сделки») ставит рендер по opts.moveLabel.
+             data-knr-move — хук переноса в окне КНР -->
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" data-knr-move
+                aria-label="Перенести" data-tooltip="Перенести"><i data-icon="arrow-left-right"></i></button>
+      </div>
+    </header>
+    <div class="tile__body">
+      <div class="lc-knrm__content">
+        <div class="lc-knrm__main">
+          <div class="lc-knrm__fields" data-cp="fields"></div>
+          <label class="cb lc-knrm__knr">
+            <input type="checkbox" class="cb__input" data-cp="knr">
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">КНР</span></span>
+          </label>
+        </div>
+        <!-- риск-метрику рантайм ds-riskmetric.js собирает сам из атрибутов -->
+        <span data-cp="risk" data-riskmetric></span>
+      </div>
+    </div>
+  </article>
+</template>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"InstrumentsCounterpartiesModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":["edit","view"],"state":null,"mode":"edit","width":null,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- InstrumentsCounterpartiesModal — окно выбора контрагентов, артефакт тайла
+     CounterpartiesTile. Собран вариант страницы сделки: там тайл называется «КНР»,
+     а окно — поиск и выбор ключевого носителя риска. Фрагмент вшивается ассемблером отдельной меткой ds-include —
+     скрим должен лежать в конце body, а не внутри тайла.
+
+     Два таба: юрлица и физлица. Под каждым — три колонки: форма поиска,
+     результаты поиска и участники сделки.
+
+     Карточек в разметке нет. Разметку карточки даёт локальный компонент
+     «Карточка контрагента» (его шаблон страница вшивает рядом с окном), а данные приходят
+     из CounterpartiesStore — так же, как реестр портфеля рисует сделки из
+     mock-deals.js. Раскладывает одно по другому InstrumentsCounterpartiesModal.js: он же
+     переключает панели табов (рантайма показа панели в ДС нет), ищет по базе
+     контрагентов, переносит карточки между колонками (кнопкой со стрелками и
+     двойным кликом) и ведёт черновик: «Сохранить» применяет правки к сделке,
+     крестик и Esc их отменяют.
+
+     Формы поиска — <form>: Enter в любом поле запускает поиск так же, как
+     «Найти». Колонки «Найдено» и «Физические лица» пусты, пока поиск не задан.
+
+     Что различает колонки: пока контрагент не участник сделки, у него нет ни
+     чекбокса «КНР», ни строки ГСЗ, ни риск-метрики — их показывает только
+     третья колонка. Правило живёт в сторе и в CSS карточки, не здесь.
+
+     Раскладка: окно шириной 8 колонок (modal--w8) и фиксированной высоты
+     (60vh — не прыгает при смене вкладки), колонки разделены вертикальными
+     Divider. У каждой колонки свой скролл с полосой ДС (.ds-scroll, Layout):
+     бегунок стоит вплотную к разделителю, появляется при прокрутке и гаснет.
+     Заголовок H6 Strong стоит на месте: он вне прокручиваемой области. -->
+
+<div class="modal-scrim" id="knr-scrim" hidden>
+
+  <!-- эталон карточки (CounterpartyCard/, единственный источник её разметки)
+       вшивает страница рядом с этим окном: общий сборщик метки внутри
+       фрагмента не раскрывает. Шаблону место в DOM не важно — скрипт берёт
+       его по id. -->
+
+  <!-- data-mode — режим прав окна: edit | view. Ставит страница: статус сделки,
+       не допускающий правку, даёт view при любой роли. В view поиск работает,
+       но карточки не переносятся, отметка «КНР» не меняется, а вместо
+       «Сохранить» — «Закрыть» (InstrumentsCounterpartiesModal.css, InstrumentsCounterpartiesModal.js). -->
+  <div class="modal modal--w8 lc-knrm" data-mode="edit" role="dialog" aria-modal="true" aria-labelledby="knr-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="knr-title">Ключевой носитель риска</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="knr-tabs">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0">
+          <span class="tab__label">Юридические лица</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1">
+          <span class="tab__label">Физические лица</span></button>
+      </div>
+
+      <!-- ══ Панель: юридические лица ══════════════════════════════════ -->
+      <div class="lc-knrm__cols" data-knr-panel>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="ul" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-name"><span class="ds-label__text">Наименование</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-name" name="name"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kpp"><span class="ds-label__text">КПП</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kpp" name="kpp" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-ogrn"><span class="ds-label__text">ОГРН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-ogrn" name="ogrn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-ul-kio"><span class="ds-label__text">КИО</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-ul-kio" name="kio" inputmode="numeric"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Найдено</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по любому из параметров</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="ul-members">
+            <p class="lc-knrm__hint">Перенесите выбранных участников сделки сюда.
+              Добавить можно только носителей риска или все группы и контрагентов, участвующих в сделке.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ══ Панель: физические лица ═══════════════════════════════════ -->
+      <!-- Поиск физлиц возможен только среди юрлиц — участников сделки,
+           поэтому первое поле формы — выбор юрлица из уже перенесённых.
+           Опции списка собирает InstrumentsCounterpartiesModal.js из участников сделки. -->
+      <div class="lc-knrm__cols" data-knr-panel hidden>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Параметры поиска</h3>
+          <form class="lc-knrm__form ds-scroll" data-knr-search="fl" novalidate>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-ul"><span class="ds-label__text">Юридическое лицо</span></label>
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="knr-fl-ul-list" data-ddl="knr-fl-ul-list">
+                <input class="inp__control" id="knr-fl-ul" placeholder="Поиск…" autocomplete="off">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button>
+                </span>
+              </div>
+              <div id="knr-fl-ul-list" class="ddl ddl--floating" role="listbox"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-inn"><span class="ds-label__text">ИНН</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-inn" name="inn" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-bd"><span class="ds-label__text">Дата рождения</span></label>
+              <div class="inp__field">
+                <input class="inp__control" id="knr-fl-bd" name="birthDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric">
+                <span class="inp__acts">
+                  <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+                </span>
+              </div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-pass"><span class="ds-label__text">Номер паспорта</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-pass" name="passport" inputmode="numeric"></div>
+            </div>
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="knr-fl-tel"><span class="ds-label__text">Номер телефона</span></label>
+              <div class="inp__field"><input class="inp__control" id="knr-fl-tel" name="phone" inputmode="tel"></div>
+            </div>
+            <button type="submit" class="btn btn--outline btn--m btn--fullwidth"><span class="btn__label">Найти</span></button>
+          </form>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Физические лица</h3>
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-found">
+            <p class="lc-knrm__hint" data-knr-hint>Поиск осуществляется по юридическим лицам, входящим в участники сделки</p>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-knrm__col">
+          <h3 class="ds-h6-strong">Участники сделки</h3>
+          <!-- Юрлица здесь тоже видны, но с этой вкладки их не трогают: они
+               рисуются недоступными (Disabled у Card). Зеркально на вкладке
+               юрлиц недоступны физлица. Удаление юрлица не тянет за собой
+               удаление входящих в него физлиц. -->
+          <div class="lc-knrm__drop ds-scroll" data-knr-drop="fl-members">
+            <p class="lc-knrm__hint">Перенесите выбранных физических лиц сюда</p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-knr-save data-modal-close><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--outline btn--m lc-knrm__close" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Модальное окно КНР — внутренняя раскладка.
+   Цвета, шрифты, отступы, радиусы — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются: карточка остаётся
+   Card (.tile--card) со своими hover/active, полоса прокрутки — .ds-scroll
+   из ДС (Layout), здесь только сетка и отступы колонок. */
+
+/* ── Окно ───────────────────────────────────────────────────────────── */
+/* Высота фиксирована — 60% экрана (решение человека 21.09.2026): вкладки
+   юрлиц и физлиц разной длины, и по контенту окно прыгало бы при каждом
+   переключении. Это меньше потолка Modal (--modal-max-h 80vh), поэтому
+   правило ДС «не выше 80vh» не нарушается. Отклонение от «высота по
+   контенту» записано в паспорте окна. Ширина — modal--w8 в разметке. */
+.lc-knrm { height: 60vh; }
+
+/* ── Три колонки под табами ─────────────────────────────────────────── */
+/* flex:1 + min-height:0 — чтобы прокручивались колонки, а не всё тело
+   модалки: у .modal__body свой overflow-y, и без min-height:0 скролл
+   уезжает на него целиком (правило К3).
+   Ряд — minmax(0,1fr), а не auto: auto растёт по содержимому самой длинной
+   колонки, и скролл снова уехал бы наружу.
+   Бегунок прокрутки стоит вплотную к разделителю (решение человека
+   21.09.2026), поэтому зазора между треками нет: 16px после разделителя —
+   его отступ, 16px перед следующим — полоса справа внутри колонки. В этой
+   полосе кончается заголовок колонки, а прокручиваемая область доходит до
+   разделителя: 8px отступа + 8px под бегунок .ds-scroll = 16px, карточки и
+   поля выровнены с заголовком.
+   Все три колонки равной ширины — minmax(0,1fr) на каждый трек (решение
+   человека 23.09.2026); раньше первый был фиксированным (240px формы плюс её
+   полоса). Ширину полей формы задаёт колонка: они inp--fullwidth. */
+.lc-knrm__cols {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0;
+}
+.lc-knrm__cols[hidden] { display: none; }
+.lc-knrm__cols > .dvd--v { margin-right: var(--space-16); }
+
+/* Колонка: заголовок H6 Strong + прокручиваемая область. Заголовок стоит вне
+   прокручиваемой области, поэтому не уезжает — sticky не нужен.
+   Линии под заголовком нет (решение человека 23.09.2026): колонки разделяют
+   вертикальные Divider, горизонтальная линия только добавляла шума. Зазор
+   остался прежним — 16px вместо снятых 8px + линия 1px + 8px. */
+.lc-knrm__col {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.lc-knrm__col > .ds-h6-strong { margin-right: var(--space-16); }
+
+/* Прокручиваемые области колонок. overflow-y, бегунок и место под него
+   (scrollbar-gutter: stable) даёт .ds-scroll из ДС, он же запрещает
+   горизонтальную прокрутку (Layout 1.012): закрытая подсказка кнопки
+   переноса и закрытый список «Юридическое лицо» стоят в колонке невидимыми
+   и шире неё. overflow здесь не переопределять — шорткат вернёт скролл. */
+.lc-knrm__form,
+.lc-knrm__drop {
+  flex: 1;
+  min-height: 0;
+  padding-right: var(--space-8);
+}
+
+/* Справа у последней колонки разделителя нет: её бегунок встаёт у края тела
+   окна. Полоса там — только место под бегунок (8px), и заголовок кончается
+   там же, где карточки. */
+.lc-knrm__col:last-child > .ds-h6-strong { margin-right: var(--space-8); }
+.lc-knrm__col:last-child > .lc-knrm__drop { padding-right: 0; }
+
+/* ── Колонка формы ──────────────────────────────────────────────────── */
+.lc-knrm__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* ── Колонки карточек ───────────────────────────────────────────────── */
+.lc-knrm__drop {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Подсказка колонки уходит, как только в ней появилась хоть одна карточка.
+   После пустого поиска её текст — «По заданным параметрам ничего не
+   найдено» (InstrumentsCounterpartiesModal.js). */
+.lc-knrm__hint {
+  margin: 0;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+.lc-knrm__drop:has(.lc-knrm__card) .lc-knrm__hint { display: none; }
+
+/* Сама карточка, её поля, чекбокс «КНР» и кнопка переноса живут в локальном
+   компоненте «Карточка контрагента» (../CounterpartyCard/CounterpartyCard.css) —
+   модалка его переиспользует. Здесь остаются только колонки окна.
+   Класс .lc-knrm__card в правиле выше — из того компонента: префикс
+   исторический, карточка из этой модалки и выросла. */
+
+/* ── Режим прав ─────────────────────────────────────────────────────── */
+/* В просмотре (data-mode="view" — роль без права или статус сделки, не
+   допускающий правку) сохранять нечего: вместо «Сохранить» — «Закрыть».
+   Что карточки не переносятся и отметка «КНР» не меняется, держит карточка
+   в своём режиме (его передаёт InstrumentsCounterpartiesModal.js). */
+.lc-knrm__close { display: none; }
+.lc-knrm[data-mode="view"] .lc-knrm__close { display: inline-flex; }
+.lc-knrm[data-mode="view"] [data-knr-save] { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   InstrumentsCounterpartiesModal.js — поведение модального окна контрагентов
+   (на странице сделки — окно КНР «Ключевой носитель риска»).
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) показ панели выбранного таба (DSTabs даёт roving tabindex и стрелки,
+      но панель не переключает — рантайма для этого в ДС нет);
+   2) поиск по базе контрагентов (формы «Параметры поиска»);
+   3) перенос карточки в соседнюю колонку — кнопкой со стрелками на карточке
+      или двойным кликом по ней. Перетаскивания нет;
+   4) черновик: окно правит состав сделки, «Сохранить» применяет правки,
+      крестик, Esc и любое другое закрытие их отменяют;
+   5) режим прав окна — data-mode на .lc-knrm (edit | view), его ставит
+      страница. В view поиск работает, а карточки рисуются в режиме просмотра:
+      без кнопки переноса, отметка «КНР» не меняется. Смена режима
+      перерисовывает колонки.
+
+   Данные — CounterpartiesStore (data/counterparties-store.js): состав сделки,
+   поиск, черновик и сохранение живут там. Разметку карточки даёт локальный
+   компонент «Карточка контрагента» (PostCardCounterparty). Здесь только
+   раскладка одного по другому и реакция на действия пользователя.
+
+   Свой JavaScript здесь — модель данных экрана, а не замена рантайма ДС:
+   открытие окна, фокус, Esc, выпадающий список и подсказки делают рантаймы.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var scrim = document.getElementById('knr-scrim');
+  if (!scrim) return;
+
+  var NOTHING_FOUND = 'По заданным параметрам ничего не найдено';
+
+  function store() { return window.CounterpartiesStore; }
+
+  /* ── Табы: показ панели выбранного ──────────────────────────────── */
+  /* Скрипт синхронный и стоит после ds.js, поэтому DSTabs.tabs(...) успевает
+     раньше автопривязки wireAll (она на DOMContentLoaded) и onChange не
+     теряется — тот же приём, что у табов страницы сделки. */
+  function bindTabs() {
+    var bar = document.getElementById('knr-tabs');
+    if (!bar || !window.DSTabs) return;
+    var panels = Array.prototype.slice.call(scrim.querySelectorAll('[data-knr-panel]'));
+    window.DSTabs.tabs(bar, {
+      onChange: function (index) {
+        panels.forEach(function (p, i) { p.hidden = (i !== index); });
+      }
+    });
+  }
+
+  /* ── Вспомогательное ────────────────────────────────────────────── */
+
+  function isMembers(drop) {
+    return drop && drop.getAttribute('data-knr-drop').indexOf('-members') !== -1;
+  }
+
+  function kindOf(drop) {
+    return drop && drop.getAttribute('data-knr-drop').indexOf('fl-') === 0 ? 'fl' : 'ul';
+  }
+
+  function cardId(card) {
+    return card && card.getAttribute('data-knr-card');
+  }
+
+  function isInline(el) {
+    return el.classList.contains('modal-scrim--inline');
+  }
+
+  /* Режим прав окна: входной атрибут корня, по умолчанию правка */
+  var root = scrim.querySelector('.lc-knrm');
+
+  function modeOf() {
+    return root && root.getAttribute('data-mode') === 'view' ? 'view' : 'edit';
+  }
+
+  /* ── Результаты поиска ──────────────────────────────────────────── */
+  /* По вкладке: null — поиск не задан (в колонке подсказка), массив id —
+     что нашлось. Убранный из участников контрагент дописывается в конец
+     результатов своей вкладки, даже если под поиск он не подходит: он ушёл
+     в соседнюю колонку и там должен быть виден. */
+  var results = { ul: null, fl: null };
+
+  function asFound(id) {
+    var rec = store().byId(id);
+    if (!rec) return null;
+    var v = JSON.parse(JSON.stringify(rec));
+    v.place = 'found';
+    v.knr = false;
+    return v;
+  }
+
+  function foundItems(kind) {
+    return (results[kind] || []).filter(function (id) { return !store().isMember(id); })
+      .map(asFound).filter(Boolean);
+  }
+
+  function dropResult(id) {
+    ['ul', 'fl'].forEach(function (k) {
+      if (!results[k]) return;
+      var i = results[k].indexOf(id);
+      if (i !== -1) results[k].splice(i, 1);
+    });
+  }
+
+  function addResult(kind, id) {
+    results[kind] = (results[kind] || []).filter(function (x) { return x !== id; });
+    results[kind].push(id);
+  }
+
+  /* ── Рендер колонок ─────────────────────────────────────────────── */
+  /* Колонка «Участники сделки» на обеих вкладках показывает всех участников,
+     но трогать с вкладки можно только свой вид: на вкладке юрлиц физлица
+     недоступны, на вкладке физлиц — юрлица (состояние Disabled у Card). */
+  function fill(drop) {
+    var card = window.PostCardCounterparty;
+    if (!store() || !card) return;
+
+    var kind = kindOf(drop);
+    var members = isMembers(drop);
+    var items = members ? store().members() : foundItems(kind);
+
+    Array.prototype.slice.call(drop.querySelectorAll('.lc-knrm__card'))
+      .forEach(function (el) { el.parentNode.removeChild(el); });
+
+    var mode = modeOf();
+    items.forEach(function (item) {
+      var el = card.render(item, {
+        mode: mode,
+        disabled: members && item.kind !== kind,
+        moveLabel: members ? 'Убрать из участников сделки' : 'Перенести в участники сделки'
+      });
+      if (el) drop.appendChild(el);
+    });
+
+    /* Подсказка колонки результатов: пока поиска не было — как искать,
+       после пустого поиска — что ничего не нашлось. Карточки её прячут (CSS). */
+    var hint = drop.querySelector('[data-knr-hint]');
+    if (hint && !members) {
+      if (!hint.hasAttribute('data-hint')) hint.setAttribute('data-hint', hint.textContent.trim());
+      hint.textContent = results[kind] !== null && !items.length ? NOTHING_FOUND : hint.getAttribute('data-hint');
+    }
+  }
+
+  var focusId = null;   /* чью кнопку переноса вернуть в фокус после перерисовки */
+
+  function repaint() {
+    /* Подсказка кнопки, которую сейчас уберёт перерисовка, иначе осталась бы
+       висеть: mouseleave у удалённого узла не наступает. */
+    if (window.DSTooltip) window.DSTooltip.hideAll();
+    Array.prototype.slice.call(scrim.querySelectorAll('[data-knr-drop]')).forEach(fill);
+    buildUlList();
+    /* риск-метрики появились вместе с карточками — их рантайм собирает чип и
+       поповер сам, но только по свежей разметке (подсказку кнопки переноса
+       привязывает рендер карточки) */
+    if (window.DSRiskMetric) window.DSRiskMetric.mount(scrim);
+    if (focusId) {
+      var panel = scrim.querySelector('[data-knr-panel]:not([hidden])') || scrim;
+      var btn = panel.querySelector('[data-knr-card="' + focusId + '"] [data-knr-move]');
+      if (btn) btn.focus();
+      focusId = null;
+    }
+  }
+
+  /* ── Перенос в соседнюю колонку ─────────────────────────────────── */
+
+  function addMember(id) {
+    dropResult(id);
+    focusId = id;
+    store().move(id, 'member');
+  }
+
+  function removeMember(id) {
+    var rec = store().byId(id);
+    if (!rec) return;
+    addResult(rec.kind, id);
+    focusId = id;
+    store().move(id, 'found');
+  }
+
+  var pending = null;   /* кого убрать после подтверждения */
+
+  /* Контрагента, отмеченного КНР, из участников молча не убирают:
+     сначала окно подтверждения. */
+  function moveCard(card) {
+    var id = cardId(card);
+    var drop = card.closest('[data-knr-drop]');
+    if (!id || !drop || !store()) return;
+    if (!isMembers(drop)) { addMember(id); return; }
+    if (store().isKnr(id)) { askRemove(id); return; }
+    removeMember(id);
+  }
+
+  scrim.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-knr-move]');
+    if (!btn || !scrim.contains(btn)) return;
+    var card = btn.closest('.lc-knrm__card');
+    if (card) moveCard(card);
+  });
+
+  /* Двойной клик по карточке — то же, что кнопка. Не срабатывает на
+     собственных элементах карточки (кнопка, чекбокс «КНР», чип метрики) и у
+     карточки без права переноса. Заблокированная карточка указатель не
+     принимает вовсе (Disabled у Card). Выделение, которое оставил двойной
+     клик, снимается: карточка уже в другой колонке. */
+  scrim.addEventListener('dblclick', function (e) {
+    var card = e.target.closest('.lc-knrm__card');
+    if (!card || !card.closest('[data-knr-drop]')) return;
+    if (e.target.closest('button, a, input, label, [data-riskmetric]')) return;
+    if (card.getAttribute('data-mode') !== 'edit' || card.getAttribute('aria-disabled') === 'true') return;
+    var sel = window.getSelection && window.getSelection();
+    if (sel && sel.removeAllRanges) sel.removeAllRanges();
+    moveCard(card);
+  });
+
+  /* Отметка «КНР» — тоже данные: пишется в стор. Делегированно, потому что
+     карточки перерисовываются. В просмотре чекбокс выключен самой карточкой;
+     проверка режима здесь — страховка, чтобы стор не менялся ни при каком
+     пути. */
+  scrim.addEventListener('change', function (e) {
+    var box = e.target.closest('.lc-knrm__knr .cb__input');
+    if (!box || modeOf() === 'view') return;
+    var card = box.closest('.lc-knrm__card');
+    if (card && store()) store().setKnr(cardId(card), box.checked);
+  });
+
+  /* ── Подтверждение удаления КНР ─────────────────────────────────── */
+  /* Подтверждение поднимается рантаймом ДС как настоящий вложенный слой.
+     Исключение — окно, показанное статично внутри страницы (витрина:
+     .modal-scrim--inline у подтверждения): там слой не открывают, а
+     показывают и прячут атрибутом hidden, чтобы оно не вышло из демо-зоны. */
+  function confirmScrim() { return document.getElementById('knr-confirm-scrim'); }
+
+  function askRemove(id) {
+    var c = confirmScrim();
+    if (!c) { removeMember(id); return; }
+    pending = id;
+    if (isInline(c)) { c.hidden = false; return; }
+    if (window.DSModal) window.DSModal.open(c);
+    else { pending = null; removeMember(id); }
+  }
+
+  function closeConfirm(c, ok) {
+    if (isInline(c)) { c.hidden = true; return; }
+    if (window.DSModal) window.DSModal.closeTop(ok);
+  }
+
+  function bindConfirm() {
+    var c = confirmScrim();
+    if (!c) return;
+    c.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-knr-confirm]');
+      if (!btn) {
+        /* крестик статичного подтверждения: слоя нет, закрываем сами */
+        if (isInline(c) && e.target.closest('[data-modal-close]')) {
+          pending = null;
+          c.hidden = true;
+        }
+        return;
+      }
+      var ok = btn.getAttribute('data-knr-confirm') === 'ok';
+      var id = pending;
+      pending = null;
+      if (ok && id) removeMember(id);
+      closeConfirm(c, ok);
+    });
+  }
+
+  /* ── Поиск ──────────────────────────────────────────────────────── */
+  /* Формы — <form>: Enter в любом поле и «Найти» приходят сюда одним
+     событием submit. Правила поиска — в сторе. */
+  function paramsOf(form) {
+    var p = {};
+    Array.prototype.forEach.call(form.querySelectorAll('input[name]'), function (inp) {
+      p[inp.name] = inp.value;
+    });
+    if (form.getAttribute('data-knr-search') === 'fl') p.parentId = flParent || '';
+    return p;
+  }
+
+  scrim.addEventListener('submit', function (e) {
+    var form = e.target.closest('[data-knr-search]');
+    if (!form || !store()) return;
+    e.preventDefault();
+    var kind = form.getAttribute('data-knr-search');
+    var found = store().search(kind, paramsOf(form));
+    results[kind] = found ? found.map(function (r) { return r.id; }) : null;
+    repaint();
+  });
+
+  /* ── «Юридическое лицо» на вкладке физлиц ───────────────────────── */
+  /* Автокомплит ДС (data-ddl): открытие, клавиатуру и позицию даёт
+     ds-dropdownlist.js, он же читает опции при каждом открытии. Здесь —
+     опции из юрлиц-участников сделки, фильтр по введённому тексту и запись
+     выбора в поле (автопривязка значение в поле не пишет). */
+  var ulInput = document.getElementById('knr-fl-ul');
+  var ulList = document.getElementById('knr-fl-ul-list');
+  var flParent = null;
+
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function withMatch(label, q) {
+    var i = q ? label.toLowerCase().indexOf(q.toLowerCase()) : -1;
+    if (i < 0) return escHtml(label);
+    return escHtml(label.slice(0, i)) + '<span class="ddl__match">' + escHtml(label.slice(i, i + q.length)) + '</span>'
+      + escHtml(label.slice(i + q.length));
+  }
+
+  function buildUlList() {
+    if (!ulInput || !ulList || !store()) return;
+    var uls = store().members('ul');
+    /* выбранное юрлицо убрали из участников — выбор сбрасывается */
+    if (flParent && !uls.some(function (u) { return u.id === flParent; })) {
+      flParent = null;
+      ulInput.value = '';
+    }
+    var q = flParent ? '' : ulInput.value.trim();
+    var shown = uls.filter(function (u) { return !q || u.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; });
+    if (!shown.length) {
+      ulList.innerHTML = '<div class="ddl__state ddl__state--empty"><span>Ничего не найдено</span></div>';
+      return;
+    }
+    ulList.innerHTML = shown.map(function (u) {
+      var on = u.id === flParent;
+      return '<button type="button" class="ddl__item' + (on ? ' ddl__item--selected' : '') + '" role="option"'
+        + ' aria-selected="' + on + '" tabindex="-1" data-ul="' + escHtml(u.id) + '">'
+        + '<span class="ddl__item-body"><span class="ddl__item-label">' + withMatch(u.name, q) + '</span></span></button>';
+    }).join('');
+  }
+
+  function bindUlField() {
+    if (!ulInput || !ulList) return;
+    ulList.addEventListener('click', function (e) {
+      var it = e.target.closest('.ddl__item[data-ul]');
+      if (!it) return;
+      flParent = it.getAttribute('data-ul');
+      var rec = store() && store().byId(flParent);
+      ulInput.value = rec ? rec.name : '';
+    });
+    ulInput.addEventListener('input', function () {
+      flParent = null;
+      buildUlList();
+      var api = ulInput.closest('[data-ddl]') && ulInput.closest('[data-ddl]').__dsDdl;
+      if (api) { if (!api.isOpen()) api.open(); else api.place(); }
+    });
+  }
+
+  /* ── Черновик и «Сохранить» ─────────────────────────────────────── */
+  /* Окно открылось — стор запоминает состав; закрылось не через «Сохранить»
+     (крестик, Esc) — состав возвращается. Слушатель «Сохранить» стоит на
+     скриме и срабатывает раньше глобального закрытия ds-modal.js. Окно,
+     показанное статично (витрина), не открывается и не закрывается —
+     черновика у него нет. */
+  var saving = false;
+  var wasOpen = !scrim.hidden;
+
+  function resetSearch() {
+    results = { ul: null, fl: null };
+    flParent = null;
+    Array.prototype.forEach.call(scrim.querySelectorAll('[data-knr-search]'), function (f) { f.reset(); });
+    if (ulInput) ulInput.value = '';
+  }
+
+  function bindDraft() {
+    new MutationObserver(function () {
+      var open = !scrim.hidden;
+      if (open === wasOpen) return;
+      wasOpen = open;
+      if (isInline(scrim) || !store()) return;
+      if (open) {
+        saving = false;
+        resetSearch();
+        store().begin();
+        repaint();
+      } else if (!saving) {
+        store().rollback();
+      }
+    }).observe(scrim, { attributes: true, attributeFilter: ['hidden'] });
+
+    scrim.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-knr-save]') || !store()) return;
+      saving = true;
+      store().commit();
+    });
+  }
+
+  /* Смена режима — карточки рисуются заново в новом режиме. На странице
+     режим ставится до открытия окна (и окно перерисовывается при открытии);
+     наблюдатель нужен тому, кто переключает режим у открытого окна, — витрине. */
+  function bindMode() {
+    if (!root) return;
+    new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
+  }
+
+  /* Перерисовка по событию стора: перенос, отметка КНР, откат черновика,
+     загрузка состава сделки — одна дорога для всех изменений. */
+  function bindStore() {
+    if (!store()) return;
+    store().on('change', function (d) {
+      if (d && d.reason === 'use') resetSearch();
+      repaint();
+    });
+  }
+
+  bindTabs();
+  bindConfirm();
+  bindUlField();
+  bindDraft();
+  bindMode();
+  bindStore();
+  repaint();
+})();
+</script>
+</body>
+</html>

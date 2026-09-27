@@ -1,23 +1,147 @@
 <!-- Локальный компонент «Описание сделки» — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (DealDescriptionTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealDescriptionTile.css). -->
-<section class="tile lc-deal-description" data-state="empty" data-mode="edit">
+
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав: edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     DealDescriptionTile.css по этим атрибутам — как тайлы «КНР», «Сроки
+     сделки» и «Команда сделки».
+
+     Значения ниже — пример (сделка 1024). На странице сделки их заменяет
+     DealDescriptionTile.js (PostTileDealDescription.render) данными сделки.
+
+     Три окна тайла живут в конце body страницы, а не здесь:
+       карандаш и «Заполнить» — окно правки (deal-description-scrim, guarded:
+         в нём ввод, клик мимо окна не должен его сбросить);
+       «Развернуть» — то же окно в просмотре;
+       «Документы ЭКД по сделке» — окно выбора контрагента (deal-ecm-scrim);
+       ссылка «Связанные сделки» — поповер (related-deals-pop). -->
+<section class="tile lc-deal-description" data-state="data" data-mode="edit">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Описание сделки</h3></div>
     </div>
+    <!-- «Документы ЭКД» — не правка: документы смотрят и в просмотре, поэтому
+         кнопка есть в обоих режимах и в пустом тайле (макет). Карандаш и
+         «Развернуть» — только когда есть что править или смотреть. -->
     <div class="tile__actions">
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+      <button type="button" class="btn btn--outline btn--xs" data-modal="deal-ecm-scrim">
+        <i data-icon="folder"></i><span class="btn__label">Документы ЭКД по сделке</span>
+      </button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--edit"
+              aria-label="Редактировать" data-modal="deal-description-scrim" data-modal-guarded><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-deal-description__act lc-deal-description__act--view"
+              aria-label="Развернуть" data-modal="deal-description-scrim"><i data-icon="maximize"></i></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-deal-description__stub">Данные ещё не заведены</p>
+
+    <!-- ── Данные есть / заполнено частично ─────────────────────────── -->
+    <!-- Порядок блоков постоянный. Незаполненное поле — прочерк, поле с места
+         не уходит: пропавшее поле читалось бы как отсутствие сущности. -->
+    <div class="tile__rows lc-deal-description__content">
+
+      <!-- Суть сделки — ведущий текст тайла, без подписи (макет). До четырёх
+           строк, дальше многоточие и тултип с полным текстом (ReadOnlyField). -->
+      <div class="rof" role="group" aria-label="Суть сделки">
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="description">Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.</span></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Комментарий Operations</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:4" data-dd-field="operationsComment">Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.</span></div>
+      </div>
+
+      <!-- Признаки сделки: текст с иконкой на подложке, три колонки. Колонки —
+           группы, а не сетка ячеек: порядок идёт по колонкам (решение
+           человека 25.09.2026):
+             1 — Категория риска ЦУП, Фин.расчеты в шаблоне (+ Связанные сделки);
+             2 — Совместность, Реструктуризация;
+             3 — Участие Деска ИФ, Участие ЦЭ.
+           Иконка показывает значение признака, тон иконки — категорию риска
+           (см. паспорт, «Признаки»). -->
+      <div class="lc-deal-description__flags" role="group" aria-label="Признаки сделки">
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="riskCategory">
+            <span class="lc-deal-description__icon lc-deal-description__icon--success" data-dd-icon><i data-icon="alert-triangle-filled"></i></span>
+            <span data-dd-text>Категория риска ЦУП: C</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="finTpl">
+            <span class="lc-deal-description__icon lc-deal-description__icon--warning" data-dd-icon><i data-icon="bar-chart-square"></i></span>
+            <span data-dd-text>Фин.расчеты в шаблоне</span>
+          </span>
+          <!-- Связанные сделки есть — третья строка первой колонки: галочка и
+               ссылка, ссылка открывает поповер со списком; нет — строки нет
+               вовсе (решение человека 25.09.2026). Присутствие ставит скрипт
+               атрибутом hidden: разметка не пересоздаётся, поэтому триггер
+               поповера, который привязал рантайм ДС при загрузке, остаётся
+               рабочим. -->
+          <span class="lc-deal-description__flag" data-dd-flag="relatedDeals">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <a class="link link--accent link--m" href="#" data-popover="related-deals-pop" data-popover-placement="bottom" data-popover-align="start">Связанные сделки</a>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="jointness">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="link"></i></span>
+            <span data-dd-text>Совместность: МБ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="restructured">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Реструктуризация</span>
+          </span>
+        </div>
+        <div class="lc-deal-description__col">
+          <span class="lc-deal-description__flag" data-dd-flag="ifDeskParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="check-circle-filled"></i></span>
+            <span data-dd-text>Участие Деска ИФ</span>
+          </span>
+          <span class="lc-deal-description__flag" data-dd-flag="ceParticipation">
+            <span class="lc-deal-description__icon" data-dd-icon><i data-icon="circle"></i></span>
+            <span data-dd-text>Участие ЦЭ</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-dd-field="gsz">Группа «СтройИнвест»</span></div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ─────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах итогового содержимого: две строки описания, подпись
+         и значение комментария, подложка признаков, подпись и значение ГСЗ. -->
+    <div class="tile__rows lc-deal-description__loading" aria-busy="true">
+      <div class="sk-group">
+        <span class="sk-line sk-line--title" style="--sk-w:92%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:64%" aria-hidden="true"></span>
+      </div>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span>
+      </div>
+      <span class="sk-block sk-block--rounded lc-deal-description__loading-flags" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:36%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- ── Не заполнено, право на правку есть ───────────────────────── -->
+    <div class="lc-deal-description__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-description-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- ── Не заполнено, права нет: одна строка причины, действия нет ── -->
+    <p class="lc-deal-description__empty">Не заполнено</p>
+
   </div>
 </section>

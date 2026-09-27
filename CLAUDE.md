@@ -51,6 +51,13 @@ cat design-system/specs/Kanban.md                                  # полна�
   страницу собирает `node .agents/tools/assemble.mjs` → `<Имя>.preview.html`.
   Виджет общий для раздела (соседний модуль берёт его путём от страницы);
   другого раздела — нельзя (СБ5), модулю из `drafts/` — нельзя (СБ6).
+- Витрина локальных компонентов — `apps/local-components/` (пункт хаба «Локальные
+  компоненты»; не раздел и не приложение, проверки экранов её обходят по
+  `project.json → localKit.dir`): страницы виджетов и реестр собирает
+  `node .agents/tools/kit-build.mjs` из паспортов и файлов `widgets/`, руками не править
+  (гейт, шаг `kit`). Руками — оболочка витрины и необязательный сценарий демо
+  `apps/local-components/<раздел>/<модуль>/<Имя>.demo.js`. Как работать —
+  `apps/local-components/README.md`.
 - Спеки — скилл `screen-spec`, по-русски, английское имя раздела в скобках:
   страница `<Имя>.screen.md` (`references/template.md`), виджет — паспорт
   `<Имя>.md` (`references/widget-template.md`); читатели — агент

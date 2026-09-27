@@ -1,0 +1,237 @@
+<!-- Связанный артефакт тайла «Финансовые метрики сделки»: окно просмотра
+     метрик целиком. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include — скрим должен лежать в конце body, а не внутри тайла.
+
+     Окно только для просмотра: метрики считает система, править их негде и
+     некому. Поэтому режима правки у окна нет, а в подвале одна кнопка
+     «Закрыть» — аутлайновая, как у окон просмотра «КНР» и «Команда сделки»:
+     подтверждать нечего, и залитая Primary обещала бы действие, которого нет
+     (решение человека 25.09.2026; на макете кнопка залитая — паспорт).
+
+     Состав сверху вниз (макет refs/финансовые метрики/Модальное окно.png):
+       1. два AllocationBar ДС рядом — ВБС по продуктам и ОСЗ по частям долга,
+          каждый на подложке. У ОСЗ бывают плашка «Данные рассчитываются» и
+          иконка-предупреждение о просрочке с тултипом;
+       2. раздел «Резервы на …» — сводка тремя карточками всегда видна,
+          таблица по ФИ раскрывается;
+       3. раздел «Переоценка по PE» — сводка четырьмя полями, таблица по ФИ
+          раскрывается. Только у сделки с PE (data-pe на .modal): без PE
+          раздела нет совсем (решение человека 25.09.2026).
+     Разделы — Tile Accordion ДС (частичный коллапс: .tile__body — сводка,
+     .tile__collapsible — таблица), сворачивает их рантайм ds-tile.js. При
+     каждом открытии окна оба свёрнуты — так на макете.
+
+     Значения ниже — пример с макета. Их заменяет DealFinancialMetricsModal.js
+     метриками сделки при открытии; бары рисует функция тайла
+     (PostTileDealFinMetrics.albarHTML) — разметка бара одна на тайл и окно. -->
+
+<div class="modal-scrim" id="deal-fin-metrics-scrim" hidden>
+  <div class="modal modal--w7 lc-deal-metrics-modal" role="dialog" aria-modal="true" aria-labelledby="deal-fin-metrics-title" data-pe="yes">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-fin-metrics-title">Финансовые метрики сделки</h2>
+      <!-- autofocus: начальный фокус окна — на крестике. Иначе рантайм Modal
+           ставит его на первый интерактивный элемент тела — иконку просрочки
+           ОСЗ, а тултип по фокусу показывается сразу, и окно открывалось с
+           поднятой подсказкой (урок ДС Л135). Иконка остаётся в таб-порядке. -->
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close autofocus><i data-icon="close"></i></button>
+    </header>
+
+    <!-- Разделы окна — Tile на всю ширину тела модалки, а не в колонках сетки
+         страницы: тело помечено data-off-grid с причиной (Spacing). -->
+    <div class="modal__body lc-deal-metrics-modal__body" data-off-grid="Разделы окна — на всю ширину тела модалки, вне сетки страницы">
+
+      <!-- ── ВБС и ОСЗ ────────────────────────────────────────────────── -->
+      <div class="lc-deal-metrics-modal__bars">
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="vbs">
+          <div class="albar albar--stretch" data-albar="vbs">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ВБС по сделке на 25.02.2026, RUB">ВБС по сделке на 25.02.2026, RUB</div></div>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Кредит 35,00%, Акции 35,00%, РЕПО 30,00%">
+              <div class="albar__seg" data-id="vbs-LOAN" style="background:var(--ch-indigo);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-SHARES" style="background:var(--ch-shiny-green);flex-grow:35"></div>
+              <div class="albar__seg" data-id="vbs-REPO" style="background:var(--ch-light-blue);flex-grow:30"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="vbs-LOAN"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Кредит</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-SHARES"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Акции</span><span class="albar__pct">35,00%</span><span class="albar__val">350 000 000,00</span></div>
+              <div class="albar__row" data-id="vbs-REPO"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">РЕПО</span><span class="albar__pct">30,00%</span><span class="albar__val">300 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="albar-host lc-deal-metrics-modal__panel" data-fin-bar="osz">
+          <div class="albar albar--stretch" data-albar="osz">
+            <div class="albar__head">
+              <div class="albar__titles"><div class="albar__label" title="ОСЗ по сделке на 12.03.2026, RUB">ОСЗ по сделке на 12.03.2026, RUB</div></div>
+              <span class="albar__warn" tabindex="0" role="img" aria-label="Просроченная задолженность на сумму 123 млн RUB"
+                    data-tooltip="Просроченная задолженность на сумму 123 млн RUB" data-tooltip-multiline="yes"><i data-icon="alert-triangle-filled"></i></span>
+              <div class="albar__total"><span>1 000 000 000,00</span></div>
+            </div>
+            <div class="albar__bar" role="img" aria-label="Распределение: Основной долг 55,00%, Проценты 40,00%, Комиссии 5,00%">
+              <div class="albar__seg" data-id="osz-PRINCIPAL" style="background:var(--ch-indigo);flex-grow:55"></div>
+              <div class="albar__seg" data-id="osz-INTEREST" style="background:var(--ch-shiny-green);flex-grow:40"></div>
+              <div class="albar__seg" data-id="osz-COMMISSIONS" style="background:var(--ch-light-blue);flex-grow:5"></div>
+            </div>
+            <div class="albar__list">
+              <div class="albar__row" data-id="osz-PRINCIPAL"><span class="albar__dot" style="background:var(--ch-indigo)"></span><span class="albar__name">Основной долг</span><span class="albar__pct">55,00%</span><span class="albar__val">550 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-INTEREST"><span class="albar__dot" style="background:var(--ch-shiny-green)"></span><span class="albar__name">Проценты</span><span class="albar__pct">40,00%</span><span class="albar__val">400 000 000,00</span></div>
+              <div class="albar__row" data-id="osz-COMMISSIONS"><span class="albar__dot" style="background:var(--ch-light-blue)"></span><span class="albar__name">Комиссии</span><span class="albar__pct">5,00%</span><span class="albar__val">50 000 000,00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Резервы ──────────────────────────────────────────────────── -->
+      <!-- Сводка — три карточки: резерв (сумма и ставка), обесценение, RWA; у
+           каждой своя дата расчёта. Подписи с пояснениями — те же, что в
+           тайле. Таблица по ФИ под сводкой раскрывается. -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section" data-fin-section="reserves">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title" data-fin-text="reservesTitle">Резервы на 25.02.2026</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-reserves-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="lc-deal-metrics-modal__cards">
+            <div class="lc-deal-metrics-modal__card lc-deal-metrics-modal__card--wide">
+              <div class="rof" data-fin-field="reserveAmount">
+                <span class="ds-label"><span class="ds-label__text">Сумма резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Сумма резерва" data-tooltip="Общая сумма по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">217 000 000,00</span><span class="rof__affix">RUB</span></div>
+              </div>
+              <div class="rof" data-fin-field="reserveRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка резерва</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка резерва" data-tooltip="Среднее значение по кредитным ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">62</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="impairmentRate">
+                <span class="ds-label"><span class="ds-label__text">Ставка обесценения</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Ставка обесценения" data-tooltip="Общая сумма по всем кредитным ФИ для «Типа учета» = «FV»" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">13</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+            <div class="lc-deal-metrics-modal__card">
+              <div class="rof" data-fin-field="rwa">
+                <span class="ds-label"><span class="ds-label__text">RWA</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: RWA" data-tooltip="Среднее значение по всем ФИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+                <div class="rof__row"><span class="rof__value">150</span><span class="rof__affix">%</span></div>
+              </div>
+              <div class="rof" data-fin-field="calcDate">
+                <span class="ds-label"><span class="ds-label__text">Дата расчета</span></span>
+                <div class="rof__row"><span class="rof__value">25.02.2026</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-reserves-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="reserves">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-reserves">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">ФИ</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Сумма резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка резерва</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Ставка обесценения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">RWA</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-reserves">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1024-Кредит-01</a></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">120 000 000,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">62</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">10</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">150</span><span class="tc__postfix">%</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Переоценка по PE ─────────────────────────────────────────── -->
+      <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section lc-deal-metrics-modal__pe" data-fin-section="pe">
+        <header class="tile__header">
+          <div class="tile__header-main">
+            <div class="tile__title-row"><h3 class="tile__title">Переоценка по PE</h3></div>
+          </div>
+          <div class="tile__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-pe-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
+          </div>
+        </header>
+        <div class="tile__body">
+          <div class="tile__grid lc-deal-metrics-modal__pe-grid">
+            <div class="rof" data-fin-field="revaluationAmount">
+              <span class="ds-label"><span class="ds-label__text">Сумма переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value">1 234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="revaluationDelta">
+              <span class="ds-label"><span class="ds-label__text">Δ переоценки по PE</span></span>
+              <div class="rof__row"><span class="rof__value rof__value--positive">+234 567,89</span><span class="rof__affix">RUB</span></div>
+            </div>
+            <div class="rof" data-fin-field="lastValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата последней оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2025</span></div>
+            </div>
+            <div class="rof" data-fin-field="nextValuationDate">
+              <span class="ds-label"><span class="ds-label__text">Дата ближайшей оценки</span></span>
+              <div class="rof__row"><span class="rof__value">21.12.2026</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tile__collapsible" id="dfm-pe-table">
+          <div class="tile__body">
+            <div class="dtable">
+              <div class="dtable__body">
+                <div class="tbl" data-table data-fin-table="pe">
+                  <div class="tbl__row tbl__row--head lc-deal-metrics-modal__cols-pe">
+                    <div class="th th--separator"></div>
+                    <div class="th"><span class="th__label">Финансовый инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Дата оценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Периодичность</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Оценка на дату</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Δ переоценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th"><span class="th__label">Кем определена</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--separator"></div>
+                  </div>
+                  <div class="tbl__row lc-deal-metrics-modal__cols-pe">
+                    <div class="tc tc--separator"></div>
+                    <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1025-Акции-01</a></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text">21.12.2025</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Ежемесячно</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 456 789,00</span><span class="tc__postfix">RUB</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text lc-deal-metrics-modal__delta">+56 789,00</span></span></div>
+                    <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Независимый оценщик</span></span></div>
+                    <div class="tc tc--separator"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Подвал обязателен: одна аутлайновая «Закрыть» справа. -->
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--outline btn--m" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

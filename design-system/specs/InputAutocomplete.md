@@ -1,8 +1,8 @@
 ---
 component: InputAutocomplete
 title: "InputAutocomplete"
-version: "1.016"
-updated: "06.09.2026"
+version: "1.017"
+updated: "25.09.2026"
 page: pages/molecules/InputAutocomplete.html
 page_js: scripts/input-autocomplete.page.js
 runtime: scripts/ds-dropdownlist.js, scripts/ds-input.js

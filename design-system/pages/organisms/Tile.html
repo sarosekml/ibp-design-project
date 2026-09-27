@@ -141,8 +141,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>1.013</b></span>
-    <span>Обновлено <b>21.09.2026</b></span>
+    <span>Версия <b>1.015</b></span>
+    <span>Обновлено <b>25.09.2026</b></span>
     <span>CSS <b>styles/tile.css</b></span>
     <span>Зависимости <b>icon-button, button, link, chip, badge, alert, divider, read-only-field, table-cell</b></span>
   </div>
@@ -276,7 +276,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <ol class="anat__legend">
       <li><span class="n">1</span><span><span class="k">TileHeader — Title</span><span class="d">H5 Strong. Опц. Addition: Link / Icon / Chip / Badge.</span></span></li>
       <li><span class="n">2</span><span><span class="k">Subtitle + Chiplist</span><span class="d">Subtitle — Body XS с опц. иконкой; ниже — ряд чипов (маркеры).</span></span></li>
-      <li><span class="n">3</span><span><span class="k">Actions</span><span class="d">Трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button в любом сочетании, зазор 8.</span></span></li>
+      <li><span class="n">3</span><span><span class="k">Actions</span><span class="d">Трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button в любом сочетании, зазор 12.</span></span></li>
       <li><span class="n">4</span><span><span class="k">Alert-слот + контентная область</span><span class="d">Опц. полноширинный Alert, затем контент (индивидуальный).</span></span></li>
     </ol>
   </div>
@@ -467,6 +467,25 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
           <p class="ws-cap" style="margin-top:8px">Move — схвачена</p>
         </div>
         <div>
+          <div class="tile tile--card is-selected" style="width:264px;">
+            <div class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row"><h4 class="tile__title">ООО «ЮгСтрой» — мезонин</h4></div>
+                <div class="tile__chiplist"><span class="chip chip--xs chip--rounded"><span class="chip__label">Повышенный риск</span></span></div>
+              </div>
+              <div class="tile__actions">
+                <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="В избранное" aria-pressed="false"><i data-icon="star"></i></button>
+              </div>
+            </div>
+            <div class="tile__body">
+              <div class="tl-fieldgrid">
+                <div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value">1 250 000 000 ₽</span></div></div>
+              </div>
+            </div>
+          </div>
+          <p class="ws-cap" style="margin-top:8px">Selected — выбрана в списке</p>
+        </div>
+        <div>
           <div class="tile tile--card is-disabled" style="width:264px;">
             <div class="tile__header">
               <div class="tile__header-main">
@@ -571,6 +590,9 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec">
     <h3>Правила наполнения</h3>
+    <ul class="bullets">
+      <li><b>Кнопки в контенте — размер S</b> (32px), если макет или ТЗ не задают иное. M (40px) — размер кнопок модальных окон, в тайл не ставится. Button в шапке (Actions) — XS, как в конструкторе. Пример — «Заполнить» в пустом тайле.</li>
+    </ul>
     <div class="guide">
       <div class="guide-card good">
         <div class="guide-card__bar"></div>
@@ -614,7 +636,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <ul class="bullets">
       <li><b>IconButton в хэдере</b> — собственные состояния Default / Hover / Focus / Disabled (см. IconButton).</li>
       <li><b>Button / Link в контенте и алертах</b> — состояния своих компонентов.</li>
-      <li><b>Card</b> (<code class="tok">.tile--card</code>) — единственный родственник со своими состояниями: <code class="tok">:hover</code> / <code class="tok">.is-hover</code>, <code class="tok">:active</code> / <code class="tok">.is-pressed</code>, <code class="tok">.is-move</code> (перетаскивание), <code class="tok">[aria-disabled="true"]</code> / <code class="tok">.is-disabled</code>. Служебные классы <code class="tok">.is-*</code> нужны, чтобы показать состояние статично в документации — как у IconButton.</li>
+      <li><b>Card</b> (<code class="tok">.tile--card</code>) — единственный родственник со своими состояниями: <code class="tok">:hover</code> / <code class="tok">.is-hover</code>, <code class="tok">:active</code> / <code class="tok">.is-pressed</code>, <code class="tok">.is-move</code> (перетаскивание), <code class="tok">[aria-disabled="true"]</code> / <code class="tok">.is-disabled</code>, выбранная в списке — <code class="tok">[aria-checked="true"]</code> / <code class="tok">[aria-selected="true"]</code> / <code class="tok">.is-selected</code> (подложка <code class="tok">--primary-bg</code>, рамка <code class="tok">--primary</code>). Служебные классы <code class="tok">.is-*</code> нужны, чтобы показать состояние статично в документации — как у IconButton.</li>
       <li><b>AccordionTile</b> — не состояние, а переключаемая конфигурация (collapsed / expanded) через <code class="tok">.tile--collapsed</code>.</li>
     </ul>
   </div>
@@ -1345,11 +1367,13 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
   flex-wrap: wrap;
 }
 
-/* Actions — трейлинг-группа: 1..3 действия (IconButton и/или Button), зазор 8 */
+/* Actions — трейлинг-группа: 1..3 действия (IconButton и/или Button), зазор 12
+   (было 8 до 1.015: кнопка с подписью и IconButton рядом сливались в одно
+   действие — решение человека 25.09.2026) */
 .tile__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: none;
 }
 
@@ -1460,8 +1484,9 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
    Alert-слот у Card не предполагается.
 
    Состояния (набор объявлен в документации Tile с самого начала):
-   Default · Hover · Active · Move · Disabled. Move — состояние
-   перетаскивания: карточка схвачена и следует за указателем.
+   Default · Hover · Active · Move · Disabled, с 1.015 — Selected. Move —
+   состояние перетаскивания: карточка схвачена и следует за указателем.
+   Selected — карточка выбрана в списке с выбором.
    Имена служебных классов — как у IconButton (.is-hover / .is-pressed):
    они нужны, чтобы показать состояние статично в документации.
    ------------------------------------------------------------ */
@@ -1515,6 +1540,18 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
 .tile--card.is-pressed {
   background: var(--bg-table-default-focus);
   border-color: var(--border-dark);
+}
+/* Selected — карточка выбрана в списке с выбором (одной или нескольких).
+   Постоянное состояние, в отличие от Active (нажатие). Реальный выбор несёт
+   aria-checked="true" (роль radio/checkbox) или aria-selected="true" (роль
+   option) на самой карточке; .is-selected — форс-состояние витрины. Тон — как
+   у выбора Entity: подложка --primary-bg, рамка --primary. */
+.tile--card:is(.is-selected, [aria-checked="true"], [aria-selected="true"]) {
+  background: var(--primary-bg);
+  border-color: var(--primary);
+}
+.tile--card:is(.is-selected, [aria-checked="true"], [aria-selected="true"]):hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 .tile--card:focus-visible {
   outline: 2px solid var(--primary);

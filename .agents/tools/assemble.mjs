@@ -271,14 +271,17 @@ export function assemble(source, inputDir) {
 export const previewOf = (file) => file.replace(/\.html$/i, '.preview.html');
 
 /* Источники apps/: .html с меткой вне комментариев; собранные *.preview.html
-   — результат, а не источник; fixtures и скрытые каталоги не обходятся. */
-export function sourcesUnder(dir, out = []) {
+   — результат, а не источник; fixtures и скрытые каталоги не обходятся.
+   skip — каталог, который не обходится целиком: витрина локальных
+   компонентов (`project.json → localKit.dir`) лежит в apps/, но её страницы
+   собирает kit-build, а не этот сборщик. */
+export function sourcesUnder(dir, out = [], skip = null) {
   let list;
   try { list = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
   for (const e of list) {
     if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'fixtures') continue;
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) { sourcesUnder(full, out); continue; }
+    if (e.isDirectory()) { if (full !== skip) sourcesUnder(full, out, skip); continue; }
     if (!/\.html$/i.test(e.name) || /\.preview\.html$/i.test(e.name)) continue;
     if (includesOf(readFileSync(full, 'utf8')).length) out.push(full);
   }
@@ -484,7 +487,7 @@ function main() {
   const P = need('assemble', HERE);
   const check = args.includes('--check');
   const named = args.filter((a) => !a.startsWith('--')).map((a) => path.resolve(process.cwd(), a));
-  const files = named.length ? named : sourcesUnder(path.join(P.root, P.appsDir || 'apps'));
+  const files = named.length ? named : sourcesUnder(path.join(P.root, P.appsDir || 'apps'), [], P.showcaseAbs);
   const res = run(P, files, !check);
   console.log(report(check ? 'assemble --check' : 'assemble', res));
   process.exit(res.defects.length ? 1 : 0);

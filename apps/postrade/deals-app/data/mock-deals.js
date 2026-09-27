@@ -14,9 +14,16 @@
    Статус = произвольная строка (UI-агностично); тон-маппинг — на экране,
    см. Portfolio.screen.md §7.
 
-   Допущения по форматам (нет однозначного ответа в ТЗ): jointness — строка
-   из справочника (см. DEALS_ENUMS.jointness); corpGovernance — список строк;
-   boardRep — Да/Нет.
+   Допущения по форматам (нет однозначного ответа в ТЗ): corpGovernance —
+   список строк; boardRep — Да/Нет.
+
+   jointness («Совместность») — краткое имя территориального банка, с которым
+   ведётся сделка (МБ — Московский банк), из справочника
+   DEALS_ENUMS.jointness; полные имена — DEALS_ENUMS.jointnessNames. Пустая
+   строка — совместности нет. До 24.09.2026 здесь лежало «Совместная» /
+   «Не совместная»; значение уточнено по макету тайла «Описание сделки»
+   (решение человека 24.09.2026). Список из 11 кодов и их порядок — с
+   экрана текущей системы, полные имена подтвердил человек (25.09.2026).
 
    Команда сделки — плоские поля этой же записи, их правит окно тайла
    «Команда сделки» (widgets/tiles/DealTeamTile). Деск + двенадцать
@@ -37,7 +44,45 @@
    здесь и раньше — их показывает реестр портфеля; остальные добавлены
    23.09.2026 и заполнены у сделок 1024 и 1027 как демо, у прочих их нет.
    Флаг restricted («Да» / «Нет») — сделка ограниченного доступа.
+
+   Описание сделки — тоже плоские поля записи, их правит окно тайла
+   «Описание сделки» (widgets/tiles/DealDescriptionTile). Три поля были в
+   записи и раньше, их показывает реестр портфеля: gsz, jointness и finTpl
+   («Да» / «Нет» — фин. расчёты ведутся в шаблоне Excel). Остальные — ниже,
+   typedef DealDescriptionFields; заполнены как демо у сделок 1024–1027 и
+   1029, у прочих их нет — отсутствующее поле читается как пустое. Сделка 1028
+   — демо пустого тайла в правке (статус правку допускает), 1033 — в
+   просмотре.
    ========================================================================= */
+
+/**
+ * Поля записи сделки, которые добавил тайл «Описание сделки».
+ * Source: invented (24.09.2026) — заменить на DTO, когда он появится.
+ * @typedef {Object} DealDescriptionFields
+ * @property {string} description          суть сделки — свободный текст
+ * @property {string} operationsComment    комментарий Operations
+ * @property {string} additionalIncome     дополнительные доходы — свободный текст
+ * @property {boolean} ceParticipation     участие ЦЭ
+ * @property {boolean} ifDeskParticipation участие Деска ИФ
+ * @property {boolean} restructured        сделка реструктурирована
+ * @property {RiskCategoryCode|null} riskCategory категория риска ЦУП; null — не присвоена
+ * @property {RelatedDealRsDto[]} relatedDeals связанные сделки; приходят из системы, в окне не правятся
+ */
+
+/**
+ * Категория риска ЦУП. Подписи — DEALS_ENUMS.riskCategoryNames, пояснения —
+ * DEALS_ENUMS.riskCategoryHints (макет тайла, 24.09.2026).
+ * Source: invented (24.09.2026).
+ * @typedef {'A'|'B'|'C'|'D'|'UNDEFINED'} RiskCategoryCode
+ */
+
+/**
+ * Связанная сделка — потенциальная сделка клиента, связанная с этой.
+ * Source: invented (24.09.2026).
+ * @typedef {Object} RelatedDealRsDto
+ * @property {string} name          наименование сделки
+ * @property {string} opportunityId номер сделки клиента
+ */
 
 window.MOCK_DEALS = [
   {
@@ -78,13 +123,34 @@ window.MOCK_DEALS = [
       "ООО «ЮгСтрой»"
     ],
     "gsz": "Группа «СтройИнвест»",
-    "jointness": "Совместная",
+    "jointness": "МБ",
     "collateral": "Да",
     "corpGovernance": [
       "Наблюдательный совет"
     ],
     "boardRep": "Да",
     "finTpl": "Да",
+    "description": "Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.",
+    "operationsComment": "Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.",
+    "additionalIncome": "Комиссия за организацию финансирования — 0,5 % от лимита",
+    "ceParticipation": false,
+    "ifDeskParticipation": true,
+    "restructured": true,
+    "riskCategory": "C",
+    "relatedDeals": [
+      {
+        "name": "Финансирование складского комплекса «Север»",
+        "opportunityId": "2041187"
+      },
+      {
+        "name": "Рефинансирование кредитного портфеля ООО «ЮгСтрой»",
+        "opportunityId": "2041203"
+      },
+      {
+        "name": "Бридж-финансирование второй очереди логистического хаба",
+        "opportunityId": "2041318"
+      }
+    ],
     "signDate": "01.01.2021",
     "firstDisb": "21.01.2021",
     "endDate": "01.01.2023",
@@ -121,11 +187,12 @@ window.MOCK_DEALS = [
       "АО «НефтьСервис»"
     ],
     "gsz": "Группа «СвязьКапитал»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
     "finTpl": "Нет",
+    "riskCategory": "D",
     "signDate": "07.02.2021",
     "firstDisb": "28.02.2021",
     "endDate": "07.03.2023",
@@ -167,11 +234,14 @@ window.MOCK_DEALS = [
       "ПАО «ТелекомИнвест»"
     ],
     "gsz": "Группа «УралРесурс»",
-    "jointness": "Совместная",
+    "jointness": "СЗБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
     "finTpl": "Да",
+    "description": "Приобретение контрольного пакета горнодобывающей компании с последующей модернизацией обогатительной фабрики.",
+    "ceParticipation": true,
+    "riskCategory": "B",
     "signDate": "",
     "firstDisb": "",
     "endDate": "",
@@ -222,13 +292,21 @@ window.MOCK_DEALS = [
       "ООО «ГорноКапитал»"
     ],
     "gsz": "Группа «ГорСтрой»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Комитет по рискам"
     ],
     "boardRep": "Да",
     "finTpl": "Нет",
+    "description": "Проектное финансирование строительства жилого комплекса бизнес-класса из четырёх корпусов общей площадью 86 тыс. кв. м. Финансирование открывается по мере распродаж: лимит выдачи привязан к доле проданных квартир в каждом корпусе, а средства дольщиков поступают на эскроу-счета и раскрываются после ввода корпуса. Залоговое обеспечение — права на земельный участок и имущественные права на строящиеся помещения; поручительство материнской компании застройщика.",
+    "operationsComment": "Условия раскрытия эскроу пересматриваются по итогам аудита.",
+    "additionalIncome": "",
+    "ceParticipation": true,
+    "ifDeskParticipation": false,
+    "restructured": false,
+    "riskCategory": "A",
+    "relatedDeals": [],
     "signDate": "22.04.2021",
     "firstDisb": "15.05.2021",
     "endDate": "22.07.2023",
@@ -268,11 +346,11 @@ window.MOCK_DEALS = [
       "ООО «ЖилСтрой»"
     ],
     "gsz": "",
-    "jointness": "Совместная",
+    "jointness": "",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
-    "finTpl": "Да",
+    "finTpl": "Нет",
     "signDate": "29.05.2021",
     "firstDisb": "22.06.2021",
     "endDate": "29.09.2023",
@@ -314,11 +392,12 @@ window.MOCK_DEALS = [
       "ООО «ПродуктТрейд»"
     ],
     "gsz": "Группа «МедИнвест»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
     "finTpl": "Нет",
+    "riskCategory": "UNDEFINED",
     "signDate": "05.07.2021",
     "firstDisb": "30.07.2021",
     "endDate": "05.12.2023",
@@ -361,7 +440,7 @@ window.MOCK_DEALS = [
       "АО «ДатаХаб»"
     ],
     "gsz": "Группа «АгроСоюз»",
-    "jointness": "Совместная",
+    "jointness": "УБ",
     "collateral": "Да",
     "corpGovernance": [
       "Совет директоров"
@@ -407,7 +486,7 @@ window.MOCK_DEALS = [
       "ООО «РечПорт»"
     ],
     "gsz": "Группа «МеталлСоюз»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -453,7 +532,7 @@ window.MOCK_DEALS = [
       "ООО «АгроХолдинг»"
     ],
     "gsz": "Группа «ЭнергоАльянс»",
-    "jointness": "Совместная",
+    "jointness": "СБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -501,7 +580,7 @@ window.MOCK_DEALS = [
       "АО «МеталлИнвест»"
     ],
     "gsz": "",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Правление"
@@ -547,7 +626,7 @@ window.MOCK_DEALS = [
       "ООО «ЭнергоСтрой»"
     ],
     "gsz": "Группа «СтройИнвест»",
-    "jointness": "Совместная",
+    "jointness": "МБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -593,7 +672,7 @@ window.MOCK_DEALS = [
       "ПАО «ТрансЛогистик»"
     ],
     "gsz": "Группа «СвязьКапитал»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -642,7 +721,7 @@ window.MOCK_DEALS = [
       "ООО «СтройГрупп»"
     ],
     "gsz": "Группа «УралРесурс»",
-    "jointness": "Совместная",
+    "jointness": "СЗБ",
     "collateral": "Да",
     "corpGovernance": [
       "Наблюдательный совет"
@@ -693,7 +772,7 @@ window.MOCK_DEALS = [
       "АО «ХимПром»"
     ],
     "gsz": "Группа «ГорСтрой»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -739,7 +818,7 @@ window.MOCK_DEALS = [
       "ООО «ЛесПром»"
     ],
     "gsz": "",
-    "jointness": "Совместная",
+    "jointness": "ПВБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -787,7 +866,7 @@ window.MOCK_DEALS = [
       "АО «ПортИнвест»"
     ],
     "gsz": "Группа «МедИнвест»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Комитет по рискам"
@@ -833,7 +912,7 @@ window.MOCK_DEALS = [
       "ООО «МорТранс»"
     ],
     "gsz": "Группа «АгроСоюз»",
-    "jointness": "Совместная",
+    "jointness": "УБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -879,7 +958,7 @@ window.MOCK_DEALS = [
       "ПАО «СтальГрупп»"
     ],
     "gsz": "Группа «МеталлСоюз»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -928,7 +1007,7 @@ window.MOCK_DEALS = [
       "ООО «НефтеХимСервис»"
     ],
     "gsz": "Группа «ЭнергоАльянс»",
-    "jointness": "Совместная",
+    "jointness": "СБ",
     "collateral": "Да",
     "corpGovernance": [
       "Совет директоров"
@@ -971,7 +1050,7 @@ window.MOCK_DEALS = [
       "АО «ГидроЭнерго»"
     ],
     "gsz": "",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1017,7 +1096,7 @@ window.MOCK_DEALS = [
       "ООО «ЗерноТрейд»"
     ],
     "gsz": "Группа «СтройИнвест»",
-    "jointness": "Совместная",
+    "jointness": "МБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1065,7 +1144,7 @@ window.MOCK_DEALS = [
       "ПАО «АвтоЛогистик»"
     ],
     "gsz": "Группа «СвязьКапитал»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Правление"
@@ -1111,7 +1190,7 @@ window.MOCK_DEALS = [
       "ООО «СтройМонтаж»"
     ],
     "gsz": "Группа «УралРесурс»",
-    "jointness": "Совместная",
+    "jointness": "СЗБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1157,7 +1236,7 @@ window.MOCK_DEALS = [
       "АО «ТеплоЭнерго»"
     ],
     "gsz": "Группа «ГорСтрой»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1206,7 +1285,7 @@ window.MOCK_DEALS = [
       "ООО «РечПорт»"
     ],
     "gsz": "",
-    "jointness": "Совместная",
+    "jointness": "ПВБ",
     "collateral": "Да",
     "corpGovernance": [
       "Наблюдательный совет"
@@ -1249,7 +1328,7 @@ window.MOCK_DEALS = [
       "ПАО «МясоПром»"
     ],
     "gsz": "Группа «МедИнвест»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1295,7 +1374,7 @@ window.MOCK_DEALS = [
       "ООО «ЛогистикЦентр»"
     ],
     "gsz": "Группа «АгроСоюз»",
-    "jointness": "Совместная",
+    "jointness": "УБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1343,7 +1422,7 @@ window.MOCK_DEALS = [
       "АО «ЦветМет»"
     ],
     "gsz": "Группа «МеталлСоюз»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Комитет по рискам"
@@ -1389,7 +1468,7 @@ window.MOCK_DEALS = [
       "ООО «СтройИндустрия»"
     ],
     "gsz": "Группа «ЭнергоАльянс»",
-    "jointness": "Совместная",
+    "jointness": "СБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1435,7 +1514,7 @@ window.MOCK_DEALS = [
       "ПАО «АгроТех»"
     ],
     "gsz": "",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1484,7 +1563,7 @@ window.MOCK_DEALS = [
       "ООО «ЮгСтрой»"
     ],
     "gsz": "Группа «СтройИнвест»",
-    "jointness": "Совместная",
+    "jointness": "МБ",
     "collateral": "Да",
     "corpGovernance": [
       "Совет директоров"
@@ -1527,7 +1606,7 @@ window.MOCK_DEALS = [
       "АО «НефтьСервис»"
     ],
     "gsz": "Группа «СвязьКапитал»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1573,7 +1652,7 @@ window.MOCK_DEALS = [
       "ПАО «ТелекомИнвест»"
     ],
     "gsz": "Группа «УралРесурс»",
-    "jointness": "Совместная",
+    "jointness": "СЗБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1621,7 +1700,7 @@ window.MOCK_DEALS = [
       "ООО «ГорноКапитал»"
     ],
     "gsz": "Группа «ГорСтрой»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Правление"
@@ -1667,7 +1746,7 @@ window.MOCK_DEALS = [
       "ООО «ЖилСтрой»"
     ],
     "gsz": "",
-    "jointness": "Совместная",
+    "jointness": "ПВБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1713,7 +1792,7 @@ window.MOCK_DEALS = [
       "ООО «ПродуктТрейд»"
     ],
     "gsz": "Группа «МедИнвест»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1762,7 +1841,7 @@ window.MOCK_DEALS = [
       "АО «ДатаХаб»"
     ],
     "gsz": "Группа «АгроСоюз»",
-    "jointness": "Совместная",
+    "jointness": "УБ",
     "collateral": "Да",
     "corpGovernance": [
       "Наблюдательный совет"
@@ -1805,7 +1884,7 @@ window.MOCK_DEALS = [
       "ООО «ФармаПлюс»"
     ],
     "gsz": "Группа «МеталлСоюз»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1851,7 +1930,7 @@ window.MOCK_DEALS = [
       "ООО «АгроХолдинг»"
     ],
     "gsz": "Группа «ЭнергоАльянс»",
-    "jointness": "Совместная",
+    "jointness": "СБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1899,7 +1978,7 @@ window.MOCK_DEALS = [
       "АО «МеталлИнвест»"
     ],
     "gsz": "",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Комитет по рискам"
@@ -1945,7 +2024,7 @@ window.MOCK_DEALS = [
       "ООО «ЭнергоСтрой»"
     ],
     "gsz": "Группа «СтройИнвест»",
-    "jointness": "Совместная",
+    "jointness": "МБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -1991,7 +2070,7 @@ window.MOCK_DEALS = [
       "ПАО «ТрансЛогистик»"
     ],
     "gsz": "Группа «СвязьКапитал»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2040,7 +2119,7 @@ window.MOCK_DEALS = [
       "ООО «СтройГрупп»"
     ],
     "gsz": "Группа «УралРесурс»",
-    "jointness": "Совместная",
+    "jointness": "СЗБ",
     "collateral": "Да",
     "corpGovernance": [
       "Совет директоров"
@@ -2083,7 +2162,7 @@ window.MOCK_DEALS = [
       "АО «ХимПром»"
     ],
     "gsz": "Группа «ГорСтрой»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2129,7 +2208,7 @@ window.MOCK_DEALS = [
       "ООО «ЛесПром»"
     ],
     "gsz": "",
-    "jointness": "Совместная",
+    "jointness": "ПВБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2177,7 +2256,7 @@ window.MOCK_DEALS = [
       "АО «ПортИнвест»"
     ],
     "gsz": "Группа «МедИнвест»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [
       "Правление"
@@ -2223,7 +2302,7 @@ window.MOCK_DEALS = [
       "ООО «МорТранс»"
     ],
     "gsz": "Группа «АгроСоюз»",
-    "jointness": "Совместная",
+    "jointness": "УБ",
     "collateral": "Да",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2269,7 +2348,7 @@ window.MOCK_DEALS = [
       "ПАО «СтальГрупп»"
     ],
     "gsz": "Группа «МеталлСоюз»",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2318,7 +2397,7 @@ window.MOCK_DEALS = [
       "ООО «НефтеХимСервис»"
     ],
     "gsz": "Группа «ЭнергоАльянс»",
-    "jointness": "Совместная",
+    "jointness": "СБ",
     "collateral": "Да",
     "corpGovernance": [
       "Наблюдательный совет"
@@ -2361,7 +2440,7 @@ window.MOCK_DEALS = [
       "АО «ГидроЭнерго»"
     ],
     "gsz": "",
-    "jointness": "Не совместная",
+    "jointness": "",
     "collateral": "Нет",
     "corpGovernance": [],
     "boardRep": "Нет",
@@ -2489,8 +2568,60 @@ window.DEALS_ENUMS = {
     "Овердрафт"
   ],
   "jointness": [
-    "Совместная",
-    "Не совместная"
+    "ЦА",
+    "ЦЧБ",
+    "УБ",
+    "МБ",
+    "ЮЗБ",
+    "СРБ",
+    "ВВБ",
+    "СБ",
+    "ПВБ",
+    "СЗБ",
+    "ДБ"
+  ],
+  "jointnessNames": {
+    "ЦА": "Центральный аппарат",
+    "ЦЧБ": "Центрально-Черноземный банк",
+    "УБ": "Уральский банк",
+    "МБ": "Московский банк",
+    "ЮЗБ": "Юго-Западный банк",
+    "СРБ": "Среднерусский банк",
+    "ВВБ": "Волго-Вятский банк",
+    "СБ": "Сибирский банк",
+    "ПВБ": "Поволжский банк",
+    "СЗБ": "Северо-Западный банк",
+    "ДБ": "Дальневосточный банк"
+  },
+  "riskCategory": [
+    "UNDEFINED",
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "riskCategoryNames": {
+    "UNDEFINED": "Не определена",
+    "A": "Категория A",
+    "B": "Категория B",
+    "C": "Категория C",
+    "D": "Категория D"
+  },
+  "riskCategoryHints": {
+    "A": "Сделка с повышенным риском — требуется регулярный анализ",
+    "B": "Потенциально рисковая сделка — требуется экспертная оценка",
+    "C": "Высоких рисков в сделке нет",
+    "D": "Венчурное финансирование или Residential RE — дифференцированный подход к мониторингу"
+  },
+  "gsz": [
+    "Группа «СтройИнвест»",
+    "Группа «СвязьКапитал»",
+    "Группа «УралРесурс»",
+    "Группа «ГорСтрой»",
+    "Группа «МедИнвест»",
+    "Группа «АгроСоюз»",
+    "Группа «МеталлСоюз»",
+    "Группа «ЭнергоАльянс»"
   ],
   "corpGovernance": [
     "Наблюдательный совет",

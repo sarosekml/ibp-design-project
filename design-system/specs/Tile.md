@@ -1,8 +1,8 @@
 ﻿---
 component: Tile
 title: "Tile"
-version: "1.014"
-updated: "23.09.2026"
+version: "1.015"
+updated: "25.09.2026"
 page: pages/organisms/Tile.html
 runtime: scripts/ds-tile.js
 css: styles/tile.css
@@ -32,7 +32,7 @@ Tile — основная плашка рабочей области стран�
 - **Варианты** — обычный Tile; AccordionTile (полный/частичный коллапс); TileHeadless (без хэдера, отступы 20/20/32/20); Alert-слот (Warning · Info · Error).
 - **Размеры** — ширина 3–12 колонок сетки контейнера; высота — по 3D. Основной паттерн — ряд: все тайлы ряда равны высоте самой высокой плашки (с учётом алертов; `.tile` несёт `align-self:stretch` сам по себе, независимо от `align-items` контейнера экрана — см. «Tile-раскладка» ниже). Два исключения, не требующие отдельной логики — просто следствие того, как устроен CSS Grid: тайл один на весь ряд (span 12) — высота по контенту (он единственный в своём ряду); тайлы в колонках/стопках (канбан-лейаут, напр. 3 стопки по 4 колонки) — высота каждого тайла по своему контенту, не по соседним стопкам — стопка это flex-column (`.tile-stack`), а у flex-column `align-self:stretch` тянет ширину, не высоту.
 - **Размеры · Радиус скругления** — Радиус не зависит от числа колонок и высоты контента. тайл — 8px (--radius-m) · Alert внутри тайла — 0.
-- **Контент** — текст, дивайдеры, ReadOnly-поля (компонент ReadOnlyField, `.rof`), кнопки, ссылки, вложенные плашки-аккордеоны. Отступы контента 0/20/24/20 (визуально 10 сверху — из паддинга хэдера); строки 16/24; колонки 16. Чипы в Chiplist — размер XS, зазор 4.
+- **Контент** — текст, дивайдеры, ReadOnly-поля (компонент ReadOnlyField, `.rof`), кнопки, ссылки, вложенные плашки-аккордеоны. Отступы контента 0/20/24/20 (визуально 10 сверху — из паддинга хэдера); строки 16/24; колонки 16. Чипы в Chiplist — размер XS, зазор 4. **Кнопки в контенте — размер S** (`btn--s`, 32), если макет или ТЗ не задают иное: M (40) — размер кнопок модальных окон, в Tile не ставится; Button в шапке (Actions) — XS (`btn--outline btn--xs`), как в конструкторе страницы. Пример — «Заполнить» в пустом тайле (решение человека 25.09.2026).
 - **Поведение** — сворачивание аккордеона (шеврон, поворот 180°); выравнивание высоты в ряду — `align-self:stretch` на `.tile`, работает вне зависимости от `align-items` контейнера экрана (RulesAudit W2, 12.08.2026); усечение Title + Tooltip.
 - **Состояния** — Tile собственных состояний НЕ имеет. Интерактивны только вложенные IconButton (хэдер), Button/Link (контент, алерт). AccordionTile collapsed/expanded — конфигурация, не состояние.
 - **Доступность** — Title = семантический heading; иконка-предупреждение декоративна (aria-hidden); IconButton — aria-label; шеврон — поворот на 180° красится и по `[aria-expanded="false"]` на кнопке напрямую (RulesAudit W1, 12.08.2026); рантайм `ds-tile.js` остаётся class-authoritative — сам синхронизирует атрибут с `.tile--collapsed`, атрибутный CSS — фоллбэк для случаев без класса. aria-expanded + aria-controls; Alert — role по тону; reduced-motion отключает анимацию.
@@ -106,15 +106,15 @@ onToggle():                       # AccordionTile
 | `.tile__title-add` | Addition: link/icon/chip/badge; `--icon` — слот 20px, иконка в `--secondary`, тон — `--success`/`--warning`/`--error`/`--info` |
 | `.tile__subtitle` | подзаголовок, Body XS, опц. `.tile__subtitle-icon` — слот 16px (высота строки Body XS), иконка в `--secondary`, тон — `.tile__subtitle-icon--success`/`--warning`/`--error`/`--info` |
 | `.tile__chiplist` | ряд чипов-маркеров (Chip XS, зазор 4) |
-| `.tile__actions` | трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button, зазор 8 |
+| `.tile__actions` | трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button, зазор 12 |
 | `.tile__toggle` / `.tile__chevron` | кнопка-шеврон аккордеона (aria-expanded) / поворот 180° |
 | `.tile__alert` | полноширинный Alert-слот (углы прямые) |
-| `.tile__body` | контентная область, padding 0/20/24/20 |
+| `.tile__body` | контентная область, padding 0/20/24/20; Button в ней — S (`btn--s`), если макет/ТЗ не задают иное |
 | `.tile__collapsible` | сворачиваемая часть контента |
 | `.tile__grid` / `.tile__rows` | сетки контента: строки 16/24, колонки 16 |
 | `.tile-row` | ряд нескольких тайлов — grid 12 колонок, gap 16. Ширина тайла — `style="grid-column:span N"` (ряд без перестроения) либо пара утилит Spacing `col-N` + `colw-N` (когда нужен адаптив: инлайн-стиль из CSS не переопределить). Своих классов ширины экран не заводит; узкий режим включается порогом `@container screen (max-width: …) { .tile-row > [class*="colw-"] { grid-column: span var(--colw) } }` |
 | `.tile-group` | обёртка нескольких `.tile-row` — flex-колонка, зазор 16px. Обязательна, когда рядов больше одного: `.screen__content` имеет собственный `gap: 24px`, поэтому зазор нельзя задавать `margin`'ом на `.tile-row` (сложится в 40px). Группа — один ребёнок контентной области: 24px между крупными зонами, 16px внутри группы |
 | `.tile__grid-full` | элемент на всю ширину сетки тайла (`grid-column:1/-1`) — длинное «Описание», комментарий, Alert: остаётся внутри `.tile__grid`, не выносится соседним блоком |
-| `.tile--card` | Card — карточка в модалке, списке, на канбане: хэдер 16/16/8, контент 8/16/20/16, Title H6 Strong, зазор Title↔Subtitle↔Chiplist 4; свои состояния `:hover`/`.is-hover` · `:active`/`.is-pressed` · `.is-move` · `.is-disabled`/`[aria-disabled="true"]`; alert-слота нет |
+| `.tile--card` | Card — карточка в модалке, списке, на канбане: хэдер 16/16/8, контент 8/16/20/16, Title H6 Strong, зазор Title↔Subtitle↔Chiplist 4; свои состояния `:hover`/`.is-hover` · `:active`/`.is-pressed` · `.is-move` · `.is-disabled`/`[aria-disabled="true"]` · выбранная в списке с выбором — `[aria-checked="true"]` (роль radio/checkbox) / `[aria-selected="true"]` (роль option) / `.is-selected` (витрина): подложка `--primary-bg`, рамка `--primary`, как выбор у Entity; alert-слота нет |
 | `.tile__grip` | грип переноса Card — IconButton M 20×20 (`<button class="ibtn ibtn--neutral ibtn--m tile__grip" aria-label="Перенести"><i data-icon="drag-dots"></i></button>`), последним в `.tile__actions`; своего только курсор grab/grabbing. Жест переноса — у потребителя |
 | `.tile-stack` | колонка/стопка внутри `.tile-row` (канбан) — flex-column, gap 16; вложенные тайлы высоту друг с другом не равняют |

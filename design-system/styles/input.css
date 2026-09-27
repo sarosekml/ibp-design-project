@@ -55,7 +55,7 @@
 .inp__field {
   display: flex;
   align-items: center;
-  box-sizing: border-box; /* 2px-бордер фокуса не меняет габариты поля */
+  box-sizing: border-box;
   gap: var(--inp-gap);
   height: var(--inp-h);
   padding: 0 var(--inp-px);
@@ -68,11 +68,15 @@
 }
 .inp__field:hover,
 .inp.is-hover .inp__field { border-color: var(--primary); }
+/* Фокус — обводка 2px (общая для всех состояний *-focus): бордер остаётся
+   1px, второй пиксель рисует внутренняя тень того же цвета. Толщину бордера
+   фокус не меняет — иначе поле с высотой по содержимому (многострочное,
+   чипы) вырастало на 2px и толкало соседей, а у поля фиксированной высоты
+   сдвигался текст на 1px (до 1.015, решение человека 25.09.2026). */
 .inp__field:focus-within,
 .inp.is-focus .inp__field {
   border-color: var(--primary);
-  border-width: 2px; /* фокус — бордер 2px (общий для всех состояний *-focus) */
-  box-shadow: 0 0 0 3px var(--primary-bg-light);
+  box-shadow: inset 0 0 0 1px var(--primary), 0 0 0 3px var(--primary-bg-light);
 }
 
 /* многострочный вариант (InputText) */
@@ -90,13 +94,13 @@
 .inp--error .inp__field:focus-within,
 .inp--error.is-focus .inp__field {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--error), 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent);
 }
 .inp--warning .inp__field { border-color: var(--warning); }
 .inp--warning .inp__field:focus-within,
 .inp--warning.is-focus .inp__field {
   border-color: var(--warning);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent);
+  box-shadow: inset 0 0 0 1px var(--warning), 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent);
 }
 .inp--disabled { pointer-events: none; }
 .inp--disabled .inp__field {
