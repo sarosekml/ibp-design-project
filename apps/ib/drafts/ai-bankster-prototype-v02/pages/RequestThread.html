@@ -107,8 +107,11 @@
 
   /* Аватарки-получателей в шапке открывают диалог «Поделиться» (диалоги —
      в chat-settings.js, триггер вешает PitcherChatSettings.avatars).
-     Фокус — как у интерактивного аватара ДС (.av--button:focus-visible). */
-  .av-group--link { cursor: pointer; }
+     Фокус — как у интерактивного аватара ДС (.av--button:focus-visible).
+     От кебаба группа отставлена на 24px: 8px штатного зазора .phead__actions
+     + 16px своего поля. Аватарки — не действие, а отдельная группа «у кого
+     доступ»; зазор кнопок действий между собой остаётся штатным. */
+  .av-group--link { cursor: pointer; margin-right: var(--space-16); }
   .av-group--link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .thr           { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--space-16); }
   /* Пол области сообщений: когда открытый конструктор (с блоком отчётов
@@ -163,8 +166,6 @@
   .think__text   { color: transparent; background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-secondary) 40%, var(--text-inactive) 50%, var(--text-secondary) 60%, var(--text-secondary) 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; animation: thinkShimmer 3.2s ease-in-out infinite; transition: opacity .3s ease; }
   .think__text.is-out { opacity: 0; }
   .think__time   { font: var(--type-body-xs); color: var(--text-inactive); font-variant-numeric: tabular-nums; }
-  .think-row    { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-8); }
-  .think-row__notify { margin-left: auto; }
   @keyframes thinkSpin { to { transform: rotate(360deg); } }
   @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
@@ -206,6 +207,10 @@
   }
   .thr__text     { display: flex; flex-direction: column; gap: var(--space-8); }
   .thr__row      { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+  /* Картинка в ответе (пасхалка прототипа, send()): в собственном размере
+     файла, не шире колонки; без рамки и подложки, скругление — как у
+     карточки материала .doc */
+  .thr__pic      { display: block; align-self: flex-start; max-width: 100%; height: auto; border-radius: var(--radius-xl); }
   /* Содержимое тайла в ответе агента. У .tile__body своего ритма нет
      (display: block), и прогресс, разделитель, шаги, карточка файла и кнопки
      прилипали друг к другу. Ритм между блоками — 24px, как между шагами. */
@@ -790,8 +795,7 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
-      <p class="ds-body-s">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
+      <p class="ds-body-m">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -1150,11 +1154,10 @@
     return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
   }
   function thinkingCard() {
-    return '<div class="think-row"><button type="button" class="think" data-act="finish" title="Прототип: нажмите, чтобы завершить подготовку" aria-label="AI Pitcher готовит материал. Прототип: нажмите, чтобы завершить подготовку">' +
+    return '<button type="button" class="think" data-act="finish" title="Прототип: нажмите, чтобы завершить подготовку" aria-label="AI Pitcher готовит материал. Прототип: нажмите, чтобы завершить подготовку">' +
       '<span class="think__loader" aria-hidden="true"></span>' +
       '<span class="think__text" data-think aria-hidden="true">' + THINK[think.i] + '</span>' +
-      '<span class="think__time" aria-hidden="true"><span data-think-time>' + elapsed() + '</span></span></button>' +
-      '<button type="button" class="btn btn--transparent btn--s think-row__notify" data-chat-settings="notify" data-modal="notify-scrim" data-modal-guarded><i data-icon="settings"></i><span class="btn__label">Настроить уведомление</span></button></div>';
+      '<span class="think__time" aria-hidden="true"><span data-think-time>' + elapsed() + '</span></span></button>';
   }
   function startThinking() {
     if (think.timer) return;
@@ -1266,7 +1269,20 @@
     var hadCtx = S.ctx.length > 0;
     S.ctx = []; S.ctxOpen = null; drawCtx();
 
-    var reportish = /собер|материал|отчёт|отчет|подготов|пересобер/i.test(q);
+    /* Пасхалка прототипа, в продукт не переносится: на «хот кореянки»
+       (регистр и лишние пробелы не важны) вместо ответа — предупреждение
+       и картинка под ним. Размер картинки задан атрибутами: место под неё
+       занято сразу, и нить докручивается до её низа, не дожидаясь загрузки. */
+    if (q.toLowerCase().replace(/\s+/g, ' ').indexOf('хот кореянки') !== -1) {
+      var i0 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+      setTimeout(function () {
+        typeAnswer(i0, 'Я вижу вы не работаете! Ваш запрос отправлен к вашему руководителю.',
+          '<img class="thr__pic" src="../refs/girl.jpg" width="450" height="438" alt="Портрет девушки">');
+      }, 700);
+      return;
+    }
+
+    var reportish =/собер|материал|отчёт|отчет|подготов|пересобер/i.test(q);
 
     /* запрос на материал с выбранным объектом — сразу к подготовке */
     if (reportish && run.object) {
@@ -1924,12 +1940,20 @@
     var wide = w >= max - 4;
     if (wide !== pvWide) {
       pvWide = wide;
-      var label = wide ? 'Обычная ширина' : 'Развернуть';
+      var label = wide ? 'Свернуть' : 'Развернуть';
       var btn = el('pvWide');
       btn.setAttribute('aria-label', label);
       btn.setAttribute('data-tooltip', label);
       btn.innerHTML = '<i data-icon="' + (wide ? 'minimize' : 'maximize') + '"></i>';
       rebind(btn);
+      /* Рантайм тултипа читает data-tooltip один раз, при привязке, и дальше
+         показывает построенный тогда тултип (раздел 17 спеки, №12): подпись
+         меняется в нём самом, открытый тултип встаёт по центру новой подписи */
+      var tt = window.DSTooltip && window.DSTooltip.bind(btn);
+      if (tt) {
+        tt.tip.firstChild.nodeValue = label;
+        if (tt.isVisible()) tt.place();
+      }
     }
     if (save) { try { localStorage.setItem(PV_KEY, String(w)); } catch (err) { /* ширина не запоминается */ } }
   }
