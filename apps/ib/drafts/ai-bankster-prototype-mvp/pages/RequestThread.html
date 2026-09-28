@@ -197,6 +197,10 @@
   }
   .thr__text     { display: flex; flex-direction: column; gap: var(--space-8); }
   .thr__row      { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+  /* Картинка в ответе (пасхалка прототипа, send()): в собственном размере
+     файла, не шире колонки; без рамки и подложки, скругление — как у
+     карточки материала .doc */
+  .thr__pic      { display: block; align-self: flex-start; max-width: 100%; height: auto; border-radius: var(--radius-xl); }
   /* Содержимое тайла в ответе агента. У .tile__body своего ритма нет
      (display: block), и прогресс, разделитель, шаги, карточка файла и кнопки
      прилипали друг к другу. Ритм между блоками — 24px, как между шагами. */
@@ -717,8 +721,7 @@
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
     </header>
     <div class="modal__body">
-      <p class="ds-body-m">Запрос, все его версии материала и приложенные файлы уйдут в корзину.</p>
-      <p class="ds-body-s">Восстановить запрос можно в течение 30 дней — из раздела «История и материалы».</p>
+      <p class="ds-body-m">Вся история диалога, все версии материалов и приложенные файлы будут удалены.</p>
     </div>
     <footer class="modal__foot">
       <div class="modal__foot-right">
@@ -1146,7 +1149,20 @@
     var hadCtx = S.ctx.length > 0;
     S.ctx = []; S.ctxOpen = null; drawCtx();
 
-    var reportish = /собер|материал|отчёт|отчет|подготов|пересобер/i.test(q);
+    /* Пасхалка прототипа, в продукт не переносится: на «хот кореянки»
+       (регистр и лишние пробелы не важны) вместо ответа — предупреждение
+       и картинка под ним. Размер картинки задан атрибутами: место под неё
+       занято сразу, и нить докручивается до её низа, не дожидаясь загрузки. */
+    if (q.toLowerCase().replace(/\s+/g, ' ').indexOf('хот кореянки') !== -1) {
+      var i0 = push('agent', text('<span class="ds-body-m">Ищу данные…</span>'));
+      setTimeout(function () {
+        typeAnswer(i0, 'Я вижу вы не работаете! Ваш запрос отправлен к вашему руководителю.',
+          '<img class="thr__pic" src="../refs/girl.jpg" width="450" height="438" alt="Портрет девушки">');
+      }, 700);
+      return;
+    }
+
+    var reportish =/собер|материал|отчёт|отчет|подготов|пересобер/i.test(q);
 
     /* запрос на материал с выбранным объектом — сразу к подготовке */
     if (reportish && run.object) {
