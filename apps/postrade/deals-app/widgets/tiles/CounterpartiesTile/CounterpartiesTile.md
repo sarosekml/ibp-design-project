@@ -14,8 +14,8 @@ uses: [Карточка контрагента (../../modals/InstrumentsCounterp
 variants: [Сделка — «КНР» (собран), Обеспечение — «Залогодатель» / «Поручитель» / «Гарант» (не собран), Инструмент — «Контрагент» (не собран)]
 modifiers: []
 dependsOn: []
-requirements: [ТЗ страницы сделки 19.09.2026, макеты apps/postrade/deals-app/refs/Post _ DEAL _ R&D 20.09.2026]
-knowledge: [apps/postrade/deals-app/refs/пример страницы — снимки заполненной страницы текущей системы, apps/postrade/deals-app/refs/Текущий портфель.md]
+requirements: [ТЗ страницы сделки 19.09.2026, макеты дизайнера 20.09.2026]
+knowledge: [apps/postrade/deals-app/refs/Текущий портфель.md]
 ---
 
 # Контрагенты (CounterpartiesTile)

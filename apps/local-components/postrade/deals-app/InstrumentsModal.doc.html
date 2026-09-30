@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/InstrumentsModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно «Инструменты» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно «Инструменты»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- InstrumentsModal — окно «Инструменты»: инструменты одного продукта.
+     Артефакт тайла «Продукты сделки» (DealProductTreeTile): открывается
+     кнопкой ⊕ «Добавить инструмент» у продукта. Заголовок — номер и название
+     продукта. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Две колонки: «Доступные инструменты» — типы инструментов, которые можно
+     добавить в этот продукт, и «Выбрано» — инструменты продукта: у
+     сохранённых — номер. Перенос — кнопкой ⇄ или двойным кликом по строке;
+     сохранённый инструмент убирается после подтверждения
+     (ProductTreeConfirmModal), добавленный в окне — сразу; прикреплённый к
+     ФИ (сам или траншем) — выключен. «Сохранить» применяет правки к дереву,
+     крестик, Esc и подложка их отменяют.
+
+     Макета окна нет: оно устроено как окно «Продукты» (ответ человека
+     30.09.2026 — окно инструментов работает так же). Строки рисует
+     InstrumentsModal.js на общем слое окон выбора
+     (../ProductsModal/ProductsModal.js) — ниже вывод той же функции для
+     продукта «1.1. Кредитный мезонин» сделки 1027: договор займа выключен,
+     его транши прикреплены к ФИ. Раскладка — ../ProductsModal/ProductsModal.css. -->
+
+<div id="ptree-instruments-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-instruments-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-instruments-title">1.1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные инструменты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="LOAN_NCL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="NCL_PJSC_BALANCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="1027.d1.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="1027.d1.p1.i2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.2. НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>30.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Окно «Инструменты»</h1>
+  <p class="lead">Выбрать инструменты одного продукта сделки — добавить из доступных типов и убрать выбранные</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal">apps/postrade/deals-app/widgets/modals/InstrumentsModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/InstrumentsModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — таб «Финансовые данные», из тайла «Продукты сделки»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 30.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/organisms/ProductRow.html">ProductRow</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/molecules/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/pages/atoms/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/pages/foundations/Typography.html">Typography</a> · <a class="inl" href="../../../../design-system/pages/foundations/Layout.html">Layout</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/atoms/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="ProductsModal.doc.html">Окно «Продукты» (../ProductsModal/ProductsModal.md)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.html">InstrumentsModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js">InstrumentsModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md">InstrumentsModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/InstrumentsModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="ProductTreeConfirmModal.doc.html">Подтверждение действия над деревом (ProductTreeConfirmModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealProductTreeTile.doc.html">Продукты сделки (DealProductTreeTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Продукты сделки» — IconButton ⊕ «Добавить инструмент» у продукта (правка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="ProductsModal.doc.html">Окно «Продукты» (../ProductsModal/ProductsModal.md) — общий слой двух колонок PostProductPicker и их раскладка ProductsModal.css</a><br><a class="inl" href="DealProductTreeTile.doc.html">Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Окно выбора инструментов одного продукта. Открывается кнопкой ⊕ «Добавить инструмент» у продукта в тайле «Продукты сделки». В заголовке — номер и название продукта: «1.1. Кредитный мезонин».</p>
+<p class="desc">Своего макета у окна нет: по ответу человека 30.09.2026 окно инструментов работает так же, как окно добавления продуктов. Во фронтенде это отдельный виджет <code class="tok">InstrumentsModal</code> — у нас так же (решение человека 30.09.2026), на общем слое окон выбора.</p>
+<p class="desc">Две колонки. «Доступные инструменты» — типы инструментов, которые можно добавить в этот продукт, без номеров: состав продукта из каталога, а без известного состава — весь справочник типов («нечего выбрать» не бывает — ответ 27). «Выбрано» — инструменты продукта: у сохранённых — номер по месту в дереве, у добавленных в окне номера нет до «Сохранить». Строку переносят в соседнюю колонку кнопкой ⇄ или двойным кликом.</p>
+<p class="desc">Перенос вправо добавляет инструмент — без данных, вторая строка в тайле будет в прочерках (ответ 5). Перенос влево убирает инструмент с его траншами: сохранённый — после подтверждения «Подтвердите действие», добавленный в окне — сразу. Инструмент, прикреплённый к ФИ сам или траншем, выключен: сначала связь снимают в окне «Изменить связь с ФИ».</p>
+<p class="desc">Правки идут в черновик. «Сохранить» применяет их к дереву сделки и сохраняет, тайл перерисовывается. Крестик, Esc и клик по подложке закрывают окно без сохранения.</p>
+<p class="desc">Место на странице задаёт страница: скрим вшивается отдельной меткой <code class="tok">&lt;ds-include&gt;</code> в конце <code class="tok">body</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal modal--w7 (как окно «Продукты»), высота 60vh
+├── шапка: заголовок «N.N. &lt;продукт&gt;» + крестик
+├── тело без полей (modal__body--flush)
+│   ├── колонка «Доступные инструменты»: заголовок H6 Strong + список ProductRow
+│   ├── Divider вертикальный (от шапки до подвала)
+│   └── колонка «Выбрано»: заголовок H6 Strong + подсказка пустой колонки + список ProductRow
+└── подвал справа: Button accent M «Сохранить»</code></pre>
+<p class="desc">Строка — ProductRow в одну линию (48px): название, справа IconButton L ⓘ «Описание инструмента» и ⇄ «Переместить». Раскладка — <code class="tok">ProductsModal.css</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w7</code>, <code class="tok">modal__body--flush</code>, <code class="tok">.modal--saving</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ProductRow</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/ProductRow.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка без дерева; выключенная — <code class="tok">aria-disabled</code>; загрузка — <code class="tok">aria-busy</code> + <code class="tok">.sk-line</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ibtn--neutral ibtn--l</code>: <code class="tok">info-circle</code>, <code class="tok">arrow-left-right</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Tooltip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-tooltip</code> на обеих кнопках строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Divider</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Divider.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dvd--v</code> между колонками</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Typography</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Typography.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовки колонок <code class="tok">ds-h6-strong</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Layout</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Layout.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.ds-scroll</code> у списков</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» <code class="tok">btn--accent btn--m</code> (<code class="tok">btn--loading</code> при сохранении)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Skeleton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.sk-line</code> в строках-заготовках</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Параметры метки (Props)">
+<h2>Параметры метки (Props)</h2>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> окна атрибутов не несёт. Продукт окну передаёт скрипт: <code class="tok">PostModalInstruments.open(productId)</code>.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне окна (<code class="tok">.modal</code>)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data</code> · <code class="tok">loading</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных; <code class="tok">data</code> ставит отрисовка</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">number</code> + <code class="tok">name</code> продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «1.1. Кредитный мезонин»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ProductTreeStore.node(productId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">name</code> типа в «Доступных»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название типа инструмента, без номера</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ProductTreeStore.availableInstruments(productId)</code> → <code class="tok">INSTRUMENT_TYPE_CATALOG</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">number</code> + <code class="tok">name</code> инструмента в «Выбрано»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер по месту в дереве и название; у добавленного в окне — без номера</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «1.1.1. Договор займа (НКЛ)»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ProductTreeStore.node(productId).children</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">описание</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказка ⓘ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">описаний нет — заглушка «Описание инструмента» (ответ 27)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026) — как у тайла</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно — только для правки: в режиме просмотра у тайла нет кнопки ⊕.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в «Доступных» — две строки-заготовки ProductRow 48px с <code class="tok">.sk-line</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обе колонки со строками</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у строки одно поле — название</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«нечего выбрать» не бывает (ответ 27) — без известного состава весь справочник</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — пока без неё (ответ 27)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело приглушено (<code class="tok">.modal--saving</code>), «Сохранить» с индикатором; в прототипе не наступает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка временно запрещена (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да, у строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">инструмент, прикреплённый к ФИ сам или траншем: строка выключена (ответ 20; про транш — допущение, вопрос 35 задачи)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Выбрано» пусто</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у продукта нет инструментов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подсказка «Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой», Body M <code class="tok">--text-inactive</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Инструмент добавлен в окне</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">перенесён вправо, ещё не сохранён</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка без номера; убирается без подтверждения</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Подтверждение удаления</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⇄ у сохранённого инструмента в «Выбрано»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вложенный слой <code class="tok">ProductTreeConfirmModal</code>; «Подтвердить» убирает инструмент с траншами в черновик окна</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Окно обязательно к заполнению целиком: нет.</li><li>Обязательные инструменты продукта приходят вместе с продуктом (окна «Продукты ДИД» и «Продукты»), здесь их можно убрать, как любые.</li><li>Что отдаёт наружу: после «Сохранить» — производные поля записи сделки (балансы, валюты, признак PE), стор переносит их в <code class="tok">DealsStore</code> и сохраняет дерево.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинное название</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">переносится по словам, не усекается (ProductRow)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у каждой колонки свой скролл, заголовки колонок и подвал на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина окна фиксирована шкалой Modal (<code class="tok">modal--w7</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⊕ «Добавить инструмент» у продукта в тайле <code class="tok">DealProductTreeTile</code> (событие <code class="tok">ptreeaction</code>, action <code class="tok">ADD</code> у узла <code class="tok">kind: 'PRODUCT'</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">две колонки, «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» — ветка продукта в тайле перерисована, номера пересчитаны; отмена — без изменений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,3fr) minmax(0,2.5fr) minmax(0,2.7fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⇄ или двойной клик у сохранённого инструмента в «Выбрано»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вложенное подтверждение <a class="inl" href="ProductTreeConfirmModal.doc.html"><code class="tok">ProductTreeConfirmModal</code></a></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердите действие», «Удаление инструмента «N. Имя»» (с траншами — «…со всеми траншами»), «Отменить», «Подтвердить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердить» — инструмент уходит в черновик окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">меню тайла, окна «Продукты ДИД» и «Продукты»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">InstrumentsModal.js</code> подключается после <code class="tok">../ProductsModal/ProductsModal.js</code>, глобал <code class="tok">PostModalInstruments</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open(productId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">открыть окно для продукта</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">use(productId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нарисовать без открытия, все выбранные — сохранённые, с номерами — для витрины</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные (Data dependencies)">
+<h2>Данные (Data dependencies)</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Типы инструментов, доступные продукту (<code class="tok">ProductCatalogItemRsDto.instrumentCodes</code>), справочник типов инструментов (<code class="tok">InstrumentTypeCatalogItemRsDto</code>), дерево сделки. Имена методов API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-product-catalog.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.PRODUCT_CATALOG</code>, <code class="tok">INSTRUMENT_TYPE_CATALOG</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ProductCatalogItemRsDto[]</code>, <code class="tok">InstrumentTypeCatalogItemRsDto[]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (29.09.2026), ответы 30.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-deal-trees.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_DEAL_TREES</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealProductTreeRsDto</code> по id сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/product-tree-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.ProductTreeStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">помощник: <code class="tok">availableInstruments</code>, <code class="tok">addInstrument</code>, <code class="tok">remove</code>, <code class="tok">canRemove</code>, черновик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления, не DTO</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,2.6fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделка-образец, коды продукта ДИД и продукта для витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Витрина рисует окно сценарием <code class="tok">apps/local-components/postrade/deals-app/InstrumentsModal.demo.js</code>: своего CSS у окна нет — ось состояний объявляет сценарий; правки на витрине не сохраняются. Пример во фрагменте — продукт «1.1. Кредитный мезонин» сделки 1027: договор займа выключен, его транши прикреплены к ФИ; строки собраны функцией <code class="tok">PostProductPicker.rowHTML</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsModal/InstrumentsModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/InstrumentsModal/InstrumentsModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/InstrumentsModal/InstrumentsModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка двух колонок, перенос, черновик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/ProductsModal/ProductsModal.css</code>, <code class="tok">ProductsModal.js</code> (<code class="tok">PostProductPicker</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">общий компонент окна выбора модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка колонки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ProductRow ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">AccordionProductRow</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Высота Modal — по контенту до 80vh</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">высота окна фиксирована — 60vh</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">как у окон «Продукты ДИД» и «Продукты» (ответ человека 30.09.2026, 28: ок)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля тела Modal 16/24/24</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело <code class="tok">modal__body--flush</code>, поля держат колонки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вертикальный Divider от шапки до подвала, как у окон выбора</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<p class="desc">Решение человека 29.09.2026: вопросы не закрываются догадкой и не удаляются, пока человек не разберёт каждый. Номера в скобках — вопросы задачи <code class="tok">docs/tasks/RE0001-product-row-tree.md</code>.</p>
+<ol class="kit-md__ol"><li><b>Макета окна нет</b> — собрано как окно «Продукты» по ответу человека 30.09.2026 (задача, 6); сверить с макетом, когда он будет.</li><li><b>Какие типы инструментов доступны какому продукту</b> — из каталога по макетам; у продуктов без известного состава — весь справочник (допущение агента, задача, 38). В составе какого продукта «Дебиторская задолженность» — не решено (задача, 37).</li><li><b>Выключенная строка</b> (задача, 23): инструмент, прикреплённый к ФИ сам или траншем, — разбор выключенной строки в окнах — позже; про транш — допущение агента (задача, 35).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">InstrumentsModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/InstrumentsModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- ProductsModal — окно «Продукты»: продукты одного продукта ДИД. Артефакт
+     тайла «Продукты сделки» (DealProductTreeTile): открывается кнопкой ⊕
+     «Добавить продукт» у продукта ДИД. Заголовок — номер и название
+     продукта ДИД. Фрагмент вшивается отдельной меткой ds-include: скрим
+     должен лежать в конце body, а не внутри тайла.
+
+     Две колонки: «Доступные продукты» — продукты, которые можно добавить в
+     этот продукт ДИД, и «Выбрано» — продукты ветки: у сохранённых — номер.
+     Перенос — кнопкой ⇄ или двойным кликом по строке; новый продукт
+     приходит со своими обязательными инструментами, сохранённый убирается
+     после подтверждения (ProductTreeConfirmModal), добавленный в окне —
+     сразу. «Сохранить» применяет правки к дереву, крестик, Esc и подложка
+     их отменяют. Обязательный продукт выбран заранее и выключен, пока он
+     единственный в продукте ДИД.
+
+     Строки колонок рисует ProductsModal.js из ProductTreeStore — ниже пример
+     с макета: «1. Кредитный мезонин», выбран только обязательный продукт.
+     Раскладка и показ блоков по состоянию — ProductsModal.css, общий с
+     окнами «Продукты ДИД» и «Инструменты». -->
+
+<div class="modal-scrim" id="ptree-products-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-products-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-products-title">1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные продукты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="CREDIT_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="CORPORATE_CONTROL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Корп. Контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="FUNDING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Фондирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="demo.n2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- ProductTreeConfirmModal — подтверждение действия над деревом продуктов
+     сделки. Артефакт тайла «Продукты сделки» (DealProductTreeTile) и окон
+     выбора: один диалог на всё дерево, текст и кнопки ставит
+     ProductTreeConfirmModal.js по варианту (data-variant на .modal).
+
+     Два варианта:
+     – delete — удаление продукта ДИД, продукта, инструмента или транша:
+       «Подтвердите действие», «Отменить» и «Подтвердить» в тоне error, как
+       на макете окна «Продукты ДИД» (29.09.2026). Поднимается пунктом
+       «Удалить» в меню узла в тайле (удаление сохраняется сразу) и из окон
+       выбора, когда убирают сохранённый узел (удаление — в черновик окна);
+     – main — назначение основного продукта ДИД (звезда в тайле):
+       «Подтверждение действия», текст «Назначение продукта «N. Имя»
+       основным в сделке» (ответ человека 30.09.2026), одна кнопка
+       «Подтвердить», как у окна погашения.
+     Крестик, Esc, подложка и «Отменить» — без изменений.
+
+     Скрим вложенный (--nested): диалог встаёт и поверх открытого окна
+     выбора, и поверх страницы. Ниже — вариант delete для продукта ДИД. -->
+<div class="modal-scrim modal-scrim--nested" id="ptree-confirm-scrim" hidden>
+  <div class="modal modal--w3 lc-ptree-confirm" data-variant="delete" role="alertdialog" aria-modal="true" aria-labelledby="ptree-confirm-title" aria-describedby="ptree-confirm-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-ptree-confirm__text" id="ptree-confirm-text">Удаление продукта ДИД со всеми продуктами и инструментами</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-ptree-confirm__cancel" data-ptree-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-ptree-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="InstrumentsModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"InstrumentsModal","type":"modal","base":"../..","hub":"../../../../index.html","states":["data"],"modes":[],"state":"data","mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины. Дерево не копируется сюда, а берётся из демо-данных модуля по id сделки-образца (data/mock-deal-trees.js, ProductTreeStore.use(dealId)): одна копия дерева на прототип.","data":{"_":"Продукт «Кредитный мезонин» продукта ДИД «Кредитный мезонин» сделки-образца: доступны договор займа (НКЛ) и НКЛ с баланса ПАО; договор займа выключен — его транши прикреплены к ФИ.","dealId":1027,"didCode":"CREDIT_MEZZANINE","productCode":"CREDIT_MEZZANINE"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- InstrumentsModal — окно «Инструменты»: инструменты одного продукта.
+     Артефакт тайла «Продукты сделки» (DealProductTreeTile): открывается
+     кнопкой ⊕ «Добавить инструмент» у продукта. Заголовок — номер и название
+     продукта. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Две колонки: «Доступные инструменты» — типы инструментов, которые можно
+     добавить в этот продукт, и «Выбрано» — инструменты продукта: у
+     сохранённых — номер. Перенос — кнопкой ⇄ или двойным кликом по строке;
+     сохранённый инструмент убирается после подтверждения
+     (ProductTreeConfirmModal), добавленный в окне — сразу; прикреплённый к
+     ФИ (сам или траншем) — выключен. «Сохранить» применяет правки к дереву,
+     крестик, Esc и подложка их отменяют.
+
+     Макета окна нет: оно устроено как окно «Продукты» (ответ человека
+     30.09.2026 — окно инструментов работает так же). Строки рисует
+     InstrumentsModal.js на общем слое окон выбора
+     (../ProductsModal/ProductsModal.js) — ниже вывод той же функции для
+     продукта «1.1. Кредитный мезонин» сделки 1027: договор займа выключен,
+     его транши прикреплены к ФИ. Раскладка — ../ProductsModal/ProductsModal.css. -->
+
+<div class="modal-scrim" id="ptree-instruments-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-instruments-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-instruments-title">1.1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные инструменты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="LOAN_NCL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="NCL_PJSC_BALANCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="1027.d1.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="1027.d1.p1.i2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.2. НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* У компонента нет своего CSS: вид дают стили ДС. */
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   InstrumentsModal.js — окно «Инструменты»: инструменты одного продукта.
+
+   Окно стоит на общем слое двух колонок PostProductPicker
+   (../ProductsModal/ProductsModal.js — подключается раньше этого файла):
+   перенос, черновик, номера, подтверждение, состояния и строки — там.
+   Здесь только что в колонках и что делает перенос (ответ человека
+   30.09.2026, 6: окно инструментов работает так же, как окно продуктов;
+   во фронтенде это отдельный виджет InstrumentsModal):
+   – «Доступные инструменты» — типы инструментов, которые можно добавить в
+     этот продукт (ProductTreeStore.availableInstruments): состав продукта
+     из каталога, без состава — весь справочник (вопрос 38 задачи RE0001);
+   – «Выбрано» — инструменты продукта; у сохранённых — номер. Строка
+     выключена, если инструмент прикреплён к ФИ или к ФИ прикреплён его
+     транш (ответ 20, вопрос 35);
+   – перенос вправо добавляет инструмент (ProductTreeStore.addInstrument),
+     влево — удаляет его с траншами: сохранённый — после подтверждения,
+     добавленный в окне — сразу.
+
+   Открывает окно событие тайла 'ptreeaction' с action ADD у продукта
+   (⊕ «Добавить инструмент»).
+
+   API: PostModalInstruments.open(productId) · use(productId) — нарисовать
+        без открытия (витрина)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var scrim = document.getElementById('ptree-instruments-scrim');
+  var Picker = window.PostProductPicker;
+  if (!scrim || !Picker) return;
+
+  var productId = null;
+
+  function store() { return window.ProductTreeStore; }
+  function productNode() { return productId && store() ? store().node(productId) : null; }
+
+  var picker = Picker.bind(scrim, {
+    infoLabel: 'Описание инструмента',
+    ready: function () { return !!productNode(); },
+    title: function () {
+      var n = productNode();
+      return n ? n.number + ' ' + n.name : '';
+    },
+    available: function () {
+      return store().availableInstruments(productId).map(function (t) {
+        return { key: t.code, name: t.name, description: null };
+      });
+    },
+    selected: function () {
+      var n = productNode();
+      return (n ? n.children : []).map(function (c) {
+        return { key: c.id, name: c.name, number: c.number, description: null, disabled: !store().canRemove(c.id) };
+      });
+    },
+    add: function (code) { store().addInstrument(productId, code); },
+    remove: function (id) { store().remove(id); }
+  });
+
+  function open(id) {
+    productId = id;
+    picker.open();
+  }
+
+  function use(id) {
+    productId = id;
+    picker.use();
+  }
+
+  /* ⊕ «Добавить инструмент» у продукта в тайле */
+  document.addEventListener('ptreeaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'ADD' || !store()) return;
+    var node = d.node || store().node(d.id);
+    if (node && node.kind === 'PRODUCT') open(node.id);
+  });
+
+  window.PostModalInstruments = { open: open, use: use };
+})();
+</script>
+</body>
+</html>

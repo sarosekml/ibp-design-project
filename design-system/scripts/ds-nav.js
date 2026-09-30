@@ -79,6 +79,7 @@
             { label: 'NavPanel', href: 'pages/organisms/NavPanel.html' },
             { label: 'PageHeader', href: 'pages/organisms/PageHeader.html' },
             { label: 'Popover',  href: 'pages/organisms/Popover.html' },
+            { label: 'ProductRow', href: 'pages/organisms/ProductRow.html' },
             { label: 'RiskMetric', href: 'pages/organisms/RiskMetric.html' },
             { label: 'SnackBar',   href: 'pages/organisms/SnackBar.html' },
             { label: 'Table',      href: 'pages/organisms/Table.html' },

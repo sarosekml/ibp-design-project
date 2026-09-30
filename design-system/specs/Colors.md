@@ -2,7 +2,7 @@
 component: Colors
 title: "Цвета"
 version: "1.004"
-updated: "20.09.2026"
+updated: "30.09.2026"
 page: pages/foundations/Colors.html
 css: styles/colors.css, styles/palette.css
 status: curated
@@ -28,9 +28,10 @@ status: curated
 назначению: `var(--text-primary)`, а не `var(--cgrey-600)`. Базовый токен в разметке экрана —
 это захардкоженный цвет с лишним шагом.
 
-Имена базовых токенов — как в образцах `uploads/Colors/*.png`: `палитра-ступень`,
+Имена базовых токенов — как в образцах палитр дизайнера: `палитра-ступень`,
 A-ступени **заглавной** буквой (`--swamp-A100`). Образец CGrey подписан токеном `sgrey-*`,
-записан как `--cgrey-*`. Имена семантических — из `uploads/DS _ Swap _ Palette`.
+записан как `--cgrey-*`. Имена семантических — из семантической палитры дизайнера
+(Static · Active · Situative · Status · Chart).
 
 ## Базовые токены (styles/colors.css)
 

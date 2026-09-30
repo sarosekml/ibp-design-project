@@ -68,6 +68,10 @@
      Карточки окна КНР (Card — тоже .tile) стоят вне .screen__content и правило
      не получают. */
   .screen__content .tile { min-height: 200px; }
+  /* Исключение — ряд «Сведения о проекте»: он один в своём ряду, соседей,
+     за которыми тянуться, нет, и тайл по макету компактный — высота по
+     содержимому (решение человека 28.09.2026). */
+  #row-project-info .tile { min-height: 0; }
 
   @container screen (max-width: 1560px) {
     .gen__body { flex-direction: column; }
@@ -155,7 +159,7 @@
                  показывает или прячет страница (fillTeam), а не сам тайл:
                  модули друг друга не знают. -->
             <div class="tile-row" id="row-project-info">
-              <ds-include src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.html" class="col-12"></ds-include>
+              <ds-include src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.html" class="col-12" id="tile-project-info" state="loading" mode="edit"></ds-include>
             </div>
 
           </div>
@@ -192,7 +196,7 @@
              align-self:stretch тянет ширину, не высоту. -->
         <div class="tile-row">
           <div class="tile-stack col-6 colw-12">
-            <ds-include src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.html"></ds-include>
+            <ds-include src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.html" id="tile-deal-products" state="loading" mode="edit"></ds-include>
           </div>
           <div class="tile-stack col-6 colw-12">
             <ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.html"></ds-include>
@@ -249,6 +253,21 @@
 <!-- Окно тайла «Финансовые метрики сделки»: только просмотр — ОСЗ, резервы
      по ФИ и переоценка по PE, которых в тайле нет. -->
 <ds-include src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.html"></ds-include>
+<!-- Окно тайла «Сведения о проекте»: правка; открывают карандаш и
+     «Заполнить» тайла. -->
+<ds-include src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.html"></ds-include>
+<!-- Окна тайла «Продукты сделки»: выбор продуктов ДИД, продуктов и
+     инструментов, погашение, перенос инструмента, связь с ФИ и общее
+     подтверждение удаления и назначения основного (вложенный скрим — сосед
+     остальных, а не потомок, поэтому последним). Открывают их события тайла
+     ptreeaction, данные окна берут из ProductTreeStore. -->
+<ds-include src="../widgets/modals/DidProductsModal/DidProductsModal.html"></ds-include>
+<ds-include src="../widgets/modals/ProductsModal/ProductsModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentsModal/InstrumentsModal.html"></ds-include>
+<ds-include src="../widgets/modals/RepaymentModal/RepaymentModal.html"></ds-include>
+<ds-include src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.html"></ds-include>
+<ds-include src="../widgets/modals/LinkChangeModal/LinkChangeModal.html"></ds-include>
+<ds-include src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.html"></ds-include>
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
@@ -263,6 +282,15 @@
 <script src="../data/counterparties-store.js"></script>
 <!-- финансовые метрики сделок для тайла и окна «Финансовые метрики сделки» -->
 <script src="../data/mock-financial-metrics.js"></script>
+<!-- дерево продуктов сделки: справочники продуктов, карточки ФИ, деревья
+     сделок и стор. Стор — после deals-store.js и post-api.js: сохранённые
+     деревья он берёт из PostApi и переносит производные поля дерева
+     (основной продукт ДИД, продукты, балансы) в запись сделки, их читает
+     реестр портфеля -->
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
@@ -281,9 +309,21 @@
 <!-- тайл раньше окна: окно рисует бары функцией тайла -->
 <script src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
 <script src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<!-- тайл «Продукты сделки» и его окна: общий слой двух колонок живёт в
+     ProductsModal.js, поэтому он раньше окон «Продукты ДИД» и «Инструменты» -->
+<script src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
-   меню по каталогу ролей, данные сделки (шапка, тайлы «КНР» и «Сроки сделки»), переключение
+   меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
    панелей табов и сворачивание секции (компонента «заголовок-аккордеон» в ДС
    нет).
    Скрипт синхронный и стоит после ds.js — поэтому его DSTabs.tabs(...) успевает
@@ -405,6 +445,8 @@
     fillTeam(deal);
     fillDescription(deal);
     fillFinMetrics(deal);
+    fillProjectInfo(deal);
+    fillProducts(deal);
   }
 
   /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
@@ -554,6 +596,48 @@
         get: function () { return metrics; }
       });
     }
+  }
+
+  /* Тайл «Сведения о проекте» — сведения этой сделки из DealsStore
+     (deal.projectInformation). Как у описания сделки, модули друг друга не
+     знают, связывает их страница: окно правки берёт сведения при открытии и
+     отдаёт правку сюда, страница пишет её в стор, тайл перерисовывается по
+     событию стора. Показывать ли ряд — решает applyProjectInfo по деску. */
+  function fillProjectInfo(deal) {
+    var tile = document.getElementById('tile-project-info');
+    if (!tile || !window.PostTileProjectInformation) return;
+
+    function paint(d) { window.PostTileProjectInformation.render(tile, d.projectInformation || null); }
+    paint(deal);
+
+    if (window.PostDealProjectInformationModal) {
+      window.PostDealProjectInformationModal.bind(document.getElementById('deal-project-info-scrim'), {
+        get: function () { return (window.DealsStore.byId(deal.id) || deal).projectInformation || null; },
+        save: function (info) { window.DealsStore.update(deal.id, { projectInformation: info }); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Продукты сделки» — дерево продуктов этой сделки из ProductTreeStore
+     (../data/product-tree-store.js поверх mock-deal-trees.js). Тайл связывает
+     со стором его собственный скрипт: перерисовка после «Сохранить» в окнах,
+     звезда основного продукта и «Удалить» — через стор. Окна «Продукты ДИД»,
+     «Продукты» и подтверждение удаления слушают события тайла сами, здесь их
+     не связывают. Режим (data-mode) тайлу уже поставил applyMode по статусу
+     сделки — render читает его с корня. Хранение — в памяти вкладки. */
+  /* Дерево сделки — после загрузки сохранённых деревьев (PostApi): до этого
+     тайл стоит в «Загрузке», как его вшила метка. */
+  function fillProducts(deal) {
+    var store = window.ProductTreeStore;
+    var tile = document.getElementById('tile-deal-products');
+    if (!store || !tile || !window.PostTileProductTree) return;
+    store.ready.then(function () {
+      store.use(deal.id);
+      window.PostTileProductTree.bind(tile, store);
+    });
   }
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

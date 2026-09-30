@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/LinkChangeModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно «Изменить связь с ФИ» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно «Изменить связь с ФИ»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- LinkChangeModal — окно «Изменить связь с ФИ». Артефакт тайла «Продукты
+     сделки» (DealProductTreeTile): открывается кнопкой ⇄ у инструмента или
+     транша. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Перенос из дерева в ФИ» (30.09.2026): заголовок — номер и
+     название узла, подзаголовок «Выберите ФИ для переноса инструмента»,
+     карточки ФИ сделки (Card ДС; у фронтенда — FICards): «N. Тип»,
+     наименование, баланс, валюта, тип отчётности. Клик выбирает карточку
+     (Selected — зелёная рамка и заливка) или снимает выбор; выбрать можно
+     две. Карточка ФИ другого типа выключена. «Сохранить» доступна, когда
+     выбор отличается от сохранённого.
+
+     Карточки рисует LinkChangeModal.js (cardsHTML) из ProductTreeStore;
+     ниже — вывод той же функции для транша «1.1.1.2. Транш» сделки 1027. -->
+<div id="ptree-link-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w4 lc-fi-link" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-link-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-link-title">1.1.1.2. Транш</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <h3 class="ds-h6-strong" id="ptree-link-hint">Выберите ФИ для переноса инструмента</h3>
+      <div class="lc-fi-link__list" role="group" aria-labelledby="ptree-link-hint" data-link-list
+           data-off-grid="Карточки ФИ в окне: ширину задаёт окно, а не сетка страницы">
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">1. Кредит</h4></div><p class="tile__subtitle">127-Кредит-201</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="true" tabindex="0" data-link-fi="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">2. Кредит</h4></div><p class="tile__subtitle">127-Кредит-202</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">3. Акции</h4></div><p class="tile__subtitle">127-Акции-203</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: ПромФинанс</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">4. Кредит</h4></div><p class="tile__subtitle">127-Кредит-204</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">5. Кредит</h4></div><p class="tile__subtitle">127-Кредит-205</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-6"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">6. Акции</h4></div><p class="tile__subtitle">127-Акции-206</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-7"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">7. РЕПО</h4></div><p class="tile__subtitle">127-РЕПО-207</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-link-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>30.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Окно «Изменить связь с ФИ»</h1>
+  <p class="lead">Прикрепить инструмент или транш к одной-двум карточкам ФИ сделки или снять связь</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal">apps/postrade/deals-app/widgets/modals/LinkChangeModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/LinkChangeModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — таб «Финансовые данные», из тайла «Продукты сделки»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 30.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/organisms/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/pages/foundations/Typography.html">Typography</a> · <a class="inl" href="../../../../design-system/pages/atoms/Spinner.html">Spinner</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.css">LinkChangeModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.html">LinkChangeModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js">LinkChangeModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md">LinkChangeModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/LinkChangeModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealProductTreeTile.doc.html">Продукты сделки (DealProductTreeTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Продукты сделки» — IconButton ⇄ «Изменить связь с ФИ» у инструмента или транша (правка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="DealProductTreeTile.doc.html">Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Окно выбора финансовых инструментов (ФИ), к которым прикреплён инструмент или транш дерева продуктов. Открывается кнопкой ⇄ «Изменить связь с ФИ» у инструмента или транша в тайле «Продукты сделки». Подпись кнопки одна для прикреплённого и неприкреплённого узла (ответ человека 30.09.2026, 2). К ФИ прикрепляются акции, пут и колл РЕПО, транш и дебиторская задолженность (ответ 4).</p>
+<ul class="bullets"><li>Заголовок — номер и название узла: «1.1.1.2. Транш». Ниже — «Выберите ФИ для переноса инструмента».</li><li>Карточки ФИ сделки (у фронтенда — <code class="tok">FICards</code>): в заголовке — номер и тип ФИ в сделке («1. Кредит»), в подзаголовке — наименование ФИ, ниже — баланс, валюта и тип отчётности.</li><li>Клик по карточке выбирает её: зелёная рамка и заливка (Card, состояние Selected). Повторный клик снимает выбор. Узел связан не больше чем с двумя ФИ — выбрать можно любые две карточки (решение человека 30.09.2026); клик по третьей переносит выбор с той, что выбрана раньше (допущение агента, вопрос 40 задачи).</li><li>Карточка ФИ другого типа выключена: транш — к кредиту, акции — к акциям, пут и колл — к РЕПО, дебиторская задолженность — к дебиторской задолженности (на макете «Акции» у транша выключены; правило — допущение агента, вопрос 39).</li><li>«Сохранить» доступна, когда выбор отличается от сохранённого. Так связь и снимается: снять выбор со всех карточек и сохранить. После сохранения строка узла в тайле с заливкой, если он прикреплён; «Удалить» у прикреплённого недоступно.</li></ul>
+<p class="desc">Крестик, Esc и клик по подложке закрывают окно без изменений.</p>
+<p class="desc">Место на странице задаёт страница: скрим вшивается отдельной меткой <code class="tok">&lt;ds-include&gt;</code> в конце <code class="tok">body</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal modal--w4 (595px — ширина макета), высота по контенту, тело прокручивается
+├── шапка: «N. &lt;узел&gt;» + крестик
+├── тело
+│   ├── «Выберите ФИ для переноса инструмента» (H6 Strong)
+│   └── карточки Card через 8: заголовок «N. Тип», подзаголовок — наименование,
+│       строки «Баланс: …», «Валюта: …», «Тип отчетности: …» (Body S --text-secondary)
+└── подвал справа: Button accent M «Сохранить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w4</code>; сохранение — <code class="tok">.modal--saving</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile (Card)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Tile.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.tile--card</code>, <code class="tok">role=&quot;checkbox&quot;</code>, выбранная — <code class="tok">aria-checked=&quot;true&quot;</code> (Selected: <code class="tok">--primary-bg</code>, рамка <code class="tok">--primary</code>), другого типа — <code class="tok">aria-disabled=&quot;true&quot;</code> (Disabled); фокус — обводка ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» <code class="tok">btn--accent btn--m</code>, при сохранении <code class="tok">btn--loading</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Spinner</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Spinner.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">spin--current</code> внутри кнопки при сохранении</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Typography</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Typography.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подзаголовок — <code class="tok">ds-h6-strong</code>; строки карточки — <code class="tok">--type-body-s</code>, <code class="tok">--text-secondary</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Параметры метки (Props)">
+<h2>Параметры метки (Props)</h2>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт. Узел передаёт скрипт.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне окна (<code class="tok">.modal</code>)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">updating</code> — идёт сохранение</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">number</code> + <code class="tok">typeCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер и тип ФИ в сделке — заголовок карточки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«1. Кредит»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_DEAL_FIN_INSTRUMENTS</code>, подписи <code class="tok">FIN_INSTRUMENT_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">наименование ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «127-Кредит-201»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">balance</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">баланс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">currency</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">валюта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">код ISO 4217</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">reportingType</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип отчётности</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«МСФО и РСБУ» · «МСФО» · «РСБУ»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка ФИ, подписи <code class="tok">FIN_INSTRUMENT_REPORTING_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiIds</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">к каким ФИ прикреплён узел</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">до двух id карточек</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">узел дерева</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — пусто, если не прикреплён</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026) — как у тайла</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе карточки ФИ локальные</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки; «Сохранить» недоступна, пока выбор не изменён</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (30.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у сделки нет ФИ подходящего типа — все карточки выключены; отдельного вида нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">идёт сохранение: тело приглушено, «Сохранить» с индикатором. В прототипе не наступает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка временно запрещена (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да, у карточки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ другого типа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Выбирать не обязательно: пустой выбор снимает связь.</li><li>Что отдаёт наружу: <code class="tok">fiIds</code> узла; заливка строки в тайле и запрет удаления — по ним.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинное наименование или баланс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">переносятся по словам внутри карточки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много карточек</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело окна прокручивается, шапка и подвал на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина фиксирована шкалой Modal (<code class="tok">modal--w4</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,0.8fr) minmax(0,1.2fr) minmax(0,2.1fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,0.8fr) minmax(0,1.2fr) minmax(0,2.1fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">⇄ «Изменить связь с ФИ» у инструмента или транша (событие <code class="tok">ptreeaction</code>, action <code class="tok">ATTACH</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточки ФИ, «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">связь узла с ФИ изменена и сохранена; заливка строки в тайле по ней</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">LinkChangeModal.js</code>, глобал <code class="tok">PostModalLinkChange</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open(nodeId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">открыть окно для узла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">use(nodeId)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нарисовать без открытия — для витрины</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">cardsHTML(cards)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">разметка карточек из <code class="tok">ProductTreeStore.fiCards</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">choose(ids)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поставить выбор — для витрины</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mirror(scrim)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state=&quot;updating&quot;</code> → <code class="tok">.modal--saving</code> и <code class="tok">btn--loading</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Клик, Пробел и Enter выбирают карточку или снимают выбор. «Сохранить» — <code class="tok">ProductTreeStore.linkFi(id, fiIds)</code> и <code class="tok">commit</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные (Data dependencies)">
+<h2>Данные (Data dependencies)</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Карточки ФИ сделки и связь узла дерева с ФИ. Тайл «Финансовые инструменты» пока заглушка: как прикреплённые инструменты показываются в карточках ФИ — не решено (вопрос 9 спеки страницы сделки). Имена методов API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-fin-instruments.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_DEAL_FIN_INSTRUMENTS</code>, <code class="tok">FIN_INSTRUMENT_TYPE_LABELS</code>, <code class="tok">FIN_INSTRUMENT_REPORTING_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealFinInstrumentCardRsDto[]</code> по id сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (30.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-product-catalog.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.INSTRUMENT_TYPE_CATALOG</code>, <code class="tok">PRODUCT_TREE_RULES</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fiType</code> — тип ФИ узла</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented, ответы 30.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/product-tree-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.ProductTreeStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">node</code>, <code class="tok">fiCards</code>, <code class="tok">linkFi</code>, <code class="tok">commit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления, не DTO</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">узел сделки-образца для витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Витрина рисует окно сценарием <code class="tok">apps/local-components/postrade/deals-app/LinkChangeModal.demo.js</code>: «Обновление» объявляет сценарий; правки на витрине не сохраняются. Пример во фрагменте — транш «1.1.1.2. Транш» сделки 1027, разметка — вывод <code class="tok">cardsHTML</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.2fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.2fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/LinkChangeModal/LinkChangeModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/LinkChangeModal/LinkChangeModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.2fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Карточки ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Card ДС в разметке окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FICards</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.2fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка тела</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/LinkChangeModal/LinkChangeModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.2fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/LinkChangeModal/LinkChangeModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<p class="desc">Решение человека 29.09.2026: вопросы не закрываются догадкой и не удаляются, пока человек не разберёт каждый. Номера в скобках — вопросы задачи <code class="tok">docs/tasks/RE0001-product-row-tree.md</code>.</p>
+<ol class="kit-md__ol"><li><b>Какая карточка ФИ доступна узлу</b> — по типу ФИ, допущение агента (задача, 39).</li><li><b>Выбор третьей карточки и снятие связи</b> — третья переносит выбор с выбранной раньше; «Сохранить» — когда выбор отличается от сохранённого — допущение агента (задача, 40).</li><li><b>Пара во фронтенде</b> — <code class="tok">LinkChangeModal</code> с <code class="tok">FICards</code> (решение человека 30.09.2026); у фронтенда есть и <code class="tok">TransferringInstrumentsToFIModal</code> — что в нём, не разбирали.</li><li><b>Карточки ФИ в тайле «Финансовые инструменты»</b> — как видна связь с деревом, не решено.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">LinkChangeModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/LinkChangeModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="LinkChangeModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"LinkChangeModal","type":"modal","base":"../..","hub":"../../../../index.html","states":["data"],"modes":[],"state":"data","mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины: сделка-образец из data/mock-deal-trees.js и её карточки ФИ из data/mock-fin-instruments.js, карточки окно рисует само (PostModalLinkChange.use).","data":{"_":"Транш «1.1.1.2. Транш» прикреплён к «2. Кредит» (МСФО); карточки «Акции» и «РЕПО» выключены — другой тип ФИ.","dealId":1027,"nodeId":"1027.d1.p1.i1.t2"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- LinkChangeModal — окно «Изменить связь с ФИ». Артефакт тайла «Продукты
+     сделки» (DealProductTreeTile): открывается кнопкой ⇄ у инструмента или
+     транша. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Перенос из дерева в ФИ» (30.09.2026): заголовок — номер и
+     название узла, подзаголовок «Выберите ФИ для переноса инструмента»,
+     карточки ФИ сделки (Card ДС; у фронтенда — FICards): «N. Тип»,
+     наименование, баланс, валюта, тип отчётности. Клик выбирает карточку
+     (Selected — зелёная рамка и заливка) или снимает выбор; выбрать можно
+     две. Карточка ФИ другого типа выключена. «Сохранить» доступна, когда
+     выбор отличается от сохранённого.
+
+     Карточки рисует LinkChangeModal.js (cardsHTML) из ProductTreeStore;
+     ниже — вывод той же функции для транша «1.1.1.2. Транш» сделки 1027. -->
+<div class="modal-scrim" id="ptree-link-scrim" hidden>
+  <div class="modal modal--w4 lc-fi-link" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-link-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-link-title">1.1.1.2. Транш</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <h3 class="ds-h6-strong" id="ptree-link-hint">Выберите ФИ для переноса инструмента</h3>
+      <div class="lc-fi-link__list" role="group" aria-labelledby="ptree-link-hint" data-link-list
+           data-off-grid="Карточки ФИ в окне: ширину задаёт окно, а не сетка страницы">
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">1. Кредит</h4></div><p class="tile__subtitle">127-Кредит-201</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="true" tabindex="0" data-link-fi="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">2. Кредит</h4></div><p class="tile__subtitle">127-Кредит-202</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">3. Акции</h4></div><p class="tile__subtitle">127-Акции-203</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: ПромФинанс</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">4. Кредит</h4></div><p class="tile__subtitle">127-Кредит-204</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">5. Кредит</h4></div><p class="tile__subtitle">127-Кредит-205</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-6"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">6. Акции</h4></div><p class="tile__subtitle">127-Акции-206</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-7"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">7. РЕПО</h4></div><p class="tile__subtitle">127-РЕПО-207</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-link-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Изменить связь с ФИ» (LinkChangeModal). Только внутренняя раскладка
+   тела. Геометрия — Modal ДС (modal--w4), карточки — Card ДС (.tile--card:
+   рамка, Hover, Selected по aria-checked, Disabled по aria-disabled отсюда
+   не переопределяются), цвета и шрифты — токены ДС; своих значений здесь
+   нет. */
+
+/* Карточки через 8. Корень окна — .lc-fi-link: правила раскладки — внутри него. */
+.lc-fi-link .lc-fi-link__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.lc-fi-link .lc-fi-link__card { flex: none; cursor: pointer; }
+.lc-fi-link .lc-fi-link__card[aria-disabled="true"] { cursor: default; }
+
+/* Строки карточки: «Баланс: …», «Валюта: …», «Тип отчетности: …» — Body S
+   --text-secondary, как на макете */
+.lc-fi-link .lc-fi-link__line {
+  margin: 0;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   LinkChangeModal.js — окно «Изменить связь с ФИ» (макет «Перенос из
+   дерева в ФИ», 30.09.2026).
+
+   Открывается кнопкой ⇄ «Изменить связь с ФИ» у инструмента или транша в
+   тайле «Продукты сделки» (событие 'ptreeaction', action ATTACH). Заголовок
+   — номер и название узла, ниже карточки ФИ сделки (у фронтенда — FICards):
+   номер и тип ФИ в сделке, наименование, баланс, валюта, тип отчётности.
+   – Клик по карточке выбирает её (Card ДС, состояние Selected по
+     aria-checked) или снимает выбор. Узел связан не больше чем с двумя ФИ
+     (решение человека 30.09.2026): клик по третьей карточке переносит выбор
+     с той, что выбрана раньше (допущение агента, вопрос 40 задачи RE0001).
+   – Карточка ФИ другого типа выключена (Card Disabled): транш — к кредиту,
+     акции — к акциям, пут и колл — к РЕПО (допущение агента, вопрос 39).
+   – «Сохранить» доступна, когда выбор отличается от сохранённого, — так
+     связь и снимается: снять выбор со всех карточек и сохранить.
+     ProductTreeStore.linkFi и commit; строка в тайле с заливкой, если узел
+     прикреплён.
+   Крестик, Esc и подложка — без изменений. Клавиатура: Tab по карточкам,
+   Пробел или Enter — выбрать.
+
+   API: PostModalLinkChange.open(nodeId) · use(nodeId) — нарисовать без
+        открытия (витрина) · cardsHTML(cards) · mirror(scrim)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var MAX = 2;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function store() { return window.ProductTreeStore; }
+
+  /* ── Разметка ───────────────────────────────────────────────────── */
+
+  function lineHTML(label, value) {
+    return '<p class="lc-fi-link__line">' + esc(label) + ': ' + esc(value) + '</p>';
+  }
+
+  function cardHTML(c) {
+    var off = !c.available;
+    return '<article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="' + (c.selected && !off ? 'true' : 'false') + '"'
+      + ' tabindex="' + (off ? '-1' : '0') + '"' + (off ? ' aria-disabled="true"' : '') + ' data-link-fi="' + esc(c.id) + '">'
+      + '<header class="tile__header"><div class="tile__header-main">'
+      + '<div class="tile__title-row"><h4 class="tile__title">' + esc(c.number + '. ' + c.typeLabel) + '</h4></div>'
+      + '<p class="tile__subtitle">' + esc(c.name) + '</p></div></header>'
+      + '<div class="tile__body">'
+      + lineHTML('Баланс', c.balance) + lineHTML('Валюта', c.currency) + lineHTML('Тип отчетности', c.reportingLabel)
+      + '</div></article>';
+  }
+
+  function cardsHTML(cards) { return (cards || []).map(cardHTML).join(''); }
+
+  /* Сохранение идёт → классы ДС: тело приглушено, «Сохранить» с индикатором. */
+  function mirror(scrim) {
+    var root = scrim && scrim.querySelector('.lc-fi-link');
+    var save = scrim && scrim.querySelector('[data-link-save]');
+    if (!root || !save) return;
+    var busy = root.getAttribute('data-state') === 'updating';
+    root.classList.toggle('modal--saving', busy);
+    save.classList.toggle('btn--loading', busy);
+    if (busy) save.setAttribute('aria-busy', 'true'); else save.removeAttribute('aria-busy');
+    var spin = save.querySelector('.spin');
+    if (busy && !spin) save.insertAdjacentHTML('afterbegin', '<span class="spin spin--current"></span>');
+    if (!busy && spin) spin.parentNode.removeChild(spin);
+    if (busy) save.disabled = true;
+  }
+
+  window.PostModalLinkChange = { cardsHTML: cardsHTML, mirror: mirror };
+
+  /* ── Окно ───────────────────────────────────────────────────────── */
+
+  var scrim = typeof document !== 'undefined' && document.getElementById('ptree-link-scrim');
+  if (!scrim) return;
+  var root = scrim.querySelector('.lc-fi-link');
+  var list = scrim.querySelector('[data-link-list]');
+  var save = scrim.querySelector('[data-link-save]');
+  var nodeId = null;
+  var initial = [];
+  var chosen = [];   /* в порядке выбора: третий вытесняет первого */
+
+  function same(a, b) { return a.slice().sort().join('|') === b.slice().sort().join('|'); }
+
+  function sync() {
+    if (list) {
+      Array.prototype.forEach.call(list.querySelectorAll('[data-link-fi]'), function (card) {
+        var on = chosen.indexOf(card.getAttribute('data-link-fi')) !== -1;
+        card.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    if (save && root && root.getAttribute('data-state') !== 'updating') save.disabled = same(chosen, initial);
+  }
+
+  function toggle(card) {
+    if (!card || card.getAttribute('aria-disabled') === 'true') return;
+    var id = card.getAttribute('data-link-fi');
+    var at = chosen.indexOf(id);
+    if (at !== -1) chosen.splice(at, 1);
+    else {
+      chosen.push(id);
+      if (chosen.length > MAX) chosen.shift();
+    }
+    sync();
+  }
+
+  function paint(id) {
+    var S = store();
+    var node = S && S.node(id);
+    if (!node || !node.canAttachToFi) return false;
+    nodeId = id;
+    var cards = S.fiCards(id);
+    initial = cards.filter(function (c) { return c.selected && c.available; }).map(function (c) { return c.id; });
+    chosen = initial.slice();
+    var title = scrim.querySelector('.modal__title');
+    if (title) title.textContent = node.number + ' ' + node.name;
+    if (list) list.innerHTML = cardsHTML(cards);
+    if (root) root.setAttribute('data-state', 'data');
+    sync();
+    mirror(scrim);
+    return true;
+  }
+
+  function open(id) {
+    if (!paint(id)) return;
+    if (window.DSModal && !scrim.classList.contains('modal-scrim--inline')) window.DSModal.open(scrim);
+  }
+
+  function use(id) { paint(id); }
+
+  if (list) {
+    list.addEventListener('click', function (e) { toggle(e.target.closest('[data-link-fi]')); });
+    list.addEventListener('keydown', function (e) {
+      var card = e.target.closest('[data-link-fi]');
+      if (!card || e.target !== card || (e.key !== ' ' && e.key !== 'Enter')) return;
+      e.preventDefault();
+      toggle(card);
+    });
+  }
+
+  /* «Сохранить» — раньше глобального закрытия ds-modal.js (data-modal-close) */
+  scrim.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-link-save]') || !nodeId || !store()) return;
+    var S = store();
+    if (S.linkFi(nodeId, chosen.slice())) S.commit();
+    nodeId = null;
+  });
+
+  if (root) new MutationObserver(function () { mirror(scrim); sync(); }).observe(root, { attributes: true, attributeFilter: ['data-state'] });
+
+  /* ⇄ «Изменить связь с ФИ» у инструмента или транша */
+  document.addEventListener('ptreeaction', function (e) {
+    var d = e.detail || {};
+    if (d.action === 'ATTACH') open(d.id);
+  });
+
+  window.PostModalLinkChange.open = open;
+  window.PostModalLinkChange.use = use;
+  window.PostModalLinkChange.choose = function (ids) { chosen = (ids || []).slice(0, MAX); sync(); };
+})();
+</script>
+</body>
+</html>

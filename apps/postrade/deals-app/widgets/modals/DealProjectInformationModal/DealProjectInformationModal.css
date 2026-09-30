@@ -1,0 +1,48 @@
+/* Окно «Сведения о проекте» — связанный артефакт тайла ProjectInformationTile.
+   Здесь раскладка двух секций и сетки полей. Отступы тела окна даёт Modal,
+   зазоры — токены ДС. Доступность полей (выключено по типу недвижимости)
+   ставит DealProjectInformationModal.js классами компонентов ДС. */
+
+/* ── Секции ─────────────────────────────────────────────────────────── */
+/* «Данные по проекту» и «Метрики» — две секции стопкой. Между секциями на
+   макете 24, внутри секции — 16. */
+.lc-project-info-modal__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.lc-project-info-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Подзаголовок секции — ступень H6 Strong, как подзаголовок тела окна
+   «Документы по сделке» (lc-deal-ecm__heading). */
+.lc-project-info-modal__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}
+
+/* ── Поля по два в ряд ──────────────────────────────────────────────── */
+/* Колонки сжимаемые (minmax(0, …)): длинное значение списка не распирает
+   соседнее поле. Пятая метрика (LLCR) встаёт в левую колонку, правая
+   ячейка остаётся пустой — как на макете. */
+.lc-project-info-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.lc-project-info-modal__wide { grid-column: 1 / -1; }
+
+/* Чекбокс «Топ застройщик» и кнопка пояснения к нему — в одну строку. */
+.lc-project-info-modal__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}

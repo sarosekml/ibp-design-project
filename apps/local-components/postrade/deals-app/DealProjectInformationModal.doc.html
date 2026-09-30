@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно сведений о проекте — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/styles/splitter.css">
+<link rel="stylesheet" href="../../../../design-system/styles/segment-control.css">
+<link rel="stylesheet" href="../../../../design-system/styles/tab.css">
+<link rel="stylesheet" href="../../../../design-system/styles/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/styles/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно сведений о проекте">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Сведения о проекте»: окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла. Открывают его карандаш тайла и
+     кнопка «Заполнить» пустого тайла; в просмотре тайл окно не открывает.
+
+     Раскладка — как на макете: две секции, «Данные по проекту» и «Метрики»,
+     в каждой поля по два в ряд. Порядок полей в разметке — порядок чтения.
+
+     Значения ниже — пример: «Жилая», класс «Комфорт», топ застройщик,
+     три метрики жилой недвижимости; DSCR и LTV у жилой недвижимости
+     выключены. На странице сделки значения и доступность полей ставит
+     DealProjectInformationModal.js по записи сделки и выбранному типу:
+       тип не выбран — все метрики выключены;
+       Коммерческая  — выключены класс жилья, LTC, LTARV и LLCR;
+       Жилая         — выключены DSCR и LTV;
+       Иная          — всё включено.
+
+     Опции списков пусты в разметке: их подставляет
+     DealProjectInformationModal.js из справочников DEALS_ENUMS
+     (runtime-hooks: динамический список у DropdownList собирается кодом).
+     «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+
+<div id="deal-project-info-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="deal-project-info-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-project-info-title">Сведения о проекте</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-project-info-modal__sections">
+
+        <!-- ── Данные по проекту ─────────────────────────────────────── -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-project">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-project">Данные по проекту</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-property-type"><span class="ds-label__text">Тип недвижимости</span></label>
+              <div class="inp__field" data-ddl="pi-property-type-list">
+                <input class="inp__control" id="pi-property-type" autocomplete="off" value="Жилая">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-property-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <span class="ds-label"><span class="ds-label__text" id="pi-housing-class-label">Класс жилья</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Класс жилья" data-tooltip="Класс жилья можно найти в презентации на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field" data-ddl="pi-housing-class-list">
+                <input class="inp__control" id="pi-housing-class" aria-labelledby="pi-housing-class-label" autocomplete="off" value="Комфорт">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-housing-class-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <!-- Чекбокс и пояснение к нему — одна строка на всю ширину. У
+                 Checkbox нет слота иконки, пояснение стоит рядом кнопкой
+                 (паспорт, «Осознанные отклонения»). -->
+            <div class="lc-project-info-modal__wide lc-project-info-modal__check">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="pi-top-developer" checked>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Топ застройщик</span></span>
+              </label>
+              <button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Топ застройщик" data-tooltip-multiline="yes"
+                      data-tooltip="Перечень топ застройщиков отражен в Решении КПКИ в Атласе: Дивизион «Кредитные продукты и процессы»/УФН/Продукты УФН/Жилая недвижимость/«Об утверждении особых условий кредитования Топ Застройщиков на цели финансирования проектов строительства объектов жилой недвижимости» (Решение КПКИ регулярно обновляется)"><i data-icon="info-circle"></i></button>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-region"><span class="ds-label__text">Регион</span></label>
+              <div class="inp__field" data-ddl="pi-region-list">
+                <input class="inp__control" id="pi-region" autocomplete="off" value="Ханты-Мансийский автономный округ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-region-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-city"><span class="ds-label__text">Город</span></label>
+              <div class="inp__field" data-ddl="pi-city-list">
+                <input class="inp__control" id="pi-city" autocomplete="off" value="Ханты-Мансийск">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-city-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Метрики ───────────────────────────────────────────────── -->
+        <!-- Числа на момент одобрения сделки на КПКИ. LTV, LTC и LTARV —
+             проценты (постфикс %), DSCR и LLCR — коэффициенты. Ввод — только
+             число: цифры и одна запятая. -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-metrics">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-metrics">Метрики</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="dscr">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-dscr-label">DSCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: DSCR" data-tooltip="Пороговый Debt Service Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-dscr" aria-labelledby="pi-dscr-label" inputmode="decimal" autocomplete="off" disabled>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="ltv">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-ltv-label">LTV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTV" data-tooltip="Loan to Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltv" aria-labelledby="pi-ltv-label" inputmode="decimal" autocomplete="off" disabled>
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltc">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltc-label">LTC</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTC" data-tooltip="Loan to Cost на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltc" aria-labelledby="pi-ltc-label" inputmode="decimal" autocomplete="off" value="80">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltarv">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltarv-label">LTARV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTARV" data-tooltip="Loan to After Repair Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltarv" aria-labelledby="pi-ltarv-label" inputmode="decimal" autocomplete="off" value="45">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="llcr">
+              <span class="ds-label"><span class="ds-label__text" id="pi-llcr-label">LLCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LLCR" data-tooltip="Loan Life Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-llcr" aria-labelledby="pi-llcr-label" inputmode="decimal" autocomplete="off" value="2">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-pi-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>28.09.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Модальное окно сведений о проекте</h1>
+  <p class="lead">Заполнить и поправить сведения о проекте недвижимости и его метрики</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal">apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/DealProjectInformationModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 28.09.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/pages/organisms/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/pages/molecules/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/pages/molecules/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/pages/atoms/Checkbox.html">Checkbox</a> · <a class="inl" href="../../../../design-system/pages/atoms/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/pages/molecules/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/pages/atoms/Buttons.html">Buttons</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.css">DealProjectInformationModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.html">DealProjectInformationModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js">DealProjectInformationModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md">DealProjectInformationModal.md</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="ProjectInformationTile.doc.html">Сведения о проекте (ProjectInformationTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Сведения о проекте» — IconButton «Редактировать» и кнопка «Заполнить» в пустом состоянии (только правка)</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Артефакт тайла «Сведения о проекте». Не компонент: сам по себе не существует и в плоском списке кита не числится — живёт подпунктом своего тайла.</p>
+<p class="desc">Окно только правки: в просмотре тайл его не открывает — всё, что есть в окне, видно в тайле. Две секции: «Данные по проекту» — что за объект и где он, «Метрики» — метрики проекта на момент одобрения сделки на КПКИ. Набор доступных полей зависит от типа недвижимости.</p>
+<p class="desc">Ширина — <code class="tok">modal--w5</code> (747px на 1920), ширина макета. Поля по два в ряд.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal w5 «Сведения о проекте»
+├── тело: две секции, между ними 24
+│   ├── «Данные по проекту» (H6 Strong)
+│   │   ├── Тип недвижимости · Класс жилья ⓘ
+│   │   ├── Топ застройщик ⓘ — на всю ширину
+│   │   └── Регион · Город
+│   └── «Метрики» (H6 Strong)
+│       ├── DSCR ⓘ · LTV ⓘ (%)
+│       ├── LTC ⓘ (%) · LTARV ⓘ (%)
+│       └── LLCR ⓘ
+└── подвал: «Сохранить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w5</code>; скрим <code class="tok">deal-project-info-scrim</code>, открытие с <code class="tok">data-modal-guarded</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/InputAutocomplete.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одиночный выбор: тип недвижимости, класс жилья, регион, город; крестик очистки — рантайм поля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">метрики — <code class="tok">inp--m</code>, <code class="tok">inputmode=&quot;decimal&quot;</code>, постфикс <code class="tok">%</code> у LTV, LTC, LTARV; выключенное поле — <code class="tok">inp--disabled</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Checkbox</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Checkbox.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Топ застройщик»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пояснения ⓘ — <code class="tok">ibtn--s ibtn--neutral</code> <code class="tok">info-circle</code> в <code class="tok">.ds-label__icons</code>; у чекбокса — рядом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Tooltip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тексты пояснений, <code class="tok">data-tooltip-multiline</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,2.2fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/specs/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» — <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Подзаголовки секций — своя разметка на токенах (<code class="tok">--type-h6-strong</code>), как подзаголовок окна «Документы по сделке».</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Секция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Сведения сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип недвижимости</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные по проекту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор: Коммерческая · Жилая · Иная</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">propertyTypeCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Класс жилья</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные по проекту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор: Эконом · Комфорт · Бизнес · Премиум · Элит</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">housingClassCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Топ застройщик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные по проекту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">чекбокс</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">isTopDeveloper</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Регион</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные по проекту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор из справочника регионов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">regionCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Город</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные по проекту</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбор из городов выбранного региона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">cityCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метрики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, коэффициент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">dscr</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метрики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ltv</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTC</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метрики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ltc</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTARV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метрики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ltarv</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LLCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метрики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, коэффициент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">llcr</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Доступность полей по типу недвижимости</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Выключено</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Включено</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не выбран</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR, LTV, LTC, LTARV, LLCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип, класс жилья, топ застройщик, регион, город</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Коммерческая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">класс жилья, LTC, LTARV, LLCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR, LTV</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Жилая</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR, LTV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">класс жилья, LTC, LTARV, LLCR</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Иная</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">всё</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Выключенное поле — Disabled самого поля: серая рамка и подпись, без крестика, не открывается. Поле, которое выключилось при смене типа, очищается: значение, недоступное типу, не сохраняется. Правило — справочники <code class="tok">DEALS_ENUMS</code> (<code class="tok">projectMetricsByPropertyType</code>, <code class="tok">housingClassPropertyTypes</code>), общие с тайлом.</p>
+<h3 class="kit-md__h3">Регион и город</h3>
+<ul class="bullets"><li>Список городов — города выбранного региона.</li><li>Регион не выбран — в списке все города; выбор города подставляет его регион.</li><li>Смена региона сбрасывает город, если он из другого региона.</li></ul>
+<h3 class="kit-md__h3">Пояснения ⓘ</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Текст тултипа</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Класс жилья</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Класс жилья можно найти в презентации на КПКИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Топ застройщик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Перечень топ застройщиков отражен в Решении КПКИ в Атласе: Дивизион «Кредитные продукты и процессы»/УФН/Продукты УФН/Жилая недвижимость/«Об утверждении особых условий кредитования Топ Застройщиков на цели финансирования проектов строительства объектов жилой недвижимости» (Решение КПКИ регулярно обновляется)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пороговый Debt Service Coverage Ratio на момент одобрения сделки на КПКИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to Value на момент одобрения сделки на КПКИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTC</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to Cost на момент одобрения сделки на КПКИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTARV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to After Repair Value на момент одобрения сделки на КПКИ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LLCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan Life Coverage Ratio на момент одобрения сделки на КПКИ</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Что значат метрики</h3>
+<p class="desc">Пояснения дизайнера — для того, кто проверяет и разрабатывает; в интерфейсе их нет.</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Метрика</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DSCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Debt Service Coverage Ratio — коэффициент покрытия долга: хватает ли операционного дохода объекта на выплаты по кредиту за период. Обычно значение выше 1 означает, что денежных потоков достаточно для обслуживания долга; чем выше показатель, тем комфортнее запас прочности</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to Value — соотношение суммы кредита к рыночной стоимости объекта. Чем ниже LTV, тем меньше кредитная нагрузка и, как правило, ниже риск для банка; для стабилизированных активов часто встречаются диапазоны примерно 50–70 %</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTC</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to Cost — соотношение суммы кредита к полной стоимости проекта или строительства. Показывает, какую долю затрат банк готов профинансировать; для строительных проектов часто встречаются значения примерно 70–90 %</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LTARV</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan to After Repair Value — соотношение кредита к стоимости объекта после ремонта или реконструкции. Применяют в проектах с ремонтом или редевелопментом; обычно чем выше LTARV, тем агрессивнее структура сделки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LLCR</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Loan Life Coverage Ratio — коэффициент покрытия кредита за весь срок жизни займа: насколько будущие денежные потоки проекта покрывают остаток долга. В отличие от DSCR, который смотрит на один период, LLCR оценивает покрытие на горизонте всего кредита; часто ориентируются на уровень 1,2 и выше</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<p class="desc">Окно роль не вычисляет: открывают его только триггеры тайла в режиме правки. Матрица ролей — в паспорте тайла.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка, данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поля со значениями сделки, доступность — по типу недвижимости</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка, пусто</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">все поля пустые, метрики выключены до выбора типа</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в просмотре окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка ввода</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибочного состояния у полей нет: в список попадает только значение из списка (набранный текст без совпадения откатывается), в метрики — только число</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно заполняется из записи сделки, уже загруженной страницей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранение (Обновление)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (28.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки в прототипе мгновенная, в памяти вкладки</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Проверка и сохранение">
+<h2>Проверка и сохранение</h2>
+<ul class="bullets"><li>Обязательных полей в прототипе нет: окно сохраняет любой набор, в том числе пустой — тайл тогда встаёт в «Данных нет».</li><li>Значение списка — только из справочника; набранный текст, не совпавший ни с одной опцией, при уходе с поля откатывается к выбранному значению.</li><li>Метрики — неотрицательные числа, дробная часть через запятую (точка заменяется запятой); до двух знаков в тайле.</li><li>«Сохранить» закрывает окно само; крестик и Esc закрывают без сохранения, клик мимо окна не закрывает (<code class="tok">data-modal-guarded</code>).</li><li>Правка уходит странице одним объектом <code class="tok">DealProjectInformationRsDto</code> (<code class="tok">opts.save</code>); выключенные поля — <code class="tok">null</code>, не заполнено ничего — <code class="tok">null</code> целиком. Страница пишет его в <code class="tok">DealsStore</code>, тайл перерисовывается по событию стора.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новые значения в записи сделки и в тайле; фокус — на кнопку, открывшую окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">закрытие окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ничего</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/DealProjectInformationModal/DealProjectInformationModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/DealProjectInformationModal/DealProjectInformationModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealProjectInformationModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнение, доступность полей, сохранение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealProjectInformationModal.js</code> (<code class="tok">PostDealProjectInformationModal.bind</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.5fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.5fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет элемента в ДС — сначала завести компонент ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пояснение ⓘ к чекбоксу «Топ застройщик» — IconButton S рядом с чекбоксом в одной строке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у Checkbox нет слота иконки, а на макете пояснение стоит у подписи чекбокса; у полей ввода то же пояснение — штатный <code class="tok">.ds-label__icons</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<ol class="kit-md__ol"><li>Обязательные поля — <code class="tok">не решено (28.09.2026)</code>.</li><li>Допустимые диапазоны метрик и число знаков после запятой — <code class="tok">не решено (28.09.2026)</code>.</li><li>Справочники регионов и городов и их источник — <code class="tok">не решено (28.09.2026)</code>.</li><li>Слот пояснения у Checkbox в ДС — <code class="tok">не решено (28.09.2026)</code>.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealProjectInformationModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/scripts/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Сведения о проекте»: окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла. Открывают его карандаш тайла и
+     кнопка «Заполнить» пустого тайла; в просмотре тайл окно не открывает.
+
+     Раскладка — как на макете: две секции, «Данные по проекту» и «Метрики»,
+     в каждой поля по два в ряд. Порядок полей в разметке — порядок чтения.
+
+     Значения ниже — пример: «Жилая», класс «Комфорт», топ застройщик,
+     три метрики жилой недвижимости; DSCR и LTV у жилой недвижимости
+     выключены. На странице сделки значения и доступность полей ставит
+     DealProjectInformationModal.js по записи сделки и выбранному типу:
+       тип не выбран — все метрики выключены;
+       Коммерческая  — выключены класс жилья, LTC, LTARV и LLCR;
+       Жилая         — выключены DSCR и LTV;
+       Иная          — всё включено.
+
+     Опции списков пусты в разметке: их подставляет
+     DealProjectInformationModal.js из справочников DEALS_ENUMS
+     (runtime-hooks: динамический список у DropdownList собирается кодом).
+     «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+
+<div class="modal-scrim" id="deal-project-info-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="deal-project-info-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-project-info-title">Сведения о проекте</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-project-info-modal__sections">
+
+        <!-- ── Данные по проекту ─────────────────────────────────────── -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-project">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-project">Данные по проекту</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-property-type"><span class="ds-label__text">Тип недвижимости</span></label>
+              <div class="inp__field" data-ddl="pi-property-type-list">
+                <input class="inp__control" id="pi-property-type" autocomplete="off" value="Жилая">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-property-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <span class="ds-label"><span class="ds-label__text" id="pi-housing-class-label">Класс жилья</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Класс жилья" data-tooltip="Класс жилья можно найти в презентации на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field" data-ddl="pi-housing-class-list">
+                <input class="inp__control" id="pi-housing-class" aria-labelledby="pi-housing-class-label" autocomplete="off" value="Комфорт">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-housing-class-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <!-- Чекбокс и пояснение к нему — одна строка на всю ширину. У
+                 Checkbox нет слота иконки, пояснение стоит рядом кнопкой
+                 (паспорт, «Осознанные отклонения»). -->
+            <div class="lc-project-info-modal__wide lc-project-info-modal__check">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="pi-top-developer" checked>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Топ застройщик</span></span>
+              </label>
+              <button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Топ застройщик" data-tooltip-multiline="yes"
+                      data-tooltip="Перечень топ застройщиков отражен в Решении КПКИ в Атласе: Дивизион «Кредитные продукты и процессы»/УФН/Продукты УФН/Жилая недвижимость/«Об утверждении особых условий кредитования Топ Застройщиков на цели финансирования проектов строительства объектов жилой недвижимости» (Решение КПКИ регулярно обновляется)"><i data-icon="info-circle"></i></button>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-region"><span class="ds-label__text">Регион</span></label>
+              <div class="inp__field" data-ddl="pi-region-list">
+                <input class="inp__control" id="pi-region" autocomplete="off" value="Ханты-Мансийский автономный округ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-region-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-city"><span class="ds-label__text">Город</span></label>
+              <div class="inp__field" data-ddl="pi-city-list">
+                <input class="inp__control" id="pi-city" autocomplete="off" value="Ханты-Мансийск">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-city-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Метрики ───────────────────────────────────────────────── -->
+        <!-- Числа на момент одобрения сделки на КПКИ. LTV, LTC и LTARV —
+             проценты (постфикс %), DSCR и LLCR — коэффициенты. Ввод — только
+             число: цифры и одна запятая. -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-metrics">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-metrics">Метрики</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="dscr">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-dscr-label">DSCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: DSCR" data-tooltip="Пороговый Debt Service Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-dscr" aria-labelledby="pi-dscr-label" inputmode="decimal" autocomplete="off" disabled>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="ltv">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-ltv-label">LTV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTV" data-tooltip="Loan to Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltv" aria-labelledby="pi-ltv-label" inputmode="decimal" autocomplete="off" disabled>
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltc">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltc-label">LTC</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTC" data-tooltip="Loan to Cost на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltc" aria-labelledby="pi-ltc-label" inputmode="decimal" autocomplete="off" value="80">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltarv">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltarv-label">LTARV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTARV" data-tooltip="Loan to After Repair Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltarv" aria-labelledby="pi-ltarv-label" inputmode="decimal" autocomplete="off" value="45">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="llcr">
+              <span class="ds-label"><span class="ds-label__text" id="pi-llcr-label">LLCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LLCR" data-tooltip="Loan Life Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-llcr" aria-labelledby="pi-llcr-label" inputmode="decimal" autocomplete="off" value="2">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-pi-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Сведения о проекте» — связанный артефакт тайла ProjectInformationTile.
+   Здесь раскладка двух секций и сетки полей. Отступы тела окна даёт Modal,
+   зазоры — токены ДС. Доступность полей (выключено по типу недвижимости)
+   ставит DealProjectInformationModal.js классами компонентов ДС. */
+
+/* ── Секции ─────────────────────────────────────────────────────────── */
+/* «Данные по проекту» и «Метрики» — две секции стопкой. Между секциями на
+   макете 24, внутри секции — 16. */
+.lc-project-info-modal__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.lc-project-info-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* Подзаголовок секции — ступень H6 Strong, как подзаголовок тела окна
+   «Документы по сделке» (lc-deal-ecm__heading). */
+.lc-project-info-modal__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}
+
+/* ── Поля по два в ряд ──────────────────────────────────────────────── */
+/* Колонки сжимаемые (minmax(0, …)): длинное значение списка не распирает
+   соседнее поле. Пятая метрика (LLCR) встаёт в левую колонку, правая
+   ячейка остаётся пустой — как на макете. */
+.lc-project-info-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.lc-project-info-modal__wide { grid-column: 1 / -1; }
+
+/* Чекбокс «Топ застройщик» и кнопка пояснения к нему — в одну строку. */
+.lc-project-info-modal__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealProjectInformationModal.js — окно «Сведения о проекте».
+
+   Фрагмент DealProjectInformationModal.html держит пример заполненного
+   окна. Скрипт делает то, чего нет в рантаймах ДС:
+
+     1. Заполнение. При открытии окно берёт сведения сделки (opts.get) и
+        раскладывает их по полям: коды — подписями из DEALS_ENUMS, числа —
+        по-русски, с запятой.
+     2. Доступность полей по типу недвижимости (макет):
+          тип не выбран — метрики выключены;
+          Коммерческая  — выключены класс жилья, LTC, LTARV и LLCR;
+          Жилая         — выключены DSCR и LTV;
+          Иная          — всё включено.
+        Поле, которое выключилось, очищается: значение, недоступное типу,
+        не сохраняется. Правило — справочники DEALS_ENUMS
+        (projectMetricsByPropertyType, housingClassPropertyTypes).
+     3. Регион и город. Список городов — города выбранного региона; нет
+        региона — все города, и выбор города подставляет его регион. Смена
+        региона сбрасывает город другого региона.
+     4. Ввод. В списках значение — только из списка: набранный текст, не
+        совпавший ни с одной опцией, при уходе с поля откатывается к
+        выбранному значению, поэтому ошибочного состояния у полей нет. В
+        метрики вводится только число: цифры и одна запятая.
+     5. Сохранение. «Сохранить» собирает DealProjectInformationRsDto
+        (выключенные поля — null; не заполнено ничего — null целиком),
+        отдаёт его странице (opts.save) и закрывает окно.
+
+   Окно роль не вычисляет: открывают его только из режима правки тайла, а
+   что сохранить — решает страница.
+
+   API:
+     PostDealProjectInformationModal.bind(scrim, opts) → api
+       opts.get()        → сведения сделки (DealProjectInformationRsDto | null)
+       opts.save(info)   ← DealProjectInformationRsDto | null
+       opts.enums        — справочники, по умолчанию window.DEALS_ENUMS
+       api.refresh() · api.collect()
+     PostDealProjectInformationModal.sanitize(text) → только число, запятая
+     PostDealProjectInformationModal.parseNumber(text) → number | null
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var SCRIM_ID = 'deal-project-info-scrim';
+
+  var METRICS = ['dscr', 'ltv', 'ltc', 'ltarv', 'llcr'];
+
+  var LISTS = [
+    { key: 'propertyTypeCode', id: 'pi-property-type' },
+    { key: 'housingClassCode', id: 'pi-housing-class' },
+    { key: 'regionCode', id: 'pi-region' },
+    { key: 'cityCode', id: 'pi-city' }
+  ];
+
+  var TEXT_KEYS = ['propertyTypeCode', 'housingClassCode', 'regionCode', 'cityCode'];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function has(v) { return v !== null && v !== undefined && v !== ''; }
+
+  /* ---------- числа ---------- */
+
+  /* Только число: цифры и одна запятая (точка становится запятой). Знака
+     минуса нет — метрики неотрицательные. */
+  function sanitize(text) {
+    var s = String(text == null ? '' : text);
+    var out = '';
+    var sep = false;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s.charAt(i);
+      if (ch >= '0' && ch <= '9') out += ch;
+      else if ((ch === ',' || ch === '.') && !sep && out.length) { out += ','; sep = true; }
+    }
+    return out;
+  }
+
+  function parseNumber(text) {
+    var s = sanitize(text);
+    if (!s) return null;
+    var n = Number(s.replace(',', '.'));
+    return isFinite(n) ? n : null;
+  }
+
+  function formatNumber(n) {
+    if (!has(n) || isNaN(Number(n))) return '';
+    return Number(n).toLocaleString('ru-RU', { maximumFractionDigits: 2, useGrouping: false });
+  }
+
+  /* ---------- справочники ---------- */
+
+  function findCity(E, code) {
+    var list = E.cities || [];
+    for (var i = 0; i < list.length; i++) if (list[i].code === code) return list[i];
+    return null;
+  }
+
+  /* Опции списка. Городов — только выбранного региона, если он есть. */
+  function optionsFor(E, key, cur) {
+    function coded(codes, names) {
+      return (codes || []).map(function (c) { return { code: c, label: (names || {})[c] || c }; });
+    }
+    if (key === 'propertyTypeCode') return coded(E.propertyType, E.propertyTypeNames);
+    if (key === 'housingClassCode') return coded(E.housingClass, E.housingClassNames);
+    if (key === 'regionCode') return coded(E.regions, E.regionNames);
+    return (E.cities || []).filter(function (c) {
+      return !cur.regionCode || c.regionCode === cur.regionCode;
+    }).map(function (c) { return { code: c.code, label: c.name }; });
+  }
+
+  function labelOf(E, key, code) {
+    if (!has(code)) return '';
+    if (key === 'cityCode') { var c = findCity(E, code); return c ? c.name : ''; }
+    var opts = optionsFor(E, key, {});
+    for (var i = 0; i < opts.length; i++) if (opts[i].code === code) return opts[i].label;
+    return '';
+  }
+
+  function optionHTML(o, selected) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="' + (selected ? 'true' : 'false') + '" data-code="' + esc(o.code) + '">'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">' + esc(o.label) + '</span></span></button>';
+  }
+
+  /* ---------- выключенное поле ---------- */
+
+  /* Выключенное поле — состояние Disabled самого InputText: класс на корне,
+     disabled на контроле; подпись гаснет модификатором LabelHelper. */
+  function setDisabled(control, on) {
+    if (!control) return;
+    control.disabled = on;
+    var inp = control.closest('.inp');
+    if (!inp) return;
+    inp.classList.toggle('inp--disabled', on);
+    var label = inp.querySelector('.ds-label');
+    if (label) label.classList.toggle('ds-label--disabled', on);
+  }
+
+  /* ---------- связывание ---------- */
+
+  function bind(scrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__projectInfoApi) return scrim.__projectInfoApi;
+    opts = opts || {};
+
+    var E = opts.enums || window.DEALS_ENUMS || {};
+    var cur = { propertyTypeCode: null, housingClassCode: null, regionCode: null, cityCode: null };
+
+    function el(id) { return scrim.querySelector('#' + id); }
+    function idOf(key) {
+      for (var i = 0; i < LISTS.length; i++) if (LISTS[i].key === key) return LISTS[i].id;
+      return '';
+    }
+
+    function paintList(key) {
+      var list = el(idOf(key) + '-list');
+      if (!list) return;
+      list.innerHTML = optionsFor(E, key, cur).map(function (o) {
+        return optionHTML(o, o.code === cur[key]);
+      }).join('');
+    }
+
+    function showText(key) {
+      var control = el(idOf(key));
+      if (control) control.value = labelOf(E, key, cur[key]);
+    }
+
+    /* Класс жилья выключен только у типа без класса (Коммерческая); пока тип
+       не выбран, класс доступен (макет, пустое окно). Метрики без типа
+       выключены все. */
+    function classAllowed() {
+      return !cur.propertyTypeCode
+        || (E.housingClassPropertyTypes || []).indexOf(cur.propertyTypeCode) !== -1;
+    }
+
+    function applyType() {
+      var classOn = classAllowed();
+      if (!classOn && cur.housingClassCode) { cur.housingClassCode = null; showText('housingClassCode'); paintList('housingClassCode'); }
+      setDisabled(el('pi-housing-class'), !classOn);
+
+      var allowed = (E.projectMetricsByPropertyType || {})[cur.propertyTypeCode] || [];
+      METRICS.forEach(function (k) {
+        var control = el('pi-' + k);
+        if (!control) return;
+        var on = allowed.indexOf(k) !== -1;
+        if (!on) control.value = '';
+        setDisabled(control, !on);
+      });
+    }
+
+    function setCode(key, code) {
+      cur[key] = has(code) ? code : null;
+      showText(key);
+
+      if (key === 'propertyTypeCode') applyType();
+
+      if (key === 'regionCode') {
+        var city = findCity(E, cur.cityCode);
+        if (city && cur.regionCode && city.regionCode !== cur.regionCode) {
+          cur.cityCode = null;
+          showText('cityCode');
+        }
+        paintList('cityCode');
+      }
+
+      if (key === 'cityCode' && cur.cityCode && !cur.regionCode) {
+        var picked = findCity(E, cur.cityCode);
+        if (picked) {
+          cur.regionCode = picked.regionCode;
+          showText('regionCode');
+          paintList('regionCode');
+          paintList('cityCode');
+        }
+      }
+
+      paintList(key);
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+
+    /* Набранный руками текст: совпал с опцией — выбор; пусто — значение
+       снято; иначе — откат к выбранному. */
+    function commitTyped(key) {
+      var control = el(idOf(key));
+      if (!control || control.disabled) return;
+      var s = String(control.value || '').trim().toLowerCase();
+      if (!s) { if (cur[key]) setCode(key, null); return; }
+      var list = optionsFor(E, key, cur);
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].label.toLowerCase() === s) {
+          if (list[i].code !== cur[key]) setCode(key, list[i].code);
+          else showText(key);
+          return;
+        }
+      }
+      showText(key);
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+
+    /* Списки — один раз на окно: опции перерисовываются при смене значений. */
+    LISTS.forEach(function (L) {
+      var control = el(L.id);
+      var list = el(L.id + '-list');
+      var field = scrim.querySelector('[data-ddl="' + L.id + '-list"]');
+      paintList(L.key);
+      if (field && list && window.DSDropdownList) {
+        window.DSDropdownList.bind(field, {
+          list: list,
+          onSelect: function (it) { setCode(L.key, it.getAttribute('data-code')); }
+        });
+      }
+      if (!control) return;
+      control.addEventListener('change', function () { commitTyped(L.key); });
+      var inp = control.closest('.inp');
+      if (inp) inp.addEventListener('ds-input:clear', function () { setCode(L.key, null); });
+    });
+
+    /* Метрики: только число. */
+    METRICS.forEach(function (k) {
+      var control = el('pi-' + k);
+      if (!control) return;
+      control.addEventListener('input', function () {
+        var v = sanitize(control.value);
+        if (v !== control.value) control.value = v;
+      });
+    });
+
+    function refresh() {
+      var info = (opts.get ? opts.get() : null) || {};
+      TEXT_KEYS.forEach(function (k) { cur[k] = has(info[k]) ? info[k] : null; });
+      TEXT_KEYS.forEach(function (k) { showText(k); paintList(k); });
+      var top = el('pi-top-developer');
+      if (top) top.checked = info.isTopDeveloper === true;
+      METRICS.forEach(function (k) {
+        var control = el('pi-' + k);
+        if (control) control.value = formatNumber(info[k]);
+      });
+      applyType();
+      /* Значения поставлены присваиванием, а оно событий не шлёт: без этого
+         вызова рантайм поля не показал бы крестик очистки (правило InputText). */
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+
+    function collect() {
+      var top = el('pi-top-developer');
+      var info = {
+        propertyTypeCode: cur.propertyTypeCode,
+        housingClassCode: classAllowed() ? cur.housingClassCode : null,
+        isTopDeveloper: !!(top && top.checked),
+        regionCode: cur.regionCode,
+        cityCode: cur.cityCode
+      };
+      METRICS.forEach(function (k) {
+        var control = el('pi-' + k);
+        info[k] = control && !control.disabled ? parseNumber(control.value) : null;
+      });
+      var any = info.isTopDeveloper
+        || TEXT_KEYS.some(function (k) { return has(info[k]); })
+        || METRICS.some(function (k) { return has(info[k]); });
+      return any ? info : null;
+    }
+
+    /* Открытие: значения берутся в момент клика по триггеру — окно живёт в
+       разметке постоянно, а сведения сделки могли измениться. */
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-modal="' + SCRIM_ID + '"]')) refresh();
+    });
+
+    var save = scrim.querySelector('[data-pi-save]');
+    if (save) {
+      save.addEventListener('click', function () {
+        LISTS.forEach(function (L) { commitTyped(L.key); });
+        if (opts.save) opts.save(collect());
+        if (scrim.classList.contains('modal-scrim--inline')) return;
+        if (window.DSModal) window.DSModal.closeTop();
+      });
+    }
+
+    var api = { refresh: refresh, collect: collect };
+    scrim.__projectInfoApi = api;
+    return api;
+  }
+
+  window.PostDealProjectInformationModal = {
+    bind: bind,
+    METRICS: METRICS,
+    sanitize: sanitize,
+    parseNumber: parseNumber
+  };
+})();
+</script>
+</body>
+</html>

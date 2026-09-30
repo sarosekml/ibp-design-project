@@ -43,6 +43,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | PageHeader | specs/PageHeader.md | styles/page-header.css | button, icon-button, chip, badge, context-menu, tooltip, breadcrumbs | 1.010 |
 | Pagination | specs/Pagination.md | styles/pagination.css | dropdown-list, checkbox, label-helper, button, splitter | 1.010 |
 | Popover | specs/Popover.md | styles/popover.css | button, icon-button, link, chip, label-helper | 1.007 |
+| ProductRow | specs/ProductRow.md | styles/product-row.css | icon-button, context-menu, tooltip, skeleton | 1.001 |
 | ProgressBar | specs/ProgressBar.md | styles/progress-bar.css | label-helper | 1.003 |
 | Radiobutton | specs/Radiobutton.md | styles/radio.css | label-helper | 2.008 |
 | Radius | specs/Radius.md | — | — | 1.000 |

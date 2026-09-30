@@ -39,7 +39,7 @@ HTML/CSS, без React и без сборщика.** Экран — это од�
 | `styles/docs-split.css` | Общий слой страниц документации со сплиттером и табами. Правила префиксованы `main.ds-split` |
 | `scripts/docs-split.js` | Логика того же слоя: табы ↔ панели, локальный TOC, подсветка кода, свитчеры конструктора |
 | `pages/` | Документация компонентов (`foundations/`, `atoms/`, `molecules/`, `organisms/`) и паттернов (`patterns/`). Страницы целиком не читать — исключение для страницы-правила названо в §4 |
-| `uploads/` | Референсы пользователя — не трогать |
+| `uploads/` | Временные входящие референсы пользователя: лежат на время задачи, кладёт и убирает их пользователь. Ссылаться на файлы оттуда нельзя |
 | `MAINTAINING.md` | Как вести ДС: новый компонент, правило линтера, проверки |
 
 ## 3. Как читать ДС и не сжечь контекст
@@ -88,7 +88,9 @@ cat specs/Tile.md
   чит-шита дословно: где показан `<svg>` — там `<svg>`, где `<span>` — `<span>`.
 - **Не переопределять состояния компонентов извне.** Состояния (`--selected`/`--disabled`/`--open`/`:hover`/`[aria-current]`/`[aria-disabled]` и т.п.) задаёт только сам компонент. Собственный `<style>` экрана/страницы — только раскладка (grid/flex/gap) на токенах; в нём не должно быть селекторов, перекрывающих состояния по специфичности (пример: `button.<класс> { background:none }` перебивает `.<класс>--selected { background }` — пропадает подложка выделения). Разметку и состояние компонента брать из чит-шита/спеки дословно, состояние задавать данными (как `itemHTML` из `it.selected`), а не параллельными классами. Сброс браузерных дефолтов — только без задевания состояний. (Инцидент: NavPanel RND, 01.09.2026.)
 - **Не создавать React-компоненты** (`.jsx`, `.tsx`, `.d.ts`) и не подключать их.
-- **Не трогать `uploads/`** — это референсы пользователя.
+- **`uploads/` — временная папка пользователя.** Файлы не удалять и не править
+  самому, ссылаться на них из спек, стилей и экранов нельзя: источник пишется
+  словами с датой («макет дизайнера 29.09.2026»).
 - **Нет компонента в ДС — не изобретать его на ходу.** Остановиться, назвать
   недостающее, спросить. Отсутствие компонента — это находка, а не препятствие.
 
@@ -146,7 +148,7 @@ JavaScript вместо рантайма ДС не пишется.** Табли�
 
 **Молекулы:** Alert · Breadcrumbs · ButtonGroup · ContextMenu · DatePicker · DropdownList · EmptyState · InputAmountRange · InputAutocomplete · InputDate · InputDateRange · InputText · NavTile · Pagination · ReadOnlyField · SegmentControl · Splitter · SubTab · Tab · Toast · Tooltip
 
-**Организмы:** AllocationBar · Chart · Drawer · Entity · Kanban · Modal · NavPanel · PageHeader · Popover · RiskMetric · SnackBar · Table · TableCell · TableFilter · Tile
+**Организмы:** AllocationBar · Chart · Drawer · Entity · Kanban · Modal · NavPanel · PageHeader · Popover · ProductRow · RiskMetric · SnackBar · Table · TableCell · TableFilter · Tile
 
 Каталог сверяется с манифестом `specs/_index.md` в обе стороны — проход 8
 `scripts/spec-audit.mjs`: новый компонент без строки здесь агент не найдёт.

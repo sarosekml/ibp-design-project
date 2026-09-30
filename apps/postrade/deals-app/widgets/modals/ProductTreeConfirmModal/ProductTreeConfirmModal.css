@@ -1,0 +1,14 @@
+/* Подтверждение действия над деревом продуктов (ProductTreeConfirmModal).
+   Только текст сообщения и показ кнопок по варианту. Геометрия — Modal ДС
+   (modal--w3), цвета и шрифты — токены ДС; своих значений здесь нет. */
+
+/* Текст сообщения — Body M, --text-secondary (ответ человека 30.09.2026, 28) */
+.lc-ptree-confirm__text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* Назначение основного продукта — одна кнопка «Подтвердить», как у окна
+   погашения: «Отменить» не рисуется (крестик и Esc остаются). */
+.lc-ptree-confirm[data-variant="main"] .lc-ptree-confirm__cancel { display: none; }

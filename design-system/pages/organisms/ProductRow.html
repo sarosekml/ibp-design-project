@@ -1,0 +1,900 @@
+<!-- @dsCard group="Организмы" name="ProductRow" viewport="1440x900" subtitle="Строка дерева объектов с уровнями, значениями и действиями" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProductRow — Дизайн-система</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
+<link rel="stylesheet" href="../../styles/typography.css">
+<link rel="stylesheet" href="../../styles/colors.css">
+<link rel="stylesheet" href="../../styles/palette.css">
+<link rel="stylesheet" href="../../styles/radius.css">
+<link rel="stylesheet" href="../../styles/spacing.css">
+<link rel="stylesheet" href="../../styles/shadow.css">
+<link rel="stylesheet" href="../../styles/button.css">
+<link rel="stylesheet" href="../../styles/icon-button.css">
+<link rel="stylesheet" href="../../styles/context-menu.css">
+<link rel="stylesheet" href="../../styles/tooltip.css">
+<link rel="stylesheet" href="../../styles/skeleton.css">
+<link rel="stylesheet" href="../../styles/product-row.css">
+<link rel="stylesheet" href="../../styles/splitter.css">
+<link rel="stylesheet" href="../../styles/segment-control.css">
+<link rel="stylesheet" href="../../styles/tab.css">
+<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../styles/ds-nav.css">
+<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../../styles/table-cell.css">
+<style>
+
+a{color:var(--link);} a:hover{color:var(--link-dark);}
+
+.section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
+.section h3+p.desc{margin-top:0;}
+
+.subhead{font:var(--type-body-m-strong);color:var(--text-primary);margin:32px 0 14px;}
+
+/* контролы конструктора (вкладка «Конструктор») */
+.ctl{display:flex;flex-direction:column;gap:10px;}
+.ctl.is-off{display:none;}
+.ctl>.lbl{font:600 11px/1 var(--font-text),sans-serif;color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;}
+/* демо в верхней панели */
+.prow-stage{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg-page);border:1px solid var(--border-light);border-radius:12px;padding:28px;min-height:200px;width:100%;}
+.prow-stage__card{width:100%;max-width:560px;background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:20px;}
+.ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
+/* примеры */
+.ex-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:20px 24px;}
+.states-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:760px){.states-grid{grid-template-columns:1fr;}}
+.st-card{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-width:0;}
+.st-card__label{font:var(--type-body-xs);color:var(--text-inactive);text-transform:uppercase;letter-spacing:.06em;margin:0;}
+.st-card__label b{color:var(--text-secondary);}
+/* образцы для redline — вне экрана */
+.rl-sample{position:absolute;top:-9999px;left:0;width:520px;}
+
+</style>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="ProductRow">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="prow-stage">
+          <div class="prow-stage__card">
+            <div id="demo-prow"></div>
+          </div>
+        </div>
+        <p class="ws-cap">Строка показана на белом тайле: собственного фона у неё нет, кроме варианта с заливкой. Вариант, состав, действия и состояние переключаются во вкладке «Конструктор».</p>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+  <a class="crumb" href="../../index.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Обзор компонентов
+  </a>
+  <div class="meta">
+    <span>Версия <b>1.001</b></span>
+    <span>Обновлено <b>30.09.2026</b></span>
+    <span>CSS <b>styles/product-row.css</b></span>
+    <span>Рантайм <b>scripts/ds-product-row.js</b></span>
+    <span>Зависимости <b>icon-button, context-menu, tooltip, skeleton</b></span>
+  </div>
+  <div class="eyebrow">Дизайн-система · Организмы</div>
+  <h1>ProductRow</h1>
+  <p class="lead">Строка иерархического списка объектов: заголовок с номером, необязательные строка статуса и строка значений, действия справа. Строки собираются в дерево — вложенная строка на 24px уже родителя, ветку можно свернуть. Предметной области компонент не знает: какие объекты в строках, как они нумеруются и какие у них действия — решает потребитель.</p>
+</header>
+
+<!-- 1. КОНСТРУКТОР: демо — в верхнюю панель сплиттера (#demo-prow),
+     контролы — во вкладку «Конструктор» нижней панели (см. в конце) -->
+
+  <!-- 2. ИСПОЛЬЗОВАНИЕ -->
+<section class="section" id="usage" data-screen-label="Использование">
+  <h2>Использование</h2>
+  <p class="desc">Строка иерархического списка объектов. Строки собираются в дерево, у каждого уровня свои действия, у части строк — строка значений и строка статуса. Что за объекты, как они нумеруются и какие действия у каждого уровня — решает потребитель: компонент даёт форму строки, её состояния и раскладку дерева.</p>
+  <h3>Когда использовать</h3>
+  <ul class="bullets">
+    <li><b>Иерархия объектов в 2–4 уровня</b>, где с каждым уровнем работают по отдельности: добавить вложенный объект, открыть меню действий, отметить основной.</li>
+    <li><b>У строки есть короткие значения</b> — дата, сумма, срок — и нужен их вид «иконка + значение» в одну строку под заголовком.</li>
+    <li><b>Список выбора в окне</b>: те же строки в колонках «доступно» и «выбрано», с действиями «описание» и «переместить».</li>
+  </ul>
+  <h3>Когда не использовать</h3>
+  <ul class="bullets">
+    <li><b>Плоский список объектов с иконкой или аватаром</b> — Entity.</li>
+    <li><b>Данные с колонками, сортировкой и выбором строк</b>, в том числе дерево строк таблицы, — Table (<code class="tok">data-node</code> / <code class="tok">data-parent</code>).</li>
+    <li><b>Сворачиваемые разделы страницы</b> — Tile в варианте аккордеона.</li>
+  </ul>
+  <h3>ProductRow и соседи</h3>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.3fr 1.3fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что показывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Чем отличается</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.3fr 1.3fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>ProductRow</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строку дерева: номер и название, значения с иконками, статус, действия уровня</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка строки, отступ уровня 24px, сворачивание ветки, свой набор действий у каждого уровня</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.3fr 1.3fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Entity</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Объект списка: ведущая иконка или аватар, надзаголовок, подзаголовки, чипы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет рамки и уровней вложенности; заголовок усекается, а не переносится</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.8fr 1.3fr 1.3fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table · дерево</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строки таблицы с колонками, раскрытие по <code class="tok">data-node</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Значения стоят в колонках таблицы, строки выбираются и сортируются</span></span></div><div class="tc tc--separator"></div></div></div></div>
+  <h3>Пример в интерфейсе</h3>
+  <p class="desc">Дерево на четыре уровня: корневая строка с меткой и кнопкой сворачивания, вложенные строки, строки со значениями, строка с заливкой, строка со статусом и строка-ссылка. Второй корневой узел свёрнут — шеврон смотрит вниз.</p>
+  <div class="ex-card" id="usage-tree"><ul class="prow-tree"><li class="prow-tree__node"><div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Раздел</span><button type="button" class="prow__mark" aria-pressed="true" aria-label="Основная строка"><i data-icon="star-filled"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><ul class="prow-tree__group"><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><ul class="prow-tree__group"><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция с частями</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-3" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-3" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><ul class="prow-tree__group"><li class="prow-tree__node"><div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Часть</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-4" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-4" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></li><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.2. Часть</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-5" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-5" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></li></ul></li><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#" onclick="return false">1.1.2. Позиция со своей страницей</a></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-6" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-6" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></li></ul></li></ul></li><li class="prow-tree__node prow-tree__node--collapsed"><div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="false" aria-label="Развернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Раздел</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основная строка"><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-7" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-7" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><ul class="prow-tree__group"><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-8" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-8" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></li></ul></li></ul></div>
+</section>
+
+  <!-- 3. АНАТОМИЯ -->
+<section class="section" id="anatomy" data-screen-label="Анатомия">
+  <h2>Анатомия</h2>
+  <p class="desc">Строка — горизонтальный ряд из трёх слотов: ведущий, содержимое и действия. Содержимое — колонка из заголовка, строки статуса и строки значений. Обязательны только строка и заголовок.</p>
+  <div class="ex-card"><div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Раздел</span><button type="button" class="prow__mark" aria-pressed="true" aria-label="Основная строка"><i data-icon="star-filled"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-9" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-9" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><div style="height:var(--space-8)"></div><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-10" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-10" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+  <div style="height:20px"></div>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Класс</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательна</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка 1px внутренней тенью, поля 12/16, радиус 4px. Корневая — <code class="tok">.prow--root</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ведущий слот</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__lead</code> → <code class="tok">.prow__toggle</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка сворачивания ветки, 24px, глиф <code class="tok">chevron-up</code>. Ставится у строки, у которой есть дети</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Содержимое</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__main</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Колонка: заголовок, статус, значения; зазор 4px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ряд заголовка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__head</code> → <code class="tok">.prow__title</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер и название одним текстом; переносится. Ссылка — <code class="tok">a.prow__title.prow__title--link</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Метка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__mark</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка-переключатель со звездой (<code class="tok">star</code> / <code class="tok">star-filled</code>, <code class="tok">aria-pressed</code>); в просмотре — <code class="tok">&lt;span&gt;</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">6</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка статуса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__status</code> → <code class="tok">.prow__status-text</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Иконка 16px и текст Body XS. Тон иконки — <code class="tok">.prow__status--success</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">7</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка значений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__meta</code> → <code class="tok">.prow__meta-item</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Пары «иконка 20px + <code class="tok">.prow__meta-text</code>», единица — <code class="tok">.prow__meta-affix</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow__actions</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton L нейтрального тона; кебаб — ContextMenu, подписи — Tooltip</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 0.3fr 1fr 1.2fr 0.55fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">9</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дерево</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow-tree</code> → <code class="tok">.prow-tree__node</code> → <code class="tok">.prow-tree__group</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список узлов: строка и группа её детей. Свёрнутый узел — <code class="tok">.prow-tree__node--collapsed</code></span></span></div><div class="tc tc--separator"></div></div></div></div>
+</section>
+
+  <!-- 4. ВАРИАНТЫ -->
+<section class="section" id="variants" data-screen-label="Варианты">
+  <h2>Варианты</h2>
+  <h3>Обычная и корневая строка</h3>
+  <p class="desc">Корневая строка (<code class="tok">.prow--root</code>) открывает ветку: рамки в покое нет, она появляется на наведении, заголовок жирный. Размеры и поля те же, что у обычной строки, поэтому корень и его дети стоят по одной вертикали.</p>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Обычная</b> · .prow</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-11" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-11" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Корневая</b> · .prow--root</p><div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Раздел</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основная строка"><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-12" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-12" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+  </div>
+  <h3>Заливка</h3>
+  <p class="desc"><code class="tok">.prow--tinted</code> — строка отмечена потребителем, например связана с другим объектом экрана. Смысл заливки назначает потребитель и описывает в паспорте своего компонента; у корневой строки заливка не применяется.</p>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Без заливки</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-13" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-13" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>С заливкой</b> · .prow--tinted</p><div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-14" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-14" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+  </div>
+  <h3>Заголовок-ссылка</h3>
+  <p class="desc">У объекта есть своя страница: заголовок — ссылка <code class="tok">a.prow__title.prow__title--link</code>. На наведении строки заголовок окрашивается в <code class="tok">--primary</code>, клик по любому месту строки, кроме кнопок, — переход.</p>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Без своей страницы</b></p><div class="prow is-hover"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-15" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-15" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Со своей страницей</b> · наведение</p><div class="prow is-hover"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#" onclick="return false">1.1.1. Позиция</a></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-16" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-16" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+  </div>
+  <h3>Состав строки</h3>
+  <p class="desc">Строка статуса и строка значений необязательны и ставятся независимо. Высота строки следует из состава.</p>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Только заголовок</b> · 48px</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-17" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-17" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Со значениями</b> · 72px</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-18" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-18" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Со статусом и значениями</b> · 92px</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-19" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-19" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Значений нет</b> · прочерки</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">–</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">–</span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-20" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-20" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+  </div>
+  <h3>Набор действий</h3>
+  <p class="desc">Слот действий принимает IconButton L и кебаб; какой набор у какого уровня — решает потребитель. Ниже — наборы, которые встречаются в продукте.</p>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Добавить + меню</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-21" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-21" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Переместить + меню</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Часть</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-22" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-22" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Только меню</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.2. Позиция</span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-23" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-23" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Описание + переместить</b> · список выбора</p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Часть</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание" data-tooltip="Описание объекта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button></div></div></div>
+  </div>
+</section>
+
+  <!-- 5. РАЗМЕРЫ -->
+<section class="section" id="sizes" data-screen-label="Размеры">
+  <h2>Размеры</h2>
+  <p class="desc">Размер у строки один. Высота складывается из полей и рядов содержимого; ширина — ширина контейнера за вычетом отступа уровня.</p>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен / из чего складывается</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Высота: только заголовок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">48px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12 + 24 + 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Высота: со строкой значений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">72px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12 + 24 + 4 + 20 + 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Высота: со статусом и значениями</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">92px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12 + 24 + 4 + 16 + 4 + 20 + 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">12 / 16px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--space-12</code> по вертикали, <code class="tok">--space-16</code> по горизонтали</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Радиус</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--radius-xs</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">внутренняя тень, места не занимает</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ряд заголовка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">от 24px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">высота кнопок; строка текста 20px с полями 2px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка сворачивания, метка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">24px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">глиф 24px; зазор до заголовка 4px <code class="tok">--space-4</code>, заголовок ↔ метка 8px <code class="tok">--space-8</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">24px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton L; зазор 8px <code class="tok">--space-8</code>, отступ от содержимого 8px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зазор между рядами содержимого</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--space-4</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Иконка значения / статуса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">20 / 16px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">зазор до текста 8px <code class="tok">--gap-icon-text</code> / 4px <code class="tok">--space-4</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зазор между парами значений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">16px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--space-16</code>; ширина пары не меньше иконки и 10 знаков</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отступ уровня дерева</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">24px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--space-24</code>; группа детей корня не сдвигается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.8fr 1.6fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Зазор строк в ветке / между корневыми узлами</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">8 / 16px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--space-8</code> / <code class="tok">--space-16</code></span></span></div><div class="tc tc--separator"></div></div></div></div>
+</section>
+
+  <!-- 6. КОНТЕНТ -->
+<section class="section" id="content" data-screen-label="Контент">
+  <h2>Контент</h2>
+  <h3>Заголовок</h3>
+  <ul class="bullets">
+    <li><b>Номер и название — одним текстом</b>: «1.1.2. Название». Номер формирует потребитель по своему правилу; компонент его не считает.</li>
+    <li><b>Заголовок переносится</b> по словам и не усекается: длинное название занимает несколько строк, метка стоит у первой строки, кнопки — у верхнего края.</li>
+  </ul>
+  <h3>Значения и единицы</h3>
+  <ul class="bullets">
+    <li><b>Пара «иконка + значение»</b> — иконка называет смысл значения (дата, сумма), подписи-лейбла нет. Какие иконки — решает потребитель, глифы из Icons.</li>
+    <li><b>Единица или код валюты</b> — <code class="tok">.prow__meta-affix</code> после значения, тоном <code class="tok">--text-inactive</code>: «800 000,00 RUB».</li>
+    <li><b>Значения нет — прочерк «–»</b> на месте значения. Пара не скрывается: пропавшая пара читается как отсутствие поля, а не значения.</li>
+  </ul>
+  <h3>Переполнение</h3>
+  <ul class="bullets">
+    <li>Длинный заголовок переносится, строка растёт по высоте.</li>
+    <li>Пары значений, не поместившиеся по ширине, переходят на следующий ряд (зазор 4px).</li>
+    <li>Действия и кнопка сворачивания не сжимаются.</li>
+  </ul>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Длинный заголовок</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция с очень длинным названием, которое не помещается в одну строку и переносится</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-24" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-24" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Узкий контейнер</b> · значения переносятся</p><div style="max-width:300px"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Часть</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-25" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-25" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div></div>
+  </div>
+</section>
+
+  <!-- 7. ПОВЕДЕНИЕ -->
+<section class="section" id="behavior" data-screen-label="Поведение">
+  <h2>Поведение</h2>
+  <h3>Сворачивание ветки</h3>
+  <p class="desc">Кнопка <code class="tok">.prow__toggle</code> в строке узла сворачивает и разворачивает группу его детей. Рантайм <code class="tok">scripts/ds-product-row.js</code> работает делегированием: дерево, перерисованное скриптом, повторной привязки не требует. Состояние — класс <code class="tok">.prow-tree__node--collapsed</code> на узле; рантайм выставляет кнопке <code class="tok">aria-expanded</code>, <code class="tok">aria-controls</code> и подпись «Свернуть» / «Развернуть», шеврон поворачивается вниз, с узла всплывает событие <code class="tok">prowtoggle</code> с <code class="tok">{ collapsed }</code>.</p>
+  <h3>Отступы уровней</h3>
+  <p class="desc">Вложенная группа сдвинута на 24px, поэтому строка на 24px уже родителя; правый край у всех уровней общий. Исключение — дети корневого узла: их группа не сдвигается, корень и его дети одной ширины.</p>
+  <h3>Наведение и клик</h3>
+  <ul class="bullets">
+    <li><b>Наведение</b> на любую строку, включая корневую, — рамка <code class="tok">--primary</code>. Строку это не делает кликабельной: действия — в кнопках.</li>
+    <li><b>Строка-ссылка</b> — заголовок <code class="tok">a.prow__title--link</code> растягивает зону клика на всю строку через <code class="tok">::after</code>; ведущий слот, метка и действия лежат выше и нажимаются отдельно. Кнопки в <code class="tok">&lt;a&gt;</code> не вкладываются.</li>
+    <li><b>Метка</b> — переключатель: потребитель меняет <code class="tok">aria-pressed</code> и глиф (<code class="tok">star</code> ↔ <code class="tok">star-filled</code>); цвет метки не меняется. Правило «одна отмеченная строка на дерево» и его последствия — у потребителя.</li>
+  </ul>
+  <h3>Анимации</h3>
+  <p class="desc">Рамка — <code class="tok">box-shadow .15s</code>, цвет заголовка-ссылки и кнопок — <code class="tok">.15s</code>, поворот шеврона — <code class="tok">.18s</code>. При <code class="tok">prefers-reduced-motion: reduce</code> переходы отключаются. Ветка скрывается без анимации высоты (<code class="tok">display: none</code>).</p>
+</section>
+
+  <!-- 8. СОСТОЯНИЯ -->
+<section class="section" id="states" data-screen-label="Состояния">
+  <h2>Состояния</h2>
+  <div class="states-grid">
+    <div class="st-card"><p class="st-card__label"><b>Обычное</b></p><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-26" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-26" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Наведение</b> · :hover / .is-hover</p><div class="prow is-hover"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-27" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-27" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>С заливкой</b> · .prow--tinted</p><div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-28" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-28" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Наведение с заливкой</b></p><div class="prow prow--tinted is-hover"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-29" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-29" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Выбранная</b> · aria-checked / .is-selected</p><div class="prow" role="radio" aria-checked="true"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Подраздел</span></div></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Выключенное</b> · aria-disabled</p><div class="prow" aria-disabled="true"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" disabled><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-30" data-menu-align="end" disabled><i data-icon="more-dots"></i></button><div id="prow-menu-30" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Корневая выключенная</b></p><div class="prow prow--root" aria-disabled="true"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Раздел</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основная строка" disabled><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить" disabled><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-31" data-menu-align="end" disabled><i data-icon="more-dots"></i></button><div id="prow-menu-31" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Загрузка</b> · Skeleton</p><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div></div>
+    <div class="st-card"><p class="st-card__label"><b>Ветка свёрнута</b> · .prow-tree__node--collapsed</p><ul class="prow-tree"><li class="prow-tree__node prow-tree__node--collapsed"><div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="false" aria-label="Развернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Раздел</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основная строка"><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="prow-menu-32" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="prow-menu-32" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button><button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button></div></span></div></div><ul class="prow-tree__group"><li class="prow-tree__node"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Подраздел</span></div></div></div></li></ul></li></ul></div>
+  </div>
+  <div style="height:20px"></div>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как задаётся</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обычное</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка <code class="tok">--border-primary</code>; у корневой рамки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">:hover</code>; для витрины — <code class="tok">.is-hover</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка <code class="tok">--primary</code> у любой строки; заголовок-ссылка — <code class="tok">--primary</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">С заливкой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow--tinted</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фон <code class="tok">--tertiary-bg-light</code>; рамка и наведение — как без заливки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбранная</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">aria-checked="true"</code> у строки списка выбора (<code class="tok">role="radio"</code> или <code class="tok">"checkbox"</code>); для витрины — <code class="tok">.is-selected</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фон <code class="tok">--primary-bg</code>, рамка <code class="tok">--primary</code>, как Selected у Card. Выбирает потребитель; выключенная строка перекрывает выбранную</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выключенное</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">aria-disabled="true"</code> на строке, <code class="tok">disabled</code> на её кнопках</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Рамка <code class="tok">--disabled-border</code>, текст <code class="tok">--text-inactive</code>, наведение не подсвечивает, ссылка не срабатывает. Кнопки выключает потребитель</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">aria-busy="true"</code>; в ряду заголовка — <code class="tok">.sk-line</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Строка той же высоты (48px), вместо текста — полоса Skeleton</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.3fr 2fr 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ветка свёрнута</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.prow-tree__node--collapsed</code> или кнопка сворачивания</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Группа детей скрыта, шеврон смотрит вниз, <code class="tok">aria-expanded="false"</code></span></span></div><div class="tc tc--separator"></div></div></div></div>
+</section>
+
+  <!-- 9. ДОСТУПНОСТЬ -->
+<section class="section" id="a11y" data-screen-label="Доступность">
+  <h2>Доступность</h2>
+  <div class="panel">
+    <ul class="bullets">
+      <li><b>Дерево — вложенные списки</b> <code class="tok">&lt;ul&gt;</code> / <code class="tok">&lt;li&gt;</code>: вложенность читается скринридером без ролей <code class="tok">tree</code>. Навигация — обычный порядок Tab.</li>
+      <li><b>Кнопка сворачивания</b> — <code class="tok">aria-expanded</code>, <code class="tok">aria-controls</code> на группу детей и подпись «Свернуть» / «Развернуть»; всё выставляет рантайм.</li>
+      <li><b>Метка</b> — кнопка с <code class="tok">aria-pressed</code> и <code class="tok">aria-label</code>; в режиме просмотра — <code class="tok">&lt;span&gt;</code> без роли кнопки.</li>
+      <li><b>Действия</b> — IconButton с обязательным <code class="tok">aria-label</code>, подпись видна тултипом (<code class="tok">data-tooltip</code>); кебаб — ContextMenu со своей клавиатурой.</li>
+      <li><b>Строка-ссылка</b> — фокус приходит на заголовок, обводка 2px <code class="tok">--primary</code> рисуется по всей строке.</li>
+      <li><b>Строка списка выбора</b> — <code class="tok">role="radio"</code> (или <code class="tok">"checkbox"</code>), <code class="tok">aria-checked</code> и <code class="tok">tabindex</code> на строке; фокус — обводка 2px <code class="tok">--primary</code>. Клавиатуру выбора ведёт потребитель.</li>
+      <li><b>Выключенная строка</b> — <code class="tok">aria-disabled="true"</code> на строке и <code class="tok">disabled</code> на кнопках: сама строка кнопкой не является.</li>
+      <li><b>Иконки значений и статуса</b> декоративны — смысл несёт текст рядом.</li>
+      <li><b>Загрузка</b> — <code class="tok">aria-busy="true"</code> на строке, полосы Skeleton — <code class="tok">aria-hidden</code>.</li>
+    </ul>
+  </div>
+</section>
+
+  <!-- 10. ТИПОГРАФИКА -->
+<section class="section" id="typography" data-screen-label="Типографика">
+  <h2>Типографика</h2>
+  <p class="desc">Все текстовые слои — гарнитура <b>SB Sans Text</b>.</p>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-m</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">16 / 20</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-m)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок корневой строки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-l-strong</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Semibold</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">18 / 24</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-l-strong)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение, единица</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-s</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">14 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-s)">Образец</span></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.4fr 0.9fr 0.9fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Строка статуса</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--type-body-xs</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Regular</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">12 / 16</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="font:var(--type-body-xs)">Образец</span></span></span></div><div class="tc tc--separator"></div></div></div></div>
+</section>
+
+  <!-- 11. ЦВЕТА -->
+<section class="section" id="colors" data-screen-label="Цвета">
+  <h2>Цвета</h2>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Раздел</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Hex</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Рамка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Обычная строка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--border-primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--border-primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#B8CCCC</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Рамка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Наведение (Active Primary макета), выбранная строка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Рамка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Выключенная строка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--disabled-border</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--disabled-border)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#E8EDED</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Фон</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заливка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--tertiary-bg-light</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--tertiary-bg-light)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">4% #617C7C</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Фон</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Выбранная строка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary-bg</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary-bg)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">8% #00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#324844</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заголовок-ссылка на наведении</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Значение</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-secondary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-secondary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#6C8080</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Единица, статус, выключенная строка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-inactive</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-inactive)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#AAB2B1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Шеврон, метка, значения, статус, действия</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--secondary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--secondary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#B8D6D3</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Шеврон и метка на наведении</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--secondary-dark</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--secondary-dark)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#639994</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1fr 1.6fr 1.4fr 0.6fr 0.9fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Статус «выполнено»</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--success</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--success)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#7CB342</span></span></div><div class="tc tc--separator"></div></div></div></div>
+</section>
+
+  <!-- 12. ДЛЯ РАЗРАБОТЧИКОВ -->
+<section class="section" id="dev" data-screen-label="Для разработчиков">
+  <h2>Для разработчиков</h2>
+  <p class="desc">Хендофф-пакет. Имена классов условны — важны элементы, их роли и состояния.</p>
+  <p class="subhead">Точные размеры (redline)</p>
+  <div class="panel" style="padding:0;overflow:hidden;"><div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Свойство</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен / описание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Высота: только заголовок</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-h1">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">48px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Высота: со строкой значений</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-h2">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">72px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Высота: со статусом и значениями</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-h3">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">92px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Поля строки</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-pad">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-12</code> <code class="tok">--space-16</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Радиус</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-radius">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--radius-xs</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Зазор рядов содержимого</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-maingap">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-4</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Зазор кнопок действий</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-actgap">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-8</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Отступ действий от заголовка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-actstart">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-16</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Зазор пар значений</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-metagap">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-16</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.6fr 1fr 1.8fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Отступ уровня дерева</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span id="rl-indent">—</span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-24</code></span></span></div><div class="tc tc--separator"></div></div></div></div>
+  <div class="rl-sample" aria-hidden="true">
+    <div id="rl-one"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Подраздел</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button></div></div></div>
+    <div id="rl-two"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button></div></div></div>
+    <div id="rl-three"><div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Позиция</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div><div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"><i data-icon="arrow-left-right"></i></button></div></div></div>
+    <ul class="prow-tree__group" id="rl-group"></ul>
+  </div>
+  <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
+  <div class="code-wrap">
+    <button class="copy-btn" data-copy="logic">Скопировать</button>
+    <code id="code-logic">// 1. Раскладка дерева
+//    level(node) = число предков-узлов; корень — 0
+//    indent(node) = level &lt;= 1 ? 0 : (level - 1) * 24px   // дети корня без отступа
+//    зазор: между корневыми узлами 16px, внутри ветки 8px
+
+// 2. Сворачивание ветки
+on click(toggle in row of node):
+  collapsed = !collapsed
+  node.children.hidden = collapsed           // без анимации высоты
+  toggle.aria-expanded = !collapsed
+  toggle.aria-label   = collapsed ? 'Развернуть' : 'Свернуть'
+  emit('prowtoggle', { collapsed })          // всплывает с узла
+
+// 3. Строка-ссылка
+//    заголовок — ссылка; её зона клика растянута на всю строку,
+//    ведущий слот, метка и действия лежат выше и перехватывают свой клик
+
+// 4. Метка (переключатель)
+on click(mark):
+  pressed = !pressed                          // правило «одна на дерево» — у потребителя
+  mark.aria-pressed = pressed
+  mark.glyph = pressed ? 'star-filled' : 'star'   // цвет не меняется
+
+// 5. Значения
+//    нет значения → '–'; пара не скрывается
+//    ширина пары ≥ 20px + 8px + 10ch — прочерк не сдвигает соседнюю пару
+
+// 6. Выключенная строка
+//    row.aria-disabled = true; кнопки строки — disabled;
+//    наведение не подсвечивает, ссылка не срабатывает
+
+// 7. Строка списка выбора
+//    row.role = 'radio' | 'checkbox'; row.aria-checked = selected   // правило выбора — у потребителя
+//    selected → подложка --primary-bg, рамка --primary; disabled перекрывает</code>
+  </div>
+</section>
+
+    <!-- BACKLOG -->
+  <section class="section" id="backlog" data-screen-label="Бэклог">
+    <h2>Бэклог</h2>
+    <p class="desc">Всё, что не решено по макету 29.09.2026: что сверить, какие решения приняты без подтверждения и чего на макете нет. Каждый пункт — «не решено 29.09.2026», пока его не закроет человек.</p>
+    <div class="panel">
+      <p class="subhead" style="margin-top:0;">Сверено с макетом (30.09.2026)</p>
+      <ul class="rules">
+        <li><b>Размеры</b> — сверены с макетом 30.09.2026: высота строки 48 / 72 / 92px, ряды содержимого через 4, от заголовка до действий 16 (было 8), кнопки через 8, пары значений через 16, иконка ↔ текст пары 8; заголовок корня — Body L Strong (<code class="tok">--type-body-l-strong</code>, было Body M Strong); рамка наведения — Active Primary макета, это <code class="tok">--primary</code>. Версия 1.001.</li>
+      </ul>
+      <p class="subhead">Решено без подтверждения</p>
+      <ul class="rules">
+        <li><b>Метка и кнопка сворачивания — свои кнопки строки, а не IconButton.</b> На макете нажатая звезда того же цвета <code class="tok">--secondary</code>, что и ненажатая; у нажатой IconButton цвет <code class="tok">--primary</code> и подложка.</li>
+        <li><b>Наведение кнопки сворачивания и метки</b> — на макете не показано; сейчас цвет <code class="tok">--secondary-dark</code>.</li>
+        <li><b>Ширина пары значений</b> — не меньше иконки и 10 знаков, чтобы прочерк не сдвигал соседнюю пару. Выведено из макета, где пары с прочерками стоят колонками под парами с датой.</li>
+      </ul>
+      <p class="subhead">Нет на макете</p>
+      <ul class="rules">
+        <li><b>Кнопки выключенной строки</b> — на макете иконки выключенной строки того же цвета <code class="tok">--secondary</code>, что у обычной, а выключенная IconButton красится в <code class="tok">--text-inactive</code>. Какой вид верный и какие кнопки выключенной строки остаются рабочими (например, «описание» в списке выбора).</li>
+        <li><b>Наведение строки без действий</b> (режим просмотра) — показывать ли рамку <code class="tok">--primary</code>, если в строке нечего нажать.</li>
+        <li><b>Загрузка</b> — сейчас строка 48px с полосой Skeleton в ряду заголовка.</li>
+        <li><b>Узкий контейнер</b> — сейчас заголовок переносится по словам, пары значений переходят на следующий ряд.</li>
+        <li><b>Фокус с клавиатуры</b> — сейчас обводка 2px <code class="tok">--primary</code> по стандарту ДС: у кнопки сворачивания, метки и по всей строке-ссылке.</li>
+        <li><b>Тона строки статуса</b> — на макете только «выполнено» (<code class="tok">--success</code>); другие тона заводятся, когда появятся в продукте.</li>
+      </ul>
+      <p class="subhead">Вопросы к поведению</p>
+      <ul class="rules">
+        <li><b>Строка значений не на нижних уровнях</b> — на одном из макетов у строки второго уровня прочерки в строке значений: ошибка макета или значения бывают на любом уровне. Компонент сейчас допускает строку значений на любом уровне.</li>
+        <li><b>Действие «переместить» в дереве</b> — что делает (перетаскивание строки в другой блок экрана или окно) и какая подпись у тултипа. Компонент даёт только кнопку.</li>
+        <li><b>Перетаскивание строк</b> между ветками и между колонками списка выбора — пока поведение потребителя (кнопка и двойной клик).</li>
+        <li><b>Подсказка действия «описание»</b> в списке выбора — откуда берётся текст и какой длины; длинный текст требует <code class="tok">data-tooltip-multiline="yes"</code>.</li>
+        <li><b>Метка в строке списка выбора</b> — только показывает отмеченную строку или ею можно отметить.</li>
+        <li><b>Клавиатурная навигация по дереву</b> — стрелки и <code class="tok">role="tree"</code>; сейчас обычный порядок Tab и кнопка сворачивания.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="page-foot">
+    <span>Дизайн-система · ProductRow</span>
+    <span>Строка дерева объектов: уровни, значения, статус, действия</span>
+  </footer>
+
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Соберите строку: вариант, состав, набор действий и состояние. Демо обновляется наверху.</p>
+              <div class="pg__controls">
+                <div class="ctl-col">
+                  <div class="ctl">
+                    <div class="lbl">Вариант</div>
+                    <div class="pg-select"><select id="ctl-variant">
+                      <option value="row" selected>Обычная строка</option>
+                      <option value="root">Корневая строка</option>
+                    </select></div>
+                  </div>
+                  <div class="ctl">
+                    <div class="lbl">Строка значений</div>
+                    <div class="pg-select"><select id="ctl-meta">
+                      <option value="none">Без значений</option>
+                      <option value="full" selected>Со значениями</option>
+                      <option value="empty">С прочерками</option>
+                    </select></div>
+                  </div>
+                  <div class="ctl">
+                    <div class="lbl">Действия</div>
+                    <div class="pg-select"><select id="ctl-actions">
+                      <option value="add">Добавить + меню</option>
+                      <option value="move" selected>Переместить + меню</option>
+                      <option value="menu">Только меню</option>
+                      <option value="pick">Описание + переместить</option>
+                      <option value="none">Без действий</option>
+                    </select></div>
+                  </div>
+                  <div class="ctl">
+                    <div class="lbl">Состояние</div>
+                    <div class="pg-select"><select id="ctl-state">
+                      <option value="default" selected>Обычное</option>
+                      <option value="hover">Наведение</option>
+                      <option value="selected">Выбранная</option>
+                      <option value="disabled">Выключенное</option>
+                      <option value="skeleton">Загрузка</option>
+                    </select></div>
+                  </div>
+                  <div class="ctl">
+                    <div class="lbl">Заголовок</div>
+                    <div class="pg-text"><input id="ctl-title" type="text" placeholder="1.1.1. Позиция" maxlength="120"></div>
+                  </div>
+                </div>
+                <div class="toggles">
+                  <label class="pg-toggle"><input id="ctl-tinted" type="checkbox"><span class="pg-toggle__sw"></span><span>Показывать заливку</span></label>
+                  <label class="pg-toggle"><input id="ctl-status" type="checkbox"><span class="pg-toggle__sw"></span><span>Показывать строку статуса</span></label>
+                  <label class="pg-toggle"><input id="ctl-link" type="checkbox"><span class="pg-toggle__sw"></span><span>Заголовок — ссылка</span></label>
+                  <label class="pg-toggle" id="ctl-mark-wrap"><input id="ctl-mark" type="checkbox" checked><span class="pg-toggle__sw"></span><span>Метка нажата</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка и исходники ProductRow: HTML — из спеки, CSS — styles/product-row.css (полностью), JS — API рантайма scripts/ds-product-row.js.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main><!-- .page -->
+
+<script src="../../scripts/icons-data.js"></script>
+<script src="../../scripts/ds-icons.js"></script>
+<script src="../../scripts/ds-nav.js"></script>
+<script src="../../scripts/ds-float.js"></script>
+<script src="../../scripts/ds-splitter.js"></script>
+<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../scripts/tbl-resize.js"></script>
+<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../scripts/ds-tooltip.js"></script>
+<script src="../../scripts/ds-menu.js"></script>
+<script src="../../scripts/ds-product-row.js"></script>
+<script src="../../scripts/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
+<script type="text/plain" id="src-code-html"><ul class="prow-tree">
+  <li class="prow-tree__node">
+    <div class="prow prow--root">
+      <div class="prow__lead">
+        <button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button>
+      </div>
+      <div class="prow__main">
+        <div class="prow__head">
+          <span class="prow__title">1. Раздел</span>
+          <button type="button" class="prow__mark" aria-pressed="true" aria-label="Основная строка"><i data-icon="star-filled"></i></button>
+        </div>
+      </div>
+      <div class="prow__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button>
+        <span class="menu-anchor">
+          <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="m1" data-menu-align="end"><i data-icon="more-dots"></i></button>
+          <div id="m1" class="menu menu--floating" role="menu" hidden>…</div>
+        </span>
+      </div>
+    </div>
+    <ul class="prow-tree__group">
+      <li class="prow-tree__node">
+        <div class="prow prow--tinted">
+          <div class="prow__main">
+            <div class="prow__head"><a class="prow__title prow__title--link" href="…">1.1. Позиция</a></div>
+            <div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div>
+            <div class="prow__meta">
+              <span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+              <span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+            </div>
+          </div>
+          <div class="prow__actions">…</div>
+        </div>
+      </li>
+    </ul>
+  </li>
+</ul></script>
+
+<script type="text/plain" id="src-code-js">/* ProductRow — рантайм scripts/ds-product-row.js (подключает ds.js).
+   Разметка статична; рантайм оживляет только сворачивание веток. */
+
+window.DSProductRow = {
+  wire(nodeEl, opts),        // оживить узел .prow-tree__node; opts: { collapsed, onToggle(collapsed, node) }
+  wireAll(root),             // обойти узлы с кнопкой .prow__toggle внутри root
+  toggle(nodeEl, collapsed)  // свернуть (true) / развернуть (false) / переключить (без аргумента)
+};
+
+/* Клик по .prow__toggle обрабатывается делегированием — перерисованное
+   дерево работает без повторной привязки. Событие: */
+tree.addEventListener('prowtoggle', (e) => e.detail.collapsed);
+
+/* После перерисовки innerHTML экран заново зовёт рантаймы соседей:
+   dsIcons.apply(root); DSMenu.bindAll(root); DSTooltip.bindAll(root); */</script>
+
+<script type="text/plain" id="src-code-css">/* =========================================================================
+   Design System — ProductRow
+   Строка иерархического списка объектов: заголовок с номером, необязательные
+   строка статуса и строка значений с иконками, действия справа. Контейнер
+   .prow-tree раскладывает строки по уровням: 24px отступа на уровень, дети
+   корня — без отступа, ветку можно свернуть. Предметной области не знает:
+   что за объекты, какие у них действия и номера — решает потребитель.
+
+   Варианты: обычная строка · корневая (.prow--root: без рамки, жирный
+             заголовок, рамка только на наведении)
+   States:   default · hover (рамка --primary) · tinted (заливка) · selected
+             (строка списка выбора: [aria-checked="true"]) · disabled
+             ([aria-disabled="true"]) · collapsed (ветка свёрнута)
+   Runtime:  scripts/ds-product-row.js — сворачивание ветки по .prow__toggle.
+   Requires: typography.css, palette.css, spacing.css, radius.css,
+             icon-button.css (действия), context-menu.css (кебаб)
+   ========================================================================= */
+
+/* Парные `[hidden]` — правило B11 линтера: правило класса (0,1,0) перебивает
+   браузерное `[hidden] { display: none }` (0,0,0), и атрибут молча перестаёт
+   работать. Корень, объявивший `display`, объявляет и пару. */
+.prow[hidden],
+.prow-tree[hidden],
+.prow-tree__node[hidden],
+.prow-tree__group[hidden] { display: none; }
+
+/* =========================================================================
+   Строка
+   Рамка — внутренняя тень: она не занимает места, поэтому смена рамки на
+   наведении и её отсутствие у корня не сдвигают содержимое ни на пиксель.
+   Высота из содержимого: одна строка 48px (12 + 24 + 12), со строкой
+   значений 72px (12 + 24 + 4 + 20 + 12).
+   ========================================================================= */
+.prow {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-xs);
+  box-shadow: inset 0 0 0 1px var(--border-primary);
+  transition: box-shadow .15s ease;
+}
+
+/* корневая строка: без рамки в покое, жирный заголовок */
+.prow--root { box-shadow: none; }
+
+/* наведение; .is-hover — форс-состояние для витрины */
+.prow:hover,
+.prow.is-hover { box-shadow: inset 0 0 0 1px var(--primary); }
+
+/* заливка: строка отмечена потребителем (например, привязана к другому объекту) */
+.prow--tinted { background: var(--tertiary-bg-light); }
+
+/* выбранная строка списка выбора (строка — role="radio" или "checkbox" с
+   aria-checked): подложка --primary-bg и рамка --primary, как Selected у Card;
+   .is-selected — форс-состояние для витрины. Выбирает строку потребитель. */
+.prow[aria-checked] { cursor: pointer; }
+.prow[aria-checked]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.prow[aria-checked="true"],
+.prow.is-selected {
+  background: var(--primary-bg);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* выключенная строка: рамка гаснет, наведение не подсвечивает (текст — ниже,
+   после заголовка-ссылки). Правила стоят после :hover и выбранной — при равной
+   специфичности выигрывают они. */
+.prow[aria-checked][aria-disabled="true"] { cursor: default; }
+.prow[aria-disabled="true"] { box-shadow: inset 0 0 0 1px var(--disabled-border); }
+.prow--root[aria-disabled="true"] { box-shadow: none; }
+
+/* ---------- ведущий слот: кнопка сворачивания ветки ------------------------ */
+.prow__lead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  margin-inline-end: var(--space-4);
+}
+
+/* Кнопка сворачивания и метка — свои кнопки строки, не IconButton: метка в
+   нажатом положении остаётся цвета --secondary (меняется только глиф), а у
+   нажатой IconButton цвет --primary и подложка. */
+.prow__toggle,
+.prow__mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--secondary);
+  transition: color .15s ease;
+}
+button.prow__toggle,
+button.prow__mark { cursor: pointer; }
+.prow__toggle > :is(svg, [data-icon]),
+.prow__mark > :is(svg, [data-icon]) { display: block; width: 24px; height: 24px; }
+button.prow__toggle:hover,
+button.prow__mark:hover { color: var(--secondary-dark); }
+.prow__toggle:focus-visible,
+.prow__mark:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* шеврон смотрит вверх у раскрытой ветки и вниз у свёрнутой */
+.prow__toggle > :is(svg, [data-icon]) { transition: transform .18s ease; }
+.prow__toggle[aria-expanded="false"] > :is(svg, [data-icon]),
+.prow-tree__node--collapsed > .prow .prow__toggle > :is(svg, [data-icon]) { transform: rotate(180deg); }
+
+/* ---------- содержимое: заголовок · статус · значения ---------------------- */
+.prow__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ряд заголовка — высотой с действия (24px), заголовок переносится, метка
+   держится у его первой строки */
+.prow__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: 24px;
+}
+.prow__head > .sk-line { align-self: center; }
+
+.prow__title {
+  min-width: 0;
+  padding-block: var(--space-2);
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+/* заголовок корня — Body L Strong: строка 24px, поля по высоте не нужны,
+   корень остаётся 48px */
+.prow--root .prow__title { font: var(--type-body-l-strong); padding-block: 0; }
+
+/* Заголовок-ссылка: у объекта есть своя страница. Кнопки в <a> не вкладываются —
+   ссылкой становится заголовок, а его ::after растягивает зону клика на всю
+   строку; ведущий слот, метка и действия подняты над ней. */
+a.prow__title { text-decoration: none; }
+.prow__title--link { transition: color .15s ease; }
+.prow__title--link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.prow:hover .prow__title--link,
+.prow.is-hover .prow__title--link { color: var(--primary); }
+.prow__title--link:focus-visible { outline: none; }
+.prow__title--link:focus-visible::after { outline: 2px solid var(--primary); outline-offset: 2px; }
+.prow__lead,
+.prow__mark,
+.prow__actions { position: relative; z-index: 1; }
+
+/* текст выключенной строки — после подсветки ссылки: при равной
+   специфичности (0,3,0) выигрывает стоящее ниже */
+.prow[aria-disabled="true"] :is(.prow__title, .prow__meta-item, .prow__meta-affix, .prow__status) {
+  color: var(--text-inactive);
+}
+.prow[aria-disabled="true"] .prow__title--link { pointer-events: none; }
+
+/* строка статуса: иконка 16 + текст Body XS */
+.prow__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  min-height: 16px;
+  font: var(--type-body-xs);
+  color: var(--text-inactive);
+}
+.prow__status > :is(svg, [data-icon]) { flex: none; width: 16px; height: 16px; color: var(--secondary); }
+.prow__status--success > :is(svg, [data-icon]) { color: var(--success); }
+.prow__status-text { min-width: 0; overflow-wrap: anywhere; }
+
+/* строка значений: пары «иконка 20 + текст Body S». Минимальная ширина пары —
+   иконка и 10 знаков (дата ДД.ММ.ГГГГ): прочерк на месте значения не сдвигает
+   соседнюю пару, значения соседних строк стоят колонками. */
+.prow__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-16);
+  row-gap: var(--space-4);
+  min-width: 0;
+}
+.prow__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-icon-text);
+  min-width: calc(20px + var(--gap-icon-text) + 10ch);
+  min-height: 20px;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+.prow__meta-item > :is(svg, [data-icon]) { flex: none; width: 20px; height: 20px; color: var(--secondary); }
+.prow__meta-text { min-width: 0; overflow-wrap: anywhere; }
+.prow__meta-affix { color: var(--text-inactive); }
+
+/* ---------- действия: IconButton L, зазор 8, от заголовка 16 --------------- */
+/* Кнопка сворачивания может стоять и здесь, последней: корневая строка в списке
+   выбора окна. Рантайм находит её в любом месте строки. */
+.prow__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 24px;
+  margin-inline-start: var(--space-16);
+}
+
+/* =========================================================================
+   Дерево строк
+   <ul class="prow-tree"> → <li class="prow-tree__node"> → .prow + <ul class="prow-tree__group">
+   Узлы корневого уровня — через 16px, внутри ветки — через 8px. Вложенная
+   группа сдвинута на 24px, поэтому строка на 24px уже родителя; группа
+   детей корня не сдвигается — корень и его дети одной ширины.
+   ========================================================================= */
+.prow-tree,
+.prow-tree__group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.prow-tree { gap: var(--space-16); }
+.prow-tree__group {
+  gap: var(--space-8);
+  padding-inline-start: var(--space-24);
+}
+.prow-tree > .prow-tree__node > .prow-tree__group { padding-inline-start: 0; }
+.prow-tree__node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.prow-tree__node--collapsed > .prow-tree__group { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .prow,
+  .prow__toggle,
+  .prow__mark,
+  .prow__title--link,
+  .prow__toggle > :is(svg, [data-icon]) { transition: none; }
+}</script>
+
+<script>
+/* ---- конструктор: строка ProductRow из контролов ---- */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var ACTIONS = { add:['add','menu'], move:['move','menu'], menu:['menu'], pick:['info','move'], none:[] };
+
+function actionHTML(a, dis) {
+  var d = dis ? ' disabled' : '';
+  if (a === 'add')  return '<button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"' + d + '><i data-icon="add-circle"></i></button>';
+  if (a === 'move') return '<button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить"' + d + '><i data-icon="arrow-left-right"></i></button>';
+  if (a === 'info') return '<button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание" data-tooltip="Описание объекта"' + d + '><i data-icon="info-circle"></i></button>';
+  return '<span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="demo-menu" data-menu-align="end"' + d + '><i data-icon="more-dots"></i></button>' +
+    '<div id="demo-menu" class="menu menu--floating" role="menu" hidden>' +
+    '<button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Изменить</span></button>' +
+    '<button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Переместить</span></button>' +
+    '<button type="button" class="menu__item" role="menuitem" aria-disabled="true"><span class="menu__item-label">Удалить</span></button>' +
+    '</div></span>';
+}
+
+function buildRow() {
+  var variant = document.getElementById('ctl-variant').value;
+  var meta    = document.getElementById('ctl-meta').value;
+  var acts    = ACTIONS[document.getElementById('ctl-actions').value] || [];
+  var state   = document.getElementById('ctl-state').value;
+  var tinted  = document.getElementById('ctl-tinted').checked;
+  var status  = document.getElementById('ctl-status').checked;
+  var link    = document.getElementById('ctl-link').checked;
+  var markOn  = document.getElementById('ctl-mark').checked;
+  var root    = variant === 'root';
+  var title   = document.getElementById('ctl-title').value.trim() || (root ? '1. Раздел' : '1.1.1. Позиция');
+
+  /* метка — только у корневой строки; заливка у корня не применяется */
+  document.getElementById('ctl-mark-wrap').classList.toggle('is-off', !root);
+
+  var cls = 'prow' + (root ? ' prow--root' : '') + (tinted && !root ? ' prow--tinted' : '') + (state === 'hover' ? ' is-hover' : '');
+  var sel = state === 'selected';
+  var dis = state === 'disabled';
+  var host = document.getElementById('demo-prow');
+  var h = '<div class="' + cls + '"' + (sel ? ' role="radio" aria-checked="true" tabindex="0"' : '') + (dis ? ' aria-disabled="true"' : '') + (state === 'skeleton' ? ' aria-busy="true"' : '') + '>';
+  if (state === 'skeleton') {
+    h += '<div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div>';
+    host.innerHTML = h;
+    return;
+  }
+  if (root) h += '<div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div>';
+  h += '<div class="prow__main"><div class="prow__head">';
+  h += link ? '<a class="prow__title prow__title--link" href="#" onclick="return false">' + esc(title) + '</a>' : '<span class="prow__title">' + esc(title) + '</span>';
+  if (root) h += '<button type="button" class="prow__mark" aria-pressed="' + markOn + '" aria-label="Основная строка"' + (dis ? ' disabled' : '') + '><i data-icon="' + (markOn ? 'star-filled' : 'star') + '"></i></button>';
+  h += '</div>';
+  if (status) h += '<div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div>';
+  if (meta !== 'none') {
+    var v = meta === 'empty' ? ['–', '–'] : ['22.04.2024', '800 000,00 <span class="prow__meta-affix">RUB</span>'];
+    h += '<div class="prow__meta"><span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">' + v[0] + '</span></span>' +
+         '<span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">' + v[1] + '</span></span></div>';
+  }
+  h += '</div>';
+  if (acts.length) h += '<div class="prow__actions">' + acts.map(function (a) { return actionHTML(a, dis); }).join('') + '</div>';
+  h += '</div>';
+  host.innerHTML = h;
+  /* перерисованная разметка связывается заново */
+  if (window.dsIcons) dsIcons.apply(host);
+  if (window.DSMenu) DSMenu.bindAll(host);
+  if (window.DSTooltip) DSTooltip.bindAll(host);
+}
+
+['ctl-variant','ctl-meta','ctl-actions','ctl-state','ctl-title','ctl-tinted','ctl-status','ctl-link','ctl-mark'].forEach(function (id) {
+  var el = document.getElementById(id);
+  if (el) { el.addEventListener('change', buildRow); el.addEventListener('input', buildRow); }
+});
+buildRow();
+
+/* ---- метка в примерах: переключатель star ↔ star-filled ---- */
+document.addEventListener('click', function (e) {
+  var m = e.target.closest && e.target.closest('button.prow__mark');
+  if (!m || m.disabled || m.closest('#demo-prow')) return;
+  var on = m.getAttribute('aria-pressed') !== 'true';
+  m.setAttribute('aria-pressed', String(on));
+  m.innerHTML = '<i data-icon="' + (on ? 'star-filled' : 'star') + '"></i>';
+  if (window.dsIcons) dsIcons.apply(m);
+});
+
+/* ---- redline: значения с отрендеренных образцов ---- */
+function measureRedline() {
+  function set(id, v) { var n = document.getElementById(id); if (n) n.textContent = v; }
+  function row(id) { var w = document.getElementById(id); return w && w.querySelector('.prow'); }
+  var r1 = row('rl-one'), r2 = row('rl-two'), r3 = row('rl-three');
+  if (!r1) return;
+  var cs = getComputedStyle(r1);
+  set('rl-h1', r1.offsetHeight + 'px');
+  set('rl-h2', r2 ? r2.offsetHeight + 'px' : '—');
+  set('rl-h3', r3 ? r3.offsetHeight + 'px' : '—');
+  set('rl-pad', cs.paddingTop + ' ' + cs.paddingRight);
+  set('rl-radius', cs.borderTopLeftRadius);
+  var main = r2 && r2.querySelector('.prow__main');
+  set('rl-maingap', main ? getComputedStyle(main).rowGap : '—');
+  var act = r1.querySelector('.prow__actions');
+  set('rl-actgap', act ? getComputedStyle(act).columnGap : '—');
+  set('rl-actstart', act ? getComputedStyle(act).marginInlineStart : '—');
+  var meta = r2 && r2.querySelector('.prow__meta');
+  set('rl-metagap', meta ? getComputedStyle(meta).columnGap : '—');
+  var grp = document.getElementById('rl-group');
+  set('rl-indent', grp ? getComputedStyle(grp).paddingInlineStart : '—');
+}
+setTimeout(measureRedline, 300);
+
+/* ---- copy buttons ---- */
+document.querySelectorAll('.copy-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var el = document.getElementById('code-' + btn.getAttribute('data-copy')); if (!el) return;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      btn.textContent = 'Скопировано ✓'; btn.classList.add('is-copied');
+      setTimeout(function () { btn.textContent = 'Скопировать'; btn.classList.remove('is-copied'); }, 2000);
+    });
+  });
+});
+</script>
+</body>
+</html>

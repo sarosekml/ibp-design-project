@@ -15,8 +15,8 @@ artifactOf: Описание сделки (DealDescriptionTile.md)
 opensFrom: [Тайл «Описание сделки» — IconButton «Редактировать» и кнопка «Заполнить» в пустом состоянии (правка), IconButton «Развернуть» (просмотр)]
 purpose: Заполнить и поправить описание сделки, её признаки и группу связанных заемщиков
 ds: [Modal, InputText, InputAutocomplete, DropdownList, Checkbox, Divider, ReadOnlyField, Buttons, IconButton]
-requirements: [Макет apps/postrade/deals-app/refs/описание/Modal_Tile_Deal_Description.png 24.09.2026, списки «Совместность» и «Категория риска ЦУП» с экрана текущей системы 25.09.2026]
-knowledge: [apps/postrade/deals-app/refs/описание — Modal_Tile_Deal_Description.png, Section 1.png (пояснения к категориям риска и совместности)]
+requirements: [Макет дизайнера 24.09.2026, списки «Совместность» и «Категория риска ЦУП» с экрана текущей системы 25.09.2026]
+knowledge: []
 ---
 
 # Widget: DealDescriptionModal — Модальное окно описания сделки

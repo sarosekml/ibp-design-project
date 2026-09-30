@@ -2,10 +2,10 @@
 screen: mainPage
 title: Главная страница
 file: apps/postrade/deals-app/pages/MainPage.html
-source: design-system/uploads/1920_Dashboard_Финансист ДИД.png (референс), решение пользователя 01.09.2026 (роли, состав)
+source: макет дизайнера (дашборд «Финансист ДИД», 1920), решение пользователя 01.09.2026 (роли, состав)
 version: "1.004"
 created: "01.09.2026"
-updated: "10.09.2026"
+updated: "30.09.2026"
 design_system: IBP DS
 components: [Layout, NavPanel, Breadcrumbs, NavTile, Illustrations, Modal, Badge, Avatar, IconButton]
 ---

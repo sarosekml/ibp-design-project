@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 220.
+Документов: 240.
 
 ## Корень (4)
 
@@ -65,7 +65,7 @@
 | [README.md](../README.md) | — |
 | [index.screen.md](../index.screen.md) | Хаб проектов |
 
-## Дизайн-система (70)
+## Дизайн-система (71)
 
 | Документ | Аннотация |
 |---|---|
@@ -121,6 +121,7 @@
 | [design-system/specs/PageHeader.md](../design-system/specs/PageHeader.md) | PageHeader |
 | [design-system/specs/Pagination.md](../design-system/specs/Pagination.md) | Pagination |
 | [design-system/specs/Popover.md](../design-system/specs/Popover.md) | Popover |
+| [design-system/specs/ProductRow.md](../design-system/specs/ProductRow.md) | ProductRow |
 | [design-system/specs/ProgressBar.md](../design-system/specs/ProgressBar.md) | ProgressBar |
 | [design-system/specs/Radiobutton.md](../design-system/specs/Radiobutton.md) | Radiobutton |
 | [design-system/specs/Radius.md](../design-system/specs/Radius.md) | Скругления |
@@ -225,7 +226,7 @@
 | [.agents/skills/screen-spec/references/widget-template.md](../.agents/skills/screen-spec/references/widget-template.md) | Widget: DealTeamTile — Команда сделки |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (88)
+## Приложения (105)
 
 | Документ | Аннотация |
 |---|---|
@@ -384,10 +385,25 @@
 | [apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md](../apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md) | Widget: DealDescriptionModal — Модальное окно описания сделки |
 | [apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md](../apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md) | Модальное окно финансовых метрик сделки |
 | [apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md](../apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md) | Модальное окно сроков сделки |
+| [apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md](../apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md) | Widget: DealProjectInformationModal — Модальное окно сведений о проекте |
 | [apps/postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.md](../apps/postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.md) | Модальное окно команды сделки |
+| [apps/postrade/deals-app/widgets/modals/DidProductsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/DidProductsModal/CHANGELOG.md) | Окно «Продукты ДИД» (DidProductsModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.md](../apps/postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.md) | Окно «Продукты ДИД» (DidProductsModal) |
+| [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/CHANGELOG.md) | Окно «Перенос инструмента» (InstrumentTransferModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.md) | Окно «Перенос инструмента» (InstrumentTransferModal) |
 | [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CHANGELOG.md) | Карточка контрагента — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.md) | Карточка контрагента |
 | [apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.md) | Модальное окно контрагентов (InstrumentsCounterpartiesModal) |
+| [apps/postrade/deals-app/widgets/modals/InstrumentsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/InstrumentsModal/CHANGELOG.md) | Окно «Инструменты» (InstrumentsModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md) | Окно «Инструменты» (InstrumentsModal) |
+| [apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) |
+| [apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/CHANGELOG.md) | Подтверждение действия над деревом (ProductTreeConfirmModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md](../apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md) | Подтверждение действия над деревом (ProductTreeConfirmModal) |
+| [apps/postrade/deals-app/widgets/modals/ProductsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/CHANGELOG.md) | Окно «Продукты» (ProductsModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md) | Окно «Продукты» (ProductsModal) |
+| [apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md) | Окно погашения (RepaymentModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md) | Окно погашения (RepaymentModal) |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.md) | Контрагенты сделки |
 | [apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/CounterpartiesTile/CHANGELOG.md) | Контрагенты (CounterpartiesTile) — журнал изменений |
@@ -399,14 +415,16 @@
 | [apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md](../apps/postrade/deals-app/widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.md) | Финансовые метрики |
 | [apps/postrade/deals-app/widgets/tiles/DealPeriodTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealPeriodTile/CHANGELOG.md) | Сроки сделки — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.md](../apps/postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.md) | Сроки сделки |
-| [apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md](../apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md) | Продукты сделки |
+| [apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/CHANGELOG.md) | Продукты сделки (DealProductTreeTile) — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md](../apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md) | Продукты сделки (DealProductTreeTile) |
 | [apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md](../apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md) | Связанные обеспечения |
 | [apps/postrade/deals-app/widgets/tiles/DealSetupTile/DealSetupTile.md](../apps/postrade/deals-app/widgets/tiles/DealSetupTile/DealSetupTile.md) | Заведение сделки |
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md) | Команда сделки — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
 | [apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md](../apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md) | Влияние на ЭПС/ВБС |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты |
-| [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Сведения о проекте |
+| [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
 
 ### apps/postrade/payments-app
 
@@ -463,7 +481,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (17)
+## Задачи и заметки (19)
 
 ### Архив/черновики
 
@@ -490,12 +508,14 @@
 | [docs/tasks/0006-docs-index.md](tasks/0006-docs-index.md) | Единый каталог документации: docs/index.md, генератор docs-index.mjs и шаг гейта |
 | [docs/tasks/0007-ds-icons-unique-ids.md](tasks/0007-ds-icons-unique-ids.md) | ДС: у каждой копии иконки — свои id внутри SVG (ds-icons.js) |
 | [docs/tasks/0008-sensor-linked-css.md](tasks/0008-sensor-linked-css.md) | Сенсор экрана видит CSS тайлов в отдельных файлах (&lt;link rel="stylesheet"&gt;) |
+| [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 
 ### Снимки задач
 
 | Документ | Аннотация |
 |---|---|
 | [docs/tasks/0006-docs-index.handoff.md](tasks/0006-docs-index.handoff.md) | DocsIndex — handoff |
+| [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
 
 ## Служебное (1)
 

@@ -36,7 +36,13 @@
 <link rel="stylesheet" href="../widgets/modals/DealDescriptionModal/DealDescriptionModal.css">
 <link rel="stylesheet" href="../widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.css">
 <link rel="stylesheet" href="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.css">
-<link rel="stylesheet" href="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
+<link rel="stylesheet" href="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.css">
+<link rel="stylesheet" href="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.css">
+<link rel="stylesheet" href="../widgets/modals/ProductsModal/ProductsModal.css">
+<link rel="stylesheet" href="../widgets/modals/RepaymentModal/RepaymentModal.css">
+<link rel="stylesheet" href="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.css">
+<link rel="stylesheet" href="../widgets/modals/LinkChangeModal/LinkChangeModal.css">
+<link rel="stylesheet" href="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
 <style>
   /* ---------- только раскладка экрана, на токенах ДС ---------- */
   *, *::before, *::after { box-sizing: border-box; }
@@ -88,6 +94,10 @@
      Карточки окна КНР (Card — тоже .tile) стоят вне .screen__content и правило
      не получают. */
   .screen__content .tile { min-height: 200px; }
+  /* Исключение — ряд «Сведения о проекте»: он один в своём ряду, соседей,
+     за которыми тянуться, нет, и тайл по макету компактный — высота по
+     содержимому (решение человека 28.09.2026). */
+  #row-project-info .tile { min-height: 0; }
 
   @container screen (max-width: 1560px) {
     .gen__body { flex-direction: column; }
@@ -629,7 +639,7 @@
      DealFinancialMetricsTile.css по этим атрибутам — как у тайлов «КНР»,
      «Сроки сделки», «Команда сделки».
 
-     Значения ниже — пример с макета (refs/финансовые метрики/Tile-fin-metrics.png).
+     Значения ниже — пример с макета дизайнера.
      На странице сделки их заменяет DealFinancialMetricsTile.js
      (PostTileDealFinMetrics.render) метриками сделки: бар ВБС, четыре поля и
      блок PE. Им же рисуются бары окна — разметка AllocationBar одна.
@@ -773,24 +783,135 @@
               <!-- Локальный компонент «Сведения о проекте» — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (ProjectInformationTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (ProjectInformationTile.css). -->
-<section data-state="empty" data-mode="edit" class="tile lc-project-info col-12">
+
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав: edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     ProjectInformationTile.css по этим атрибутам — как остальные тайлы
+     страницы сделки.
+
+     Значения ниже — пример: «Иная», все пять метрик, топ застройщик. На
+     странице сделки их заменяет ProjectInformationTile.js
+     (PostTileProjectInformation.render) данными сделки.
+
+     Окно правки живёт в конце body страницы, а не здесь: карандаш и
+     «Заполнить» открывают deal-project-info-scrim (guarded: в нём ввод,
+     клик мимо окна не должен его сбросить). В просмотре действий нет. -->
+<section id="tile-project-info" data-state="loading" data-mode="edit" class="tile lc-project-info col-12">
   <header class="tile__header">
     <div class="tile__header-main">
-      <div class="tile__title-row"><h3 class="tile__title">Сведения о проекте</h3></div>
+      <div class="tile__title-row">
+        <h3 class="tile__title">Сведения о проекте</h3>
+        <!-- Тег «Топ застройщик» — есть только у топ застройщика; нет — атрибут
+             hidden. Тег, не статус: без rounded и не сжимается (правило Chip). -->
+        <span class="tile__title-add lc-project-info__top" data-pi-top>
+          <span class="chip chip--xs chip--lblue chip--fit"><span class="chip__label">Топ застройщик</span></span>
+        </span>
+      </div>
     </div>
     <div class="tile__actions">
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="deal-project-info-scrim" data-modal-guarded><i data-icon="edit"></i></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-project-info__stub">Данные ещё не заведены</p>
+
+    <!-- ── Данные есть / заполнено частично ─────────────────────────── -->
+    <!-- Поля и группы полей тянутся поровну и переносятся на новую строку,
+         когда не помещаются, а не обрезаются. Минимальные ширины — в
+         ProjectInformationTile.css. Незаполненное поле — прочерк, поле с места
+         не уходит. -->
+    <div class="lc-project-info__fields lc-project-info__content">
+
+      <div class="lc-project-info__group">
+        <div class="lc-project-info__pair">
+          <div class="rof lc-project-info__type">
+            <span class="ds-label"><span class="ds-label__text">Тип недвижимости</span></span>
+            <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-pi-field="propertyType">Иная</span></div>
+          </div>
+          <div class="rof lc-project-info__class">
+            <span class="ds-label"><span class="ds-label__text">Класс жилья</span></span>
+            <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-pi-field="housingClass">Комфорт</span></div>
+          </div>
+        </div>
+        <!-- Метрики — чипы «DSCR: 1», «LTV: 70%» в порядке DSCR, LTV, LTC,
+             LTARV, LLCR: только доступные типу недвижимости и заполненные.
+             Ни одной — прочерк вместо списка. -->
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Метрики</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips">
+              <div class="chiplist chiplist--s" role="group" aria-label="Метрики проекта" data-pi-metrics>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">DSCR: 1</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTV: 70%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTC: 80%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTARV: 45%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LLCR: 2</span></span>
+              </div>
+            </div>
+            <span class="rof__value" data-pi-metrics-empty hidden>—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lc-project-info__group">
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Регион</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:2" data-pi-field="region">Ханты-Мансийский автономный округ</span></div>
+        </div>
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Город</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:2" data-pi-field="city">Ханты-Мансийск</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ─────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах итогового содержимого: пять пар «подпись +
+         значение» той же раскладки, что у полей. -->
+    <div class="lc-project-info__fields lc-project-info__loading" aria-busy="true">
+      <div class="lc-project-info__group">
+        <div class="lc-project-info__pair">
+          <div class="sk-group lc-project-info__type">
+            <span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span>
+            <span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span>
+          </div>
+          <div class="sk-group lc-project-info__class">
+            <span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span>
+            <span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="lc-project-info__group">
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:85%" aria-hidden="true"></span>
+        </div>
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Не заполнено, право на правку есть ───────────────────────── -->
+    <div class="lc-project-info__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-project-info-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- ── Не заполнено, права нет: одна строка причины, действия нет ── -->
+    <p class="lc-project-info__empty">Не заполнено</p>
+
   </div>
 </section>
             </div>
@@ -851,27 +972,115 @@
              align-self:stretch тянет ширину, не высоту. -->
         <div class="tile-row">
           <div class="tile-stack col-6 colw-12">
-            <!-- Локальный компонент «Продукты сделки» — фрагмент страницы сделки.
+            <!-- Локальный компонент «Продукты сделки» (DealProductTreeTile) — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
+     data-state — состояние данных: loading | data | partial | empty | updating
+                  (ошибки нет — ответ человека 30.09.2026)
      data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (DealProductTreeTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealProductTreeTile.css). -->
-<section class="tile lc-deal-products" data-state="empty" data-mode="edit">
+                  не допускающий правку, даёт view при любой роли
+     Разметка держит ВСЕ состояния сразу, показывает нужное DealProductTreeTile.css по этим
+     двум атрибутам — так устроен шаблон ДС (templates/local-component/Component.css).
+     Дерево ниже — пример с макета, стадия «часть инструментов и траншей прикреплены
+     к ФИ» (сделка 1027 демо-данных), разметка — вывод PostTileProductTree.treeHTML.
+     На странице сделки его заменяет DealProductTreeTile.js данными своей сделки.
+     Кнопки и пункты меню несут data-ptree-act: тайл отдаёт действие событием
+     ptreeaction, окна слушают его сами (паспорт, «Связанные артефакты»):
+     выбор продуктов ДИД, продуктов и инструментов, подтверждение удаления и
+     назначения основного, погашение, перенос инструмента, связь с ФИ. -->
+<section class="tile lc-deal-products" id="tile-deal-products" data-state="loading" data-mode="edit">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Продукты сделки</h3></div>
     </div>
+    <!-- Действие шапки — только в правке и когда дерево есть. «Обновление» — спиннер
+         на месте действия, дерево остаётся видимым (DealProductTreeTile.css). -->
     <div class="tile__actions">
-      <button type="button" class="btn btn--outline btn--xs"><i data-icon="add"></i><span class="btn__label">Продукт ДИД</span></button>
+      <span class="spin spin--s spin--accent lc-deal-products__spin" role="status" aria-label="Обновление"></span>
+      <button type="button" class="btn btn--outline btn--xs lc-deal-products__add" data-ptree-act="ADD_DID"><i data-icon="add"></i><span class="btn__label">Продукт ДИД</span></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-deal-products__stub">Данные ещё не заведены</p>
+
+    <!-- Данные есть: дерево ProductRow и кнопка добавления во всю ширину под ним.
+         Сворачивается только ветка продукта ДИД; в просмотре у строк нет
+         кнопок и меню, звезда — знак (DealProductTreeTile.js, mode: 'view'). -->
+    <div class="lc-deal-products__data">
+      <ul class="prow-tree">
+        <li class="prow-tree__node" data-ptree-id="1027.d1">
+          <div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><button type="button" class="prow__mark" aria-pressed="true" aria-label="Основной продукт ДИД" data-ptree-act="MAIN" data-ptree-id="1027.d1"><i data-icon="star-filled"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить продукт" data-tooltip="Добавить продукт" data-ptree-act="ADD" data-ptree-id="1027.d1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-ptree-id="1027.d1.p1">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d1.p1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1. Договор займа (НКЛ)</a></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить транш" data-tooltip="Добавить транш" data-ptree-act="ADD" data-ptree-id="1027.d1.p1.i1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                  <ul class="prow-tree__group">
+                    <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t1">
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.1. Транш</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                    </li>
+                    <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t2">
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.2. Транш</a></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t2"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                    </li>
+                  </ul>
+                </li>
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i2">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.2. НКЛ с баланса ПАО</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата входа ДИД"><i data-icon="calendar"></i><span class="prow__meta-text">01.04.2024</span></span><span class="prow__meta-item" data-tooltip="Дата выхода ДИД"><i data-icon="calendar"></i><span class="prow__meta-text">31.12.2026</span></span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+            <li class="prow-tree__node" data-ptree-id="1027.d1.p2">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d1.p2"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p2.i1">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2.1. Корп. договор</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p2-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p2-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="prow-tree__node" data-ptree-id="1027.d2">
+          <div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Долевое участие в жилой недвижимости</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основной продукт ДИД" data-ptree-act="MAIN" data-ptree-id="1027.d2"><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить продукт" data-tooltip="Добавить продукт" data-ptree-act="ADD" data-ptree-id="1027.d2"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-ptree-id="1027.d2.p1">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Долевое в ЖН</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d2.p1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d2.p1.i1">
+                  <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">2.1.1. Акции / Доли</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Стоимость покупки"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d2.p1.i1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+                <li class="prow-tree__node" data-ptree-id="1027.d2.p1.i2">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1.2. Корп. договор</span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1-i2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1-i2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <button type="button" class="btn btn--outline btn--s btn--fullwidth lc-deal-products__add" data-ptree-act="ADD_DID"><i data-icon="add"></i><span class="btn__label">Добавить продукт ДИД</span></button>
+    </div>
+
+    <!-- Загрузка: дерево-заготовка в габаритах будущих строк (48px), корневая строка
+         и две вложенные — раскладка не прыгает после ответа. -->
+    <ul class="prow-tree lc-deal-products__loading" aria-busy="true">
+      <li class="prow-tree__node">
+        <div class="prow prow--root" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+        <ul class="prow-tree__group">
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div></li>
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Не заполнено, право на правку есть: кнопка слева вверху тела, без EmptyState
+         (макет «Нет данных», паспорт — «Осознанные отклонения») -->
+    <div class="lc-deal-products__fill">
+      <button type="button" class="btn btn--accent btn--s" data-ptree-act="ADD_DID"><span class="btn__label">Добавить продукт ДИД</span></button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-deal-products__empty">Не заполнено</p>
+
   </div>
 </section>
           </div>
@@ -1848,7 +2057,7 @@
      (подчасть этого окна — EcmModal/EcmModal.html, свой скрим и своя метка).
 
      Фрагмент вшивается ассемблером отдельной меткой ds-include в конце body.
-     Вид — по макету refs/описание/«Документы по сделке (ЭКД).png» модуля
+     Вид — по макету дизайнера «Документы по сделке»
      (решение человека 25.09.2026): участник — карточкой контрагента, выбранная
      карточка подсвечена, «Открыть» недоступна, пока участник не выбран.
 
@@ -1898,7 +2107,7 @@
      меткой рядом с ним — у фрагмента один корневой элемент, и сборщик не
      раскрывает метки внутри фрагмента.
 
-     Вид — по макету «Документы по сделке (ЭКД).png» (refs/описание модуля):
+     Вид — по макету дизайнера «Документы по сделке»:
      в теле полное наименование контрагента, под ним документы. В продукте
      документы открываются из внешней системы хранения; в прототипе её нет,
      поэтому на их месте — пустое состояние с объяснением.
@@ -1980,7 +2189,7 @@
      подтверждать нечего, и залитая Primary обещала бы действие, которого нет
      (решение человека 25.09.2026; на макете кнопка залитая — паспорт).
 
-     Состав сверху вниз (макет refs/финансовые метрики/Модальное окно.png):
+     Состав сверху вниз (макет дизайнера):
        1. два AllocationBar ДС рядом — ВБС по продуктам и ОСЗ по частям долга,
           каждый на подложке. У ОСЗ бывают плашка «Данные рассчитываются» и
           иконка-предупреждение о просрочке с тултипом;
@@ -2207,6 +2416,567 @@
     </footer>
   </div>
 </div>
+<!-- Окно тайла «Сведения о проекте»: правка; открывают карандаш и
+     «Заполнить» тайла. -->
+<!-- Связанный артефакт тайла «Сведения о проекте»: окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла. Открывают его карандаш тайла и
+     кнопка «Заполнить» пустого тайла; в просмотре тайл окно не открывает.
+
+     Раскладка — как на макете: две секции, «Данные по проекту» и «Метрики»,
+     в каждой поля по два в ряд. Порядок полей в разметке — порядок чтения.
+
+     Значения ниже — пример: «Жилая», класс «Комфорт», топ застройщик,
+     три метрики жилой недвижимости; DSCR и LTV у жилой недвижимости
+     выключены. На странице сделки значения и доступность полей ставит
+     DealProjectInformationModal.js по записи сделки и выбранному типу:
+       тип не выбран — все метрики выключены;
+       Коммерческая  — выключены класс жилья, LTC, LTARV и LLCR;
+       Жилая         — выключены DSCR и LTV;
+       Иная          — всё включено.
+
+     Опции списков пусты в разметке: их подставляет
+     DealProjectInformationModal.js из справочников DEALS_ENUMS
+     (runtime-hooks: динамический список у DropdownList собирается кодом).
+     «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+
+<div class="modal-scrim" id="deal-project-info-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="deal-project-info-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-project-info-title">Сведения о проекте</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-project-info-modal__sections">
+
+        <!-- ── Данные по проекту ─────────────────────────────────────── -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-project">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-project">Данные по проекту</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-property-type"><span class="ds-label__text">Тип недвижимости</span></label>
+              <div class="inp__field" data-ddl="pi-property-type-list">
+                <input class="inp__control" id="pi-property-type" autocomplete="off" value="Жилая">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-property-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <span class="ds-label"><span class="ds-label__text" id="pi-housing-class-label">Класс жилья</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Класс жилья" data-tooltip="Класс жилья можно найти в презентации на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field" data-ddl="pi-housing-class-list">
+                <input class="inp__control" id="pi-housing-class" aria-labelledby="pi-housing-class-label" autocomplete="off" value="Комфорт">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-housing-class-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <!-- Чекбокс и пояснение к нему — одна строка на всю ширину. У
+                 Checkbox нет слота иконки, пояснение стоит рядом кнопкой
+                 (паспорт, «Осознанные отклонения»). -->
+            <div class="lc-project-info-modal__wide lc-project-info-modal__check">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="pi-top-developer" checked>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Топ застройщик</span></span>
+              </label>
+              <button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Топ застройщик" data-tooltip-multiline="yes"
+                      data-tooltip="Перечень топ застройщиков отражен в Решении КПКИ в Атласе: Дивизион «Кредитные продукты и процессы»/УФН/Продукты УФН/Жилая недвижимость/«Об утверждении особых условий кредитования Топ Застройщиков на цели финансирования проектов строительства объектов жилой недвижимости» (Решение КПКИ регулярно обновляется)"><i data-icon="info-circle"></i></button>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-region"><span class="ds-label__text">Регион</span></label>
+              <div class="inp__field" data-ddl="pi-region-list">
+                <input class="inp__control" id="pi-region" autocomplete="off" value="Ханты-Мансийский автономный округ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-region-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-city"><span class="ds-label__text">Город</span></label>
+              <div class="inp__field" data-ddl="pi-city-list">
+                <input class="inp__control" id="pi-city" autocomplete="off" value="Ханты-Мансийск">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-city-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Метрики ───────────────────────────────────────────────── -->
+        <!-- Числа на момент одобрения сделки на КПКИ. LTV, LTC и LTARV —
+             проценты (постфикс %), DSCR и LLCR — коэффициенты. Ввод — только
+             число: цифры и одна запятая. -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-metrics">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-metrics">Метрики</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="dscr">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-dscr-label">DSCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: DSCR" data-tooltip="Пороговый Debt Service Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-dscr" aria-labelledby="pi-dscr-label" inputmode="decimal" autocomplete="off" disabled>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="ltv">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-ltv-label">LTV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTV" data-tooltip="Loan to Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltv" aria-labelledby="pi-ltv-label" inputmode="decimal" autocomplete="off" disabled>
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltc">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltc-label">LTC</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTC" data-tooltip="Loan to Cost на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltc" aria-labelledby="pi-ltc-label" inputmode="decimal" autocomplete="off" value="80">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltarv">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltarv-label">LTARV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTARV" data-tooltip="Loan to After Repair Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltarv" aria-labelledby="pi-ltarv-label" inputmode="decimal" autocomplete="off" value="45">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="llcr">
+              <span class="ds-label"><span class="ds-label__text" id="pi-llcr-label">LLCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LLCR" data-tooltip="Loan Life Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-llcr" aria-labelledby="pi-llcr-label" inputmode="decimal" autocomplete="off" value="2">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-pi-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окна тайла «Продукты сделки»: выбор продуктов ДИД, продуктов и
+     инструментов, погашение, перенос инструмента, связь с ФИ и общее
+     подтверждение удаления и назначения основного (вложенный скрим — сосед
+     остальных, а не потомок, поэтому последним). Открывают их события тайла
+     ptreeaction, данные окна берут из ProductTreeStore. -->
+<!-- DidProductsModal — окно «Продукты ДИД»: состав продуктов ДИД сделки.
+     Артефакт тайла «Продукты сделки» (DealProductTreeTile): открывается
+     кнопками «+ Продукт ДИД» в шапке, «+ Добавить продукт ДИД» под деревом
+     и «Добавить продукт ДИД» в пустом тайле. Фрагмент вшивается отдельной
+     меткой ds-include: скрим должен лежать в конце body, а не внутри тайла.
+
+     Две колонки: «Доступные продукты ДИД» — весь справочник продуктов ДИД, и
+     «Выбрано» — продукты ДИД сделки: у сохранённых — номер, у основного —
+     звезда. Перенос — кнопкой ⇄ или двойным кликом по строке. Новый продукт
+     ДИД приходит со своим обязательным составом; сохранённый продукт ДИД
+     убирается из «Выбрано» после подтверждения (ProductTreeConfirmModal),
+     добавленный в окне — сразу. «Сохранить» применяет правки к дереву,
+     крестик, Esc и подложка их отменяют.
+
+     Строки колонок рисует DidProductsModal.js на общем слое окон выбора
+     (../ProductsModal/ProductsModal.js) из ProductTreeStore — ниже пример с
+     макета: окно открыто повторно, выбраны «1. Акционерный мезонин»
+     (основной) и «2. Доп. доходность». Раскладка и показ блоков по состоянию —
+     ../ProductsModal/ProductsModal.css. -->
+
+<div class="modal-scrim" id="ptree-did-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-did-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-did-title">Продукты ДИД</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные продукты ДИД</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="EQUITY_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Акционерный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="ADDITIONAL_YIELD"><div class="prow__main"><div class="prow__head"><span class="prow__title">Доп. доходность</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="VENTURE_FINANCING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Венчурное финансирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="PAY_ONCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Pay Once</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="EQUITY_PARTICIPATION"><div class="prow__main"><div class="prow__head"><span class="prow__title">Долевое участие в капитале</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="COMPENSATION_AGREEMENT"><div class="prow__main"><div class="prow__head"><span class="prow__title">Соглашение о компенсационных выплатах</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="RESIDENTIAL_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Мезонин в жилой недвижимости</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="RESIDENTIAL_EQUITY"><div class="prow__main"><div class="prow__head"><span class="prow__title">Долевое участие в жилой недвижимости</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="RESIDENTIAL_PROJECT_BRIDGE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Проектный бридж в жилой недвижимости</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="PRE_PROJECT_BRIDGE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Предпроектный бридж</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="CREDIT_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="CORPORATE_CONTROL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Корпоративный контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="FUNDING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Фондирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="COMMERCIAL_PROJECT_BRIDGE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Проектный бридж в коммерческой недвижимости</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="LBO_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Мезонин в LBO</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="AGRO_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Мезонин в АПК</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="INTRAGROUP_LOAN"><div class="prow__main"><div class="prow__head"><span class="prow__title">Внутригрупповой кредит</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="SEED_3_IN_1"><div class="prow__main"><div class="prow__head"><span class="prow__title">Начальное финансирование в рамках продукта &quot;3 в 1&quot;</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="SEED_COMPLEX_HOUSING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Начальное финансирование в рамках продукта &quot;Комплексное жилищное&quot;</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="PRIVATE_EQUITY"><div class="prow__main"><div class="prow__head"><span class="prow__title">Private Equity</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="MA_FINANCING"><div class="prow__main"><div class="prow__head"><span class="prow__title">M&amp;A Финансирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="ADVISORY"><div class="prow__main"><div class="prow__head"><span class="prow__title">Консультационные услуги</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="PRODUCT_2_IN_1"><div class="prow__main"><div class="prow__head"><span class="prow__title">Продукт &quot;2 в 1&quot;</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="GUARANTEE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Гарантия</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="PROJECT_FINANCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Проектное финансирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" data-prodpick-key="demo.n4"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Акционерный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="demo.n8"><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Доп. доходность</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта ДИД" data-tooltip="Описание продукта ДИД"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- ProductsModal — окно «Продукты»: продукты одного продукта ДИД. Артефакт
+     тайла «Продукты сделки» (DealProductTreeTile): открывается кнопкой ⊕
+     «Добавить продукт» у продукта ДИД. Заголовок — номер и название
+     продукта ДИД. Фрагмент вшивается отдельной меткой ds-include: скрим
+     должен лежать в конце body, а не внутри тайла.
+
+     Две колонки: «Доступные продукты» — продукты, которые можно добавить в
+     этот продукт ДИД, и «Выбрано» — продукты ветки: у сохранённых — номер.
+     Перенос — кнопкой ⇄ или двойным кликом по строке; новый продукт
+     приходит со своими обязательными инструментами, сохранённый убирается
+     после подтверждения (ProductTreeConfirmModal), добавленный в окне —
+     сразу. «Сохранить» применяет правки к дереву, крестик, Esc и подложка
+     их отменяют. Обязательный продукт выбран заранее и выключен, пока он
+     единственный в продукте ДИД.
+
+     Строки колонок рисует ProductsModal.js из ProductTreeStore — ниже пример
+     с макета: «1. Кредитный мезонин», выбран только обязательный продукт.
+     Раскладка и показ блоков по состоянию — ProductsModal.css, общий с
+     окнами «Продукты ДИД» и «Инструменты». -->
+
+<div class="modal-scrim" id="ptree-products-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-products-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-products-title">1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные продукты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="CREDIT_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="CORPORATE_CONTROL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Корп. Контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="FUNDING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Фондирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="demo.n2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- InstrumentsModal — окно «Инструменты»: инструменты одного продукта.
+     Артефакт тайла «Продукты сделки» (DealProductTreeTile): открывается
+     кнопкой ⊕ «Добавить инструмент» у продукта. Заголовок — номер и название
+     продукта. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Две колонки: «Доступные инструменты» — типы инструментов, которые можно
+     добавить в этот продукт, и «Выбрано» — инструменты продукта: у
+     сохранённых — номер. Перенос — кнопкой ⇄ или двойным кликом по строке;
+     сохранённый инструмент убирается после подтверждения
+     (ProductTreeConfirmModal), добавленный в окне — сразу; прикреплённый к
+     ФИ (сам или траншем) — выключен. «Сохранить» применяет правки к дереву,
+     крестик, Esc и подложка их отменяют.
+
+     Макета окна нет: оно устроено как окно «Продукты» (ответ человека
+     30.09.2026 — окно инструментов работает так же). Строки рисует
+     InstrumentsModal.js на общем слое окон выбора
+     (../ProductsModal/ProductsModal.js) — ниже вывод той же функции для
+     продукта «1.1. Кредитный мезонин» сделки 1027: договор займа выключен,
+     его транши прикреплены к ФИ. Раскладка — ../ProductsModal/ProductsModal.css. -->
+
+<div class="modal-scrim" id="ptree-instruments-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-instruments-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-instruments-title">1.1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные инструменты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="LOAN_NCL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="NCL_PJSC_BALANCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="1027.d1.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="1027.d1.p1.i2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.2. НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- RepaymentModal — окно погашения инструмента или транша. Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом меню
+     «Погасить» или «Отменить погашение» у инструмента или транша. Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Два варианта (data-variant на .modal), макет «Погашение» (30.09.2026):
+     – repay — «Погашение инструмента N. Имя» и InputDate «Дата фактического
+       погашения», по умолчанию сегодня; «Подтвердить» гасит узел вместе с
+       вложенными (ответ человека 30.09.2026, 3);
+     – undo — «Отмена погашения инструмента N. Имя», без поля.
+     Крестик, Esc и подложка — без изменений.
+
+     Текст и дату ставит RepaymentModal.js из ProductTreeStore; ниже — пример
+     с макета: погашение транша 1.1.1.1. -->
+<div class="modal-scrim" id="ptree-repay-scrim" hidden>
+  <div class="modal modal--w3 lc-repay" data-variant="repay" role="dialog" aria-modal="true" aria-labelledby="ptree-repay-title" aria-describedby="ptree-repay-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-repay-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-repay__text" id="ptree-repay-text">Погашение инструмента 1.1.1.1. Транш</p>
+      <!-- InputDate: маска и календарь — из коробки ДС (ds-datepicker.js по
+           кнопке «Открыть календарь»); крестик очистки рисует ds-input.js по
+           значению, после заполнения кодом окно зовёт DSInput.sync. -->
+      <div class="inp inp--m inp--fullwidth lc-repay__date">
+        <label class="ds-label" for="ptree-repay-date"><span class="ds-label__text">Дата фактического погашения</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="ptree-repay-date" name="repaidAt" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="30.09.2026">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-repay-ok data-modal-close><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- InstrumentTransferModal — окно «Перенос инструмента». Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом «Перенести»
+     в меню инструмента. Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Макет «Перенос инструмента» (30.09.2026): пояснение, «Откуда» — продукт
+     ДИД и продукт, где инструмент сейчас (выключен), «Куда» — продукты ДИД
+     сделки и их продукты. Выбранная строка — состояние ProductRow «выбрана»;
+     «Сохранить» доступна после выбора, во время сохранения — с индикатором.
+     Строку продукта ДИД сворачивает шеврон справа.
+
+     Списки рисует InstrumentTransferModal.js (listHTML) из ProductTreeStore;
+     ниже — вывод той же функции для сделки 1027: переносится «1.2.1. Корп.
+     договор», подходит только «2.1. Долевое в ЖН». -->
+<div class="modal-scrim" id="ptree-transfer-scrim" hidden>
+  <div class="modal modal--w4 lc-transfer" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-transfer-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-transfer-title">Перенос инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-transfer__text">Выберите продукт, в который вы хотите переместить 1.2.1. Корп. договор</p>
+      <section class="lc-transfer__section" aria-labelledby="ptree-transfer-from">
+        <h3 class="ds-h6-strong" id="ptree-transfer-from">Откуда</h3>
+        <ul class="prow-tree" data-transfer-list="from">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" aria-disabled="true"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <section class="lc-transfer__section">
+        <h3 class="ds-h6-strong" id="ptree-transfer-to">Куда</h3>
+        <ul class="prow-tree" role="radiogroup" aria-labelledby="ptree-transfer-to" data-transfer-list="to">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div></div>
+              </li>
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Долевое участие в жилой недвижимости</span><span class="prow__mark" aria-hidden="true"><i data-icon="star"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" data-transfer-product="1027.d2.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Долевое в ЖН</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-transfer-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- LinkChangeModal — окно «Изменить связь с ФИ». Артефакт тайла «Продукты
+     сделки» (DealProductTreeTile): открывается кнопкой ⇄ у инструмента или
+     транша. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Перенос из дерева в ФИ» (30.09.2026): заголовок — номер и
+     название узла, подзаголовок «Выберите ФИ для переноса инструмента»,
+     карточки ФИ сделки (Card ДС; у фронтенда — FICards): «N. Тип»,
+     наименование, баланс, валюта, тип отчётности. Клик выбирает карточку
+     (Selected — зелёная рамка и заливка) или снимает выбор; выбрать можно
+     две. Карточка ФИ другого типа выключена. «Сохранить» доступна, когда
+     выбор отличается от сохранённого.
+
+     Карточки рисует LinkChangeModal.js (cardsHTML) из ProductTreeStore;
+     ниже — вывод той же функции для транша «1.1.1.2. Транш» сделки 1027. -->
+<div class="modal-scrim" id="ptree-link-scrim" hidden>
+  <div class="modal modal--w4 lc-fi-link" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-link-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-link-title">1.1.1.2. Транш</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <h3 class="ds-h6-strong" id="ptree-link-hint">Выберите ФИ для переноса инструмента</h3>
+      <div class="lc-fi-link__list" role="group" aria-labelledby="ptree-link-hint" data-link-list
+           data-off-grid="Карточки ФИ в окне: ширину задаёт окно, а не сетка страницы">
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">1. Кредит</h4></div><p class="tile__subtitle">127-Кредит-201</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="true" tabindex="0" data-link-fi="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">2. Кредит</h4></div><p class="tile__subtitle">127-Кредит-202</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">3. Акции</h4></div><p class="tile__subtitle">127-Акции-203</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: ПромФинанс</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">4. Кредит</h4></div><p class="tile__subtitle">127-Кредит-204</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">5. Кредит</h4></div><p class="tile__subtitle">127-Кредит-205</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-6"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">6. Акции</h4></div><p class="tile__subtitle">127-Акции-206</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-7"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">7. РЕПО</h4></div><p class="tile__subtitle">127-РЕПО-207</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-link-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- ProductTreeConfirmModal — подтверждение действия над деревом продуктов
+     сделки. Артефакт тайла «Продукты сделки» (DealProductTreeTile) и окон
+     выбора: один диалог на всё дерево, текст и кнопки ставит
+     ProductTreeConfirmModal.js по варианту (data-variant на .modal).
+
+     Два варианта:
+     – delete — удаление продукта ДИД, продукта, инструмента или транша:
+       «Подтвердите действие», «Отменить» и «Подтвердить» в тоне error, как
+       на макете окна «Продукты ДИД» (29.09.2026). Поднимается пунктом
+       «Удалить» в меню узла в тайле (удаление сохраняется сразу) и из окон
+       выбора, когда убирают сохранённый узел (удаление — в черновик окна);
+     – main — назначение основного продукта ДИД (звезда в тайле):
+       «Подтверждение действия», текст «Назначение продукта «N. Имя»
+       основным в сделке» (ответ человека 30.09.2026), одна кнопка
+       «Подтвердить», как у окна погашения.
+     Крестик, Esc, подложка и «Отменить» — без изменений.
+
+     Скрим вложенный (--nested): диалог встаёт и поверх открытого окна
+     выбора, и поверх страницы. Ниже — вариант delete для продукта ДИД. -->
+<div class="modal-scrim modal-scrim--nested" id="ptree-confirm-scrim" hidden>
+  <div class="modal modal--w3 lc-ptree-confirm" data-variant="delete" role="alertdialog" aria-modal="true" aria-labelledby="ptree-confirm-title" aria-describedby="ptree-confirm-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-ptree-confirm__text" id="ptree-confirm-text">Удаление продукта ДИД со всеми продуктами и инструментами</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-ptree-confirm__cancel" data-ptree-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-ptree-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
@@ -2221,6 +2991,15 @@
 <script src="../data/counterparties-store.js"></script>
 <!-- финансовые метрики сделок для тайла и окна «Финансовые метрики сделки» -->
 <script src="../data/mock-financial-metrics.js"></script>
+<!-- дерево продуктов сделки: справочники продуктов, карточки ФИ, деревья
+     сделок и стор. Стор — после deals-store.js и post-api.js: сохранённые
+     деревья он берёт из PostApi и переносит производные поля дерева
+     (основной продукт ДИД, продукты, балансы) в запись сделки, их читает
+     реестр портфеля -->
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
@@ -2239,9 +3018,21 @@
 <!-- тайл раньше окна: окно рисует бары функцией тайла -->
 <script src="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
 <script src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<!-- тайл «Продукты сделки» и его окна: общий слой двух колонок живёт в
+     ProductsModal.js, поэтому он раньше окон «Продукты ДИД» и «Инструменты» -->
+<script src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
-   меню по каталогу ролей, данные сделки (шапка, тайлы «КНР» и «Сроки сделки»), переключение
+   меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
    панелей табов и сворачивание секции (компонента «заголовок-аккордеон» в ДС
    нет).
    Скрипт синхронный и стоит после ds.js — поэтому его DSTabs.tabs(...) успевает
@@ -2363,6 +3154,8 @@
     fillTeam(deal);
     fillDescription(deal);
     fillFinMetrics(deal);
+    fillProjectInfo(deal);
+    fillProducts(deal);
   }
 
   /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
@@ -2512,6 +3305,48 @@
         get: function () { return metrics; }
       });
     }
+  }
+
+  /* Тайл «Сведения о проекте» — сведения этой сделки из DealsStore
+     (deal.projectInformation). Как у описания сделки, модули друг друга не
+     знают, связывает их страница: окно правки берёт сведения при открытии и
+     отдаёт правку сюда, страница пишет её в стор, тайл перерисовывается по
+     событию стора. Показывать ли ряд — решает applyProjectInfo по деску. */
+  function fillProjectInfo(deal) {
+    var tile = document.getElementById('tile-project-info');
+    if (!tile || !window.PostTileProjectInformation) return;
+
+    function paint(d) { window.PostTileProjectInformation.render(tile, d.projectInformation || null); }
+    paint(deal);
+
+    if (window.PostDealProjectInformationModal) {
+      window.PostDealProjectInformationModal.bind(document.getElementById('deal-project-info-scrim'), {
+        get: function () { return (window.DealsStore.byId(deal.id) || deal).projectInformation || null; },
+        save: function (info) { window.DealsStore.update(deal.id, { projectInformation: info }); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal && String(d.deal.id) === String(deal.id)) paint(d.deal);
+    });
+  }
+
+  /* Тайл «Продукты сделки» — дерево продуктов этой сделки из ProductTreeStore
+     (../data/product-tree-store.js поверх mock-deal-trees.js). Тайл связывает
+     со стором его собственный скрипт: перерисовка после «Сохранить» в окнах,
+     звезда основного продукта и «Удалить» — через стор. Окна «Продукты ДИД»,
+     «Продукты» и подтверждение удаления слушают события тайла сами, здесь их
+     не связывают. Режим (data-mode) тайлу уже поставил applyMode по статусу
+     сделки — render читает его с корня. Хранение — в памяти вкладки. */
+  /* Дерево сделки — после загрузки сохранённых деревьев (PostApi): до этого
+     тайл стоит в «Загрузке», как его вшила метка. */
+  function fillProducts(deal) {
+    var store = window.ProductTreeStore;
+    var tile = document.getElementById('tile-deal-products');
+    if (!store || !tile || !window.PostTileProductTree) return;
+    store.ready.then(function () {
+      store.use(deal.id);
+      window.PostTileProductTree.bind(tile, store);
+    });
   }
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

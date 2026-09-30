@@ -16,8 +16,8 @@ opensFrom: [Тайл «Описание сделки» — кнопка «Док
 purpose: Выбрать участника сделки и открыть его документы ЭКД
 ds: [Modal, Tile, EmptyState, Skeleton, Buttons, IconButton]
 dependsOn: [CounterpartyCard — режим select]
-requirements: [Макет apps/postrade/deals-app/refs/описание/Документы по сделке (ЭКД).png 25.09.2026, решения человека 25.09.2026]
-knowledge: [apps/postrade/deals-app/refs/описание — Документы по сделке (ЭКД).png (три кадра: выбор без выбранного, выбран участник, документы)]
+requirements: [Макет дизайнера 25.09.2026, решения человека 25.09.2026]
+knowledge: []
 ---
 
 # Widget: CounterpartiesEcmModal — Модальное окно «Документы по сделке»

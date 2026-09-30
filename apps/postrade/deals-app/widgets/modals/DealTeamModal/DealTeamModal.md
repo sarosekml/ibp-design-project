@@ -11,8 +11,8 @@ artifactOf: Команда сделки (DealTeamTile.md)
 opensFrom: [Тайл «Команда сделки» — IconButton «Редактировать» и кнопка «Заполнить» в пустом состоянии (правка), IconButton «Развернуть» (просмотр)]
 purpose: Назначить деск и участников сделки и отметить сделку ограниченного доступа
 ds: [Modal, InputAutocomplete, DropdownList, InputText, Checkbox, ReadOnlyField, Buttons, IconButton]
-requirements: [Макет apps/postrade/deals-app/refs/команда/Modal_.png 23.09.2026, пояснения заказчика 23.09.2026]
-knowledge: [apps/postrade/deals-app/refs/команда — Modal_.png]
+requirements: [Макет дизайнера 23.09.2026, пояснения заказчика 23.09.2026]
+knowledge: []
 ---
 
 # Модальное окно команды сделки

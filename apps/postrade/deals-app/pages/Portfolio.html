@@ -709,6 +709,10 @@
 <script src="../data/mock-counterparties.js"></script>
 <script src="../data/post-api.js"></script>
 <script src="../data/counterparties-store.js"></script>
+<!-- дерево продуктов: стор переносит сохранённые на странице сделки деревья в
+     DealsStore — баланс, PE, продукты и валюты реестра читают их оттуда -->
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/product-tree-store.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <script>
 /* Экранный скрипт: меню панели навигации строится из каталога ibp-home.js
@@ -955,22 +959,41 @@
   Array.prototype.slice.call(wrap.children).forEach(function (row) { frag.appendChild(row); });
   headRow.parentNode.insertBefore(frag, headRow.nextSibling);
 
-  /* Колонка «КНР» — состав, сохранённый на странице сделки. CounterpartiesStore
-     переносит его в DealsStore; если хранилище ответило раньше рендера строк
-     (localStorage), строки уже нарисованы с ним, если позже (сервер данных) —
-     ячейка перерисовывается здесь. Фильтр по КНР читает тот же deal.knr. */
+  /* Колонки из сохранённого на странице сделки: «КНР» — состав участников
+     (CounterpartiesStore), баланс, PE, продукты и валюты — дерево продуктов
+     (ProductTreeStore). Сторы переносят их в DealsStore; если хранилище
+     ответило раньше рендера строк (localStorage), строки уже нарисованы с
+     ними, если позже (сервер данных) — ячейки перерисовываются здесь.
+     Фильтры читают те же поля сделки. */
+  var SAVED_CELLS = {
+    knr: function (d) { return linkCell('knr', d.knr); },
+    balances: function (d) { return joinedCell('balances', d.balances); },
+    isPE: function (d) { return peCell('isPE', d.isPE); },
+    mainProductDid: function (d) { return textCell('mainProductDid', d.mainProductDid); },
+    productsDidNames: function (d) { return joinedCell('productsDidNames', d.productsDidNames); },
+    productsNames: function (d) { return joinedCell('productsNames', d.productsNames); },
+    currencies: function (d) { return currencyCell('currencies', d.currencies); }
+  };
   window.DealsStore.on('change', function (e) {
-    if (!e || e.type !== 'update' || !e.patch || !e.patch.knr) return;
+    if (!e || e.type !== 'update' || !e.patch) return;
     var row = tbl.querySelector('.tbl__row[data-row="' + String(e.id).replace(/"/g, '') + '"]');
-    /* DSTable.cell находит и ячейку скрытой колонки: скрытая настройкой
-       колонка (она переживает возврат на страницу) в DOM строки не стоит */
-    var cell = row && window.DSTable.cell(row, 'knr');
-    if (!cell) return;
-    /* меняется только содержимое: атрибуты ячейки (ширину, видимость
-       колонки) держит рантайм таблицы */
-    var tmp = document.createElement('div');
-    tmp.innerHTML = linkCell('knr', e.deal.knr);
-    cell.innerHTML = tmp.firstElementChild.innerHTML;
+    if (!row) return;
+    Object.keys(SAVED_CELLS).forEach(function (key) {
+      if (!(key in e.patch)) return;
+      /* DSTable.cell находит и ячейку скрытой колонки: скрытая настройкой
+         колонка (она переживает возврат на страницу) в DOM строки не стоит */
+      var cell = window.DSTable.cell(row, key);
+      if (!cell) return;
+      /* меняются только содержимое и значение сортировки: атрибуты ячейки
+         (ширину, видимость колонки) держит рантайм таблицы */
+      var tmp = document.createElement('div');
+      tmp.innerHTML = SAVED_CELLS[key](e.deal);
+      var fresh = tmp.firstElementChild;
+      cell.innerHTML = fresh.innerHTML;
+      var sort = fresh.getAttribute('data-sort-value');
+      if (sort == null) cell.removeAttribute('data-sort-value');
+      else cell.setAttribute('data-sort-value', sort);
+    });
   });
 
   /* ---------- переход на страницу сделки: двойной клик по строке ----------

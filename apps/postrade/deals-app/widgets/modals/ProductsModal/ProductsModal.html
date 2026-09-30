@@ -1,0 +1,65 @@
+<!-- ProductsModal — окно «Продукты»: продукты одного продукта ДИД. Артефакт
+     тайла «Продукты сделки» (DealProductTreeTile): открывается кнопкой ⊕
+     «Добавить продукт» у продукта ДИД. Заголовок — номер и название
+     продукта ДИД. Фрагмент вшивается отдельной меткой ds-include: скрим
+     должен лежать в конце body, а не внутри тайла.
+
+     Две колонки: «Доступные продукты» — продукты, которые можно добавить в
+     этот продукт ДИД, и «Выбрано» — продукты ветки: у сохранённых — номер.
+     Перенос — кнопкой ⇄ или двойным кликом по строке; новый продукт
+     приходит со своими обязательными инструментами, сохранённый убирается
+     после подтверждения (ProductTreeConfirmModal), добавленный в окне —
+     сразу. «Сохранить» применяет правки к дереву, крестик, Esc и подложка
+     их отменяют. Обязательный продукт выбран заранее и выключен, пока он
+     единственный в продукте ДИД.
+
+     Строки колонок рисует ProductsModal.js из ProductTreeStore — ниже пример
+     с макета: «1. Кредитный мезонин», выбран только обязательный продукт.
+     Раскладка и показ блоков по состоянию — ProductsModal.css, общий с
+     окнами «Продукты ДИД» и «Инструменты». -->
+
+<div class="modal-scrim" id="ptree-products-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-products-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-products-title">1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные продукты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="CREDIT_MEZZANINE"><div class="prow__main"><div class="prow__head"><span class="prow__title">Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="CORPORATE_CONTROL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Корп. Контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="FUNDING"><div class="prow__main"><div class="prow__head"><span class="prow__title">Фондирование</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="demo.n2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание продукта" data-tooltip="Описание продукта" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

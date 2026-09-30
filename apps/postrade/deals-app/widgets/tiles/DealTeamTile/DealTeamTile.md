@@ -13,8 +13,8 @@ opens: [DealTeamModal]
 variants: []
 modifiers: []
 dependsOn: []
-requirements: [ТЗ страницы сделки 19.09.2026, макеты apps/postrade/deals-app/refs/команда 23.09.2026, пояснения заказчика 23.09.2026]
-knowledge: [apps/postrade/deals-app/refs/команда — Tile-Deal-Team.png (шесть состояний тайла) и Modal_.png (окно правки)]
+requirements: [ТЗ страницы сделки 19.09.2026, макеты дизайнера 23.09.2026, пояснения заказчика 23.09.2026]
+knowledge: []
 ---
 
 # Команда сделки

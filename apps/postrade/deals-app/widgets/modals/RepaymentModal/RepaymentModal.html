@@ -1,0 +1,44 @@
+<!-- RepaymentModal — окно погашения инструмента или транша. Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом меню
+     «Погасить» или «Отменить погашение» у инструмента или транша. Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Два варианта (data-variant на .modal), макет «Погашение» (30.09.2026):
+     – repay — «Погашение инструмента N. Имя» и InputDate «Дата фактического
+       погашения», по умолчанию сегодня; «Подтвердить» гасит узел вместе с
+       вложенными (ответ человека 30.09.2026, 3);
+     – undo — «Отмена погашения инструмента N. Имя», без поля.
+     Крестик, Esc и подложка — без изменений.
+
+     Текст и дату ставит RepaymentModal.js из ProductTreeStore; ниже — пример
+     с макета: погашение транша 1.1.1.1. -->
+<div class="modal-scrim" id="ptree-repay-scrim" hidden>
+  <div class="modal modal--w3 lc-repay" data-variant="repay" role="dialog" aria-modal="true" aria-labelledby="ptree-repay-title" aria-describedby="ptree-repay-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-repay-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-repay__text" id="ptree-repay-text">Погашение инструмента 1.1.1.1. Транш</p>
+      <!-- InputDate: маска и календарь — из коробки ДС (ds-datepicker.js по
+           кнопке «Открыть календарь»); крестик очистки рисует ds-input.js по
+           значению, после заполнения кодом окно зовёт DSInput.sync. -->
+      <div class="inp inp--m inp--fullwidth lc-repay__date">
+        <label class="ds-label" for="ptree-repay-date"><span class="ds-label__text">Дата фактического погашения</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="ptree-repay-date" name="repaidAt" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="30.09.2026">
+            <span class="inp__acts">
+              <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-repay-ok data-modal-close><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

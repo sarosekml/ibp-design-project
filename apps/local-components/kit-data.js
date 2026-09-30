@@ -172,21 +172,35 @@ window.IBPKit = {
       "owner": null,
       "stub": false,
       "version": "0.006",
-      "updated": "25.09.2026"
+      "updated": "30.09.2026"
     },
     {
       "id": "DealProductTreeTile",
       "name": "Продукты сделки",
       "category": "Сделка",
-      "purpose": "Дерево продуктов ДИД сделки: продукты, договоры и транши",
+      "purpose": "Дерево продуктов сделки — продукты ДИД, продукты, инструменты и транши с номерами, основной продукт и точки входа в добавление, удаление, погашение, перенос и связь с ФИ",
       "type": "tile",
       "typeLabel": "тайл",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/DealProductTreeTile.doc.html",
       "owner": null,
-      "stub": true,
-      "version": "0.004",
-      "updated": "22.09.2026"
+      "stub": false,
+      "version": "1.003",
+      "updated": "30.09.2026"
+    },
+    {
+      "id": "DealProjectInformationModal",
+      "name": "Модальное окно сведений о проекте",
+      "category": "Сделка",
+      "purpose": "Заполнить и поправить сведения о проекте недвижимости и его метрики",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/DealProjectInformationModal.doc.html",
+      "owner": "ProjectInformationTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "28.09.2026"
     },
     {
       "id": "DealRelatedCollateralsTile",
@@ -245,6 +259,20 @@ window.IBPKit = {
       "updated": "25.09.2026"
     },
     {
+      "id": "DidProductsModal",
+      "name": "Окно «Продукты ДИД»",
+      "category": "Сделка",
+      "purpose": "Выбрать продукты ДИД сделки — добавить из справочника с обязательным составом и убрать выбранные",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/DidProductsModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.002",
+      "updated": "30.09.2026"
+    },
+    {
       "id": "EpsVbsImpactTile",
       "name": "Влияние на ЭПС/ВБС",
       "category": "Сделка",
@@ -287,18 +315,88 @@ window.IBPKit = {
       "updated": "24.09.2026"
     },
     {
+      "id": "InstrumentsModal",
+      "name": "Окно «Инструменты»",
+      "category": "Сделка",
+      "purpose": "Выбрать инструменты одного продукта сделки — добавить из доступных типов и убрать выбранные",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/InstrumentsModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "30.09.2026"
+    },
+    {
+      "id": "InstrumentTransferModal",
+      "name": "Окно «Перенос инструмента»",
+      "category": "Сделка",
+      "purpose": "Перенести инструмент в другой подходящий продукт этой же сделки",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/InstrumentTransferModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "30.09.2026"
+    },
+    {
+      "id": "LinkChangeModal",
+      "name": "Окно «Изменить связь с ФИ»",
+      "category": "Сделка",
+      "purpose": "Прикрепить инструмент или транш к одной-двум карточкам ФИ сделки или снять связь",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/LinkChangeModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "30.09.2026"
+    },
+    {
+      "id": "ProductsModal",
+      "name": "Окно «Продукты»",
+      "category": "Сделка",
+      "purpose": "Выбрать продукты одного продукта ДИД сделки — добавить из доступных и убрать выбранные",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/ProductsModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.002",
+      "updated": "30.09.2026"
+    },
+    {
+      "id": "ProductTreeConfirmModal",
+      "name": "Подтверждение действия над деревом",
+      "category": "Сделка",
+      "purpose": "Подтвердить удаление узла дерева продуктов или назначение основного продукта ДИД",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/ProductTreeConfirmModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "30.09.2026"
+    },
+    {
       "id": "ProjectInformationTile",
       "name": "Сведения о проекте",
       "category": "Сделка",
-      "purpose": "Параметры проекта недвижимости и проектные коэффициенты — показывается не у всех сделок",
+      "purpose": "Параметры проекта недвижимости — тип, класс жилья, регион и город — и метрики проекта на момент одобрения на КПКИ",
       "type": "tile",
       "typeLabel": "тайл",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/ProjectInformationTile.doc.html",
       "owner": null,
-      "stub": true,
-      "version": "0.004",
-      "updated": "22.09.2026"
+      "stub": false,
+      "version": "1.000",
+      "updated": "28.09.2026"
     },
     {
       "id": "RelatedDealsPopover",
@@ -313,6 +411,20 @@ window.IBPKit = {
       "stub": false,
       "version": "1.002",
       "updated": "27.09.2026"
+    },
+    {
+      "id": "RepaymentModal",
+      "name": "Окно погашения",
+      "category": "Сделка",
+      "purpose": "Погасить инструмент или транш вручную с датой фактического погашения или отменить погашение",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/RepaymentModal.doc.html",
+      "owner": "DealProductTreeTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "30.09.2026"
     }
   ]
 };

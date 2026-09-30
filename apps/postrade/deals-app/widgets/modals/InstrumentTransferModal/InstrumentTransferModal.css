@@ -1,0 +1,21 @@
+/* Окно «Перенос инструмента» (InstrumentTransferModal). Только внутренняя
+   раскладка тела. Геометрия — Modal ДС (modal--w4), строки и дерево —
+   ProductRow ДС (их размеры, рамки, выбранное и выключенное состояния
+   отсюда не переопределяются), цвета и шрифты — токены ДС; своих значений
+   здесь нет. */
+
+/* Пояснение — Body M, --text-secondary, как текст подтверждений (ответ
+   человека 30.09.2026, 28). Корень окна — .lc-transfer: правила — внутри него. */
+.lc-transfer .lc-transfer__text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* «Откуда» и «Куда»: заголовок H6 Strong и дерево строк через 8 */
+.lc-transfer .lc-transfer__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}

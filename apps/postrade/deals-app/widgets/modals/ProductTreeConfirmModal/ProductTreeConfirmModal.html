@@ -1,0 +1,36 @@
+<!-- ProductTreeConfirmModal — подтверждение действия над деревом продуктов
+     сделки. Артефакт тайла «Продукты сделки» (DealProductTreeTile) и окон
+     выбора: один диалог на всё дерево, текст и кнопки ставит
+     ProductTreeConfirmModal.js по варианту (data-variant на .modal).
+
+     Два варианта:
+     – delete — удаление продукта ДИД, продукта, инструмента или транша:
+       «Подтвердите действие», «Отменить» и «Подтвердить» в тоне error, как
+       на макете окна «Продукты ДИД» (29.09.2026). Поднимается пунктом
+       «Удалить» в меню узла в тайле (удаление сохраняется сразу) и из окон
+       выбора, когда убирают сохранённый узел (удаление — в черновик окна);
+     – main — назначение основного продукта ДИД (звезда в тайле):
+       «Подтверждение действия», текст «Назначение продукта «N. Имя»
+       основным в сделке» (ответ человека 30.09.2026), одна кнопка
+       «Подтвердить», как у окна погашения.
+     Крестик, Esc, подложка и «Отменить» — без изменений.
+
+     Скрим вложенный (--nested): диалог встаёт и поверх открытого окна
+     выбора, и поверх страницы. Ниже — вариант delete для продукта ДИД. -->
+<div class="modal-scrim modal-scrim--nested" id="ptree-confirm-scrim" hidden>
+  <div class="modal modal--w3 lc-ptree-confirm" data-variant="delete" role="alertdialog" aria-modal="true" aria-labelledby="ptree-confirm-title" aria-describedby="ptree-confirm-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-ptree-confirm__text" id="ptree-confirm-text">Удаление продукта ДИД со всеми продуктами и инструментами</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-ptree-confirm__cancel" data-ptree-confirm="cancel"><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--error btn--m" data-ptree-confirm="ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

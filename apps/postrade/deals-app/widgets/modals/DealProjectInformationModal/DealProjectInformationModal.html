@@ -1,0 +1,148 @@
+<!-- Связанный артефакт тайла «Сведения о проекте»: окно правки.
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен
+     лежать в конце body, а не внутри тайла. Открывают его карандаш тайла и
+     кнопка «Заполнить» пустого тайла; в просмотре тайл окно не открывает.
+
+     Раскладка — как на макете: две секции, «Данные по проекту» и «Метрики»,
+     в каждой поля по два в ряд. Порядок полей в разметке — порядок чтения.
+
+     Значения ниже — пример: «Жилая», класс «Комфорт», топ застройщик,
+     три метрики жилой недвижимости; DSCR и LTV у жилой недвижимости
+     выключены. На странице сделки значения и доступность полей ставит
+     DealProjectInformationModal.js по записи сделки и выбранному типу:
+       тип не выбран — все метрики выключены;
+       Коммерческая  — выключены класс жилья, LTC, LTARV и LLCR;
+       Жилая         — выключены DSCR и LTV;
+       Иная          — всё включено.
+
+     Опции списков пусты в разметке: их подставляет
+     DealProjectInformationModal.js из справочников DEALS_ENUMS
+     (runtime-hooks: динамический список у DropdownList собирается кодом).
+     «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+
+<div class="modal-scrim" id="deal-project-info-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="deal-project-info-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-project-info-title">Сведения о проекте</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-project-info-modal__sections">
+
+        <!-- ── Данные по проекту ─────────────────────────────────────── -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-project">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-project">Данные по проекту</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-property-type"><span class="ds-label__text">Тип недвижимости</span></label>
+              <div class="inp__field" data-ddl="pi-property-type-list">
+                <input class="inp__control" id="pi-property-type" autocomplete="off" value="Жилая">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-property-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <span class="ds-label"><span class="ds-label__text" id="pi-housing-class-label">Класс жилья</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Класс жилья" data-tooltip="Класс жилья можно найти в презентации на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field" data-ddl="pi-housing-class-list">
+                <input class="inp__control" id="pi-housing-class" aria-labelledby="pi-housing-class-label" autocomplete="off" value="Комфорт">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-housing-class-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <!-- Чекбокс и пояснение к нему — одна строка на всю ширину. У
+                 Checkbox нет слота иконки, пояснение стоит рядом кнопкой
+                 (паспорт, «Осознанные отклонения»). -->
+            <div class="lc-project-info-modal__wide lc-project-info-modal__check">
+              <label class="cb">
+                <input type="checkbox" class="cb__input" id="pi-top-developer" checked>
+                <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+                <span class="cb__content"><span class="cb__label">Топ застройщик</span></span>
+              </label>
+              <button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: Топ застройщик" data-tooltip-multiline="yes"
+                      data-tooltip="Перечень топ застройщиков отражен в Решении КПКИ в Атласе: Дивизион «Кредитные продукты и процессы»/УФН/Продукты УФН/Жилая недвижимость/«Об утверждении особых условий кредитования Топ Застройщиков на цели финансирования проектов строительства объектов жилой недвижимости» (Решение КПКИ регулярно обновляется)"><i data-icon="info-circle"></i></button>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-region"><span class="ds-label__text">Регион</span></label>
+              <div class="inp__field" data-ddl="pi-region-list">
+                <input class="inp__control" id="pi-region" autocomplete="off" value="Ханты-Мансийский автономный округ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-region-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth">
+              <label class="ds-label" for="pi-city"><span class="ds-label__text">Город</span></label>
+              <div class="inp__field" data-ddl="pi-city-list">
+                <input class="inp__control" id="pi-city" autocomplete="off" value="Ханты-Мансийск">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+              <div id="pi-city-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Метрики ───────────────────────────────────────────────── -->
+        <!-- Числа на момент одобрения сделки на КПКИ. LTV, LTC и LTARV —
+             проценты (постфикс %), DSCR и LLCR — коэффициенты. Ввод — только
+             число: цифры и одна запятая. -->
+        <section class="lc-project-info-modal__section" aria-labelledby="pi-sec-metrics">
+          <h3 class="lc-project-info-modal__heading" id="pi-sec-metrics">Метрики</h3>
+          <div class="lc-project-info-modal__grid">
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="dscr">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-dscr-label">DSCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: DSCR" data-tooltip="Пороговый Debt Service Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-dscr" aria-labelledby="pi-dscr-label" inputmode="decimal" autocomplete="off" disabled>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth inp--disabled" data-pi-metric="ltv">
+              <span class="ds-label ds-label--disabled"><span class="ds-label__text" id="pi-ltv-label">LTV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTV" data-tooltip="Loan to Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltv" aria-labelledby="pi-ltv-label" inputmode="decimal" autocomplete="off" disabled>
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltc">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltc-label">LTC</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTC" data-tooltip="Loan to Cost на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltc" aria-labelledby="pi-ltc-label" inputmode="decimal" autocomplete="off" value="80">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="ltarv">
+              <span class="ds-label"><span class="ds-label__text" id="pi-ltarv-label">LTARV</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LTARV" data-tooltip="Loan to After Repair Value на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-ltarv" aria-labelledby="pi-ltarv-label" inputmode="decimal" autocomplete="off" value="45">
+                <span class="inp__postfix">%</span>
+              </div>
+            </div>
+
+            <div class="inp inp--m inp--fullwidth" data-pi-metric="llcr">
+              <span class="ds-label"><span class="ds-label__text" id="pi-llcr-label">LLCR</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Пояснение: LLCR" data-tooltip="Loan Life Coverage Ratio на момент одобрения сделки на КПКИ" data-tooltip-multiline="yes"><i data-icon="info-circle"></i></button></span></span>
+              <div class="inp__field">
+                <input class="inp__control" id="pi-llcr" aria-labelledby="pi-llcr-label" inputmode="decimal" autocomplete="off" value="2">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-pi-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

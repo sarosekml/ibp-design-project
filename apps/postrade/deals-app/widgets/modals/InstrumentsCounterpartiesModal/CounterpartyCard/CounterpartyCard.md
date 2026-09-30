@@ -13,7 +13,7 @@ opens: []
 variants: [Юридическое лицо, Физическое лицо]
 modifiers: []
 dependsOn: []
-requirements: [Макеты apps/postrade/deals-app/refs/Post _ DEAL _ R&D 20.09.2026, решение человека 20.09.2026 (вынести карточку в переиспользуемый компонент)]
+requirements: [Макеты дизайнера 20.09.2026, решение человека 20.09.2026 (вынести карточку в переиспользуемый компонент)]
 knowledge: [apps/postrade/deals-app/refs/Текущий портфель.md]
 ---
 

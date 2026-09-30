@@ -15,8 +15,8 @@ artifactOf: Финансовые метрики сделки (DealFinancialMetri
 opensFrom: [Тайл «Финансовые метрики сделки» — IconButton «Развернуть» (только просмотр)]
 purpose: Финансовые метрики сделки целиком — ВБС и ОСЗ, резервы по ФИ, переоценка по PE по ФИ
 ds: [Modal, AllocationBar, Tile, ReadOnlyField, Table, TableCell, Link, Tooltip, Buttons, IconButton]
-requirements: [Макет apps/postrade/deals-app/refs/финансовые метрики/Модальное окно.png 25.09.2026, решения человека 25.09.2026]
-knowledge: [apps/postrade/deals-app/refs/финансовые метрики — Модальное окно.png (три варианта окна), Текст тултипов.png]
+requirements: [Макеты дизайнера 25.09.2026, решения человека 25.09.2026]
+knowledge: []
 ---
 
 # Модальное окно финансовых метрик сделки
