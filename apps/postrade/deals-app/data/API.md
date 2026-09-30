@@ -9,17 +9,18 @@
 ## Кто с кем говорит
 
 ```
-страница ─▶ CounterpartiesStore (counterparties-store.js) ─▶ PostApi (post-api.js) ─▶ API
+страница ─▶ CounterpartiesStore (counterparties-store.js) ─┐
+страница ─▶ ProductTreeStore (product-tree-store.js) ──────┴▶ PostApi (post-api.js) ─▶ API
 ```
 
 - Страницы и компоненты зовут только стор.
 - Стор зовёт только `PostApi`.
-- `PostApi` выбирает режим один раз, при загрузке страницы:
+- `PostApi` выбирает режим один раз, при загрузке страницы, — общий для всех ресурсов:
 
 | Режим | Когда | Куда пишется |
 |---|---|---|
 | `server` | страница открыта по http(s), и `GET /api/post/participants` ответил 2xx | база сервера |
-| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключ `ibp.post.participants` |
+| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants` и `ibp.post.product-trees` |
 
 В режиме `local` правки видны только в этом браузере. Консоль сообщает об этом один раз.
 
@@ -40,6 +41,27 @@
 Если сделку не сохраняли, записи о ней нет. Тогда стор собирает начальный состав из поля
 `knr` сделки в реестре (`mock-deals.js`). Имена КНР для таблицы портфеля стор тоже
 вычисляет из базы контрагентов, поэтому хранятся только id.
+
+## Дерево продуктов сделки
+
+Запись о сделке хранит дерево целиком — продукты ДИД, продукты, инструменты и транши
+(typedef `DealProductTreeRsDto`, `mock-deal-trees.js`), коды узлов — из каталога
+`mock-product-catalog.js`, связи с ФИ — id карточек `mock-fin-instruments.js`:
+
+```json
+{ "tree": { "id": 1027, "productsDid": [ … ] }, "updated": "2026-09-30T12:00:00.000Z" }
+```
+
+| Поле | Что это |
+|---|---|
+| `tree` | дерево сделки; сохранённое перекрывает демо-дерево из `mock-deal-trees.js` |
+| `updated` | время сохранения, ISO 8601; ставит сервер |
+
+Если сделку не сохраняли, записи нет — стор показывает дерево из `mock-deal-trees.js`.
+Плоские поля реестра (`mainProductDid`, `productsDidNames`, `productsNames`, `balances`,
+`currencies`, `isPE`) стор вычисляет из дерева (`ProductTreeStore.summary`), поэтому
+отдельно не хранятся. Правки в прототипе — ответ человека 30.09.2026 (задача
+`docs/tasks/RE0001-product-row-tree.md`, вопрос 15): в продукте дерево сохраняется.
 
 ## Команда сделки
 
@@ -115,12 +137,17 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 | `GET /api/post/participants/:dealId` | `200` — запись; `404` — сделку не сохраняли |
 | `PUT /api/post/participants/:dealId` | тело `{ members, knr }` → `200` `{ ok: true, updated }` |
 | `DELETE /api/post/participants` | `204` — база очищена (для показов) |
+| `GET /api/post/product-trees` | `200` — `{ "<номер сделки>": { tree, updated }, … }`; только сохранённые сделки |
+| `GET /api/post/product-trees/:dealId` | `200` — запись; `404` — дерево сделки не сохраняли |
+| `PUT /api/post/product-trees/:dealId` | тело `{ tree }` → `200` `{ ok: true, updated }` |
+| `DELETE /api/post/product-trees` | `204` — база деревьев очищена (для показов) |
 
 **Проверки при записи** (`400` с `{ error }`):
 
 - номер сделки и id контрагентов — `[A-Za-z0-9_-]`, от 1 до 32 символов;
 - `members` и `knr` — массивы без повторов, не больше 500 записей;
-- каждый id из `knr` есть в `members`.
+- каждый id из `knr` есть в `members`;
+- `tree.id` совпадает с номером сделки из пути; у узла `fiIds` — не больше двух.
 
 Тело больше 64 КБ — `413`. Другие методы — `405`.
 

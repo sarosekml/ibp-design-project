@@ -1,0 +1,41 @@
+<!-- LinkChangeModal — окно «Изменить связь с ФИ». Артефакт тайла «Продукты
+     сделки» (DealProductTreeTile): открывается кнопкой ⇄ у инструмента или
+     транша. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Перенос из дерева в ФИ» (30.09.2026): заголовок — номер и
+     название узла, подзаголовок «Выберите ФИ для переноса инструмента»,
+     карточки ФИ сделки (Card ДС; у фронтенда — FICards): «N. Тип»,
+     наименование, баланс, валюта, тип отчётности. Клик выбирает карточку
+     (Selected — зелёная рамка и заливка) или снимает выбор; выбрать можно
+     две. Карточка ФИ другого типа выключена. «Сохранить» доступна, когда
+     выбор отличается от сохранённого.
+
+     Карточки рисует LinkChangeModal.js (cardsHTML) из ProductTreeStore;
+     ниже — вывод той же функции для транша «1.1.1.2. Транш» сделки 1027. -->
+<div class="modal-scrim" id="ptree-link-scrim" hidden>
+  <div class="modal modal--w4 lc-fi-link" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-link-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-link-title">1.1.1.2. Транш</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <h3 class="ds-h6-strong" id="ptree-link-hint">Выберите ФИ для переноса инструмента</h3>
+      <div class="lc-fi-link__list" role="group" aria-labelledby="ptree-link-hint" data-link-list
+           data-off-grid="Карточки ФИ в окне: ширину задаёт окно, а не сетка страницы">
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">1. Кредит</h4></div><p class="tile__subtitle">127-Кредит-201</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="true" tabindex="0" data-link-fi="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">2. Кредит</h4></div><p class="tile__subtitle">127-Кредит-202</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">3. Акции</h4></div><p class="tile__subtitle">127-Акции-203</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: ПромФинанс</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-4"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">4. Кредит</h4></div><p class="tile__subtitle">127-Кредит-204</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="0" data-link-fi="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">5. Кредит</h4></div><p class="tile__subtitle">127-Кредит-205</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-6"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">6. Акции</h4></div><p class="tile__subtitle">127-Акции-206</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+        <article class="tile tile--card lc-fi-link__card" role="checkbox" aria-checked="false" tabindex="-1" aria-disabled="true" data-link-fi="FI-1027-7"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">7. РЕПО</h4></div><p class="tile__subtitle">127-РЕПО-207</p></div></header><div class="tile__body"><p class="lc-fi-link__line">Баланс: VPE CAPITAL</p><p class="lc-fi-link__line">Валюта: RUB</p><p class="lc-fi-link__line">Тип отчетности: МСФО и РСБУ</p></div></article>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-link-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -120,6 +120,7 @@
       monEntity: '',
       mainProductDid: '', productsDidNames: [], productsNames: [],
       balances: [], currencies: [], isPE: false,
+      projectInformation: null,
     }, partial);
     deals.unshift(deal);
     emit('change', { type: 'create', deal: deal });

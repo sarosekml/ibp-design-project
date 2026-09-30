@@ -139,10 +139,11 @@ node .agents/tools/assemble.mjs <файл>   # один
 
 ## Состав
 
-12 тайлов и таблица страницы сделки (`../pages/Deal.html`), пять модальных окон, две подчасти окон
-и один поповер. Наполнены четыре тайла: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
-`DealPeriodTile` (22.09.2026), `DealTeamTile` (23.09.2026), `DealDescriptionTile` (24.09.2026) — у
-каждого своё окно. Остальные 8 тайлов и таблица `DealCounterpartiesTable` — заглушки (`data-state="empty"`): оболочка есть,
+12 тайлов и таблица страницы сделки (`../pages/Deal.html`), семь модальных окон, две подчасти окон
+и один поповер. Наполнены шесть тайлов: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
+`DealPeriodTile` (22.09.2026), `DealTeamTile` (23.09.2026), `DealDescriptionTile` (24.09.2026),
+`DealFinancialMetricsTile` (25.09.2026), `ProjectInformationTile` (28.09.2026) — у каждого своё окно.
+Остальные 6 тайлов и таблица `DealCounterpartiesTable` — заглушки (`data-state="empty"`): оболочка есть,
 состав полей не согласован.
 
 **Заглушка не растягивает ряд** (решение человека 22.09.2026). Тело заглушки — одна строка
@@ -160,8 +161,8 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | Модуль | Где стоит |
 |---|---|
 | `CounterpartiesTile` — «КНР» (наполнен) · `DealPeriodTile` (наполнен) · `DealTeamTile` (наполнен) | Общая информация, первый ряд (3 + 3 + 6) |
-| `DealDescriptionTile` · `DealFinancialMetricsTile` | Общая информация, второй ряд (6 + 6) |
-| `ProjectInformationTile` | Общая информация, третий ряд (12, опциональный) |
+| `DealDescriptionTile` (наполнен) · `DealFinancialMetricsTile` (наполнен) | Общая информация, второй ряд (6 + 6) |
+| `ProjectInformationTile` (наполнен) | Общая информация, третий ряд (12, опциональный; только деск «Недвижимость»; высота по содержимому) |
 | `DealSetupTile` | Общая информация, правая колонка 320px |
 | `DealProductTreeTile` · `FinInstrumentsTile` | таб «Финансовые данные», первый ряд (6 + 6, в стопках) |
 | `EpsVbsImpactTile` · `DealMetricsCalculationTile` | таб «Финансовые данные», второй ряд (6 + 6) |
@@ -174,3 +175,5 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `modals/DealDescriptionModal` | конец `body`; открывается из `DealDescriptionTile` (правка и просмотр — одно окно) |
 | `modals/CounterpartiesEcmModal` (+ подчасть `EcmModal/` — второй шаг, свой скрим) | конец `body`; открывается кнопкой «Документы ЭКД по сделке» `DealDescriptionTile` |
 | `popovers/RelatedDealsPopover` | конец `body`; открывается ссылкой «Связанные сделки» `DealDescriptionTile`, у триггера его ставит `ds-popover.js` |
+| `modals/DealFinancialMetricsModal` | конец `body`; открывается из `DealFinancialMetricsTile` («Развернуть», только просмотр) |
+| `modals/DealProjectInformationModal` | конец `body`; открывается из `ProjectInformationTile` (карандаш и «Заполнить», только правка) |

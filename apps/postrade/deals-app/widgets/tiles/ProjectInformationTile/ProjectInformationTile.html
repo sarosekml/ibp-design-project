@@ -1,23 +1,134 @@
 <!-- Локальный компонент «Сведения о проекте» — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (ProjectInformationTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (ProjectInformationTile.css). -->
-<section class="tile lc-project-info" data-state="empty" data-mode="edit">
+
+     data-state — состояние данных: loading | data | partial | empty
+     data-mode  — режим прав: edit | view. Ставит страница: статус сделки,
+                  не допускающий правку, даёт view при любой роли
+
+     Разметка держит ВСЕ состояния сразу, показывает нужное
+     ProjectInformationTile.css по этим атрибутам — как остальные тайлы
+     страницы сделки.
+
+     Значения ниже — пример: «Иная», все пять метрик, топ застройщик. На
+     странице сделки их заменяет ProjectInformationTile.js
+     (PostTileProjectInformation.render) данными сделки.
+
+     Окно правки живёт в конце body страницы, а не здесь: карандаш и
+     «Заполнить» открывают deal-project-info-scrim (guarded: в нём ввод,
+     клик мимо окна не должен его сбросить). В просмотре действий нет. -->
+<section class="tile lc-project-info" data-state="data" data-mode="edit">
   <header class="tile__header">
     <div class="tile__header-main">
-      <div class="tile__title-row"><h3 class="tile__title">Сведения о проекте</h3></div>
+      <div class="tile__title-row">
+        <h3 class="tile__title">Сведения о проекте</h3>
+        <!-- Тег «Топ застройщик» — есть только у топ застройщика; нет — атрибут
+             hidden. Тег, не статус: без rounded и не сжимается (правило Chip). -->
+        <span class="tile__title-add lc-project-info__top" data-pi-top>
+          <span class="chip chip--xs chip--lblue chip--fit"><span class="chip__label">Топ застройщик</span></span>
+        </span>
+      </div>
     </div>
     <div class="tile__actions">
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m"
+              aria-label="Редактировать" data-modal="deal-project-info-scrim" data-modal-guarded><i data-icon="edit"></i></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-project-info__stub">Данные ещё не заведены</p>
+
+    <!-- ── Данные есть / заполнено частично ─────────────────────────── -->
+    <!-- Поля и группы полей тянутся поровну и переносятся на новую строку,
+         когда не помещаются, а не обрезаются. Минимальные ширины — в
+         ProjectInformationTile.css. Незаполненное поле — прочерк, поле с места
+         не уходит. -->
+    <div class="lc-project-info__fields lc-project-info__content">
+
+      <div class="lc-project-info__group">
+        <div class="lc-project-info__pair">
+          <div class="rof lc-project-info__type">
+            <span class="ds-label"><span class="ds-label__text">Тип недвижимости</span></span>
+            <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-pi-field="propertyType">Иная</span></div>
+          </div>
+          <div class="rof lc-project-info__class">
+            <span class="ds-label"><span class="ds-label__text">Класс жилья</span></span>
+            <div class="rof__row"><span class="rof__value rof__value--clamp-1" data-pi-field="housingClass">Комфорт</span></div>
+          </div>
+        </div>
+        <!-- Метрики — чипы «DSCR: 1», «LTV: 70%» в порядке DSCR, LTV, LTC,
+             LTARV, LLCR: только доступные типу недвижимости и заполненные.
+             Ни одной — прочерк вместо списка. -->
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Метрики</span></span>
+          <div class="rof__row">
+            <div class="rof__value rof__value--chips">
+              <div class="chiplist chiplist--s" role="group" aria-label="Метрики проекта" data-pi-metrics>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">DSCR: 1</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTV: 70%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTC: 80%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LTARV: 45%</span></span>
+                <span class="chip chip--xs chip--fit"><span class="chip__label">LLCR: 2</span></span>
+              </div>
+            </div>
+            <span class="rof__value" data-pi-metrics-empty hidden>—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lc-project-info__group">
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Регион</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:2" data-pi-field="region">Ханты-Мансийский автономный округ</span></div>
+        </div>
+        <div class="rof lc-project-info__cell">
+          <span class="ds-label"><span class="ds-label__text">Город</span></span>
+          <div class="rof__row"><span class="rof__value rof__value--clamp-n" style="--rof-clamp:2" data-pi-field="city">Ханты-Мансийск</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Загрузка ─────────────────────────────────────────────────── -->
+    <!-- Каркас в габаритах итогового содержимого: пять пар «подпись +
+         значение» той же раскладки, что у полей. -->
+    <div class="lc-project-info__fields lc-project-info__loading" aria-busy="true">
+      <div class="lc-project-info__group">
+        <div class="lc-project-info__pair">
+          <div class="sk-group lc-project-info__type">
+            <span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span>
+            <span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span>
+          </div>
+          <div class="sk-group lc-project-info__class">
+            <span class="sk-line sk-line--caption" style="--sk-w:70%" aria-hidden="true"></span>
+            <span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="lc-project-info__group">
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:85%" aria-hidden="true"></span>
+        </div>
+        <div class="sk-group lc-project-info__cell">
+          <span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span>
+          <span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Не заполнено, право на правку есть ───────────────────────── -->
+    <div class="lc-project-info__fill">
+      <button type="button" class="btn btn--accent btn--s" data-modal="deal-project-info-scrim" data-modal-guarded>
+        <span class="btn__label">Заполнить</span>
+      </button>
+    </div>
+
+    <!-- ── Не заполнено, права нет: одна строка причины, действия нет ── -->
+    <p class="lc-project-info__empty">Не заполнено</p>
+
   </div>
 </section>

@@ -1598,7 +1598,7 @@ css: `styles/tile.css` · js: `scripts/ds-tile.js` · deps: [icon-button, button
 ```
 Инлайн `style="grid-column:span N"` из CSS не переопределяется без `!important` — если нужен адаптив, бери пару `col-N`/`colw-N`, а не изобретай свой класс.
 
-Число колонок подбирается под объём контента, а не «по умолчанию 6»: блок на 3–4 коротких поля — 4 колонки (три в ряд), плотный блок — 6, таблица/длинный текст — 12. Пустое место справа внутри тайла — признак, что взято слишком много колонок.
+Число колонок подбирается под объём контента, а не «по умолчанию 6»: блок до 5 коротких полей — 3 или 4 колонки (на FHD и выше приоритет 3 — четыре в ряд, ниже FHD — 4, три в ряд), плотный блок — 6, таблица/длинный текст — 12. Пустое место справа внутри тайла — признак, что взято слишком много колонок.
 
 **Несколько рядов — оборачиваются в `.tile-group`** (flex-колонка, зазор 16px). Зазор между рядами руками не выставляется: `.screen__content` — flex с `gap: 24px`, и `margin` на `.tile-row` сложился бы с ним в 40px. Группа решает это тем, что она — один ребёнок контентной области: 24px остаётся между крупными зонами (PageHeader ↔ группа), 16px работает внутри группы.
 ```html
@@ -1750,6 +1750,55 @@ css: `styles/kanban.css` · js: `scripts/ds-kanban.js` · deps: [tile, chip, bad
 </div>
 <!-- … полная анатомия: specs/Kanban.md -->
 ```
+
+## ProductRow
+css: `styles/product-row.css` · js: `scripts/ds-product-row.js` · deps: [icon-button, context-menu, tooltip, skeleton]
+**Оси:** вариант (обычная / корневая `.prow--root`) · заливка (`.prow--tinted`) · заголовок-ссылка (`.prow__title--link`) · состав (только заголовок 48px / со значениями 72px / со статусом и значениями 92px) · набор действий (IconButton L + кебаб — решает потребитель) · выбор в списке (`role="radio"`/`"checkbox"` + `aria-checked`) · уровень в дереве (отступ 24px, дети корня без отступа).
+**Инварианты:** рамка — внутренняя тень, не `border` (наведение и корень без рамки не сдвигают содержимое); кнопки в `<a>` не вкладываются — ссылкой становится только заголовок `a.prow__title--link`, его `::after` растягивает клик на строку; метка `.prow__mark` — своя кнопка, не IconButton: нажатая меняет только глиф `star` → `star-filled`, цвет `--secondary`; пустое значение — «–», пара значения не скрывается; группа детей корня не сдвигается. Предметных слов в ДС нет: что за объекты, нумерация и действия — у потребителя.
+**Классы:** .prow · .prow--root · .prow--tinted · .is-hover · [aria-checked="true"] · .is-selected · [aria-disabled="true"] · .prow__lead · .prow__toggle · .prow__main · .prow__head · .prow__title · .prow__title--link · .prow__mark · .prow__status · .prow__status--success · .prow__status-text · .prow__meta · .prow__meta-item · .prow__meta-text · .prow__meta-affix · .prow__actions · .prow-tree · .prow-tree__node · .prow-tree__node--collapsed · .prow-tree__group
+**Диагностика:** «Строка прыгает на 1px при наведении» → рамка задана `border`, а не тенью компонента · «Клик по кнопке строки-ссылки уводит на страницу» → кнопка вложена в `<a>` · «Ветка не сворачивается» → `.prow__toggle` не в строке узла `.prow-tree__node` или у узла нет `.prow-tree__group` · «Дети корня сдвинуты на 24px» → группа не прямой потомок узла корня `.prow-tree > .prow-tree__node`
+
+Строка иерархического списка объектов: заголовок с номером, необязательные строка статуса и строка значений (иконка + значение), действия справа. Дерево — вложенные `<ul>`: строки в ветке через 8px, корневые узлы через 16px. Поля 12/16, радиус 4px, действия от заголовка через 16, между кнопками 8, иконки значений 20px, статуса 16px; заголовок корня — Body L Strong. Состояния: наведение (рамка `--primary`), заливка `--tertiary-bg-light`, выбранная в списке выбора (`aria-checked="true"`: подложка `--primary-bg`, рамка `--primary`), выключенное (`aria-disabled` на строке + `disabled` на кнопках), загрузка (`aria-busy` + `.sk-line` в `.prow__head`), ветка свёрнута. В списке выбора окна кнопка сворачивания корня может стоять последней в `.prow__actions`.
+
+```html
+<ul class="prow-tree">
+  <li class="prow-tree__node">                       <!-- + .prow-tree__node--collapsed -->
+    <div class="prow prow--root">
+      <div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div>
+      <div class="prow__main">
+        <div class="prow__head">
+          <span class="prow__title">1. Раздел</span>
+          <button type="button" class="prow__mark" aria-pressed="true" aria-label="Основная строка"><i data-icon="star-filled"></i></button>
+        </div>
+      </div>
+      <div class="prow__actions">
+        <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить" data-tooltip="Добавить"><i data-icon="add-circle"></i></button>
+        <span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="m1" data-menu-align="end"><i data-icon="more-dots"></i></button>
+          <div id="m1" class="menu menu--floating" role="menu" hidden>…</div></span>
+      </div>
+    </div>
+    <ul class="prow-tree__group">
+      <li class="prow-tree__node">
+        <div class="prow prow--tinted">                <!-- обычная строка; [aria-disabled="true"] — выключена -->
+          <div class="prow__main">
+            <div class="prow__head"><a class="prow__title prow__title--link" href="…">1.1. Позиция</a></div>
+            <div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Выполнено 12.01.2021</span></div>
+            <div class="prow__meta">
+              <span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span>
+              <span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span>
+            </div>
+          </div>
+          <div class="prow__actions">…</div>
+        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+```
+
+**Из коробки:** `ds-product-row.js` (через `ds.js`) сворачивает ветку по клику на `.prow__toggle` делегированием — перерисованное дерево повторной привязки не требует; выставляет `aria-expanded` / `aria-controls` / подпись, шлёт `prowtoggle` с `{ collapsed }`. API: `DSProductRow.wire(node, opts)` · `wireAll(root)` · `toggle(node, collapsed)`. Метку, нумерацию и действия ведёт потребитель; после перерисовки `innerHTML` — `dsIcons.apply`, `DSMenu.bindAll`, `DSTooltip.bindAll`.
+
+Полная анатомия: specs/ProductRow.md.
 
 ## Spacing (Сетка и отступы)
 css: `styles/spacing.css` · deps: — · 1.004

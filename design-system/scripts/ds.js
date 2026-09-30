@@ -31,6 +31,7 @@
     'ds-float.js',
     'ds-tabs.js',
     'ds-tile.js',
+    'ds-product-row.js',
     'ds-kanban.js',
     'ds-menu.js',
     'ds-popover.js',

@@ -105,6 +105,7 @@ const TILE_GAP = px('--tile-gap-col', 16);       // gap сетки и рядов
 const ROW_H = 40;                                // метка body-xs (16) + 4 + значение body-m (20)
 const ROW_GAP = 16;
 const CELL_MIN = 240;                            // K5: минимальная ширина ячейки
+const FHD = 1920;                                // K4: от этой ширины малый тайл — приоритет 3 колонки
 const CHAR_W_VALUE = 8;                          // body-m 16px, кириллица (эвристика composition-review)
 const CHAR_W_LABEL = 7;                          // body-xs
 const HEADER_H = 50;                             // шапка тайла (~padding 20/10 + заголовок h5)
@@ -1446,14 +1447,21 @@ function runGeometry(rows, standalone, width) {
        колонка навигации — под правило не подпадает: переносить в нём нечего, а
        ширину задаёт раскладка экрана. Раньше минимум 4 колонки требовался и от
        такого тайла: хаб проектов (15.09.2026) с тремя колонками по 3 из 12 и
-       списками Entity получал ложный FAIL «0 полей на 3 колонках». */
+       списками Entity получал ложный FAIL «0 полей на 3 колонках».
+       Малый тайл (1–5 полей) — 3 или 4 колонки: на FHD и выше приоритет 3,
+       ниже FHD — 4, и тайл на 3 колонках получает замечание, а не блокер
+       (решение человека 30.09.2026; до того было «от 4», и «Сроки сделки»
+       на 3 колонках по ТЗ держали страницу сделки красной). */
     const fcount = t.fields.length;
     const hasTable = /class="tbl|chart-host/.test(t.el);
-    const expected = hasTable ? 12 : (fcount >= 10 ? 8 : fcount >= 6 ? 6 : fcount >= 3 ? 4 : 4);
+    const small = !hasTable && fcount > 0 && fcount <= 5;
+    const expected = hasTable ? 12 : (fcount >= 10 ? 8 : fcount >= 6 ? 6 : 3);
     if (fcount === 0 && !hasTable) {
       out.push({ level: 'info', label: `K4 «${t.title}»: полей и таблицы нет — ширина по объёму неприменима` });
     } else if (t.span < expected && t.span <= 4) {
-      out.push({ level: 'fail', label: `K4 «${t.title}» (строка ${t.line}): ${fcount} полей на ${t.span} колонках — положено от ${expected} (поля переносятся)` });
+      out.push({ level: 'fail', label: `K4 «${t.title}» (строка ${t.line}): ${fcount} полей на ${t.span} колонках — положено от ${expected}${small ? ' (3 или 4; на FHD и выше приоритет 3)' : ''} (поля переносятся)` });
+    } else if (small && t.span === 3 && width < FHD) {
+      out.push({ level: 'warn', label: `K4 «${t.title}»: ${fcount} полей на 3 колонках при ширине ${width}px — ниже FHD приоритет 4 колонки` });
     } else if (t.span === 12 && fcount <= 5 && !hasTable) {
       out.push({ level: 'warn', label: `K4 «${t.title}»: тайл на всю ширину под ${fcount} полей — пустота справа` });
     }

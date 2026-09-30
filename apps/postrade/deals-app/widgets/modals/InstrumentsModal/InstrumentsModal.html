@@ -1,0 +1,65 @@
+<!-- InstrumentsModal — окно «Инструменты»: инструменты одного продукта.
+     Артефакт тайла «Продукты сделки» (DealProductTreeTile): открывается
+     кнопкой ⊕ «Добавить инструмент» у продукта. Заголовок — номер и название
+     продукта. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Две колонки: «Доступные инструменты» — типы инструментов, которые можно
+     добавить в этот продукт, и «Выбрано» — инструменты продукта: у
+     сохранённых — номер. Перенос — кнопкой ⇄ или двойным кликом по строке;
+     сохранённый инструмент убирается после подтверждения
+     (ProductTreeConfirmModal), добавленный в окне — сразу; прикреплённый к
+     ФИ (сам или траншем) — выключен. «Сохранить» применяет правки к дереву,
+     крестик, Esc и подложка их отменяют.
+
+     Макета окна нет: оно устроено как окно «Продукты» (ответ человека
+     30.09.2026 — окно инструментов работает так же). Строки рисует
+     InstrumentsModal.js на общем слое окон выбора
+     (../ProductsModal/ProductsModal.js) — ниже вывод той же функции для
+     продукта «1.1. Кредитный мезонин» сделки 1027: договор займа выключен,
+     его транши прикреплены к ФИ. Раскладка — ../ProductsModal/ProductsModal.css. -->
+
+<div class="modal-scrim" id="ptree-instruments-scrim" hidden>
+  <div class="modal modal--w7 lc-prodpick" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-instruments-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-instruments-title">1.1. Кредитный мезонин</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body modal__body--flush">
+      <div class="lc-prodpick__cols">
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Доступные инструменты</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="available">
+            <div class="prow" data-prodpick-key="LOAN_NCL"><div class="prow__main"><div class="prow__head"><span class="prow__title">Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="NCL_PJSC_BALANCE"><div class="prow__main"><div class="prow__head"><span class="prow__title">НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+          <!-- Загрузка: заготовка в габаритах будущих строк (48px) -->
+          <div class="lc-prodpick__list lc-prodpick__loading" aria-busy="true">
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div>
+            <div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+          </div>
+        </section>
+
+        <div class="dvd dvd--v" role="separator" aria-orientation="vertical"></div>
+
+        <section class="lc-prodpick__col">
+          <h3 class="ds-h6-strong">Выбрано</h3>
+          <div class="lc-prodpick__list ds-scroll" data-prodpick-list="selected">
+            <p class="lc-prodpick__hint">Для выбора актива кликните по нему дважды или нажмите на кнопку со стрелкой</p>
+            <div class="prow" aria-disabled="true" data-prodpick-key="1027.d1.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1. Договор займа (НКЛ)</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента" disabled><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move disabled><i data-icon="arrow-left-right"></i></button></div></div>
+            <div class="prow" data-prodpick-key="1027.d1.p1.i2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.2. НКЛ с баланса ПАО</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Описание инструмента" data-tooltip="Описание инструмента"><i data-icon="info-circle"></i></button><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Переместить" data-tooltip="Переместить" data-prodpick-move><i data-icon="arrow-left-right"></i></button></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-prodpick-save data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+/* Окно «Изменить связь с ФИ» (LinkChangeModal). Только внутренняя раскладка
+   тела. Геометрия — Modal ДС (modal--w4), карточки — Card ДС (.tile--card:
+   рамка, Hover, Selected по aria-checked, Disabled по aria-disabled отсюда
+   не переопределяются), цвета и шрифты — токены ДС; своих значений здесь
+   нет. */
+
+/* Карточки через 8. Корень окна — .lc-fi-link: правила раскладки — внутри него. */
+.lc-fi-link .lc-fi-link__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.lc-fi-link .lc-fi-link__card { flex: none; cursor: pointer; }
+.lc-fi-link .lc-fi-link__card[aria-disabled="true"] { cursor: default; }
+
+/* Строки карточки: «Баланс: …», «Валюта: …», «Тип отчетности: …» — Body S
+   --text-secondary, как на макете */
+.lc-fi-link .lc-fi-link__line {
+  margin: 0;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}

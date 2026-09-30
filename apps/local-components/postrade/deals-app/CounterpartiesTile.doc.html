@@ -577,6 +577,10 @@
 <script src="../../../postrade/deals-app/data/post-api.js"></script>
 <script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
 <script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
 <script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
 <script src="../../kit-data.js"></script>
 <script src="../../kit-nav.js"></script>
@@ -594,6 +598,16 @@
 <script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
 <script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
 <script src="CounterpartiesTile.demo.js"></script>
 <script>
 window.IBPKitPage = {"id":"CounterpartiesTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty","error"],"modes":["edit","view"],"state":"data","mode":"edit","width":400,"scenario":true,"fixtures":{"_":"Демо-данные витрины: по одному объекту на состояние. Значения выдуманные, но правдоподобной длины — короткие строки скрывают проблемы переполнения. Порядок КНР в списке значим: первые два показываются в тайле, остальные уходят в тултип строки «и ещё N КНР».","data":{"knr":[{"name":"КГ Самолёт","href":"#","rating":26,"zone":"red","ratingDate":"24.10.2025","zoneDate":"24.10.2025","segment":"Крупный бизнес","profile":"Непроектный"},{"name":"СамолётИнвестХолдинг Inc","href":"#","rating":26,"zone":"green","ratingDate":"24.10.2025","zoneDate":"24.10.2025","segment":"Крупный бизнес","profile":"Непроектный"},{"name":"ООО «ЮгСтрой»","href":"#","rating":18,"zone":"watchlist","ratingDate":"24.10.2025","zoneDate":"24.10.2025","segment":"Крупный бизнес","profile":"Непроектный"},{"name":"АО «Самолёт-Девелопмент»","href":"#","rating":31,"zone":"green","ratingDate":"24.10.2025","zoneDate":"24.10.2025","segment":"Крупный бизнес","profile":"Непроектный"}]},"partial":{"_":"Один КНР назначен, рейтинг по нему ещё не рассчитан: риск-метрика без зоны — чип outline, поля поповера прочерком. Поле с места не уходит.","knr":[{"name":"КГ Самолёт","href":"#","rating":null,"zone":null}]},"empty":{"_":"КНР по сделке не назначен. С правом на правку — кнопка «Заполнить», без права — строка «Не заполнено».","knr":[]},"error":{"_":"Заголовок и описание приходят с бэка; тайл показывает их дословно, остальной экран продолжает работать.","title":"Не удалось загрузить КНР","message":"Сервис рейтингов не ответил. Повторите попытку позже."},"long":{"_":"То же, что data, но с максимально длинными наименованиями — проверка усечения ссылки и переноса строки счётчика.","knr":[{"name":"Консолидированная группа «Самолёт-Инвест-Холдинг-Девелопмент-Северо-Запад»","href":"#","rating":26,"zone":"red","ratingDate":"24.10.2025","zoneDate":"24.10.2025"},{"name":"Акционерное общество «Специализированный застройщик Самолёт-Мытищи»","href":"#","rating":26,"zone":"green","ratingDate":"24.10.2025","zoneDate":"24.10.2025"},{"name":"ООО «ЮгСтрой»","href":"#","rating":18,"zone":"watchlist"}]}}};

@@ -1,23 +1,111 @@
-<!-- Локальный компонент «Продукты сделки» — фрагмент страницы сделки.
+<!-- Локальный компонент «Продукты сделки» (DealProductTreeTile) — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
+     data-state — состояние данных: loading | data | partial | empty | updating
+                  (ошибки нет — ответ человека 30.09.2026)
      data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (DealProductTreeTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealProductTreeTile.css). -->
-<section class="tile lc-deal-products" data-state="empty" data-mode="edit">
+                  не допускающий правку, даёт view при любой роли
+     Разметка держит ВСЕ состояния сразу, показывает нужное DealProductTreeTile.css по этим
+     двум атрибутам — так устроен шаблон ДС (templates/local-component/Component.css).
+     Дерево ниже — пример с макета, стадия «часть инструментов и траншей прикреплены
+     к ФИ» (сделка 1027 демо-данных), разметка — вывод PostTileProductTree.treeHTML.
+     На странице сделки его заменяет DealProductTreeTile.js данными своей сделки.
+     Кнопки и пункты меню несут data-ptree-act: тайл отдаёт действие событием
+     ptreeaction, окна слушают его сами (паспорт, «Связанные артефакты»):
+     выбор продуктов ДИД, продуктов и инструментов, подтверждение удаления и
+     назначения основного, погашение, перенос инструмента, связь с ФИ. -->
+<section class="tile lc-deal-products" data-state="data" data-mode="edit">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Продукты сделки</h3></div>
     </div>
+    <!-- Действие шапки — только в правке и когда дерево есть. «Обновление» — спиннер
+         на месте действия, дерево остаётся видимым (DealProductTreeTile.css). -->
     <div class="tile__actions">
-      <button type="button" class="btn btn--outline btn--xs"><i data-icon="add"></i><span class="btn__label">Продукт ДИД</span></button>
+      <span class="spin spin--s spin--accent lc-deal-products__spin" role="status" aria-label="Обновление"></span>
+      <button type="button" class="btn btn--outline btn--xs lc-deal-products__add" data-ptree-act="ADD_DID"><i data-icon="add"></i><span class="btn__label">Продукт ДИД</span></button>
     </div>
   </header>
+
   <div class="tile__body">
-    <p class="lc-deal-products__stub">Данные ещё не заведены</p>
+
+    <!-- Данные есть: дерево ProductRow и кнопка добавления во всю ширину под ним.
+         Сворачивается только ветка продукта ДИД; в просмотре у строк нет
+         кнопок и меню, звезда — знак (DealProductTreeTile.js, mode: 'view'). -->
+    <div class="lc-deal-products__data">
+      <ul class="prow-tree">
+        <li class="prow-tree__node" data-ptree-id="1027.d1">
+          <div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><button type="button" class="prow__mark" aria-pressed="true" aria-label="Основной продукт ДИД" data-ptree-act="MAIN" data-ptree-id="1027.d1"><i data-icon="star-filled"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить продукт" data-tooltip="Добавить продукт" data-ptree-act="ADD" data-ptree-id="1027.d1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-ptree-id="1027.d1.p1">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d1.p1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1. Договор займа (НКЛ)</a></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить транш" data-tooltip="Добавить транш" data-ptree-act="ADD" data-ptree-id="1027.d1.p1.i1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                  <ul class="prow-tree__group">
+                    <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t1">
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.1. Транш</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                    </li>
+                    <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t2">
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.2. Транш</a></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t2"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                    </li>
+                  </ul>
+                </li>
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i2">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.2. НКЛ с баланса ПАО</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата входа ДИД"><i data-icon="calendar"></i><span class="prow__meta-text">01.04.2024</span></span><span class="prow__meta-item" data-tooltip="Дата выхода ДИД"><i data-icon="calendar"></i><span class="prow__meta-text">31.12.2026</span></span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+            <li class="prow-tree__node" data-ptree-id="1027.d1.p2">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d1.p2"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d1.p2.i1">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2.1. Корп. договор</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p2-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p2-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d1.p2.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="prow-tree__node" data-ptree-id="1027.d2">
+          <div class="prow prow--root"><div class="prow__lead"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Долевое участие в жилой недвижимости</span><button type="button" class="prow__mark" aria-pressed="false" aria-label="Основной продукт ДИД" data-ptree-act="MAIN" data-ptree-id="1027.d2"><i data-icon="star"></i></button></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить продукт" data-tooltip="Добавить продукт" data-ptree-act="ADD" data-ptree-id="1027.d2"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+          <ul class="prow-tree__group">
+            <li class="prow-tree__node" data-ptree-id="1027.d2.p1">
+              <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Долевое в ЖН</span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить инструмент" data-tooltip="Добавить инструмент" data-ptree-act="ADD" data-ptree-id="1027.d2.p1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+              <ul class="prow-tree__group">
+                <li class="prow-tree__node" data-ptree-id="1027.d2.p1.i1">
+                  <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">2.1.1. Акции / Доли</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Стоимость покупки"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d2.p1.i1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+                <li class="prow-tree__node" data-ptree-id="1027.d2.p1.i2">
+                  <div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1.2. Корп. договор</span></div></div><div class="prow__actions"><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d2-p1-i2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d2-p1-i2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="DELETE" data-ptree-id="1027.d2.p1.i2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <button type="button" class="btn btn--outline btn--s btn--fullwidth lc-deal-products__add" data-ptree-act="ADD_DID"><i data-icon="add"></i><span class="btn__label">Добавить продукт ДИД</span></button>
+    </div>
+
+    <!-- Загрузка: дерево-заготовка в габаритах будущих строк (48px), корневая строка
+         и две вложенные — раскладка не прыгает после ответа. -->
+    <ul class="prow-tree lc-deal-products__loading" aria-busy="true">
+      <li class="prow-tree__node">
+        <div class="prow prow--root" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div></div>
+        <ul class="prow-tree__group">
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:56%" aria-hidden="true"></span></div></div></div></li>
+          <li class="prow-tree__node"><div class="prow" aria-busy="true"><div class="prow__main"><div class="prow__head"><span class="sk-line" style="--sk-w:48%" aria-hidden="true"></span></div></div></div></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Не заполнено, право на правку есть: кнопка слева вверху тела, без EmptyState
+         (макет «Нет данных», паспорт — «Осознанные отклонения») -->
+    <div class="lc-deal-products__fill">
+      <button type="button" class="btn btn--accent btn--s" data-ptree-act="ADD_DID"><span class="btn__label">Добавить продукт ДИД</span></button>
+    </div>
+
+    <!-- Не заполнено, права нет: одна строка причины, действия нет -->
+    <p class="lc-deal-products__empty">Не заполнено</p>
+
   </div>
 </section>

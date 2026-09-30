@@ -67,6 +67,7 @@
 @import url("styles/chart.css");
 @import url("styles/tile.css");
 @import url("styles/kanban.css");
+@import url("styles/product-row.css");
 
 /* Компоненты подкачки */
 @import url("styles/alert.css");

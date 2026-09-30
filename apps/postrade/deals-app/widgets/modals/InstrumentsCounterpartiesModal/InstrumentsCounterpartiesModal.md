@@ -12,7 +12,7 @@ opensFrom: [Тайл контрагентов (на странице сделк�
 purpose: Найти контрагентов, перенести их в участники сделки и отметить среди них ключевых носителей риска
 ds: [Modal, Tab, InputText, InputDate, InputAutocomplete, DropdownList, Divider, Typography, Layout, Buttons, IconButton, Tooltip]
 uses: [Карточка контрагента (CounterpartyCard/CounterpartyCard.md)]
-requirements: [Макеты apps/postrade/deals-app/refs/Post _ DEAL _ R&D 20.09.2026]
+requirements: [Макеты дизайнера 20.09.2026]
 knowledge: [apps/postrade/deals-app/refs/Текущий портфель.md]
 ---
 

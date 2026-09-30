@@ -13,7 +13,7 @@ variants: []
 modifiers: []
 dependsOn: []
 requirements: [ТЗ страницы сделки 19.09.2026]
-knowledge: [apps/postrade/deals-app/refs/пример страницы — снимки заполненной страницы текущей системы]
+knowledge: []
 ---
 
 # Заведение сделки

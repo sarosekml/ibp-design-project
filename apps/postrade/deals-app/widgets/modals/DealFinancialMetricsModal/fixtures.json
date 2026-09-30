@@ -1,5 +1,5 @@
 {
-  "_": "Демо-данные витрины окна. Форма — DealFinancialMetricsRsDto (data/mock-financial-metrics.js). База — сделка с PE, ОСЗ посчитана и с просрочкой (второй и третий варианты окна на макете apps/postrade/deals-app/refs/финансовые метрики/Модальное окно.png). Переключатели сценария DealFinancialMetricsModal.demo.js меняют её: PE, число строк ВБС (segments), ОСЗ рассчитывается, знак Δ переоценки, просрочка (overdueAmount, 0 — нет). Рисует DealFinancialMetricsModal.js (PostDealFinMetricsModal.render) — та же функция, что на странице сделки.",
+  "_": "Демо-данные витрины окна. Форма — DealFinancialMetricsRsDto (data/mock-financial-metrics.js). База — сделка с PE, ОСЗ посчитана и с просрочкой (второй и третий варианты окна на макете дизайнера). Переключатели сценария DealFinancialMetricsModal.demo.js меняют её: PE, число строк ВБС (segments), ОСЗ рассчитывается, знак Δ переоценки, просрочка (overdueAmount, 0 — нет). Рисует DealFinancialMetricsModal.js (PostDealFinMetricsModal.render) — та же функция, что на странице сделки.",
   "data": {
     "dealId": 1025,
     "currencyCode": "RUB",

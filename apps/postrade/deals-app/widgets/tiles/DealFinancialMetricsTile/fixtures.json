@@ -1,7 +1,7 @@
 {
-  "_": "Демо-данные витрины: по объекту на состояние. Форма — DealFinancialMetricsRsDto (data/mock-financial-metrics.js): суммы числами, ставки — проценты числом, даты — ISO; итога бара нет — над баром сумма строк. Рисует их DealFinancialMetricsTile.js (PostTileDealFinMetrics.render), той же функцией, что на странице сделки. Значения — с макетов apps/postrade/deals-app/refs/финансовые метрики/.",
+  "_": "Демо-данные витрины: по объекту на состояние. Форма — DealFinancialMetricsRsDto (data/mock-financial-metrics.js): суммы числами, ставки — проценты числом, даты — ISO; итога бара нет — над баром сумма строк. Рисует их DealFinancialMetricsTile.js (PostTileDealFinMetrics.render), той же функцией, что на странице сделки. Значения — с макетов дизайнера.",
   "data": {
-    "_": "Три продукта, без PE — второй тайл на макете Tile-fin-metrics.png, он же эталонный снимок.",
+    "_": "Три продукта, без PE — второй тайл на макете дизайнера, он же эталонный снимок.",
     "dealId": 1024,
     "currencyCode": "RUB",
     "vbs": {

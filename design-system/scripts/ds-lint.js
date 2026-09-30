@@ -33,13 +33,16 @@ const HEX_OK = /(chess|checker|shadow-demo|elevation-demo)/i;
 const HEX_ALLOW = [/^#(fff|ffffff|000|000000)$/i, /^rgba?\(\s*255\s*,\s*255\s*,\s*255/i, /^#(f2f5f5|fbfcfc|d9e0e0)$/i, /^rgba?\(\s*40\s*,\s*50\s*,\s*55/i];
 // пары «скрипт ↔ его CSS» (сами скрипты умеют подтягивать стиль, потому WARN)
 const JS_CSS_PAIRS = [['ds-nav.js', 'ds-nav.css'], ['ds-toc.js', 'ds-toc.css'], ['pg-kit.js', 'pg-kit.css'],
+  // ds-product-row.js ставит aria-expanded и класс свёрнутой ветки, но саму
+  // ветку прячет и шеврон поворачивает только product-row.css
+  ['ds-product-row.js', 'product-row.css'],
   // ds-tooltip.js свой CSS НЕ догружает, а разметку строит: оборачивает подпись в
   // .tip-anchor и кладёт рядом .tip. Без tooltip.css этот .tip рисуется обычным
   // текстом — подпись дублируется прямо в компоненте (инцидент 11.09.2026: Tab,
   // Chip, Entity, Table). Потому BLOCKER, а не WARN, как у самодогружающих пар.
   ['ds-tooltip.js', 'tooltip.css', 'BLOCKER']];
 // рантаймы, которые ds.js (RulesAudit W0/K0) догружает сам — экран не должен подключать их напрямую
-const DS_JS_BUNDLES = ['icons-data.js', 'ds-icons.js', 'ds-float.js', 'screens-chrome.js', 'ds-tabs.js', 'ds-tile.js', 'ds-menu.js', 'ds-popover.js', 'ds-tooltip.js', 'ds-modal.js', 'ds-table.js', 'tbl-resize.js', 'tbl-reorder.js', 'tbl-pin.js', 'ds-pagination.js', 'ds-riskmetric.js', 'ds-alert.js', 'ds-chip.js', 'ds-allocationbar.js', 'ds-notify.js', 'ds-datepicker.js', 'input-kit.js', 'ds-nav-panel.js', 'ds-splitter.js', 'ds-illustrations.js'];
+const DS_JS_BUNDLES = ['icons-data.js', 'ds-icons.js', 'ds-float.js', 'screens-chrome.js', 'ds-tabs.js', 'ds-tile.js', 'ds-product-row.js', 'ds-menu.js', 'ds-popover.js', 'ds-tooltip.js', 'ds-modal.js', 'ds-table.js', 'tbl-resize.js', 'tbl-reorder.js', 'tbl-pin.js', 'ds-pagination.js', 'ds-riskmetric.js', 'ds-alert.js', 'ds-chip.js', 'ds-allocationbar.js', 'ds-notify.js', 'ds-datepicker.js', 'input-kit.js', 'ds-nav-panel.js', 'ds-splitter.js', 'ds-illustrations.js'];
 // утилитарные классы разметки документации — владельца в styles/* не имеют
 const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
 // F5 — реестр «анатомия компонента взята целиком, не урезана под текущий вид». Каждый

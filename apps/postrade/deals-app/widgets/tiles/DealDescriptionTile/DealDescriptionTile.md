@@ -18,8 +18,8 @@ opens: [DealDescriptionModal, CounterpartiesEcmModal, RelatedDealsPopover]
 variants: []
 modifiers: []
 dependsOn: []
-requirements: [ТЗ страницы сделки 19.09.2026, макеты apps/postrade/deals-app/refs/описание 24.09.2026, решения человека 25.09.2026]
-knowledge: [apps/postrade/deals-app/refs/описание — Tile-Deal-Description.png (четыре состояния тайла), Section 1.png (пояснения к признакам), Modal_Tile_Deal_Description.png (окно правки), Документы по сделке (ЭКД).png (окна документов)]
+requirements: [ТЗ страницы сделки 19.09.2026, макеты дизайнера 24.09.2026, решения человека 25.09.2026]
+knowledge: []
 ---
 
 # Widget: DealDescriptionTile — Описание сделки
@@ -106,7 +106,7 @@ Tile (заголовок «Описание сделки»)
 
 ### Признаки
 
-Значение признака — иконка (`Section 1.png`). Иконка по умолчанию —
+Значение признака — иконка (пояснения макета). Иконка по умолчанию —
 `--secondary`; тон — только там, где он несёт смысл.
 
 | Признак | Значение | Иконка | Тон |

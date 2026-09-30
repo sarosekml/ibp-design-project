@@ -1,0 +1,14 @@
+/* Окно погашения (RepaymentModal). Только текст сообщения и показ поля по
+   варианту. Геометрия — Modal ДС (modal--w3), поле — InputDate ДС, цвета и
+   шрифты — токены ДС; своих значений здесь нет. */
+
+/* Текст сообщения — Body M, --text-secondary (ответ человека 30.09.2026, 28) */
+.lc-repay__text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* Отмена погашения — без поля даты. Скрытие через корень окна: у .inp своя
+   display той же специфичности. */
+.lc-repay[data-variant="undo"] .lc-repay__date { display: none; }

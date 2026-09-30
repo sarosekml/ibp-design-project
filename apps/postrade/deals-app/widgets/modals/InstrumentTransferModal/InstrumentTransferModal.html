@@ -1,0 +1,67 @@
+<!-- InstrumentTransferModal — окно «Перенос инструмента». Артефакт тайла
+     «Продукты сделки» (DealProductTreeTile): открывается пунктом «Перенести»
+     в меню инструмента. Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Макет «Перенос инструмента» (30.09.2026): пояснение, «Откуда» — продукт
+     ДИД и продукт, где инструмент сейчас (выключен), «Куда» — продукты ДИД
+     сделки и их продукты. Выбранная строка — состояние ProductRow «выбрана»;
+     «Сохранить» доступна после выбора, во время сохранения — с индикатором.
+     Строку продукта ДИД сворачивает шеврон справа.
+
+     Списки рисует InstrumentTransferModal.js (listHTML) из ProductTreeStore;
+     ниже — вывод той же функции для сделки 1027: переносится «1.2.1. Корп.
+     договор», подходит только «2.1. Долевое в ЖН». -->
+<div class="modal-scrim" id="ptree-transfer-scrim" hidden>
+  <div class="modal modal--w4 lc-transfer" data-state="data" role="dialog" aria-modal="true" aria-labelledby="ptree-transfer-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ptree-transfer-title">Перенос инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-transfer__text">Выберите продукт, в который вы хотите переместить 1.2.1. Корп. договор</p>
+      <section class="lc-transfer__section" aria-labelledby="ptree-transfer-from">
+        <h3 class="ds-h6-strong" id="ptree-transfer-from">Откуда</h3>
+        <ul class="prow-tree" data-transfer-list="from">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" aria-disabled="true"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <section class="lc-transfer__section">
+        <h3 class="ds-h6-strong" id="ptree-transfer-to">Куда</h3>
+        <ul class="prow-tree" role="radiogroup" aria-labelledby="ptree-transfer-to" data-transfer-list="to">
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">1. Кредитный мезонин</span><span class="prow__mark" role="img" aria-label="Основной продукт ДИД"><i data-icon="star-filled"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1. Кредитный мезонин</span></div></div></div>
+              </li>
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" aria-disabled="true" data-transfer-product="1027.d1.p2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.2. Корп. Контроль</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+          <li class="prow-tree__node">
+            <div class="prow prow--root"><div class="prow__main"><div class="prow__head"><span class="prow__title">2. Долевое участие в жилой недвижимости</span><span class="prow__mark" aria-hidden="true"><i data-icon="star"></i></span></div></div><div class="prow__actions"><button type="button" class="prow__toggle" aria-expanded="true" aria-label="Свернуть"><i data-icon="chevron-up"></i></button></div></div>
+            <ul class="prow-tree__group">
+              <li class="prow-tree__node">
+                <div class="prow" role="radio" aria-checked="false" tabindex="-1" data-transfer-product="1027.d2.p1"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1. Долевое в ЖН</span></div></div></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-transfer-save data-modal-close disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

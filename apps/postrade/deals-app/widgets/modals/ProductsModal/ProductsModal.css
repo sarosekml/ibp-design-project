@@ -1,0 +1,75 @@
+/* Окна выбора дерева продуктов — «Продукты», «Продукты ДИД» и
+   «Инструменты»: общая внутренняя раскладка двух колонок и показ блоков по
+   состоянию данных. Владелец — ProductsModal; DidProductsModal и
+   InstrumentsModal стоят на тех же классах (их паспорта, dependsOn). Цвета,
+   шрифты, отступы — токены ДС; своих значений здесь нет.
+   Строки — ProductRow ДС: их размеры, рамка, наведение и выключенное
+   состояние отсюда не переопределяются. Ширина окна — modal--w7 в разметке
+   (1053px — ширина макета). */
+
+/* ── Окно ───────────────────────────────────────────────────────────── */
+/* Высота фиксирована — 60% экрана, как у окна КНР (решение человека
+   21.09.2026 для КНР). Причина та же: колонка «Выбрано» растёт с каждым
+   переносом, и окно по контенту прыгало бы; на макетах высота окна одна во
+   всех стадиях. Потолок Modal (--modal-max-h 80vh) не нарушается.
+   Отклонение от «высота по контенту» записано в паспортах окон. */
+.lc-prodpick { height: 60vh; }
+
+/* ── Две колонки ────────────────────────────────────────────────────── */
+/* Тело окна без полей (modal__body--flush): вертикальный Divider между
+   колонками идёт от шапки до подвала, как на макете, а поля держат сами
+   колонки. Ряд — minmax(0,1fr): прокручиваются списки, а не всё тело
+   (правило К3). */
+.lc-prodpick__cols {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* Колонка: заголовок + прокручиваемый список. Поля — как у тела Modal:
+   16 сверху, 24 снаружи и снизу. У разделителя 16px с каждой стороны; слева
+   из них 8px — место под бегунок .ds-scroll внутри списка. Справа бегунок
+   стоит у края окна: 16px поля + 8px бегунка = 24px. */
+.lc-prodpick__col {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-16) var(--space-8) var(--space-24) var(--space-24);
+}
+.lc-prodpick__col:last-child {
+  padding: var(--space-16) var(--space-16) var(--space-24) var(--space-16);
+}
+
+/* Строки через 8px — как в ветке дерева ProductRow. overflow и бегунок даёт
+   .ds-scroll (Layout), здесь не переопределяются. */
+.lc-prodpick__list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Подсказка пустой колонки «Выбрано» — Body M, --text-inactive (ответ
+   человека 30.09.2026, 28); уходит с первой строкой. */
+.lc-prodpick__hint {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-inactive);
+}
+.lc-prodpick__list:has(.prow) > .lc-prodpick__hint { display: none; }
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть». Меняется только левая колонка: «Выбрано» — дерево
+   сделки, оно уже загружено тайлом. «Обновление» (сохранение) — классы ДС
+   .modal--saving и .btn--loading, их ставит ProductsModal.js по
+   data-state. Ошибки и «нечего выбрать» нет (ответ человека 30.09.2026,
+   27). Скрытие — через корень окна: у списков своя display той же
+   специфичности. */
+.lc-prodpick .lc-prodpick__loading { display: none; }
+.lc-prodpick[data-state="loading"] [data-prodpick-list="available"] { display: none; }
+.lc-prodpick[data-state="loading"] .lc-prodpick__loading { display: flex; }
