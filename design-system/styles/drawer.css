@@ -167,8 +167,47 @@
   font: var(--type-body-m);
   color: var(--text-primary);
 }
-.drawer__body::-webkit-scrollbar { width: 8px; }
-.drawer__body::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 8px; }
+/* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,
+   скругление полное, цвет --secondary, без дорожки, уголка и стрелок. В покое
+   скрыт, при прокрутке появляется и гаснет: класс .is-scrolling ставит
+   ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
+   своей видимой рамки у .drawer__body не бывает. Резерв места не ставится.
+   1.001; до этого бегунок --border-light был виден всегда (решение человека
+   01.10.2026 — все полосы прокрутки ДС в одном виде). */
+.drawer__body {
+  --scroll-w: 8px;
+  --scroll-show: .1s;
+  --scroll-fade: .3s;
+  border-color: transparent;
+  transition: border-color var(--scroll-fade) ease;
+}
+.drawer__body.is-scrolling {
+  border-color: var(--secondary);
+  transition-duration: var(--scroll-show);
+}
+.drawer__body::-webkit-scrollbar { width: var(--scroll-w); height: var(--scroll-w); background: transparent; }
+.drawer__body::-webkit-scrollbar-track,
+.drawer__body::-webkit-scrollbar-corner { background: transparent; }
+.drawer__body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.drawer__body::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-color: inherit;
+  border-width: 0 calc(100vw + 100vh) 0 0;
+}
+/* Firefox — тонкая системная полоса того же цвета; стандартные свойства
+   только здесь, иначе Chrome перестал бы применять ::-webkit-scrollbar. */
+@supports not selector(::-webkit-scrollbar) {
+  .drawer__body {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color var(--scroll-fade) ease;
+  }
+  .drawer__body.is-scrolling {
+    scrollbar-color: var(--secondary) transparent;
+    transition-duration: var(--scroll-show);
+  }
+}
 .drawer__body--flush { padding: 0; gap: 0; }
 
 /* ---- секция тела ---- */

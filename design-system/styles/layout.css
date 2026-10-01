@@ -13,6 +13,9 @@
               по брейкпоинтам — горизонтального скролла нет.
    Прокрутка: .ds-scroll — общая полоса прокрутки внутренних областей
               (только бегунок, гаснет после прокрутки; рантайм scripts/ds-scroll.js).
+              .ds-page-scroll — полоса прокрутки самой страницы: системная
+              скрыта, бегунок ДС лежит оверлеем в правом поле контента, ширина
+              рабочей области от прокрутки не зависит (тот же рантайм).
    Requires:  spacing.css (шкала и сетка .grid12/.col-N), colors.css,
               palette.css и radius.css (бегунок .ds-scroll), nav-panel.css,
               breadcrumbs.css
@@ -131,4 +134,61 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ds-scroll { transition: none; }
+}
+
+/* ---------- прокрутка страницы: .ds-page-scroll ----------
+   Страница на каркасе (body > .nav-layout) прокручивается как обычно —
+   колесом, клавиатурой, тачем, — но системной полосы у документа нет.
+   Системная полоса занимает место у окна: на экране с табами она то есть,
+   то нет (контент одного таба выше окна, другого — ниже), и рабочая
+   область при каждом переключении меняет ширину (страница сделки,
+   01.10.2026). Вместо неё бегунок ДС лежит оверлеем поверх правого поля
+   контентной области: 8px по центру поля 24px, ширина рабочей области от
+   прокрутки не зависит, поле остаётся 24px. Модалкам компенсировать
+   нечего: у документа без полосы innerWidth − clientWidth = 0.
+   Вид и поведение — как у .ds-scroll: только бегунок --secondary со
+   скруглением --radius-full, в покое скрыт, появляется при прокрутке и
+   гаснет через 800 мс; ещё — при наведении на бегунок и пока его тянут.
+   Дорожку и бегунок вставляет, размеряет и двигает рантайм
+   scripts/ds-scroll.js, в разметке экрана их нет. Прокручивать нечего
+   (контент ниже окна, .screen--app) — дорожка [hidden].
+   Слой — выше контента и липких крошек (z-index 3), ниже меню и поповеров
+   (40), панели навигации и модалок. Системная полоса скрыта только у
+   экранов: страницы документации ДС держат .nav-layout внутри демо. */
+html:has(> body > .nav-layout) { scrollbar-width: none; }
+html:has(> body > .nav-layout)::-webkit-scrollbar { display: none; } /* Chromium до scrollbar-width */
+
+.ds-page-scroll {
+  --scroll-w: 8px;     /* ширина бегунка — как у .ds-scroll */
+  --scroll-show: .1s;  /* появление при прокрутке */
+  --scroll-fade: .3s;  /* затухание после остановки */
+  position: fixed;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  right: calc((var(--layout-pad-x) - var(--scroll-w)) / 2);
+  width: var(--scroll-w);
+  z-index: 20;
+  pointer-events: none;
+}
+.ds-page-scroll[hidden] { display: none; }
+.ds-page-scroll__thumb {
+  width: 100%;
+  min-height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--secondary);
+  opacity: 0;
+  transition: opacity var(--scroll-fade) ease;
+  pointer-events: auto;
+  touch-action: none;
+}
+.ds-page-scroll.is-scrolling .ds-page-scroll__thumb,
+.ds-page-scroll.is-dragging .ds-page-scroll__thumb,
+.ds-page-scroll__thumb:hover {
+  opacity: 1;
+  transition-duration: var(--scroll-show);
+}
+/* пока бегунок тянут, текст страницы не выделяется */
+html.ds-page-scroll-drag { user-select: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ds-page-scroll__thumb { transition: none; }
 }

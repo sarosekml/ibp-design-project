@@ -132,10 +132,11 @@
           <div class="phead__title-row">
             <div class="phead__title-group">
               <h1 class="phead__title" id="deal-title">Сделка</h1>
-              <!-- Модалка редактирования номера и наименования — та же, что при
-                   создании сделки в реестре. Не собрана: скрима deal-rename-scrim
-                   на странице пока нет, хук ждёт его (Deal.screen.md, §6). -->
+              <!-- Окно «Редактирование сделки» (DealTitleModal) — то же, что
+                   «Новая сделка» в реестре, только заполненное: номер и
+                   наименование. guarded — в окне ввод, клик мимо его не закрывает. -->
               <button type="button" class="ibtn ibtn--neutral ibtn--s phead__edit"
+                      data-modal="deal-title-scrim" data-modal-guarded
                       aria-label="Редактировать номер и наименование сделки"><i data-icon="edit"></i></button>
             </div>
             <!-- Чипы статусов заполняет экранный скрипт из DealsStore:
@@ -1199,6 +1200,65 @@
   </div>
 </div>
 
+<!-- Окно шапки страницы: «Редактирование сделки» — номер и наименование;
+     открывает карандаш у заголовка. -->
+<!-- Связанный артефакт шапки страницы сделки: модальное окно правки номера и
+     наименования сделки. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include — скрим должен лежать в конце body.
+
+     Окно — то же, что «Новая сделка» в реестре портфеля (Portfolio.html,
+     #new-deal-scrim): те же два поля, хелпер и тексты проверок, только
+     заголовок «Редактирование сделки» и поля заполнены значениями сделки. У
+     фронтенда это два окна — DealCreateModal и DealTitleModal, — поэтому и у
+     нас два фрагмента, а не режим одного.
+
+     Значения в разметке — пример. Окно заполняет и проверяет DealTitleModal.js
+     (PostDealTitleModal.bind): номер и наименование берёт у страницы при
+     открытии, «Сохранить» проверяет оба поля и отдаёт правку странице. Кнопка
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с
+     ошибкой окно остаётся открытым. Крестик и Esc закрывают без сохранения,
+     клик мимо окна не закрывает (триггер стоит с data-modal-guarded).
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю
+     ширину. Якорь тултипа ошибки — .inp__box (как в окне реестра). -->
+
+<div class="modal-scrim" id="deal-title-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="deal-title-modal-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-title-modal-title">Редактирование сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="deal-title-number"><span class="ds-label__text">Номер сделки</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="deal-title-number" data-title-field="id" inputmode="numeric" autocomplete="off" value="1234">
+          </div>
+        </div>
+        <!-- хелпер — постоянное правило формата, нейтральный даже в Error
+             (InputText: текст ошибки не дублируется в хелпере); ошибку
+             показывает только тултип на фокусе -->
+        <span class="ds-helper ds-helper--left">Только числовые символы</span>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="deal-title-name"><span class="ds-label__text">Наименование сделки</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="deal-title-name" data-title-field="name" autocomplete="off" value="Наименование сделки">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-title-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
 <!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
      вложенный в скрытый родитель скрим не показать. Окно подтверждения —
      отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
@@ -3004,6 +3064,7 @@
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
      Рендер карточки — до модалки: она им рисует свои колонки. -->
+<script src="../widgets/modals/DealTitleModal/DealTitleModal.js"></script>
 <script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
 <script src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
 <script src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
@@ -3140,13 +3201,16 @@
     }).join('');
   }
 
+  /* Номер, под которым сделку открыли. Сторы КНР и дерева продуктов
+     открыты по нему и держат его, даже если номер сменили в окне
+     «Редактирование сделки»: DealsStore помнит прежний номер псевдонимом. */
+  var openedId = null;
+
   function fillDeal() {
     var deal = currentDeal();
     if (!deal) return;
-    var num = 'Сделка № ' + deal.id;
-    document.getElementById('deal-title').textContent = deal.id + '. ' + (deal.name || '');
-    document.getElementById('deal-crumb').textContent = num;
-    document.title = num + ' — IBP';
+    openedId = String(deal.id);
+    fillTitle(deal);
     fillChips(deal);
     applyMode(deal);
     fillKnr(deal);
@@ -3156,6 +3220,49 @@
     fillFinMetrics(deal);
     fillProjectInfo(deal);
     fillProducts(deal);
+  }
+
+  /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
+     из записи сделки. Окно «Редактирование сделки» (DealTitleModal) модули
+     не знают, связывает его страница: окно берёт номер и наименование при
+     открытии, сверяет их с реестром через DealsStore.exists — исключая эту
+     сделку — и отдаёт правку сюда, страница пишет её в стор, шапка
+     перерисовывается по событию стора. Запись правится на месте, поэтому
+     deal.id после смены номера — уже новый номер. */
+  function paintTitle(d) {
+    var num = 'Сделка № ' + d.id;
+    document.getElementById('deal-title').textContent = d.id + '. ' + (d.name || '');
+    paintCrumb(num);
+    document.title = num + ' — IBP';
+  }
+
+  /* Текущая крошка. До привязки рантайма крошек (DOMContentLoaded) она ещё
+     разметка экрана — #deal-crumb. Привязанный рантайм читает звенья один раз
+     и перерисовывает список сам (#deal-crumb пропадает), поэтому после
+     переименования текст меняется в его звеньях (api.items) и список
+     перерисовывается (api.refresh) — ds-breadcrumbs.js. */
+  function paintCrumb(text) {
+    var cur = document.getElementById('deal-crumb');
+    if (cur) { cur.textContent = text; return; }
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var api = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (!api || !api.items.length) return;
+    api.items[api.items.length - 1].text = text;
+    api.refresh();
+  }
+
+  function fillTitle(deal) {
+    paintTitle(deal);
+    if (window.PostDealTitleModal) {
+      window.PostDealTitleModal.bind(document.getElementById('deal-title-scrim'), {
+        get: function () { return { id: deal.id, name: deal.name }; },
+        exists: function (q) { return window.DealsStore.exists(Object.assign({ except: deal.id }, q)); },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) paintTitle(d.deal);
+    });
   }
 
   /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
@@ -3277,7 +3384,7 @@
         {
           members: function () {
             if (!store) return [];
-            return String(store.dealId()) === String(deal.id) ? store.members() : null;
+            return String(store.dealId()) === openedId ? store.members() : null;
           }
         });
     }

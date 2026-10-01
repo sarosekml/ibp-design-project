@@ -259,6 +259,20 @@ window.IBPKit = {
       "updated": "25.09.2026"
     },
     {
+      "id": "DealTitleModal",
+      "name": "Модальное окно редактирования сделки",
+      "category": "Сделка",
+      "purpose": "Поменять номер и наименование сделки",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/DealTitleModal.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.000",
+      "updated": "01.10.2026"
+    },
+    {
       "id": "DidProductsModal",
       "name": "Окно «Продукты ДИД»",
       "category": "Сделка",

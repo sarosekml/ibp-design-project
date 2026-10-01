@@ -4,16 +4,19 @@
 
    Экспорт: window.DealsStore = {
      list() → запись[]                    — копия текущего состава (снимок)
-     byId(id) → запись|null
-     exists({ id, name }) → boolean       — уникальность номера/наименования,
+     byId(id) → запись|null               — и по прежнему номеру сделки,
+                                             если номер сменили (см. update)
+     exists({ id, name, except }) → boolean — уникальность номера/наименования,
                                              сверка регистронезависимая и по
-                                             обрезанным пробелам
+                                             обрезанным пробелам; except — номер
+                                             сделки, которую правят: её запись
+                                             в сверке пропускается
      statusTone(value[, scope]) → класс   — тон статусного чипа; scope 'mon' —
                                              словарь статусов мониторинга
      isEditable(deal) → boolean           — допускает ли статус сделки правку
                                              её сущностей (см. READ_ONLY_STATUSES)
      create(partial) → запись             — новая сделка (см. ниже)
-     update(id, patch) → запись|null
+     update(id, patch) → запись|null      — patch.id меняет номер сделки
      on(type, fn) → off()                 — подписка на 'change'
    }
 
@@ -27,6 +30,12 @@
 
   var deals = (window.MOCK_DEALS || []).slice();
   var listeners = [];
+  /* Прежние номера переименованных сделок → запись. Номер сделки и есть её
+     id, а сторы, открытые по сделке раньше (CounterpartiesStore,
+     ProductTreeStore), держат её под старым номером и находят запись через
+     byId — окно «Редактирование сделки» на странице сделки не должно рвать
+     эту связь. Живёт, как и всё здесь, в памяти страницы. */
+  var renamed = {};
 
   function emit(type, detail) {
     listeners.forEach(function (l) { if (l.type === type) l.fn(detail); });
@@ -85,20 +94,27 @@
     return !!deal && READ_ONLY_STATUSES.indexOf(deal.status) === -1;
   }
 
-  function byId(id) {
+  /* только текущие номера — для сверки уникальности */
+  function byCurrentId(id) {
     var key = String(id);
     for (var i = 0; i < deals.length; i++) if (String(deals[i].id) === key) return deals[i];
     return null;
   }
 
+  function byId(id) {
+    return byCurrentId(id) || renamed[String(id)] || null;
+  }
+
   function exists(query) {
     query = query || {};
+    var skip = (query.except != null && String(query.except) !== '') ? byCurrentId(query.except) : null;
     if (query.id != null && String(query.id) !== '') {
-      if (byId(query.id)) return true;
+      var hit = byCurrentId(String(query.id).trim());
+      if (hit && hit !== skip) return true;
     }
     if (query.name != null && String(query.name) !== '') {
       var n = norm(query.name);
-      for (var i = 0; i < deals.length; i++) if (norm(deals[i].name) === n) return true;
+      for (var i = 0; i < deals.length; i++) if (deals[i] !== skip && norm(deals[i].name) === n) return true;
     }
     return false;
   }
@@ -127,9 +143,15 @@
     return deal;
   }
 
+  /* patch.id — смена номера: запись правится на месте, прежний номер
+     остаётся псевдонимом (см. renamed выше). */
   function update(id, patch) {
     var deal = byId(id);
     if (!deal) return null;
+    if (patch && patch.id != null && String(patch.id) !== String(deal.id)) {
+      renamed[String(deal.id)] = deal;
+      delete renamed[String(patch.id)];
+    }
     Object.assign(deal, patch);
     emit('change', { type: 'update', id: id, patch: patch, deal: deal });
     return deal;

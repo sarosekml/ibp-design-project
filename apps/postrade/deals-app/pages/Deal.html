@@ -106,10 +106,11 @@
           <div class="phead__title-row">
             <div class="phead__title-group">
               <h1 class="phead__title" id="deal-title">Сделка</h1>
-              <!-- Модалка редактирования номера и наименования — та же, что при
-                   создании сделки в реестре. Не собрана: скрима deal-rename-scrim
-                   на странице пока нет, хук ждёт его (Deal.screen.md, §6). -->
+              <!-- Окно «Редактирование сделки» (DealTitleModal) — то же, что
+                   «Новая сделка» в реестре, только заполненное: номер и
+                   наименование. guarded — в окне ввод, клик мимо его не закрывает. -->
               <button type="button" class="ibtn ibtn--neutral ibtn--s phead__edit"
+                      data-modal="deal-title-scrim" data-modal-guarded
                       aria-label="Редактировать номер и наименование сделки"><i data-icon="edit"></i></button>
             </div>
             <!-- Чипы статусов заполняет экранный скрипт из DealsStore:
@@ -227,6 +228,9 @@
   </div>
 </div>
 
+<!-- Окно шапки страницы: «Редактирование сделки» — номер и наименование;
+     открывает карандаш у заголовка. -->
+<ds-include src="../widgets/modals/DealTitleModal/DealTitleModal.html"></ds-include>
 <!-- Модальные окна тайла «КНР» (CounterpartiesTile → InstrumentsCounterpartiesModal). Скримы живут в конце body, а не внутри тайла:
      вложенный в скрытый родитель скрим не показать. Окно подтверждения —
      отдельным фрагментом, потому что у фрагмента один корневой элемент. -->
@@ -295,6 +299,7 @@
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
      Рендер карточки — до модалки: она им рисует свои колонки. -->
+<script src="../widgets/modals/DealTitleModal/DealTitleModal.js"></script>
 <script src="../widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
 <script src="../widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
 <script src="../widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
@@ -431,13 +436,16 @@
     }).join('');
   }
 
+  /* Номер, под которым сделку открыли. Сторы КНР и дерева продуктов
+     открыты по нему и держат его, даже если номер сменили в окне
+     «Редактирование сделки»: DealsStore помнит прежний номер псевдонимом. */
+  var openedId = null;
+
   function fillDeal() {
     var deal = currentDeal();
     if (!deal) return;
-    var num = 'Сделка № ' + deal.id;
-    document.getElementById('deal-title').textContent = deal.id + '. ' + (deal.name || '');
-    document.getElementById('deal-crumb').textContent = num;
-    document.title = num + ' — IBP';
+    openedId = String(deal.id);
+    fillTitle(deal);
     fillChips(deal);
     applyMode(deal);
     fillKnr(deal);
@@ -447,6 +455,49 @@
     fillFinMetrics(deal);
     fillProjectInfo(deal);
     fillProducts(deal);
+  }
+
+  /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
+     из записи сделки. Окно «Редактирование сделки» (DealTitleModal) модули
+     не знают, связывает его страница: окно берёт номер и наименование при
+     открытии, сверяет их с реестром через DealsStore.exists — исключая эту
+     сделку — и отдаёт правку сюда, страница пишет её в стор, шапка
+     перерисовывается по событию стора. Запись правится на месте, поэтому
+     deal.id после смены номера — уже новый номер. */
+  function paintTitle(d) {
+    var num = 'Сделка № ' + d.id;
+    document.getElementById('deal-title').textContent = d.id + '. ' + (d.name || '');
+    paintCrumb(num);
+    document.title = num + ' — IBP';
+  }
+
+  /* Текущая крошка. До привязки рантайма крошек (DOMContentLoaded) она ещё
+     разметка экрана — #deal-crumb. Привязанный рантайм читает звенья один раз
+     и перерисовывает список сам (#deal-crumb пропадает), поэтому после
+     переименования текст меняется в его звеньях (api.items) и список
+     перерисовывается (api.refresh) — ds-breadcrumbs.js. */
+  function paintCrumb(text) {
+    var cur = document.getElementById('deal-crumb');
+    if (cur) { cur.textContent = text; return; }
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var api = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (!api || !api.items.length) return;
+    api.items[api.items.length - 1].text = text;
+    api.refresh();
+  }
+
+  function fillTitle(deal) {
+    paintTitle(deal);
+    if (window.PostDealTitleModal) {
+      window.PostDealTitleModal.bind(document.getElementById('deal-title-scrim'), {
+        get: function () { return { id: deal.id, name: deal.name }; },
+        exists: function (q) { return window.DealsStore.exists(Object.assign({ except: deal.id }, q)); },
+        save: function (patch) { window.DealsStore.update(deal.id, patch); }
+      });
+    }
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) paintTitle(d.deal);
+    });
   }
 
   /* Режим правки страницы. Статус сделки сильнее роли: в статусе, который не
@@ -568,7 +619,7 @@
         {
           members: function () {
             if (!store) return [];
-            return String(store.dealId()) === String(deal.id) ? store.members() : null;
+            return String(store.dealId()) === openedId ? store.members() : null;
           }
         });
     }

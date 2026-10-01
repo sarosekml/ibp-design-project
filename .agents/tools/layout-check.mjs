@@ -42,7 +42,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { logRun, codesFrom, isEtalon } from './runlog.mjs';
+import { logRun, codesFrom, failsFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
 import { need } from './project.mjs';
 
@@ -778,7 +778,14 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
 
      Что НЕ ловится статикой и закрыто линтером ds-lint по CSS: обёртка
      рантайма, отключающая усечение (B9, урок Л28), и компонент с усекаемой
-     подписью, который не умеет сжиматься (B8, урок Л29). */
+     подписью, который не умеет сжиматься (B8, урок Л29).
+
+     Числовая ячейка `.tc--numbers` (без `.tc--wrap`) усекается САМА — с
+     TableCell 2.023 (25.09.2026) ДС держит сумму в одну строку с многоточием
+     и тултипом, класс на подписи ей не нужен. Сенсор этого не знал и назвал
+     бы такую ячейку «вылезающей»: правило ДС поменялось, а копия его знания
+     здесь — нет (урок Л154). Узкая колонка сумм
+     по-прежнему даёт замечание «теряют больше трети». */
   const CHAR_W_CELL = 7;                   // body-s 14px, кириллица
   const CELL_PAD = 32;                     // .tc padding 16 + 16
   const TRUNC_HARD = 1.5;                  // усечено больше трети — колонка систематически узка
@@ -807,7 +814,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       const avail = parseFloat(track) - CELL_PAD;
       const est = value.length * CHAR_W_CELL;
       if (est <= avail) return;
-      const truncates = /tc__text--truncate/.test(textEl[1]);
+      // числовая ячейка без .tc--wrap усекается ДС сама (TableCell 2.023), см. шапку правила
+      const truncates = /tc__text--truncate/.test(textEl[1]) || /(^|\s)tc--numbers(\s|$)/.test(cls);
       const item = `строка ${rowLine}, колонка ${i + 1} (${track}): «${value.slice(0, 28)}» ~${est}px / ${Math.round(avail)}px`;
       if (!truncates) bleed.push(item);
       else if (est > avail * TRUNC_HARD) {
@@ -1770,6 +1778,7 @@ function main() {
     target: r.path,
     verdict: r.status,
     codes: codesFrom(r.printed.join('\n')),
+    fails: failsFrom(r.printed.join('\n')),   // регресс — только по блокерам (runlog.mjs, шапка)
   });
   process.exit(r.fails === 0 ? 0 : 1);
 }

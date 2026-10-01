@@ -227,7 +227,74 @@ async function loadProject() {
   return { files, list, styleFiles, tokens, owner, cssClasses, index, nav, specIndex, cheat, dsCss, canon };
 }
 
-/* ---------- глобальные проверки: A3, B6, D3, D4 ---------- */
+/* ---------- шапка главной ДС: версия, дата, счётчик компонентов ----------
+   Строки «Версия … · обновлено …» и «Компоненты» в герое index.html руками не
+   ведутся: руками они стоят месяцами (1.000 от 27.08.2026 простояла до
+   30.09.2026, счётчик отстал на десять компонентов). Выводятся из данных ДС:
+   - дата — самый поздний раздел `## ДД.ММ.ГГГГ` в CHANGELOG.md;
+   - версия — последняя метка `· ДС М.ммм` в заголовке раздела плюс 0.001 за
+     каждый более поздний день журнала (повтор заголовка одного дня — один день);
+   - счётчик — файлы .html в pages/atoms, pages/molecules, pages/organisms.
+   Вывод зависит только от файлов, не от часов: без правок проверка назавтра не
+   краснеет. Переписывает шапку `node scripts/ds-home.mjs`, сторожит D9. */
+const HOME_DAY_RX = /^##\s+(\d{2})\.(\d{2})\.(\d{4})(?![\d.])([^\r\n]*)$/gm;
+const HOME_MARK_RX = /·\s*ДС\s+(\d+)\.(\d{3})\b/;
+const HOME_VER_RX = /(<p class="ver">)([^<]*)(<\/p>)/;
+const HOME_COMPS_RX = /(<p class="k">Компоненты<\/p>\s*<p class="v">)([^<]*)(<\/p>)/;
+const HOME_GROUPS = [
+  ['atoms', ['атом', 'атома', 'атомов']],
+  ['molecules', ['молекула', 'молекулы', 'молекул']],
+  ['organisms', ['организм', 'организма', 'организмов']],
+];
+const plural = (n, forms) => {
+  const d = n % 10, h = n % 100;
+  return n + ' ' + (d === 1 && h !== 11 ? forms[0] : d >= 2 && d <= 4 && (h < 12 || h > 14) ? forms[1] : forms[2]);
+};
+
+async function homeMeta() {
+  const log = await readFile('CHANGELOG.md').catch(() => '');
+  const days = new Map(); // ГГГГММДД → { date, mark }
+  for (const m of log.matchAll(HOME_DAY_RX)) {
+    const key = m[3] + m[2] + m[1];
+    const day = days.get(key) || { date: m[1] + '.' + m[2] + '.' + m[3], mark: null };
+    const mk = m[4].match(HOME_MARK_RX);
+    if (mk) day.mark = Number(mk[1]) * 1000 + Number(mk[2]);
+    days.set(key, day);
+  }
+  const keys = [...days.keys()].sort();
+  const baseKey = [...keys].reverse().find((k) => days.get(k).mark !== null);
+  let version = null;
+  if (baseKey) {
+    const n = days.get(baseKey).mark + keys.filter((k) => k > baseKey).length;
+    version = Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0');
+  }
+  const date = keys.length ? days.get(keys[keys.length - 1]).date : null;
+  const counts = await Promise.all(HOME_GROUPS.map(([dir]) =>
+    ls('pages/' + dir).then((xs) => xs.filter((x) => /\.html$/.test(String(x))).length).catch(() => 0)));
+  const total = counts.reduce((a, b) => a + b, 0);
+  const comps = [plural(total, ['компонент', 'компонента', 'компонентов'])]
+    .concat(HOME_GROUPS.map(([, forms], i) => plural(counts[i], forms))).join(' · ');
+  return { version, date, ver: version && date ? 'Версия ' + version + ' · обновлено ' + date : null, comps };
+}
+
+/* Сверяет шапку index.html с homeMeta(): новый текст и расхождения
+   [что, было, стало]; было = null — в разметке не нашлось места под строку.
+   Одна функция на сторожа D9 и на генератор ds-home.mjs — разъехаться им не в чем. */
+function homeApply(html, meta) {
+  const diffs = [];
+  let text = html;
+  for (const [what, rx, want] of [['версия и дата', HOME_VER_RX, meta.ver], ['счётчик компонентов', HOME_COMPS_RX, meta.comps]]) {
+    const m = text.match(rx);
+    if (!m) { diffs.push([what, null, want]); continue; }
+    if (want && m[2].trim() !== want) {
+      diffs.push([what, m[2].trim(), want]);
+      text = text.replace(rx, (all0, open, _was, close) => open + want + close);
+    }
+  }
+  return { html: text, diffs };
+}
+
+/* ---------- глобальные проверки: A3, B6, D3, D4, D9 ---------- */
 async function globalChecks(P, out) {
   for (const f of P.styleFiles) {
     if (CSS_NOT_IN_BUNDLE.includes(base(f))) continue;
@@ -317,7 +384,13 @@ async function globalChecks(P, out) {
      Заведено 05.09.2026 как INFO с 80 находками в 44 файлах; в тот же день список
      разобран целиком (пары проставлены всем корням), и правило поднято до WARN —
      теперь оно охраняет достигнутый ноль, а не описывает долг. Новый компонент,
-     объявивший display без пары, попадёт в отчёт сразу. */
+     объявивший display без пары, попадёт в отчёт сразу.
+     Корнями правило и ограничено, а дефект повторился седьмой раз на ЭЛЕМЕНТЕ —
+     строки `.albar__row` (AllocationBar 1.003, 25.09.2026); у ≈150 элементов пар
+     нет. С 01.10.2026 класс закрыт структурно: `[hidden] { display: none
+     !important }` в typography.css (Typography 1.002), его подключают и экраны,
+     и страницы документации. B11 остаётся второй линией — пары у корней
+     (урок Л156). */
   {
     const pairedAll = new Set();
     const rootsByFile = new Map();
@@ -560,6 +633,14 @@ async function globalChecks(P, out) {
     if (real.length < 2) continue;
     const sorted = [...real].sort((a, b) => a.localeCompare(b, 'ru'));
     if (real.join('|') !== sorted.join('|')) out.push(['WARN', 'D4', 'ds-nav.js: «' + gname + '» — порядок не алфавитный']);
+  }
+  // D9 — шапка главной (версия, дата, счётчик) выводится из журнала и pages/ (homeMeta)
+  const home = await homeMeta();
+  if (!home.ver) out.push(['BLOCKER', 'D9', 'CHANGELOG.md: нет базы версии ДС — метки в заголовке раздела вида «## ДД.ММ.ГГГГ · ДС 1.000»']);
+  for (const [what, was, want] of homeApply(P.index, home).diffs) {
+    out.push(['BLOCKER', 'D9', was === null
+      ? 'index.html: в шапке нет места под «' + what + '» (<p class="ver"> или «Компоненты» в .meta)'
+      : 'index.html: ' + what + ' в шапке «' + was + '», по данным ДС «' + want + '» — запусти node scripts/ds-home.mjs']);
   }
   await runtimeApiCheck(P, out);
   await stickyInHorizontalScrollCheck(P, out);
@@ -1313,8 +1394,8 @@ async function pageChecks(p, P, opts, out) {
       if (missing.length) say('BLOCKER', 'F5', c.name + ' использован не целиком — анатомия урезана под текущий вид вместо взятой как есть (разметка не должна меняться между режимами/состояниями); отсутствует: ' + missing.join(', '));
     }
   }
-  /* G1 (гейт фиделити макету, маркер FIDELITY-GATE) снят 13.09.2026: на рабочем контуре
-     гейт невыполним — модель не читает изображения, браузер по скрипту запрещён. */
+  /* G1 (гейт фиделити макету, маркер FIDELITY-GATE) снят 13.09.2026: гейт невыполним —
+     требовал снимок отрендеренного экрана, а браузер по скрипту запрещён. */
   /* C1 — карточка @dsCard первой строкой */
   if (!/^<!--\s*@dsCard\b/.test(html)) say('BLOCKER', 'C1', 'первая строка — не <!-- @dsCard … -->');
   /* C2/C3 — masthead */
@@ -1445,4 +1526,4 @@ async function run(targets, opts) {
 
 /* API наружу: файл должен оставаться валидным скриптом (компилятор ДС его парсит),
    поэтому не `return`, а переменная — вызывающий дописывает `;return dsLint;` */
-var dsLint = { run };
+var dsLint = { run, homeMeta, homeApply };

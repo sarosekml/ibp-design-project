@@ -1,0 +1,57 @@
+<!-- Связанный артефакт шапки страницы сделки: модальное окно правки номера и
+     наименования сделки. Фрагмент вшивается ассемблером отдельной меткой
+     ds-include — скрим должен лежать в конце body.
+
+     Окно — то же, что «Новая сделка» в реестре портфеля (Portfolio.html,
+     #new-deal-scrim): те же два поля, хелпер и тексты проверок, только
+     заголовок «Редактирование сделки» и поля заполнены значениями сделки. У
+     фронтенда это два окна — DealCreateModal и DealTitleModal, — поэтому и у
+     нас два фрагмента, а не режим одного.
+
+     Значения в разметке — пример. Окно заполняет и проверяет DealTitleModal.js
+     (PostDealTitleModal.bind): номер и наименование берёт у страницы при
+     открытии, «Сохранить» проверяет оба поля и отдаёт правку странице. Кнопка
+     без data-modal-close: окно закрывает скрипт, когда проверка прошла; с
+     ошибкой окно остаётся открытым. Крестик и Esc закрывают без сохранения,
+     клик мимо окна не закрывает (триггер стоит с data-modal-guarded).
+
+     Своего CSS у окна нет: тело Modal — колонка с зазором 16px, поля во всю
+     ширину. Якорь тултипа ошибки — .inp__box (как в окне реестра). -->
+
+<div class="modal-scrim" id="deal-title-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="deal-title-modal-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="deal-title-modal-title">Редактирование сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="deal-title-number"><span class="ds-label__text">Номер сделки</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="deal-title-number" data-title-field="id" inputmode="numeric" autocomplete="off" value="1234">
+          </div>
+        </div>
+        <!-- хелпер — постоянное правило формата, нейтральный даже в Error
+             (InputText: текст ошибки не дублируется в хелпере); ошибку
+             показывает только тултип на фокусе -->
+        <span class="ds-helper ds-helper--left">Только числовые символы</span>
+      </div>
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="deal-title-name"><span class="ds-label__text">Наименование сделки</span></label>
+        <div class="inp__box">
+          <div class="inp__field">
+            <input class="inp__control" id="deal-title-name" data-title-field="name" autocomplete="off" value="Наименование сделки">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-title-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

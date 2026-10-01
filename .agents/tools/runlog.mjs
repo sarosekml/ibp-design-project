@@ -42,6 +42,14 @@
    Пройденные проверки не пишутся: их состав меняется от версии к версии, а
    различать нужно «код появился» и «код не появился».
 
+   `fails` — те из них, что сработали БЛОКЕРОМ (FAIL/BLOCKER). По ним, и только
+   по ним, `stats` решает РЕГРЕСС; «живой / исчез» по-прежнему считается по
+   `codes`. До 01.10.2026 поля не было, и замечание (WARN) засчитывалось как
+   возврат дефекта: утверждённые человеком тайлы страницы сделки дают замечания
+   K4/K5, и гейт с 30.09.2026 краснел шагом `stats` на подсказке, а красное
+   перестали читать (Л37, урок Л152). У строк без поля блокеры выводит `blockersOf` — по
+   вердикту прогона.
+
    ФИКСТУРЫ В ЖУРНАЛ НЕ ПОПАДАЮТ. `verify` гоняет 37 пар «дефект/эталон», и
    каждый прогон по определению даёт сработавший код. Пусти их в журнал — и
    «код появлялся» будет верно для любого сторожа с фикстурой, то есть сигнал
@@ -187,18 +195,37 @@ export function isOutside(p) {
     Формы строк: «FAIL  Б12 …», «WARN  K1 …», «BLOCKER A2 …», «WARN    D4  …».
     Один разбор на всех — три копии разъезжались бы так же, как разъезжались
     ручные перечни проверок (урок Л43). */
-export function codesFrom(text) {
+const CODE_RX = (levels) => new RegExp('^(?:' + levels + ')\\s+([A-ZА-ЯЁ][0-9]{1,2}(?:\\.[0-9])?)(?![0-9])', 'gmu');
+function codesAt(text, levels) {
   const out = [];
   const seen = new Set();
-  for (const m of String(text).matchAll(/^(?:FAIL|WARN|BLOCKER|INFO)\s+([A-ZА-ЯЁ][0-9]{1,2}(?:\.[0-9])?)(?![0-9])/gmu)) {
+  for (const m of String(text).matchAll(CODE_RX(levels))) {
     if (!seen.has(m[1])) { seen.add(m[1]); out.push(m[1]); }
   }
   return out;
 }
 
+export function codesFrom(text) {
+  return codesAt(text, 'FAIL|WARN|BLOCKER|INFO');
+}
+
+/** Коды, сработавшие блокером (FAIL/BLOCKER), — поле `fails`, см. шапку. */
+export function failsFrom(text) {
+  return codesAt(text, 'FAIL|BLOCKER');
+}
+
+/** Блокеры строки журнала. Есть `fails` — они. Строка старой формы (до
+    01.10.2026) без поля: прогон с вердиктом OK/PASS блокеров не имел, у
+    упавшего — все его коды, различить уровень уже нечем. */
+export function blockersOf(r) {
+  if (Array.isArray(r.fails)) return r.fails;
+  if (/^(OK|PASS)\b/u.test(String(r.verdict || ''))) return [];
+  return r.codes || [];
+}
+
 /**
- * @param {{tool:string, target?:string, verdict:string, codes?:string[], text?:string}} rec
- *   `codes` можно не передавать — тогда они извлекаются из `text` (отчёта).
+ * @param {{tool:string, target?:string, verdict:string, codes?:string[], fails?:string[], text?:string}} rec
+ *   `codes` и `fails` можно не передавать — тогда они извлекаются из `text` (отчёта).
  * @returns {boolean} записана ли строка
  */
 export function logRun(rec) {
@@ -206,7 +233,10 @@ export function logRun(rec) {
     const target = relTarget(rec.target || '');
     if (target && (isFixture(target) || isEtalon(target) || isOutside(target))) return false;
     const codes = rec.codes || codesFrom(rec.text || '');
-    const line = JSON.stringify({ t: new Date().toISOString(), tool: rec.tool, target, verdict: rec.verdict, codes });
+    const fails = rec.fails || (rec.text ? failsFrom(rec.text) : null);
+    const row = { t: new Date().toISOString(), tool: rec.tool, target, verdict: rec.verdict, codes };
+    if (fails) row.fails = fails;
+    const line = JSON.stringify(row);
     const file = currentRunFile();
     if (!file) return false;                      // проекта нет — журнала нет
     const fresh = !existsSync(file);
@@ -284,6 +314,27 @@ const CASES = [
       try { wrote = logRun({ tool: 'сенсор', target: '.agents/tools/fixtures/Б5@document.bad.html', verdict: 'FAIL', codes: ['Б5'] }); }
       finally { if (was === undefined) delete process.env.RUNLOG_FILE; else process.env.RUNLOG_FILE = was; }
       return !wrote && !existsSync(file) ? null : 'строка фикстуры записана';
+    } },
+  { name: 'уровни: замечание (WARN/INFO) — в codes, блокером не считается', run: () => {
+      const text = 'FAIL  Б12 нет спеки\nWARN  K4 «Сроки»: 3 колонки\nBLOCKER A2 нет <link>\nINFO  K5 справка\nWARN    D4  порядок';
+      const codes = codesFrom(text).join(','), fails = failsFrom(text).join(',');
+      return codes === 'Б12,K4,A2,K5,D4' && fails === 'Б12,A2' ? null : 'codes ' + codes + ' · fails ' + fails;
+    } },
+  { name: 'журнал: строка по отчёту пишет и блокеры', run: (d) => {
+      const file = path.join(d, runFileName());
+      const was = process.env.RUNLOG_FILE;
+      process.env.RUNLOG_FILE = file;
+      try { logRun({ tool: 'линтер', target: 'apps/x/pages/X.html', verdict: 'NEEDS-WORK', text: 'BLOCKER A2 …\nWARN    D4  …' }); }
+      finally { if (was === undefined) delete process.env.RUNLOG_FILE; else process.env.RUNLOG_FILE = was; }
+      const r = readRuns(d, null)[0] || {};
+      return (r.codes || []).join(',') === 'A2,D4' && (r.fails || []).join(',') === 'A2' ? null : 'строка ' + JSON.stringify(r);
+    } },
+  { name: 'старые строки без fails: блокеры по вердикту', run: () => {
+      const ok = blockersOf({ verdict: 'OK', codes: ['K4', 'K5'] }).length === 0;
+      const pass = blockersOf({ verdict: 'PASS с замечаниями', codes: ['D4'] }).length === 0;
+      const red = blockersOf({ verdict: 'FAIL', codes: ['K4'] }).join(',') === 'K4';
+      const fresh = blockersOf({ verdict: 'FAIL', codes: ['Б4', 'K4'], fails: ['Б4'] }).join(',') === 'Б4';
+      return ok && pass && red && fresh ? null : 'OK ' + ok + ' · PASS ' + pass + ' · FAIL ' + red + ' · fails ' + fresh;
     } },
 ];
 
