@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 241.
+Документов: 252.
 
 ## Корень (4)
 
@@ -226,7 +226,7 @@
 | [.agents/skills/screen-spec/references/widget-template.md](../.agents/skills/screen-spec/references/widget-template.md) | Widget: DealTeamTile — Команда сделки |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (106)
+## Приложения (117)
 
 | Документ | Аннотация |
 |---|---|
@@ -451,12 +451,33 @@
 |---|---|
 | [apps/pretrade/callreports-app/README.md](../apps/pretrade/callreports-app/README.md) | callreports-app — модуль раздела pretrade |
 
-### apps/pretrade/drafts/pipeline-manager-kanban
+### apps/pretrade/drafts/pipelineManager-v01
 
 | Документ | Аннотация |
 |---|---|
-| [apps/pretrade/drafts/pipeline-manager-kanban/pages/PipelineManagement.screen.md](../apps/pretrade/drafts/pipeline-manager-kanban/pages/PipelineManagement.screen.md) | Pipeline Management |
-| [apps/pretrade/drafts/pipeline-manager-kanban/pages/index.screen.md](../apps/pretrade/drafts/pipeline-manager-kanban/pages/index.screen.md) | Главная (Pipeline Management) |
+| [apps/pretrade/drafts/pipelineManager-v01/pages/PipelineManagement.screen.md](../apps/pretrade/drafts/pipelineManager-v01/pages/PipelineManagement.screen.md) | Pipeline Management |
+| [apps/pretrade/drafts/pipelineManager-v01/pages/index.screen.md](../apps/pretrade/drafts/pipelineManager-v01/pages/index.screen.md) | Главная (Pipeline Management) |
+
+### apps/pretrade/drafts/pipelineManager-v02
+
+| Документ | Аннотация |
+|---|---|
+| [apps/pretrade/drafts/pipelineManager-v02/pages/PipelineManagement.screen.md](../apps/pretrade/drafts/pipelineManager-v02/pages/PipelineManagement.screen.md) | Pipeline Management |
+| [apps/pretrade/drafts/pipelineManager-v02/pages/index.screen.md](../apps/pretrade/drafts/pipelineManager-v02/pages/index.screen.md) | Главная (Pipeline Management) |
+
+### apps/pretrade/drafts/pipelineScanner-v07
+
+| Документ | Аннотация |
+|---|---|
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/ActivityLog.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/ActivityLog.screen.md) | Журнал действий |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/HomePage.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/HomePage.screen.md) | Главная страница IBP |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialDocument.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialDocument.screen.md) | Материал с идеями |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialReport-AR.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialReport-AR.screen.md) | Материал — А-риск не выявлен |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialReport.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/MaterialReport.screen.md) | Материал с идеями — бриф перед встречей |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/RequestBuilder.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/RequestBuilder.screen.md) | Новый отчёт — режим конструктора |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/RequestBuilderCompact.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/RequestBuilderCompact.screen.md) | Новый отчёт — режим конструктора, компактный вариант |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/RequestHistory.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/RequestHistory.screen.md) | История и материалы |
+| [apps/pretrade/drafts/pipelineScanner-v07/pages/RequestThread.screen.md](../apps/pretrade/drafts/pipelineScanner-v07/pages/RequestThread.screen.md) | Новый отчёт (нить запроса) |
 
 ### apps/pretrade/kfulsources-app
 

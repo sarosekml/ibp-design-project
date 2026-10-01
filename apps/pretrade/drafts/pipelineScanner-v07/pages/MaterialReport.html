@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<!-- Материал Пайплайн сканер «А-риск обнаружен» (MaterialReport).
+     Отчёт открывается превью в панели просмотра на экране «Новый отчёт»
+     (RequestThread.html) и живёт отдельной страницей: так его видно целиком,
+     как файл, который получит пользователь. Содержание — из
+     ../refs/report-example-for-test.pdf; ряды для графиков — демо-данные прототипа.
+     Графики — компонент Chart (DSChart.make), статусы — Chip; обложка, карточки
+     и раскладка — локальные, на токенах ДС. Спека — MaterialReport.screen.md. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>А-риск обнаружен — Пайплайн сканер</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* ── Лист отчёта ──────────────────────────────────────────────────────────
+     Документ на «бумаге» поверх фона страницы. Ширина листа ограничена,
+     в узкой панели просмотра отступы уменьшаются. */
+  .rep           { max-width: 880px; margin: 0 auto; padding: var(--space-24); }
+  .rep__sheet    { overflow: hidden; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 2px 12px color-mix(in srgb, var(--text-primary) 5%, transparent); }
+
+  /* Обложка: бренд-градиент и ключевые показатели. Верхний край — 24px от
+     плашки, строки информации разделены точкой, под ними заголовок А-риска,
+     затем тайлы метрик; до нижнего края — 16px. */
+  .rep__cover    { display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-24) var(--space-40) var(--space-16); color: var(--text-on-dark); background: linear-gradient(135deg, var(--primary-dark), var(--primary) 70%, var(--primary-light)); }
+  .rep__cover-head { display: flex; flex-direction: column; gap: var(--space-8); }
+  .rep__info    { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-s); }
+  .rep__sep     { flex: none; width: 4px; height: 4px; border-radius: var(--radius-circle); background: currentColor; opacity: .75; }
+  .rep__title   { margin: var(--space-8) 0 0; font: var(--type-h2); }
+  .rep__lead    { margin: var(--space-12) 0 0; max-width: 720px; font: var(--type-body-m); opacity: .92; }
+  .rep__kpis     { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-12); }
+  .rep__kpi      { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-12) var(--space-16); background: color-mix(in srgb, var(--text-on-dark) 12%, transparent); border: 1px solid color-mix(in srgb, var(--text-on-dark) 22%, transparent); border-radius: var(--radius-l); }
+  .rep__kpi-name { font: var(--type-body-xs); letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
+  .rep__kpi-val  { font: var(--type-h4-strong); font-variant-numeric: tabular-nums; }
+  .rep__kpi-note { font: var(--type-body-xs); opacity: .85; }
+
+  /* Разделы листа */
+  .rep__body     { display: flex; flex-direction: column; gap: var(--space-40); padding: var(--space-40); }
+  .rep__sec      { display: flex; flex-direction: column; gap: var(--space-16); }
+  .rep__h        { margin: 0; padding-bottom: var(--space-8); font: var(--type-h5-strong); border-bottom: 1px solid var(--border-light); }
+  .rep__p        { margin: 0; font: var(--type-body-m); color: var(--text-primary); }
+  .rep__note     { margin: 0; font: var(--type-body-xs); color: var(--text-secondary); }
+
+  /* Графики: карточки в две колонки */
+  .rep__charts   { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+  .rep__chart    { min-width: 0; padding: var(--space-16); border: 1px solid var(--border-light); border-radius: var(--radius-l); }
+  .rep__chart--wide { grid-column: 1 / -1; }
+
+  /* Возможности ДИД */
+  .rep__opps     { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-12); }
+  .rep__opp      { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16); background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-l); }
+  .rep__opp--top { background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-color: var(--primary); }
+  .rep__opp-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
+  .rep__opp-title { margin: 0; font: var(--type-body-m-strong); }
+  .rep__opp-text { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+
+  /* Инсайты */
+  .rep__insights { display: flex; flex-direction: column; gap: var(--space-12); margin: 0; padding: 0; list-style: none; counter-reset: ins; }
+  .rep__insight  { display: flex; gap: var(--space-12); counter-increment: ins; }
+  .rep__insight::before { content: counter(ins); flex: none; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; font: var(--type-body-s-strong); color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 12%, var(--bg-tile)); border-radius: var(--radius-full); }
+  .rep__insight p { margin: 0; font: var(--type-body-m); }
+
+  /* Риски */
+  .rep__risks    { display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: var(--radius-l); overflow: hidden; }
+  .rep__risk     { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-16); padding: var(--space-16); }
+  .rep__risk + .rep__risk { border-top: 1px solid var(--border-light); }
+  .rep__risk-name { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); font: var(--type-body-m-strong); }
+  .rep__risk-text { margin: 0; font: var(--type-body-s); color: var(--text-primary); }
+
+  /* Параметры продукта — таблица как у рисков, но без чипов и нежирных меток */
+  .rep__params   { display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: var(--radius-l); overflow: hidden; }
+  .rep__param    { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-16); padding: var(--space-12) var(--space-16); }
+  .rep__param + .rep__param { border-top: 1px solid var(--border-light); }
+  .rep__param-label { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .rep__param-value { margin: 0; font: var(--type-body-m); color: var(--text-primary); }
+
+  /* Динамика DSCR — встроенный SVG масштабируется по ширине листа */
+  .rep__dscr-svg { width: 100%; overflow-x: auto; margin-top: var(--space-8); }
+  .rep__dscr-svg svg { max-width: 100%; height: auto; display: block; }
+  /* Вывод кредитного инспектора */
+  .rep__call     { display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-16) var(--space-20); background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-left: 3px solid var(--primary); border-radius: 0 var(--radius-m) var(--radius-m) 0; }
+
+  /* ── «Доработать в чате» ──────────────────────────────────────────────────
+     Работает, когда материал открыт в панели просмотра экрана «Новый отчёт»:
+     над выделенным текстом всплывает кнопка, у графика она появляется при
+     наведении. Фрагмент уходит в поле ввода контекстом следующего запроса. */
+  .rep__chart    { position: relative; }
+  .rep__chart.is-sent { box-shadow: 0 0 0 2px var(--primary); transition: box-shadow .2s ease; }
+  .rep__chart-ask { position: absolute; top: var(--space-12); right: var(--space-12); z-index: 2; opacity: 0; transition: opacity .15s ease; }
+  .rep__chart:hover .rep__chart-ask, .rep__chart:focus-within .rep__chart-ask { opacity: 1; }
+  .quote-fab     { position: absolute; z-index: 20; display: flex; padding: var(--space-4); background: var(--bg-tile); border-radius: var(--radius-l); box-shadow: 0 8px 24px color-mix(in srgb, var(--text-primary) 18%, transparent); transform: translate(-50%, calc(-100% - var(--space-8))); animation: fabIn .18s ease both; }
+  .quote-fab[hidden] { display: none; }
+  /* Появление без прозрачности: браузер приостанавливает анимации во фрейме
+     вне видимой области, и кнопка, начинавшая с opacity 0, оставалась
+     невидимой. Сдвиг и лёгкий масштаб видны и без анимации. */
+  @keyframes fabIn { from { transform: translate(-50%, calc(-100% - var(--space-2))) scale(.96); } }
+  @media (prefers-reduced-motion: reduce) { .quote-fab, .rep__chart-ask { animation: none; transition: none; } }
+
+  .rep__foot     { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-20) var(--space-40); background: var(--bg-page); border-top: 1px solid var(--border-light); }
+
+  @media (max-width: 720px) {
+    .rep           { padding: var(--space-12); }
+    .rep__cover, .rep__body { padding: var(--space-24) var(--space-20); }
+    .rep__foot     { padding: var(--space-16) var(--space-20); }
+    .rep__charts   { grid-template-columns: minmax(0, 1fr); }
+    .rep__risk     { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
+  }
+</style>
+</head>
+<body>
+
+<main class="rep">
+  <article class="rep__sheet" aria-labelledby="repTitle">
+
+    <header class="rep__cover">
+      <div class="rep__cover-head">
+        <p class="rep__info"><span>ППРБ ID сделки: DFE-XV7</span><span class="rep__sep" aria-hidden="true"></span><span>AI summary по заключению КП от 30.09.2026</span></p>
+        <p class="rep__info"><span>Клиент ООО «Ромашка Инкорпоретед Трест»</span><span class="rep__sep" aria-hidden="true"></span><span>Холдинг «Глобальная агропромышленная корпорация Ромашка Холдинг Рус»</span></p>
+        <h1 class="rep__title" id="repTitle">А-риск обнаружен</h1>
+      </div>
+      <div class="rep__kpis">
+        <div class="rep__kpi"><span class="rep__kpi-val">70%</span><span class="rep__kpi-name">LTC</span></div>
+        <div class="rep__kpi"><span class="rep__kpi-val">17,5%</span><span class="rep__kpi-name">Доля собственного участия</span></div>
+        <div class="rep__kpi"><span class="rep__kpi-val">0,4</span><span class="rep__kpi-name">Минимальный DSCR</span></div>
+      </div>
+    </header>
+
+    <div class="rep__body">
+
+      <section class="rep__sec">
+        <div class="rep__risks">
+          <div class="rep__risk">
+            <div class="rep__risk-name">M&amp;A / LBO<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">МИП<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">ТОР<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">упоминается</span></span></div>
+            <p class="rep__risk-text">Упоминается статус резидента ТОР 'Забайкалье', что подразумевает территорию опережающего развития. Также указано, что проекты включены в ТОР 'Забайкалье', что соответствует понятию 'территория опережающего социально-экономического развития'. Упоминается 'статус резидента территории опережающего социально-экономического развития (ТОР)'. Прямого упоминания ФЗ №473-ФЗ или 'соглашения об осуществлении деятельности' нет.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">КРТ / КЖС<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secSummary">
+        <h2 class="rep__h" id="secSummary">Описание бизнеса</h2>
+        <p class="rep__p">Группа оказывает транспортно-логистические услуги для горнодобывающих компаний Забайкальского края, включая отгрузку горной массы и доставку транспортом. Выручка за 2025 год составила 2,9 млрд руб. (82% — внутренние продажи, 18% — экспорт в Китай). Ключевые клиенты: ПАО «ППГХО» и ООО «Приаргунский угольный разрез». Основные зарубежные партнеры — компании из КНР (Inner Mongolia Yulong, Heilongjiang Wan Hao Te).</p>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secDeal">
+        <h2 class="rep__h" id="secDeal">Суть сделки</h2>
+        <p class="rep__p">Бридж-кредит на цели финансирования затрат по реализации двух инвестиционных проектов Забайкальского края: Проект 1: Строительство цементного завода мощностью 600 тыс. тонн/год займ ООО «Забайкальский цементный завод» на сумму до 1 270,2 млН рублей на проектирование, изыскания, инфраструктуру, геологию И подготовку площадок. Проект 2: Строительство известкового завода мощностью до 200 тыс. тонн/год - займ ООО «Забайкальский известковый завод» на сумму до 227,9 МЛН рублей на проведение проектно-изыскательных работ и организацию стройплощадки.</p>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secProduct">
+        <h2 class="rep__h" id="secProduct">Параметры продукта</h2>
+        <div class="rep__params">
+          <div class="rep__param"><p class="rep__param-label">Рассматриваемый продукт</p><p class="rep__param-value">Рассматривается новый продукт.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Тип продукта</p><p class="rep__param-value">Бридж-кредит (промежуточное финансирование) на цели реализации инвестиционных проектов, с последующим рефинансированием за счет проектного финансирования.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Сумма</p><p class="rep__param-value">1 500 млн</p></div>
+          <div class="rep__param"><p class="rep__param-label">Валюта</p><p class="rep__param-value">RUB</p></div>
+          <div class="rep__param"><p class="rep__param-label">Срок</p><p class="rep__param-value">36 месяцев</p></div>
+          <div class="rep__param"><p class="rep__param-label">Ставка</p><p class="rep__param-value">Плавающая с фиксированной маржой, КС+3%</p></div>
+          <div class="rep__param"><p class="rep__param-label">Цель</p><p class="rep__param-value">Финансирование затрат по реализации двух инвестиционных проектов: строительство цементного завода и строительство известкового завода в Забайкальском крае.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Обеспечение</p><p class="rep__param-value">Отсутствует имущественное обеспечение. В качестве обеспечения принимаются поручительства бенефициара, головной компании Группы, 4-х юрлиц Группы, залог 50% долей в SPV, залог земельных участков.</p></div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secRisks">
+        <h2 class="rep__h" id="secRisks">Риски</h2>
+        <div class="rep__risks">
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск некорректности Cash Flow<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Прогнозная финансовая модель показывает убытки в отдельных периодах и неспособность обслуживать долг за счет операционного потока. Уровень долговой нагрузки значительно превышает операционный поток минимум в 3х периодах.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск резкого увеличения долговой нагрузки<span class="chip chip--s chip--rounded chip--error-solid"><span class="chip__label">Очень высокий</span></span></div>
+            <p class="rep__risk-text">Бридж-кредит увеличит финансовый долг группы с 450 млн до 1 950 млн руб., что приведет к росту показателя Долг/EBITDA с 1,15 до -5,0. Это превышает допустимый уровень и создает риск нарушения ковенант.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск падения операционной эффективности<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Выручка сократилась на 22%, EBITDA - вдвое, чистая прибыль - на две трети за год из-за падения спроса в угольной отрасли. Если тенденция сохранится, способность генерировать денежный поток для обслуживания долга ухудшится.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск ликвидности и рефинансирования<span class="chip chip--s chip--rounded chip--warning"><span class="chip__label">Средний</span></span></div>
+            <p class="rep__risk-text">Текущая ликвидность 1,22 ниже комфортного уровня, что указывает на возможные проблемы с покрытием краткосрочных обязательств после выборки кредита. Погашение единовременное, источник - проектное финансирование.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск неправильного/некорректного структурирования сделки<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Режим погашения бридж-кредита не соответствует стадии проекта (Green Field), так как единовременный платеж предусмотрен при отсутствии операционного денежного потока. Качество обеспечения признано недостаточным.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Проектный риск<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Отсутствие фиксированного ЕРС-контракта, технологическая сложность и зависимость от импортного оборудования создают риск удорожания строительства и срыва сроков. Также не оформлена полная исходно-разрешительная документация.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск отсутствия диверсификации<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Критическая зависимость от двух связанных между собой контрагентов (ППГХО и Приаргунский угольный разрез), на которые приходится 64,1% выручки. Это создает угрозу при потере одного из покупателей.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secPosition">
+        <h2 class="rep__h" id="secPosition">Вывод кредитного инспектора</h2>
+        <div class="rep__call">
+          <p class="rep__p">В рамках текущей сделки с учетом рефинансирования бридж-кредита в рамках проектного финансирования считаем возможным принять высокий риск по модели.</p>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secDscr">
+        <h2 class="rep__h" id="secDscr">Динамика DSCR</h2>
+        <p class="rep__p">Минимальный DSCR: <strong>0,4</strong> — ниже порогового значения 1,2. Проблемные периоды выделены красным.</p>
+        <div class="rep__dscr-svg"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="711.023903pt" height="295.534108pt" viewBox="0 0 711.023903 295.534108" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-07T11:22:19.403661</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 295.534108 
+L 711.023903 295.534108 
+L 711.023903 0 
+L 0 0 
+L 0 295.534108 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 32.968125 261.46264 
+L 665.758894 261.46264 
+L 665.758894 7.2 
+L 32.968125 7.2 
+L 32.968125 261.46264 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mbde7a66aed" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mbde7a66aed" x="45.137178" y="261.46264" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <!-- 2026 -->
+      <g style="fill: #d64545" transform="translate(29.564035 287.157659) rotate(-45) scale(0.08 -0.08)">
+       <defs>
+        <path id="DejaVuSans-32" d="M 1228 531 
+L 3431 531 
+L 3431 0 
+L 469 0 
+L 469 531 
+Q 828 903 1448 1529 
+Q 2069 2156 2228 2338 
+Q 2531 2678 2651 2914 
+Q 2772 3150 2772 3378 
+Q 2772 3750 2511 3984 
+Q 2250 4219 1831 4219 
+Q 1534 4219 1204 4116 
+Q 875 4013 500 3803 
+L 500 4441 
+Q 881 4594 1212 4672 
+Q 1544 4750 1819 4750 
+Q 2544 4750 2975 4387 
+Q 3406 4025 3406 3419 
+Q 3406 3131 3298 2873 
+Q 3191 2616 2906 2266 
+Q 2828 2175 2409 1742 
+Q 1991 1309 1228 531 
+z
+" transform="scale(0.015625)"/>
+        <path id="DejaVuSans-30" d="M 2034 4250 
+Q 1547 4250 1301 3770 
+Q 1056 3291 1056 2328 
+Q 1056 1369 1301 889 
+Q 1547 409 2034 409 
+Q 2525 409 2770 889 
+Q 3016 1369 3016 2328 
+Q 3016 3291 2770 3770 
+Q 2525 4250 2034 4250 
+z
+M 2034 4750 
+Q 2819 4750 3233 4129 
+Q 3647 3509 3647 2328 
+Q 3647 1150 3233 529 
+Q 2819 -91 2034 -91 
+Q 1250 -91 836 529 
+Q 422 1150 422 2328 
+Q 422 3509 836 4129 
+Q 1250 4750 2034 4750 
+z
+" transform="scale(0.015625)"/>
+        <path id="DejaVuSans-36" d="M 2113 2584 
+Q 1688 2584 1439 2293 
+Q 1191 2003 1191 1497 
+Q 1191 994 1439 701 
+Q 1688 409 2113 409 
+Q 2538 409 2786 701 
+Q 3034 994 3034 1497 
+Q 3034 2003 2786 2293 
+Q 2538 2584 2113 2584 
+z
+M 3366 4563 
+L 3366 3988 
+Q 3128 4100 2886 4159 
+Q 2644 4219 2406 4219 
+Q 1781 4219 1451 3797 
+Q 1122 3375 1075 2522 
+Q 1259 2794 1537 2939 
+Q 1816 3084 2150 3084 
+Q 2853 3084 3261 2657 
+Q 3669 2231 3669 1497 
+Q 3669 778 3244 343 
+Q 2819 -91 2113 -91 
+Q 1303 -91 875 529 
+Q 447 1150 447 2328 
+Q 447 3434 972 4092 
+Q 1497 4750 2381 4750 
+Q 2619 4750 2861 4703 
+Q 3103 4656 3366 4563 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#DejaVuSans-32"/>
+       <use xlink:href="#DejaVuSans-30" transform="translate(63.623047 0)"/>
+       <use xlink:href="#DejaVuSans-32" transform="translate(127.246094 0)"/>
+       <use xlink:href="#DejaVuSans-36" transform="translate(190.869141 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mbde7a66aed" x="349.36351" y="261.46264" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <!-- 2027 -->
+      <g style="fill: #d64545" transform="translate(333.790367 287.157659) rotate(-45) scale(0.08 -0.08)">
+       <defs>
+        <path id="DejaVuSans-37" d="M 525 4666 
+L 3525 4666 
+L 3525 4397 
+L 1831 0 
+L 1172 0 
+L 2766 4134 
+L 525 4134 
+L 525 4666 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#DejaVuSans-32"/>
+       <use xlink:href="#DejaVuSans-30" transform="translate(63.623047 0)"/>
+       <use xlink:href="#DejaVuSans-32" transform="translate(127.246094 0)"/>
+       <use xlink:href="#DejaVuSans-37" transform="translate(190.869141 0)"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mbde7a66aed" x="653.589841" y="261.46264" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <!-- 2028 -->
+      <g style="fill: #d64545" transform="translate(638.016698 287.157659) rotate(-45) scale(0.08 -0.08)">
+       <defs>
+        <path id="DejaVuSans-38" d="M 2034 2216 
+Q 1584 2216 1326 1975 
+Q 1069 1734 1069 1313 
+Q 1069 891 1326 650 
+Q 1584 409 2034 409 
+Q 2484 409 2743 651 
+Q 3003 894 3003 1313 
+Q 3003 1734 2745 1975 
+Q 2488 2216 2034 2216 
+z
+M 1403 2484 
+Q 997 2584 770 2862 
+Q 544 3141 544 3541 
+Q 544 4100 942 4425 
+Q 1341 4750 2034 4750 
+Q 2731 4750 3128 4425 
+Q 3525 4100 3525 3541 
+Q 3525 3141 3298 2862 
+Q 3072 2584 2669 2484 
+Q 3125 2378 3379 2068 
+Q 3634 1759 3634 1313 
+Q 3634 634 3220 271 
+Q 2806 -91 2034 -91 
+Q 1263 -91 848 271 
+Q 434 634 434 1313 
+Q 434 1759 690 2068 
+Q 947 2378 1403 2484 
+z
+M 1172 3481 
+Q 1172 3119 1398 2916 
+Q 1625 2713 2034 2713 
+Q 2441 2713 2670 2916 
+Q 2900 3119 2900 3481 
+Q 2900 3844 2670 4047 
+Q 2441 4250 2034 4250 
+Q 1625 4250 1398 4047 
+Q 1172 3844 1172 3481 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#DejaVuSans-32"/>
+       <use xlink:href="#DejaVuSans-30" transform="translate(63.623047 0)"/>
+       <use xlink:href="#DejaVuSans-32" transform="translate(127.246094 0)"/>
+       <use xlink:href="#DejaVuSans-38" transform="translate(190.869141 0)"/>
+      </g>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 32.968125 85.434658 
+L 665.758894 85.434658 
+" clip-path="url(#p9b46207b9f)" style="fill: none; stroke: #e6ebe7; stroke-opacity: 0.7; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5">
+      <defs>
+       <path id="m15ef717291" d="M 0 0 
+L -3.5 0 
+" style="stroke: #6b7770; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m15ef717291" x="32.968125" y="85.434658" style="fill: #6b7770; stroke: #6b7770; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <!-- 1 -->
+      <g style="fill: #6b7770" transform="translate(20.878125 88.474033) scale(0.08 -0.08)">
+       <defs>
+        <path id="DejaVuSans-31" d="M 794 531 
+L 1825 531 
+L 1825 4091 
+L 703 3866 
+L 703 4441 
+L 1819 4666 
+L 2450 4666 
+L 2450 531 
+L 3481 531 
+L 3481 0 
+L 794 0 
+L 794 531 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#DejaVuSans-31"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_5">
+     <!-- DSCR -->
+     <g style="fill: #6b7770" transform="translate(14.798438 148.321164) rotate(-90) scale(0.1 -0.1)">
+      <defs>
+       <path id="DejaVuSans-44" d="M 1259 4147 
+L 1259 519 
+L 2022 519 
+Q 2988 519 3436 956 
+Q 3884 1394 3884 2338 
+Q 3884 3275 3436 3711 
+Q 2988 4147 2022 4147 
+L 1259 4147 
+z
+M 628 4666 
+L 1925 4666 
+Q 3281 4666 3915 4102 
+Q 4550 3538 4550 2338 
+Q 4550 1131 3912 565 
+Q 3275 0 1925 0 
+L 628 0 
+L 628 4666 
+z
+" transform="scale(0.015625)"/>
+       <path id="DejaVuSans-53" d="M 3425 4513 
+L 3425 3897 
+Q 3066 4069 2747 4153 
+Q 2428 4238 2131 4238 
+Q 1616 4238 1336 4038 
+Q 1056 3838 1056 3469 
+Q 1056 3159 1242 3001 
+Q 1428 2844 1947 2747 
+L 2328 2669 
+Q 3034 2534 3370 2195 
+Q 3706 1856 3706 1288 
+Q 3706 609 3251 259 
+Q 2797 -91 1919 -91 
+Q 1588 -91 1214 -16 
+Q 841 59 441 206 
+L 441 856 
+Q 825 641 1194 531 
+Q 1563 422 1919 422 
+Q 2459 422 2753 634 
+Q 3047 847 3047 1241 
+Q 3047 1584 2836 1778 
+Q 2625 1972 2144 2069 
+L 1759 2144 
+Q 1053 2284 737 2584 
+Q 422 2884 422 3419 
+Q 422 4038 858 4394 
+Q 1294 4750 2059 4750 
+Q 2388 4750 2728 4690 
+Q 3069 4631 3425 4513 
+z
+" transform="scale(0.015625)"/>
+       <path id="DejaVuSans-43" d="M 4122 4306 
+L 4122 3641 
+Q 3803 3938 3442 4084 
+Q 3081 4231 2675 4231 
+Q 1875 4231 1450 3742 
+Q 1025 3253 1025 2328 
+Q 1025 1406 1450 917 
+Q 1875 428 2675 428 
+Q 3081 428 3442 575 
+Q 3803 722 4122 1019 
+L 4122 359 
+Q 3791 134 3420 21 
+Q 3050 -91 2638 -91 
+Q 1578 -91 968 557 
+Q 359 1206 359 2328 
+Q 359 3453 968 4101 
+Q 1578 4750 2638 4750 
+Q 3056 4750 3426 4639 
+Q 3797 4528 4122 4306 
+z
+" transform="scale(0.015625)"/>
+       <path id="DejaVuSans-52" d="M 2841 2188 
+Q 3044 2119 3236 1894 
+Q 3428 1669 3622 1275 
+L 4263 0 
+L 3584 0 
+L 2988 1197 
+Q 2756 1666 2539 1819 
+Q 2322 1972 1947 1972 
+L 1259 1972 
+L 1259 0 
+L 628 0 
+L 628 4666 
+L 2053 4666 
+Q 2853 4666 3247 4331 
+Q 3641 3997 3641 3322 
+Q 3641 2881 3436 2590 
+Q 3231 2300 2841 2188 
+z
+M 1259 4147 
+L 1259 2491 
+L 2053 2491 
+Q 2509 2491 2742 2702 
+Q 2975 2913 2975 3322 
+Q 2975 3731 2742 3939 
+Q 2509 4147 2053 4147 
+L 1259 4147 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#DejaVuSans-44"/>
+      <use xlink:href="#DejaVuSans-53" transform="translate(77.001953 0)"/>
+      <use xlink:href="#DejaVuSans-43" transform="translate(140.478516 0)"/>
+      <use xlink:href="#DejaVuSans-52" transform="translate(210.302734 0)"/>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_6">
+    <path d="M 45.137178 232.124643 
+L 349.36351 134.33132 
+L 653.589841 85.434658 
+" clip-path="url(#p9b46207b9f)" style="fill: none; stroke: #cfe3c0; stroke-width: 1.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 32.968125 36.537997 
+L 665.758894 36.537997 
+" clip-path="url(#p9b46207b9f)" style="fill: none; stroke-dasharray: 4.07,1.76; stroke-dashoffset: 0; stroke: #d64545; stroke-opacity: 0.7; stroke-width: 1.1"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 32.968125 261.46264 
+L 32.968125 7.2 
+" style="fill: none; stroke: #e6ebe7; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 32.968125 261.46264 
+L 665.758894 261.46264 
+" style="fill: none; stroke: #e6ebe7; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="C0_0_fb05e695e1" d="M 0 3.872983 
+C 1.027127 3.872983 2.012324 3.464901 2.738613 2.738613 
+C 3.464901 2.012324 3.872983 1.027127 3.872983 -0 
+C 3.872983 -1.027127 3.464901 -2.012324 2.738613 -2.738613 
+C 2.012324 -3.464901 1.027127 -3.872983 0 -3.872983 
+C -1.027127 -3.872983 -2.012324 -3.464901 -2.738613 -2.738613 
+C -3.464901 -2.012324 -3.872983 -1.027127 -3.872983 0 
+C -3.872983 1.027127 -3.464901 2.012324 -2.738613 2.738613 
+C -2.012324 3.464901 -1.027127 3.872983 0 3.872983 
+z
+"/>
+    </defs>
+    <g clip-path="url(#p9b46207b9f)">
+     <use xlink:href="#C0_0_fb05e695e1" x="45.137178" y="232.124643" style="fill: #d64545; stroke: #ffffff"/>
+    </g>
+    <g clip-path="url(#p9b46207b9f)">
+     <use xlink:href="#C0_0_fb05e695e1" x="349.36351" y="134.33132" style="fill: #d64545; stroke: #ffffff"/>
+    </g>
+    <g clip-path="url(#p9b46207b9f)">
+     <use xlink:href="#C0_0_fb05e695e1" x="653.589841" y="85.434658" style="fill: #d64545; stroke: #ffffff"/>
+    </g>
+   </g>
+   <g id="text_6">
+    <!-- 0,4 -->
+    <g style="fill: #d64545" transform="translate(38.051553 246.124643) scale(0.08 -0.08)">
+     <defs>
+      <path id="DejaVuSans-Bold-30" d="M 2944 2338 
+Q 2944 3213 2780 3570 
+Q 2616 3928 2228 3928 
+Q 1841 3928 1675 3570 
+Q 1509 3213 1509 2338 
+Q 1509 1453 1675 1090 
+Q 1841 728 2228 728 
+Q 2613 728 2778 1090 
+Q 2944 1453 2944 2338 
+z
+M 4147 2328 
+Q 4147 1169 3647 539 
+Q 3147 -91 2228 -91 
+Q 1306 -91 806 539 
+Q 306 1169 306 2328 
+Q 306 3491 806 4120 
+Q 1306 4750 2228 4750 
+Q 3147 4750 3647 4120 
+Q 4147 3491 4147 2328 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-Bold-2c" d="M 653 1209 
+L 1778 1209 
+L 1778 256 
+L 1006 -909 
+L 341 -909 
+L 653 256 
+L 653 1209 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-Bold-34" d="M 2356 3675 
+L 1038 1722 
+L 2356 1722 
+L 2356 3675 
+z
+M 2156 4666 
+L 3494 4666 
+L 3494 1722 
+L 4159 1722 
+L 4159 850 
+L 3494 850 
+L 3494 0 
+L 2356 0 
+L 2356 850 
+L 288 850 
+L 288 1881 
+L 2156 4666 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSans-Bold-30"/>
+     <use xlink:href="#DejaVuSans-Bold-2c" transform="translate(69.580078 0)"/>
+     <use xlink:href="#DejaVuSans-Bold-34" transform="translate(107.568359 0)"/>
+    </g>
+   </g>
+   <g id="text_7">
+    <!-- 0,8 -->
+    <g style="fill: #d64545" transform="translate(342.277885 148.33132) scale(0.08 -0.08)">
+     <defs>
+      <path id="DejaVuSans-Bold-38" d="M 2228 2088 
+Q 1891 2088 1709 1903 
+Q 1528 1719 1528 1375 
+Q 1528 1031 1709 848 
+Q 1891 666 2228 666 
+Q 2563 666 2741 848 
+Q 2919 1031 2919 1375 
+Q 2919 1722 2741 1905 
+Q 2563 2088 2228 2088 
+z
+M 1350 2484 
+Q 925 2613 709 2878 
+Q 494 3144 494 3541 
+Q 494 4131 934 4440 
+Q 1375 4750 2228 4750 
+Q 3075 4750 3515 4442 
+Q 3956 4134 3956 3541 
+Q 3956 3144 3739 2878 
+Q 3522 2613 3097 2484 
+Q 3572 2353 3814 2058 
+Q 4056 1763 4056 1313 
+Q 4056 619 3595 264 
+Q 3134 -91 2228 -91 
+Q 1319 -91 855 264 
+Q 391 619 391 1313 
+Q 391 1763 633 2058 
+Q 875 2353 1350 2484 
+z
+M 1631 3419 
+Q 1631 3141 1786 2991 
+Q 1941 2841 2228 2841 
+Q 2509 2841 2662 2991 
+Q 2816 3141 2816 3419 
+Q 2816 3697 2662 3845 
+Q 2509 3994 2228 3994 
+Q 1941 3994 1786 3844 
+Q 1631 3694 1631 3419 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSans-Bold-30"/>
+     <use xlink:href="#DejaVuSans-Bold-2c" transform="translate(69.580078 0)"/>
+     <use xlink:href="#DejaVuSans-Bold-38" transform="translate(107.568359 0)"/>
+    </g>
+   </g>
+   <g id="text_8">
+    <!-- 1,0 -->
+    <g style="fill: #d64545" transform="translate(646.504216 99.434658) scale(0.08 -0.08)">
+     <defs>
+      <path id="DejaVuSans-Bold-31" d="M 750 831 
+L 1813 831 
+L 1813 3847 
+L 722 3622 
+L 722 4441 
+L 1806 4666 
+L 2950 4666 
+L 2950 831 
+L 4013 831 
+L 4013 0 
+L 750 0 
+L 750 831 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSans-Bold-31"/>
+     <use xlink:href="#DejaVuSans-Bold-2c" transform="translate(69.580078 0)"/>
+     <use xlink:href="#DejaVuSans-Bold-30" transform="translate(107.568359 0)"/>
+    </g>
+   </g>
+   <g id="text_9">
+    <g id="patch_5">
+     <path d="M 651.609841 42.873153 
+L 705.803903 42.873153 
+L 705.803903 30.202841 
+L 651.609841 30.202841 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <!--   порог 1,2 -->
+    <g style="fill: #d64545" transform="translate(653.589841 39.021434) scale(0.09 -0.09)">
+     <defs>
+      <path id="DejaVuSans-20" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-43f" d="M 3603 3500 
+L 3603 0 
+L 3025 0 
+L 3025 3041 
+L 1159 3041 
+L 1159 0 
+L 581 0 
+L 581 3500 
+L 3603 3500 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-43e" d="M 1959 3097 
+Q 1497 3097 1228 2736 
+Q 959 2375 959 1747 
+Q 959 1119 1226 758 
+Q 1494 397 1959 397 
+Q 2419 397 2687 759 
+Q 2956 1122 2956 1747 
+Q 2956 2369 2687 2733 
+Q 2419 3097 1959 3097 
+z
+M 1959 3584 
+Q 2709 3584 3137 3096 
+Q 3566 2609 3566 1747 
+Q 3566 888 3137 398 
+Q 2709 -91 1959 -91 
+Q 1206 -91 779 398 
+Q 353 888 353 1747 
+Q 353 2609 779 3096 
+Q 1206 3584 1959 3584 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-440" d="M 1159 525 
+L 1159 -1331 
+L 581 -1331 
+L 581 3500 
+L 1159 3500 
+L 1159 2969 
+Q 1341 3281 1617 3432 
+Q 1894 3584 2278 3584 
+Q 2916 3584 3314 3078 
+Q 3713 2572 3713 1747 
+Q 3713 922 3314 415 
+Q 2916 -91 2278 -91 
+Q 1894 -91 1617 61 
+Q 1341 213 1159 525 
+z
+M 3116 1747 
+Q 3116 2381 2855 2742 
+Q 2594 3103 2138 3103 
+Q 1681 3103 1420 2742 
+Q 1159 2381 1159 1747 
+Q 1159 1113 1420 752 
+Q 1681 391 2138 391 
+Q 2594 391 2855 752 
+Q 3116 1113 3116 1747 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-433" d="M 581 0 
+L 581 3500 
+L 3050 3500 
+L 3050 3041 
+L 1159 3041 
+L 1159 0 
+L 581 0 
+z
+" transform="scale(0.015625)"/>
+      <path id="DejaVuSans-2c" d="M 750 794 
+L 1409 794 
+L 1409 256 
+L 897 -744 
+L 494 -744 
+L 750 256 
+L 750 794 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSans-20"/>
+     <use xlink:href="#DejaVuSans-20" transform="translate(31.787109 0)"/>
+     <use xlink:href="#DejaVuSans-43f" transform="translate(63.574219 0)"/>
+     <use xlink:href="#DejaVuSans-43e" transform="translate(128.955078 0)"/>
+     <use xlink:href="#DejaVuSans-440" transform="translate(190.136719 0)"/>
+     <use xlink:href="#DejaVuSans-43e" transform="translate(253.613281 0)"/>
+     <use xlink:href="#DejaVuSans-433" transform="translate(314.794922 0)"/>
+     <use xlink:href="#DejaVuSans-20" transform="translate(367.333984 0)"/>
+     <use xlink:href="#DejaVuSans-31" transform="translate(399.121094 0)"/>
+     <use xlink:href="#DejaVuSans-2c" transform="translate(462.744141 0)"/>
+     <use xlink:href="#DejaVuSans-32" transform="translate(494.53125 0)"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9b46207b9f">
+   <rect x="32.968125" y="7.2" width="632.790769" height="254.26264"/>
+  </clipPath>
+ </defs>
+</svg></div>
+      </section>
+
+    </div>
+
+    <footer class="rep__foot">
+      <p class="rep__note">Материал подготовлен Pipeline scanner · версия 0.1.4 · 12.09.2026. Цифры и выводы требуют проверки и носят исключительно рекомендательный характер</p>
+    </footer>
+
+  </article>
+</main>
+
+<!-- Всплывающая кнопка над выделенным текстом -->
+<div class="quote-fab" id="quoteFab" hidden>
+  <button type="button" class="btn btn--accent btn--s" id="quoteAsk"><i data-icon="ai-stars"></i><span class="btn__label">Доработать в чате</span></button>
+</div>
+
+<script src="../../../../ds-body.js"></script>
+<script>
+/* «Доработать в чате»: фрагмент материала — в контекст следующего запроса.
+   Материал живёт во фрейме панели просмотра; экран «Новый отчёт» получает
+   фрагмент сообщением (postMessage) — так работает и при открытии файла
+   двойным кликом, где доступ к документу фрейма закрыт. Текст уходит целиком,
+   график — тегом с названием: агенту это указание, что смотреть в материале. */
+(function () {
+  'use strict';
+  if (!window.parent || window.parent === window) return;
+
+  var fab = document.getElementById('quoteFab');
+  var sheet = document.querySelector('.rep__sheet');
+  var pending = null;
+
+  function elOf(node) { return node && (node.nodeType === 1 ? node : node.parentElement); }
+  function sectionOf(node) {
+    var el = elOf(node);
+    var sec = el && el.closest('.rep__sec');
+    if (sec) { var h = sec.querySelector('.rep__h'); return h ? h.textContent.trim() : ''; }
+    return el && el.closest('.rep__cover') ? 'Обложка' : '';
+  }
+  function chartTitle(box) { var t = box.querySelector('.chart__title'); return t ? t.textContent.trim() : 'График'; }
+  function send(items) { window.parent.postMessage({ source: 'ai-pitcher-material', type: 'context', items: items }, '*'); }
+  function hide() { fab.hidden = true; pending = null; }
+  function clean(s) { return s.replace(/\s+/g, ' ').trim(); }
+
+  /* текст выделения без подписей графиков, между блоками — пробел */
+  function selectedText(range) {
+    var frag = range.cloneContents();
+    Array.prototype.forEach.call(frag.querySelectorAll('.rep__chart, .quote-fab, button'), function (n) { n.remove(); });
+    Array.prototype.forEach.call(frag.querySelectorAll('p, li, h1, h2, span, div'), function (n) { n.appendChild(document.createTextNode(' ')); });
+    return clean(frag.textContent);
+  }
+
+  function onSelection() {
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) { hide(); return; }
+    var range = sel.getRangeAt(0);
+    if (!sheet.contains(range.commonAncestorContainer)) { hide(); return; }
+    var charts = Array.prototype.filter.call(document.querySelectorAll('.rep__chart'), function (c) { return range.intersectsNode(c); });
+    var insideChart = charts.length === 1 && charts[0].contains(range.commonAncestorContainer);
+    var items = [];
+    var txt = insideChart ? '' : (charts.length ? selectedText(range) : clean(sel.toString()));
+    if (txt.length >= 3) items.push({ kind: 'text', text: txt, section: sectionOf(range.startContainer) });
+    charts.forEach(function (c) { items.push({ kind: 'chart', title: chartTitle(c), section: sectionOf(c) }); });
+    if (!items.length) { hide(); return; }
+    pending = items;
+    var rect = range.getBoundingClientRect();
+    var x = Math.min(Math.max(rect.left + rect.width / 2, 110), document.documentElement.clientWidth - 110);
+    fab.style.left = (x + window.scrollX) + 'px';
+    fab.style.top = (Math.max(rect.top, 56) + window.scrollY) + 'px';
+    fab.hidden = false;
+  }
+
+  document.addEventListener('mouseup', function (e) { if (!fab.contains(e.target)) setTimeout(onSelection, 0); });
+  document.addEventListener('keyup', function (e) { if (e.shiftKey || e.key === 'Shift') onSelection(); });
+  document.addEventListener('selectionchange', function () { var s = window.getSelection(); if (!s || s.isCollapsed) hide(); });
+  window.addEventListener('resize', hide);
+  /* клик по кнопке не должен снимать выделение до отправки */
+  fab.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  document.getElementById('quoteAsk').addEventListener('click', function () {
+    if (!pending) return;
+    send(pending);
+    window.getSelection().removeAllRanges();
+    hide();
+  });
+
+  /* у каждого графика — своя кнопка: график не выделяется как текст */
+  Array.prototype.forEach.call(document.querySelectorAll('.rep__chart'), function (box) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn--outline btn--xs rep__chart-ask';
+    btn.innerHTML = '<i data-icon="ai-stars"></i><span class="btn__label">Доработать в чате</span>';
+    btn.setAttribute('aria-label', 'Доработать в чате: график «' + chartTitle(box) + '»');
+    box.appendChild(btn);
+    if (window.dsIcons) window.dsIcons.apply(btn);
+    btn.addEventListener('click', function () {
+      send([{ kind: 'chart', title: chartTitle(box), section: sectionOf(box) }]);
+      box.classList.add('is-sent');
+      setTimeout(function () { box.classList.remove('is-sent'); }, 900);
+    });
+  });
+})();
+</script>
+</body>
+</html>

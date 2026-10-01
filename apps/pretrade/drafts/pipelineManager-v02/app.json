@@ -1,0 +1,8 @@
+{
+  "id": "pipelineManager-v02",
+  "track": "rnd",
+  "title": "Pipeline Management ver. 02",
+  "desc": "Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица — версия 02",
+  "home": "pages/index.html",
+  "icon": "layout-grid-01"
+}

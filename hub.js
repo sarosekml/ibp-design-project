@@ -80,12 +80,30 @@ window.IBPHub = [
     icon: 'ai-stars'
   },
   {
-    id: 'pipeline-manager-kanban',
+    id: 'pipelineManager-v01',
     group: 'concepts',
-    title: 'Pipeline Management',
+    title: 'Pipeline Management ver. 01',
     desc: 'Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица',
-    href: 'apps/pretrade/drafts/pipeline-manager-kanban/pages/index.html',
-    root: 'apps/pretrade/drafts/pipeline-manager-kanban',
+    href: 'apps/pretrade/drafts/pipelineManager-v01/pages/index.html',
+    root: 'apps/pretrade/drafts/pipelineManager-v01',
     icon: 'layout-grid-01'
+  },
+  {
+    id: 'pipelineManager-v02',
+    group: 'concepts',
+    title: 'Pipeline Management ver. 02',
+    desc: 'Сделки и лиды всех pipeline: канбан по стадиям и дескам, таблица — версия 02',
+    href: 'apps/pretrade/drafts/pipelineManager-v02/pages/index.html',
+    root: 'apps/pretrade/drafts/pipelineManager-v02',
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'pipelineScanner-v07',
+    group: 'concepts',
+    title: 'Pipeline Scanner ver. 07',
+    desc: 'Пайплайн сканер: нить запроса, конструктор, материалы с заключением АР, история и журнал',
+    href: 'apps/pretrade/drafts/pipelineScanner-v07/pages/index.html',
+    root: 'apps/pretrade/drafts/pipelineScanner-v07',
+    icon: 'ai-stars'
   }
 ];

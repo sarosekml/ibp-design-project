@@ -31,6 +31,10 @@
      средствами ДС»). Здесь только подъём над абсолютной иллюстрацией. */
   .hub-groups { position: relative; }
 
+  /* подзаголовок раздела apps/<раздел>/ внутри колонки «Концепты» */
+  .hub-sub { margin: var(--space-16) 0 var(--space-8); color: var(--text-secondary); }
+  .hub-sub:first-child { margin-top: 0; }
+
   /* Перестроение по рецепту стартовой страницы (Layout): первый шаг — штатная
      пара .col-N / .colw-N, второй парой не выражается и обязан иметь ту же
      специфичность (0,2,0) и стоять ниже правила пары. */
@@ -72,7 +76,15 @@
   var GROUPS = [
     { key: 'ds', label: 'Дизайн-система' },
     { key: 'projects', label: 'Проекты' },
-    { key: 'concepts', label: 'Концепты' }
+    { key: 'concepts', label: 'Концепты', bySection: true }
+  ];
+  /* подзаголовки колонки по разделу apps/<раздел>/ (порядок — как в apps/README.md) */
+  var SECTIONS = [
+    { key: 'core', label: 'Core' },
+    { key: 'ib', label: 'IB' },
+    { key: 'pretrade', label: 'Pretrade' },
+    { key: 'postrade', label: 'Postrade' },
+    { key: 'common', label: 'Common' }
   ];
 
   function esc(s) {
@@ -83,6 +95,8 @@
   function itemsOf(key) { return ENTRIES.filter(function (p) { return p.group === key; }); }
   /* подпись папки: root записи, у ДС — папка стартовой страницы */
   function folderOf(p) { return p.root || p.href.replace(/\/[^/]*$/, ''); }
+  /* раздел записи — второй сегмент пути apps/<раздел>/… */
+  function sectionOf(p) { return folderOf(p).split('/')[1] || ''; }
 
   function buildNav() {
     var nav = document.getElementById('nav');
@@ -138,6 +152,19 @@
       + '</a>';
   }
 
+  function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
+  /* записи по разделам: подзаголовок + свой .entity-list; раздел вне SECTIONS — в конец, подписью папки */
+  function sectionsHTML(items) {
+    var keys = SECTIONS.map(function (x) { return x.key; });
+    items.forEach(function (p) { if (keys.indexOf(sectionOf(p)) < 0) keys.push(sectionOf(p)); });
+    return keys.map(function (k) {
+      var list = items.filter(function (p) { return sectionOf(p) === k; });
+      if (!list.length) return '';
+      var sec = SECTIONS.filter(function (x) { return x.key === k; })[0];
+      return '<h3 class="hub-sub ds-h6-strong">' + esc(sec ? sec.label : k) + '</h3>' + listHTML(list);
+    }).join('');
+  }
+
   function buildGroups() {
     var host = document.getElementById('hub-groups');
     var html = '';
@@ -148,7 +175,7 @@
       html += '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
         + '<h2 class="tile__title">' + esc(g.label) + '</h2>'
         + '</div></div></header>';
-      html += '<div class="tile__body"><div class="entity-list">' + items.map(rowHTML).join('') + '</div></div>';
+      html += '<div class="tile__body">' + (g.bySection ? sectionsHTML(items) : listHTML(items)) + '</div>';
       html += '</section>';
     });
     host.innerHTML = html;
