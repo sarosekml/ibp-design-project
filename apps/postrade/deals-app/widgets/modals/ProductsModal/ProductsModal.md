@@ -81,15 +81,15 @@ Modal modal--w7 (1053px на 1920 — ширина макета), высота 6
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w7`, тело `modal__body--flush`; сохранение — `.modal--saving` |
-| ProductRow | ДС — `design-system/specs/ProductRow.md` | строка без дерева, только заголовок; выключенная — `aria-disabled` + `disabled` на кнопках; загрузка — `aria-busy` + `.sk-line` |
-| IconButton | ДС — `design-system/specs/IconButton.md` | `ibtn--neutral ibtn--l`: `info-circle`, `arrow-left-right` |
-| Tooltip | ДС — `design-system/specs/Tooltip.md` | `data-tooltip` на обеих кнопках строки |
-| Divider | ДС — `design-system/specs/Divider.md` | `dvd--v` между колонками |
-| Typography | ДС — `design-system/specs/Typography.md` | заголовки колонок `ds-h6-strong` (ответ человека 30.09.2026, 28) |
-| Layout | ДС — `design-system/specs/Layout.md` | `.ds-scroll` у списков |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Сохранить» — `btn--accent btn--m`, при сохранении `btn--loading` |
-| Skeleton | ДС — `design-system/specs/Skeleton.md` | `.sk-line` в строках-заготовках |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w7`, тело `modal__body--flush`; сохранение — `.modal--saving` |
+| ProductRow | ДС — `design-system/components/organisms/ProductRow/ProductRow.md` | строка без дерева, только заголовок; выключенная — `aria-disabled` + `disabled` на кнопках; загрузка — `aria-busy` + `.sk-line` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `ibtn--neutral ibtn--l`: `info-circle`, `arrow-left-right` |
+| Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | `data-tooltip` на обеих кнопках строки |
+| Divider | ДС — `design-system/components/atoms/Divider/Divider.md` | `dvd--v` между колонками |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | заголовки колонок `ds-h6-strong` (ответ человека 30.09.2026, 28) |
+| Layout | ДС — `design-system/foundations/Layout/Layout.md` | `.ds-scroll` у списков |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» — `btn--accent btn--m`, при сохранении `btn--loading` |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `.sk-line` в строках-заготовках |
 
 ## Параметры метки (Props)
 

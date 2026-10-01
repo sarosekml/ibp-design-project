@@ -24,16 +24,16 @@ metadata:
 
 | Файл | Размер | Что делать вместо |
 |---|---|---|
-| `design-system/scripts/icons-data.js` | 671 KB, одна строка | никогда не открывать; имена глифов — `design-system/specs/Icons.md` |
+| `design-system/foundations/Icons/icons-data.js` | 671 KB, одна строка | никогда не открывать; имена глифов — `design-system/foundations/Icons/Icons.md` |
 | `design-system/specs/_cheatsheet.md` | ~170 KB | читать по одному блоку компонента |
-| `design-system/pages/**/*.html` | 40–70 KB каждая | не читать; всё нужное есть в спеке |
-| `design-system/styles/*.css` | — | целиком не читать; **точечный `grep` по классу — можно и нужно**, когда чит-шит и спека расходятся или когда значение подозрительное |
+| страницы документации `<Имя>.html` (в папках компонентов) | 40–70 KB каждая | не читать; всё нужное есть в спеке |
+| CSS компонентов `<Имя>.css` | — | целиком не читать; **точечный `grep` по классу — можно и нужно**, когда чит-шит и спека расходятся или когда значение подозрительное |
 
 ## Чит-шит — не истина в последней инстанции
 
 Чит-шит собирается руками и **может расходиться со спекой и с CSS**. Такое
 уже случалось: в блоке NavPanel бургер был `ibtn--s`, а спека и расчёт оси в
-`design-system/styles/nav-panel.css` требуют `ibtn--m`; в блоке DatePicker сниппет давал
+`design-system/components/organisms/NavPanel/NavPanel.css` требуют `ibtn--m`; в блоке DatePicker сниппет давал
 `btn--s` при том, что описание того же блока строкой выше говорило XS
 (оба исправлены 26.08.2026 — но гарантии, что расхождений не осталось, нет).
 
@@ -73,7 +73,8 @@ sed -n '/^## Tile$/,/^## /p' design-system/specs/_cheatsheet.md
 ### 3. Полная спека — обязательные триггеры
 
 ```bash
-cat design-system/specs/Tile.md
+cat design-system/components/organisms/Tile/Tile.md
+node design-system/tools/ds-paths.mjs Tile   # где папка компонента и какие в ней файлы
 ```
 
 6–12 KB. **Жёсткого лимита на число прочитанных спек нет** — читай столько,
@@ -106,13 +107,13 @@ cat design-system/specs/Tile.md
 
 ## Иконки
 
-Все 247 имён глифов — одной строкой в `design-system/specs/Icons.md`:
+Все 247 имён глифов — одной строкой в `design-system/foundations/Icons/Icons.md`:
 
 ```bash
-grep -o "^[^#].*" design-system/specs/Icons.md | tail -1 | tr '·' '\n' | grep -i "arrow"
+grep -o "^[^#].*" design-system/foundations/Icons/Icons.md | tail -1 | tr '·' '\n' | grep -i "arrow"
 ```
 
-или просто `cat design-system/specs/Icons.md` (файл 16 строк).
+или просто `cat design-system/foundations/Icons/Icons.md` (файл 16 строк).
 
 Правила:
 
@@ -126,14 +127,14 @@ grep -o "^[^#].*" design-system/specs/Icons.md | tail -1 | tr '·' '\n' | grep -
 
 | Что нужно | Где смотреть |
 |---|---|
-| Цвета — семантика | `grep -n "^  --" design-system/styles/palette.css` |
-| Цвета — базовые токены | `grep -n "^  --" design-system/styles/colors.css` |
-| Типографика (`--type-*`, классы `.ds-*`) | `sed -n '/^## Ключевые/,/^## /p' design-system/specs/Typography.md` |
+| Цвета — семантика | `grep -n "^  --" design-system/foundations/Colors/Palette.css` |
+| Цвета — базовые токены | `grep -n "^  --" design-system/foundations/Colors/Colors.css` |
+| Типографика (`--type-*`, классы `.ds-*`) | `sed -n '/^## Ключевые/,/^## /p' design-system/foundations/Typography/Typography.md` |
 | Отступы, шкала `--space-*`, сетка `.grid12`/`.col-N` | `sed -n '/^## Spacing/,/^## /p' design-system/specs/_cheatsheet.md` |
-| Радиусы | `grep -n "radius" design-system/styles/radius.css` |
-| Тени | `grep -n "shadow" design-system/styles/shadow.css` |
+| Радиусы | `grep -n "radius" design-system/foundations/Radius/Radius.css` |
+| Тени | `grep -n "shadow" design-system/foundations/Elevation/Elevation.css` |
 
-Ищешь конкретный токен по имени — `grep -rn "имя-токена" design-system/styles/`.
+Ищешь конкретный токен по имени — `grep -rn "имя-токена" --include=*.css design-system/foundations design-system/components`.
 
 Токена нет — **спроси**. Не подставляй `#hex`, не считай «примерно как рядом».
 

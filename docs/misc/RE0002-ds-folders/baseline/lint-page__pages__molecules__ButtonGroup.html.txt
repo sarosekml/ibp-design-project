@@ -1,8 +1,0 @@
-код 0
-DS-LINT · pages/molecules/ButtonGroup.html · 01.10.2026
-WARN    D4  index.html: «Правила и паттерны» — порядок не алфавитный: «Локальные компоненты» стоит 1-м, ожидается 2-м
-WARN    D4  ds-nav.js: «Правила и паттерны» — порядок не алфавитный
-WARN    C3  страница правилась, «Обновлено» = 21.09.2026, сегодня 01.10.2026
-INFO    B3  вне шкалы 4: gap:30px, gap:18px, gap:22px, padding:26px, border-radius:9px
-—
-BLOCKER 0 · WARN 3 · INFO 1 → PASS с замечаниями

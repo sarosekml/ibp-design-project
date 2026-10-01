@@ -8,7 +8,7 @@
    Запуск:
      node tools/ds-lint-cli.mjs                         # только глобальные правила
      node tools/ds-lint-cli.mjs components/molecules/SegmentControl/SegmentControl.html
-     node tools/ds-lint-cli.mjs pages/atoms/*.html      # несколько страниц
+     node tools/ds-lint-cli.mjs components/atoms/Chip/Chip.html components/atoms/Badge/Badge.html   # несколько страниц
      node tools/ds-lint-cli.mjs --parity                # гейт парности «доки = код»
 
    Код выхода: 1 если в отчёте есть BLOCKER (NEEDS-WORK), иначе 0.
@@ -77,8 +77,8 @@ try {
      отбросил бы (отсечение временных копий, runlog.isOutside): с 12.09.2026 по
      13.09.2026 ни один прогон линтера по экрану в журнал не попал, и `stats`
      не видел кодов экранов. Путь с `../` переводится к корню проекта (его
-     называет манифест, kit-link.mjs — не «на уровень выше ДС»); страницы
-     `pages/…` остаются как были — на этой форме лежит история. */
+     называет манифест, kit-link.mjs — не «на уровень выше ДС»); страницы ДС
+     пишутся путём от её корня, как были — на этой форме лежит история. */
   const journalPath = (t) => (t.startsWith('../') ? path.relative(projectRoot(), path.resolve(ROOT, t)).split(path.sep).join('/') : t);
   if (!targets.some(isFixture)) {
     logRun({

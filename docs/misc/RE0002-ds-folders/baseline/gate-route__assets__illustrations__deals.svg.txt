@@ -1,7 +1,0 @@
-код 0
-== gate: проверки по изменениям ==
-изменено: 1 (задано --changed, снимок не обновляется)
-  design-system/assets/illustrations/deals.svg
-
-шаги (--dry, не запускаются): 1
-  readme-stats --check (счётчики README = ДС и приложения)

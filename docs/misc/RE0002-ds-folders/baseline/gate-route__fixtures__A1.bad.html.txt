@@ -1,9 +1,0 @@
-код 0
-== gate: проверки по изменениям ==
-изменено: 1 (задано --changed, снимок не обновляется)
-  design-system/fixtures/A1.bad.html
-
-шаги (--dry, не запускаются): 3
-  anchors
-  verify --corpus lint
-  vendor-scan (нейтральность)

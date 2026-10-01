@@ -25,14 +25,16 @@
 import { readFileSync, existsSync, statSync, appendFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { need } from '../../../tools/project.mjs';
+import { need, dsPaths } from '../../../tools/project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 /* Корень проекта и ДС — из манифеста project.json (реструктуризация, Ш4). */
 const PRJ = need('ctx-budget', HERE);
 const ROOT = PRJ.root;
 const STAGES_FILE = path.join(HERE, 'stages.json');
-const CHEATSHEET = path.join(PRJ.dsAbs, 'specs', '_cheatsheet.md');
+// где лежит чит-шит, знает модуль путей ДС, а не литерал папки (RE0002)
+const DSL = (await dsPaths(HERE)).layout(PRJ.dsAbs);
+const CHEATSHEET = DSL.abs(DSL.at.cheatsheet);
 
 const П = JSON.parse(readFileSync(STAGES_FILE, 'utf8'));
 const К = П['коэффициенты'];

@@ -23,7 +23,7 @@ Popover — нон-модальный всплывающий контейнер,
 - Кнопки действий не кладутся в Header — только в Footer (foot-right); Header — заголовок + ✕.
 - Свыше `--pop-w-max` (560px) или когда контенту не хватает высоты со скроллом — сигнал переключиться на Modal, не растягивать Popover.
 - Стрелка (`.pop__arrow`) красится в цвет зоны, к которой примыкает (Header/Footer/Body) — не фиксированный цвет.
-- Полоса прокрутки тела — как `.ds-scroll` (Layout): бегунок 8px `--secondary` со скруглением `--radius-full`, без дорожки и стрелок; в покое скрыт, при прокрутке появляется и гаснет через 800 мс — класс `.is-scrolling` ставит `ds-scroll.js`. Цвет бегунка берётся из `border-color` тела, поэтому своей рамки у `.pop__body` нет. Резерв места под бегунок не ставится. (1.008)
+- Полоса прокрутки тела — как `.ds-scroll` (Layout): бегунок 8px `--secondary` со скруглением `--radius-full`, без дорожки и стрелок; в покое скрыт, при прокрутке появляется и гаснет через 800 мс — класс `.is-scrolling` ставит `Layout.js`. Цвет бегунка берётся из `border-color` тела, поэтому своей рамки у `.pop__body` нет. Резерв места под бегунок не ставится. (1.008)
 
 ## Диагностика
 - «Поповер, открытый из модалки, не видно или он не ловит клики» → рантайм старше 1.007: поповер монтировался в общий слой `DSFloat` (`z-index: 40`) под скрим модалки (`z-index: 1000`) и попадал под её `inert`. С 1.007 `open()` передаёт в `mount` якорь (триггер)
@@ -49,7 +49,7 @@ Popover — нон-модальный всплывающий контейнер,
 - **Настройки атрибутами триггера**: `data-popover-placement` (top|bottom|left|right, по умолчанию bottom), `data-popover-align` (start|center|end, start), `data-popover-gap` (8), `data-popover-flip="no"` (выключить авто-flip), `data-popover-boundary` (CSS-селектор контейнера-границы, по умолчанию вьюпорт).
 - **API**: `DSPopover.bind(trigger, opts) → {open, close, toggle, place, isOpen}` · `DSPopover.place(pop, trigger, {placement, align, gap, flip, boundary, offsetParent}) → {placement, align}` · `DSPopover.bindAll(root)` · `DSPopover.watchScroll(pop) → sync()` · `DSPopover.closeAll()` · `DSPopover.current()`.
 - **Реализовано**: 12 позиций, авто-flip стороны (противоположная → перпендикулярные) и выравнивания (start↔end), clamp 8px от границ, стрелка доводится до центра триггера (12px от углов), один открытый поповер одновременно, 5 способов закрытия (✕ / клик вне / Esc с возвратом фокуса / Tab за последний элемент / `[data-pop-close]`), тени `.is-scrolled` у шапки и подвала, репозиционирование по resize/scroll.
-- Страница компонента использует тот же рантайм: `popover.page.js` собирает только демо-разметку.
+- Страница компонента использует тот же рантайм: `Popover.page.js` собирает только демо-разметку.
 
 ## Для разработчиков (выжимка)
 
@@ -61,7 +61,7 @@ Popover — нон-модальный всплывающий контейнер,
 ```
 <span class="pop-anchor">
   <button type="button" data-popover="pop-1">…</button>
-  <!-- aria-haspopup/aria-expanded/aria-controls проставит ds-popover.js -->
+  <!-- aria-haspopup/aria-expanded/aria-controls проставит Popover.js -->
 
   <div id="pop-1" class="pop pop--w-m pop--bottom pop--start pop--floating" role="dialog" aria-modal="false" aria-labelledby="pop-1-title">
     <div class="pop__head">

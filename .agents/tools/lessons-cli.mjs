@@ -259,7 +259,7 @@ function lintIds() {
 }
 
 /* Правила линтера, чей ВХОД — не файл, а репозиторий: реестры (index.html,
-   ds-nav.js, specs/_index.md), все styles/*.css, все scripts/*.js, дерево
+   ds-nav.js, манифест спек), весь CSS ДС, все её скрипты, дерево
    файлов. Такое правило файловой фикстурой не доказывается в принципе —
    доказывать его пришлось бы фикстурным РЕПОЗИТОРИЕМ.
 
@@ -1256,8 +1256,9 @@ function fingerprint() {
   return out;
 }
 
-/* Страничный скрипт живёт в `design-system/scripts/<kebab>.page.js`, страница — в
-   `design-system/pages/<раздел>/<Pascal>.html`. Имена сверяются без дефисов и регистра. */
+/* Страничный скрипт `<Имя>.page.js` и страница `<Имя>.html` лежат в папке
+   компонента; страницу находит модуль путей ДС по имени. Имена сверяются без
+   дефисов и регистра. */
 function pageForScript(rel) {
   const key = path.basename(rel).replace(/\.page\.js$/, '').replace(/-/g, '').toLowerCase();
   return L.pages().filter((p) => p.name.toLowerCase() === key).map((p) => toRel(L.abs(p.rel)));
@@ -1302,12 +1303,20 @@ function gateStep(id, paths = null) {
     case 'sensor': return { title: 'сенсор ' + target, args: [SENSOR, abs], cwd: ROOT };
     case 'lint': return { title: 'линтер ' + target, args: [L.at.lintCli, fromDs], cwd: DS };
     case 'split': return { title: 'docs-split check ' + target, args: [DOCS_SPLIT, 'check', target], cwd: ROOT };
+    /* Синтаксис изменённого Node-модуля проверяется node --check: падение ловит
+       дефект класса «пример в блочном комментарии закрыл комментарий» РАНЬШЕ,
+       чем он превратится в каскад непонятных FAIL упавшего линтера (Л168). */
+    case 'syntax': return { title: 'node --check ' + target, args: ['--check', abs], cwd: ROOT };
     case 'lint-global': return { title: 'линтер, глобальные правила', args: [L.at.lintCli], cwd: DS };
     case 'parity': return { title: 'линтер --parity (доки = код)', args: [L.at.lintCli, '--parity'], cwd: DS };
     case 'spec-audit': return { title: 'spec-audit', args: [SPEC_AUDIT], cwd: DS };
     /* Рантайм иконок ДС (задача 0007): у каждой копии глифа свои id внутри SVG,
        DS_ICONS после ds-icons.js отдаёт копии, ds.js грузит его раньше читателей. */
     case 'icons-selftest': return { title: 'ds-icon --selftest (рантайм иконок: уникальные id копий)', args: [DS_ICON, '--selftest'], cwd: DS };
+    /* Самопроверка ДС (ds-check.mjs --all): обёртка над линтером, аудитом и
+       иконками. Гоняется, когда правили саму обёртку или kit-link.mjs — модуль,
+       который ищет оснастку для всех инструментов ДС (дыра маршрутов RE0002). */
+    case 'ds-check': return { title: 'ds-check --all (ДС проверяет себя сама)', args: [L.at.check, '--all'], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1436,6 +1445,14 @@ function gateStepsFor(rel, deleted) {
      (появился или пропал модуль) → readme-stats; инструмент и обход модулей
      → ещё и его селфтест. */
   const dk = dsKind(rel);
+  /* Синтаксис изменённого Node-модуля — node --check: ловит дефект класса
+     «пример в комментарии закрыл сам комментарий» раньше, чем тот станет
+     каскадом непонятных FAIL упавшего линтера (Л168). */
+  if (!deleted && /\.(mjs|cjs)$/.test(rel)) add('syntax:' + rel);
+  /* Шрифты — бинарный актив ДС. Статической проверки у них нет (единственный
+     потребитель — url() в Typography.css; ссылки сверены на переезде RE0002);
+     роут к vendor, чтобы правка шрифта не молчала «проверок 0» (дыра RE0002). */
+  if (dk && dk.kind === 'font') add('vendor');
   if (rel === 'README.md' || rel === 'project.json'
     || (dk && dk.kind === 'page' && README_PAGE_CATS.includes(dk.category))
     || isDsFile(rel, L.at.iconsData) || rel.startsWith(DS_REL + '/' + L.at.illustrations + '/')
@@ -1449,6 +1466,14 @@ function gateStepsFor(rel, deleted) {
      иконки и счётчики README — его правка прогоняет их всех (решение владельца
      01.10.2026, RE0002) */
   if (isDsFile(rel, L.at.paths)) add('verify-lint', 'anchors', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'readme-stats');
+
+  /* Обёртка самопроверки ДС и связка с оснасткой (kit-link ищет оснастку для
+     линтера/аудита/иконок). Правка любой из них прогоняет самопроверку ДС
+     целиком: обёртка могла сломать вызовы подшагов, kit-link — их адреса.
+     До 01.10.2026 на обе гонялся один vendor-scan — дыра маршрутов, закрыта в
+     RE0002 Э4 (открытый вопрос 8). */
+  if (isDsFile(rel, L.at.check)) add('ds-check');
+  if (isDsFile(rel, L.at.kitLink)) add('ds-check');
 
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
@@ -1544,7 +1569,7 @@ function gateStepsFor(rel, deleted) {
 
 const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1694,7 +1719,7 @@ function gate() {
   const fresh = results.filter((r) => !r.debt);
   const failedNow = fresh.filter((r) => r.code !== 0);
   const okNow = fresh.filter((r) => r.code === 0);
-  const perFile = new Set(['sensor', 'lint', 'split']);
+  const perFile = new Set(['sensor', 'lint', 'split', 'syntax']);
   const sec = (s) => s.toFixed(1).replace('.', ',') + ' с';
 
   if (okNow.length <= 8) {

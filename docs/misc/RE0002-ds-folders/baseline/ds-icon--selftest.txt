@@ -1,7 +1,0 @@
-код 0
-== ds-icon.mjs --selftest ==
-ok    1 копии 247 глифов (с id — 247, со ссылками url/href — 141, с повтором id внутри глифа — 118): id уникальны и между копиями, и внутри копии, ссылки в свою копию, остальное байт в байт
-ok    2 apply(): две копии message-text с разными id, повторный apply не вставляет заново, неизвестное имя — предупреждение без вставки
-ok    3 DS_ICONS после ds-icons.js: те же ключи, каждое чтение — копия со своими id; рантайм раньше данных — замена при первом apply()
-ok    4 ds.js: ds-icons.js сразу за icons-data.js и раньше рантаймов, читающих DS_ICONS (ds-actions-overflow.js, ds-pagination.js, ds-notify.js, ds-datepicker.js, input-kit.js)
-ВЕРДИКТ: OK (кейсов: 4)

@@ -47,12 +47,12 @@ Modal w7 «Описание сделки»
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w7`; скрим `deal-description-scrim`, открытие с `data-modal-guarded` в правке |
-| InputText | ДС — `design-system/specs/InputText.md` | суть и комментарий — `inp--multiline`, 4 строки; дополнительные доходы — строка |
-| InputAutocomplete + DropdownList | ДС — `design-system/specs/InputAutocomplete.md` | одиночный выбор: ГСЗ, совместность (под кодом — полное имя банка), категория риска (под буквой — пояснение) |
-| Checkbox | ДС — `design-system/specs/Checkbox.md` | три признака группой (`cb-group`) и «Фин. расчеты в Excel» отдельно |
-| Divider | ДС — `design-system/specs/Divider.md` | `dvd--v` между колонками |
-| ReadOnlyField | ДС — `design-system/specs/ReadOnlyField.md` | поля в просмотре, текст без усечения |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w7`; скрим `deal-description-scrim`, открытие с `data-modal-guarded` в правке |
+| InputText | ДС — `design-system/components/molecules/Inputs/InputText/InputText.md` | суть и комментарий — `inp--multiline`, 4 строки; дополнительные доходы — строка |
+| InputAutocomplete + DropdownList | ДС — `design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md` | одиночный выбор: ГСЗ, совместность (под кодом — полное имя банка), категория риска (под буквой — пояснение) |
+| Checkbox | ДС — `design-system/components/atoms/Checkbox/Checkbox.md` | три признака группой (`cb-group`) и «Фин. расчеты в Excel» отдельно |
+| Divider | ДС — `design-system/components/atoms/Divider/Divider.md` | `dvd--v` между колонками |
+| ReadOnlyField | ДС — `design-system/components/molecules/ReadOnlyField/ReadOnlyField.md` | поля в просмотре, текст без усечения |
 
 ## Поля
 

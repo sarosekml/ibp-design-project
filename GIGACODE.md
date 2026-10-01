@@ -62,7 +62,7 @@ HTML-прототипов. Это инструментарий, а не прод
 
 Источник истины: токены, классы компонентов и документация. **Файлы этой
 папки агент не меняет** (исключение — явное поручение человека). Точки
-входа ДС — `ds.css` (все стили) и `scripts/ds.js` (все рантаймы). Экран
+входа ДС — `ds.css` (все стили) и `ds.js` (все рантаймы). Экран
 проекта их не называет: ДС подключает загрузчик двумя тегами
 (`apps/ds-config.js` в `<head>`, `apps/ds-body.js` вместо `ds.js`), адрес ДС
 записан только строкой `DS_PATH` в `apps/ds-config.js`.
@@ -71,15 +71,14 @@ HTML-прототипов. Это инструментарий, а не прод
 
 | Файл | Что содержит |
 |---|---|
-| `design-system/ds.css` | Единая точка подключения стилей (@import всех `styles/*`) |
-| `design-system/scripts/ds.js` | Единая точка подключения рантаймов (сам догружает иконки, табы, модалки, таблицы) |
+| `design-system/ds.css` | Единая точка подключения стилей (@import CSS основ и компонентов) |
+| `design-system/ds.js` | Единая точка подключения рантаймов (сам догружает иконки, табы, модалки, таблицы) |
 | `design-system/specs/_index.md` | Манифест: компонент → спека → CSS → версия |
 | `design-system/specs/_cheatsheet.md` | Чит-шит: по блоку на каждый компонент. **Большой — читать только точечно** |
-| `design-system/specs/<Имя>.md` | Полная спека компонента |
-| `design-system/specs/Icons.md` | Все имена глифов (вставляются как `<i data-icon="имя">`) |
-| `design-system/styles/colors.css` (базовые цветовые рампы), `palette.css` (семантика цвета), `typography.css`, `spacing.css`, `radius.css`, `shadow.css` | Токены фундамента |
+| `design-system/components/<категория>/<Имя>/` | Компонент — папка со всеми файлами: `<Имя>.md` (полная спека), `<Имя>.css`, `<Имя>.js`, страница `<Имя>.html`. Папку называет `node design-system/tools/ds-paths.mjs <Имя>` |
+| `design-system/foundations/Icons/Icons.md` | Все имена глифов (вставляются как `<i data-icon="имя">`) |
+| `design-system/foundations/<Имя>/` — `Colors/Colors.css` (базовые цветовые рампы), `Colors/Palette.css` (семантика цвета), `Typography`, `Spacing`, `Radius`, `Elevation` | Токены фундамента |
 | `design-system/templates/screen/Screen.html` | Стартовый шаблон экрана |
-| `design-system/pages/` | Документация компонентов (не читать целиком) |
 
 ### 3. `apps/` — приложения: проекты и концепты
 
@@ -141,9 +140,9 @@ HTML-прототипов. Это инструментарий, а не прод
 `sed -n '/^## <Имя>$/,/^## /p'` по блоку компонента, `read` с `offset/limit`.
 Запрещено читать целиком:
 
-- `design-system/scripts/icons-data.js` (671 KB в одну строку);
+- `design-system/foundations/Icons/icons-data.js` (671 KB в одну строку);
 - `design-system/specs/_cheatsheet.md` (~170 KB);
-- страницы `design-system/pages/**/*.html`;
+- страницы документации ДС (`<Имя>.html` в папках компонентов);
 - собранный экран при правке — только по якорям секций (`#sec:head`,
   `#sec:content`, `#sec:modals`).
 

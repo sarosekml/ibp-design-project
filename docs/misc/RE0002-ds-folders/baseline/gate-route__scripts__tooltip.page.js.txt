@@ -1,9 +1,0 @@
-код 0
-== gate: проверки по изменениям ==
-изменено: 1 (задано --changed, снимок не обновляется)
-  design-system/scripts/tooltip.page.js
-
-шаги (--dry, не запускаются): 3
-  линтер design-system/pages/molecules/Tooltip.html
-  docs-split check design-system/pages/molecules/Tooltip.html
-  vendor-scan (нейтральность)

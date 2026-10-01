@@ -55,7 +55,7 @@ const JS_CSS_PAIRS = [['ds-nav.js', 'ds-nav.css'], ['ds-toc.js', 'ds-toc.css'], 
   ['Tooltip.js', 'Tooltip.css', 'BLOCKER']];
 // рантаймы, которые ds.js (RulesAudit W0/K0) догружает сам — экран не должен подключать их напрямую
 const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
-// утилитарные классы разметки документации — владельца в styles/* не имеют
+// утилитарные классы разметки документации — владельца в CSS ДС не имеют
 const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
 // F5 — реестр «анатомия компонента взята целиком, не урезана под текущий вид». Каждый
 // компонент, у которого есть узлы, обязанные существовать в DOM ВСЕГДА (класс-свап
@@ -216,7 +216,7 @@ async function loadProject() {
   const scriptByName = new Map(dsLayout.scripts().map((f) => [base(f), f]));
   const styleFiles = list.filter(lay.style);
 
-  // токены: все определения --x в styles/*
+  // токены: все определения --x в CSS ДС
   const tokens = new Set();
   const classOwners = new Map(); // класс -> Set(файлов)
   const cssSources = await Promise.all(styleFiles.map((f) => readFile(f)));
@@ -256,7 +256,7 @@ async function loadProject() {
    - дата — самый поздний раздел `## ДД.ММ.ГГГГ` в CHANGELOG.md;
    - версия — последняя метка `· ДС М.ммм` в заголовке раздела плюс 0.001 за
      каждый более поздний день журнала (повтор заголовка одного дня — один день);
-   - счётчик — файлы .html в pages/atoms, pages/molecules, pages/organisms.
+   - счётчик — страницы атомов, молекул и организмов (модуль путей ДС).
    Вывод зависит только от файлов, не от часов: без правок проверка назавтра не
    краснеет. Переписывает шапку `node tools/ds-home.mjs`, сторожит D9. */
 const HOME_DAY_RX = /^##\s+(\d{2})\.(\d{2})\.(\d{4})(?![\d.])([^\r\n]*)$/gm;
@@ -328,7 +328,7 @@ async function globalChecks(P, out) {
   const react = P.list.filter((f) => /\.(jsx|tsx|d\.ts)$/.test(f) && !/^_ds_/.test(f));
   if (react.length) out.push(['BLOCKER', 'B6', 'React-файлы в ванильной ДС: ' + react.slice(0, 5).join(', ')]);
 
-  /* B7 — незаскоупленный ARIA-состояние-селектор в styles/*.css: топ-уровневая ветка
+  /* B7 — незаскоупленный ARIA-состояние-селектор в CSS ДС: топ-уровневая ветка
      селектора (до `{`, разбитая по запятым верхнего уровня) начинается прямо с `:is(`/
      `[aria-...]` без класса-компонента перед ней — значит матчит ЛЮБОЙ элемент с этим
      атрибутом на странице. Через общий ds.css это протекает на другие компоненты с тем
@@ -608,7 +608,7 @@ async function globalChecks(P, out) {
     }
   }
 
-  /* A6 — index.html тянет styles/* поштучно: если на витрине есть разметка
+  /* A6 — index.html тянет CSS компонентов поштучно: если на витрине есть разметка
      компонента, его CSS обязан быть подключён. Инцидент 07.08.2026: карточка
      ProgressBar была пустой — .pbar не имел ни одного правила. */
   {
@@ -657,7 +657,7 @@ async function globalChecks(P, out) {
     const sorted = [...real].sort((a, b) => a.localeCompare(b, 'ru'));
     if (real.join('|') !== sorted.join('|')) out.push(['WARN', 'D4', 'ds-nav.js: «' + gname + '» — порядок не алфавитный']);
   }
-  // D9 — шапка главной (версия, дата, счётчик) выводится из журнала и pages/ (homeMeta)
+  // D9 — шапка главной (версия, дата, счётчик) выводится из журнала и страниц компонентов (homeMeta)
   const home = await homeMeta();
   if (!home.ver) out.push(['BLOCKER', 'D9', 'CHANGELOG.md: нет базы версии ДС — метки в заголовке раздела вида «## ДД.ММ.ГГГГ · ДС 1.000»']);
   for (const [what, was, want] of homeApply(P.index, home).diffs) {
@@ -779,10 +779,10 @@ async function runtimeApiCheck(P, out) {
    P3 — класс из код-панели витрины (<code> внутри сценария страницы *.page.js)
         отсутствует в CSS: страница предлагает скопировать несуществующий класс.
    P2 снят 01.10.2026 (RE0002, решение владельца): правило читало экраны из
-   `pages/screens/` ДС, а такого каталога давно нет — его вход был пуст, и оно
+   каталога экранов самой ДС, а такого каталога давно нет — его вход был пуст, и оно
    не срабатывало никогда. Выдуманный класс на экране приложения ловит сенсор (Б4). */
 const PARITY_SKIP = /^(is-|js-|has-)/;
-// стили этих рантаймов живут в shadow DOM самого скрипта, а не в styles/*.css
+// стили этих рантаймов живут в shadow DOM самого скрипта, а не в CSS ДС
 const SHADOW_RUNTIMES = /image-slot\.js$/;
 function parityIgnore(c) { return CLASS_IGNORE.has(c) || PARITY_SKIP.test(c) || /[^a-z0-9_-]/i.test(c); }
 // JS-хуки: класс без собственных правил, но по нему работает рантайм — не опечатка
@@ -927,7 +927,7 @@ async function pageChecks(p, P, opts, out) {
      сюда путём `../apps/…/pages/Имя.html`. Без этого признака к экрану
      применялся контракт docs-страницы, и любой экран получал ложные C1/C2
      («нет @dsCard», «нет Версия/Обновлено»). Вторая ветка — экраны в
-     `pages/screens/` самой ДС — снята 01.10.2026 (RE0002): такого каталога нет. */
+     каталоге экранов самой ДС — снята 01.10.2026 (RE0002): такого каталога нет. */
   const isScreen = p.startsWith('../');
   /* Комментарий — не разметка. Вырезается вместе со <style> и <script>: текст
      комментария неотличим от разметки для строкового правила, и страница,
@@ -1218,7 +1218,7 @@ async function pageChecks(p, P, opts, out) {
     const segs = (dir ? dir.split('/') : []);
     /* `..` на пустом пути — выход ВЫШЕ корня ДС. Раньше `segs.pop()` на пустом
        массиве молча ничего не делал, побег терялся, и ссылка наружу выглядела
-       как внутренняя: `pages/patterns/../../../Projects/…` превращалась в
+       как внутренняя: `patterns/HomeRoles/../../../Projects/…` превращалась в
        `Projects/…` и падала блокером «битая», хотя файл существует. */
     let escaped = false;
     for (const s of clean.split('/')) {
@@ -1476,9 +1476,9 @@ async function pageChecks(p, P, opts, out) {
       if (upd && su && su.trim() !== upd.trim()) say('WARN', 'D7', 'дата в спеке ' + su + ' ≠ ' + upd + ' на странице');
     }
   }
-  /* D7 вне реестров (pages/rnd/* и прочие): версия и дата обязаны совпадать со
+  /* D7 вне реестров (rnd/* и прочие): версия и дата обязаны совпадать со
      спекой — но только если спека и правда объявляет ЭТУ страницу. Совпадения
-     одного имени файла мало: концепт в `pages/rnd/`, из которого вырос организм,
+     одного имени файла мало: концепт в `rnd/`, из которого вырос организм,
      — отдельный документ со своей историей, и требовать от него версию
      компонента бессмысленно (так было с концептом Kanban, удалён 13.09.2026).
      Сверяем с полем `page:` спеки. */

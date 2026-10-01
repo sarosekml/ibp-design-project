@@ -79,10 +79,10 @@ Page (Layout, nav--rail)
 
 | Компонент | Откуда | Где на экране | Варианты и ключевые параметры |
 |---|---|---|---|
-| Layout | ДС — `design-system/specs/Layout.md` | каркас | `nav--rail` |
-| Breadcrumbs | ДС — `design-system/specs/Breadcrumbs.md` | зона крошек | — |
-| PageHeader | ДС — `design-system/specs/PageHeader.md` | шапка | без иконки, без статуса |
-| Tile | ДС — `design-system/specs/Tile.md` | сводка | обычный, 4 колонки |
+| Layout | ДС — `design-system/foundations/Layout/Layout.md` | каркас | `nav--rail` |
+| Breadcrumbs | ДС — `design-system/components/molecules/Breadcrumbs/Breadcrumbs.md` | зона крошек | — |
+| PageHeader | ДС — `design-system/components/organisms/PageHeader/PageHeader.md` | шапка | без иконки, без статуса |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | сводка | обычный, 4 колонки |
 | `CurrentPortfolioDidTable` | виджет модуля — `../widgets/tables/CurrentPortfolioDidTable/CurrentPortfolioDidTable.md` | реестр | метка `class="col-12"` |
 | `DealFilterModal` | виджет модуля — `../widgets/modals/DealFilterModal/DealFilterModal.md` | по кнопке «Фильтр» | `.modal--w6` |
 

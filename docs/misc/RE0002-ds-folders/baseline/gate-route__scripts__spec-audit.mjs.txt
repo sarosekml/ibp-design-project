@@ -1,9 +1,0 @@
-код 0
-== gate: проверки по изменениям ==
-изменено: 1 (задано --changed, снимок не обновляется)
-  design-system/scripts/spec-audit.mjs
-
-шаги (--dry, не запускаются): 3
-  spec-audit
-  anchors
-  vendor-scan (нейтральность)

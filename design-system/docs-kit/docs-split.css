@@ -12,12 +12,13 @@
    ВСЕ правила этого файла префиксованы main.ds-split — на страницы без
    класса не влияют.
 
-   Подключение на странице-хосте:
-     <link rel="stylesheet" href="../../styles/ds-docs.css">
-     <link rel="stylesheet" href="../../styles/splitter.css">
-     <link rel="stylesheet" href="../../styles/segment-control.css">
-     <link rel="stylesheet" href="../../styles/tab.css">
-     <link rel="stylesheet" href="../../styles/docs-split.css">  ← после ds-docs.css
+   Подключение на странице-хосте (пути — от папки страницы; пример — атом,
+   components/atoms/<Имя>/):
+     <link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+     <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+     <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+     <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+     <link rel="stylesheet" href="../../../docs-kit/docs-split.css">  ← после ds-docs.css
    и рантаймы: components/molecules/Splitter/Splitter.js, components/molecules/Tab/Tab.js,
    docs-kit/docs-split.js (после page.js страницы).
    ========================================================================= */

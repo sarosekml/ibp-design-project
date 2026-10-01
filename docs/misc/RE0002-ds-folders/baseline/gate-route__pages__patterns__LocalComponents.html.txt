@@ -1,8 +1,0 @@
-код 0
-== gate: проверки по изменениям ==
-изменено: 1 (задано --changed, снимок не обновляется)
-  design-system/pages/patterns/LocalComponents.html
-
-шаги (--dry, не запускаются): 2
-  линтер design-system/pages/patterns/LocalComponents.html
-  vendor-scan (нейтральность)

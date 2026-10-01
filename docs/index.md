@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 256.
+Документов: 254.
 
 ## Корень (4)
 
@@ -212,7 +212,7 @@
 |---|---|
 | [.agents/skills/composition-review/SKILL.md](../.agents/skills/composition-review/SKILL.md) | Приёмка композиции |
 | [.agents/skills/concept-design/SKILL.md](../.agents/skills/concept-design/SKILL.md) | Проектирование концептов |
-| [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка \`design-system/pages/\*\*\` на docs-split |
+| [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка страниц документации ДС на docs-split |
 | [.agents/skills/docs-split/references/lessons.md](../.agents/skills/docs-split/references/lessons.md) | Уроки раскатки docs-split |
 | [.agents/skills/docs-split/references/pages-index.md](../.agents/skills/docs-split/references/pages-index.md) | Карта страниц документации |
 | [.agents/skills/docs-split/references/skeleton.md](../.agents/skills/docs-split/references/skeleton.md) | Скелет страницы docs-split (эталон структуры) |
@@ -513,14 +513,12 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (23)
+## Задачи и заметки (21)
 
 ### Архив/черновики
 
 | Документ | Аннотация |
 |---|---|
-| [docs/misc/RE0002-ds-folders/move-map.md](misc/RE0002-ds-folders/move-map.md) | RE0002 · карта переезда ДС (генерат move-map.mjs — руками не править) |
-| [docs/misc/RE0002-ds-folders/refs-report.md](misc/RE0002-ds-folders/refs-report.md) | RE0002 · ссылки вне ДС на переезжающие пути (генерат refs-report.mjs — руками не править) |
 | [docs/misc/agent-imp.md](misc/agent-imp.md) | Задача: привести обвязку агента в порядок до реструктуризации |
 | [docs/misc/clients-app-all.md](misc/clients-app-all.md) | clients-app — объединённые дизайн-спецификации |
 | [docs/misc/clients-app-tree.md](misc/clients-app-tree.md) | clients-app — структура папки |

@@ -78,14 +78,14 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Tile | ДС — `design-system/specs/Tile.md` | обычный, действие шапки — Button `btn--outline btn--xs` |
-| ProductRow | ДС — `design-system/specs/ProductRow.md` | продукт ДИД — `.prow--root` с `.prow__toggle` и меткой `.prow__mark`; прикреплённый к ФИ — `.prow--tinted`; вторая строка — `.prow__meta`; погашение — `.prow__status--success`; заголовок-ссылка — `.prow__title--link` |
-| IconButton | ДС — `design-system/specs/IconButton.md` | `ibtn--neutral ibtn--l` в `.prow__actions`: `arrow-left-right`, `add-circle`, `more-dots` |
-| ContextMenu | ДС — `design-system/specs/ContextMenu.md` | `.menu.menu--floating`, `data-menu-align="end"`, пункты без иконок; недоступный пункт — `aria-disabled="true"` |
-| Tooltip | ДС — `design-system/specs/Tooltip.md` | `data-tooltip` на IconButton строк и на значениях второй строки |
-| Buttons | ДС — `design-system/specs/Buttons.md` | шапка — `btn--outline btn--xs`; низ дерева — `btn--outline btn--s btn--fullwidth`; пусто — `btn--accent btn--s` |
-| Skeleton | ДС — `design-system/specs/Skeleton.md` | `.sk-line` в `.prow__head` строк ProductRow с `aria-busy` |
-| Spinner | ДС — `design-system/specs/Spinner.md` | `spin--s spin--accent` в `.tile__actions` |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | обычный, действие шапки — Button `btn--outline btn--xs` |
+| ProductRow | ДС — `design-system/components/organisms/ProductRow/ProductRow.md` | продукт ДИД — `.prow--root` с `.prow__toggle` и меткой `.prow__mark`; прикреплённый к ФИ — `.prow--tinted`; вторая строка — `.prow__meta`; погашение — `.prow__status--success`; заголовок-ссылка — `.prow__title--link` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `ibtn--neutral ibtn--l` в `.prow__actions`: `arrow-left-right`, `add-circle`, `more-dots` |
+| ContextMenu | ДС — `design-system/components/molecules/ContextMenu/ContextMenu.md` | `.menu.menu--floating`, `data-menu-align="end"`, пункты без иконок; недоступный пункт — `aria-disabled="true"` |
+| Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | `data-tooltip` на IconButton строк и на значениях второй строки |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | шапка — `btn--outline btn--xs`; низ дерева — `btn--outline btn--s btn--fullwidth`; пусто — `btn--accent btn--s` |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `.sk-line` в `.prow__head` строк ProductRow с `aria-busy` |
+| Spinner | ДС — `design-system/components/atoms/Spinner/Spinner.md` | `spin--s spin--accent` в `.tile__actions` |
 
 ## Параметры метки (Props)
 

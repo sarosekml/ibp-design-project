@@ -63,11 +63,11 @@ Modal modal--w3 (442px — ширина макета)
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w3` |
-| InputDate | ДС — `design-system/specs/InputDate.md` | `inp--m inp--fullwidth`; календарь — кнопка «Открыть календарь» (рантайм `ds-datepicker.js`), крестик очистки рисует `ds-input.js` по значению |
-| IconButton | ДС — `design-system/specs/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Подтвердить» `btn--accent btn--m` |
-| Typography | ДС — `design-system/specs/Typography.md` | текст — `--type-body-m`, `--text-secondary` (ответ 28) |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w3` |
+| InputDate | ДС — `design-system/components/molecules/Inputs/InputDate/InputDate.md` | `inp--m inp--fullwidth`; календарь — кнопка «Открыть календарь» (рантайм `DatePicker.js`), крестик очистки рисует `Inputs.js` по значению |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Подтвердить» `btn--accent btn--m` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | текст — `--type-body-m`, `--text-secondary` (ответ 28) |
 
 ## Параметры метки (Props)
 

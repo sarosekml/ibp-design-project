@@ -6,7 +6,7 @@
    варианта «со ссылками» («Отчёты для Рисков»).
 
    Подключается явно (как icons-data.js), НЕ через ds.js:
-     <script src="../../scripts/ibp-home.js"></script>
+     <script src="<путь до ДС>/patterns/HomeRoles/ibp-home.js"></script>
    Потребители: страница NavTile (каталог), демо NavPanel (меню по роли),
    экран главной страницы, страница «Главная страница · роли».
 

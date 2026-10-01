@@ -63,12 +63,12 @@ Tile (заголовок «Описание сделки»)
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Tile | ДС — `design-system/specs/Tile.md` | шапка с действиями, тело — `.tile__rows` |
-| ReadOnlyField | ДС — `design-system/specs/ReadOnlyField.md` | суть сделки — без подписи, `rof__value--clamp-n` (4 строки); комментарий — с подписью, 4 строки; ГСЗ — `rof__value--clamp-1` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Документы ЭКД по сделке» — `btn--outline btn--xs` с иконкой `folder`; «Заполнить» — `btn--accent btn--s` |
-| IconButton | ДС — `design-system/specs/IconButton.md` | `edit` в правке, `maximize` в просмотре |
-| Link | ДС — `design-system/specs/Link.md` | «Связанные сделки» — `link--accent link--m`, триггер поповера |
-| Skeleton | ДС — `design-system/specs/Skeleton.md` | каркас загрузки |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | шапка с действиями, тело — `.tile__rows` |
+| ReadOnlyField | ДС — `design-system/components/molecules/ReadOnlyField/ReadOnlyField.md` | суть сделки — без подписи, `rof__value--clamp-n` (4 строки); комментарий — с подписью, 4 строки; ГСЗ — `rof__value--clamp-1` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Документы ЭКД по сделке» — `btn--outline btn--xs` с иконкой `folder`; «Заполнить» — `btn--accent btn--s` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `edit` в правке, `maximize` в просмотре |
+| Link | ДС — `design-system/components/atoms/Link/Link.md` | «Связанные сделки» — `link--accent link--m`, триггер поповера |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | каркас загрузки |
 
 Признаки на подложке — своя разметка тайла на токенах ДС (раздел «Осознанные
 отклонения»).
@@ -191,7 +191,7 @@ Tile (заголовок «Описание сделки»)
 
 | Случай | Правило |
 |---|---|
-| Длинный текст в поле | суть сделки и комментарий — до четырёх строк, дальше многоточие и тултип с полным текстом (ReadOnlyField, `ds-readonlyfield.js`); целиком текст виден в окне. ГСЗ — одна строка с тем же тултипом |
+| Длинный текст в поле | суть сделки и комментарий — до четырёх строк, дальше многоточие и тултип с полным текстом (ReadOnlyField, `ReadOnlyField.js`); целиком текст виден в окне. ГСЗ — одна строка с тем же тултипом |
 | Много строк или записей | не бывает: признаков шесть или семь (строка «Связанные сделки» — только когда они есть). Длинный список связанных сделок живёт в поповере |
 | Узкая ширина | подпись признака переносится внутри своей колонки, иконка остаётся на первой строке. Ниже 720px ширины тайла признаки встают в две колонки, ниже 380px — в одну (`@container`). На странице сделки: окно 1920 — тайл ≈ 732px, три колонки; 1366–1680 — тайл 610–660px, две; окно до 1296 — тайл на всю ширину, три (решение человека 25.09.2026) |
 | Полная ширина | три колонки признаков, подложка тянется на всю ширину тела |

@@ -103,7 +103,7 @@
 <h2>Описание (Purpose)</h2>
 <p class="desc">Артефакт тайла «Описание сделки». Список связанных сделок клиента, только просмотр. Каждая сделка — одна ссылка «№ &lt;номер сделки клиента&gt; · &lt;наименование&gt;» на её страницу.</p>
 <p class="desc">Пара во фронтенде — окно <code class="tok">RelatedDealsModal</code>. Здесь поповер по решению человека 24.09.2026: список короткий, и контекст страницы сделки не теряется. Имя виджета — наше, с типом в конце (<code class="tok">RelatedDealsPopover</code>), потому что тип другой.</p>
-<p class="desc">Открытие, закрытие (крестик, клик вне, Esc, Tab за последний элемент), позицию у триггера и фокус ведёт рантайм ДС <code class="tok">ds-popover.js</code>: триггер — ссылка с <code class="tok">data-popover=&quot;related-deals-pop&quot;</code>. Поповер вшит меткой в конце <code class="tok">body</code>, рантайм выносит его в плавающий слой, поэтому рядом с триггером он лежать не обязан.</p>
+<p class="desc">Открытие, закрытие (крестик, клик вне, Esc, Tab за последний элемент), позицию у триггера и фокус ведёт рантайм ДС <code class="tok">Popover.js</code>: триггер — ссылка с <code class="tok">data-popover=&quot;related-deals-pop&quot;</code>. Поповер вшит меткой в конце <code class="tok">body</code>, рантайм выносит его в плавающий слой, поэтому рядом с триггером он лежать не обязан.</p>
 
 </section>
 <section class="section kit-md" data-screen-label="Раскладка (Layout)">

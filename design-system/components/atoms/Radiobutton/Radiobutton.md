@@ -141,7 +141,7 @@ interface RadioGroupProps {
 | .rb--no-content | label | Шейп без названия/хелпера (icon-only) |
 | .rb__input | input | Визуально скрытый нативный radio — общий name даёт взаимоисключающий выбор |
 | .rb__box | span | Охранное поле 20px, центрирует шейп |
-| .rb__mark | i[data-icon] | Видимый круг 16px: готовая SVG-иконка пака System (radio-button-unchecked/checked, ds-icons.js); currentColor несёт все state-цвета |
+| .rb__mark | i[data-icon] | Видимый круг 16px: готовая SVG-иконка пака System (radio-button-unchecked/checked, Icons.js); currentColor несёт все state-цвета |
 | .rb__content | span | Колонка название + хелпер (зазор 2px) |
 | .rb__label | span | Название (Body M) |
 | .rb__req | span | Звёздочка обязательной группы (--error) |
