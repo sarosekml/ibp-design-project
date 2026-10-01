@@ -20,6 +20,15 @@
    иначе на переезде харнеса (Ш5) сторож молча перестал бы его видеть — тот
    же класс «у правила отняли вход».
 
+   Пути, а не только содержимое (01.10.2026). Обход читает текст файлов и
+   не заходит в посторонние дот-каталоги, поэтому памятка стороннего агентного
+   CLI в корне (имя ассистента — в ИМЕНИ файла) и его служебный каталог
+   лежали в git и в `main` с 22.09.2026 и уезжали бы на рабочий контур, а
+   сторож давал «чисто»: у правила отняли вход (класс Л100, урок Л153). Теперь каждый
+   путь, который git отслеживает или заберёт в коммит (не игнорируемый),
+   сверяется со стоп-словами — имя вендора, ассистента, семейства моделей.
+   Список даёт git; нет git — проверки путей нет, обход прежний.
+
    Почему шаблоны собраны из кусков. Сторож, написавший стоп-слова
    литералами, находит сам себя: файл правила стал бы первым нарушителем.
    Склейка — не украшение, а условие работоспособности. Образцы путей в
@@ -170,8 +179,35 @@ function walk(dir, acc, dotDirs, root = dir, scratch = scratchFor(root), ignore 
   return acc;
 }
 
+/* Пути, которые уйдут в репозиторий: отслеживаемые и неотслеживаемые, но не
+   игнорируемые git (см. шапку, «Пути, а не только содержимое»). Отслеживаемый
+   файл попадает в список, даже если подпадает под шаблон игнора. */
+function repoPathsFor(root) {
+  try {
+    const out = execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '-z'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return [...new Set(out.split('\0').filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
+
+// в пути ищутся имена, а не абсолютные пути: путь от корня абсолютным не бывает
+const NAME_PATTERNS = PATTERNS.filter((p) => p.what !== PATH_WHAT);
+
 function scan(root, dotDirs = dotDirsFor(root)) {
   const hits = [];
+  const scratch = [...scratchFor(root)], ignore = [...ignoreFor(root)];
+  const under = (rel, dirs) => dirs.some((d) => rel === d || rel.startsWith(d + '/'));
+  for (const rel of repoPathsFor(root)) {
+    if (under(rel, scratch) || under(rel, ignore)) continue;
+    const seen = new Set();
+    for (const p of NAME_PATTERNS) {
+      if (seen.has(p.what) || !p.re.test(rel)) continue;
+      seen.add(p.what);
+      hits.push({ rel, n: 0, what: p.what + ' в пути', line: rel });
+    }
+  }
   for (const file of walk(root, [], dotDirs)) {
     if (path.resolve(file) === SELF) continue;          // см. шапку: иначе сторож ловит сам себя
     let text;
@@ -202,6 +238,9 @@ function put(root, rel, text) {
 const POSIX_USER = '/' + U + '/someone/Work/secret-project/file.md';
 const POSIX_HOME = '/' + H + '/someone/project/notes.md';
 const WIN = 'C:' + '\\' + U + '\\someone\\Work\\file.md';
+// памятка и служебный каталог стороннего CLI — тоже склейкой
+const NAME_FILE = B.toUpperCase() + '.md';
+const NAME_DIR = '.' + B;
 
 const CASES = [
   { name: 'чистое дерево и почти-совпадения', expect: null,
@@ -282,6 +321,31 @@ const GIT_CASES = [
     mutate: (r) => {
       gitInit(r, '/local/\n');
       put(r, 'local2/notes.md', 'Сделано в ' + A + '.\n');
+    } },
+  /* Пути (01.10.2026): имя в имени файла и посторонний дот-каталог, которые
+     уйдут в коммит, — находки; исключённые из git — нет. */
+  { name: 'имя ассистента в имени файла, который уйдёт в коммит', expect: NAME_FILE + ' — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '');
+      put(r, NAME_FILE, '# Памятка\n');
+    } },
+  { name: 'служебный каталог стороннего CLI в git', expect: NAME_DIR + '/launch.json — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '');
+      put(r, NAME_DIR + '/launch.json', '{}\n');
+      execFileSync('git', ['add', '-A'], { cwd: r, stdio: 'ignore' });
+    } },
+  { name: 'отслеживаемый файл под шаблоном игнора — всё равно находка', expect: NAME_FILE + ' — имя ассистента в пути',
+    mutate: (r) => {
+      gitInit(r, '/' + NAME_FILE + '\n');
+      put(r, NAME_FILE, '# Памятка\n');
+      execFileSync('git', ['add', '-f', NAME_FILE], { cwd: r, stdio: 'ignore' });
+    } },
+  { name: 'исключённые из git файл и каталог — не находка', expect: null,
+    mutate: (r) => {
+      gitInit(r, '/' + NAME_FILE + '\n/' + NAME_DIR + '/\n');
+      put(r, NAME_FILE, '# Памятка\n');
+      put(r, NAME_DIR + '/launch.json', '{}\n');
     } },
 ];
 

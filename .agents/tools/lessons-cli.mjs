@@ -41,7 +41,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
-import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate } from './runlog.mjs';
+import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate, blockersOf } from './runlog.mjs';
 import { need } from './project.mjs';
 import { documentationPaths, isDocPath } from './docs-index.mjs';
 import path from 'node:path';
@@ -1004,7 +1004,12 @@ function fixtureIdsFor(ns) {
    новом файле — сторож, поймавший новый экземпляр класса, а не сломанная
    починка. Агрегатные цели («N файлов», `--parity`, «(несколько)») к файлу не
    привязаны и в пофайловый разбор не идут. Если последний прогон файла чист,
-   регресс закрыт и не показывается (Л49). */
+   регресс закрыт и не показывается (Л49).
+   Возвращается БЛОКЕР, а не замечание: коды прогона берутся через
+   `blockersOf` (runlog.mjs). Замечание — подсказка, и осознанное отклонение
+   человека его законно оставляет: до 01.10.2026 замечания K4/K5 на
+   утверждённой странице сделки держали шаг `stats` красным с 30.09.2026, и
+   красное перестали читать (Л37, урок Л152). */
 const isFileTarget = (t) => /\.html?\b/i.test(String(t || ''));
 
 function findRegressions(runs, fixed) {
@@ -1029,8 +1034,8 @@ function findRegressions(runs, fixed) {
       const rs = list.filter((r) => Date.parse(r.t) >= after);
       if (!rs.length) continue;
       const last = rs[rs.length - 1];
-      if (!(last.codes || []).includes(id)) continue;      // последний прогон чист — закрыт
-      const earlierClean = rs.slice(0, -1).some((r) => !(r.codes || []).includes(id));
+      if (!blockersOf(last).includes(id)) continue;        // последний прогон чист — закрыт
+      const earlierClean = rs.slice(0, -1).some((r) => !blockersOf(r).includes(id));
       if (earlierClean && !hit) hit = { ns, id, f, last, target };
     }
     if (hit) out.push(hit);
@@ -1170,6 +1175,7 @@ const RUNLOG = path.join(HERE, 'runlog.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const ASSEMBLE = path.join(HERE, 'assemble.mjs');
 const MODULE_README = path.join(HERE, 'module-readme.mjs');
+const README_STATS = path.join(HERE, 'readme-stats.mjs');
 const DOCS_INDEX = path.join(HERE, 'docs-index.mjs');
 const PROMOTE = path.join(HERE, 'promote.mjs');
 const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
@@ -1366,6 +1372,10 @@ function gateStep(id, paths = null) {
        папкой (24.09.2026, шапка module-readme.mjs). */
     case 'readme': return { title: 'module-readme --check (README модулей = их папки)', args: [MODULE_README, '--check'], cwd: ROOT };
     case 'readme-selftest': return { title: 'module-readme --selftest', args: [MODULE_README, '--selftest'], cwd: ROOT };
+    /* Счётчики корневого README: компоненты и основы ДС, глифы, иллюстрации,
+       модули — генерат (01.10.2026, шапка readme-stats.mjs). */
+    case 'readme-stats': return { title: 'readme-stats --check (счётчики README = ДС и приложения)', args: [README_STATS, '--check'], cwd: ROOT };
+    case 'readme-stats-selftest': return { title: 'readme-stats --selftest', args: [README_STATS, '--selftest'], cwd: ROOT };
     case 'docs-index': return { title: 'docs-index --check (карта документации = md на диске)', args: [DOCS_INDEX, '--check'], cwd: ROOT };
     case 'docs-index-selftest': return { title: 'docs-index --selftest', args: [DOCS_INDEX, '--selftest'], cwd: ROOT };
     /* Перенос концепта в модуль (/promote): сам инструмент гоняется только
@@ -1421,6 +1431,17 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel === TOOL_REL + '/proto-panel.mjs') add('panel-selftest', 'panel', 'promote-selftest');
 
+  /* Счётчики корневого README — тоже до раннего выхода: удалённая страница ДС,
+     иллюстрация или модуль сдвигают число так же, как новые. Сам README,
+     страницы компонентов и основ ДС, глифы, иллюстрации, запись модуля
+     (появился или пропал модуль) → readme-stats; инструмент и обход модулей
+     → ещё и его селфтест. */
+  if (rel === 'README.md' || rel === 'project.json'
+    || underDs('pages/(atoms|molecules|organisms|foundations)/[^/]+\\.html$').test(rel)
+    || rel === DS_REL + '/scripts/icons-data.js' || rel.startsWith(DS_REL + '/assets/illustrations/')
+    || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('readme-stats');
+  if (rel === TOOL_REL + '/readme-stats.mjs' || rel === TOOL_REL + '/module-readme.mjs') add('readme-stats-selftest', 'readme-stats');
+
   /* рантайм иконок ДС, их данные, порядок загрузки рантаймов, сам инструмент — в том числе удалённые */
   if (['ds-icons.js', 'icons-data.js', 'ds.js', 'ds-icon.mjs'].some((f) => rel === DS_REL + '/scripts/' + f)) add('icons-selftest');
 
@@ -1471,8 +1492,9 @@ function gateStepsFor(rel, deleted) {
   }
   if (rel.startsWith(DS_REL + '/styles/') || rel === DS_REL + '/ds.css') add('lint-global', 'parity', 'etalons');
   if (rel.startsWith(DS_REL + '/specs/')) add('parity', 'spec-audit');
-  // реестры ДС, которые читают глобальные правила линтера (D1–D4): витрина и правила ведения
-  if (rel === DS_REL + '/index.html' || rel === DS_REL + '/MAINTAINING.md') add('lint-global');
+  // реестры ДС, которые читают глобальные правила линтера (D1–D4, D9): витрина, правила ведения,
+  // журнал правок и генератор шапки главной (версия и дата выводятся из журнала)
+  if ([DS_REL + '/index.html', DS_REL + '/MAINTAINING.md', DS_REL + '/CHANGELOG.md', DS_REL + '/scripts/ds-home.mjs'].includes(rel)) add('lint-global');
   // каталог компонентов в AGENTS.md ДС сверяется с манифестом — проход 8 аудита
   if (rel === DS_REL + '/AGENTS.md') add('spec-audit');
   // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
@@ -1502,7 +1524,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
-    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
+    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1515,9 +1537,9 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1613,16 +1635,20 @@ function gate() {
         files.slice(0, 4).map((f) => path.basename(f)).join(', ') + (files.length > 4 ? ' …' : '') + ' (разбор — gate --full)');
   };
 
+  const logAfter = () => { for (const l of afterSession(changed)) log(l); };
+
   if (!ids.length) {
     log(changed.length + deleted.length ? 'изменения не задевают ни одного сторожа — проверок 0' : 'изменений с прошлого гейта нет — проверок 0');
     logCarried();
     if (!changedArg && !dry && (changed.length || deleted.length)) saveSnapshot(now, carried);
+    logAfter();
     log('ВЕРДИКТ: OK');
     return 0;
   }
   if (dry) {
     log('шаги (--dry, не запускаются): ' + ids.length);
     for (const id of ids) log('  ' + gateStep(id, byStep.get(id)).title);
+    logAfter();
     return 0;
   }
 
@@ -1712,6 +1738,7 @@ function gate() {
   if (!changedArg) saveSnapshot(now, [...results.filter((r) => r.code !== 0).map((r) => r.id), ...carried]);
 
   log('');
+  logAfter();
   if (st.code !== 0 && debtLine) log('ВНИМАНИЕ: ' + debtLine.trim() + ' — курация обязательна (скилл lessons)');
   if (калибровка) log('ВНИМАНИЕ: ' + калибровка.trim());
   log(failedNow.length ? 'ВЕРДИКТ: FAIL (' + failedNow.length + ' из ' + fresh.length + ')' : 'ВЕРДИКТ: OK (' + fresh.length + ' шаг.)');
@@ -1721,6 +1748,36 @@ function gate() {
 function saveSnapshot(files, failed) {
   mkdirSync(path.dirname(GATE_SNAPSHOT), { recursive: true });
   writeFileSync(GATE_SNAPSHOT, JSON.stringify({ files, failed }) + '\n', 'utf8');
+}
+
+/* ПОСЛЕ ЗАХОДА — напоминание о двух шагах, которые гейт не проверяет, но
+   которые должны случиться в конце захода: приёмка и урок (корневой AGENTS.md,
+   «Проверка»). Оба описаны в роли и в скилле, которые читают в начале
+   захода, а срабатывать им — в конце. В CLI, где роли не встроены, заход
+   закрывался одним гейтом, и шаги выпадали молча: с 25.09.2026 ни одна
+   ошибка, замеченная человеком, не стала уроком, и приёмки виджетов
+   страницы сделки не было (урок Л151). Гейт запускают в конце всегда, в любом контуре и
+   с любой моделью, — поэтому напоминание здесь, а не в памятке одного
+   инструмента. Вердикт оно не меняет и проверкой не является. Концепты
+   (`drafts/`) не напоминают: там можно выходить за ДС (решение человека
+   01.10.2026). */
+function afterSession(paths) {
+  const places = PRJ.places, shape = PRJ.appShape;
+  // область модуля: 'pages' | 'widgets' | null — модуль `<раздел>/<имя>-app/`, не концепт и не витрина
+  const moduleArea = (rel) => {
+    if (!PRJ.appsDir || !places || !shape || !rel.startsWith(PRJ.appsDir + '/') || inShowcase(rel)) return null;
+    const parts = rel.slice(PRJ.appsDir.length + 1).split('/');
+    const i = parts.findIndex((p) => p.endsWith(places.moduleSuffix));
+    if (i < 1 || parts.slice(0, i).includes(places.drafts)) return null;
+    return [shape.pages, shape.widgets].includes(parts[i + 1]) ? parts[i + 1] : null;
+  };
+  const names = (list) => list.slice(0, 3).map((p) => path.basename(p)).join(', ') + (list.length > 3 ? ' …' : '');
+  const out = [];
+  const ui = paths.filter((rel) => /\.(html|css|js)$/.test(rel) && moduleArea(rel));
+  if (ui.length) out.push('ПОСЛЕ ЗАХОДА: изменены экраны или виджеты модулей (' + names(ui) + ') — сборка или новая структура: приёмка по роли screen-reviewer до отчёта; мелкой правке достаточно гейта (AGENTS.md, «Проверка»)');
+  const journals = paths.filter((rel) => rel === DS_REL + '/CHANGELOG.md' || (rel.endsWith('/CHANGELOG.md') && moduleArea(rel) === shape.widgets));
+  if (journals.length && !paths.includes(toRel(RAW))) out.push('ПОСЛЕ ЗАХОДА: журнал правок изменён (' + names(journals) + '), архив уроков — нет: если чинилась ошибка, в том числе замеченная человеком, — урок: почему так вышло и что не даст повториться (скилл lessons)');
+  return out;
 }
 
 /* ---------------- main ---------------- */

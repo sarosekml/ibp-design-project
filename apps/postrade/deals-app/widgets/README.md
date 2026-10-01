@@ -139,11 +139,12 @@ node .agents/tools/assemble.mjs <файл>   # один
 
 ## Состав
 
-12 тайлов и таблица страницы сделки (`../pages/Deal.html`), семь модальных окон, две подчасти окон
-и один поповер. Наполнены шесть тайлов: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
+12 тайлов и таблица страницы сделки (`../pages/Deal.html`), 15 модальных окон, две подчасти окон
+и один поповер. Наполнены семь тайлов: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
 `DealPeriodTile` (22.09.2026), `DealTeamTile` (23.09.2026), `DealDescriptionTile` (24.09.2026),
-`DealFinancialMetricsTile` (25.09.2026), `ProjectInformationTile` (28.09.2026) — у каждого своё окно.
-Остальные 6 тайлов и таблица `DealCounterpartiesTable` — заглушки (`data-state="empty"`): оболочка есть,
+`DealFinancialMetricsTile` (25.09.2026), `ProjectInformationTile` (28.09.2026), `DealProductTreeTile`
+(30.09.2026) — у каждого свои окна. Окно `DealTitleModal` (01.10.2026) — не тайла, а шапки страницы.
+Остальные 5 тайлов и таблица `DealCounterpartiesTable` — заглушки (`data-state="empty"`): оболочка есть,
 состав полей не согласован.
 
 **Заглушка не растягивает ряд** (решение человека 22.09.2026). Тело заглушки — одна строка
@@ -177,3 +178,5 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `popovers/RelatedDealsPopover` | конец `body`; открывается ссылкой «Связанные сделки» `DealDescriptionTile`, у триггера его ставит `ds-popover.js` |
 | `modals/DealFinancialMetricsModal` | конец `body`; открывается из `DealFinancialMetricsTile` («Развернуть», только просмотр) |
 | `modals/DealProjectInformationModal` | конец `body`; открывается из `ProjectInformationTile` (карандаш и «Заполнить», только правка) |
+| `modals/DidProductsModal` · `ProductsModal` · `InstrumentsModal` · `RepaymentModal` · `InstrumentTransferModal` · `LinkChangeModal` · `ProductTreeConfirmModal` (последним) | конец `body`; открываются событиями `ptreeaction` тайла `DealProductTreeTile` |
+| `modals/DealTitleModal` | конец `body`; открывается карандашом в шапке страницы сделки — номер и наименование («Редактирование сделки») |

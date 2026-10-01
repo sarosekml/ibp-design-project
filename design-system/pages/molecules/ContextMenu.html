@@ -163,7 +163,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.009</b></span><span>Обновлено: <b>13.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.010</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Context Menu</h1>
     <p class="lead">Контекстное меню — всплывающий список действий над объектом. Возникает по нажатию на кнопку действий (kebab «три точки» или дропдаун) в заголовке таблицы, строке таблицы или карточке. Ширина зависит от контента, набор пунктов — от объекта.</p>
@@ -512,6 +512,7 @@
 
 <script src="../../scripts/icons-data.js"></script>
 <script src="../../scripts/ds-menu.js"></script>
+<script src="../../scripts/ds-scroll.js"></script>
 <script src="../../scripts/ds-nav.js"></script>
 <script src="../../scripts/ds-splitter.js"></script>
 <script src="../../scripts/ds-tabs.js"></script>
@@ -761,12 +762,26 @@ function makeMenu(items, o) { /* o: { floating, pinned, scroll, maxH } → .menu
   max-height: var(--menu-max-h, 280px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-primary) transparent;
 }
-.menu--scroll::-webkit-scrollbar { width: 8px; }
-.menu--scroll::-webkit-scrollbar-thumb { background: var(--border-primary); border-radius: 999px; border: 2px solid var(--menu-bg); }
-.menu--scroll::-webkit-scrollbar-track { background: transparent; }
+/* Полоса прокрутки — в виде .ds-scroll (Layout): только бегунок 8px,
+   скругление полное, цвет --secondary, без дорожки и стрелок; в покое скрыт,
+   виден, пока меню прокручивается (.is-scrolling ставит ds-scroll.js,
+   делегированно). Плавного затухания нет: приём .ds-scroll берёт цвет
+   бегунка из border-color области, а у меню своя рамка. Стандартные
+   scrollbar-* — только для Firefox: Chrome, увидев их, перестаёт применять
+   ::-webkit-scrollbar (до 1.010 так и было — правила ниже не работали).
+   1.010; до этого бегунок --border-primary был виден всегда (решение человека
+   01.10.2026 — все полосы прокрутки ДС в одном виде). */
+.menu--scroll::-webkit-scrollbar { width: 8px; height: 8px; background: transparent; }
+.menu--scroll::-webkit-scrollbar-track,
+.menu--scroll::-webkit-scrollbar-corner { background: transparent; }
+.menu--scroll::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.menu--scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: var(--radius-full); }
+.menu--scroll.is-scrolling::-webkit-scrollbar-thumb { background: var(--secondary); }
+@supports not selector(::-webkit-scrollbar) {
+  .menu--scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+  .menu--scroll.is-scrolling { scrollbar-color: var(--secondary) transparent; }
+}
 
 /* =========================================================================
    SUBMENU — вложенное меню (flyout)

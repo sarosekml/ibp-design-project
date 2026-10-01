@@ -14,7 +14,8 @@
    пин переключает drawer ↔ fixed, подписи пунктов в rail позиционируются
    как тултипы (position:fixed, вне скролл-контейнера), пункт-родитель
    .nav__item--acc раскрывает/сворачивает вложенный под-список (в rail —
-   разворачивает панель), развёрнутая (drawer) панель сворачивается в rail
+   разворачивает панель и сразу раскрывает пункт), развёрнутая (drawer)
+   панель сворачивается в rail
    кликом вне панели или по Esc (клики внутри открытых модалок — например,
    смена роли из футера — drawer не сворачивают).
 
@@ -130,11 +131,18 @@
 
     nav.addEventListener('click', function (e) {
       /* пункт-родитель с под-списком (аккордеон): в rail клик разворачивает
-         панель, в развёрнутых режимах — переключает aria-expanded */
+         панель и сразу раскрывает этот пункт (именно раскрывает, а не
+         переключает: уже раскрытый остаётся раскрытым) — иначе под-список
+         пришлось бы открывать вторым кликом; в развёрнутых режимах —
+         переключает aria-expanded */
       var parent = e.target.closest('.nav__item--acc');
       if (parent) {
         e.preventDefault();
-        if (modeOf(nav) === 'rail') { setMode(nav, expanded); return; }
+        if (modeOf(nav) === 'rail') {
+          setMode(nav, expanded);
+          parent.setAttribute('aria-expanded', 'true');
+          return;
+        }
         parent.setAttribute('aria-expanded', String(parent.getAttribute('aria-expanded') !== 'true'));
         return;
       }
