@@ -228,7 +228,7 @@ flowchart TD
     Q1 -- да --> R_CHECK["Маршрут «Проверь экран»"]
     Q1 -- нет --> Q2{"Вопрос по ДС или продукту?<br/>«есть ли компонент…»,<br/>«чем Chip отличается от Badge»"}
     Q2 -- да --> R_ASK["Маршрут «Вопрос по ДС»<br/>отвечает сам + skill ds-lookup"]
-    Q2 -- нет --> Q3{"Поручение по design-system/pages/**<br/>(документация компонентов)?"}
+    Q2 -- нет --> Q3{"Поручение по страницам документации ДС<br/>(*.html в папках компонентов)?"}
     Q3 -- да --> R_DOCS["Сценарий «docs-split»<br/>ведёт сам + skill docs-split"]
     Q3 -- нет --> Q4{"Нужны варианты или альтернативы,<br/>задача о проектировании?<br/>(/concepts)"}
     Q4 -- да --> R_CONC["Маршрут «Спроектируй концепты»"]
@@ -366,8 +366,8 @@ node .agents/tools/lessons-cli.mjs gate
 | Инструмент | Что стережёт |
 |---|---|
 | `tools/layout-check.mjs` | сенсор раскладки экрана: блокеры Б, замечания З, каскад К, геометрия K. Состав — `--rules` |
-| `design-system/scripts/ds-lint.js` (через `ds-lint-cli.mjs`) | правила ДС: подключения, классы, токены, парность доков и кода |
-| `design-system/scripts/spec-audit.mjs` | обещания спек ДС против кода |
+| `design-system/tools/ds-lint.js` (через `ds-lint-cli.mjs`) | правила ДС: подключения, классы, токены, парность доков и кода |
+| `design-system/tools/spec-audit.mjs` | обещания спек ДС против кода |
 | `tools/manifest-check.mjs` | `project.json` против диска (коды МФ) |
 | `tools/boot-build.mjs --check` | загрузчик ДС собран из манифеста и не правлен руками (БТ) |
 | `tools/hub-build.mjs --check` | реестр хаба собран из `app.json` (ХБ) |

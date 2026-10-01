@@ -1,7 +1,7 @@
 ---
 belongs_to: docs-split
 purpose: Структурная карта doc-страниц IBP. Читай карту вместо файла целиком. Генерируется командой map, руками не править.
-generated: 2026-09-13
+generated: 2026-10-01
 ---
 
 # Карта страниц документации
@@ -13,78 +13,79 @@ generated: 2026-09-13
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
 | Colors | — | — | — | — | 0 | ⬜ |
-| Elevation | static | — | — | styles/shadow.css | 4 | ✅ |
+| Elevation | static | — | — | foundations/Elevation/Elevation.css | 4 | ✅ |
 | Icons | — | — | — | — | 0 | ⬜ |
-| Illustrations | — | — | — | styles/illustration.css | 4 | ⬜ |
-| Layout | static | — | layout.page.js | styles/layout.css | 12 | ✅ |
+| Illustrations | — | — | — | foundations/Illustrations/Illustrations.css | 4 | ⬜ |
+| Layout | static | — | Layout.page.js | foundations/Layout/Layout.css | 12 | ✅ |
 | Radius | static | — | — | — | 4 | ✅ |
-| Spacing | static | — | — | styles/spacing.css | 7 | ✅ |
+| Spacing | static | — | — | foundations/Spacing/Spacing.css | 7 | ✅ |
 | Typography | — | — | — | — | 4 | ⬜ |
 
 ## Atoms (14)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
-| Avatar | dynamic | — | — | styles/avatar.css | 12 | ✅ |
-| Badge | dynamic | — | — | styles/badge.css | 12 | ✅ |
-| Buttons | dynamic | — | — | styles/button.css | 12 | ✅ |
-| Checkbox | dynamic | — | — | styles/checkbox.css | 12 | ✅ |
-| Chip | dynamic | — | chip.page.js | styles/chip.css | 12 | ✅ |
-| Divider | dynamic | pg-stage | divider.page.js | styles/divider.css | 12 | ✅ |
-| IconButton | dynamic | — | — | styles/icon-button.css | 12 | ✅ |
-| LabelHelper | dynamic | — | label-helper.page.js | styles/label-helper.css | 12 | ✅ |
-| Link | dynamic | — | — | styles/link.css | 12 | ✅ |
-| ProgressBar | dynamic | — | — | styles/progress-bar.css | 12 | ✅ |
-| Radiobutton | dynamic | — | — | styles/radio.css | 12 | ✅ |
-| Skeleton | dynamic | — | — | styles/skeleton.css | 12 | ✅ |
-| Spinner | dynamic | pg-stage | — | styles/spinner.css | 12 | ✅ |
-| Switch | dynamic | — | — | styles/switch.css | 12 | ✅ |
+| Avatar | dynamic | — | — | components/atoms/Avatar/Avatar.css | 12 | ✅ |
+| Badge | dynamic | — | — | components/atoms/Badge/Badge.css | 12 | ✅ |
+| Buttons | dynamic | — | — | components/atoms/Buttons/Buttons.css | 12 | ✅ |
+| Checkbox | dynamic | — | — | components/atoms/Checkbox/Checkbox.css | 12 | ✅ |
+| Chip | dynamic | — | Chip.page.js | components/atoms/Chip/Chip.css | 12 | ✅ |
+| Divider | dynamic | pg-stage | Divider.page.js | components/atoms/Divider/Divider.css | 12 | ✅ |
+| IconButton | dynamic | — | — | components/atoms/IconButton/IconButton.css | 12 | ✅ |
+| LabelHelper | dynamic | — | LabelHelper.page.js | components/atoms/LabelHelper/LabelHelper.css | 12 | ✅ |
+| Link | dynamic | — | — | components/atoms/Link/Link.css | 12 | ✅ |
+| ProgressBar | dynamic | — | — | components/atoms/ProgressBar/ProgressBar.css | 12 | ✅ |
+| Radiobutton | dynamic | — | — | components/atoms/Radiobutton/Radiobutton.css | 12 | ✅ |
+| Skeleton | dynamic | — | — | components/atoms/Skeleton/Skeleton.css | 12 | ✅ |
+| Spinner | dynamic | pg-stage | — | components/atoms/Spinner/Spinner.css | 12 | ✅ |
+| Switch | dynamic | — | — | components/atoms/Switch/Switch.css | 12 | ✅ |
 
 ## Molecules (21)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
-| Alert | dynamic | — | alert.page.js | styles/alert.css | 12 | ✅ |
-| Breadcrumbs | dynamic | — | breadcrumbs.page.js | styles/breadcrumbs.css | 12 | ✅ |
-| ButtonGroup | dynamic | — | — | styles/button-group.css | 12 | ✅ |
-| ContextMenu | dynamic | pg-stage | context-menu.page.js | styles/context-menu.css | 12 | ✅ |
-| DatePicker | dynamic | pg-stage | datepicker.page.js | styles/datepicker.css | 11 | ✅ |
-| DropdownList | dynamic | pg-stage | dropdown-list.page.js | styles/dropdown-list.css | 12 | ✅ |
-| EmptyState | dynamic | — | — | styles/empty-state.css | 12 | ✅ |
-| InputAmountRange | dynamic | pg-stage | input-amount-range.page.js | styles/input-range.css | 11 | ✅ |
-| InputAutocomplete | dynamic | pg-stage | input-autocomplete.page.js | styles/input.css | 11 | ✅ |
-| InputDate | dynamic | pg-stage | input-date.page.js | styles/input.css | 11 | ✅ |
-| InputDateRange | dynamic | pg-stage | input-date-range.page.js | styles/input-range.css | 11 | ✅ |
-| InputText | dynamic | pg-stage | input-text.page.js | styles/input.css | 11 | ✅ |
-| NavTile | dynamic | pg-stage | nav-tile.page.js | styles/nav-tile.css | 11 | ✅ |
-| Pagination | dynamic | demo-hscroll | pagination.page.js | styles/pagination.css | 12 | ✅ |
-| ReadOnlyField | dynamic | — | read-only-field.page.js | styles/read-only-field.css | 12 | ✅ |
-| SegmentControl | dynamic | — | segment-control.page.js | styles/segment-control.css | 12 | ✅ |
-| Splitter | dynamic | pg-stage | splitter.page.js | styles/splitter.css | 12 | ✅ |
-| SubTab | dynamic | — | sub-tab.page.js | styles/sub-tab.css | 12 | ✅ |
-| Tab | dynamic | — | tab.page.js | styles/tab.css | 12 | ✅ |
-| Toast | dynamic | — | toast.page.js | styles/toast.css | 12 | ✅ |
-| Tooltip | dynamic | pg-stage | tooltip.page.js | styles/tooltip.css | 12 | ✅ |
+| Alert | dynamic | — | Alert.page.js | components/molecules/Alert/Alert.css | 12 | ✅ |
+| Breadcrumbs | dynamic | — | Breadcrumbs.page.js | components/molecules/Breadcrumbs/Breadcrumbs.css | 12 | ✅ |
+| ButtonGroup | dynamic | — | — | components/molecules/ButtonGroup/ButtonGroup.css | 12 | ✅ |
+| ContextMenu | dynamic | pg-stage | ContextMenu.page.js | components/molecules/ContextMenu/ContextMenu.css | 12 | ✅ |
+| DatePicker | dynamic | pg-stage | DatePicker.page.js | components/molecules/DatePicker/DatePicker.css | 11 | ✅ |
+| DropdownList | dynamic | pg-stage | DropdownList.page.js | components/molecules/DropdownList/DropdownList.css | 12 | ✅ |
+| EmptyState | dynamic | — | — | components/molecules/EmptyState/EmptyState.css | 12 | ✅ |
+| InputAmountRange | dynamic | pg-stage | InputAmountRange.page.js | components/molecules/Inputs/InputRanges.css | 11 | ✅ |
+| InputAutocomplete | dynamic | pg-stage | InputAutocomplete.page.js | components/molecules/Inputs/Inputs.css | 11 | ✅ |
+| InputDate | dynamic | pg-stage | InputDate.page.js | components/molecules/Inputs/Inputs.css | 11 | ✅ |
+| InputDateRange | dynamic | pg-stage | InputDateRange.page.js | components/molecules/Inputs/InputRanges.css | 11 | ✅ |
+| InputText | dynamic | pg-stage | InputText.page.js | components/molecules/Inputs/Inputs.css | 11 | ✅ |
+| NavTile | dynamic | pg-stage | NavTile.page.js | components/molecules/NavTile/NavTile.css | 11 | ✅ |
+| Pagination | dynamic | demo-hscroll | Pagination.page.js | components/molecules/Pagination/Pagination.css | 12 | ✅ |
+| ReadOnlyField | dynamic | — | ReadOnlyField.page.js | components/molecules/ReadOnlyField/ReadOnlyField.css | 12 | ✅ |
+| SegmentControl | dynamic | — | SegmentControl.page.js | components/molecules/SegmentControl/SegmentControl.css | 12 | ✅ |
+| Splitter | dynamic | pg-stage | Splitter.page.js | components/molecules/Splitter/Splitter.css | 12 | ✅ |
+| SubTab | dynamic | — | SubTab.page.js | components/molecules/SubTab/SubTab.css | 12 | ✅ |
+| Tab | dynamic | — | Tab.page.js | components/molecules/Tab/Tab.css | 12 | ✅ |
+| Toast | dynamic | — | Toast.page.js | components/molecules/Toast/Toast.css | 12 | ✅ |
+| Tooltip | dynamic | pg-stage | Tooltip.page.js | components/molecules/Tooltip/Tooltip.css | 12 | ✅ |
 
-## Organisms (15)
+## Organisms (16)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
-| AllocationBar | dynamic | pg-stage | allocation-bar.page.js | styles/allocation-bar.css | 12 | ✅ |
-| Chart | dynamic | pg-stage | chart.page.js | styles/chart.css | 12 | ✅ |
-| Drawer | dynamic | pg-stage | drawer.page.js | styles/drawer.css | 12 | ✅ |
-| Entity | static | demo-entity | — | styles/entity.css | 12 | ✅ |
-| Kanban | dynamic | pg-stage | kanban.page.js | styles/kanban.css | 12 | ✅ |
-| Modal | dynamic | pg-stage | modal.page.js | styles/modal.css | 12 | ✅ |
-| NavPanel | dynamic | pg-stage | nav-panel.page.js | styles/nav-panel.css | 11 | ✅ |
-| PageHeader | static | demo-scale | page-header.page.js | styles/page-header.css | 12 | ✅ |
-| Popover | dynamic | pg-stage | popover.page.js | styles/popover.css | 12 | ✅ |
-| RiskMetric | dynamic | pg-stage | riskmetric.page.js | styles/riskmetric.css | 12 | ✅ |
-| SnackBar | static | demo-layer | — | styles/snackbar.css | 12 | ✅ |
-| Table | static | demo-dtable | table.page.js | styles/table.css | 12 | ✅ |
-| TableCell | grouped | demo-tbl | table-cell.page.js | styles/table-cell.css | 12 | ✅ |
-| TableFilter | dynamic | pg-stage | table-filter.page.js | styles/table-filter.css | 11 | ✅ |
-| Tile | static | demo-tile-wrap | — | styles/tile.css | 12 | ✅ |
+| AllocationBar | dynamic | pg-stage | AllocationBar.page.js | components/organisms/AllocationBar/AllocationBar.css | 12 | ✅ |
+| Chart | dynamic | pg-stage | Chart.page.js | components/organisms/Chart/Chart.css | 12 | ✅ |
+| Drawer | dynamic | pg-stage | Drawer.page.js | components/organisms/Drawer/Drawer.css | 12 | ✅ |
+| Entity | static | demo-entity | — | components/organisms/Entity/Entity.css | 12 | ✅ |
+| Kanban | dynamic | pg-stage | Kanban.page.js | components/organisms/Kanban/Kanban.css | 12 | ✅ |
+| Modal | dynamic | pg-stage | Modal.page.js | components/organisms/Modal/Modal.css | 12 | ✅ |
+| NavPanel | dynamic | pg-stage | NavPanel.page.js | components/organisms/NavPanel/NavPanel.css | 11 | ✅ |
+| PageHeader | static | demo-scale | PageHeader.page.js | components/organisms/PageHeader/PageHeader.css | 12 | ✅ |
+| Popover | dynamic | pg-stage | Popover.page.js | components/organisms/Popover/Popover.css | 12 | ✅ |
+| ProductRow | static | demo-prow | — | components/organisms/ProductRow/ProductRow.css | 12 | ✅ |
+| RiskMetric | dynamic | pg-stage | RiskMetric.page.js | components/organisms/RiskMetric/RiskMetric.css | 12 | ✅ |
+| SnackBar | static | demo-layer | — | components/organisms/SnackBar/SnackBar.css | 12 | ✅ |
+| Table | static | demo-dtable | Table.page.js | components/organisms/Table/Table.css | 12 | ✅ |
+| TableCell | grouped | demo-tbl | TableCell.page.js | components/organisms/TableCell/TableCell.css | 12 | ✅ |
+| TableFilter | dynamic | pg-stage | TableFilter.page.js | components/organisms/TableFilter/TableFilter.css | 11 | ✅ |
+| Tile | static | demo-tile-wrap | — | components/organisms/Tile/Tile.css | 12 | ✅ |
 
 ## Patterns (3)
 

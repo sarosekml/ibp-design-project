@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 252.
+Документов: 254.
 
 ## Корень (4)
 
@@ -74,75 +74,79 @@
 | [design-system/MAINTAINING.md](../design-system/MAINTAINING.md) | Дизайн-система — правила ведения |
 | [design-system/readme.md](../design-system/readme.md) | IBP DS — дизайн-система |
 
-### design-system/scripts
+### design-system/components
 
 | Документ | Аннотация |
 |---|---|
-| [design-system/scripts/ds-lint.md](../design-system/scripts/ds-lint.md) | Линтер ДС: правила и проверки |
+| [design-system/components/atoms/Avatar/Avatar.md](../design-system/components/atoms/Avatar/Avatar.md) | Avatar |
+| [design-system/components/atoms/Badge/Badge.md](../design-system/components/atoms/Badge/Badge.md) | Badge |
+| [design-system/components/atoms/Buttons/Buttons.md](../design-system/components/atoms/Buttons/Buttons.md) | Button |
+| [design-system/components/atoms/Checkbox/Checkbox.md](../design-system/components/atoms/Checkbox/Checkbox.md) | Checkbox |
+| [design-system/components/atoms/Chip/Chip.md](../design-system/components/atoms/Chip/Chip.md) | Chip |
+| [design-system/components/atoms/Divider/Divider.md](../design-system/components/atoms/Divider/Divider.md) | Divider |
+| [design-system/components/atoms/IconButton/IconButton.md](../design-system/components/atoms/IconButton/IconButton.md) | IconButton |
+| [design-system/components/atoms/LabelHelper/LabelHelper.md](../design-system/components/atoms/LabelHelper/LabelHelper.md) | Label / Helper |
+| [design-system/components/atoms/Link/Link.md](../design-system/components/atoms/Link/Link.md) | Link |
+| [design-system/components/atoms/ProgressBar/ProgressBar.md](../design-system/components/atoms/ProgressBar/ProgressBar.md) | ProgressBar |
+| [design-system/components/atoms/Radiobutton/Radiobutton.md](../design-system/components/atoms/Radiobutton/Radiobutton.md) | Radiobutton |
+| [design-system/components/atoms/Skeleton/Skeleton.md](../design-system/components/atoms/Skeleton/Skeleton.md) | Skeleton |
+| [design-system/components/atoms/Spinner/Spinner.md](../design-system/components/atoms/Spinner/Spinner.md) | Spinner |
+| [design-system/components/atoms/Switch/Switch.md](../design-system/components/atoms/Switch/Switch.md) | Switch |
+| [design-system/components/molecules/Alert/Alert.md](../design-system/components/molecules/Alert/Alert.md) | Alert |
+| [design-system/components/molecules/Breadcrumbs/Breadcrumbs.md](../design-system/components/molecules/Breadcrumbs/Breadcrumbs.md) | Breadcrumbs |
+| [design-system/components/molecules/ButtonGroup/ButtonGroup.md](../design-system/components/molecules/ButtonGroup/ButtonGroup.md) | ButtonGroup |
+| [design-system/components/molecules/ContextMenu/ContextMenu.md](../design-system/components/molecules/ContextMenu/ContextMenu.md) | Context Menu |
+| [design-system/components/molecules/DatePicker/DatePicker.md](../design-system/components/molecules/DatePicker/DatePicker.md) | DatePicker |
+| [design-system/components/molecules/DropdownList/DropdownList.md](../design-system/components/molecules/DropdownList/DropdownList.md) | DropdownList |
+| [design-system/components/molecules/EmptyState/EmptyState.md](../design-system/components/molecules/EmptyState/EmptyState.md) | EmptyState |
+| [design-system/components/molecules/Inputs/InputAmountRange/InputAmountRange.md](../design-system/components/molecules/Inputs/InputAmountRange/InputAmountRange.md) | InputAmountRange |
+| [design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md](../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md) | InputAutocomplete |
+| [design-system/components/molecules/Inputs/InputDate/InputDate.md](../design-system/components/molecules/Inputs/InputDate/InputDate.md) | InputDate |
+| [design-system/components/molecules/Inputs/InputDateRange/InputDateRange.md](../design-system/components/molecules/Inputs/InputDateRange/InputDateRange.md) | InputDateRange |
+| [design-system/components/molecules/Inputs/InputText/InputText.md](../design-system/components/molecules/Inputs/InputText/InputText.md) | InputText |
+| [design-system/components/molecules/NavTile/NavTile.md](../design-system/components/molecules/NavTile/NavTile.md) | NavTile |
+| [design-system/components/molecules/Pagination/Pagination.md](../design-system/components/molecules/Pagination/Pagination.md) | Pagination |
+| [design-system/components/molecules/ReadOnlyField/ReadOnlyField.md](../design-system/components/molecules/ReadOnlyField/ReadOnlyField.md) | ReadOnlyField |
+| [design-system/components/molecules/SegmentControl/SegmentControl.md](../design-system/components/molecules/SegmentControl/SegmentControl.md) | SegmentControl |
+| [design-system/components/molecules/Splitter/Splitter.md](../design-system/components/molecules/Splitter/Splitter.md) | Splitter |
+| [design-system/components/molecules/SubTab/SubTab.md](../design-system/components/molecules/SubTab/SubTab.md) | SubTab — табы второго уровня |
+| [design-system/components/molecules/Tab/Tab.md](../design-system/components/molecules/Tab/Tab.md) | Tab |
+| [design-system/components/molecules/Toast/Toast.md](../design-system/components/molecules/Toast/Toast.md) | Toast |
+| [design-system/components/molecules/Tooltip/Tooltip.md](../design-system/components/molecules/Tooltip/Tooltip.md) | Tooltip |
+| [design-system/components/organisms/AllocationBar/AllocationBar.md](../design-system/components/organisms/AllocationBar/AllocationBar.md) | AllocationBar |
+| [design-system/components/organisms/Chart/Chart.md](../design-system/components/organisms/Chart/Chart.md) | Chart |
+| [design-system/components/organisms/Drawer/Drawer.md](../design-system/components/organisms/Drawer/Drawer.md) | Панель деталей |
+| [design-system/components/organisms/Entity/Entity.md](../design-system/components/organisms/Entity/Entity.md) | Entity |
+| [design-system/components/organisms/Kanban/Kanban.md](../design-system/components/organisms/Kanban/Kanban.md) | Канбан-доска |
+| [design-system/components/organisms/Modal/Modal.md](../design-system/components/organisms/Modal/Modal.md) | Modal |
+| [design-system/components/organisms/NavPanel/NavPanel.md](../design-system/components/organisms/NavPanel/NavPanel.md) | Панель навигации |
+| [design-system/components/organisms/PageHeader/PageHeader.md](../design-system/components/organisms/PageHeader/PageHeader.md) | PageHeader |
+| [design-system/components/organisms/Popover/Popover.md](../design-system/components/organisms/Popover/Popover.md) | Popover |
+| [design-system/components/organisms/ProductRow/ProductRow.md](../design-system/components/organisms/ProductRow/ProductRow.md) | ProductRow |
+| [design-system/components/organisms/RiskMetric/RiskMetric.md](../design-system/components/organisms/RiskMetric/RiskMetric.md) | Риск-метрика |
+| [design-system/components/organisms/SnackBar/SnackBar.md](../design-system/components/organisms/SnackBar/SnackBar.md) | SnackBar |
+| [design-system/components/organisms/Table/Table.md](../design-system/components/organisms/Table/Table.md) | Table |
+| [design-system/components/organisms/TableCell/TableCell.md](../design-system/components/organisms/TableCell/TableCell.md) | TableCell |
+| [design-system/components/organisms/TableFilter/TableFilter.md](../design-system/components/organisms/TableFilter/TableFilter.md) | TableFilter |
+| [design-system/components/organisms/Tile/Tile.md](../design-system/components/organisms/Tile/Tile.md) | Tile |
+
+### design-system/foundations
+
+| Документ | Аннотация |
+|---|---|
+| [design-system/foundations/Colors/Colors.md](../design-system/foundations/Colors/Colors.md) | Цвета |
+| [design-system/foundations/Elevation/Elevation.md](../design-system/foundations/Elevation/Elevation.md) | Тени (Elevation) |
+| [design-system/foundations/Icons/Icons.md](../design-system/foundations/Icons/Icons.md) | Иконки |
+| [design-system/foundations/Illustrations/Illustrations.md](../design-system/foundations/Illustrations/Illustrations.md) | Иллюстрации |
+| [design-system/foundations/Layout/Layout.md](../design-system/foundations/Layout/Layout.md) | Каркас экрана |
+| [design-system/foundations/Radius/Radius.md](../design-system/foundations/Radius/Radius.md) | Скругления |
+| [design-system/foundations/Spacing/Spacing.md](../design-system/foundations/Spacing/Spacing.md) | Сетка и отступы |
+| [design-system/foundations/Typography/Typography.md](../design-system/foundations/Typography/Typography.md) | Типографика |
 
 ### design-system/specs
 
 | Документ | Аннотация |
 |---|---|
-| [design-system/specs/Alert.md](../design-system/specs/Alert.md) | Alert |
-| [design-system/specs/AllocationBar.md](../design-system/specs/AllocationBar.md) | AllocationBar |
-| [design-system/specs/Avatar.md](../design-system/specs/Avatar.md) | Avatar |
-| [design-system/specs/Badge.md](../design-system/specs/Badge.md) | Badge |
-| [design-system/specs/Breadcrumbs.md](../design-system/specs/Breadcrumbs.md) | Breadcrumbs |
-| [design-system/specs/ButtonGroup.md](../design-system/specs/ButtonGroup.md) | ButtonGroup |
-| [design-system/specs/Buttons.md](../design-system/specs/Buttons.md) | Button |
-| [design-system/specs/Chart.md](../design-system/specs/Chart.md) | Chart |
-| [design-system/specs/Checkbox.md](../design-system/specs/Checkbox.md) | Checkbox |
-| [design-system/specs/Chip.md](../design-system/specs/Chip.md) | Chip |
-| [design-system/specs/Colors.md](../design-system/specs/Colors.md) | Цвета |
-| [design-system/specs/ContextMenu.md](../design-system/specs/ContextMenu.md) | Context Menu |
-| [design-system/specs/DatePicker.md](../design-system/specs/DatePicker.md) | DatePicker |
-| [design-system/specs/Divider.md](../design-system/specs/Divider.md) | Divider |
-| [design-system/specs/Drawer.md](../design-system/specs/Drawer.md) | Панель деталей |
-| [design-system/specs/DropdownList.md](../design-system/specs/DropdownList.md) | DropdownList |
-| [design-system/specs/Elevation.md](../design-system/specs/Elevation.md) | Тени (Elevation) |
-| [design-system/specs/EmptyState.md](../design-system/specs/EmptyState.md) | EmptyState |
-| [design-system/specs/Entity.md](../design-system/specs/Entity.md) | Entity |
-| [design-system/specs/IconButton.md](../design-system/specs/IconButton.md) | IconButton |
-| [design-system/specs/Icons.md](../design-system/specs/Icons.md) | Иконки |
-| [design-system/specs/Illustrations.md](../design-system/specs/Illustrations.md) | Иллюстрации |
-| [design-system/specs/InputAmountRange.md](../design-system/specs/InputAmountRange.md) | InputAmountRange |
-| [design-system/specs/InputAutocomplete.md](../design-system/specs/InputAutocomplete.md) | InputAutocomplete |
-| [design-system/specs/InputDate.md](../design-system/specs/InputDate.md) | InputDate |
-| [design-system/specs/InputDateRange.md](../design-system/specs/InputDateRange.md) | InputDateRange |
-| [design-system/specs/InputText.md](../design-system/specs/InputText.md) | InputText |
-| [design-system/specs/Kanban.md](../design-system/specs/Kanban.md) | Канбан-доска |
-| [design-system/specs/LabelHelper.md](../design-system/specs/LabelHelper.md) | Label / Helper |
-| [design-system/specs/Layout.md](../design-system/specs/Layout.md) | Каркас экрана |
-| [design-system/specs/Link.md](../design-system/specs/Link.md) | Link |
-| [design-system/specs/Modal.md](../design-system/specs/Modal.md) | Modal |
-| [design-system/specs/NavPanel.md](../design-system/specs/NavPanel.md) | Панель навигации |
-| [design-system/specs/NavTile.md](../design-system/specs/NavTile.md) | NavTile |
-| [design-system/specs/PageHeader.md](../design-system/specs/PageHeader.md) | PageHeader |
-| [design-system/specs/Pagination.md](../design-system/specs/Pagination.md) | Pagination |
-| [design-system/specs/Popover.md](../design-system/specs/Popover.md) | Popover |
-| [design-system/specs/ProductRow.md](../design-system/specs/ProductRow.md) | ProductRow |
-| [design-system/specs/ProgressBar.md](../design-system/specs/ProgressBar.md) | ProgressBar |
-| [design-system/specs/Radiobutton.md](../design-system/specs/Radiobutton.md) | Radiobutton |
-| [design-system/specs/Radius.md](../design-system/specs/Radius.md) | Скругления |
-| [design-system/specs/ReadOnlyField.md](../design-system/specs/ReadOnlyField.md) | ReadOnlyField |
-| [design-system/specs/RiskMetric.md](../design-system/specs/RiskMetric.md) | Риск-метрика |
-| [design-system/specs/SegmentControl.md](../design-system/specs/SegmentControl.md) | SegmentControl |
-| [design-system/specs/Skeleton.md](../design-system/specs/Skeleton.md) | Skeleton |
-| [design-system/specs/SnackBar.md](../design-system/specs/SnackBar.md) | SnackBar |
-| [design-system/specs/Spacing.md](../design-system/specs/Spacing.md) | Сетка и отступы |
-| [design-system/specs/Spinner.md](../design-system/specs/Spinner.md) | Spinner |
-| [design-system/specs/Splitter.md](../design-system/specs/Splitter.md) | Splitter |
-| [design-system/specs/SubTab.md](../design-system/specs/SubTab.md) | SubTab — табы второго уровня |
-| [design-system/specs/Switch.md](../design-system/specs/Switch.md) | Switch |
-| [design-system/specs/Tab.md](../design-system/specs/Tab.md) | Tab |
-| [design-system/specs/Table.md](../design-system/specs/Table.md) | Table |
-| [design-system/specs/TableCell.md](../design-system/specs/TableCell.md) | TableCell |
-| [design-system/specs/TableFilter.md](../design-system/specs/TableFilter.md) | TableFilter |
-| [design-system/specs/Tile.md](../design-system/specs/Tile.md) | Tile |
-| [design-system/specs/Toast.md](../design-system/specs/Toast.md) | Toast |
-| [design-system/specs/Tooltip.md](../design-system/specs/Tooltip.md) | Tooltip |
-| [design-system/specs/Typography.md](../design-system/specs/Typography.md) | Типографика |
 | [design-system/specs/\_TEMPLATE.md](../design-system/specs/_TEMPLATE.md) | Название по-русски |
 | [design-system/specs/\_cheatsheet.md](../design-system/specs/_cheatsheet.md) | IBP DS — чит-шит компонентов |
 | [design-system/specs/\_index.md](../design-system/specs/_index.md) | Индекс спек |
@@ -155,6 +159,12 @@
 | [design-system/templates/local-component/CHANGELOG.md](../design-system/templates/local-component/CHANGELOG.md) | Журнал правок &amp;lt;Имя&amp;gt; |
 | [design-system/templates/local-component/Component.md](../design-system/templates/local-component/Component.md) | &lt;Имя&gt; |
 | [design-system/templates/local-component/README.md](../design-system/templates/local-component/README.md) | Шаблон локального компонента |
+
+### design-system/tools
+
+| Документ | Аннотация |
+|---|---|
+| [design-system/tools/ds-lint.md](../design-system/tools/ds-lint.md) | Линтер ДС: правила и проверки |
 
 ## Агентная система (40)
 
@@ -202,7 +212,7 @@
 |---|---|
 | [.agents/skills/composition-review/SKILL.md](../.agents/skills/composition-review/SKILL.md) | Приёмка композиции |
 | [.agents/skills/concept-design/SKILL.md](../.agents/skills/concept-design/SKILL.md) | Проектирование концептов |
-| [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка \`design-system/pages/\*\*\` на docs-split |
+| [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка страниц документации ДС на docs-split |
 | [.agents/skills/docs-split/references/lessons.md](../.agents/skills/docs-split/references/lessons.md) | Уроки раскатки docs-split |
 | [.agents/skills/docs-split/references/pages-index.md](../.agents/skills/docs-split/references/pages-index.md) | Карта страниц документации |
 | [.agents/skills/docs-split/references/skeleton.md](../.agents/skills/docs-split/references/skeleton.md) | Скелет страницы docs-split (эталон структуры) |
@@ -503,7 +513,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (19)
+## Задачи и заметки (21)
 
 ### Архив/черновики
 
@@ -531,6 +541,7 @@
 | [docs/tasks/0007-ds-icons-unique-ids.md](tasks/0007-ds-icons-unique-ids.md) | ДС: у каждой копии иконки — свои id внутри SVG (ds-icons.js) |
 | [docs/tasks/0008-sensor-linked-css.md](tasks/0008-sensor-linked-css.md) | Сенсор экрана видит CSS тайлов в отдельных файлах (&lt;link rel="stylesheet"&gt;) |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
+| [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 
 ### Снимки задач
 
@@ -538,6 +549,7 @@
 |---|---|
 | [docs/tasks/0006-docs-index.handoff.md](tasks/0006-docs-index.handoff.md) | DocsIndex — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
+| [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 
 ## Служебное (1)
 

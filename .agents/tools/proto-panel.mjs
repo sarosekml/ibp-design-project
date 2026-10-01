@@ -71,7 +71,12 @@ import os from 'node:os';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { project, need } from './project.mjs';
+import { project, need, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
 import { includesOf } from './assemble.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -274,15 +279,13 @@ function pageCorpus(pageAbs, appAbs) {
 /* Текст ДС для классов состояния (.is-open ставит рантайм ДС). Словарь глифов не читается. */
 function dsCorpus(P) {
   if (!P.dsAbs) return '';
+  const L = DSP.layout(P.dsAbs);
+  /* стили, затем скрипты ДС; линтер — в корпусе, как до RE0002 (у стенда его нет) */
+  const scripts = [...L.scripts(), ...(existsSync(L.abs(L.at.linter)) ? [L.at.linter] : [])];
   let text = '';
-  for (const sub of ['styles', 'scripts']) {
-    const dir = path.join(P.dsAbs, sub);
-    let list = [];
-    try { list = readdirSync(dir); } catch { continue; }
-    for (const f of list.sort()) {
-      if (!/\.(css|js)$/.test(f) || f === 'icons-data.js') continue;
-      text += '\n' + readFileSync(path.join(dir, f), 'utf8');
-    }
+  for (const f of [...L.styles().sort(), ...scripts.sort()]) {
+    if (f === L.at.iconsData) continue;
+    text += '\n' + readFileSync(L.abs(f), 'utf8');
   }
   return text;
 }
@@ -832,8 +835,9 @@ function sourceRuntime() {
 function tree(root, runtime) {
   put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
   put(root, 'ds/ds.css', '');
-  put(root, 'ds/styles/x.css', '.is-open { display: block; }\n');
-  put(root, 'ds/scripts/ds-x.js', "el.classList.add('is-shown');\n");
+  put(root, 'ds/components/atoms/X/X.css', '.is-open { display: block; }\n');
+  put(root, 'ds/components/atoms/X/X.js', "el.classList.add('is-shown');\n");
+  for (const d of ['foundations', 'utils', 'docs-kit']) put(root, 'ds/' + d + '/.keep', '');   // раскладка ДС стенда
   cpSync(runtime, path.join(root, '.kit/proto-panel'), { recursive: true, filter: (s) => !path.basename(s).startsWith('.') });
   put(root, LAB + '/app.json', JSON.stringify({ id: 'lab', track: 'rnd', title: 'Лаборатория', desc: 'т', home: 'pages/A.html', icon: 'folder' }));
   put(root, LAB + '/pages/A.html', '<!DOCTYPE html>\n<button id="go" data-x="y">Пуск</button>\n<aside id="pv" hidden></aside>\n<script src="a.js"></script>\n');

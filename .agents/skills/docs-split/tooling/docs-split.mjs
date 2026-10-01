@@ -6,7 +6,7 @@
    Подкоманды:
      map                 — перегенерировать references/pages-index.md
                            (структурная карта всех doc-страниц)
-     inject <page>       — вставить styles/<компонент>.css в блок
+     inject <page>       — вставить CSS компонента (<Имя>.css его папки) в блок
                            <script type="text/plain" id="src-code-css">
                            (CSS берётся из файла, модель его не читает)
      check <page>        — структурные проверки: баланс тегов, остатки
@@ -30,13 +30,22 @@ import { fileURLToPath } from 'node:url';
 
 const run = promisify(execFile);
 
-import { need } from '../../../tools/project.mjs';
+import { need, dsPaths } from '../../../tools/project.mjs';
 /* Корень проекта и ДС — из манифеста project.json (реструктуризация, Ш4). */
 const PRJ = need('docs-split', path.dirname(fileURLToPath(import.meta.url)));
 const ROOT = PRJ.root;
 const DS = PRJ.dsAbs;
 const TOOL = path.dirname(fileURLToPath(import.meta.url));
-const INDEX_MD = path.join(DS, 'specs', '_index.md');
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где страницы, стили,
+   рантаймы и спеки, тулчейн не пишет литералами папок; ссылки, которые он
+   вставляет в страницу, считаются от неё до файла. */
+const L = (await dsPaths()).layout(DS);
+const INDEX_MD = L.abs(L.at.specIndex);
+const hrefFrom = (pageAbs, rel) => path.relative(path.dirname(pageAbs), L.abs(rel)).split(path.sep).join('/');
+const one = (list, what) => {
+  if (list.length !== 1) throw new Error('docs-split: ' + what + ' — в спеке ДС не один файл (' + (list.join(', ') || '—') + ')');
+  return list[0];
+};
 const PAGES_INDEX = path.join(TOOL, '..', 'references', 'pages-index.md');
 
 const PAGE_DIRS = ['foundations', 'atoms', 'molecules', 'organisms', 'patterns'];
@@ -49,12 +58,12 @@ function fail(msg) { log('ОШИБКА: ' + msg); process.exit(2); }
 async function readUtf8(p) { return readFile(p, 'utf8'); }
 async function writeUtf8(p, s) { return writeFile(p, s, 'utf8'); }
 
-/* компонент → styles/*.css из specs/_index.md (источник истины) */
+/* компонент → его CSS из манифеста ДС `_index.md` (источник истины) */
 async function loadCssMap() {
   const map = {};
   const text = await readUtf8(INDEX_MD);
   for (const line of text.split('\n')) {
-    const m = line.match(/^\|\s*([^|]+?)\s*\|\s*specs\/[^|]+\|\s*([^|]+?\.css)\s*\|/);
+    const m = line.match(/^\|\s*([^|]+?)\s*\|\s*[^|]*\.md\s*\|\s*([^|]+?\.css)\s*\|/);
     if (m) map[m[1].trim()] = m[2].trim();
   }
   return map;
@@ -75,13 +84,13 @@ async function resolveCss(pagePath, explicitCss) {
   const name = path.basename(pagePath, '.html');
   const cssMap = await loadCssMap();
   if (cssMap[name]) return path.join(DS, cssMap[name]);
-  // fallback: kebab + нижний регистр (snackbar, riskmetric — без дефиса)
-  const cands = [kebab(name) + '.css', name.toLowerCase() + '.css'];
+  // fallback: <Имя>.css папки компонента, затем прежние имена — kebab и нижний регистр
+  const cands = [name + '.css', kebab(name) + '.css', name.toLowerCase() + '.css'];
   for (const c of cands) {
-    const p = path.join(DS, 'styles', c);
-    if (existsSync(p)) return p;
+    const hit = L.styles().find((s) => path.posix.basename(s) === c);
+    if (hit) return L.abs(hit);
   }
-  fail(`не найден CSS для ${name} — укажи явно: --css ${PRJ.ds}/styles/<файл>.css`);
+  fail(`не найден CSS для ${name} — укажи явно: --css <путь до .css от корня ДС, см. node ${PRJ.ds}/${L.at.paths} ${name}>`);
 }
 
 function pagePath(arg) {
@@ -117,11 +126,19 @@ async function cmdCheck(pageArg) {
   ok(count(/ds-toc\.js/g) === 0, `ДС6 нет ds-toc.js (${count(/ds-toc\.js/g)})`);
   ok(count(/pg-kit\.js/g) === 0, `ДС7 нет pg-kit.js (${count(/pg-kit\.js/g)})`);
   ok(count(/ds-toc\.css/g) === 0, `ДС8 нет ds-toc.css (${count(/ds-toc\.css/g)})`);
-  ok(count(/styles\/tab\.css/) >= 1, `ДС9 tab.css подключён (${count(/styles\/tab\.css/)})`);
-  ok(count(/styles\/segment-control\.css/) >= 1, `ДС10 segment-control.css подключён (${count(/styles\/segment-control\.css/)})`);
+  /* стили Tab и SegmentControl — по имени файла из их спек (модуль путей ДС),
+     с «/» или кавычкой перед именем: `Tab.css` не должен находиться в `SubTab.css` */
+  const linked = (comp) => {
+    const file = path.posix.basename(one(L.cssOf(comp), 'стили ' + comp));
+    const re = new RegExp('["/]' + file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '"');
+    return [file, count(re)];
+  };
+  const [tabCss, tabN] = linked('Tab'), [segCss, segN] = linked('SegmentControl');
+  ok(tabN >= 1, `ДС9 ${tabCss} подключён (${tabN})`);
+  ok(segN >= 1, `ДС10 ${segCss} подключён (${segN})`);
   ok(count(/\{\s*on:\s*'[^']*'\s*,\s*off:/) === 0, `ДС11 нет {on, off} словарей в DS_SPLIT_SWITCH_LABELS (${count(/\{\s*on:\s*'[^']*'\s*,\s*off:/)})`);
   /* .splitpane--app считается по КАРКАСУ (noScript), не по всему файлу: правила
-     --app входят в styles/splitter.css, который inject кладёт в src-code-css
+     --app входят в components/molecules/Splitter/Splitter.css, который inject кладёт в src-code-css
      вкладки «Код» (полный CSS компонента) — упоминания в код-образцах легальны.
      Запрет паттерна касается каркаса main.ds-split (урок Splitter, 30.08.2026). */
   ok(countFrame(/splitpane--app/g) === 0, `ДС12 нет .splitpane--app в каркасе (${countFrame(/splitpane--app/g)})`);
@@ -198,7 +215,7 @@ async function cmdCheck(pageArg) {
 /* HTML-эталон из спеки: первый fenced-блок после «### Разметка · HTML» */
 async function loadSpecHtml(pagePath) {
   const name = path.basename(pagePath, '.html');
-  const specPath = path.join(DS, 'specs', name + '.md');
+  const specPath = L.abs(L.specOf(name));
   if (!existsSync(specPath)) return null;
   const text = await readUtf8(specPath);
   const idx = text.indexOf('### Разметка · HTML');
@@ -216,12 +233,13 @@ async function cmdInject(pageArg, explicitCss, wantHtml) {
 
   if (wantHtml) {
     const html = await loadSpecHtml(p);
-    if (html === null) fail(`${name}: в specs/${name}.md нет блока «### Разметка · HTML» — вставь src-code-html вручную`);
+    const spec = L.specOf(path.basename(p, '.html'));
+    if (html === null) fail(`${name}: в ${spec} нет блока «### Разметка · HTML» — вставь src-code-html вручную`);
     const reHtml = /<script type="text\/plain" id="src-code-html">[\s\S]*?<\/script>/i;
     if (!reHtml.test(t)) fail(`${name}: блок src-code-html не найден`);
     const before = t;
     t = t.replace(reHtml, `<script type="text/plain" id="src-code-html">${html}</script>`);
-    if (t !== before) { done.push(`HTML-эталон из specs/${name}.md (${html.length} байт)`); }
+    if (t !== before) { done.push(`HTML-эталон из ${spec} (${html.length} байт)`); }
   }
 
   const cssPath = await resolveCss(p, explicitCss);
@@ -230,7 +248,7 @@ async function cmdInject(pageArg, explicitCss, wantHtml) {
   if (!re.test(t)) fail(`${name}: блок src-code-css не найден`);
   const before = t;
   t = t.replace(re, `<script type="text/plain" id="src-code-css">${css.trimEnd()}</script>`);
-  if (t !== before) done.push(`styles/${path.basename(cssPath)} (${css.length} байт)`);
+  if (t !== before) done.push(`${path.relative(DS, cssPath).split(path.sep).join('/')} (${css.length} байт)`);
 
   if (!done.length) {
     log(`== inject ${name} ==`);
@@ -407,14 +425,15 @@ async function cmdScaffold(pageArg) {
     + '</main>');
 
   /* 6. head: ds-toc.css → 4 файла; убрать pg-kit.css */
-  t = t.replace(/<link rel="stylesheet" href="\.\.\/\.\.\/styles\/ds-toc\.css">\s*/g, '');
-  t = t.replace(/<link rel="stylesheet" href="\.\.\/\.\.\/styles\/pg-kit\.css">\s*/g, '');
-  const need = ['splitter.css', 'segment-control.css', 'tab.css', 'docs-split.css'];
-  const add = need.filter((c) => !t.includes('styles/' + c));
+  t = t.replace(/<link rel="stylesheet" href="[^"]*\/ds-toc\.css">\s*/g, '');
+  t = t.replace(/<link rel="stylesheet" href="[^"]*\/pg-kit\.css">\s*/g, '');
+  const need = [one(L.cssOf('Splitter'), 'стили Splitter'), one(L.cssOf('SegmentControl'), 'стили SegmentControl'),
+    one(L.cssOf('Tab'), 'стили Tab'), L.at.docsSplitCss];
+  const add = need.filter((c) => !t.includes(hrefFrom(p, c)));
   if (add.length) {
-    const ins = add.map((c) => '  <link rel="stylesheet" href="../../styles/' + c + '">').join('\n') + '\n';
+    const ins = add.map((c) => '  <link rel="stylesheet" href="' + hrefFrom(p, c) + '">').join('\n') + '\n';
     t = t.replace('</head>', ins + '</head>');
-    ok('head: ' + add.join(', '));
+    ok('head: ' + add.map((c) => path.posix.basename(c)).join(', '));
   }
 
   /* 7. style: playground-правила */
@@ -428,18 +447,19 @@ async function cmdScaffold(pageArg) {
   });
 
   /* 8. скрипты: ds-toc/pg-kit убрать; рантаймы до page.js; docs-split после */
-  t = t.replace(/<script src="\.\.\/\.\.\/scripts\/ds-toc\.js"><\/script>\s*/g, '');
-  t = t.replace(/<script src="\.\.\/\.\.\/scripts\/pg-kit\.js"><\/script>\s*/g, '');
-  const runtimes = ['ds-splitter.js', 'ds-tabs.js'].filter((r) => !t.includes('scripts/' + r));
+  t = t.replace(/<script src="[^"]*\/ds-toc\.js"><\/script>\s*/g, '');
+  t = t.replace(/<script src="[^"]*\/pg-kit\.js"><\/script>\s*/g, '');
+  const runtimes = [one(L.runtimeOf('Splitter'), 'рантайм Splitter'), one(L.runtimeOf('Tab'), 'рантайм Tab')]
+    .filter((r) => !t.includes(hrefFrom(p, r)));
   if (runtimes.length) {
-    const firstPage = t.search(/<script src="\.\.\/\.\.\/scripts\/[a-z0-9-]+\.page\.js">/);
-    const insRt = runtimes.map((r) => '<script src="../../scripts/' + r + '"></script>\n').join('');
+    const firstPage = t.search(/<script src="[^"]*\.page\.js">/);
+    const insRt = runtimes.map((r) => '<script src="' + hrefFrom(p, r) + '"></script>\n').join('');
     if (firstPage >= 0) t = t.slice(0, firstPage) + insRt + t.slice(firstPage);
     else t = t.replace('</body>', insRt + '</body>');
-    ok('рантаймы: ' + runtimes.join(', '));
+    ok('рантаймы: ' + runtimes.map((r) => path.posix.basename(r)).join(', '));
   }
   const tail = '<script>window.DS_SPLIT_SWITCH_LABELS = {};</script>\n'
-    + '<script src="../../scripts/docs-split.js"></script>\n'
+    + '<script src="' + hrefFrom(p, L.at.docsSplitJs) + '"></script>\n'
     + SRC_CODE_TAIL;
   if (!t.includes('docs-split.js')) t = t.replace('</body>', tail + '</body>');
 
@@ -500,7 +520,7 @@ async function parsePage(filePath) {
     : /class="ctl-group"/.test(t) ? 'grouped'
     : /pg__controls/.test(t) ? 'static' : '—';
   const demo = (t.match(/id="(pg-stage|demo-[a-z0-9-]+)"/i) || [])[1] || '—';
-  const pageJs = [...t.matchAll(/src="[^"]*\/([a-z0-9-]+\.page\.js)"/g)].map((x) => x[1]);
+  const pageJs = [...t.matchAll(/src="(?:[^"]*\/)?([\w-]+\.page\.js)"/g)].map((x) => x[1]);
   const cssMap = await loadCssMap();
   const css = cssMap[name] || '—';
   const status = /class="page ds-split"/.test(t) ? '✅' : '⬜';
@@ -521,17 +541,16 @@ async function cmdMap() {
   lines.push('Статус: ✅ — раскатано на docs-split, ⬜ — старый формат. Конструктор: dynamic — контролы строит page.js в `#pg-controls` (docs-split.js сам делает две колонки); static — разметка `.ctl-col`/`.toggles` вручную; grouped — `.ctl-group` с двумя колонками в каждой.');
   lines.push('');
 
+  const allPages = L.pages();
   for (const dir of PAGE_DIRS) {
-    const dirPath = path.join(DS, 'pages', dir);
-    if (!existsSync(dirPath)) continue;
-    const files = (await readdir(dirPath)).filter((f) => f.endsWith('.html'));
+    const files = allPages.filter((x) => x.category === dir).map((x) => x.rel);
     if (!files.length) continue;
     lines.push(`## ${dir[0].toUpperCase() + dir.slice(1)} (${files.length})`);
     lines.push('');
     lines.push('| Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |');
     lines.push('|---|---|---|---|---|---|---|');
     for (const f of files.sort()) {
-      const info = await parsePage(path.join(dirPath, f));
+      const info = await parsePage(L.abs(f));
       lines.push(`| ${info.name} | ${info.ctor} | ${info.demo} | ${info.pageJs} | ${info.css} | ${info.sections.length} | ${info.status} |`);
     }
     lines.push('');
@@ -570,7 +589,7 @@ const args = process.argv.slice(2);
 const cmd = args[0];
 if (args.includes('--rules')) { printRules(); process.exit(0); }
 if (!cmd) {
-  log('Использование: node docs-split.mjs <map|scaffold|inject|rollout|check> [page] [--css styles/x.css] [--html] | --rules');
+  log('Использование: node docs-split.mjs <map|scaffold|inject|rollout|check> [page] [--css <путь до .css от корня ДС>] [--html] | --rules');
   process.exit(1);
 }
 const pageArg = args.slice(1).find((a) => !a.startsWith('--'));

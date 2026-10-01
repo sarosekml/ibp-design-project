@@ -54,11 +54,11 @@ Modal w8 «Документы по сделке»
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w4` (выбор), `modal--w8` (документы) |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w4` (выбор), `modal--w8` (документы) |
 | Карточка контрагента | модуль — `widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard` | режим `select`: без переноса и отметки «КНР», вся карточка — радиокнопка; выбранная — состояние Selected у Card из ДС (Tile 1.015) |
-| EmptyState | ДС — `design-system/specs/EmptyState.md` | `es--m`, иллюстрация `empty-folder` — на месте документов |
-| Skeleton | ДС — `design-system/specs/Skeleton.md` | каркас двух карточек при загрузке |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Открыть» — accent; «К списку контрагентов» — transparent с иконкой; «Закрыть» — outline |
+| EmptyState | ДС — `design-system/components/molecules/EmptyState/EmptyState.md` | `es--m`, иллюстрация `empty-folder` — на месте документов |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | каркас двух карточек при загрузке |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Открыть» — accent; «К списку контрагентов» — transparent с иконкой; «Закрыть» — outline |
 
 ## Поля
 

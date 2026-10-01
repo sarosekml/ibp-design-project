@@ -1,0 +1,260 @@
+/* =========================================================================
+   Design System — ProductRow
+   Строка иерархического списка объектов: заголовок с номером, необязательные
+   строка статуса и строка значений с иконками, действия справа. Контейнер
+   .prow-tree раскладывает строки по уровням: 24px отступа на уровень, дети
+   корня — без отступа, ветку можно свернуть. Предметной области не знает:
+   что за объекты, какие у них действия и номера — решает потребитель.
+
+   Варианты: обычная строка · корневая (.prow--root: без рамки, жирный
+             заголовок, рамка только на наведении)
+   States:   default · hover (рамка --primary) · tinted (заливка) · selected
+             (строка списка выбора: [aria-checked="true"]) · disabled
+             ([aria-disabled="true"]) · collapsed (ветка свёрнута)
+   Runtime:  components/organisms/ProductRow/ProductRow.js — сворачивание ветки по .prow__toggle.
+   Requires: typography.css, palette.css, spacing.css, radius.css,
+             icon-button.css (действия), context-menu.css (кебаб)
+   ========================================================================= */
+
+/* Парные `[hidden]` — правило B11 линтера: правило класса (0,1,0) перебивает
+   браузерное `[hidden] { display: none }` (0,0,0), и атрибут молча перестаёт
+   работать. Корень, объявивший `display`, объявляет и пару. */
+.prow[hidden],
+.prow-tree[hidden],
+.prow-tree__node[hidden],
+.prow-tree__group[hidden] { display: none; }
+
+/* =========================================================================
+   Строка
+   Рамка — внутренняя тень: она не занимает места, поэтому смена рамки на
+   наведении и её отсутствие у корня не сдвигают содержимое ни на пиксель.
+   Высота из содержимого: одна строка 48px (12 + 24 + 12), со строкой
+   значений 72px (12 + 24 + 4 + 20 + 12).
+   ========================================================================= */
+.prow {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-xs);
+  box-shadow: inset 0 0 0 1px var(--border-primary);
+  transition: box-shadow .15s ease;
+}
+
+/* корневая строка: без рамки в покое, жирный заголовок */
+.prow--root { box-shadow: none; }
+
+/* наведение; .is-hover — форс-состояние для витрины */
+.prow:hover,
+.prow.is-hover { box-shadow: inset 0 0 0 1px var(--primary); }
+
+/* заливка: строка отмечена потребителем (например, привязана к другому объекту) */
+.prow--tinted { background: var(--tertiary-bg-light); }
+
+/* выбранная строка списка выбора (строка — role="radio" или "checkbox" с
+   aria-checked): подложка --primary-bg и рамка --primary, как Selected у Card;
+   .is-selected — форс-состояние для витрины. Выбирает строку потребитель. */
+.prow[aria-checked] { cursor: pointer; }
+.prow[aria-checked]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.prow[aria-checked="true"],
+.prow.is-selected {
+  background: var(--primary-bg);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* выключенная строка: рамка гаснет, наведение не подсвечивает (текст — ниже,
+   после заголовка-ссылки). Правила стоят после :hover и выбранной — при равной
+   специфичности выигрывают они. */
+.prow[aria-checked][aria-disabled="true"] { cursor: default; }
+.prow[aria-disabled="true"] { box-shadow: inset 0 0 0 1px var(--disabled-border); }
+.prow--root[aria-disabled="true"] { box-shadow: none; }
+
+/* ---------- ведущий слот: кнопка сворачивания ветки ------------------------ */
+.prow__lead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  margin-inline-end: var(--space-4);
+}
+
+/* Кнопка сворачивания и метка — свои кнопки строки, не IconButton: метка в
+   нажатом положении остаётся цвета --secondary (меняется только глиф), а у
+   нажатой IconButton цвет --primary и подложка. */
+.prow__toggle,
+.prow__mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--secondary);
+  transition: color .15s ease;
+}
+button.prow__toggle,
+button.prow__mark { cursor: pointer; }
+.prow__toggle > :is(svg, [data-icon]),
+.prow__mark > :is(svg, [data-icon]) { display: block; width: 24px; height: 24px; }
+button.prow__toggle:hover,
+button.prow__mark:hover { color: var(--secondary-dark); }
+.prow__toggle:focus-visible,
+.prow__mark:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* шеврон смотрит вверх у раскрытой ветки и вниз у свёрнутой */
+.prow__toggle > :is(svg, [data-icon]) { transition: transform .18s ease; }
+.prow__toggle[aria-expanded="false"] > :is(svg, [data-icon]),
+.prow-tree__node--collapsed > .prow .prow__toggle > :is(svg, [data-icon]) { transform: rotate(180deg); }
+
+/* ---------- содержимое: заголовок · статус · значения ---------------------- */
+.prow__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ряд заголовка — высотой с действия (24px), заголовок переносится, метка
+   держится у его первой строки */
+.prow__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: 24px;
+}
+.prow__head > .sk-line { align-self: center; }
+
+.prow__title {
+  min-width: 0;
+  padding-block: var(--space-2);
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+/* заголовок корня — Body L Strong: строка 24px, поля по высоте не нужны,
+   корень остаётся 48px */
+.prow--root .prow__title { font: var(--type-body-l-strong); padding-block: 0; }
+
+/* Заголовок-ссылка: у объекта есть своя страница. Кнопки в <a> не вкладываются —
+   ссылкой становится заголовок, а его ::after растягивает зону клика на всю
+   строку; ведущий слот, метка и действия подняты над ней. */
+a.prow__title { text-decoration: none; }
+.prow__title--link { transition: color .15s ease; }
+.prow__title--link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.prow:hover .prow__title--link,
+.prow.is-hover .prow__title--link { color: var(--primary); }
+.prow__title--link:focus-visible { outline: none; }
+.prow__title--link:focus-visible::after { outline: 2px solid var(--primary); outline-offset: 2px; }
+.prow__lead,
+.prow__mark,
+.prow__actions { position: relative; z-index: 1; }
+
+/* текст выключенной строки — после подсветки ссылки: при равной
+   специфичности (0,3,0) выигрывает стоящее ниже */
+.prow[aria-disabled="true"] :is(.prow__title, .prow__meta-item, .prow__meta-affix, .prow__status) {
+  color: var(--text-inactive);
+}
+.prow[aria-disabled="true"] .prow__title--link { pointer-events: none; }
+
+/* строка статуса: иконка 16 + текст Body XS */
+.prow__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  min-height: 16px;
+  font: var(--type-body-xs);
+  color: var(--text-inactive);
+}
+.prow__status > :is(svg, [data-icon]) { flex: none; width: 16px; height: 16px; color: var(--secondary); }
+.prow__status--success > :is(svg, [data-icon]) { color: var(--success); }
+.prow__status-text { min-width: 0; overflow-wrap: anywhere; }
+
+/* строка значений: пары «иконка 20 + текст Body S». Минимальная ширина пары —
+   иконка и 10 знаков (дата ДД.ММ.ГГГГ): прочерк на месте значения не сдвигает
+   соседнюю пару, значения соседних строк стоят колонками. */
+.prow__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-16);
+  row-gap: var(--space-4);
+  min-width: 0;
+}
+.prow__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-icon-text);
+  min-width: calc(20px + var(--gap-icon-text) + 10ch);
+  min-height: 20px;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+.prow__meta-item > :is(svg, [data-icon]) { flex: none; width: 20px; height: 20px; color: var(--secondary); }
+.prow__meta-text { min-width: 0; overflow-wrap: anywhere; }
+.prow__meta-affix { color: var(--text-inactive); }
+
+/* ---------- действия: IconButton L, зазор 8, от заголовка 16 --------------- */
+/* Кнопка сворачивания может стоять и здесь, последней: корневая строка в списке
+   выбора окна. Рантайм находит её в любом месте строки. */
+.prow__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 24px;
+  margin-inline-start: var(--space-16);
+}
+
+/* =========================================================================
+   Дерево строк
+   <ul class="prow-tree"> → <li class="prow-tree__node"> → .prow + <ul class="prow-tree__group">
+   Узлы корневого уровня — через 16px, внутри ветки — через 8px. Вложенная
+   группа сдвинута на 24px, поэтому строка на 24px уже родителя; группа
+   детей корня не сдвигается — корень и его дети одной ширины.
+   ========================================================================= */
+.prow-tree,
+.prow-tree__group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.prow-tree { gap: var(--space-16); }
+.prow-tree__group {
+  gap: var(--space-8);
+  padding-inline-start: var(--space-24);
+}
+.prow-tree > .prow-tree__node > .prow-tree__group { padding-inline-start: 0; }
+.prow-tree__node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.prow-tree__node--collapsed > .prow-tree__group { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .prow,
+  .prow__toggle,
+  .prow__mark,
+  .prow__title--link,
+  .prow__toggle > :is(svg, [data-icon]) { transition: none; }
+}

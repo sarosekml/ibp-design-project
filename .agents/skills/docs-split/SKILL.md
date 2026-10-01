@@ -1,21 +1,21 @@
 ---
 name: docs-split
-description: Как раскатать страницу документации ДС IBP (design-system/pages/**) на паттерн «сплиттер + табы» — процедура, тулчейн check/inject/map и правила точечного чтения страницы. Загружать, когда поручение касается страниц документации компонентов, а не экранов приложений в apps/.
+description: Как раскатать страницу документации ДС IBP (<Имя>.html в папках компонентов design-system/) на паттерн «сплиттер + табы» — процедура, тулчейн check/inject/map и правила точечного чтения страницы. Загружать, когда поручение касается страниц документации компонентов, а не экранов приложений в apps/.
 belongs_to: docs-split
-purpose: Раскатка страниц документации IBP (design-system/pages/**) на паттерн «сплиттер + табы» (docs-split) — процедура, тулчейн, правила чтения
+purpose: Раскатка страниц документации IBP (<Имя>.html в папках компонентов) на паттерн «сплиттер + табы» (docs-split) — процедура, тулчейн, правила чтения
 checked: "30.08.2026 — пилот AllocationBar2, тулчейн check/inject/map работает; 13.09.2026 — verify удалён"
 ---
 
-# Раскатка `design-system/pages/**` на docs-split
+# Раскатка страниц документации ДС на docs-split
 
 ## Когда применять
 
-Поручение касается страниц документации (`design-system/pages/foundations|atoms|molecules|organisms/**`).
+Поручение касается страниц документации (`<Имя>.html` в `design-system/components/<категория>/<Имя>/`, `foundations/<Имя>/`).
 Сценарий ведёт `ai-designer` сам (страницы документации не собираются через
 `screen-builder` и не имеют `.screen.md`). Приёмку делает `screen-reviewer`.
 
 Правила паттерна — раздел 11 `process.md`. Общий слой —
-`design-system/styles/docs-split.css` + `design-system/scripts/docs-split.js` (не трогать).
+`design-system/docs-kit/docs-split.css` + `design-system/docs-kit/docs-split.js` (не трогать).
 
 ## Правила чтения (экономия контекста)
 
@@ -28,14 +28,14 @@ checked: "30.08.2026 — пилот AllocationBar2, тулчейн check/inject/
    не читаются** — при раскатке они проходят насквозь.
 3. **CSS не читать и не перепечатывать.** Вкладку «Код» заполняет
    `node …docs-split.mjs inject <page>`, который вставляет полный
-   `design-system/styles/<компонент>.css` в `src-code-css` из файла. Модель CSS не видит.
+   `<Имя>.css` компонента в `src-code-css` из файла. Модель CSS не видит.
 4. **Эталон — `references/skeleton.md`**, не Entity.html и не другие готовые
    страницы (их не перечитывать).
 
 ## Тулчейн
 
 ```
-node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css design-system/styles/x.css]
+node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css <путь до .css от корня ДС>]
 ```
 
 | Команда | Что делает |
@@ -46,7 +46,7 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css design
 | `--rules` | печатает состав проверок |
 
 **Вход у `check` — любая страница с каркасом `class="page ds-split"`, а не только
-`design-system/pages/**`.** Витрины локальных компонентов собраны тем же паттерном, и гейт
+страницы ДС.** Витрины локальных компонентов собраны тем же паттерном, и гейт
 зовёт шаг по признаку страницы: пока он звался по папке, витрины не получали
 структурной проверки вовсе и три дефекта каркаса дошли до человека (Л135).
 
@@ -65,14 +65,14 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css design
 
 1. `map` — сверить статус/тип конструктора.
 2. Ручная структура (следую `skeleton.md`):
-   - head: `ds-toc.css` → `splitter.css` + `segment-control.css` + `tab.css` + `docs-split.css`;
+   - head: `ds-toc.css` → `Splitter.css` + `SegmentControl.css` + `Tab.css` + `docs-split.css`;
    - `<style>`: playground `.panel.pg` → демо-стадия на `flex:1`; убрать
      `#pg-controls` grid-правила (их место занимает docs-split.css);
    - `main.page` → `main.page.ds-split` + обёртка `splitpane--h[data-splitter]`:
      панель A — демо, `.spl--h`, панель B — `.tabs[data-tabs]` + `.tabs-body` + три `.tabpane`;
    - секцию «Конструктор» из документации убрать (демо — наверх, контролы — во вкладку);
    - после футера: закрыть `docs-main` + `nav#docs-toc` + panes конструктора и кода;
-   - скрипты: `ds-toc.js`/`pg-kit.js` → `ds-splitter.js` + `ds-tabs.js` + `docs-split.js`
+   - скрипты: `ds-toc.js`/`pg-kit.js` → `Splitter.js` + `Tab.js` + `docs-split.js`
      (после `page.js`); `pg-kit.css` остаётся;
    - динамический конструктор: `<div class="pg__controls" id="pg-controls"></div>`
      пустой — `docs-split.js` сам разложит по колонкам и улучшит селекты по числу
@@ -95,7 +95,7 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css design
 
 ## Границы
 
-- `design-system/styles/`, `design-system/scripts/`, `design-system/specs/`, `design-system/pages/**` (кроме раскатываемой страницы) —
+- Файлы ДС (`design-system/**`), кроме раскатываемой страницы, —
   не трогать. Тулчейн — рабочий инструмент харнеса, живёт в `.agents/skills/docs-split/tooling/`.
 - Один `</body></html>` в конце файла; перед инлайн-скриптами страницы дубликатов
   не создавать (урок Entity).

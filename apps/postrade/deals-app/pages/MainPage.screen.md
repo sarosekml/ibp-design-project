@@ -44,7 +44,7 @@ components: [Layout, NavPanel, Breadcrumbs, NavTile, Illustrations, Modal, Badge
 ## 3. Источник данных — единый каталог
 
 Меню панели и тайлы главной строятся из одного файла
-`design-system/scripts/ibp-home.js` (`window.IBPHome`):
+`design-system/patterns/HomeRoles/ibp-home.js` (`window.IBPHome`):
 
 - `IBPHome.itemsFor(role)` — группы меню роли (с по-пунктной доступностью,
   partial: у роли «Финансист ДИД» в «Администрировании» только «Администрирование»,

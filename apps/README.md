@@ -52,7 +52,7 @@ apps/
 ```
 postrade/deals-app/  Post — ДИД: главная, текущий портфель, страница сделки (модуль, трек product)
 ib/drafts/           ai-bankster-prototype-mvp · ai-bankster-prototype-v01 · ai-bankster-prototype-v02
-pretrade/drafts/     pipeline-manager-kanban
+pretrade/drafts/     pipelineManager-v01 · pipelineManager-v02 · pipelineScanner-v07
 ```
 
 <details>
@@ -161,7 +161,9 @@ apps/
     │   ├── refs/
     │   └── widgets/
     ├── drafts/
-    │   └── pipeline-manager-kanban/   ← приложение (app.json)
+    │   ├── pipelineManager-v01/   ← приложение (app.json)
+    │   ├── pipelineManager-v02/
+    │   └── pipelineScanner-v07/
     ├── kfulsources-app/
     │   ├── data/
     │   ├── pages/
@@ -370,7 +372,7 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
   …
 <body>
   …
-  <script src="../../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+  <script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
   <script> /* экранный скрипт */ </script>
 ```
 
@@ -382,7 +384,7 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
 | Файл | Что делает |
 |---|---|
 | `ds-config.js` | адрес ДС (`DS_PATH`); вычисляет ДС от собственного адреса, ставит `window.__DS_ROOT`, пишет тегами фавикон и `ds.css`, задаёт переменную `--boot-bg-illustration` — фон стартовой страницы (экран пишет `var(--boot-bg-illustration, none)`) |
-| `ds-body.js` | пишет тег `scripts/ds.js` (он сам догружает рантаймы ДС), а следом — дополнительные скрипты ДС из атрибута `data-ds` своего тега |
+| `ds-body.js` | пишет тег `ds.js` (он сам догружает рантаймы ДС), а следом — дополнительные скрипты ДС из атрибута `data-ds` своего тега |
 
 Теги пишутся через `document.write` во время разбора страницы, поэтому
 загрузчик подключается обычным тегом, без `async` и `defer`. Почему не
@@ -436,7 +438,7 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
 | Код | Что ловит |
 |---|---|
 | П1 | реестр не читается, нет обязательного поля, повтор `id`, у приложения нет `root` |
-| П2 | иконки нет в `design-system/specs/Icons.md` |
+| П2 | иконки нет в `design-system/foundations/Icons/Icons.md` |
 | П3 | `href` или `root` ведут в никуда, `href` вне `root`; `root` не каталог приложения (папка с `app.json`), `id` не совпадает с папкой, трек не из манифеста, группа записи не совпадает с треком |
 | П4 | `.html` в `apps/` вне записей реестра; ДС не в реестре |
 | П5 | строка пользователя меню не ведёт на хаб |

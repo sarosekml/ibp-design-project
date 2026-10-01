@@ -62,12 +62,12 @@ Tile (заголовок «Сведения о проекте» + тег «То�
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Tile | ДС — `design-system/specs/Tile.md` | тег в `.tile__title-add`, действие шапки — IconButton |
-| ReadOnlyField | ДС — `design-system/specs/ReadOnlyField.md` | тип и класс — `rof__value--clamp-1`; регион и город — `rof__value--clamp-n` (2 строки); метрики — `rof__value--chips` |
-| Chip | ДС — `design-system/specs/Chip.md` | «Топ застройщик» — `chip--xs chip--lblue chip--fit` (тег, не статус: без rounded, не сжимается); метрики — `chip--xs chip--fit` системного тона в `chiplist--s` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Заполнить» — `btn--accent btn--s` |
-| IconButton | ДС — `design-system/specs/IconButton.md` | `edit`, `ibtn--neutral ibtn--m` |
-| Skeleton | ДС — `design-system/specs/Skeleton.md` | каркас загрузки в раскладке полей |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | тег в `.tile__title-add`, действие шапки — IconButton |
+| ReadOnlyField | ДС — `design-system/components/molecules/ReadOnlyField/ReadOnlyField.md` | тип и класс — `rof__value--clamp-1`; регион и город — `rof__value--clamp-n` (2 строки); метрики — `rof__value--chips` |
+| Chip | ДС — `design-system/components/atoms/Chip/Chip.md` | «Топ застройщик» — `chip--xs chip--lblue chip--fit` (тег, не статус: без rounded, не сжимается); метрики — `chip--xs chip--fit` системного тона в `chiplist--s` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Заполнить» — `btn--accent btn--s` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `edit`, `ibtn--neutral ibtn--m` |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | каркас загрузки в раскладке полей |
 
 ## Параметры метки (Props)
 
@@ -161,7 +161,7 @@ Tile (заголовок «Сведения о проекте» + тег «То�
 
 | Случай | Правило |
 |---|---|
-| Длинный текст в поле | тип и класс — одна строка, регион и город — до двух строк, дальше многоточие и тултип с полным текстом (ReadOnlyField, `ds-readonlyfield.js`) |
+| Длинный текст в поле | тип и класс — одна строка, регион и город — до двух строк, дальше многоточие и тултип с полным текстом (ReadOnlyField, `ReadOnlyField.js`) |
 | Много строк или записей | метрик не больше пяти; чипы не сжимаются (`chip--fit`) и переносятся внутри поля |
 | Узкая ширина | поля и группы полей переносятся на новую строку, а не обрезаются. Ширина тайла 2000 — всё в одну строку; 1500 — чипы метрик во вторую строку поля; 1000 — группы рядом, в каждой по две строки; 800 — то же, уже; 500 — группы друг под другом, пара «Тип + Класс» в строку. Раскладка идёт от ширины тайла, а не окна |
 | Полная ширина | пять полей в одну строку, поля тянутся поровну |

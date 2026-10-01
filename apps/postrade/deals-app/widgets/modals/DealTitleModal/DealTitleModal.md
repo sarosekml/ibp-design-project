@@ -55,12 +55,12 @@ Modal w3
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w3`, подвал справа |
-| InputText | ДС — `design-system/specs/InputText.md` | `inp--m inp--fullwidth`; номер — `inputmode="numeric"` |
-| LabelHelper | ДС — `design-system/specs/LabelHelper.md` | хелпер слева «Только числовые символы», нейтральный и в ошибке |
-| Tooltip | ДС — `design-system/specs/Tooltip.md` | `error`, снизу, от начала поля, многострочный; якорь — `.inp__box` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | accent M «Сохранить» |
-| IconButton | ДС — `design-system/specs/IconButton.md` | neutral L «Закрыть» |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w3`, подвал справа |
+| InputText | ДС — `design-system/components/molecules/Inputs/InputText/InputText.md` | `inp--m inp--fullwidth`; номер — `inputmode="numeric"` |
+| LabelHelper | ДС — `design-system/components/atoms/LabelHelper/LabelHelper.md` | хелпер слева «Только числовые символы», нейтральный и в ошибке |
+| Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | `error`, снизу, от начала поля, многострочный; якорь — `.inp__box` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | accent M «Сохранить» |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | neutral L «Закрыть» |
 
 ## Поля
 

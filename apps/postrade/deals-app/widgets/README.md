@@ -28,7 +28,7 @@
   файлом в папке окна (`modals/InstrumentsCounterpartiesModal/KNRConfirmModal.html`), паспорт у него общий с
   окном.
 - Правила заполнения — страница ДС «Локальные компоненты»
-  (`design-system/pages/patterns/LocalComponents.html`), заготовка — `design-system/templates/local-component/`.
+  (`design-system/patterns/LocalComponents/LocalComponents.html`), заготовка — `design-system/templates/local-component/`.
   **Эта страница читается целиком** — перед тем, как заводить модуль или планировать
   правку: исключение из запрета читать страницы ДС целиком названо в
   `design-system/AGENTS.md` §4.
@@ -61,7 +61,7 @@ node .agents/tools/assemble.mjs <файл>   # один
 Источник `<имя>.html` превращается в самодостаточный `<имя>.preview.html` — **открывают
 двойным кликом именно его**. После правки любого модуля или источника — пересобрать.
 
-**Почему сборка, а не рантайм.** В ДС есть `scripts/ds-include.js`, который делает то же
+**Почему сборка, а не рантайм.** В ДС есть `utils/ds-include.js`, который делает то же
 самое в браузере, но он тянет фрагмент через `fetch`, а `fetch` по `file://` не работает.
 Страницы здесь открываются двойным кликом, поэтому вшивание делается до открытия.
 Контракт у ассемблера тот же, что у рантайма: `id` и `class` с метки переносятся на корень
@@ -175,7 +175,7 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `modals/DealTeamModal` | конец `body`; открывается из `DealTeamTile` (правка и просмотр — одно окно) |
 | `modals/DealDescriptionModal` | конец `body`; открывается из `DealDescriptionTile` (правка и просмотр — одно окно) |
 | `modals/CounterpartiesEcmModal` (+ подчасть `EcmModal/` — второй шаг, свой скрим) | конец `body`; открывается кнопкой «Документы ЭКД по сделке» `DealDescriptionTile` |
-| `popovers/RelatedDealsPopover` | конец `body`; открывается ссылкой «Связанные сделки» `DealDescriptionTile`, у триггера его ставит `ds-popover.js` |
+| `popovers/RelatedDealsPopover` | конец `body`; открывается ссылкой «Связанные сделки» `DealDescriptionTile`, у триггера его ставит `Popover.js` |
 | `modals/DealFinancialMetricsModal` | конец `body`; открывается из `DealFinancialMetricsTile` («Развернуть», только просмотр) |
 | `modals/DealProjectInformationModal` | конец `body`; открывается из `ProjectInformationTile` (карандаш и «Заполнить», только правка) |
 | `modals/DidProductsModal` · `ProductsModal` · `InstrumentsModal` · `RepaymentModal` · `InstrumentTransferModal` · `LinkChangeModal` · `ProductTreeConfirmModal` (последним) | конец `body`; открываются событиями `ptreeaction` тайла `DealProductTreeTile` |

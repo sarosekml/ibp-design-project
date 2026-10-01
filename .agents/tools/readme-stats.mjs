@@ -9,8 +9,8 @@
    `<!-- @stats … -->` и `<!-- /@stats -->` пишет этот инструмент, гейт (шаг
    `readme-stats`) сверяет его с диском. Текст вокруг блока — ручной.
    Что считается (пути — из project.json, имени ДС инструмент не знает):
-     компоненты и основы — страницы `pages/{atoms,molecules,organisms,foundations}/*.html` ДС;
-     глифы — ключи `window.DS_ICONS` в `scripts/icons-data.js` ДС;
+     компоненты и основы — страницы атомов, молекул, организмов и основ ДС (модуль путей ДС);
+     глифы — ключи `window.DS_ICONS` в `foundations/Icons/icons-data.js` ДС;
      иллюстрации — `*.svg` в `assets/illustrations/` ДС;
      модули — `apps/<раздел>/<имя>-app/` (тот же обход, что у module-readme).
    Коды РС — «README: счётчики»:
@@ -28,7 +28,12 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project, need } from './project.mjs';
+import { project, need, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
 import { modulesOf } from './module-readme.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -54,7 +59,7 @@ function filesIn(dir, rx) {
 
 /* Число глифов: icons-data.js выполняется в песочнице с заглушкой window. */
 function glyphs(dsAbs) {
-  const file = path.join(dsAbs, 'scripts', 'icons-data.js');
+  const file = DSP.layout(dsAbs).abs(DSP.layout(dsAbs).at.iconsData);
   if (!existsSync(file)) return 0;
   const sandbox = { window: {} };
   sandbox.self = sandbox.window;
@@ -67,7 +72,7 @@ function glyphs(dsAbs) {
 export function countsOf(P) {
   const ds = P.dsAbs;
   return {
-    components: ds ? PAGE_GROUPS.reduce((s, g) => s + filesIn(path.join(ds, 'pages', g), /\.html$/i), 0) : 0,
+    components: ds ? DSP.layout(ds).pages().filter((p) => PAGE_GROUPS.includes(p.category)).length : 0,
     glyphs: ds ? glyphs(ds) : 0,
     illustrations: ds ? filesIn(path.join(ds, 'assets', 'illustrations'), /\.svg$/i) : 0,
     modules: modulesOf(P).length,
@@ -148,11 +153,11 @@ const MANIFEST = {
 
 function tree(r) {
   put(r, 'project.json', JSON.stringify(MANIFEST));
-  put(r, 'ds/pages/atoms/Button.html', '');
-  put(r, 'ds/pages/molecules/Tile.html', '');
-  put(r, 'ds/pages/foundations/Colors.html', '');
-  put(r, 'ds/pages/patterns/Screen.html', '');                 // не компонент и не основа — не считается
-  put(r, 'ds/scripts/icons-data.js', 'window.DS_ICONS = {"a":"<svg/>","b":"<svg/>"};\n');
+  put(r, 'ds/components/atoms/Button/Button.html', '');
+  put(r, 'ds/components/molecules/Tile/Tile.html', '');
+  put(r, 'ds/foundations/Colors/Colors.html', '');
+  put(r, 'ds/patterns/Screen/Screen.html', '');                 // не компонент и не основа — не считается
+  put(r, 'ds/foundations/Icons/icons-data.js', 'window.DS_ICONS = {"a":"<svg/>","b":"<svg/>"};\n');
   put(r, 'ds/assets/illustrations/empty.svg', '<svg/>');
   put(r, 'apps/postrade/deals-app/app.json', '{}');
   put(r, 'apps/postrade/drafts/lab/app.json', '{}');            // концепт — не модуль
@@ -164,13 +169,13 @@ const CASES = [
   { name: 'нет меток', expect: 'РС1 ' + README,
     mutate: (r) => put(r, README, '# Проект\n\n| 1 | 2 |\n') },
   { name: 'новая страница ДС без пересборки', expect: 'РС2 ' + README, build: true,
-    mutate: (r) => put(r, 'ds/pages/organisms/NavPanel.html', '') },
+    mutate: (r) => put(r, 'ds/components/organisms/NavPanel/NavPanel.html', '') },
   { name: 'новый модуль без пересборки', expect: 'РС2 ' + README, build: true,
     mutate: (r) => put(r, 'apps/core/clients-app/app.json', '{}') },
   { name: 'правка руками внутри блока', expect: 'РС2 ' + README, build: true,
     mutate: (r) => { const f = path.join(r, README); writeFileSync(f, readFileSync(f, 'utf8').replace('| 3 |', '| 4 |'), 'utf8'); } },
   { name: 'новый глиф и пересборка', expect: null, build: true,
-    mutate: (r) => { put(r, 'ds/scripts/icons-data.js', 'window.DS_ICONS = {"a":"","b":"","c":""};\n'); check(project(r), true); } },
+    mutate: (r) => { put(r, 'ds/foundations/Icons/icons-data.js', 'window.DS_ICONS = {"a":"","b":"","c":""};\n'); check(project(r), true); } },
 ];
 
 function selftest() {

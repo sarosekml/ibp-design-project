@@ -144,7 +144,7 @@ flowchart LR
         data["data/*.js<br/>демо-данные"]
     end
     subgraph ds["design-system/"]
-        css["ds.css + scripts/ds.js<br/>токены, компоненты, иконки"]
+        css["ds.css + ds.js<br/>токены, компоненты, иконки"]
     end
     page --> cfg --> css
     page --> data

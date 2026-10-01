@@ -212,7 +212,7 @@ function selftest() {
     put('README.md', '---\ntitle: "Название из шапки"\n---\n# Другое\n');
     put('apps/postrade/deals-app/refs/Текущий портфель.md', '# Портфель\n');
     put('apps/postrade/deals-app/Deal.handoff.md');
-    put('docs/misc/draft.md'); put('.state/README.md'); put('ds/specs/Tile.md'); put('.kit/README.md');
+    put('docs/misc/draft.md'); put('.state/README.md'); put('ds/components/organisms/Tile/Tile.md'); put('.kit/README.md');
     test('полнота, кластеры, кириллица и пробелы, архив и снимки', () => {
       check(P, true); const text = read();
       assert.equal(documentationPaths(P).length, 7);

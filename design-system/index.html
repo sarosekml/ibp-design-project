@@ -5,38 +5,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Дизайн-система — Обзор</title>
-<link rel="stylesheet" href="styles/typography.css">
-<link rel="stylesheet" href="styles/colors.css">
-<link rel="stylesheet" href="styles/palette.css">
-<link rel="stylesheet" href="styles/radius.css">
-<link rel="stylesheet" href="styles/shadow.css">
-<link rel="stylesheet" href="styles/button.css">
-<link rel="stylesheet" href="styles/icon-button.css">
-<link rel="stylesheet" href="styles/link.css">
-<link rel="stylesheet" href="styles/checkbox.css">
-<link rel="stylesheet" href="styles/button-group.css">
-<link rel="stylesheet" href="styles/radio.css">
-<link rel="stylesheet" href="styles/switch.css">
-<link rel="stylesheet" href="styles/badge.css">
-<link rel="stylesheet" href="styles/chip.css">
-<link rel="stylesheet" href="styles/avatar.css">
-<link rel="stylesheet" href="styles/tooltip.css">
-<link rel="stylesheet" href="styles/divider.css">
-<link rel="stylesheet" href="styles/splitter.css">
-<link rel="stylesheet" href="styles/tab.css">
-<link rel="stylesheet" href="styles/sub-tab.css">
-<link rel="stylesheet" href="styles/segment-control.css">
-<link rel="stylesheet" href="styles/label-helper.css">
-<link rel="stylesheet" href="styles/toast.css">
-<link rel="stylesheet" href="styles/breadcrumbs.css">
-<link rel="stylesheet" href="styles/context-menu.css">
-<link rel="stylesheet" href="styles/dropdown-list.css">
-<link rel="stylesheet" href="styles/read-only-field.css">
-<link rel="stylesheet" href="styles/input.css">
-<link rel="stylesheet" href="styles/input-range.css">
-<link rel="stylesheet" href="styles/alert.css">
-<link rel="stylesheet" href="styles/spinner.css">
-<link rel="stylesheet" href="styles/skeleton.css">
+<link rel="stylesheet" href="foundations/Typography/Typography.css">
+<link rel="stylesheet" href="foundations/Colors/Colors.css">
+<link rel="stylesheet" href="foundations/Colors/Palette.css">
+<link rel="stylesheet" href="foundations/Radius/Radius.css">
+<link rel="stylesheet" href="foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="components/atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="components/atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="components/atoms/Link/Link.css">
+<link rel="stylesheet" href="components/atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="components/molecules/ButtonGroup/ButtonGroup.css">
+<link rel="stylesheet" href="components/atoms/Radiobutton/Radiobutton.css">
+<link rel="stylesheet" href="components/atoms/Switch/Switch.css">
+<link rel="stylesheet" href="components/atoms/Badge/Badge.css">
+<link rel="stylesheet" href="components/atoms/Chip/Chip.css">
+<link rel="stylesheet" href="components/atoms/Avatar/Avatar.css">
+<link rel="stylesheet" href="components/molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="components/atoms/Divider/Divider.css">
+<link rel="stylesheet" href="components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="components/molecules/SubTab/SubTab.css">
+<link rel="stylesheet" href="components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="components/atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="components/molecules/Toast/Toast.css">
+<link rel="stylesheet" href="components/molecules/Breadcrumbs/Breadcrumbs.css">
+<link rel="stylesheet" href="components/molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="components/molecules/DropdownList/DropdownList.css">
+<link rel="stylesheet" href="components/molecules/ReadOnlyField/ReadOnlyField.css">
+<link rel="stylesheet" href="components/molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="components/molecules/Inputs/InputRanges.css">
+<link rel="stylesheet" href="components/molecules/Alert/Alert.css">
+<link rel="stylesheet" href="components/atoms/Spinner/Spinner.css">
+<link rel="stylesheet" href="components/atoms/Skeleton/Skeleton.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -130,13 +130,13 @@
   footer.foot { margin-top:90px; padding-top:26px; border-top:1px solid var(--border-light);
     font: var(--type-body-s); color: var(--text-inactive); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 </style>
-  <link rel="stylesheet" href="styles/illustration.css">
-<link rel="stylesheet" href="styles/datepicker.css">
-  <link rel="stylesheet" href="styles/empty-state.css">
-  <link rel="stylesheet" href="styles/snackbar.css">
-  <link rel="stylesheet" href="styles/progress-bar.css">
-  <link rel="stylesheet" href="styles/nav-tile.css">
-<link rel="stylesheet" href="styles/ds-nav.css">
+  <link rel="stylesheet" href="foundations/Illustrations/Illustrations.css">
+<link rel="stylesheet" href="components/molecules/DatePicker/DatePicker.css">
+  <link rel="stylesheet" href="components/molecules/EmptyState/EmptyState.css">
+  <link rel="stylesheet" href="components/organisms/SnackBar/SnackBar.css">
+  <link rel="stylesheet" href="components/atoms/ProgressBar/ProgressBar.css">
+  <link rel="stylesheet" href="components/molecules/NavTile/NavTile.css">
+<link rel="stylesheet" href="docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page" data-screen-label="DS Home">
@@ -158,7 +158,7 @@
   <section class="sec" data-screen-label="Foundations">
     <div class="sec-head"><h2>Основы</h2><span class="n">8 разделов</span></div>
     <div class="grid">
-      <a class="card" href="pages/foundations/Icons.html">
+      <a class="card" href="foundations/Icons/Icons.html">
         <div class="card__preview">
           <div class="pv-icons" id="pvIcons"></div>
         </div>
@@ -170,7 +170,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Illustrations.html">
+      <a class="card" href="foundations/Illustrations/Illustrations.html">
         <div class="card__preview">
           <div style="display:flex; gap:14px; align-items:center;">
             <span class="illu" data-illu="deals" style="width:64px; height:64px;"></span>
@@ -185,7 +185,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Layout.html">
+      <a class="card" href="foundations/Layout/Layout.html">
         <div class="card__preview">
           <div style="display:flex;width:100%;max-width:280px;height:96px;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;background:var(--bg-page)">
             <div style="width:22px;background:var(--bg-main-menu);border-right:1px solid var(--border-light)"></div>
@@ -207,7 +207,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Spacing.html">
+      <a class="card" href="foundations/Spacing/Spacing.html">
         <div class="card__preview">
           <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:6px;width:100%;max-width:280px;">
             <span style="grid-column:span 8;height:44px;border-radius:6px;background:color-mix(in srgb,var(--primary) 16%,transparent)"></span>
@@ -225,7 +225,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Radius.html">
+      <a class="card" href="foundations/Radius/Radius.html">
         <div class="card__preview">
           <div class="pv-radius" id="pvRadius"></div>
         </div>
@@ -237,7 +237,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Elevation.html">
+      <a class="card" href="foundations/Elevation/Elevation.html">
         <div class="card__preview">
           <div class="pv-elevation">
             <span style="box-shadow: var(--elevation-1);"></span>
@@ -253,7 +253,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Typography.html">
+      <a class="card" href="foundations/Typography/Typography.html">
         <div class="card__preview">
           <div class="pv-typo">
             <div class="ag">Ag</div>
@@ -272,7 +272,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/foundations/Colors.html">
+      <a class="card" href="foundations/Colors/Colors.html">
         <div class="card__preview">
           <div class="pv-colors" id="pvColors"></div>
         </div>
@@ -291,7 +291,7 @@
   <section class="sec" data-screen-label="Atoms">
     <div class="sec-head"><h2>Атомы</h2><span class="n">14 компонентов</span></div>
     <div class="grid">
-      <a class="card" href="pages/atoms/Avatar.html">
+      <a class="card" href="components/atoms/Avatar/Avatar.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvAvatar" style="flex-direction:row; gap:18px; align-items:center;"></div>
         </div>
@@ -303,7 +303,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Badge.html">
+      <a class="card" href="components/atoms/Badge/Badge.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvBadge" style="flex-direction:row; gap:22px; align-items:center;"></div>
         </div>
@@ -315,7 +315,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Buttons.html">
+      <a class="card" href="components/atoms/Buttons/Buttons.html">
         <div class="card__preview">
           <div class="pv-btn">
             <button class="btn btn--accent btn--m" type="button" tabindex="-1">Button</button>
@@ -331,7 +331,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Checkbox.html">
+      <a class="card" href="components/atoms/Checkbox/Checkbox.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvCb"></div>
         </div>
@@ -343,7 +343,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Chip.html">
+      <a class="card" href="components/atoms/Chip/Chip.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvChip" style="flex-direction:row; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;"></div>
         </div>
@@ -355,7 +355,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Divider.html">
+      <a class="card" href="components/atoms/Divider/Divider.html">
         <div class="card__preview">
           <div id="pvDvd" style="width:100%; max-width:240px; display:flex; flex-direction:column; gap:0;"></div>
         </div>
@@ -367,7 +367,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/IconButton.html">
+      <a class="card" href="components/atoms/IconButton/IconButton.html">
         <div class="card__preview">
           <div class="pv-btn" id="pvIbtn"></div>
         </div>
@@ -379,7 +379,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/LabelHelper.html">
+      <a class="card" href="components/atoms/LabelHelper/LabelHelper.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvLH" style="align-items:flex-start;"></div>
         </div>
@@ -391,7 +391,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Link.html">
+      <a class="card" href="components/atoms/Link/Link.html">
         <div class="card__preview">
           <div class="pv-link" id="pvLink"></div>
         </div>
@@ -403,7 +403,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/ProgressBar.html">
+      <a class="card" href="components/atoms/ProgressBar/ProgressBar.html">
         <div class="card__preview">
           <div id="pvPbar" style="width:100%; max-width:260px; display:flex; flex-direction:column; gap:14px;"></div>
         </div>
@@ -415,7 +415,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Radiobutton.html">
+      <a class="card" href="components/atoms/Radiobutton/Radiobutton.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvRb"></div>
         </div>
@@ -427,7 +427,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Skeleton.html">
+      <a class="card" href="components/atoms/Skeleton/Skeleton.html">
         <div class="card__preview">
           <div id="pvSkel" style="display:flex; align-items:center; gap:14px; width:100%; max-width:260px;"></div>
         </div>
@@ -439,7 +439,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Spinner.html">
+      <a class="card" href="components/atoms/Spinner/Spinner.html">
         <div class="card__preview">
           <div id="pvSpin" style="display:flex; align-items:center; gap:28px;"></div>
         </div>
@@ -451,7 +451,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/atoms/Switch.html">
+      <a class="card" href="components/atoms/Switch/Switch.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvSw"></div>
         </div>
@@ -470,7 +470,7 @@
   <section class="sec" data-screen-label="Molecules">
     <div class="sec-head"><h2>Молекулы</h2><span class="n">21 компонент</span></div>
     <div class="grid">
-      <a class="card" href="pages/molecules/Alert.html">
+      <a class="card" href="components/molecules/Alert/Alert.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvAlert" style="align-items:stretch; gap:10px; width:100%; max-width:280px;"></div>
         </div>
@@ -482,7 +482,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/Breadcrumbs.html">
+      <a class="card" href="components/molecules/Breadcrumbs/Breadcrumbs.html">
         <div class="card__preview">
           <nav class="crumbs" aria-label="Хлебные крошки" style="pointer-events:none;">
             <span class="crumbs__item"><span class="link link--muted" tabindex="-1">Главная</span></span>
@@ -498,7 +498,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/ButtonGroup.html">
+      <a class="card" href="components/molecules/ButtonGroup/ButtonGroup.html">
         <div class="card__preview">
           <div class="pv-btn">
             <div class="btn-group btn-group--accent" role="group" style="pointer-events:none;">
@@ -520,7 +520,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/ContextMenu.html">
+      <a class="card" href="components/molecules/ContextMenu/ContextMenu.html">
         <div class="card__preview">
           <div class="menu" role="menu" style="pointer-events:none; box-shadow:none; border-color:var(--border-light);">
             <button type="button" class="menu__item" role="menuitem" tabindex="-1"><span class="menu__item-label">Изменить</span></button>
@@ -537,7 +537,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/DatePicker.html">
+      <a class="card" href="components/molecules/DatePicker/DatePicker.html">
         <div class="card__preview">
           <div style="transform:scale(.64); transform-origin:center; pointer-events:none;">
             <div class="dpk" style="box-shadow:none; border:1px solid var(--border-light);">
@@ -565,7 +565,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/DropdownList.html">
+      <a class="card" href="components/molecules/DropdownList/DropdownList.html">
         <div class="card__preview">
           <div class="ddl" style="width:100%; max-width:230px; box-shadow:none; border-color:var(--border-light);">
             <button type="button" class="ddl__item" aria-selected="true" tabindex="-1">
@@ -584,7 +584,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/EmptyState.html">
+      <a class="card" href="components/molecules/EmptyState/EmptyState.html">
         <div class="card__preview">
           <div class="es es--m" style="padding:0; gap:12px; max-width:230px;">
             <span class="illu es__illu" data-illu="empty-folder" style="width:64px; height:64px;"></span>
@@ -602,7 +602,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/InputAmountRange.html">
+      <a class="card" href="components/molecules/Inputs/InputAmountRange/InputAmountRange.html">
         <div class="card__preview">
           <div style="width:100%; max-width:280px;">
             <span class="ds-label ds-label--left" style="margin-bottom:6px;"><span class="ds-label__text">Сумма, RUB</span></span>
@@ -623,7 +623,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/InputAutocomplete.html">
+      <a class="card" href="components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">
         <div class="card__preview">
           <div class="pv-ac" style="width:100%; max-width:230px;">
             <div class="pv-ac__input">Валюта<span class="pv-ac__caret">▾</span></div>
@@ -642,7 +642,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/InputDate.html">
+      <a class="card" href="components/molecules/Inputs/InputDate/InputDate.html">
         <div class="card__preview">
           <div style="width:100%; max-width:230px;">
             <div class="inp inp--m" style="width:100%;">
@@ -659,7 +659,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/InputDateRange.html">
+      <a class="card" href="components/molecules/Inputs/InputDateRange/InputDateRange.html">
         <div class="card__preview">
           <div style="width:100%; max-width:280px;">
             <span class="ds-label ds-label--left" style="margin-bottom:6px;"><span class="ds-label__text">Период сделки</span></span>
@@ -680,7 +680,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/InputText.html">
+      <a class="card" href="components/molecules/Inputs/InputText/InputText.html">
         <div class="card__preview">
           <div style="width:100%; max-width:230px;">
             <div class="inp inp--m" style="width:100%;">
@@ -697,7 +697,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/NavTile.html">
+      <a class="card" href="components/molecules/NavTile/NavTile.html">
         <div class="card__preview">
           <div class="ntile" style="width:230px; min-height:96px; padding:16px; padding-right:84px; gap:6px; pointer-events:none;">
             <span class="illu ntile__illu" data-illu="deals" style="width:56px; height:56px; right:14px;"></span>
@@ -713,7 +713,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/Pagination.html">
+      <a class="card" href="components/molecules/Pagination/Pagination.html">
         <div class="card__preview">
           <div id="pvPgn" style="width:100%; max-width:280px;"></div>
         </div>
@@ -725,7 +725,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/ReadOnlyField.html">
+      <a class="card" href="components/molecules/ReadOnlyField/ReadOnlyField.html">
         <div class="card__preview">
           <div class="rof" style="width:100%; max-width:220px;">
             <span class="ds-label"><span class="ds-label__text">ID во внешней АС</span></span>
@@ -740,7 +740,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/SegmentControl.html">
+      <a class="card" href="components/molecules/SegmentControl/SegmentControl.html">
         <div class="card__preview">
           <div id="pvSeg" style="width:100%; max-width:260px;"></div>
         </div>
@@ -753,7 +753,7 @@
       </a>
 
 
-      <a class="card" href="pages/molecules/Splitter.html">
+      <a class="card" href="components/molecules/Splitter/Splitter.html">
         <div class="card__preview">
           <div id="pvSpl" style="display:flex; align-items:stretch; width:240px; height:120px; border:1px solid var(--border-light); border-radius:10px; overflow:hidden;"></div>
         </div>
@@ -765,7 +765,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/SubTab.html">
+      <a class="card" href="components/molecules/SubTab/SubTab.html">
         <div class="card__preview">
           <div id="pvSubTab" style="width:100%; max-width:260px;"></div>
         </div>
@@ -777,7 +777,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/Tab.html">
+      <a class="card" href="components/molecules/Tab/Tab.html">
         <div class="card__preview">
           <div id="pvTab" style="width:100%; max-width:260px;"></div>
         </div>
@@ -789,7 +789,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/Toast.html">
+      <a class="card" href="components/molecules/Toast/Toast.html">
         <div class="card__preview">
           <div id="pvToast" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:8px;"></div>
         </div>
@@ -801,7 +801,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/molecules/Tooltip.html">
+      <a class="card" href="components/molecules/Tooltip/Tooltip.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvTip" style="flex-direction:row; gap:30px; align-items:center; padding-top:18px;"></div>
         </div>
@@ -820,7 +820,7 @@
   <section class="sec" data-screen-label="Organisms">
     <div class="sec-head"><h2>Организмы</h2><span class="n">16 компонентов</span></div>
     <div class="grid">
-      <a class="card" href="pages/organisms/AllocationBar.html">
+      <a class="card" href="components/organisms/AllocationBar/AllocationBar.html">
         <div class="card__preview">
           <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
@@ -847,7 +847,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Chart.html">
+      <a class="card" href="components/organisms/Chart/Chart.html">
         <div class="card__preview">
           <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:260px;">
             <div style="display:flex; align-items:flex-end; gap:6px; height:74px;">
@@ -873,7 +873,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Drawer.html">
+      <a class="card" href="components/organisms/Drawer/Drawer.html">
         <div class="card__preview">
           <div style="display:flex; gap:6px; width:100%; max-width:260px; height:96px;">
             <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
@@ -897,7 +897,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Entity.html">
+      <a class="card" href="components/organisms/Entity/Entity.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h0M9 12h0M9 15h0"/></svg></span>
@@ -912,7 +912,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Kanban.html">
+      <a class="card" href="components/organisms/Kanban/Kanban.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="7" rx="1"/></svg></span>
@@ -927,7 +927,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Modal.html">
+      <a class="card" href="components/organisms/Modal/Modal.html">
         <div class="card__preview">
           <div id="pvModal" style="width:100%; max-width:280px;"></div>
         </div>
@@ -939,7 +939,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/NavPanel.html">
+      <a class="card" href="components/organisms/NavPanel/NavPanel.html">
         <div class="card__preview">
           <div style="display:flex; height:150px; border:1px solid var(--border-light,#DCE6E6); border-radius:10px; overflow:hidden; background:var(--bg-main-menu,#fefefe);">
             <div style="width:40px; display:flex; flex-direction:column; align-items:center; gap:12px; padding:12px 0; color:var(--text-secondary,#617C7C); border-right:1px solid var(--border-light,#DCE6E6);">
@@ -960,7 +960,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/PageHeader.html">
+      <a class="card" href="components/organisms/PageHeader/PageHeader.html">
         <div class="card__preview">
           <div style="width:100%; max-width:280px; display:flex; align-items:flex-start; gap:10px;">
             <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;">
@@ -985,7 +985,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Popover.html">
+      <a class="card" href="components/organisms/Popover/Popover.html">
         <div class="card__preview">
           <div id="pvPopover" style="width:100%; max-width:220px;"></div>
         </div>
@@ -997,7 +997,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/ProductRow.html">
+      <a class="card" href="components/organisms/ProductRow/ProductRow.html">
         <div class="card__preview">
           <div style="display:flex; flex-direction:column; gap:6px; width:100%; max-width:260px;">
             <span style="display:flex; align-items:center; gap:6px; padding:4px 8px; font:600 12px/1.3 var(--font-text,sans-serif); color:var(--text-primary,#324844);"><span style="color:var(--secondary,#B8D6D3);">⌃</span>1. Раздел<span style="color:var(--secondary,#B8D6D3);">★</span></span>
@@ -1013,7 +1013,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/RiskMetric.html">
+      <a class="card" href="components/organisms/RiskMetric/RiskMetric.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
             <span style="display:inline-flex; align-items:center; gap:4px; height:24px; padding:0 10px; border-radius:999px; background:#E5625C; color:#FFFFFF; font:600 14px/1 var(--font-text,sans-serif);">26 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="7.5" x2="12" y2="7.5"></line></svg></span>
@@ -1028,7 +1028,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/SnackBar.html">
+      <a class="card" href="components/organisms/SnackBar/SnackBar.html">
         <div class="card__preview">
           <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:240px;">
             <div class="snack snack--error" style="width:100%;pointer-events:none;">
@@ -1051,7 +1051,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Table.html">
+      <a class="card" href="components/organisms/Table/Table.html">
         <div class="card__preview">
           <div style="display:flex;flex-direction:column;width:100%;max-width:280px;border:1px solid var(--border-light,#E1EDE7);border-radius:10px;overflow:hidden;font:400 11px/1 var(--font-text,sans-serif);">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--border-light,#E1EDE7);background:var(--bg-tile,#F7FAF9);">
@@ -1073,7 +1073,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/TableCell.html">
+      <a class="card" href="components/organisms/TableCell/TableCell.html">
         <div class="card__preview">
           <div style="display:flex; flex-direction:column; width:100%; max-width:280px; border:1px solid var(--border-light,#E1EDE7); border-radius:10px; overflow:hidden; font:400 13px/1 var(--font-text,sans-serif);">
             <div style="display:grid; grid-template-columns:1.4fr 1fr; background:var(--mgrey-50,#fff); border-bottom:1px solid var(--border-primary,#B8CCCC);"><span style="padding:9px 12px; font:600 12px/1.2 var(--font-text,sans-serif); color:var(--text-secondary,#617C7C);">Контрагент</span><span style="padding:9px 12px; text-align:right; font:600 12px/1.2 var(--font-text,sans-serif); color:var(--text-secondary,#617C7C);">Сумма ▾</span></div>
@@ -1089,7 +1089,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/TableFilter.html">
+      <a class="card" href="components/organisms/TableFilter/TableFilter.html">
         <div class="card__preview">
           <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; width:100%; max-width:300px; font:400 13px/1 var(--font-text,sans-serif);">
             <span style="display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border:1px solid var(--border-primary,#B8CCCC); border-radius:8px; background:var(--mgrey-50,#fff); color:var(--text-primary,#1F2D2A);"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--primary,#12A594)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>Фильтр</span>
@@ -1106,7 +1106,7 @@
         </div>
       </a>
 
-      <a class="card" href="pages/organisms/Tile.html">
+      <a class="card" href="components/organisms/Tile/Tile.html">
         <div class="card__preview">
           <div style="display:flex; flex-direction:column; width:100%; max-width:280px; background:var(--mgrey-50,#fff); border:1px solid var(--border-light,#E1EDE7); border-radius:8px; overflow:hidden; font:400 13px/1 var(--font-text,sans-serif);">
             <div style="display:flex; align-items:flex-start; gap:10px; padding:14px 16px 0;"><div style="flex:1;"><div style="font:600 15px/1.2 var(--font-display,sans-serif); color:var(--text-primary,#1F2D2A);">Проектное финансирование</div><div style="margin-top:6px; font:400 11px/1.3 var(--font-text,sans-serif); color:var(--text-secondary,#617C7C);">Нерезидент</div></div><span style="color:var(--text-inactive,#9DB1B1);">✎</span></div>
@@ -1129,7 +1129,7 @@
     <div class="sec-head"><h2>Правила и паттерны</h2><span class="n">3 раздела</span></div>
     <p style="font:var(--type-body-m);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Правила, которые действуют поверх компонентов: как собираются локальные компоненты продукта, как они описываются и связываются между собой.</p>
     <div class="grid">
-      <a class="card" href="pages/patterns/LocalComponents.html">
+      <a class="card" href="patterns/LocalComponents/LocalComponents.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg></span>
@@ -1143,7 +1143,7 @@
           <span class="card__go">Открыть страницу <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a class="card" href="pages/patterns/HomeRoles.html">
+      <a class="card" href="patterns/HomeRoles/HomeRoles.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
@@ -1157,7 +1157,7 @@
           <span class="card__go">Открыть страницу <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a class="card" href="pages/patterns/Redpolicy.html">
+      <a class="card" href="patterns/Redpolicy/Redpolicy.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span>
@@ -1179,7 +1179,7 @@
     <div class="sec-head"><h2>RND</h2><span class="n">1 раздел</span></div>
     <p style="font:var(--type-body-m);color:var(--text-secondary);margin:-12px 0 24px;max-width:760px">Рабочая память дизайн-системы: задачи на потом. Не часть поставляемой ДС — материал для решений по ней.</p>
     <div class="grid">
-      <a class="card" href="pages/rnd/Backlog.html">
+      <a class="card" href="rnd/Backlog/Backlog.html">
         <div class="card__preview">
           <div style="display:flex; align-items:center; gap:12px; width:100%; max-width:260px;">
             <span style="flex:none; width:40px; height:40px; border-radius:12px; background:var(--swamp-100,#E1EDE7); color:var(--text-primary,#6E8A82); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6M9 16h6"/></svg></span>
@@ -1201,7 +1201,7 @@
   </footer>
 </main>
 
-<script src="scripts/icons-data.js"></script>
+<script src="foundations/Icons/icons-data.js"></script>
 <script>
   // hero stripe — representative tokens
   const stripeTokens = ['--primary','--primary-dark','--secondary','--tertiary','--success','--warning','--error','--info','--text-primary','--border-primary'];
@@ -1427,7 +1427,7 @@
     '</span>' +
     av('rounded','icon','');
 </script>
-<script src="scripts/ds-nav.js"></script>
+<script src="docs-kit/ds-nav.js"></script>
 <script>
   // pagination preview
   (function(){

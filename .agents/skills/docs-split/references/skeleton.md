@@ -6,17 +6,21 @@
 
 ## head — подключения
 
-Порядок: компонентные CSS → служебные. Обязательная замена `ds-toc.css`:
+Порядок: компонентные CSS → служебные. Обязательная замена `ds-toc.css`.
+Пути — от папки страницы; пример — молекула `components/molecules/<Имя>/`
+(сосед другой категории — `../../<категория>/<Имя>/`, у основы
+`foundations/<Имя>/` до корня ДС на один `../` короче; `window.__DS_ROOT` —
+путь до корня ДС по глубине папки, правило линтера A8):
 
 ```html
-<link rel="stylesheet" href="../../styles/<компонент>.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/pg-kit.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="<Имя>.css">
+<link rel="stylesheet" href="../Splitter/Splitter.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/pg-kit.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 ```
 
 `ds-toc.css` отсутствует; `pg-kit.css` остаётся (CSS), `pg-kit.js` — нет.
@@ -120,19 +124,19 @@
 ## скрипты (конец файла)
 
 ```html
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<!-- + рантаймы компонента: ds-<comp>.js / ds-notify.js / … -->
-<script src="../../scripts/<компонент>.page.js"></script>  <!-- если есть -->
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<!-- + рантаймы компонента: <Имя>.js / ../../../utils/ds-notify.js / … -->
+<script src="<Имя>.page.js"></script>  <!-- если есть -->
 <!-- при бинарных селектах конструктора (подпись СТАТИЧНА, не меняется от положения):
      строка — статичная подпись; объект { label, on? } — подпись + явное on-значение селекта -->
 <script>window.DS_SPLIT_SWITCH_LABELS = { '{{Лейбл}}': 'Показывать {{что}}' };</script>
 <!-- или: { 'Сетка': { label: 'Показывать сетку', on: 'y' } } — когда эвристика направления врёт -->
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html">{{эталон из спеки}}</script>

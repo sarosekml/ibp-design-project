@@ -33,7 +33,7 @@
 
    Одна строка на прогон инструмента, JSON Lines:
      {"t":"2026-09-06T10:11:12.000Z","tool":"линтер",
-      "target":"pages/molecules/InputText.html","verdict":"PASS с замечаниями",
+      "target":"components/molecules/Inputs/InputText/InputText.html","verdict":"PASS с замечаниями",
       "codes":["D4"]}
    Поле `n` — номер строки в общем файле — ушло вместе с общим файлом; в
    перенесённых строках оно осталось и ни на что не влияет.
@@ -60,7 +60,7 @@
    (`layout-check.mjs`, `ds-lint-cli.mjs`, `spec-audit.mjs`) импортируют этот
    модуль МЯГКО — через try/catch: журнал прогонов не имеет права уронить
    проверку. Инструменты ДС находят его через манифест проекта
-   (`scripts/kit-link.mjs` ДС → `agentKit.tools`), а не литералом пути в
+   (`tools/kit-link.mjs` ДС → `agentKit.tools`), а не литералом пути в
    харнес. Нет проекта (ДС проверяется отдельно, без харнеса) — инструменты
    работают как работали, просто без записи. Читает журнал `lessons-cli` (`stats`, `check`,
    `state`) — через `readRuns` отсюда, а не своим разбором.

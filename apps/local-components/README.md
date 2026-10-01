@@ -63,7 +63,7 @@ python3 -m http.server 8765    # затем http://localhost:8765/apps/local-com
 | показать демо на данных | `fixtures.json` виджета + [сценарий демо](#сценарий-демо) |
 | добавить категорию меню | `project.json → localKit.categories` → пересобрать |
 | понять, почему гейт красный | [коды КТ](#проверки) |
-| узнать правила самих локальных компонентов | страница ДС [«Локальные компоненты»](../../design-system/pages/patterns/LocalComponents.html) |
+| узнать правила самих локальных компонентов | страница ДС [«Локальные компоненты»](../../design-system/patterns/LocalComponents/LocalComponents.html) |
 
 ## Зачем здесь HTML-страницы
 
@@ -331,7 +331,7 @@ node .agents/tools/kit-build.mjs --selftest   # откат на временно
 | Проект целиком: структура, процесс, проверки | [`README.md`](../../README.md) |
 | Приложения: форма, модули, виджеты, сборка страниц | [`apps/README.md`](../README.md) |
 | Виджеты модуля сделок: подключение, режимы, связи | [`postrade/deals-app/widgets/README.md`](../postrade/deals-app/widgets/README.md) |
-| Правила локальных компонентов в ДС | [`LocalComponents.html`](../../design-system/pages/patterns/LocalComponents.html), заготовка — [`templates/local-component/`](../../design-system/templates/local-component/) |
+| Правила локальных компонентов в ДС | [`LocalComponents.html`](../../design-system/patterns/LocalComponents/LocalComponents.html), заготовка — [`templates/local-component/`](../../design-system/templates/local-component/) |
 | Шаблон паспорта виджета | [`widget-template.md`](../../.agents/skills/screen-spec/references/widget-template.md) |
 | Генератор: что делает, коды, самопроверка | шапка [`kit-build.mjs`](../../.agents/tools/kit-build.mjs) |
 

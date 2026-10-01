@@ -65,12 +65,12 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w4`; сохранение — `.modal--saving` |
-| ProductRow | ДС — `design-system/specs/ProductRow.md` | дерево `.prow-tree`; продукт ДИД — `.prow--root`, звезда-знак, шеврон `.prow__toggle` в `.prow__actions`; продукт — строка списка выбора `role="radio"` + `aria-checked` (состояние «выбрана»), выключенный — `aria-disabled` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Сохранить» `btn--accent btn--m`, при сохранении `btn--loading` |
-| Spinner | ДС — `design-system/specs/Spinner.md` | `spin--current` внутри кнопки при сохранении |
-| IconButton | ДС — `design-system/specs/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
-| Typography | ДС — `design-system/specs/Typography.md` | «Откуда», «Куда» — `ds-h6-strong`; пояснение — `--type-body-m`, `--text-secondary` |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w4`; сохранение — `.modal--saving` |
+| ProductRow | ДС — `design-system/components/organisms/ProductRow/ProductRow.md` | дерево `.prow-tree`; продукт ДИД — `.prow--root`, звезда-знак, шеврон `.prow__toggle` в `.prow__actions`; продукт — строка списка выбора `role="radio"` + `aria-checked` (состояние «выбрана»), выключенный — `aria-disabled` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» `btn--accent btn--m`, при сохранении `btn--loading` |
+| Spinner | ДС — `design-system/components/atoms/Spinner/Spinner.md` | `spin--current` внутри кнопки при сохранении |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | «Откуда», «Куда» — `ds-h6-strong`; пояснение — `--type-body-m`, `--text-secondary` |
 
 ## Параметры метки (Props)
 

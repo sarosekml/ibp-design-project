@@ -62,10 +62,10 @@ Modal modal--w3 (442px — ширина макета подтверждения)
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal-scrim--nested`, `modal--w3`, `role="alertdialog"` |
-| IconButton | ДС — `design-system/specs/IconButton.md` | крестик `ibtn--neutral ibtn--l` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Отменить» `btn--transparent btn--m`; «Подтвердить» `btn--accent btn--m`, у удаления + `btn--error` |
-| Typography | ДС — `design-system/specs/Typography.md` | текст — `--type-body-m`, `--text-secondary` (ответ человека 30.09.2026, 28) |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal-scrim--nested`, `modal--w3`, `role="alertdialog"` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик `ibtn--neutral ibtn--l` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Отменить» `btn--transparent btn--m`; «Подтвердить» `btn--accent btn--m`, у удаления + `btn--error` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | текст — `--type-body-m`, `--text-secondary` (ответ человека 30.09.2026, 28) |
 
 ## Параметры метки (Props)
 

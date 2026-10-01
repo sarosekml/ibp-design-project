@@ -15,7 +15,7 @@
    молча перестал бы проверяться (класс Л100).
 
    Владелец один — этот модуль. Импортируют: `layout-check.mjs`,
-   `design-system/scripts/ds-lint-cli.mjs` (мягко: ДС без оснастки линтуется как
+   `design-system/tools/ds-lint-cli.mjs` (мягко: ДС без оснастки линтуется как
    раньше), `lessons-cli gate`.
    ============================================================ */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';

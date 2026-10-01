@@ -53,13 +53,13 @@ Modal w5 «Сведения о проекте»
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w5`; скрим `deal-project-info-scrim`, открытие с `data-modal-guarded` |
-| InputAutocomplete + DropdownList | ДС — `design-system/specs/InputAutocomplete.md` | одиночный выбор: тип недвижимости, класс жилья, регион, город; крестик очистки — рантайм поля |
-| InputText | ДС — `design-system/specs/InputText.md` | метрики — `inp--m`, `inputmode="decimal"`, постфикс `%` у LTV, LTC, LTARV; выключенное поле — `inp--disabled` |
-| Checkbox | ДС — `design-system/specs/Checkbox.md` | «Топ застройщик» |
-| IconButton | ДС — `design-system/specs/IconButton.md` | пояснения ⓘ — `ibtn--s ibtn--neutral` `info-circle` в `.ds-label__icons`; у чекбокса — рядом |
-| Tooltip | ДС — `design-system/specs/Tooltip.md` | тексты пояснений, `data-tooltip-multiline` |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Сохранить» — `btn--accent btn--m` |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w5`; скрим `deal-project-info-scrim`, открытие с `data-modal-guarded` |
+| InputAutocomplete + DropdownList | ДС — `design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md` | одиночный выбор: тип недвижимости, класс жилья, регион, город; крестик очистки — рантайм поля |
+| InputText | ДС — `design-system/components/molecules/Inputs/InputText/InputText.md` | метрики — `inp--m`, `inputmode="decimal"`, постфикс `%` у LTV, LTC, LTARV; выключенное поле — `inp--disabled` |
+| Checkbox | ДС — `design-system/components/atoms/Checkbox/Checkbox.md` | «Топ застройщик» |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | пояснения ⓘ — `ibtn--s ibtn--neutral` `info-circle` в `.ds-label__icons`; у чекбокса — рядом |
+| Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | тексты пояснений, `data-tooltip-multiline` |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» — `btn--accent btn--m` |
 
 Подзаголовки секций — своя разметка на токенах (`--type-h6-strong`), как
 подзаголовок окна «Документы по сделке».

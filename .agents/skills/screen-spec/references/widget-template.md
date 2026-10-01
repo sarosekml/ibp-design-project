@@ -27,7 +27,7 @@ knowledge: []
      (tile | table | modal | context-menu | popover); module — <раздел>/<модуль>
      владельца; frontend — пара во фронтенде (README модуля, раздел «Имена
      фронтенда», или дерево фронтенда), нет пары — new. Остальные поля —
-     паспорт локального компонента ДС (design-system/pages/patterns/LocalComponents.html):
+     паспорт локального компонента ДС (design-system/patterns/LocalComponents/LocalComponents.html):
      name, version, updated, rulesVersion, owner, designer, category, purpose,
      ds, usedOn, variants, modifiers, dependsOn, requirements, knowledge.
      Неизвестное — «не решено (ДД.ММ.ГГГГ)», не догадкой. Этот комментарий в
@@ -52,9 +52,9 @@ Tile (заголовок «Команда сделки», действие ша�
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Tile | ДС — `design-system/specs/Tile.md` | шапка с IconButton `edit` |
-| Avatar | ДС — `design-system/specs/Avatar.md` | `av--s`, инициалы |
-| EmptyState | ДС — `design-system/specs/EmptyState.md` | иллюстрация `empty-folder` |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | шапка с IconButton `edit` |
+| Avatar | ДС — `design-system/components/atoms/Avatar/Avatar.md` | `av--s`, инициалы |
+| EmptyState | ДС — `design-system/components/molecules/EmptyState/EmptyState.md` | иллюстрация `empty-folder` |
 
 ## Параметры метки (Props)
 

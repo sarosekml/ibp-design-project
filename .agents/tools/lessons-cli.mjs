@@ -42,7 +42,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSy
 import { execFileSync } from 'node:child_process';
 import { includersOf, assembledOf } from './fragments.mjs';
 import { RUNS_DIR, LIMIT, runFileName, readRuns, countLines, rotate, blockersOf } from './runlog.mjs';
-import { need } from './project.mjs';
+import { need, dsPaths } from './project.mjs';
 import { documentationPaths, isDocPath } from './docs-index.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -57,6 +57,15 @@ const PRJ = need('lessons-cli', HERE);
 const ROOT = PRJ.root;
 const DS = PRJ.dsAbs;          // ДС: абсолютный путь …
 const DS_REL = PRJ.ds;         // … и от корня
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где страницы, стили,
+   рантаймы, спеки и инструменты ДС, гейт узнаёт у него, а не по префиксам
+   папок, — переезд раскладки не должен молча снять маршруты и проверки. */
+const L = (await dsPaths()).layout(DS);
+const dsKind = (rel) => (rel.startsWith(DS_REL + '/') ? L.kindOf(rel.slice(DS_REL.length + 1)) : null);
+const isDsFile = (rel, at) => rel === DS_REL + '/' + at;
+const isDsPage = (rel) => { const k = dsKind(rel); return !!k && k.kind === 'page'; };
+// категории страниц ДС, которые считает корневой README (компоненты и основы — readme-stats)
+const README_PAGE_CATS = ['atoms', 'molecules', 'organisms', 'foundations'];
 const KIT = PRJ.kitAbs;        // харнес
 const KIT_REL = PRJ.kit;
 const ADAPTER_REL = PRJ.adapter;  // адаптер агентного CLI: один конфиг с путями до харнеса (Ш5, доработка 22.09.2026)
@@ -68,9 +77,9 @@ const SENSOR = path.join(HERE, 'layout-check.mjs');
 const FIXTURES = path.join(HERE, 'fixtures');
 const REGISTRY = path.join(HERE, 'coverage.json');
 const ANCHORS = path.join(HERE, 'anchors.json');
-const LINT_FIXTURES = path.join(DS, 'fixtures');
+const LINT_FIXTURES = L.abs(L.at.fixtures);
 /* Корпус экранов лежит ВНЕ дерева ДС не по вкусу, а по определению правила:
-   линтер считает экраном путь, начинающийся с `pages/screens/` или с `../`.
+   линтер считает экраном путь, начинающийся с `../` (вне дерева ДС).
    Правила A7, F6, L4, L5, L6 внутри `design-system/fixtures/` не срабатывают никогда —
    доказывать их там значило бы доказывать на входе, который им не вход (Л71).
    С 15.09.2026 корпус лежит в оснастке (подпапка fixtures/lint-screens), а не в
@@ -128,7 +137,7 @@ function firedOn(out, id) {
    запускается оттуда. Ненулевой код — норма для `.bad`, перехватываем. */
 function runLinter(rel) {
   try {
-    return execFileSync(process.execPath, ['scripts/ds-lint-cli.mjs', rel], { cwd: DS, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+    return execFileSync(process.execPath, [L.at.lintCli, rel], { cwd: DS, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
   } catch (e) {
     return String(e.stdout || '') + String(e.stderr || '');
   }
@@ -218,7 +227,7 @@ function verify(only = null, corpus = null) {
   log('');
   const none = { total: 0, bad: 0 };
   const s = corpus === 'lint' ? none : verifyCorpus(FIXTURES, (f) => runSensor(path.join(FIXTURES, f)), 'сенсор layout-check (' + PRJ.rel(FIXTURES) + ')', only);
-  const l = corpus === 'sensor' ? none : verifyCorpus(LINT_FIXTURES, (f) => runLinter('fixtures/' + f), 'линтер ds-lint, страницы (' + DS_REL + '/fixtures)', only);
+  const l = corpus === 'sensor' ? none : verifyCorpus(LINT_FIXTURES, (f) => runLinter(L.at.fixtures + '/' + f), 'линтер ds-lint, страницы (' + DS_REL + '/' + L.at.fixtures + ')', only);
   const e = corpus === 'sensor' ? none : verifyCorpus(SCREEN_FIXTURES, (f) => runLinter('../' + SCREEN_FIXTURES_REL + '/' + f), 'линтер ds-lint, экраны (' + SCREEN_FIXTURES_REL + ')', only);
 
   const total = s.total + l.total + e.total, bad = s.bad + l.bad + e.bad;
@@ -242,7 +251,7 @@ function verify(only = null, corpus = null) {
    даёт 56 идентификаторов, из них пять живут только в комментарии-шапке. */
 
 function lintIds() {
-  const src = rd(path.join(DS, 'scripts/ds-lint.js'));
+  const src = rd(L.abs(L.at.linter));
   const out = new Set();
   // say('WARN', 'A2', …) и out.push(['BLOCKER', 'P1', …]) — обе формы отчёта
   for (const m of src.matchAll(/(?:say|out\.push)\(\s*\[?\s*(?:'[A-Z]+'|lvl)\s*,\s*'([A-Z]\d{1,2})'/g)) out.add(m[1]);
@@ -250,7 +259,7 @@ function lintIds() {
 }
 
 /* Правила линтера, чей ВХОД — не файл, а репозиторий: реестры (index.html,
-   ds-nav.js, specs/_index.md), все styles/*.css, все scripts/*.js, дерево
+   ds-nav.js, манифест спек), весь CSS ДС, все её скрипты, дерево
    файлов. Такое правило файловой фикстурой не доказывается в принципе —
    доказывать его пришлось бы фикстурным РЕПОЗИТОРИЕМ.
 
@@ -259,7 +268,7 @@ function lintIds() {
    внутри `pageChecks`. Список руками разъехался бы с кодом на первой же новой
    проверке; здесь он пересчитывается каждым прогоном. */
 function lintRepoIds() {
-  const src = rd(path.join(DS, 'scripts/ds-lint.js'));
+  const src = rd(L.abs(L.at.linter));
   const at = src.indexOf('function pageChecks');
   const head = at > 0 ? src.slice(0, at) : src;
   const tail = at > 0 ? src.slice(at) : '';
@@ -298,7 +307,7 @@ function docsSplitIds() {
 }
 
 function auditIds() {
-  const src = rd(path.join(DS, 'scripts/spec-audit.mjs'));
+  const src = rd(L.abs(L.at.specAudit));
   return [...new Set([...src.matchAll(/section\('Проход (\d)/g)].map((m) => m[1]))];
 }
 
@@ -320,9 +329,9 @@ function anchorsFromCode() {
     как: 'node ' + PRJ.rel(path.join(HERE, 'lessons-cli.mjs')) + ' anchors --write',
     зачем: 'Журнал уроков сверяется с этим реестром, а не с грепом по коду. Расхождение реестра и кода — находка команды anchors.',
     пространства: {
-      'линтер': { источник: DS_REL + '/scripts/ds-lint.js', алфавит: 'латиница', ids: lintIds() },
+      'линтер': { источник: DS_REL + '/' + L.at.linter, алфавит: 'латиница', ids: lintIds() },
       'сенсор': { источник: PRJ.rel(SENSOR) + ' --rules', алфавит: 'кириллица Б/З/К, латинская K — геометрия', ids: sensorIds() },
-      'аудит': { источник: DS_REL + '/scripts/spec-audit.mjs', алфавит: 'номер прохода', ids: auditIds() },
+      'аудит': { источник: DS_REL + '/' + L.at.specAudit, алфавит: 'номер прохода', ids: auditIds() },
       'док-сплит': { источник: PRJ.rel(DOCS_SPLIT) + ' --rules', алфавит: 'кириллица ДС', ids: docsSplitIds() },
       'чек-лист': { источник: 'SKILL.md screen-review и composition-review', алфавит: 'кириллица Б/З/К, латинская K — композиция', ids: checkIds() },
     },
@@ -1162,8 +1171,8 @@ function stats() {
 const GATE_SNAPSHOT = path.join(PRJ.stateAbs, 'gate-snapshot.json');
 const TOOL_REL = PRJ.rel(HERE);
 const VENDOR = path.join(HERE, 'vendor-scan.mjs');
-const SPEC_AUDIT = path.join(DS, 'scripts/spec-audit.mjs');
-const DS_ICON = path.join(DS, 'scripts/ds-icon.mjs');
+const SPEC_AUDIT = L.abs(L.at.specAudit);
+const DS_ICON = L.abs(L.at.iconTool);
 const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
 const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
 const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
@@ -1247,21 +1256,12 @@ function fingerprint() {
   return out;
 }
 
-/* Страничный скрипт живёт в `design-system/scripts/<kebab>.page.js`, страница — в
-   `design-system/pages/<раздел>/<Pascal>.html`. Имена сверяются без дефисов и регистра. */
+/* Страничный скрипт `<Имя>.page.js` и страница `<Имя>.html` лежат в папке
+   компонента; страницу находит модуль путей ДС по имени. Имена сверяются без
+   дефисов и регистра. */
 function pageForScript(rel) {
   const key = path.basename(rel).replace(/\.page\.js$/, '').replace(/-/g, '').toLowerCase();
-  const found = [];
-  const walk = (abs) => {
-    if (!existsSync(abs)) return;
-    for (const e of readdirSync(abs, { withFileTypes: true })) {
-      const p = path.join(abs, e.name);
-      if (e.isDirectory()) walk(p);
-      else if (e.name.endsWith('.html') && e.name.replace(/\.html$/, '').toLowerCase() === key) found.push(toRel(p));
-    }
-  };
-  walk(path.join(DS, 'pages'));
-  return found;
+  return L.pages().filter((p) => p.name.toLowerCase() === key).map((p) => toRel(L.abs(p.rel)));
 }
 
 /* Экран спеки: одноимённый `.html` рядом или файл из строки `file:` шапки —
@@ -1298,17 +1298,25 @@ function gateStep(id, paths = null) {
        отсечение эталонов; поймано на первом полном гейте 13.09.2026). */
     case 'lint-pages': {
       const list = [...(paths || [])].sort();
-      return { title: 'линтер, страницы ДС пакетом — файлов: ' + list.length, args: ['scripts/ds-lint-cli.mjs', ...list.map(dsRel)], cwd: DS };
+      return { title: 'линтер, страницы ДС пакетом — файлов: ' + list.length, args: [L.at.lintCli, ...list.map(dsRel)], cwd: DS };
     }
     case 'sensor': return { title: 'сенсор ' + target, args: [SENSOR, abs], cwd: ROOT };
-    case 'lint': return { title: 'линтер ' + target, args: ['scripts/ds-lint-cli.mjs', fromDs], cwd: DS };
+    case 'lint': return { title: 'линтер ' + target, args: [L.at.lintCli, fromDs], cwd: DS };
     case 'split': return { title: 'docs-split check ' + target, args: [DOCS_SPLIT, 'check', target], cwd: ROOT };
-    case 'lint-global': return { title: 'линтер, глобальные правила', args: ['scripts/ds-lint-cli.mjs'], cwd: DS };
-    case 'parity': return { title: 'линтер --parity (доки = код)', args: ['scripts/ds-lint-cli.mjs', '--parity'], cwd: DS };
+    /* Синтаксис изменённого Node-модуля проверяется node --check: падение ловит
+       дефект класса «пример в блочном комментарии закрыл комментарий» РАНЬШЕ,
+       чем он превратится в каскад непонятных FAIL упавшего линтера (Л168). */
+    case 'syntax': return { title: 'node --check ' + target, args: ['--check', abs], cwd: ROOT };
+    case 'lint-global': return { title: 'линтер, глобальные правила', args: [L.at.lintCli], cwd: DS };
+    case 'parity': return { title: 'линтер --parity (доки = код)', args: [L.at.lintCli, '--parity'], cwd: DS };
     case 'spec-audit': return { title: 'spec-audit', args: [SPEC_AUDIT], cwd: DS };
     /* Рантайм иконок ДС (задача 0007): у каждой копии глифа свои id внутри SVG,
        DS_ICONS после ds-icons.js отдаёт копии, ds.js грузит его раньше читателей. */
     case 'icons-selftest': return { title: 'ds-icon --selftest (рантайм иконок: уникальные id копий)', args: [DS_ICON, '--selftest'], cwd: DS };
+    /* Самопроверка ДС (ds-check.mjs --all): обёртка над линтером, аудитом и
+       иконками. Гоняется, когда правили саму обёртку или kit-link.mjs — модуль,
+       который ищет оснастку для всех инструментов ДС (дыра маршрутов RE0002). */
+    case 'ds-check': return { title: 'ds-check --all (ДС проверяет себя сама)', args: [L.at.check, '--all'], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1436,14 +1444,36 @@ function gateStepsFor(rel, deleted) {
      страницы компонентов и основ ДС, глифы, иллюстрации, запись модуля
      (появился или пропал модуль) → readme-stats; инструмент и обход модулей
      → ещё и его селфтест. */
+  const dk = dsKind(rel);
+  /* Синтаксис изменённого Node-модуля — node --check: ловит дефект класса
+     «пример в комментарии закрыл сам комментарий» раньше, чем тот станет
+     каскадом непонятных FAIL упавшего линтера (Л168). */
+  if (!deleted && /\.(mjs|cjs)$/.test(rel)) add('syntax:' + rel);
+  /* Шрифты — бинарный актив ДС. Статической проверки у них нет (единственный
+     потребитель — url() в Typography.css; ссылки сверены на переезде RE0002);
+     роут к vendor, чтобы правка шрифта не молчала «проверок 0» (дыра RE0002). */
+  if (dk && dk.kind === 'font') add('vendor');
   if (rel === 'README.md' || rel === 'project.json'
-    || underDs('pages/(atoms|molecules|organisms|foundations)/[^/]+\\.html$').test(rel)
-    || rel === DS_REL + '/scripts/icons-data.js' || rel.startsWith(DS_REL + '/assets/illustrations/')
+    || (dk && dk.kind === 'page' && README_PAGE_CATS.includes(dk.category))
+    || isDsFile(rel, L.at.iconsData) || rel.startsWith(DS_REL + '/' + L.at.illustrations + '/')
     || (PRJ.appsDir && rel.startsWith(PRJ.appsDir + '/') && rel.endsWith('/' + PRJ.appsManifest))) add('readme-stats');
   if (rel === TOOL_REL + '/readme-stats.mjs' || rel === TOOL_REL + '/module-readme.mjs') add('readme-stats-selftest', 'readme-stats');
 
   /* рантайм иконок ДС, их данные, порядок загрузки рантаймов, сам инструмент — в том числе удалённые */
-  if (['ds-icons.js', 'icons-data.js', 'ds.js', 'ds-icon.mjs'].some((f) => rel === DS_REL + '/scripts/' + f)) add('icons-selftest');
+  if ([L.at.iconsRuntime, L.at.iconsData, L.at.entryJs, L.at.iconTool].some((f) => isDsFile(rel, f))) add('icons-selftest');
+
+  /* модуль путей ДС, в том числе удалённый: на нём стоят линтер, аудит, сенсор,
+     иконки и счётчики README — его правка прогоняет их всех (решение владельца
+     01.10.2026, RE0002) */
+  if (isDsFile(rel, L.at.paths)) add('verify-lint', 'anchors', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'readme-stats');
+
+  /* Обёртка самопроверки ДС и связка с оснасткой (kit-link ищет оснастку для
+     линтера/аудита/иконок). Правка любой из них прогоняет самопроверку ДС
+     целиком: обёртка могла сломать вызовы подшагов, kit-link — их адреса.
+     До 01.10.2026 на обе гонялся один vendor-scan — дыра маршрутов, закрыта в
+     RE0002 Э4 (открытый вопрос 8). */
+  if (isDsFile(rel, L.at.check)) add('ds-check');
+  if (isDsFile(rel, L.at.kitLink)) add('ds-check');
 
   if (deleted) {
     if (rel.startsWith(DS_REL + '/')) add('lint-global', 'parity');
@@ -1470,31 +1500,31 @@ function gateStepsFor(rel, deleted) {
   if (screenArea && !inFixtures && rel.endsWith('.screen.md')) {
     for (const h of screenOfSpec(rel)) add('sensor:' + h);
   }
-  if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/fixtures/')) add('verify-lint', 'anchors');
+  if (rel.startsWith(SCREEN_FIXTURES_REL + '/') || rel.startsWith(DS_REL + '/' + L.at.fixtures + '/')) add('verify-lint', 'anchors');
 
-  if (underDs('pages/.+\\.html$').test(rel)) add('lint:' + rel);
+  if (dk && dk.kind === 'page') add('lint:' + rel);
   /* Структурная проверка паттерна «сплиттер + табы» — по ПРИЗНАКУ СТРАНИЦЫ, а
      не по её папке (урок Л135). Пока шаг звался только для страниц ДС, 21
      страница витрины локальных компонентов на том же паттерне не получала его
      вовсе: сенсор витрину пропускает (SHOWCASE_REL), шаг `kit` сверяет её с
      генератором, а не каркас, — у класса файлов не было читателя (Л115). */
   if (html && !inFixtures && isDocsSplit(rel)) add('split:' + rel);
-  if (underDs('scripts/[^/]+\\.page\\.js$').test(rel)) {
+  if (dk && dk.kind === 'script' && dk.role === 'page-script') {
     const pages = pageForScript(rel);
     if (!pages.length) add('lint-global');
     for (const p of pages) { add('lint:' + p); if (isDocsSplit(p)) add('split:' + p); }
-  } else if (rel === DS_REL + '/scripts/ds-lint.js' || rel === DS_REL + '/scripts/ds-lint-cli.mjs') {
+  } else if (isDsFile(rel, L.at.linter) || isDsFile(rel, L.at.lintCli)) {
     add('verify-lint', 'anchors', 'lint-global', 'parity');
-  } else if (rel === DS_REL + '/scripts/spec-audit.mjs') {
+  } else if (isDsFile(rel, L.at.specAudit)) {
     add('anchors', 'spec-audit');
-  } else if (underDs('scripts/[^/]+\\.js$').test(rel)) {
+  } else if (dk && dk.kind === 'script') {
     add('lint-global', 'parity', 'etalons');
   }
-  if (rel.startsWith(DS_REL + '/styles/') || rel === DS_REL + '/ds.css') add('lint-global', 'parity', 'etalons');
-  if (rel.startsWith(DS_REL + '/specs/')) add('parity', 'spec-audit');
+  if ((dk && dk.kind === 'style') || isDsFile(rel, L.at.bundleCss)) add('lint-global', 'parity', 'etalons');
+  if (dk && dk.kind === 'spec') add('parity', 'spec-audit');
   // реестры ДС, которые читают глобальные правила линтера (D1–D4, D9): витрина, правила ведения,
   // журнал правок и генератор шапки главной (версия и дата выводятся из журнала)
-  if ([DS_REL + '/index.html', DS_REL + '/MAINTAINING.md', DS_REL + '/CHANGELOG.md', DS_REL + '/scripts/ds-home.mjs'].includes(rel)) add('lint-global');
+  if ([L.at.home, 'MAINTAINING.md', 'CHANGELOG.md', L.at.homeTool].some((f) => isDsFile(rel, f))) add('lint-global');
   // каталог компонентов в AGENTS.md ДС сверяется с манифестом — проход 8 аудита
   if (rel === DS_REL + '/AGENTS.md') add('spec-audit');
   // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
@@ -1539,7 +1569,7 @@ function gateStepsFor(rel, deleted) {
 
 const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
@@ -1589,7 +1619,7 @@ function gate() {
   if (isFull) {
     for (const rel of Object.keys(now)) {
       for (const id of gateStepsFor(rel, false)) {
-        if (id.startsWith('lint:' + DS_REL + '/pages/')) want('lint-pages', id.slice(5));
+        if (id.startsWith('lint:') && isDsPage(id.slice(5))) want('lint-pages', id.slice(5));
         else want(id, rel);
       }
     }
@@ -1614,7 +1644,7 @@ function gate() {
       if (target && !(target in now)) continue;          // файл удалён — долга больше нет
       if (target) { carried.push(id); continue; }
       retried.push(id);
-      if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (underDs('pages/.+\\.html$').test(rel)) want(id, rel); }
+      if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (isDsPage(rel)) want(id, rel); }
       else want(id, null);
     }
   }
@@ -1689,7 +1719,7 @@ function gate() {
   const fresh = results.filter((r) => !r.debt);
   const failedNow = fresh.filter((r) => r.code !== 0);
   const okNow = fresh.filter((r) => r.code === 0);
-  const perFile = new Set(['sensor', 'lint', 'split']);
+  const perFile = new Set(['sensor', 'lint', 'split', 'syntax']);
   const sec = (s) => s.toFixed(1).replace('.', ',') + ' с';
 
   if (okNow.length <= 8) {

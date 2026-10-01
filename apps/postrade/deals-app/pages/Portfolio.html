@@ -22,7 +22,7 @@
      поля, высоты и низ 24px даёт каркас, добавочных отступов таблица не имеет. */
   .screen__content { gap: var(--space-12); }
 
-  /* Модалка фильтра — штатная структура TableFilter (.tfm__*), см. specs/TableFilter.md.
+  /* Модалка фильтра — штатная структура TableFilter (.tfm__*), см. components/organisms/TableFilter/TableFilter.md.
      Собственного CSS на форме фильтра нет: сетка/зазоры/заголовки секций — из ДС. */
 
   /* Тег-флаг PE — НЕ статус, кастомный цвет по кейсу (согласовано 04.09.2026).
@@ -700,7 +700,7 @@
 </div>
 
 <!-- Модалка «Настройка таблицы» собирается рантаймом ds-table-settings.js по хуку
-     data-table-settings на кнопке-шестерёнке (см. specs/Table.md «Настройка таблицы») -->
+     data-table-settings на кнопке-шестерёнке (см. components/organisms/Table/Table.md «Настройка таблицы») -->
 
 <script src="../data/mock-deals.js"></script>
 <script src="../data/deals-store.js"></script>
@@ -713,7 +713,7 @@
      DealsStore — баланс, PE, продукты и валюты реестра читают их оттуда -->
 <script src="../data/mock-product-catalog.js"></script>
 <script src="../data/product-tree-store.js"></script>
-<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script>
 /* Экранный скрипт: меню панели навигации строится из каталога ibp-home.js
    (window.IBPHome) по роли «Финансист ДИД»; пункт «Текущий портфель» selected. */
@@ -790,7 +790,7 @@
 /* Модалка фильтра — вертикальные табы как ЯКОРНЫЕ ссылки по контентной области
    (TableFilter, правило `.tmsf__nav` + scroll-spy). Рантайма ДС для этого нет
    (ds-table-filter.js умеет только сброс чипа), поэтому поведение повторяет
-   эталонного демо (design-system/scripts/table-filter.page.js, 497–531). Слушатели
+   эталонного демо (design-system/components/organisms/TableFilter/TableFilter.page.js, 497–531). Слушатели
    вешаются на статичные элементы — DSModal порталит скрим в body, но НЕ клонирует
    его, поэтому обработчики переживают перенос. */
 (function () {
@@ -1121,7 +1121,7 @@
      DealsStore, вставка строки без пересоздания остальных (см. правило
      «строки не пересоздаются», выше). Тултип ошибки — по InputText/
      LabelHelper: текст только в тултипе на фокусе поля, не в хелпере
-     (specs/InputText.md, «текст ошибки… не дублируется в хелпере»). ---------- */
+     (components/molecules/Inputs/InputText/InputText.md, «текст ошибки… не дублируется в хелпере»). ---------- */
   (function () {
     var scrim = document.getElementById('new-deal-scrim');
     var trigger = document.querySelector('[data-modal="new-deal-scrim"]');

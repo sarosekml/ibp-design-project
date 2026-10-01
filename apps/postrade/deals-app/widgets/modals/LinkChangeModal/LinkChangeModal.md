@@ -69,12 +69,12 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Modal | ДС — `design-system/specs/Modal.md` | `modal--w4`; сохранение — `.modal--saving` |
-| Tile (Card) | ДС — `design-system/specs/Tile.md` | `.tile--card`, `role="checkbox"`, выбранная — `aria-checked="true"` (Selected: `--primary-bg`, рамка `--primary`), другого типа — `aria-disabled="true"` (Disabled); фокус — обводка ДС |
-| Buttons | ДС — `design-system/specs/Buttons.md` | «Сохранить» `btn--accent btn--m`, при сохранении `btn--loading` |
-| Spinner | ДС — `design-system/specs/Spinner.md` | `spin--current` внутри кнопки при сохранении |
-| IconButton | ДС — `design-system/specs/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
-| Typography | ДС — `design-system/specs/Typography.md` | подзаголовок — `ds-h6-strong`; строки карточки — `--type-body-s`, `--text-secondary` |
+| Modal | ДС — `design-system/components/organisms/Modal/Modal.md` | `modal--w4`; сохранение — `.modal--saving` |
+| Tile (Card) | ДС — `design-system/components/organisms/Tile/Tile.md` | `.tile--card`, `role="checkbox"`, выбранная — `aria-checked="true"` (Selected: `--primary-bg`, рамка `--primary`), другого типа — `aria-disabled="true"` (Disabled); фокус — обводка ДС |
+| Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» `btn--accent btn--m`, при сохранении `btn--loading` |
+| Spinner | ДС — `design-system/components/atoms/Spinner/Spinner.md` | `spin--current` внутри кнопки при сохранении |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
+| Typography | ДС — `design-system/foundations/Typography/Typography.md` | подзаголовок — `ds-h6-strong`; строки карточки — `--type-body-s`, `--text-secondary` |
 
 ## Параметры метки (Props)
 

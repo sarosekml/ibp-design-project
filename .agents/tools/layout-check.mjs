@@ -10,7 +10,7 @@
                    помещается ли значение в свою колонку и не шире ли строка
                    контентной области (уроки Л28–Л30, ~7px/символ body-s).
      геометрия  — блокеры composition-review (K*): вычисленные
-                   из токенов styles/*.css + эвристика ширины
+                   из токенов CSS ДС + эвристика ширины
                    символа (~8px body-m кириллица, ~7px body-xs).
 
    Стили экрана — как их применяет браузер (задача 0008): встроенный
@@ -44,7 +44,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { logRun, codesFrom, failsFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
-import { need } from './project.mjs';
+import { need, dsPaths } from './project.mjs';
 
 /* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
    (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
@@ -52,22 +52,28 @@ import { need } from './project.mjs';
 const PRJ = need('layout-check', path.dirname(fileURLToPath(import.meta.url)));
 const ROOT = PRJ.root;
 const DS = PRJ.dsAbs;
+/* Где в ДС токены, стили и рантаймы — у модуля путей ДС (задача RE0002), а
+   не литералами папок: после переезда раскладки литерал молча дал бы пустой
+   набор, и геометрия считалась бы по умолчаниям. */
+const L = (await dsPaths()).layout(DS);
+const isDsScript = (abs) => {
+  if (!abs.startsWith(DS + path.sep)) return false;
+  const k = L.kindOf(path.relative(DS, abs).split(path.sep).join('/'));
+  return !!k && (k.kind === 'script' || k.kind === 'tool');
+};
 
-/* ---------------- токены ДС (источник истины — styles/*.css) ---------------- */
+/* ---------------- токены ДС (источник истины — CSS основ и компонентов ДС) ---------------- */
 
-const TOKEN_FILES = [
-  'styles/spacing.css',
-  'styles/layout.css',
-  'styles/tile.css',
-  'styles/nav-panel.css',
-];
+const TOKEN_FILES = ['Spacing', 'Layout', 'Tile', 'NavPanel'].map((name) => {
+  const css = L.cssOf(name);
+  if (css.length !== 1) throw new Error('layout-check: у ' + name + ' в спеке ДС не один файл стилей (css: ' + (css.join(', ') || '—') + ') — токены сенсора взять неоткуда');
+  return css[0];
+});
 
 function loadTokens() {
   const raw = {};
   for (const f of TOKEN_FILES) {
-    const p = path.join(DS, f);
-    if (!existsSync(p)) continue;
-    const text = readFileSync(p, 'utf8');
+    const text = readFileSync(L.abs(f), 'utf8');
     const re = /--([a-z0-9][a-z0-9-]*)\s*:\s*([^;]+);/g;
     let m;
     while ((m = re.exec(text))) {
@@ -167,8 +173,8 @@ function isLiteralAttr(v) {
    own — встроенные <style>, как прежний вход styleSrc (из разметки с
    комментариями, без гашения). linked — файлы из <link rel="stylesheet"> вне
    HTML-комментариев: href относительный (без схемы, без // и / в начале),
-   файл внутри проекта, не в ДС (её стили подключает загрузчик, поштучные
-   styles/* — дефект Б1) и существует. Файл, лежащий рядом, но не
+   файл внутри проекта, не в ДС (её стили подключает загрузчик, поштучный
+   CSS ДС — дефект Б1) и существует. Файл, лежащий рядом, но не
    подключённый, стилем экрана не считается: его классы браузер не применит. */
 function screenStyles(html, pagePath) {
   const own = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
@@ -551,11 +557,19 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
     ok(dsCssLinks.length === 1,
       `Б1 ровно один ds.css (${dsCssLinks.length})`);
-    ok((html.match(/scripts\/ds\.js/g) || []).length === 1,
-      `Б1 ровно один scripts/ds.js (${(html.match(/scripts\/ds\.js/g) || []).length})`);
+    const dsJsTags = (html.match(/src="(?:[^"]*\/)?ds\.js"/g) || []).length;
+    ok(dsJsTags === 1, `Б1 ровно один ds.js (${dsJsTags})`);
   }
-  ok(!/href="[^"]*styles\//.test(html), 'Б1 нет поштучных styles/* (только ds.css)');
-  ok(!/src="[^"]*scripts\/ds-[a-z-]+\.js/.test(html), 'Б1 нет поштучных scripts/ds-*');
+  /* Поштучные файлы ДС: ссылка разрешается от папки экрана, а вид файла
+     называет модуль путей ДС — не префикс папки в строке (RE0002: после
+     переезда раскладки литерал папки стилей молча перестал бы что-либо ловить). */
+  const dsKindsOf = (attr) => (pagePath ? [...html.matchAll(new RegExp('\\b' + attr + '="([^"#?]+)', 'g'))] : [])
+    .map((m) => {
+      const abs = path.resolve(path.dirname(pagePath), m[1]);
+      return abs.startsWith(DS + path.sep) ? L.kindOf(path.relative(DS, abs).split(path.sep).join('/')) : null;
+    }).filter(Boolean);
+  ok(!dsKindsOf('href').some((k) => k.kind === 'style'), 'Б1 нет поштучных CSS ДС (только ds.css)');
+  ok(!dsKindsOf('src').some((k) => k.kind === 'script' && k.role !== 'entry'), 'Б1 нет поштучных рантаймов ДС (только ds.js)');
 
   /* Б34 — путь до ДС записан ровно в одном месте (решение владельца Р5).
      В экране проекта с загрузчиком нет литерала каталога ДС (адрес — строка
@@ -563,7 +577,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      фавикон, ds.css и ds.js ставит загрузчик, дополнительные скрипты ДС —
      атрибут `data-ds` его тега, фон стартовой страницы —
      `var(--boot-bg-illustration, none)`. Комментарии не в счёт: подсказка
-     «контекст для правки — <ДС>/specs/…» ничего не подключает. Литерал в коде
+     «контекст для правки — <ДС>/…/Kanban.md» ничего не подключает. Литерал в коде
      значит, что следующий переезд ДС снова потребует правки экранов. */
   if (bootForm) {
     const code = noComments.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
@@ -1090,7 +1104,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      · строки может строить рантайм, а содержимое <script> здесь погашено —
        поэтому «строк в разметке нет» само по себе не значит «таблица пуста»;
        смотрим в `raw`, собирает ли страница строки скриптом;
-     · EmptyState в ДС — это `.es` (styles/empty-state.css), а не выдуманный
+     · EmptyState в ДС — это `.es` (components/molecules/EmptyState/EmptyState.css), а не выдуманный
        `.empty-state`; проверка по несуществующему классу дала бы находку на
        экране, где состояние как раз описано. */
   const rowsFromJs = [...raw.matchAll(/tbl__row/g)].length > [...html.matchAll(/tbl__row/g)].length;
@@ -1122,11 +1136,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      рантайм страницы, употреблён по-настоящему. Токены с ${} — куски шаблона,
      не классы. */
   const dsClasses = new Set();
-  const stylesDir = path.join(DS, 'styles');
-  if (existsSync(stylesDir)) {
-    for (const f of readdirSync(stylesDir).filter((n) => n.endsWith('.css'))) {
-      for (const m of readFileSync(path.join(stylesDir, f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
-    }
+  for (const f of L.styles()) {
+    for (const m of readFileSync(L.abs(f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
   }
   /* свои стили экрана — <style> и подключённые файлы тайлов (задача 0008):
      класс из файла, который страница не подключила, по-прежнему выдуман */
@@ -1137,10 +1148,10 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      ищет `ds-nav-panel.js`; без этого шага Б4 объявил бы дефектом рабочую
      разметку на трёх экранах сразу. Набор паттернов зеркалит `collectHooks`
      линтера — разъедутся, и два правила заспорят об одном классе. */
-  const scriptsDir = path.join(DS, 'scripts');
-  if (existsSync(scriptsDir)) {
-    for (const f of readdirSync(scriptsDir).filter((n) => n.endsWith('.js'))) {
-      const src = readFileSync(path.join(scriptsDir, f), 'utf8');
+  // линтер — в корпусе, как до RE0002 (его хуки разметки — тоже классы ДС)
+  {
+    for (const f of [...L.scripts(), L.at.linter]) {
+      const src = readFileSync(L.abs(f), 'utf8');
       for (const m of src.matchAll(/closest\(\s*['"]\.([\w-]+)/g)) dsClasses.add(m[1]);
       for (const m of src.matchAll(/querySelector(?:All)?\(\s*['"][^'"]*\.([\w-]+)/g)) dsClasses.add(m[1]);
       for (const m of src.matchAll(/classList\.(?:add|remove|toggle|contains)\(\s*['"]([\w-]+)/g)) dsClasses.add(m[1]);
@@ -1172,7 +1183,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   }
   if (dsClasses.size) {
     ok(invented.length === 0, invented.length
-      ? `Б4 классов нет ни в styles/*.css, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
+      ? `Б4 классов нет ни в CSS ДС, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
       : `Б4 все классы разметки существуют в ДС, в <style> экрана или в подключённых CSS-файлах (${seenCls.size}${styles.linked.length ? '; файлов экрана: ' + styles.linked.length : ''})`);
   }
 
@@ -1328,7 +1339,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       const href = m[1];
       if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
       const abs = path.resolve(pageDir, href);
-      if (!existsSync(abs) || abs.startsWith(path.join(DS, 'scripts'))) continue;
+      if (!existsSync(abs) || isDsScript(abs)) continue;
       parts.push(readFileSync(abs, 'utf8'));
     }
     const allSrc = parts.join('\n');
@@ -1654,8 +1665,8 @@ function checkOne(pageArg, width) {
     return { status: 'пропущен', path: p, printed, fails: 0, warns: 0 };
   }
 
-  /* иконки из specs/Icons.md (формат: строка имён через ·) */
-  const iconsText = readFileSync(path.join(DS, 'specs', 'Icons.md'), 'utf8');
+  /* иконки из foundations/Icons/Icons.md (формат: строка имён через ·) */
+  const iconsText = readFileSync(L.abs(L.specOf('Icons')), 'utf8');
   const iconsSection = iconsText.slice(iconsText.indexOf('## Все глифы'));
   const icons = new Set(iconsSection.split('·').map((s) => s.trim()).filter(Boolean));
 

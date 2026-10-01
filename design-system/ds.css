@@ -2,72 +2,72 @@
    IBP DS — единая точка подключения стилей для экранов.
    На странице-экране достаточно одного линка:
    <link rel="stylesheet" href="ds.css">
-   (страницы-документация компонентов подключают styles/* точечно)
+   (страницы-документация компонентов подключают CSS компонентов точечно)
    ============================================================ */
 
 /* Фундамент */
-@import url("styles/typography.css");
-@import url("styles/colors.css");
-@import url("styles/palette.css");
-@import url("styles/radius.css");
-@import url("styles/spacing.css");
-@import url("styles/layout.css");
-@import url("styles/shadow.css");
-@import url("styles/illustration.css");
+@import url("foundations/Typography/Typography.css");
+@import url("foundations/Colors/Colors.css");
+@import url("foundations/Colors/Palette.css");
+@import url("foundations/Radius/Radius.css");
+@import url("foundations/Spacing/Spacing.css");
+@import url("foundations/Layout/Layout.css");
+@import url("foundations/Elevation/Elevation.css");
+@import url("foundations/Illustrations/Illustrations.css");
 
 /* Атомы */
-@import url("styles/button.css");
-@import url("styles/icon-button.css");
-@import url("styles/button-group.css");
-@import url("styles/link.css");
-@import url("styles/checkbox.css");
-@import url("styles/radio.css");
-@import url("styles/switch.css");
-@import url("styles/chip.css");
-@import url("styles/badge.css");
-@import url("styles/progress-bar.css");
-@import url("styles/spinner.css");
-@import url("styles/skeleton.css");
-@import url("styles/avatar.css");
-@import url("styles/divider.css");
-@import url("styles/label-helper.css");
+@import url("components/atoms/Buttons/Buttons.css");
+@import url("components/atoms/IconButton/IconButton.css");
+@import url("components/molecules/ButtonGroup/ButtonGroup.css");
+@import url("components/atoms/Link/Link.css");
+@import url("components/atoms/Checkbox/Checkbox.css");
+@import url("components/atoms/Radiobutton/Radiobutton.css");
+@import url("components/atoms/Switch/Switch.css");
+@import url("components/atoms/Chip/Chip.css");
+@import url("components/atoms/Badge/Badge.css");
+@import url("components/atoms/ProgressBar/ProgressBar.css");
+@import url("components/atoms/Spinner/Spinner.css");
+@import url("components/atoms/Skeleton/Skeleton.css");
+@import url("components/atoms/Avatar/Avatar.css");
+@import url("components/atoms/Divider/Divider.css");
+@import url("components/atoms/LabelHelper/LabelHelper.css");
 
 /* Молекулы */
-@import url("styles/segment-control.css");
-@import url("styles/tab.css");
-@import url("styles/sub-tab.css");
-@import url("styles/breadcrumbs.css");
-@import url("styles/tooltip.css");
-@import url("styles/toast.css");
-@import url("styles/context-menu.css");
-@import url("styles/dropdown-list.css");
-@import url("styles/read-only-field.css");
-@import url("styles/riskmetric.css");
-@import url("styles/pagination.css");
-@import url("styles/splitter.css");
-@import url("styles/input.css");
-@import url("styles/input-range.css");
-@import url("styles/datepicker.css");
-@import url("styles/nav-tile.css");
-@import url("styles/empty-state.css");
+@import url("components/molecules/SegmentControl/SegmentControl.css");
+@import url("components/molecules/Tab/Tab.css");
+@import url("components/molecules/SubTab/SubTab.css");
+@import url("components/molecules/Breadcrumbs/Breadcrumbs.css");
+@import url("components/molecules/Tooltip/Tooltip.css");
+@import url("components/molecules/Toast/Toast.css");
+@import url("components/molecules/ContextMenu/ContextMenu.css");
+@import url("components/molecules/DropdownList/DropdownList.css");
+@import url("components/molecules/ReadOnlyField/ReadOnlyField.css");
+@import url("components/organisms/RiskMetric/RiskMetric.css");
+@import url("components/molecules/Pagination/Pagination.css");
+@import url("components/molecules/Splitter/Splitter.css");
+@import url("components/molecules/Inputs/Inputs.css");
+@import url("components/molecules/Inputs/InputRanges.css");
+@import url("components/molecules/DatePicker/DatePicker.css");
+@import url("components/molecules/NavTile/NavTile.css");
+@import url("components/molecules/EmptyState/EmptyState.css");
 
 /* Организмы */
-@import url("styles/modal.css");
-@import url("styles/drawer.css");
-@import url("styles/nav-panel.css");
-@import url("styles/page-header.css");
-@import url("styles/popover.css");
-@import url("styles/snackbar.css");
-@import url("styles/entity.css");
-@import url("styles/table.css");
-@import url("styles/table-cell.css");
-@import url("styles/table-filter.css");
-@import url("styles/table-settings.css");
-@import url("styles/allocation-bar.css");
-@import url("styles/chart.css");
-@import url("styles/tile.css");
-@import url("styles/kanban.css");
-@import url("styles/product-row.css");
+@import url("components/organisms/Modal/Modal.css");
+@import url("components/organisms/Drawer/Drawer.css");
+@import url("components/organisms/NavPanel/NavPanel.css");
+@import url("components/organisms/PageHeader/PageHeader.css");
+@import url("components/organisms/Popover/Popover.css");
+@import url("components/organisms/SnackBar/SnackBar.css");
+@import url("components/organisms/Entity/Entity.css");
+@import url("components/organisms/Table/Table.css");
+@import url("components/organisms/TableCell/TableCell.css");
+@import url("components/organisms/TableFilter/TableFilter.css");
+@import url("components/organisms/Table/TableSettings.css");
+@import url("components/organisms/AllocationBar/AllocationBar.css");
+@import url("components/organisms/Chart/Chart.css");
+@import url("components/organisms/Tile/Tile.css");
+@import url("components/organisms/Kanban/Kanban.css");
+@import url("components/organisms/ProductRow/ProductRow.css");
 
 /* Компоненты подкачки */
-@import url("styles/alert.css");
+@import url("components/molecules/Alert/Alert.css");

@@ -30,7 +30,7 @@
    `.illu`); экран пишет `var(--boot-bg-illustration, none)`.
    ds-body.js пишет `ds.js`, а следом — дополнительные скрипты ДС из атрибута
    `data-ds` своего тега (пути внутри ДС через пробел, например
-   `scripts/ibp-home.js`). Порядок тот же, что у прежних тегов: `ds.js`
+   `patterns/HomeRoles/ibp-home.js`). Порядок тот же, что у прежних тегов: `ds.js`
    дописывает рантаймы прямо за собой, до следующего тега.
    Ограничение честное: загрузчик — обычный тег, без async/defer.
    Если манифест объявляет панель прототипа (`protoPanel.boot`, задача
@@ -59,10 +59,21 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project, need } from './project.mjs';
+import { project, need, dsPaths } from './project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'boot-build.mjs';
+
+/* Пути внутри ДС — точка входа ds.js и каталог главной для примера data-ds —
+   у модуля путей ДС (задача RE0002), а не литералом: переезд раскладки
+   пересобирает загрузчик, а не правит его. Модуля нет — дефект БТ4 в check(),
+   а не падение при импорте. */
+let DS_AT = null, DS_PATHS_ERROR = null;
+try { DS_AT = (await dsPaths()).layout().at; } catch (e) { DS_PATHS_ERROR = e.message; }
+const at = (key) => {
+  if (!DS_AT) throw new Error(GEN + ': ' + DS_PATHS_ERROR);
+  return DS_AT[key];
+};
 
 /** Тексты загрузчика для манифеста P: { [путь от корня]: текст }. */
 export function render(P) {
@@ -103,13 +114,13 @@ export function render(P) {
     + '})();\n';
   const body = bodyNote
     + '/* Тег вместо ds.js, перед экранным скриптом. Дополнительные скрипты ДС —\n'
-    + '   атрибутом data-ds, пути внутри ДС через пробел: data-ds="scripts/ibp-home.js". */\n'
+    + '   атрибутом data-ds, пути внутри ДС через пробел: data-ds="' + at('homeCatalog') + '". */\n'
     + '(function () {\n'
     + '  var DS = window.__DS_ROOT;\n'
     + '  if (!DS) { console.error(' + JSON.stringify(headName + ' не подключён в <head> — ДС не загрузится') + '); return; }\n'
     + '  var me = document.currentScript;\n'
     + '  var extra = ((me && me.getAttribute(\'data-ds\')) || \'\').split(/\\s+/).filter(Boolean);\n'
-    + '  var tags = [\'scripts/ds.js\'].concat(extra);\n'
+    + '  var tags = [\'' + at('entryJs') + '\'].concat(extra);\n'
     + '  for (var i = 0; i < tags.length; i++) document.write(\'<scr\' + \'ipt src="\' + DS + tags[i] + \'"><\\/scr\' + \'ipt>\');\n'
     + panel
     + '})();\n';
@@ -124,6 +135,10 @@ export function check(P, write = false) {
   }
   if (!P.boot || !P.boot.dir || !P.boot.head || !P.boot.body || !P.ds) {
     defects.push('БТ1 project.json не объявляет загрузчик (boot: dir, head, body) или ДС (designSystem.from | mount)');
+    return { defects, written: [] };
+  }
+  if (DS_PATHS_ERROR) {
+    defects.push('БТ4 ' + DS_PATHS_ERROR);
     return { defects, written: [] };
   }
   if (!existsSync(path.join(P.root, P.ds, 'ds.css'))) defects.push('БТ4 по адресу ДС «' + P.ds + '/» нет ds.css — адрес ведёт не в дизайн-систему');
@@ -208,7 +223,7 @@ function runBody(text) {
   const written = [];
   const ctx = {
     URL, console,
-    document: { currentScript: { src: 'file:///p/apps/ds-body.js', getAttribute: (n) => (n === 'data-ds' ? 'scripts/ibp-home.js' : null) }, write: (s) => written.push(s) },
+    document: { currentScript: { src: 'file:///p/apps/ds-body.js', getAttribute: (n) => (n === 'data-ds' ? at('homeCatalog') : null) }, write: (s) => written.push(s) },
   };
   ctx.window = ctx;
   ctx.__DS_ROOT = 'file:///p/ds/';
@@ -255,7 +270,7 @@ function selftest() {
      порядок доказывается исполнением второго тега в vm, а не поиском строки. */
   const PP = { ...P, boot: CONFIG.boot, panel: { boot: 'apps/proto-panel.js' } };
   const withPanel = runBody(render(PP)['apps/ds-body.js']);
-  const panelOk = withPanel.length === 3 && withPanel[0].includes('/ds/scripts/ds.js') && withPanel[1].includes('/ds/scripts/ibp-home.js')
+  const panelOk = withPanel.length === 3 && withPanel[0].includes('/ds/' + at('entryJs')) && withPanel[1].includes('/ds/' + at('homeCatalog'))
     && withPanel[2] === '<script src="file:///p/apps/proto-panel.js"></script>';
   if (!panelOk) failed++;
   out.push((panelOk ? 'ok    ' : 'FAIL  ') + 'панель объявлена — включатель подключается после тегов ДС (исполнение в vm)' + (panelOk ? '' : ' — ' + withPanel.join(' | ')));
