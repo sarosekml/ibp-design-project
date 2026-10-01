@@ -74,11 +74,11 @@
 | [design-system/MAINTAINING.md](../design-system/MAINTAINING.md) | Дизайн-система — правила ведения |
 | [design-system/readme.md](../design-system/readme.md) | IBP DS — дизайн-система |
 
-### design-system/skills
+### design-system/scripts
 
 | Документ | Аннотация |
 |---|---|
-| [design-system/skills/ds-integrity-check.md](../design-system/skills/ds-integrity-check.md) | Скилл: Ревизор целостности страниц ДС (линтер) |
+| [design-system/scripts/ds-lint.md](../design-system/scripts/ds-lint.md) | Линтер ДС: правила и проверки |
 
 ### design-system/specs
 

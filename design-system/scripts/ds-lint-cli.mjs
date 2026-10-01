@@ -30,7 +30,7 @@ const ls = async (dir) => {
     .map((e) => (e.isDirectory() ? e.name + '/' : e.name));
 };
 
-// загрузка линтера тем же способом, что в skills/ds-integrity-check.md
+// загрузка линтера тем же способом, что в scripts/ds-lint.md
 const src = await readFile('scripts/ds-lint.js');
 const { run } = new Function('readFile', 'ls', src + ';return dsLint;')(readFile, ls);
 

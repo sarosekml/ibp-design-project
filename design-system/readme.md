@@ -15,12 +15,11 @@ index.html               ← обзор ДС (карточки компонен�
 CHANGELOG.md             ← журнал правок; большой — дописывать в секцию даты, целиком не читать
 MAINTAINING.md           ← правила ведения ДС: контракт страницы, чек-листы, проверки
 styles/                  ← CSS фундамента и по файлу на компонент; токены — colors, typography, spacing, radius, shadow
-scripts/                 ← ds.js (точка входа рантаймов), ds-*.js рантаймы, *.page.js страниц, линтер ds-lint.js
+scripts/                 ← ds.js (точка входа рантаймов), ds-*.js рантаймы, *.page.js страниц, линтер ds-lint.js и разбор его правил ds-lint.md
 pages/                   ← документация: foundations, atoms, molecules, organisms, patterns, screens, rnd
 specs/                   ← md-спеки компонентов + _index.md (манифест) + _cheatsheet.md (чит-шит)
 templates/               ← screen/Screen.html — стартовый шаблон экрана; local-component/ — заготовка локального компонента
 fixtures/                ← корпус фикстур линтера (пары «эталон / дефект»)
-skills/                  ← ds-integrity-check.md — разбор правил линтера
 fonts/ · assets/         ← SB Sans (.otf) · logo.svg и иллюстрации
 ```
 
