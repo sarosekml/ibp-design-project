@@ -774,12 +774,13 @@ async function runtimeApiCheck(P, out) {
 }
 
 /* ---------- группа P: гейт парности «документация = код» ----------
-   P1 — класс из копируемого сниппета (specs/_cheatsheet.md, specs/<Имя>.md)
-        не существует ни в одном styles/*.css: документация обещает то, чего нет.
-   P2 — класс в разметке экрана не существует в CSS и не объявлен в <style>
-        самого экрана: класс выдуман при сборке.
-   P3 — класс из код-панели витрины (<code> внутри scripts/*.page.js) отсутствует
-        в CSS: страница предлагает скопировать несуществующий класс. */
+   P1 — класс из копируемого сниппета (чит-шит, спека компонента) не существует
+        ни в одном CSS ДС: документация обещает то, чего нет.
+   P3 — класс из код-панели витрины (<code> внутри сценария страницы *.page.js)
+        отсутствует в CSS: страница предлагает скопировать несуществующий класс.
+   P2 снят 01.10.2026 (RE0002, решение владельца): правило читало экраны из
+   `pages/screens/` ДС, а такого каталога давно нет — его вход был пуст, и оно
+   не срабатывало никогда. Выдуманный класс на экране приложения ловит сенсор (Б4). */
 const PARITY_SKIP = /^(is-|js-|has-)/;
 // стили этих рантаймов живут в shadow DOM самого скрипта, а не в styles/*.css
 const SHADOW_RUNTIMES = /image-slot\.js$/;
@@ -799,11 +800,10 @@ function fenceClasses(md) {
 }
 async function parityChecks(P, out) {
   const specs = P.list.filter((f) => P.lay.spec(f) && !/_TEMPLATE/.test(f));
-  const screens = P.list.filter((f) => /^pages\/screens\/.+\.html$/.test(f));
   const pageJs = P.list.filter(P.lay.pageScript);
   const runtimeJs = P.list.filter((f) => P.lay.script(f) && !/icons-data|ds-lint/.test(f));
-  const srcs = await Promise.all([...specs, ...screens, ...runtimeJs].map((f) => readFile(f).catch(() => '')));
-  const src = new Map([...specs, ...screens, ...runtimeJs].map((f, i) => [f, srcs[i]]));
+  const srcs = await Promise.all([...specs, ...runtimeJs].map((f) => readFile(f).catch(() => '')));
+  const src = new Map([...specs, ...runtimeJs].map((f, i) => [f, srcs[i]]));
   const hooks = new Set();
   const localDoc = new Set(); // локальные классы витрин из инлайн-<style> страниц
   const written = new Set(); // классы, которые рантайм ДС реально пишет в разметку
@@ -812,10 +812,6 @@ async function parityChecks(P, out) {
     collectHooks(s, hooks);
     for (const a of [...all(RX.cls, s), ...all(RX.classNameAssign, s)]) for (const c of a.split(/\s+/)) if (c) written.add(c);
   }
-  for (const f of screens) collectHooks(src.get(f), hooks);
-  // локальная раскладка экрана живёт в его же <style> — для скрипта этого экрана
-  // (<имя>.screen.js) такой класс законен, P4 не должен считать его сиротой
-  for (const f of screens) for (const st of all(RX.styleBlock, src.get(f) || '', 0)) for (const c of all(/\.(-?[a-zA-Z][a-zA-Z0-9_-]*)/g, st.replace(/\{[^{}]*\}/g, '{}'))) localDoc.add(c);
   // хуки из inline-<script> страниц — читаем только страницы из поля page: спек
   const pagesOfSpecs = uniq(specs.map((f) => (src.get(f).match(/^page:\s*(\S+)/m) || [])[1]).filter(Boolean));
   const pageSrcs = await Promise.all(pagesOfSpecs.map((f) => readFile(f).catch(() => '')));
@@ -836,14 +832,6 @@ async function parityChecks(P, out) {
   for (const f of specs) {
     const bad = fenceClasses(src.get(f)).filter((c) => !parityIgnore(c) && !known(c));
     for (const c of bad) out.push(['BLOCKER', 'P1', f + ': сниппет обещает .' + c + ' — в CSS ДС такого класса нет']);
-  }
-  for (const f of screens) {
-    const html = src.get(f);
-    const local = new Set();
-    for (const st of all(RX.styleBlock, html, 0)) for (const c of all(/\.(-?[a-zA-Z][a-zA-Z0-9_-]*)/g, st.replace(/\{[^{}]*\}/g, '{}'))) local.add(c);
-    const used = uniq([...all(RX.cls, html), ...all(RX.classNameAssign, html)].filter((a) => !/['`+]|\$\{/.test(a)).flatMap((a) => a.split(/\s+/)).filter(Boolean));
-    const bad = used.filter((c) => !parityIgnore(c) && !known(c) && !local.has(c));
-    for (const c of bad) out.push(['WARN', 'P2', f + ': .' + c + ' не объявлен ни в ДС, ни в <style> экрана']);
   }
   // P5 — класс в живой разметке страницы документации, у которого нет правил ни в ДС,
   // ни в её собственном <style>: блок рендерится без стиля и выглядит сломанным
@@ -935,11 +923,12 @@ async function pageChecks(p, P, opts, out) {
   const name = base(p).replace(/\.html$/, '');
   const inContract = CONTRACT_CATS.includes(categoryOf(p));
   const inRegistry = REGISTRY_CATS.includes(categoryOf(p));
-  /* Экран — это и `pages/screens/`, и любой файл ВНЕ дерева ДС: экраны живут
-     в `Projects/**` и приходят сюда путём `../Projects/test/Имя.html`. Без
-     второго условия к экрану применялся контракт docs-страницы, и любой экран
-     получал ложные C1/C2 («нет @dsCard», «нет Версия/Обновлено»). */
-  const isScreen = p.startsWith('pages/screens/') || p.startsWith('../');
+  /* Экран — любой файл ВНЕ дерева ДС: экраны живут в приложениях и приходят
+     сюда путём `../apps/…/pages/Имя.html`. Без этого признака к экрану
+     применялся контракт docs-страницы, и любой экран получал ложные C1/C2
+     («нет @dsCard», «нет Версия/Обновлено»). Вторая ветка — экраны в
+     `pages/screens/` самой ДС — снята 01.10.2026 (RE0002): такого каталога нет. */
+  const isScreen = p.startsWith('../');
   /* Комментарий — не разметка. Вырезается вместе со <style> и <script>: текст
      комментария неотличим от разметки для строкового правила, и страница,
      ОБЪЯСНЯЮЩАЯ в комментарии «здесь нужен data-tabs», этим объяснением

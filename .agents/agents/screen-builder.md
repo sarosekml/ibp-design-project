@@ -60,7 +60,7 @@ description: Собирает экран продукта по ТЗ из ком�
 ## Что ты выдаёшь
 
 Ровно два файла на один экран, в папку экранов приложения из задания —
-`apps/<раздел>/drafts/<id>/pages/` (например `apps/pretrade/drafts/pipeline-manager-kanban/pages/`):
+`apps/<раздел>/drafts/<id>/pages/` (например `apps/pretrade/drafts/pipelineManager-v02/pages/`):
 
 1. `<папка>/<Имя>.html` — макет
 2. `<папка>/<Имя>.screen.md` — структура и описание экрана

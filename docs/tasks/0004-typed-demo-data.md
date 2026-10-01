@@ -28,7 +28,7 @@ typedef не имеют, часть полей названа транслито
 - [x] `apps/postrade/deals-app/data/mock-deal-trees.js` — typedef дерева продуктов
   (задача `RE0001-product-row-tree.md`, 29.09.2026)
 - [ ] `apps/postrade/deals-app/data/deals-store.js` — типы параметров и результатов помощника
-- [ ] `apps/pretrade/drafts/pipeline-manager-kanban/data/pipeline-data.js` — typedef десков, стадий, сотрудников, сделок
+- [ ] `apps/pretrade/drafts/pipelineManager-v01/data/pipeline-data.js` и `pipelineManager-v02/data/pipeline-data.js` — typedef десков, стадий, сотрудников, сделок
 - [ ] при появлении DTO (человек кладёт их в `refs/dto/` модуля) — заменить
   придуманные имена контрактными в данных, спеках и разметке
 - [ ] переименования полей — синхронно с экранами, которые их читают

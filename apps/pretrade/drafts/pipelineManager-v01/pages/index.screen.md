@@ -1,7 +1,7 @@
 ---
 screen: HomePage
 title: Главная (Pipeline Management)
-file: apps/pretrade/drafts/pipeline-manager-kanban/pages/index.html
+file: apps/pretrade/drafts/pipelineManager-v01/pages/index.html
 source: скриншот главной от дизайнера (16.09.2026) + тайл «Pipeline Management» (../refs/image002.png)
 version: "0.100"
 created: "16.09.2026"

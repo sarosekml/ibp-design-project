@@ -52,7 +52,7 @@ apps/
 ```
 postrade/deals-app/  Post — ДИД: главная, текущий портфель, страница сделки (модуль, трек product)
 ib/drafts/           ai-bankster-prototype-mvp · ai-bankster-prototype-v01 · ai-bankster-prototype-v02
-pretrade/drafts/     pipeline-manager-kanban
+pretrade/drafts/     pipelineManager-v01 · pipelineManager-v02 · pipelineScanner-v07
 ```
 
 <details>
@@ -161,7 +161,9 @@ apps/
     │   ├── refs/
     │   └── widgets/
     ├── drafts/
-    │   └── pipeline-manager-kanban/   ← приложение (app.json)
+    │   ├── pipelineManager-v01/   ← приложение (app.json)
+    │   ├── pipelineManager-v02/
+    │   └── pipelineScanner-v07/
     ├── kfulsources-app/
     │   ├── data/
     │   ├── pages/

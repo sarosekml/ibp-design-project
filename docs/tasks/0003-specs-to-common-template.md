@@ -32,7 +32,7 @@ API. Привести их к шаблону. Язык не меняется —
 Страницы (`*.screen.md`), 28 файлов:
 
 - [ ] `apps/postrade/deals-app/pages/` — `Deal`, `MainPage`, `Portfolio`
-- [ ] `apps/pretrade/drafts/pipeline-manager-kanban/pages/` — `index`, `PipelineManagement`
+- [ ] `apps/pretrade/drafts/pipelineManager-v01/pages/` и `pipelineManager-v02/pages/` — `index`, `PipelineManagement`
 - [ ] `apps/ib/drafts/ai-bankster-prototype-mvp/pages/` — 8 спек
 - [ ] `apps/ib/drafts/ai-bankster-prototype-v01/pages/` — 7 спек
 - [ ] `apps/ib/drafts/ai-bankster-prototype-v02/pages/` — 8 спек

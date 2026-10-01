@@ -227,7 +227,7 @@ components/molecules/Tooltip/
 | Приложения и проект | Паспорта виджетов и спеки экранов (`design-system/specs/<Имя>.md` → путь в папке), `apps/README.md`, `apps/local-components/README.md`, `apps/postrade/deals-app/widgets/README.md` (вне `module-readme`; там строка-закрепление урока про страницу-правило), рукописные строки README модулей вне блока `@tree` (`data-ds`, `design-system/scripts/ds.js`), README концептов, корневые `README.md`, `index.screen.md`, `GIGACODE.md`; локальные памятки агентов в корне, исключённые из git | переписать |
 | | Страницы витрины локальных компонентов, `docs/index.md`, `hub.js`, README модулей | пересобрать (`kit-build`, `docs-index`, `hub-build`, `module-readme`) |
 | | Комментарии экранов со ссылкой на `specs/_cheatsheet.md`, `specs/_runtime-hooks.md` | не меняются — файлы остаются в `specs/` |
-| | Комментарии экранов со ссылкой на переезжающие спеки (`specs/Kanban.md` в `pipeline-manager-kanban`) | переписать |
+| | Комментарии экранов со ссылкой на переезжающие спеки (`specs/Kanban.md` в `PipelineManagement.html` концептов `pipelineManager-v01` и `pipelineManager-v02`) | переписать |
 | История | `CHANGELOG.md` ДС (кроме новой записи), `lessons-raw.md`, закрытые задачи `docs/tasks/`, `docs/misc/`; выжимки уроков `skills/*/references/lessons.md` — пути в прозе и «дата/зона» не переписываются (технические якоря обновляет `lessons-cli anchors --write`) | не трогать |
 
 ## 7. Где сломается молча
@@ -429,6 +429,10 @@ components/molecules/Tooltip/
    `specs/Kanban.md` — в их `PipelineManagement.html` (уже в отчёте ссылок
    `refs-report.md`). Раздел 6 и локальная памятка агента называют старое имя —
    поправить при Э3?
+   **Ответ человека 01.10.2026:** поправить. Сделано 01.10.2026: раздел 6, памятка,
+   а также роль `screen-builder.md`, `apps/README.md`, поле `file:` двух спек
+   `pipelineManager-v01` (вело в несуществующую папку), чек-листы открытых задач
+   0003, 0004, 0005. История (`docs/misc/`) не трогалась.
 8. Дыры маршрутизации гейта, найденные эталоном Э0 (существуют и до переезда):
    `gate --changed` на `scripts/ds-check.mjs` и `scripts/kit-link.mjs` гоняет
    только `vendor-scan`, на шрифт `fonts/*.otf` — ничего. Переезд обязан
@@ -439,3 +443,8 @@ components/molecules/Tooltip/
    это снятие правила (и его якоря в журнале уроков), а не чистка кода. Удалить P2,
    перенацелить на экраны приложений или оставить — решить до Э3 (критерий «в коде
    инструментов нет литералов раскладки»).
+   **Ответ человека 01.10.2026:** удалить. Сделано 01.10.2026: P2 снят в
+   `ds-lint.js` (правило и его вход `screens` в гейте парности) и в `ds-lint.md`,
+   `isScreen` — только путь вне дерева ДС (`../`); реестр якорей пересобран
+   (`anchors --write`). Уроков с якорем P2 в журнале нет. Выдуманный класс на экране
+   приложения по-прежнему ловит сенсор (Б4).

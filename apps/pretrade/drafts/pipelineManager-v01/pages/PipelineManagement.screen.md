@@ -1,7 +1,7 @@
 ---
 screen: PipelineManagement
 title: Pipeline Management
-file: apps/pretrade/drafts/pipeline-manager-kanban/pages/PipelineManagement.html
+file: apps/pretrade/drafts/pipelineManager-v01/pages/PipelineManagement.html
 source: ТЗ в разговоре с дизайнером (16.09.2026) + прототипы Pixso «PreTrade Kanban», страница «Pipeline Desks RnD 2»; экспорты фреймов — exports/
 version: "0.100"
 created: "16.09.2026"
