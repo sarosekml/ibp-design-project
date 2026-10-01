@@ -1,0 +1,8 @@
+код 0
+== gate: проверки по изменениям ==
+изменено: 1 (задано --changed, снимок не обновляется)
+  design-system/pages/rnd/Backlog.html
+
+шаги (--dry, не запускаются): 2
+  линтер design-system/pages/rnd/Backlog.html
+  vendor-scan (нейтральность)

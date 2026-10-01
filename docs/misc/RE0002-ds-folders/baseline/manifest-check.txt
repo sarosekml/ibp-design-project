@@ -1,0 +1,3 @@
+код 0
+== manifest-check ==
+ВЕРДИКТ: OK

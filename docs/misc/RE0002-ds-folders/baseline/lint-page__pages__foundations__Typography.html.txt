@@ -1,0 +1,7 @@
+код 0
+DS-LINT · pages/foundations/Typography.html · 01.10.2026
+WARN    D4  index.html: «Правила и паттерны» — порядок не алфавитный: «Локальные компоненты» стоит 1-м, ожидается 2-м
+WARN    D4  ds-nav.js: «Правила и паттерны» — порядок не алфавитный
+INFO    B3  вне шкалы 4: padding:30px, padding:26px, gap:22px, gap:18px
+—
+BLOCKER 0 · WARN 2 · INFO 1 → PASS с замечаниями

@@ -1,0 +1,3 @@
+код 0
+== assemble --check ==
+ВЕРДИКТ: OK

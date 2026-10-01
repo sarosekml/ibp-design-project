@@ -1,0 +1,3 @@
+код 0
+== layout-check Deal.html ==
+ПРОПУЩЕН: apps/postrade/deals-app/pages/Deal.html — шаблон-исходник с неразвёрнутыми <ds-include>; проверять собранный файл (результат assemble.mjs).

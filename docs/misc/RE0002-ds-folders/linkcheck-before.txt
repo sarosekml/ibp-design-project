@@ -1,0 +1,15 @@
+проверено ссылок: 4884
+по видам: attr 4669 · data-ds 36 · ds-body 1 · ds-nav 63 · ds.js FILES 39 · page.js 7 · self-css 5 · url 64
+битых: 11
+
+design-system/fixtures/A5.bad.html:29 [attr] ../styles/fx-net-tut.css
+design-system/pages/atoms/Link.html:798 [attr] …
+design-system/pages/atoms/Link.html:893 [attr] /deals/4521
+design-system/pages/atoms/Link.html:896 [attr] /help
+design-system/pages/atoms/Link.html:899 [attr] /report.pdf
+design-system/pages/molecules/Breadcrumbs.html:425 [attr] /deals
+design-system/pages/molecules/NavTile.html:318 [attr] /deals
+design-system/pages/molecules/NavTile.html:327 [attr] /reports
+design-system/pages/molecules/NavTile.html:330 [attr] /reports/reg
+design-system/pages/molecules/NavTile.html:331 [attr] /reports/export
+design-system/pages/organisms/ProductRow.html:493 [attr] …

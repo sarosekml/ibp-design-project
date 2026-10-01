@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 253.
+Документов: 256.
 
 ## Корень (4)
 
@@ -503,12 +503,14 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (20)
+## Задачи и заметки (23)
 
 ### Архив/черновики
 
 | Документ | Аннотация |
 |---|---|
+| [docs/misc/RE0002-ds-folders/move-map.md](misc/RE0002-ds-folders/move-map.md) | RE0002 · карта переезда ДС (генерат move-map.mjs — руками не править) |
+| [docs/misc/RE0002-ds-folders/refs-report.md](misc/RE0002-ds-folders/refs-report.md) | RE0002 · ссылки вне ДС на переезжающие пути (генерат refs-report.mjs — руками не править) |
 | [docs/misc/agent-imp.md](misc/agent-imp.md) | Задача: привести обвязку агента в порядок до реструктуризации |
 | [docs/misc/clients-app-all.md](misc/clients-app-all.md) | clients-app — объединённые дизайн-спецификации |
 | [docs/misc/clients-app-tree.md](misc/clients-app-tree.md) | clients-app — структура папки |
@@ -539,6 +541,7 @@
 |---|---|
 | [docs/tasks/0006-docs-index.handoff.md](tasks/0006-docs-index.handoff.md) | DocsIndex — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
+| [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 
 ## Служебное (1)
 

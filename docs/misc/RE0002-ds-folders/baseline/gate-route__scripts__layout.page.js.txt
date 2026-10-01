@@ -1,0 +1,9 @@
+код 0
+== gate: проверки по изменениям ==
+изменено: 1 (задано --changed, снимок не обновляется)
+  design-system/scripts/layout.page.js
+
+шаги (--dry, не запускаются): 3
+  линтер design-system/pages/foundations/Layout.html
+  docs-split check design-system/pages/foundations/Layout.html
+  vendor-scan (нейтральность)

@@ -1,0 +1,3 @@
+код 0
+== boot-build --check ==
+ВЕРДИКТ: OK

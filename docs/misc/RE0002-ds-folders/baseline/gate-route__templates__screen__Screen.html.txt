@@ -1,0 +1,8 @@
+код 0
+== gate: проверки по изменениям ==
+изменено: 1 (задано --changed, снимок не обновляется)
+  design-system/templates/screen/Screen.html
+
+шаги (--dry, не запускаются): 2
+  сенсор --etalons
+  vendor-scan (нейтральность)

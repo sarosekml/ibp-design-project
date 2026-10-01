@@ -1,0 +1,10 @@
+код 0
+== gate: проверки по изменениям ==
+изменено: 1 (задано --changed, снимок не обновляется)
+  design-system/pages/atoms/Avatar.html
+
+шаги (--dry, не запускаются): 4
+  readme-stats --check (счётчики README = ДС и приложения)
+  линтер design-system/pages/atoms/Avatar.html
+  docs-split check design-system/pages/atoms/Avatar.html
+  vendor-scan (нейтральность)

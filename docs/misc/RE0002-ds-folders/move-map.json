@@ -1,0 +1,1536 @@
+{
+  "task": "RE0002",
+  "root": "design-system",
+  "generated": "move-map.mjs",
+  "moves": [
+    {
+      "from": "fonts/SBSansDisplay-Light.otf",
+      "to": "assets/fonts/SBSansDisplay-Light.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "fonts/SBSansDisplay-Regular.otf",
+      "to": "assets/fonts/SBSansDisplay-Regular.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "fonts/SBSansDisplay-SemiBold.otf",
+      "to": "assets/fonts/SBSansDisplay-SemiBold.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "fonts/SBSansScreen.otf",
+      "to": "assets/fonts/SBSansScreen.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "fonts/SBSansText-Regular.otf",
+      "to": "assets/fonts/SBSansText-Regular.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "fonts/SBSansText-Semibold.otf",
+      "to": "assets/fonts/SBSansText-Semibold.otf",
+      "why": "раздел 5"
+    },
+    {
+      "from": "pages/atoms/.image-slots.state.json",
+      "to": "components/atoms/Avatar/.image-slots.state.json",
+      "why": "раздел 5; ключ один — pg-av-img (Avatar)"
+    },
+    {
+      "from": "pages/atoms/Avatar.html",
+      "to": "components/atoms/Avatar/Avatar.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Badge.html",
+      "to": "components/atoms/Badge/Badge.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Buttons.html",
+      "to": "components/atoms/Buttons/Buttons.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Checkbox.html",
+      "to": "components/atoms/Checkbox/Checkbox.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Chip.html",
+      "to": "components/atoms/Chip/Chip.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Divider.html",
+      "to": "components/atoms/Divider/Divider.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/IconButton.html",
+      "to": "components/atoms/IconButton/IconButton.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/LabelHelper.html",
+      "to": "components/atoms/LabelHelper/LabelHelper.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Link.html",
+      "to": "components/atoms/Link/Link.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/ProgressBar.html",
+      "to": "components/atoms/ProgressBar/ProgressBar.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Radiobutton.html",
+      "to": "components/atoms/Radiobutton/Radiobutton.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Skeleton.html",
+      "to": "components/atoms/Skeleton/Skeleton.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Spinner.html",
+      "to": "components/atoms/Spinner/Spinner.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/atoms/Switch.html",
+      "to": "components/atoms/Switch/Switch.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Colors.html",
+      "to": "foundations/Colors/Colors.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Elevation.html",
+      "to": "foundations/Elevation/Elevation.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Icons.html",
+      "to": "foundations/Icons/Icons.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Illustrations.html",
+      "to": "foundations/Illustrations/Illustrations.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Layout.html",
+      "to": "foundations/Layout/Layout.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Radius.html",
+      "to": "foundations/Radius/Radius.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Spacing.html",
+      "to": "foundations/Spacing/Spacing.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/foundations/Typography.html",
+      "to": "foundations/Typography/Typography.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Alert.html",
+      "to": "components/molecules/Alert/Alert.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Breadcrumbs.html",
+      "to": "components/molecules/Breadcrumbs/Breadcrumbs.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/ButtonGroup.html",
+      "to": "components/molecules/ButtonGroup/ButtonGroup.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/ContextMenu.html",
+      "to": "components/molecules/ContextMenu/ContextMenu.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/DatePicker.html",
+      "to": "components/molecules/DatePicker/DatePicker.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/DropdownList.html",
+      "to": "components/molecules/DropdownList/DropdownList.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/EmptyState.html",
+      "to": "components/molecules/EmptyState/EmptyState.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/InputAmountRange.html",
+      "to": "components/molecules/Inputs/InputAmountRange/InputAmountRange.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/InputAutocomplete.html",
+      "to": "components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/InputDate.html",
+      "to": "components/molecules/Inputs/InputDate/InputDate.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/InputDateRange.html",
+      "to": "components/molecules/Inputs/InputDateRange/InputDateRange.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/InputText.html",
+      "to": "components/molecules/Inputs/InputText/InputText.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/NavTile.html",
+      "to": "components/molecules/NavTile/NavTile.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Pagination.html",
+      "to": "components/molecules/Pagination/Pagination.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/ReadOnlyField.html",
+      "to": "components/molecules/ReadOnlyField/ReadOnlyField.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/SegmentControl.html",
+      "to": "components/molecules/SegmentControl/SegmentControl.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Splitter.html",
+      "to": "components/molecules/Splitter/Splitter.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/SubTab.html",
+      "to": "components/molecules/SubTab/SubTab.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Tab.html",
+      "to": "components/molecules/Tab/Tab.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Toast.html",
+      "to": "components/molecules/Toast/Toast.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/molecules/Tooltip.html",
+      "to": "components/molecules/Tooltip/Tooltip.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/AllocationBar.html",
+      "to": "components/organisms/AllocationBar/AllocationBar.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Chart.html",
+      "to": "components/organisms/Chart/Chart.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Drawer.html",
+      "to": "components/organisms/Drawer/Drawer.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Entity.html",
+      "to": "components/organisms/Entity/Entity.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Kanban.html",
+      "to": "components/organisms/Kanban/Kanban.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Modal.html",
+      "to": "components/organisms/Modal/Modal.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/NavPanel.html",
+      "to": "components/organisms/NavPanel/NavPanel.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/PageHeader.html",
+      "to": "components/organisms/PageHeader/PageHeader.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Popover.html",
+      "to": "components/organisms/Popover/Popover.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/ProductRow.html",
+      "to": "components/organisms/ProductRow/ProductRow.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/RiskMetric.html",
+      "to": "components/organisms/RiskMetric/RiskMetric.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/SnackBar.html",
+      "to": "components/organisms/SnackBar/SnackBar.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Table.html",
+      "to": "components/organisms/Table/Table.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/TableCell.html",
+      "to": "components/organisms/TableCell/TableCell.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/TableFilter.html",
+      "to": "components/organisms/TableFilter/TableFilter.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/organisms/Tile.html",
+      "to": "components/organisms/Tile/Tile.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/patterns/HomeRoles.html",
+      "to": "patterns/HomeRoles/HomeRoles.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/patterns/LocalComponents.html",
+      "to": "patterns/LocalComponents/LocalComponents.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/patterns/Redpolicy.html",
+      "to": "patterns/Redpolicy/Redpolicy.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "pages/rnd/Backlog.html",
+      "to": "rnd/Backlog/Backlog.html",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/alert.page.js",
+      "to": "components/molecules/Alert/Alert.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/allocation-bar.page.js",
+      "to": "components/organisms/AllocationBar/AllocationBar.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/breadcrumbs.page.js",
+      "to": "components/molecules/Breadcrumbs/Breadcrumbs.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/chart.page.js",
+      "to": "components/organisms/Chart/Chart.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/chip.page.js",
+      "to": "components/atoms/Chip/Chip.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/context-menu.page.js",
+      "to": "components/molecules/ContextMenu/ContextMenu.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/datepicker.page.js",
+      "to": "components/molecules/DatePicker/DatePicker.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/divider.page.js",
+      "to": "components/atoms/Divider/Divider.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/docs-split.js",
+      "to": "docs-kit/docs-split.js",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "scripts/drawer.page.js",
+      "to": "components/organisms/Drawer/Drawer.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/dropdown-list.page.js",
+      "to": "components/molecules/DropdownList/DropdownList.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-actions-overflow.js",
+      "to": "utils/ds-actions-overflow.js",
+      "why": "раздел 5, utils"
+    },
+    {
+      "from": "scripts/ds-alert.js",
+      "to": "components/molecules/Alert/Alert.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-allocationbar.js",
+      "to": "components/organisms/AllocationBar/AllocationBar.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-breadcrumbs.js",
+      "to": "components/molecules/Breadcrumbs/Breadcrumbs.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-buttongroup.js",
+      "to": "components/molecules/ButtonGroup/ButtonGroup.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-chart.js",
+      "to": "components/organisms/Chart/Chart.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-check.mjs",
+      "to": "tools/ds-check.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-chip.js",
+      "to": "components/atoms/Chip/Chip.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-copy.js",
+      "to": "utils/ds-copy.js",
+      "why": "раздел 5, utils"
+    },
+    {
+      "from": "scripts/ds-datepicker.js",
+      "to": "components/molecules/DatePicker/DatePicker.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-drawer.js",
+      "to": "components/organisms/Drawer/Drawer.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-dropdownlist.js",
+      "to": "components/molecules/DropdownList/DropdownList.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-float.js",
+      "to": "utils/ds-float.js",
+      "why": "раздел 5, utils"
+    },
+    {
+      "from": "scripts/ds-home.mjs",
+      "to": "tools/ds-home.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-icon.mjs",
+      "to": "tools/ds-icon.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-icons.js",
+      "to": "foundations/Icons/Icons.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-illustrations.js",
+      "to": "foundations/Illustrations/Illustrations.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-include.js",
+      "to": "utils/ds-include.js",
+      "why": "раздел 5, utils"
+    },
+    {
+      "from": "scripts/ds-input.js",
+      "to": "components/molecules/Inputs/Inputs.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-kanban.js",
+      "to": "components/organisms/Kanban/Kanban.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-lint-cli.mjs",
+      "to": "tools/ds-lint-cli.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-lint.js",
+      "to": "tools/ds-lint.js",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-lint.md",
+      "to": "tools/ds-lint.md",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/ds-menu.js",
+      "to": "components/molecules/ContextMenu/ContextMenu.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-modal.js",
+      "to": "components/organisms/Modal/Modal.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-nav-panel.js",
+      "to": "components/organisms/NavPanel/NavPanel.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-nav.js",
+      "to": "docs-kit/ds-nav.js",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "scripts/ds-notify.js",
+      "to": "utils/ds-notify.js",
+      "why": "раздел 5, utils"
+    },
+    {
+      "from": "scripts/ds-pagination.js",
+      "to": "components/molecules/Pagination/Pagination.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-popover.js",
+      "to": "components/organisms/Popover/Popover.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-product-row.js",
+      "to": "components/organisms/ProductRow/ProductRow.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-readonlyfield.js",
+      "to": "components/molecules/ReadOnlyField/ReadOnlyField.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-riskmetric.js",
+      "to": "components/organisms/RiskMetric/RiskMetric.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-scroll.js",
+      "to": "foundations/Layout/Layout.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-splitter.js",
+      "to": "components/molecules/Splitter/Splitter.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-table-filter.js",
+      "to": "components/organisms/TableFilter/TableFilter.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-table-settings.js",
+      "to": "components/organisms/Table/TableSettings.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-table.js",
+      "to": "components/organisms/Table/Table.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-tabs.js",
+      "to": "components/molecules/Tab/Tab.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ds-tile.js",
+      "to": "components/organisms/Tile/Tile.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds-toc.js",
+      "to": "docs-kit/ds-toc.js",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "scripts/ds-tooltip.js",
+      "to": "components/molecules/Tooltip/Tooltip.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/ds.js",
+      "to": "ds.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/ibp-home.js",
+      "to": "patterns/HomeRoles/ibp-home.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/icons-data.js",
+      "to": "foundations/Icons/icons-data.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/image-slot.js",
+      "to": "docs-kit/image-slot.js",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "scripts/input-amount-range.page.js",
+      "to": "components/molecules/Inputs/InputAmountRange/InputAmountRange.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/input-autocomplete.page.js",
+      "to": "components/molecules/Inputs/InputAutocomplete/InputAutocomplete.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/input-date-range.page.js",
+      "to": "components/molecules/Inputs/InputDateRange/InputDateRange.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/input-date.page.js",
+      "to": "components/molecules/Inputs/InputDate/InputDate.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/input-kit.js",
+      "to": "components/molecules/Inputs/InputKit.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/input-text.page.js",
+      "to": "components/molecules/Inputs/InputText/InputText.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/kanban.page.js",
+      "to": "components/organisms/Kanban/Kanban.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/kit-link.mjs",
+      "to": "tools/kit-link.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/label-helper.page.js",
+      "to": "components/atoms/LabelHelper/LabelHelper.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/layout.page.js",
+      "to": "foundations/Layout/Layout.page.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/modal.page.js",
+      "to": "components/organisms/Modal/Modal.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/nav-panel.page.js",
+      "to": "components/organisms/NavPanel/NavPanel.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/nav-tile.page.js",
+      "to": "components/molecules/NavTile/NavTile.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/page-header.page.js",
+      "to": "components/organisms/PageHeader/PageHeader.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/pagination.page.js",
+      "to": "components/molecules/Pagination/Pagination.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/pg-kit.js",
+      "to": "docs-kit/pg-kit.js",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "scripts/popover.page.js",
+      "to": "components/organisms/Popover/Popover.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/read-only-field.page.js",
+      "to": "components/molecules/ReadOnlyField/ReadOnlyField.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/riskmetric.page.js",
+      "to": "components/organisms/RiskMetric/RiskMetric.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/segment-control.page.js",
+      "to": "components/molecules/SegmentControl/SegmentControl.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/spec-audit.mjs",
+      "to": "tools/spec-audit.mjs",
+      "why": "раздел 5, tools"
+    },
+    {
+      "from": "scripts/splitter.page.js",
+      "to": "components/molecules/Splitter/Splitter.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/sub-tab.page.js",
+      "to": "components/molecules/SubTab/SubTab.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/tab.page.js",
+      "to": "components/molecules/Tab/Tab.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/table-cell.page.js",
+      "to": "components/organisms/TableCell/TableCell.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/table-filter.page.js",
+      "to": "components/organisms/TableFilter/TableFilter.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/table.page.js",
+      "to": "components/organisms/Table/Table.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/tbl-pin.js",
+      "to": "components/organisms/Table/TablePin.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/tbl-reorder.js",
+      "to": "components/organisms/Table/TableReorder.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/tbl-resize.js",
+      "to": "components/organisms/Table/TableResize.js",
+      "why": "раздел 5"
+    },
+    {
+      "from": "scripts/toast.page.js",
+      "to": "components/molecules/Toast/Toast.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "scripts/tooltip.page.js",
+      "to": "components/molecules/Tooltip/Tooltip.page.js",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Alert.md",
+      "to": "components/molecules/Alert/Alert.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/AllocationBar.md",
+      "to": "components/organisms/AllocationBar/AllocationBar.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Avatar.md",
+      "to": "components/atoms/Avatar/Avatar.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Badge.md",
+      "to": "components/atoms/Badge/Badge.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Breadcrumbs.md",
+      "to": "components/molecules/Breadcrumbs/Breadcrumbs.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/ButtonGroup.md",
+      "to": "components/molecules/ButtonGroup/ButtonGroup.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Buttons.md",
+      "to": "components/atoms/Buttons/Buttons.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Chart.md",
+      "to": "components/organisms/Chart/Chart.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Checkbox.md",
+      "to": "components/atoms/Checkbox/Checkbox.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Chip.md",
+      "to": "components/atoms/Chip/Chip.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Colors.md",
+      "to": "foundations/Colors/Colors.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/ContextMenu.md",
+      "to": "components/molecules/ContextMenu/ContextMenu.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/DatePicker.md",
+      "to": "components/molecules/DatePicker/DatePicker.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Divider.md",
+      "to": "components/atoms/Divider/Divider.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Drawer.md",
+      "to": "components/organisms/Drawer/Drawer.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/DropdownList.md",
+      "to": "components/molecules/DropdownList/DropdownList.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Elevation.md",
+      "to": "foundations/Elevation/Elevation.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/EmptyState.md",
+      "to": "components/molecules/EmptyState/EmptyState.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Entity.md",
+      "to": "components/organisms/Entity/Entity.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/IconButton.md",
+      "to": "components/atoms/IconButton/IconButton.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Icons.md",
+      "to": "foundations/Icons/Icons.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Illustrations.md",
+      "to": "foundations/Illustrations/Illustrations.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/InputAmountRange.md",
+      "to": "components/molecules/Inputs/InputAmountRange/InputAmountRange.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/InputAutocomplete.md",
+      "to": "components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/InputDate.md",
+      "to": "components/molecules/Inputs/InputDate/InputDate.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/InputDateRange.md",
+      "to": "components/molecules/Inputs/InputDateRange/InputDateRange.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/InputText.md",
+      "to": "components/molecules/Inputs/InputText/InputText.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Kanban.md",
+      "to": "components/organisms/Kanban/Kanban.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/LabelHelper.md",
+      "to": "components/atoms/LabelHelper/LabelHelper.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Layout.md",
+      "to": "foundations/Layout/Layout.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Link.md",
+      "to": "components/atoms/Link/Link.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Modal.md",
+      "to": "components/organisms/Modal/Modal.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/NavPanel.md",
+      "to": "components/organisms/NavPanel/NavPanel.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/NavTile.md",
+      "to": "components/molecules/NavTile/NavTile.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/PageHeader.md",
+      "to": "components/organisms/PageHeader/PageHeader.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Pagination.md",
+      "to": "components/molecules/Pagination/Pagination.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Popover.md",
+      "to": "components/organisms/Popover/Popover.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/ProductRow.md",
+      "to": "components/organisms/ProductRow/ProductRow.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/ProgressBar.md",
+      "to": "components/atoms/ProgressBar/ProgressBar.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Radiobutton.md",
+      "to": "components/atoms/Radiobutton/Radiobutton.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Radius.md",
+      "to": "foundations/Radius/Radius.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/ReadOnlyField.md",
+      "to": "components/molecules/ReadOnlyField/ReadOnlyField.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/RiskMetric.md",
+      "to": "components/organisms/RiskMetric/RiskMetric.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/SegmentControl.md",
+      "to": "components/molecules/SegmentControl/SegmentControl.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Skeleton.md",
+      "to": "components/atoms/Skeleton/Skeleton.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/SnackBar.md",
+      "to": "components/organisms/SnackBar/SnackBar.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Spacing.md",
+      "to": "foundations/Spacing/Spacing.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Spinner.md",
+      "to": "components/atoms/Spinner/Spinner.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Splitter.md",
+      "to": "components/molecules/Splitter/Splitter.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/SubTab.md",
+      "to": "components/molecules/SubTab/SubTab.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Switch.md",
+      "to": "components/atoms/Switch/Switch.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Tab.md",
+      "to": "components/molecules/Tab/Tab.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Table.md",
+      "to": "components/organisms/Table/Table.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/TableCell.md",
+      "to": "components/organisms/TableCell/TableCell.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/TableFilter.md",
+      "to": "components/organisms/TableFilter/TableFilter.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Tile.md",
+      "to": "components/organisms/Tile/Tile.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Toast.md",
+      "to": "components/molecules/Toast/Toast.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Tooltip.md",
+      "to": "components/molecules/Tooltip/Tooltip.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "specs/Typography.md",
+      "to": "foundations/Typography/Typography.md",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/alert.css",
+      "to": "components/molecules/Alert/Alert.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/allocation-bar.css",
+      "to": "components/organisms/AllocationBar/AllocationBar.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/avatar.css",
+      "to": "components/atoms/Avatar/Avatar.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/badge.css",
+      "to": "components/atoms/Badge/Badge.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/breadcrumbs.css",
+      "to": "components/molecules/Breadcrumbs/Breadcrumbs.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/button-group.css",
+      "to": "components/molecules/ButtonGroup/ButtonGroup.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/button.css",
+      "to": "components/atoms/Buttons/Buttons.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/chart.css",
+      "to": "components/organisms/Chart/Chart.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/checkbox.css",
+      "to": "components/atoms/Checkbox/Checkbox.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/chip.css",
+      "to": "components/atoms/Chip/Chip.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/colors.css",
+      "to": "foundations/Colors/Colors.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/context-menu.css",
+      "to": "components/molecules/ContextMenu/ContextMenu.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/datepicker.css",
+      "to": "components/molecules/DatePicker/DatePicker.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/divider.css",
+      "to": "components/atoms/Divider/Divider.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/docs-split.css",
+      "to": "docs-kit/docs-split.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/drawer.css",
+      "to": "components/organisms/Drawer/Drawer.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/dropdown-list.css",
+      "to": "components/molecules/DropdownList/DropdownList.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/ds-docs.css",
+      "to": "docs-kit/ds-docs.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/ds-nav.css",
+      "to": "docs-kit/ds-nav.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/ds-toc.css",
+      "to": "docs-kit/ds-toc.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/empty-state.css",
+      "to": "components/molecules/EmptyState/EmptyState.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/entity.css",
+      "to": "components/organisms/Entity/Entity.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/icon-button.css",
+      "to": "components/atoms/IconButton/IconButton.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/illustration.css",
+      "to": "foundations/Illustrations/Illustrations.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/input-pages.css",
+      "to": "docs-kit/input-pages.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/input-range.css",
+      "to": "components/molecules/Inputs/InputRanges.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/input.css",
+      "to": "components/molecules/Inputs/Inputs.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/kanban.css",
+      "to": "components/organisms/Kanban/Kanban.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/label-helper.css",
+      "to": "components/atoms/LabelHelper/LabelHelper.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/layout.css",
+      "to": "foundations/Layout/Layout.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/link.css",
+      "to": "components/atoms/Link/Link.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/modal.css",
+      "to": "components/organisms/Modal/Modal.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/nav-panel.css",
+      "to": "components/organisms/NavPanel/NavPanel.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/nav-tile.css",
+      "to": "components/molecules/NavTile/NavTile.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/page-header.css",
+      "to": "components/organisms/PageHeader/PageHeader.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/pagination.css",
+      "to": "components/molecules/Pagination/Pagination.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/palette.css",
+      "to": "foundations/Colors/Palette.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/pg-kit.css",
+      "to": "docs-kit/pg-kit.css",
+      "why": "раздел 5, docs-kit"
+    },
+    {
+      "from": "styles/popover.css",
+      "to": "components/organisms/Popover/Popover.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/product-row.css",
+      "to": "components/organisms/ProductRow/ProductRow.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/progress-bar.css",
+      "to": "components/atoms/ProgressBar/ProgressBar.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/radio.css",
+      "to": "components/atoms/Radiobutton/Radiobutton.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/radius.css",
+      "to": "foundations/Radius/Radius.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/read-only-field.css",
+      "to": "components/molecules/ReadOnlyField/ReadOnlyField.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/riskmetric.css",
+      "to": "components/organisms/RiskMetric/RiskMetric.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/segment-control.css",
+      "to": "components/molecules/SegmentControl/SegmentControl.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/shadow.css",
+      "to": "foundations/Elevation/Elevation.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/skeleton.css",
+      "to": "components/atoms/Skeleton/Skeleton.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/snackbar.css",
+      "to": "components/organisms/SnackBar/SnackBar.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/spacing.css",
+      "to": "foundations/Spacing/Spacing.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/spinner.css",
+      "to": "components/atoms/Spinner/Spinner.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/splitter.css",
+      "to": "components/molecules/Splitter/Splitter.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/sub-tab.css",
+      "to": "components/molecules/SubTab/SubTab.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/switch.css",
+      "to": "components/atoms/Switch/Switch.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/tab.css",
+      "to": "components/molecules/Tab/Tab.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/table-cell.css",
+      "to": "components/organisms/TableCell/TableCell.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/table-filter.css",
+      "to": "components/organisms/TableFilter/TableFilter.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/table-settings.css",
+      "to": "components/organisms/Table/TableSettings.css",
+      "why": "раздел 5"
+    },
+    {
+      "from": "styles/table.css",
+      "to": "components/organisms/Table/Table.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/tile.css",
+      "to": "components/organisms/Tile/Tile.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/toast.css",
+      "to": "components/molecules/Toast/Toast.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/tooltip.css",
+      "to": "components/molecules/Tooltip/Tooltip.css",
+      "why": "правило раздела 4"
+    },
+    {
+      "from": "styles/typography.css",
+      "to": "foundations/Typography/Typography.css",
+      "why": "правило раздела 4"
+    }
+  ],
+  "copies": [
+    {
+      "from": "pages/atoms/.image-slots.state.json",
+      "to": "components/atoms/Chip/.image-slots.state.json",
+      "why": "Chip подключает image-slot.js, без файла — 404 в консоли; содержимое — {}"
+    }
+  ],
+  "stay": [
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "MAINTAINING.md",
+    "assets/illustrations/background-illustration.svg",
+    "assets/illustrations/booked-deals.svg",
+    "assets/illustrations/calclate-fv.svg",
+    "assets/illustrations/cash-flow.svg",
+    "assets/illustrations/ckp-pipeline.svg",
+    "assets/illustrations/clients.svg",
+    "assets/illustrations/corporate-transactions.svg",
+    "assets/illustrations/current-depo.svg",
+    "assets/illustrations/dcm-pipeline.svg",
+    "assets/illustrations/dcm-potentials.svg",
+    "assets/illustrations/deals.svg",
+    "assets/illustrations/ecm-pipeline.svg",
+    "assets/illustrations/empty-check.svg",
+    "assets/illustrations/empty-folder.svg",
+    "assets/illustrations/empty-loading.svg",
+    "assets/illustrations/error-page-not-found-light.svg",
+    "assets/illustrations/error-page-not-found.svg",
+    "assets/illustrations/error-page-unavailable.svg",
+    "assets/illustrations/error-server-unavailable.svg",
+    "assets/illustrations/important-deals.svg",
+    "assets/illustrations/important-leads.svg",
+    "assets/illustrations/kpki-cal.svg",
+    "assets/illustrations/mna-pipeline.svg",
+    "assets/illustrations/payment-ib.svg",
+    "assets/illustrations/pipeline.svg",
+    "assets/illustrations/possible-deals.svg",
+    "assets/illustrations/possible-leads.svg",
+    "assets/illustrations/potentials-rd.svg",
+    "assets/illustrations/qliksense-reports.svg",
+    "assets/illustrations/registry.svg",
+    "assets/illustrations/reports-1-c.svg",
+    "assets/illustrations/reserve.svg",
+    "assets/illustrations/rwa.svg",
+    "assets/illustrations/sales-company.svg",
+    "assets/illustrations/sales-projects.svg",
+    "assets/illustrations/settings.svg",
+    "assets/illustrations/tasks.svg",
+    "assets/logo.svg",
+    "ds.css",
+    "fixtures/A1.bad.html",
+    "fixtures/A2.bad.html",
+    "fixtures/A4.bad.html",
+    "fixtures/A5.bad.html",
+    "fixtures/A6.bad.html",
+    "fixtures/B1.bad.html",
+    "fixtures/B12.bad.html",
+    "fixtures/B14.bad.html",
+    "fixtures/B2.bad.html",
+    "fixtures/B5.bad.html",
+    "fixtures/C1.bad.html",
+    "fixtures/C2.bad.html",
+    "fixtures/C7.bad.html",
+    "fixtures/F1.bad.html",
+    "fixtures/F2.bad.html",
+    "fixtures/F3.bad.html",
+    "fixtures/F4.bad.html",
+    "fixtures/F5.bad.html",
+    "fixtures/F5@js.bad.html",
+    "fixtures/L1.bad.html",
+    "fixtures/L2.bad.html",
+    "fixtures/R1.bad.html",
+    "fixtures/R2.bad.html",
+    "fixtures/R4.bad.html",
+    "fixtures/R5.bad.html",
+    "fixtures/R6.bad.html",
+    "fixtures/R7.bad.html",
+    "fixtures/R8.bad.html",
+    "fixtures/R9.bad.html",
+    "fixtures/R9@static.bad.html",
+    "fixtures/_base.ok.html",
+    "index.html",
+    "readme.md",
+    "specs/_TEMPLATE.md",
+    "specs/_cheatsheet.md",
+    "specs/_index.md",
+    "specs/_runtime-hooks.md",
+    "templates/local-component/CHANGELOG.md",
+    "templates/local-component/Component.css",
+    "templates/local-component/Component.doc.html",
+    "templates/local-component/Component.html",
+    "templates/local-component/Component.md",
+    "templates/local-component/README.md",
+    "templates/local-component/fixtures.json",
+    "templates/screen/Screen.html"
+  ],
+  "unowned": [],
+  "yamlNotes": [
+    "Chip.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке Chip)",
+    "Elevation.runtime: scripts/ds-float.js → utils/ds-float.js (общий файл, не в папке Elevation)",
+    "Breadcrumbs.runtime: scripts/ds-menu.js → components/molecules/ContextMenu/ContextMenu.js (общий файл, не в папке Breadcrumbs)",
+    "Breadcrumbs.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке Breadcrumbs)",
+    "ButtonGroup.runtime: scripts/ds-menu.js → components/molecules/ContextMenu/ContextMenu.js (общий файл, не в папке ButtonGroup)",
+    "InputAutocomplete.runtime: scripts/ds-dropdownlist.js → components/molecules/DropdownList/DropdownList.js (общий файл, не в папке InputAutocomplete)",
+    "InputDate.runtime: scripts/ds-datepicker.js → components/molecules/DatePicker/DatePicker.js (общий файл, не в папке InputDate)",
+    "InputDateRange.runtime: scripts/ds-datepicker.js → components/molecules/DatePicker/DatePicker.js (общий файл, не в папке InputDateRange)",
+    "ReadOnlyField.runtime: scripts/ds-copy.js → utils/ds-copy.js (общий файл, не в папке ReadOnlyField)",
+    "ReadOnlyField.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке ReadOnlyField)",
+    "SegmentControl.runtime: scripts/ds-tabs.js → components/molecules/Tab/Tab.js (общий файл, не в папке SegmentControl)",
+    "SubTab.runtime: scripts/ds-tabs.js → components/molecules/Tab/Tab.js (общий файл, не в папке SubTab)",
+    "Tab.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке Tab)",
+    "Toast.runtime: scripts/ds-notify.js → utils/ds-notify.js (общий файл, не в папке Toast)",
+    "NavPanel.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке NavPanel)",
+    "PageHeader.runtime: scripts/ds-menu.js → components/molecules/ContextMenu/ContextMenu.js (общий файл, не в папке PageHeader)",
+    "PageHeader.runtime: scripts/ds-actions-overflow.js → utils/ds-actions-overflow.js (общий файл, не в папке PageHeader)",
+    "SnackBar.runtime: scripts/ds-notify.js → utils/ds-notify.js (общий файл, не в папке SnackBar)",
+    "Table.runtime: scripts/ds-tooltip.js → components/molecules/Tooltip/Tooltip.js (общий файл, не в папке Table)",
+    "TableCell.runtime: scripts/ds-table.js → components/organisms/Table/Table.js (общий файл, не в папке TableCell)",
+    "TableCell.runtime: scripts/tbl-resize.js → components/organisms/Table/TableResize.js (общий файл, не в папке TableCell)",
+    "TableCell.runtime: scripts/tbl-reorder.js → components/organisms/Table/TableReorder.js (общий файл, не в папке TableCell)",
+    "TableCell.runtime: scripts/tbl-pin.js → components/organisms/Table/TablePin.js (общий файл, не в папке TableCell)",
+    "TableFilter.runtime: scripts/ds-menu.js → components/molecules/ContextMenu/ContextMenu.js (общий файл, не в папке TableFilter)",
+    "TableFilter.runtime: scripts/ds-modal.js → components/organisms/Modal/Modal.js (общий файл, не в папке TableFilter)"
+  ]
+}
