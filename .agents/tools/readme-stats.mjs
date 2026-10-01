@@ -28,7 +28,12 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project, need } from './project.mjs';
+import { project, need, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
 import { modulesOf } from './module-readme.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -54,7 +59,7 @@ function filesIn(dir, rx) {
 
 /* Число глифов: icons-data.js выполняется в песочнице с заглушкой window. */
 function glyphs(dsAbs) {
-  const file = path.join(dsAbs, 'scripts', 'icons-data.js');
+  const file = DSP.layout(dsAbs).abs(DSP.layout(dsAbs).at.iconsData);
   if (!existsSync(file)) return 0;
   const sandbox = { window: {} };
   sandbox.self = sandbox.window;
@@ -67,7 +72,7 @@ function glyphs(dsAbs) {
 export function countsOf(P) {
   const ds = P.dsAbs;
   return {
-    components: ds ? PAGE_GROUPS.reduce((s, g) => s + filesIn(path.join(ds, 'pages', g), /\.html$/i), 0) : 0,
+    components: ds ? DSP.layout(ds).pages().filter((p) => PAGE_GROUPS.includes(p.category)).length : 0,
     glyphs: ds ? glyphs(ds) : 0,
     illustrations: ds ? filesIn(path.join(ds, 'assets', 'illustrations'), /\.svg$/i) : 0,
     modules: modulesOf(P).length,

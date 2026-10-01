@@ -17,8 +17,11 @@ import { readFile as fsReadFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { importKitTool, projectRoot, projectBoot } from './kit-link.mjs';
+import { layout } from '../tools/ds-paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// раскладка ДС: где стили, рантаймы, страницы и спеки (линтер получает её третьим параметром)
+const L = layout(ROOT);
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.vscode', 'uploads', 'screenshots']);
 
 // хелперы в том же контракте, который ждёт линтер
@@ -31,8 +34,8 @@ const ls = async (dir) => {
 };
 
 // загрузка линтера тем же способом, что в scripts/ds-lint.md
-const src = await readFile('scripts/ds-lint.js');
-const { run } = new Function('readFile', 'ls', src + ';return dsLint;')(readFile, ls);
+const src = await readFile(L.at.linter);
+const { run } = new Function('readFile', 'ls', 'dsLayout', src + ';return dsLint;')(readFile, ls, L);
 
 const args = process.argv.slice(2);
 const parity = args.includes('--parity');

@@ -28,10 +28,17 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { layout } from '../tools/ds-paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const L = layout(ROOT);
+/* Список FILES в ds.js — пути от самого ds.js (он грузит их от своего адреса):
+   данные и рантайм иконок ищутся в нём в той же форме. */
+const ENTRY_DIR = path.posix.dirname(L.at.entryJs);
+const fromEntry = (rel) => path.posix.relative(ENTRY_DIR, rel);
+const DATA_JS = fromEntry(L.at.iconsData), RUNTIME_JS = fromEntry(L.at.iconsRuntime);
 
-const src = await readFile(path.join(ROOT, 'scripts', 'icons-data.js'), 'utf8');
+const src = await readFile(L.abs(L.at.iconsData), 'utf8');
 // формат файла: window.DS_ICONS = {"имя":"<svg …>", …};
 const json = src.slice(src.indexOf('{'), src.lastIndexOf('}') + 1);
 let icons;
@@ -74,8 +81,8 @@ async function selftest() {
   /* кейс, упавший исключением, — FAIL со своей строкой, а не обрыв прогона */
   const guard = async (title, fn) => { try { await fn(); } catch (e) { pass(false, title, 'исключение: ' + (e && e.message || e)); } };
   const dataSrc = src;
-  const runtimeSrc = await readFile(path.join(ROOT, 'scripts', 'ds-icons.js'), 'utf8');
-  const dsSrc = await readFile(path.join(ROOT, 'scripts', 'ds.js'), 'utf8');
+  const runtimeSrc = await readFile(L.abs(L.at.iconsRuntime), 'utf8');
+  const dsSrc = await readFile(L.abs(L.at.entryJs), 'utf8');
 
   /* 1. Копии всех глифов: id не пересекаются, ссылки — в свою копию, снятие суффикса — исходная строка. */
   await guard('1 копии всех глифов', async () => {
@@ -147,12 +154,12 @@ async function selftest() {
   /* 4. Порядок в ds.js: ds-icons.js сразу за icons-data.js и раньше каждого рантайма, который читает DS_ICONS. */
   await guard('4 порядок в ds.js', async () => {
     const list = [...dsSrc.matchAll(/'([\w.-]+\.js)'/g)].map((m) => m[1]);
-    const iData = list.indexOf('icons-data.js'), iRt = list.indexOf('ds-icons.js');
+    const iData = list.indexOf(DATA_JS), iRt = list.indexOf(RUNTIME_JS);
     const readers = [];
     for (const f of list) {
-      if (f === 'icons-data.js' || f === 'ds-icons.js') continue;
+      if (f === DATA_JS || f === RUNTIME_JS) continue;
       let text = '';
-      try { text = await readFile(path.join(ROOT, 'scripts', f), 'utf8'); } catch { continue; }
+      try { text = await readFile(L.abs(path.posix.join(ENTRY_DIR, f)), 'utf8'); } catch { continue; }
       if (/DS_ICONS/.test(text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, ''))) readers.push(f);
     }
     const early = readers.filter((f) => list.indexOf(f) < iRt);

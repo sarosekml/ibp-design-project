@@ -71,7 +71,12 @@ import os from 'node:os';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { project, need } from './project.mjs';
+import { project, need, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
 import { includesOf } from './assemble.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -274,15 +279,13 @@ function pageCorpus(pageAbs, appAbs) {
 /* Текст ДС для классов состояния (.is-open ставит рантайм ДС). Словарь глифов не читается. */
 function dsCorpus(P) {
   if (!P.dsAbs) return '';
+  const L = DSP.layout(P.dsAbs);
+  /* стили, затем скрипты ДС; линтер — в корпусе, как до RE0002 (у стенда его нет) */
+  const scripts = [...L.scripts(), ...(existsSync(L.abs(L.at.linter)) ? [L.at.linter] : [])];
   let text = '';
-  for (const sub of ['styles', 'scripts']) {
-    const dir = path.join(P.dsAbs, sub);
-    let list = [];
-    try { list = readdirSync(dir); } catch { continue; }
-    for (const f of list.sort()) {
-      if (!/\.(css|js)$/.test(f) || f === 'icons-data.js') continue;
-      text += '\n' + readFileSync(path.join(dir, f), 'utf8');
-    }
+  for (const f of [...L.styles().sort(), ...scripts.sort()]) {
+    if (f === L.at.iconsData) continue;
+    text += '\n' + readFileSync(L.abs(f), 'utf8');
   }
   return text;
 }

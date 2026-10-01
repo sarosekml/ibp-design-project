@@ -20,8 +20,10 @@
 import { readFile as fsReadFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { layout } from '../tools/ds-paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const L = layout(ROOT);
 const check = process.argv.includes('--check');
 
 // хелперы в том же контракте, что у ds-lint-cli.mjs: пути от корня ДС
@@ -29,8 +31,8 @@ const readFile = (p) => fsReadFile(path.join(ROOT, p), 'utf8');
 const ls = async (dir) => (await readdir(path.join(ROOT, dir || '.'), { withFileTypes: true }))
   .map((e) => (e.isDirectory() ? e.name + '/' : e.name));
 
-const src = await readFile('scripts/ds-lint.js');
-const { homeMeta, homeApply } = new Function('readFile', 'ls', src + ';return dsLint;')(readFile, ls);
+const src = await readFile(L.at.linter);
+const { homeMeta, homeApply } = new Function('readFile', 'ls', 'dsLayout', src + ';return dsLint;')(readFile, ls, L);
 
 const meta = await homeMeta();
 if (!meta.ver) {
@@ -38,7 +40,7 @@ if (!meta.ver) {
   process.exit(1);
 }
 
-const html = await readFile('index.html');
+const html = await readFile(L.at.home);
 const { html: next, diffs } = homeApply(html, meta);
 const lost = diffs.filter(([, was]) => was === null);
 if (lost.length) {
@@ -54,4 +56,4 @@ if (check) {
   console.log('Запусти node scripts/ds-home.mjs без --check.');
   process.exit(1);
 }
-await writeFile(path.join(ROOT, 'index.html'), next, 'utf8');
+await writeFile(L.abs(L.at.home), next, 'utf8');

@@ -44,7 +44,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { logRun, codesFrom, failsFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
-import { need } from './project.mjs';
+import { need, dsPaths } from './project.mjs';
 
 /* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
    (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
@@ -52,22 +52,28 @@ import { need } from './project.mjs';
 const PRJ = need('layout-check', path.dirname(fileURLToPath(import.meta.url)));
 const ROOT = PRJ.root;
 const DS = PRJ.dsAbs;
+/* Где в ДС токены, стили и рантаймы — у модуля путей ДС (задача RE0002), а
+   не литералами папок: после переезда раскладки литерал молча дал бы пустой
+   набор, и геометрия считалась бы по умолчаниям. */
+const L = (await dsPaths()).layout(DS);
+const isDsScript = (abs) => {
+  if (!abs.startsWith(DS + path.sep)) return false;
+  const k = L.kindOf(path.relative(DS, abs).split(path.sep).join('/'));
+  return !!k && (k.kind === 'script' || k.kind === 'tool');
+};
 
 /* ---------------- токены ДС (источник истины — styles/*.css) ---------------- */
 
-const TOKEN_FILES = [
-  'styles/spacing.css',
-  'styles/layout.css',
-  'styles/tile.css',
-  'styles/nav-panel.css',
-];
+const TOKEN_FILES = ['Spacing', 'Layout', 'Tile', 'NavPanel'].map((name) => {
+  const css = L.cssOf(name);
+  if (css.length !== 1) throw new Error('layout-check: у ' + name + ' в спеке ДС не один файл стилей (css: ' + (css.join(', ') || '—') + ') — токены сенсора взять неоткуда');
+  return css[0];
+});
 
 function loadTokens() {
   const raw = {};
   for (const f of TOKEN_FILES) {
-    const p = path.join(DS, f);
-    if (!existsSync(p)) continue;
-    const text = readFileSync(p, 'utf8');
+    const text = readFileSync(L.abs(f), 'utf8');
     const re = /--([a-z0-9][a-z0-9-]*)\s*:\s*([^;]+);/g;
     let m;
     while ((m = re.exec(text))) {
@@ -1122,11 +1128,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      рантайм страницы, употреблён по-настоящему. Токены с ${} — куски шаблона,
      не классы. */
   const dsClasses = new Set();
-  const stylesDir = path.join(DS, 'styles');
-  if (existsSync(stylesDir)) {
-    for (const f of readdirSync(stylesDir).filter((n) => n.endsWith('.css'))) {
-      for (const m of readFileSync(path.join(stylesDir, f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
-    }
+  for (const f of L.styles()) {
+    for (const m of readFileSync(L.abs(f), 'utf8').matchAll(/\.(-?[a-zA-Z][\w-]*)/g)) dsClasses.add(m[1]);
   }
   /* свои стили экрана — <style> и подключённые файлы тайлов (задача 0008):
      класс из файла, который страница не подключила, по-прежнему выдуман */
@@ -1137,10 +1140,10 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      ищет `ds-nav-panel.js`; без этого шага Б4 объявил бы дефектом рабочую
      разметку на трёх экранах сразу. Набор паттернов зеркалит `collectHooks`
      линтера — разъедутся, и два правила заспорят об одном классе. */
-  const scriptsDir = path.join(DS, 'scripts');
-  if (existsSync(scriptsDir)) {
-    for (const f of readdirSync(scriptsDir).filter((n) => n.endsWith('.js'))) {
-      const src = readFileSync(path.join(scriptsDir, f), 'utf8');
+  // линтер — в корпусе, как до RE0002 (его хуки разметки — тоже классы ДС)
+  {
+    for (const f of [...L.scripts(), L.at.linter]) {
+      const src = readFileSync(L.abs(f), 'utf8');
       for (const m of src.matchAll(/closest\(\s*['"]\.([\w-]+)/g)) dsClasses.add(m[1]);
       for (const m of src.matchAll(/querySelector(?:All)?\(\s*['"][^'"]*\.([\w-]+)/g)) dsClasses.add(m[1]);
       for (const m of src.matchAll(/classList\.(?:add|remove|toggle|contains)\(\s*['"]([\w-]+)/g)) dsClasses.add(m[1]);
@@ -1328,7 +1331,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       const href = m[1];
       if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || !isLiteralAttr(href)) continue;
       const abs = path.resolve(pageDir, href);
-      if (!existsSync(abs) || abs.startsWith(path.join(DS, 'scripts'))) continue;
+      if (!existsSync(abs) || isDsScript(abs)) continue;
       parts.push(readFileSync(abs, 'utf8'));
     }
     const allSrc = parts.join('\n');
@@ -1655,7 +1658,7 @@ function checkOne(pageArg, width) {
   }
 
   /* иконки из specs/Icons.md (формат: строка имён через ·) */
-  const iconsText = readFileSync(path.join(DS, 'specs', 'Icons.md'), 'utf8');
+  const iconsText = readFileSync(L.abs(L.specOf('Icons')), 'utf8');
   const iconsSection = iconsText.slice(iconsText.indexOf('## Все глифы'));
   const icons = new Set(iconsSection.split('·').map((s) => s.trim()).filter(Boolean));
 

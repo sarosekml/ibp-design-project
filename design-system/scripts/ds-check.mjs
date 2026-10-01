@@ -24,19 +24,21 @@
 
    Код выхода: 1 если хоть один шаг дал FAIL/BLOCKER, иначе 0.
    ============================================================ */
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { kitFile, projectRoot } from './kit-link.mjs';
+import { layout } from '../tools/ds-paths.mjs';
 
 const run = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const NODE = process.execPath;
-const DS_LINT = path.join(ROOT, 'scripts', 'ds-lint-cli.mjs');
-const SPEC_AUDIT = path.join(ROOT, 'scripts', 'spec-audit.mjs');
-const DS_ICON = path.join(ROOT, 'scripts', 'ds-icon.mjs');
+const L = layout(ROOT);
+const DS_LINT = L.abs(L.at.lintCli);
+const SPEC_AUDIT = L.abs(L.at.specAudit);
+const DS_ICON = L.abs(L.at.iconTool);
 const DOCS_SPLIT = kitFile('skills/docs-split/tooling/docs-split.mjs');
 
 const argv = process.argv.slice(2);
@@ -47,15 +49,6 @@ if (!page && !all) {
   process.exit(2);
 }
 
-async function pagesOf(dir) {
-  const out = [];
-  for (const e of await readdir(dir, { withFileTypes: true })) {
-    const p = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...await pagesOf(p));
-    else if (e.name.endsWith('.html')) out.push(path.relative(ROOT, p).split(path.sep).join('/'));
-  }
-  return out.sort();
-}
 
 const steps = [];
 if (all) {
@@ -63,7 +56,7 @@ if (all) {
   steps.push(['линтер --parity', [DS_LINT, '--parity']]);
   steps.push(['spec-audit', [SPEC_AUDIT]]);
   steps.push(['иконки --selftest', [DS_ICON, '--selftest']]);
-  const pages = await pagesOf(path.join(ROOT, 'pages'));
+  const pages = L.pages().map((p) => p.rel).sort();
   steps.push(['линтер, страницы — ' + pages.length, [DS_LINT, ...pages]]);
 } else {
   const pageAbs = path.resolve(ROOT, page);

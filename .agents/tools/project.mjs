@@ -19,7 +19,7 @@
    ============================================================ */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const MANIFEST_FILE = 'project.json';
@@ -181,4 +181,23 @@ export function need(tool, from = HERE) {
     process.exit(2);
   }
   return p;
+}
+
+/* Модуль путей ДС (задача RE0002) — единственное место, которое знает
+   раскладку дизайн-системы: где стили, рантаймы, страницы документации и
+   спеки. Оснастка берёт его из ДС этого проекта, а раскладку получает для
+   любого корня ДС, в том числе для стенда селфтеста:
+   `(await dsPaths()).layout(P.dsAbs)`. Место модуля внутри ДС записано здесь
+   и только здесь. Нет модуля — громкая ошибка: без него проверки ДС не знают,
+   что проверять, а молчать им нельзя. */
+export const DS_PATHS_MODULE = 'tools/ds-paths.mjs';
+let dsPathsLoaded = null;
+export async function dsPaths(from = HERE) {
+  if (dsPathsLoaded) return dsPathsLoaded;
+  const p = project(from);
+  if (p.error || !p.dsAbs) throw new Error('модуль путей ДС: ' + (p.error || 'манифест не называет ДС (designSystem)'));
+  const f = path.join(p.dsAbs, DS_PATHS_MODULE);
+  if (!existsSync(f)) throw new Error('модуль путей ДС: нет ' + p.rel(f) + ' — по адресу ДС из манифеста не та ДС или в ней нет модуля путей');
+  dsPathsLoaded = await import(pathToFileURL(f).href);
+  return dsPathsLoaded;
 }

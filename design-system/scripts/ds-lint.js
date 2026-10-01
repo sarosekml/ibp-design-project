@@ -16,11 +16,23 @@
      log(await run([], { global: false, parity: true }));
    ============================================================ */
 
+/* ---------- раскладка ДС ----------
+   Где лежат стили, рантаймы, страницы и спеки, линтер узнаёт у модуля путей
+   (tools/ds-paths.mjs): обёртка передаёт его раскладку третьим параметром,
+   `dsLayout`. Префиксов папок здесь нет — переезд раскладки (задача RE0002)
+   не должен молча выключить правила. Нет раскладки — отказ, а не пустые списки. */
+if (typeof dsLayout === 'undefined' || !dsLayout || typeof dsLayout.kindOf !== 'function') {
+  throw new Error('ds-lint: нет раскладки ДС (параметр dsLayout) — запускать через ds-lint-cli.mjs');
+}
+// страница документации ДС (не экран и не фикстура) и её категория
+const isDsPage = (p) => { const k = dsLayout.kindOf(p); return !!k && k.kind === 'page'; };
+const categoryOf = (p) => (isDsPage(p) ? dsLayout.kindOf(p).category : null);
+
 /* ---------- белые списки (каждое подавление — с причиной) ---------- */
-// контракт разделов применяется только к компонентным страницам
-const CONTRACT_DIRS = ['pages/atoms/', 'pages/molecules/', 'pages/organisms/'];
-// реестры (index/ds-nav/спеки) ведутся для этих папок
-const REGISTRY_DIRS = ['pages/foundations/', 'pages/atoms/', 'pages/molecules/', 'pages/organisms/'];
+// контракт разделов применяется только к компонентным страницам (категории страниц ДС)
+const CONTRACT_CATS = ['atoms', 'molecules', 'organisms'];
+// реестры (index/ds-nav/спеки) ведутся для этих категорий
+const REGISTRY_CATS = ['foundations', 'atoms', 'molecules', 'organisms'];
 // у страниц-экранов и rnd свои разделы и своя роль
 const SKIP_ALL = [/^index\.html$/, /^templates\//];
 // CSS документации и экранов — намеренно вне ds.css (не компоненты ДС)
@@ -192,7 +204,16 @@ async function tree() {
 async function loadProject() {
   const files = await tree();
   const list = [...files];
-  const styleFiles = list.filter((f) => /^styles\/.+\.css$/.test(f));
+  /* Виды файлов — по спискам модуля путей: они бросают, если раскладки нет,
+     и пустым списком «не проверялось» не притворится «чисто». Порядок — дерева. */
+  const inSet = (xs) => { const s = new Set(xs); return (f) => s.has(f); };
+  const lay = {
+    style: inSet(dsLayout.styles()), script: inSet(dsLayout.scripts()), runtime: inSet(dsLayout.runtimes()),
+    pageScript: inSet(dsLayout.pageScripts()), spec: inSet(dsLayout.specs()),
+  };
+  // сценарий страницы по имени из её <script src> (имена файлов ДС уникальны)
+  const scriptByName = new Map(dsLayout.scripts().map((f) => [base(f), f]));
+  const styleFiles = list.filter(lay.style);
 
   // токены: все определения --x в styles/*
   const tokens = new Set();
@@ -213,7 +234,7 @@ async function loadProject() {
   const cssClasses = new Set(classOwners.keys());
 
   const [index, nav, specIndex, cheat, dsCss, dsRules] = await Promise.all(
-    ['index.html', 'scripts/ds-nav.js', 'specs/_index.md', 'specs/_cheatsheet.md', 'ds.css', 'MAINTAINING.md'].map((f) => readFile(f))
+    [dsLayout.at.home, dsLayout.at.nav, dsLayout.at.specIndex, dsLayout.at.cheatsheet, dsLayout.at.bundleCss, 'MAINTAINING.md'].map((f) => readFile(f))
   );
 
   // канонический порядок h2 — из MAINTAINING.md, не дублируем
@@ -224,7 +245,7 @@ async function loadProject() {
       .map((s) => s.split(/\s+[—(]|:/)[0].trim())
       .filter((s) => s && !/^Шапка/.test(s));
   }
-  return { files, list, styleFiles, tokens, owner, cssClasses, index, nav, specIndex, cheat, dsCss, canon };
+  return { files, list, lay, scriptByName, styleFiles, tokens, owner, cssClasses, index, nav, specIndex, cheat, dsCss, canon };
 }
 
 /* ---------- шапка главной ДС: версия, дата, счётчик компонентов ----------
@@ -269,8 +290,8 @@ async function homeMeta() {
     version = Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0');
   }
   const date = keys.length ? days.get(keys[keys.length - 1]).date : null;
-  const counts = await Promise.all(HOME_GROUPS.map(([dir]) =>
-    ls('pages/' + dir).then((xs) => xs.filter((x) => /\.html$/.test(String(x))).length).catch(() => 0)));
+  const pages = dsLayout.pages();
+  const counts = HOME_GROUPS.map(([cat]) => pages.filter((p) => p.category === cat).length);
   const total = counts.reduce((a, b) => a + b, 0);
   const comps = [plural(total, ['компонент', 'компонента', 'компонентов'])]
     .concat(HOME_GROUPS.map(([, forms], i) => plural(counts[i], forms))).join(' · ');
@@ -509,7 +530,8 @@ async function globalChecks(P, out) {
      подключения рантайма — и чинить её на экране бесполезно (инцидент .tip-anchor: якорь
      тултипа отключал усечение у ячейки таблицы, 04.09.2026). */
   {
-    const runtimes = P.list.filter((f) => /^scripts\/(ds-|tbl-|input-kit)/.test(f) && f.endsWith('.js'));
+    // линтер — в выборке, как до RE0002 (охват правил переезд не сужает)
+    const runtimes = P.list.filter((f) => P.lay.runtime(f) || f === dsLayout.at.linter);
     const srcs = await Promise.all(runtimes.map((f) => readFile(f).catch(() => '')));
     const cssAll = (await Promise.all(P.styleFiles.map((f) => readFile(f).catch(() => '')))).join('\n');
     const cssRules = [...cssAll.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
@@ -552,7 +574,7 @@ async function globalChecks(P, out) {
   {
     const GEO = /\.style\.(transform|left|right|top|bottom)\s*=[^=]/;
     const GEO_SET = /\.style\.setProperty\(\s*['"](transform|left|right|top|bottom)['"]/;
-    const scripts = P.list.filter((f) => /^scripts\/.+\.js$/.test(f) && !/ds-lint/.test(base(f)));
+    const scripts = P.list.filter((f) => P.lay.script(f) && !/ds-lint/.test(base(f)));
     const srcs = await Promise.all(scripts.map((f) => P.src.get(f) || readFile(f).catch(() => '')));
     for (let i = 0; i < scripts.length; i++) {
       const js = srcs[i], name = base(scripts[i]);
@@ -598,7 +620,7 @@ async function globalChecks(P, out) {
       for (const c of attr.split(/\s+/)) {
         const own = P.owner.get(c);
         if (own0.has(c)) continue;
-        if (own && /^styles\//.test(own) && !linked.has(base(own))) {
+        if (own && P.lay.style(own) && !linked.has(base(own))) {
           if (!need.has(own)) need.set(own, c);
         }
       }
@@ -706,7 +728,7 @@ async function runtimeApiCheck(P, out) {
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 
-  const jsFiles = P.list.filter((f) => /^scripts\/.+\.js$/.test(f) && !/ds-lint/.test(base(f)));
+  const jsFiles = P.list.filter((f) => P.lay.script(f) && !/ds-lint/.test(base(f)));
   const jsSrc = await Promise.all(jsFiles.map((f) => readFile(f).catch(() => '')));
 
   const exp = new Map();                       // DSX -> { file, keys: Set }
@@ -775,10 +797,10 @@ function fenceClasses(md) {
   return uniq(out.filter(Boolean));
 }
 async function parityChecks(P, out) {
-  const specs = P.list.filter((f) => /^specs\/[^/]+\.md$/.test(f) && !/_TEMPLATE/.test(f));
+  const specs = P.list.filter((f) => P.lay.spec(f) && !/_TEMPLATE/.test(f));
   const screens = P.list.filter((f) => /^pages\/screens\/.+\.html$/.test(f));
-  const pageJs = P.list.filter((f) => /^scripts\/.+\.page\.js$/.test(f));
-  const runtimeJs = P.list.filter((f) => /^scripts\/.+\.js$/.test(f) && !/icons-data|ds-lint/.test(f));
+  const pageJs = P.list.filter(P.lay.pageScript);
+  const runtimeJs = P.list.filter((f) => P.lay.script(f) && !/icons-data|ds-lint/.test(f));
   const srcs = await Promise.all([...specs, ...screens, ...runtimeJs].map((f) => readFile(f).catch(() => '')));
   const src = new Map([...specs, ...screens, ...runtimeJs].map((f, i) => [f, srcs[i]]));
   const hooks = new Set();
@@ -910,8 +932,8 @@ async function pageChecks(p, P, opts, out) {
   const html = P.src.get(p);
   const dir = p.split('/').slice(0, -1).join('/');
   const name = base(p).replace(/\.html$/, '');
-  const inContract = CONTRACT_DIRS.some((d) => p.startsWith(d));
-  const inRegistry = REGISTRY_DIRS.some((d) => p.startsWith(d));
+  const inContract = CONTRACT_CATS.includes(categoryOf(p));
+  const inRegistry = REGISTRY_CATS.includes(categoryOf(p));
   /* Экран — это и `pages/screens/`, и любой файл ВНЕ дерева ДС: экраны живут
      в `Projects/**` и приходят сюда путём `../Projects/test/Имя.html`. Без
      второго условия к экрану применялся контракт docs-страницы, и любой экран
@@ -973,7 +995,7 @@ async function pageChecks(p, P, opts, out) {
   if (!hasBundle) {
     const local = new Set(all(/\.(-?[a-zA-Z][a-zA-Z0-9_-]*)/g, styleSrc.replace(/\{[^{}]*\}/g, '{}')));
     const pageJs = uniq(scripts.map(base).filter((f) => /\.page\.js$/.test(f)));
-    const jsSrc = (await Promise.all(pageJs.map((f) => readFile('scripts/' + f).catch(() => '')))).join('\n');
+    const jsSrc = (await Promise.all(pageJs.map((f) => (P.scriptByName.has(f) ? readFile(P.scriptByName.get(f)).catch(() => '') : '')))).join('\n');
     const used = uniq([...all(RX.cls, markup), ...all(RX.cls, jsSrc)]
       .join(' ').split(/\s+/).filter((c) => c && !/[${}]/.test(c)));
     const missing = new Map();
@@ -1184,7 +1206,7 @@ async function pageChecks(p, P, opts, out) {
      `<script src>`, а не из имени страницы — транслитерация неверна (Л41). */
   {
     const pageJsNames = uniq(scripts.map(base).filter((f) => /\.page\.js$/.test(f)));
-    const pageJsSrc = (await Promise.all(pageJsNames.map((f) => readFile('scripts/' + f).catch(() => '')))).join('\n');
+    const pageJsSrc = (await Promise.all(pageJsNames.map((f) => (P.scriptByName.has(f) ? readFile(P.scriptByName.get(f)).catch(() => '') : '')))).join('\n');
     const noSize = [];
     for (const m of (html + '\n' + pageJsSrc).matchAll(/class="([^"]*)"/g)) {
       const tokens = m[1].split(/\s+/).filter(Boolean);
@@ -1366,7 +1388,7 @@ async function pageChecks(p, P, opts, out) {
   // A8 — страница в pages без window.__DS_ROOT: ds-nav.js подставит пустой префикс,
   // и ВСЕ ссылки левой навигации плюс логотип окажутся битыми (Layout.html, 20.08.2026):
   // страница выглядит нормально, навигация не работает.
-  if (/^pages\//.test(p) && /ds-nav\.js/.test(html) && !/__DS_ROOT/.test(html))
+  if (isDsPage(p) && /ds-nav\.js/.test(html) && !/__DS_ROOT/.test(html))
     say('BLOCKER', 'A8', "нет window.__DS_ROOT — ds-nav.js даст битые ссылки и логотип; для страниц в pages/<категория>/ нужно '../../'");
   /* F5 — «анатомия компонента взята не целиком»: реестр контрактов, а не код на каждый
      инцидент — новый компонент с обязательными «всегда обязаны присутствовать в DOM»
@@ -1436,7 +1458,7 @@ async function pageChecks(p, P, opts, out) {
     if (!P.index.includes('"' + p + '"')) say('BLOCKER', 'D1', 'нет карточки в index.html (href="' + p + '")');
     if (!P.nav.includes("'" + p + "'")) say('BLOCKER', 'D2', 'нет пункта в scripts/ds-nav.js');
     /* D5 — спека и манифест */
-    const spec = 'specs/' + name + '.md';
+    const spec = dsLayout.specOf(name);
     if (!P.files.has(spec)) say('BLOCKER', 'D5', 'нет спеки ' + spec);
     else {
       if (!P.specIndex.includes(spec)) say('BLOCKER', 'D5', 'нет строки в specs/_index.md');
@@ -1446,11 +1468,11 @@ async function pageChecks(p, P, opts, out) {
         const blockM = P.cheat.match(new RegExp('\\n##\\s*' + name + '\\b[\\s\\S]*?(?=\\n## |$)', 'i'));
         const block = blockM ? blockM[0] : '';
         if (block && !/\*\*Инварианты:\*\*/.test(block)) say('WARN', 'D8', 'блок «## ' + name + '» в чит-шите без «**Инварианты:**»');
-        if (block && !new RegExp('specs/' + name + '\\.md').test(block)) say('WARN', 'D8', 'блок «## ' + name + '» в чит-шите без отсылки specs/' + name + '.md');
+        if (block && !new RegExp(dsLayout.specRx(name)).test(block)) say('WARN', 'D8', 'блок «## ' + name + '» в чит-шите без отсылки ' + spec);
       }
       /* A5 — css компонента из спеки обязан быть подключён страницей */
       const sCss = ((P.src.get(spec) || '').match(/^css:\s*`?([^`\n·]+)/m) || [])[1];
-      if (sCss && /^styles\//.test(sCss.trim())) {
+      if (sCss && (dsLayout.kindOf(sCss.trim().split(/[\s,]+/)[0]) || {}).kind === 'style') {
         const need = base(sCss.trim());
         if (!all(RX.link, html).some((href) => base(href) === need)) say('BLOCKER', 'A5', 'спека объявляет css: ' + sCss.trim() + ', но страница его не линкует');
       }
@@ -1469,7 +1491,7 @@ async function pageChecks(p, P, opts, out) {
      компонента бессмысленно (так было с концептом Kanban, удалён 13.09.2026).
      Сверяем с полем `page:` спеки. */
   if (!inRegistry) {
-    const s = P.src.get('specs/' + name + '.md');
+    const s = P.src.get(dsLayout.specOf(name));
     const declared = s ? ((s.match(/^page:\s*(\S+)/m) || [])[1] || '').trim() : '';
     if (s && declared === p) {
       const sv = (s.match(/^version:\s*"?([^"\n]+)/m) || [])[1];
@@ -1487,7 +1509,7 @@ async function run(targets, opts) {
   const pages = (targets && targets.length ? targets : []).filter((p) => !SKIP_ALL.some((rx) => rx.test(p)));
   const wanted = [...pages];
   for (const p of pages) {
-    const spec = 'specs/' + base(p).replace(/\.html$/, '') + '.md';
+    const spec = dsLayout.specOf(base(p).replace(/\.html$/, ''));
     if (P.files.has(spec)) wanted.push(spec);
   }
   const loaded = await Promise.all(wanted.map((f) => readFile(f).catch(() => '')));

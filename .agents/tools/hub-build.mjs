@@ -42,7 +42,12 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-import { project, need, findApps } from './project.mjs';
+import { project, need, findApps, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GEN = 'hub-build.mjs';
@@ -125,7 +130,7 @@ export function render(P, entries) {
     "     root   — каталог приложения от корня; у группы 'ds' — null. Всё внутри",
     '              него — часть записи: экраны с меню обязаны вести строкой',
     '              пользователя в футере на хаб;',
-    '     icon   — имя глифа из ' + P.ds + '/specs/Icons.md. */',
+    '     icon   — имя глифа из ' + P.ds + '/' + DSP.layout().specOf('Icons') + '. */',
   ].join('\n');
   const body = entries.map((e) => '  {\n' + ['id', 'group', 'title', 'desc', 'href', 'root', 'icon']
     .map((k) => '    ' + k + ': ' + js(e[k])).join(',\n') + '\n  }').join(',\n');

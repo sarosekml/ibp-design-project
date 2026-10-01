@@ -34,41 +34,23 @@
    тултип» (это корневой дефект CM, который чинили 05.09) или если проход 8
    нашёл расхождение манифеста с каталогом; иначе 0.
    ============================================================ */
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { importKitTool, projectRoot } from './kit-link.mjs';
+import { layout } from '../tools/ds-paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-async function list(dir, ext) {
-  try {
-    const entries = await readdir(path.join(ROOT, dir), { withFileTypes: true });
-    return entries
-      .filter((e) => e.isFile() && (!ext || e.name.endsWith(ext)))
-      .map((e) => path.join(ROOT, dir, e.name));
-  } catch {
-    return [];
-  }
-}
 const read = (p) => readFile(p, 'utf8');
 
-/* Рекурсивный обход дерева (страницы лежат в подпапках pages/<тип>/). */
-async function listRec(dir, ext) {
-  const out = [];
-  let entries;
-  try { entries = await readdir(path.join(ROOT, dir), { withFileTypes: true }); } catch { return out; }
-  for (const e of entries) {
-    const rel = dir + '/' + e.name;
-    if (e.isDirectory()) out.push(...(await listRec(rel, ext)));
-    else if (!ext || e.name.endsWith(ext)) out.push(path.join(ROOT, rel));
-  }
-  return out;
-}
-
-const stylesFiles = await list('styles', '.css');
-const scriptsFiles = await list('scripts', '.js');
-const specsFiles = await list('specs', '.md');
+/* Файлы ДС — из модуля путей (tools/ds-paths.mjs): нет раскладки — отказ, а не
+   пустой аудит. Линтер в корпус скриптов входит, как до RE0002: маркеры
+   разметки вроде data-off-grid читает только он. */
+const L = layout(ROOT);
+const stylesFiles = L.styles().map(L.abs);
+const scriptsFiles = [...L.scripts(), L.at.linter].sort().map(L.abs);
+const specsFiles = L.specs().map(L.abs);
 
 const styles = {};
 for (const f of stylesFiles) styles[path.basename(f)] = await read(f);
@@ -265,7 +247,7 @@ for (const s of Object.values(specs)) {
    не попадает — иначе проход ослеп бы ровно на том случае, ради которого
    заведён. */
 const pageClasses = new Set();
-for (const f of await listRec('pages', '.html')) {
+for (const f of L.pages().map((p) => L.abs(p.rel))) {
   const h = await read(f);
   const attrs = h.match(/class="([^"]+)"/g) || [];
   attrs.forEach((x) => x.replace(/class="([^"]+)"/, (all, v) => v.split(/\s+/).forEach((c) => { if (/^[a-z][a-z0-9_-]*$/.test(c)) pageClasses.add(c); })));
@@ -324,7 +306,7 @@ for (const c of sheetMiss.slice(0, 40)) say('  · .' + c);
    без агентской оснастки, — но пропуск печатается, а не молчит. Разбор, давший
    пустой список, — находка: пустая сверка неотличима от чистой. */
 section('Проход 8 · манифест specs/_index.md против каталога компонентов в правилах агента');
-const RULES = path.join(ROOT, 'AGENTS.md');
+const RULES = L.abs('AGENTS.md');
 let catalogMissing = [];
 let catalogExtra = [];
 let catalogBroken = false;

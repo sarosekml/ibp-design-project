@@ -85,7 +85,14 @@ import path from 'node:path';
 import os from 'node:os';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { project, findApps } from './project.mjs';
+import { project, findApps, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): где в ДС стили, скрипты,
+   страницы и спеки, оснастка не пишет литералами папок. Модуль — из ДС этого
+   проекта, раскладка — для ДС любого манифеста, в том числе стенда селфтеста. */
+const DSP = await dsPaths();
+// спека иконок — список глифов, которые знает ДС (П2)
+const ICONS_SPEC = DSP.layout().specOf('Icons');
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FIELDS = ['id', 'group', 'title', 'desc', 'href', 'icon'];
@@ -115,7 +122,7 @@ function loadRegistry(file) {
 
 /** Имена глифов из строки после заголовка «## Все глифы». null — файла нет. */
 function iconNames(dsAbs) {
-  const f = path.join(dsAbs, 'specs', 'Icons.md');
+  const f = path.join(dsAbs, ICONS_SPEC);
   if (!existsSync(f)) return null;
   const lines = readFileSync(f, 'utf8').split(/\r?\n/);
   const i = lines.findIndex((l) => l.startsWith('## Все глифы'));
@@ -180,7 +187,7 @@ export function check(from = HERE) {
     const groupDir = GROUP_DIRS[e.group];
     const hasRoot = typeof e.root === 'string' && e.root.trim();
     if (groupDir && !hasRoot) defects.push('П1 ' + name + ' — нет root (папка записи от корня, внутри ' + groupDir + '/)');
-    if (icons && !icons.has(e.icon)) defects.push('П2 ' + name + ' — иконки «' + e.icon + '» нет в ' + P.ds + '/specs/Icons.md');
+    if (icons && !icons.has(e.icon)) defects.push('П2 ' + name + ' — иконки «' + e.icon + '» нет в ' + P.ds + '/' + ICONS_SPEC);
 
     const href = path.resolve(repo, e.href);
     if (!existsSync(href)) defects.push('П3 ' + name + ' — href ведёт на несуществующий файл: ' + e.href);
@@ -224,7 +231,7 @@ export function check(from = HERE) {
     if (miss.length) defects.push('П1 ' + name + ' — в ' + relOf(mf) + ' нет полей записи: ' + miss.join(', '));
     else {
       if (!existsSync(path.join(rootAbs, app.home))) defects.push('П3 ' + name + ' — home «' + app.home + '» из ' + relOf(mf) + ' ведёт на несуществующий файл');
-      if (icons && !icons.has(app.icon)) defects.push('П2 ' + name + ' — иконки «' + app.icon + '» из ' + relOf(mf) + ' нет в ' + P.ds + '/specs/Icons.md');
+      if (icons && !icons.has(app.icon)) defects.push('П2 ' + name + ' — иконки «' + app.icon + '» из ' + relOf(mf) + ' нет в ' + P.ds + '/' + ICONS_SPEC);
     }
   }
 

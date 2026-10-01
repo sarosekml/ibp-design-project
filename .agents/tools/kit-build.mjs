@@ -67,7 +67,20 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-import { project, need, findApps } from './project.mjs';
+import { project, need, findApps, dsPaths } from './project.mjs';
+
+/* Раскладка ДС — у модуля путей ДС (задача RE0002): страницы документации,
+   стили и рантаймы оболочки витрины. Пути внутри ДС берутся у ДС этого
+   проекта и прикладываются к ДС любого манифеста — и стенда селфтеста. */
+const DSP = await dsPaths();
+const DS_HERE = DSP.layout();
+const oneCss = (name) => {
+  const css = DS_HERE.cssOf(name);
+  if (css.length !== 1) throw new Error('kit-build: у ' + name + ' в спеке ДС не один файл стилей (css: ' + (css.join(', ') || '—') + ')');
+  return css[0];
+};
+// стили оболочки страницы витрины: сплиттер, переключатель, вкладки, docs-split
+const KIT_PAGE_CSS = [oneCss('Splitter'), oneCss('SegmentControl'), oneCss('Tab'), DS_HERE.at.docsSplitCss, DS_HERE.at.docsCss];
 import { assemble, includesOf } from './assemble.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -389,16 +402,11 @@ function hostScripts(P, page) {
 /* Каталог страниц ДС: имя компонента → файл страницы. */
 function dsPages(P) {
   const map = new Map();
-  const walk = (abs) => {
-    let list;
-    try { list = readdirSync(abs, { withFileTypes: true }); } catch { return; }
-    for (const e of list.sort((a, b) => (a.name < b.name ? -1 : 1))) {
-      const full = path.join(abs, e.name);
-      if (e.isDirectory()) walk(full);
-      else if (/\.html$/i.test(e.name) && !map.has(e.name.slice(0, -5))) map.set(e.name.slice(0, -5), full);
-    }
-  };
-  if (P.ds) walk(path.join(P.root, P.ds, 'pages'));
+  if (!P.ds) return map;
+  const L = DSP.layout(P.dsAbs);
+  for (const p of [...L.pages()].sort((a, b) => (a.rel < b.rel ? -1 : 1))) {
+    if (!map.has(p.name)) map.set(p.name, L.abs(p.rel));
+  }
   return map;
 }
 
@@ -673,8 +681,8 @@ function docPage(P, cfg, c, ctx) {
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
     '<title>' + esc(c.name) + ' — ' + esc(cfg.title) + '</title>',
-    ...['splitter.css', 'segment-control.css', 'tab.css', 'docs-split.css', 'ds-docs.css']
-      .map((f) => '<link rel="stylesheet" href="' + esc(R(path.join(dsAbs, 'styles', f))) + '">'),
+    ...KIT_PAGE_CSS
+      .map((f) => '<link rel="stylesheet" href="' + esc(R(path.join(dsAbs, f))) + '">'),
     '<link rel="stylesheet" href="' + esc(R(path.join(kitAbs, 'kit.css'))) + '">',
     '<!-- @lc-css -->',
     '</head>',
@@ -762,14 +770,14 @@ function docPage(P, cfg, c, ctx) {
     ...nearby.map((n) => inc(n.abs, n.extra)),
     '',
     ...scripts.pre.map(script),
-    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="scripts/ibp-home.js"></script>',
+    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
     '<script src="' + esc(R(path.join(P.root, cfg.registry))) + '"></script>',
     '<script src="' + esc(R(path.join(kitAbs, 'kit-nav.js'))) + '"></script>',
     '<script src="' + esc(R(path.join(kitAbs, 'kit-docpage.js'))) + '"></script>',
     ...scripts.post.map(script),
     page.scenario ? '<script src="' + esc(R(demoAbs)) + '"></script>' : '',
     '<!-- @kit-page -->',
-    '<script src="' + esc(R(path.join(dsAbs, 'scripts', 'docs-split.js'))) + '"></script>',
+    '<script src="' + esc(R(path.join(dsAbs, DS_HERE.at.docsSplitJs))) + '"></script>',
     '<!-- @kit-code -->',
     '</body>',
     '</html>',
@@ -915,6 +923,7 @@ const DEAL = '<!DOCTYPE html>\n<html><head>\n<script src="../../../ds-config.js"
 
 function tree(r) {
   put(r, 'project.json', JSON.stringify(MANIFEST));
+  put(r, 'ds/pages/atoms/Divider.html', '');                    // ДС стенда: страниц без раскладки не бывает
   put(r, 'apps/ds-config.js', '');
   put(r, 'apps/ds-body.js', '');
   put(r, MOD + '/app.json', '{}');
