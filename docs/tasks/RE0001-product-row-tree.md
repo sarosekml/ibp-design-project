@@ -1,7 +1,7 @@
 ---
 id: 'RE001'
 title: 'Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов'
-status: in_progress
+status: done
 priority: high
 effort: large
 dependencies: []
