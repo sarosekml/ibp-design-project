@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<!-- Материал Пайплайн сканер «А-риск обнаружен» (MaterialReport).
+     Отчёт открывается превью в панели просмотра на экране «Новый отчёт»
+     (RequestThread.html) и живёт отдельной страницей: так его видно целиком,
+     как файл, который получит пользователь. Содержание — из
+     ../refs/report-example-for-test.pdf; ряды для графиков — демо-данные прототипа.
+     Графики — компонент Chart (DSChart.make), статусы — Chip; обложка, карточки
+     и раскладка — локальные, на токенах ДС. Спека — MaterialReport.screen.md. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>А-риск обнаружен — Пайплайн сканер</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* ── Лист отчёта ──────────────────────────────────────────────────────────
+     Документ на «бумаге» поверх фона страницы. Ширина листа ограничена,
+     в узкой панели просмотра отступы уменьшаются. */
+  .rep           { max-width: 880px; margin: 0 auto; padding: var(--space-24); }
+  .rep__sheet    { overflow: hidden; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 2px 12px color-mix(in srgb, var(--text-primary) 5%, transparent); }
+
+  /* Обложка: бренд-градиент и ключевые показатели. Верхний край — 24px от
+     плашки, строки информации разделены точкой, под ними заголовок А-риска,
+     затем тайлы метрик; до нижнего края — 16px. */
+  .rep__cover    { display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-24) var(--space-40) var(--space-16); color: var(--text-on-dark); background: linear-gradient(135deg, var(--primary-dark), var(--primary) 70%, var(--primary-light)); }
+  .rep__cover-head { display: flex; flex-direction: column; gap: var(--space-8); }
+  .rep__info    { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-s); }
+  .rep__sep     { flex: none; width: 4px; height: 4px; border-radius: var(--radius-circle); background: currentColor; opacity: .75; }
+  .rep__title   { margin: var(--space-8) 0 0; font: var(--type-h2); }
+  .rep__lead    { margin: var(--space-12) 0 0; max-width: 720px; font: var(--type-body-m); opacity: .92; }
+  .rep__kpis     { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-12); }
+  .rep__kpi      { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-12) var(--space-16); background: color-mix(in srgb, var(--text-on-dark) 12%, transparent); border: 1px solid color-mix(in srgb, var(--text-on-dark) 22%, transparent); border-radius: var(--radius-l); }
+  .rep__kpi-name { font: var(--type-body-xs); letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
+  .rep__kpi-val  { font: var(--type-h4-strong); font-variant-numeric: tabular-nums; }
+  .rep__kpi-note { font: var(--type-body-xs); opacity: .85; }
+
+  /* Разделы листа */
+  .rep__body     { display: flex; flex-direction: column; gap: var(--space-40); padding: var(--space-40); }
+  .rep__sec      { display: flex; flex-direction: column; gap: var(--space-16); }
+  .rep__h        { margin: 0; padding-bottom: var(--space-8); font: var(--type-h5-strong); border-bottom: 1px solid var(--border-light); }
+  .rep__p        { margin: 0; font: var(--type-body-m); color: var(--text-primary); }
+  .rep__note     { margin: 0; font: var(--type-body-xs); color: var(--text-secondary); }
+
+  /* Графики: карточки в две колонки */
+  .rep__charts   { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+  .rep__chart    { min-width: 0; padding: var(--space-16); border: 1px solid var(--border-light); border-radius: var(--radius-l); }
+  .rep__chart--wide { grid-column: 1 / -1; }
+
+  /* Возможности ДИД */
+  .rep__opps     { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-12); }
+  .rep__opp      { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16); background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-l); }
+  .rep__opp--top { background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-color: var(--primary); }
+  .rep__opp-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
+  .rep__opp-title { margin: 0; font: var(--type-body-m-strong); }
+  .rep__opp-text { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+
+  /* Инсайты */
+  .rep__insights { display: flex; flex-direction: column; gap: var(--space-12); margin: 0; padding: 0; list-style: none; counter-reset: ins; }
+  .rep__insight  { display: flex; gap: var(--space-12); counter-increment: ins; }
+  .rep__insight::before { content: counter(ins); flex: none; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; font: var(--type-body-s-strong); color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 12%, var(--bg-tile)); border-radius: var(--radius-full); }
+  .rep__insight p { margin: 0; font: var(--type-body-m); }
+
+  /* Риски */
+  .rep__risks    { display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: var(--radius-l); overflow: hidden; }
+  .rep__risk     { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-16); padding: var(--space-16); }
+  .rep__risk + .rep__risk { border-top: 1px solid var(--border-light); }
+  .rep__risk-name { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); font: var(--type-body-m-strong); }
+  .rep__risk-text { margin: 0; font: var(--type-body-s); color: var(--text-primary); }
+
+  /* Параметры продукта — таблица как у рисков, но без чипов и нежирных меток */
+  .rep__params   { display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: var(--radius-l); overflow: hidden; }
+  .rep__param    { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-16); padding: var(--space-12) var(--space-16); }
+  .rep__param + .rep__param { border-top: 1px solid var(--border-light); }
+  .rep__param-label { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+  .rep__param-value { margin: 0; font: var(--type-body-m); color: var(--text-primary); }
+
+  /* Динамика DSCR — встроенный SVG масштабируется по ширине листа */
+  /* Вывод кредитного инспектора */
+  .rep__call     { display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-16) var(--space-20); background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-left: 3px solid var(--primary); border-radius: 0 var(--radius-m) var(--radius-m) 0; }
+
+  /* ── «Доработать в чате» ──────────────────────────────────────────────────
+     Работает, когда материал открыт в панели просмотра экрана «Новый отчёт»:
+     над выделенным текстом всплывает кнопка, у графика она появляется при
+     наведении. Фрагмент уходит в поле ввода контекстом следующего запроса. */
+  .rep__chart    { position: relative; }
+  .rep__chart.is-sent { box-shadow: 0 0 0 2px var(--primary); transition: box-shadow .2s ease; }
+  .rep__chart-ask { position: absolute; top: var(--space-12); right: var(--space-12); z-index: 2; opacity: 0; transition: opacity .15s ease; }
+  .rep__chart:hover .rep__chart-ask, .rep__chart:focus-within .rep__chart-ask { opacity: 1; }
+  .quote-fab     { position: absolute; z-index: 20; display: flex; padding: var(--space-4); background: var(--bg-tile); border-radius: var(--radius-l); box-shadow: 0 8px 24px color-mix(in srgb, var(--text-primary) 18%, transparent); transform: translate(-50%, calc(-100% - var(--space-8))); animation: fabIn .18s ease both; }
+  .quote-fab[hidden] { display: none; }
+  /* Появление без прозрачности: браузер приостанавливает анимации во фрейме
+     вне видимой области, и кнопка, начинавшая с opacity 0, оставалась
+     невидимой. Сдвиг и лёгкий масштаб видны и без анимации. */
+  @keyframes fabIn { from { transform: translate(-50%, calc(-100% - var(--space-2))) scale(.96); } }
+  @media (prefers-reduced-motion: reduce) { .quote-fab, .rep__chart-ask { animation: none; transition: none; } }
+
+  .rep__foot     { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-20) var(--space-40); background: var(--bg-page); border-top: 1px solid var(--border-light); }
+
+  @media (max-width: 720px) {
+    .rep           { padding: var(--space-12); }
+    .rep__cover, .rep__body { padding: var(--space-24) var(--space-20); }
+    .rep__foot     { padding: var(--space-16) var(--space-20); }
+    .rep__charts   { grid-template-columns: minmax(0, 1fr); }
+    .rep__risk     { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
+  }
+</style>
+</head>
+<body>
+
+<main class="rep">
+  <article class="rep__sheet" aria-labelledby="repTitle">
+
+    <header class="rep__cover">
+      <div class="rep__cover-head">
+        <p class="rep__info"><span>ППРБ ID сделки: DFE-XV7</span><span class="rep__sep" aria-hidden="true"></span><span>AI summary по заключению КП от 30.09.2026</span></p>
+        <p class="rep__info"><span>Клиент ООО «Ромашка Инкорпоретед Трест»</span><span class="rep__sep" aria-hidden="true"></span><span>Холдинг «Глобальная агропромышленная корпорация Ромашка Холдинг Рус»</span></p>
+        <h1 class="rep__title" id="repTitle">А-риск обнаружен</h1>
+      </div>
+      <div class="rep__kpis">
+        <div class="rep__kpi"><span class="rep__kpi-val">70%</span><span class="rep__kpi-name">LTC</span></div>
+        <div class="rep__kpi"><span class="rep__kpi-val">17,5%</span><span class="rep__kpi-name">Доля собственного участия</span></div>
+        <div class="rep__kpi"><span class="rep__kpi-val">0,4</span><span class="rep__kpi-name">Минимальный DSCR</span></div>
+      </div>
+    </header>
+
+    <div class="rep__body">
+
+      <section class="rep__sec">
+        <div class="rep__risks">
+          <div class="rep__risk">
+            <div class="rep__risk-name">M&amp;A / LBO<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">МИП<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">ТОР<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">упоминается</span></span></div>
+            <p class="rep__risk-text">Упоминается статус резидента ТОР 'Забайкалье', что подразумевает территорию опережающего развития. Также указано, что проекты включены в ТОР 'Забайкалье', что соответствует понятию 'территория опережающего социально-экономического развития'. Упоминается 'статус резидента территории опережающего социально-экономического развития (ТОР)'. Прямого упоминания ФЗ №473-ФЗ или 'соглашения об осуществлении деятельности' нет.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">КРТ / КЖС<span class="chip chip--s chip--rounded"><span class="chip__label">не упоминается</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secSummary">
+        <h2 class="rep__h" id="secSummary">Описание бизнеса</h2>
+        <p class="rep__p">Группа оказывает транспортно-логистические услуги для горнодобывающих компаний Забайкальского края, включая отгрузку горной массы и доставку транспортом. Выручка за 2025 год составила 2,9 млрд RUB (82% — внутренние продажи, 18% — экспорт в Китай). Ключевые клиенты: ПАО «ППГХО» и ООО «Приаргунский угольный разрез». Основные зарубежные партнеры — компании из КНР (Inner Mongolia Yulong, Heilongjiang Wan Hao Te).</p>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secDeal">
+        <h2 class="rep__h" id="secDeal">Суть сделки</h2>
+        <p class="rep__p">Бридж-кредит на цели финансирования затрат по реализации двух инвестиционных проектов Забайкальского края: Проект 1: Строительство цементного завода мощностью 600 тыс. тонн/год займ ООО «Забайкальский цементный завод» на сумму до 1 270,2 млн RUB на проектирование, изыскания, инфраструктуру, геологию И подготовку площадок. Проект 2: Строительство известкового завода мощностью до 200 тыс. тонн/год - займ ООО «Забайкальский известковый завод» на сумму до 227,9 млн RUB на проведение проектно-изыскательных работ и организацию стройплощадки.</p>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secProduct">
+        <h2 class="rep__h" id="secProduct">Параметры продукта</h2>
+        <div class="rep__params">
+          <div class="rep__param"><p class="rep__param-label">Рассматриваемый продукт</p><p class="rep__param-value">Рассматривается новый продукт.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Тип продукта</p><p class="rep__param-value">Бридж-кредит (промежуточное финансирование) на цели реализации инвестиционных проектов, с последующим рефинансированием за счет проектного финансирования.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Сумма</p><p class="rep__param-value">1 500 млн</p></div>
+          <div class="rep__param"><p class="rep__param-label">Валюта</p><p class="rep__param-value">RUB</p></div>
+          <div class="rep__param"><p class="rep__param-label">Срок</p><p class="rep__param-value">36 месяцев</p></div>
+          <div class="rep__param"><p class="rep__param-label">Ставка</p><p class="rep__param-value">Плавающая с фиксированной маржой, КС+3%</p></div>
+          <div class="rep__param"><p class="rep__param-label">Цель</p><p class="rep__param-value">Финансирование затрат по реализации двух инвестиционных проектов: строительство цементного завода и строительство известкового завода в Забайкальском крае.</p></div>
+          <div class="rep__param"><p class="rep__param-label">Обеспечение</p><p class="rep__param-value">Отсутствует имущественное обеспечение. В качестве обеспечения принимаются поручительства бенефициара, головной компании Группы, 4-х юрлиц Группы, залог 50% долей в SPV, залог земельных участков.</p></div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secRisks">
+        <h2 class="rep__h" id="secRisks">Риски</h2>
+        <div class="rep__risks">
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск некорректности Cash Flow<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Прогнозная финансовая модель показывает убытки в отдельных периодах и неспособность обслуживать долг за счет операционного потока. Уровень долговой нагрузки значительно превышает операционный поток минимум в 3х периодах.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск резкого увеличения долговой нагрузки<span class="chip chip--s chip--rounded chip--error-solid"><span class="chip__label">Очень высокий</span></span></div>
+            <p class="rep__risk-text">Бридж-кредит увеличит финансовый долг группы с 450 млн до 1 950 млн RUB, что приведет к росту показателя Долг/EBITDA с 1,15 до -5,0. Это превышает допустимый уровень и создает риск нарушения ковенант.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск падения операционной эффективности<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Выручка сократилась на 22%, EBITDA - вдвое, чистая прибыль - на две трети за год из-за падения спроса в угольной отрасли. Если тенденция сохранится, способность генерировать денежный поток для обслуживания долга ухудшится.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск ликвидности и рефинансирования<span class="chip chip--s chip--rounded chip--warning"><span class="chip__label">Средний</span></span></div>
+            <p class="rep__risk-text">Текущая ликвидность 1,22 ниже комфортного уровня, что указывает на возможные проблемы с покрытием краткосрочных обязательств после выборки кредита. Погашение единовременное, источник - проектное финансирование.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск неправильного/некорректного структурирования сделки<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Режим погашения бридж-кредита не соответствует стадии проекта (Green Field), так как единовременный платеж предусмотрен при отсутствии операционного денежного потока. Качество обеспечения признано недостаточным.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Проектный риск<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Отсутствие фиксированного ЕРС-контракта, технологическая сложность и зависимость от импортного оборудования создают риск удорожания строительства и срыва сроков. Также не оформлена полная исходно-разрешительная документация.</p>
+          </div>
+          <div class="rep__risk">
+            <div class="rep__risk-name">Риск отсутствия диверсификации<span class="chip chip--s chip--rounded chip--error"><span class="chip__label">Высокий</span></span></div>
+            <p class="rep__risk-text">Критическая зависимость от двух связанных между собой контрагентов (ППГХО и Приаргунский угольный разрез), на которые приходится 64,1% выручки. Это создает угрозу при потере одного из покупателей.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secPosition">
+        <h2 class="rep__h" id="secPosition">Вывод кредитного инспектора</h2>
+        <div class="rep__call">
+          <p class="rep__p">В рамках текущей сделки с учетом рефинансирования бридж-кредита в рамках проектного финансирования считаем возможным принять высокий риск по модели.</p>
+        </div>
+      </section>
+
+      <section class="rep__sec" aria-labelledby="secDscr">
+        <h2 class="rep__h" id="secDscr">Динамика DSCR</h2>
+        <p class="rep__p">Минимальный DSCR: <strong>0,4</strong> — ниже порогового значения 1,2. Проблемные периоды выделены красным.</p>
+        <div class="rep__chart" id="chDscr"></div>
+      </section>
+
+    </div>
+
+    <footer class="rep__foot">
+      <p class="rep__note">Материал подготовлен Pipeline scanner · версия 0.1.4 · 12.09.2026. Цифры и выводы требуют проверки и носят исключительно рекомендательный характер</p>
+    </footer>
+
+  </article>
+</main>
+
+<!-- Всплывающая кнопка над выделенным текстом -->
+<div class="quote-fab" id="quoteFab" hidden>
+  <button type="button" class="btn btn--accent btn--s" id="quoteAsk"><i data-icon="ai-stars"></i><span class="btn__label">Доработать в чате</span></button>
+</div>
+
+<script src="../../../../ds-body.js"></script>
+<script>
+/* График «Динамика DSCR» — компонент Chart (DSChart.make): линия по годам,
+   опорная линия — порог 1,2. Все точки ниже порога — цвет серии семантический
+   --error («проблемные периоды выделены красным»). */
+(function () {
+  'use strict';
+  var host = document.getElementById('chDscr');
+  if (!host || !window.DSChart) return;
+  host.appendChild(window.DSChart.make({
+    type: 'line', size: 'm',
+    title: 'DSCR по годам', subtitle: 'Порог — 1,2',
+    categories: ['2026', '2027', '2028'],
+    series: [{ id: 'dscr', name: 'DSCR', data: [0.4, 0.8, 1.0], color: '--error' }],
+    format: 'full', valueLabels: true, legend: false,
+    refLine: { value: 1.2, label: 'Порог 1,2' }
+  }));
+})();
+</script>
+<script>
+/* «Доработать в чате»: фрагмент материала — в контекст следующего запроса.
+   Материал живёт во фрейме панели просмотра; экран «Новый отчёт» получает
+   фрагмент сообщением (postMessage) — так работает и при открытии файла
+   двойным кликом, где доступ к документу фрейма закрыт. Текст уходит целиком,
+   график — тегом с названием: агенту это указание, что смотреть в материале. */
+(function () {
+  'use strict';
+  if (!window.parent || window.parent === window) return;
+
+  var fab = document.getElementById('quoteFab');
+  var sheet = document.querySelector('.rep__sheet');
+  var pending = null;
+
+  function elOf(node) { return node && (node.nodeType === 1 ? node : node.parentElement); }
+  function sectionOf(node) {
+    var el = elOf(node);
+    var sec = el && el.closest('.rep__sec');
+    if (sec) { var h = sec.querySelector('.rep__h'); return h ? h.textContent.trim() : ''; }
+    return el && el.closest('.rep__cover') ? 'Обложка' : '';
+  }
+  function chartTitle(box) { var t = box.querySelector('.chart__title'); return t ? t.textContent.trim() : 'График'; }
+  function send(items) { window.parent.postMessage({ source: 'ai-pitcher-material', type: 'context', items: items }, '*'); }
+  function hide() { fab.hidden = true; pending = null; }
+  function clean(s) { return s.replace(/\s+/g, ' ').trim(); }
+
+  /* текст выделения без подписей графиков, между блоками — пробел */
+  function selectedText(range) {
+    var frag = range.cloneContents();
+    Array.prototype.forEach.call(frag.querySelectorAll('.rep__chart, .quote-fab, button'), function (n) { n.remove(); });
+    Array.prototype.forEach.call(frag.querySelectorAll('p, li, h1, h2, span, div'), function (n) { n.appendChild(document.createTextNode(' ')); });
+    return clean(frag.textContent);
+  }
+
+  function onSelection() {
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) { hide(); return; }
+    var range = sel.getRangeAt(0);
+    if (!sheet.contains(range.commonAncestorContainer)) { hide(); return; }
+    var charts = Array.prototype.filter.call(document.querySelectorAll('.rep__chart'), function (c) { return range.intersectsNode(c); });
+    var insideChart = charts.length === 1 && charts[0].contains(range.commonAncestorContainer);
+    var items = [];
+    var txt = insideChart ? '' : (charts.length ? selectedText(range) : clean(sel.toString()));
+    if (txt.length >= 3) items.push({ kind: 'text', text: txt, section: sectionOf(range.startContainer) });
+    charts.forEach(function (c) { items.push({ kind: 'chart', title: chartTitle(c), section: sectionOf(c) }); });
+    if (!items.length) { hide(); return; }
+    pending = items;
+    var rect = range.getBoundingClientRect();
+    var x = Math.min(Math.max(rect.left + rect.width / 2, 110), document.documentElement.clientWidth - 110);
+    fab.style.left = (x + window.scrollX) + 'px';
+    fab.style.top = (Math.max(rect.top, 56) + window.scrollY) + 'px';
+    fab.hidden = false;
+  }
+
+  document.addEventListener('mouseup', function (e) { if (!fab.contains(e.target)) setTimeout(onSelection, 0); });
+  document.addEventListener('keyup', function (e) { if (e.shiftKey || e.key === 'Shift') onSelection(); });
+  document.addEventListener('selectionchange', function () { var s = window.getSelection(); if (!s || s.isCollapsed) hide(); });
+  window.addEventListener('resize', hide);
+  /* клик по кнопке не должен снимать выделение до отправки */
+  fab.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  document.getElementById('quoteAsk').addEventListener('click', function () {
+    if (!pending) return;
+    send(pending);
+    window.getSelection().removeAllRanges();
+    hide();
+  });
+
+  /* у каждого графика — своя кнопка: график не выделяется как текст */
+  Array.prototype.forEach.call(document.querySelectorAll('.rep__chart'), function (box) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn--outline btn--xs rep__chart-ask';
+    btn.innerHTML = '<i data-icon="ai-stars"></i><span class="btn__label">Доработать в чате</span>';
+    btn.setAttribute('aria-label', 'Доработать в чате: график «' + chartTitle(box) + '»');
+    box.appendChild(btn);
+    if (window.dsIcons) window.dsIcons.apply(btn);
+    btn.addEventListener('click', function () {
+      send([{ kind: 'chart', title: chartTitle(box), section: sectionOf(box) }]);
+      box.classList.add('is-sent');
+      setTimeout(function () { box.classList.remove('is-sent'); }, 900);
+    });
+  });
+})();
+</script>
+</body>
+</html>
