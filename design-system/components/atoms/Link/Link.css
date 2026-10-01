@@ -139,7 +139,7 @@
 }
 
 /* =========================================================================
-   Breadcrumbs — вынесен в отдельный компонент, см. styles/breadcrumbs.css
+   Breadcrumbs — вынесен в отдельный компонент, см. components/molecules/Breadcrumbs/Breadcrumbs.css
    и Breadcrumbs.html (полная спецификация: анатомия, авто-схлопывание,
    обрезка текущей крошки, доступность). Здесь остаются только ссылки
    Breadcrumbs_1 / Breadcrumbs_2 (тона .link--muted / .link--neutral выше).

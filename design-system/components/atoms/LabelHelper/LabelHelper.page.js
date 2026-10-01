@@ -227,13 +227,13 @@ function classListHelper(o){ return 'ds-helper ds-helper--' + o.align + (o.statu
   if (!tb) return;
   const rows = [
     ['InputText',          null, true,  true],
-    ['InputAutocomplete',  '../molecules/InputAutocomplete.html', true, true],
+    ['InputAutocomplete',  '../../molecules/Inputs/InputAutocomplete/InputAutocomplete.html', true, true],
     ['InputDate',          null, true,  true],
-    ['ReadOnlyField',      '../molecules/ReadOnlyField.html', true,  true],
-    ['Checkbox',           'Checkbox.html', false, true],
-    ['Radiobutton',        'Radiobutton.html', false, true],
-    ['Switch',             'Switch.html', false, true],
-    ['DropdownList',       '../molecules/DropdownList.html', false, true],
+    ['ReadOnlyField',      '../../molecules/ReadOnlyField/ReadOnlyField.html', true,  true],
+    ['Checkbox',           '../Checkbox/Checkbox.html', false, true],
+    ['Radiobutton',        '../Radiobutton/Radiobutton.html', false, true],
+    ['Switch',             '../Switch/Switch.html', false, true],
+    ['DropdownList',       '../../molecules/DropdownList/DropdownList.html', false, true],
   ];
   function cell(v){ return v ? '<span class="yes">'+LH_ICONS.check+'</span>' : '<span class="no">'+LH_ICONS.dash+'</span>'; }
   tb.innerHTML = rows.map(([name, href, hasLabel, hasHelper])=>`

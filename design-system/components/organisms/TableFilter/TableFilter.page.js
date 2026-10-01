@@ -70,14 +70,14 @@
       const chip = makeAppliedChip(count);
       bar.appendChild(chip);
       /* сброс (клик по крестику / Backspace-Delete, фейд, удаление чипа) —
-         рантайм ДС (scripts/ds-table-filter.js); он всплывает 'tfilter:reset' на .tfilter */
+         рантайм ДС (components/organisms/TableFilter/TableFilter.js); он всплывает 'tfilter:reset' на .tfilter */
       if (onReset) bar.addEventListener('tfilter:reset', onReset, { once: true });
     }
 
     /* выпадающий список пресетов */
     const chevBtn = bar.querySelector('.tfilter__presets');
     if (chevBtn) {
-      /* поведение — рантайм ДС (scripts/ds-menu.js): открытие/закрытие,
+      /* поведение — рантайм ДС (components/molecules/ContextMenu/ContextMenu.js): открытие/закрытие,
          позиция, клавиатура, Esc, закрытие по выбору пункта */
       const menu = bar.querySelector('.tfilter__menu');
       if (window.DSMenu) DSMenu.bind(chevBtn, { menu: menu, align: 'end' });
@@ -563,7 +563,7 @@
       modal.querySelector('.tfm-apply').addEventListener('click', () => closeFilterModal(true));
       window.dsIcons && window.dsIcons.apply(scrim);
 
-      /* слой ведёт рантайм ДС (scripts/ds-modal.js): портал в body, блокировка
+      /* слой ведёт рантайм ДС (components/organisms/Modal/Modal.js): портал в body, блокировка
          прокрутки, inert фона, focus trap, крестик/Esc/клик по скриму, тени
          шапки и подвала, возврат фокуса на инициатора */
       DSModal.open(scrim, {

@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Splitter — рантайм функционального разделителя панелей (out-of-box).
-   Зависимости: styles/splitter.css.
+   Зависимости: components/molecules/Splitter/Splitter.css.
 
    Экспорт: window.DSSplitter = {
      make(opts) → HTMLElement       — один сплиттер .spl (без панелей)

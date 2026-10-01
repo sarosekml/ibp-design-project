@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Button — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="Buttons.css">
+<link rel="stylesheet" href="../Spinner/Spinner.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -144,11 +144,11 @@
   .code-panel__name { font: var(--type-body-s-strong); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Button">
@@ -218,7 +218,7 @@
 
 <div class="subsec" data-screen-label="Tone">
     <h3>Тон</h3>
-    <p class="desc">Модификатор, а не отдельный тип — комбинируется с Accent / Outline / Transparent и меняет цвет на токены одного из четырёх тонов палитры <code class="tok">Situative</code>: <b>Error</b>, <b>Warning</b>, <b>Success</b>, <b>Info</b>. Те же самые кнопки переиспользуются в <a class="inl" href="../molecules/Alert.html">Alert</a> и <a class="inl" href="../organisms/SnackBar.html">SnackBar</a> — тон кнопки совпадает с тоном компонента. Error — тон для деструктивного действия в диалоге подтверждения (например «Удалить» в confirm-модалке, см. <a class="inl" href="../organisms/Modal.html">Modal</a>); класс <code class="tok">.btn--danger</code> сохранён как алиас <code class="tok">.btn--error</code> для обратной совместимости. Не применяйте тон к обычному «Удалить» в подвале формы — там кнопка остаётся Transparent, деструктивность подтверждает отдельный диалог, а не цвет.</p>
+    <p class="desc">Модификатор, а не отдельный тип — комбинируется с Accent / Outline / Transparent и меняет цвет на токены одного из четырёх тонов палитры <code class="tok">Situative</code>: <b>Error</b>, <b>Warning</b>, <b>Success</b>, <b>Info</b>. Те же самые кнопки переиспользуются в <a class="inl" href="../../molecules/Alert/Alert.html">Alert</a> и <a class="inl" href="../../organisms/SnackBar/SnackBar.html">SnackBar</a> — тон кнопки совпадает с тоном компонента. Error — тон для деструктивного действия в диалоге подтверждения (например «Удалить» в confirm-модалке, см. <a class="inl" href="../../organisms/Modal/Modal.html">Modal</a>); класс <code class="tok">.btn--danger</code> сохранён как алиас <code class="tok">.btn--error</code> для обратной совместимости. Не применяйте тон к обычному «Удалить» в подвале формы — там кнопка остаётся Transparent, деструктивность подтверждает отдельный диалог, а не цвет.</p>
     <div class="panel"><div class="tone-grid" id="tone-grid"></div></div>
   </div>
 
@@ -331,17 +331,17 @@
     <p class="desc">Эта страница ДС собрана на чистых CSS-классах и vanilla JS — но всё ниже не привязано к стеку: команда, которая верстает компонент на React (или любом другом фреймворке), может взять отсюда анатомию, точные размеры, состояния и цвета, не заглядывая в этот код построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/button.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Buttons/Buttons.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:36px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.6fr 0.6fr 0.6fr 0.6fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">XS</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/button.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -427,7 +427,7 @@ leftSlot = loading ? Spinner : iconLeft
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ---------- icons ---------- */
 const ICONS = {
@@ -927,13 +927,13 @@ function attachLoader(btn){
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Иконка слева': 'Показывать иконку слева', 'Текст': 'Показывать текст', 'Иконка справа': 'Показывать иконку справа', 'Шеврон': 'Показывать шеврон', 'Лоадер': 'Показывать лоадер', 'Fullwidth': 'На всю ширину' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- иконка слева и/или текст и/или иконка справа; справа — иконка ИЛИ шеврон, не оба -->
@@ -1240,7 +1240,7 @@ function makeDropdown(o) { /* … стрелка-кнопка + контекст
 
 /* ---------- state: LOADING ------------------------------------------------- */
 /* While loading the button is non-interactive (treated as disabled).
-   Индикатор — общий компонент Spinner (styles/spinner.css): <span class="spin spin--current">,
+   Индикатор — общий компонент Spinner (components/atoms/Spinner/Spinner.css): <span class="spin spin--current">,
    размер задают правила выше (.btn--m/s/xs .spin). */
 .btn--loading { pointer-events: none; }</script>
 </body>

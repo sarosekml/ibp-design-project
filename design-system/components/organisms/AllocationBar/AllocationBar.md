@@ -3,9 +3,9 @@ component: AllocationBar
 title: "AllocationBar"
 version: "1.003"
 updated: "25.09.2026"
-page: pages/organisms/AllocationBar.html
-runtime: scripts/ds-allocationbar.js
-css: styles/allocation-bar.css
+page: components/organisms/AllocationBar/AllocationBar.html
+runtime: components/organisms/AllocationBar/AllocationBar.js
+css: components/organisms/AllocationBar/AllocationBar.css
 deps: [alert, button]
 status: curated
 ---
@@ -107,6 +107,6 @@ status: curated
 Кредит → indigo · Фондирующий кредит → pastel-green · Внутригрупповой кредит → blue · РЕПО → light-blue · Акции → shiny-green · Облигации → turquoise · Корп. контроль → red · Доп. доходность → orange · Комиссия → yellow · Дебиторская задолженность → purple. Прикладное соглашение, не правило ДС.
 
 ## Рантайм
-`scripts/allocation-bar.page.js` → `window.AllocationBar.make(cfg)`, `.palette`, `.fmtNumber`, `.fmtPercent`, `.fmtCompact`. `scripts/ds-allocationbar.js` — связь бара со строкой по hover (`root[data-hover]`/`.is-active`), подключается через единую точку входа `ds.js`. Для статичных экранов достаточно разметки выше.
+`components/organisms/AllocationBar/AllocationBar.page.js` → `window.AllocationBar.make(cfg)`, `.palette`, `.fmtNumber`, `.fmtPercent`, `.fmtCompact`. `components/organisms/AllocationBar/AllocationBar.js` — связь бара со строкой по hover (`root[data-hover]`/`.is-active`), подключается через единую точку входа `ds.js`. Для статичных экранов достаточно разметки выше.
 
 - **Размеры · Радиус скругления** — Пропса размера нет, радиусы одинаковы во всех раскладках. полоса — 999px (--radius-pill) · строка легенды — 4px (--radius-xs) · точка-маркер — 50% · блок «Расчёт» — 8px (--radius-control).

@@ -835,8 +835,9 @@ function sourceRuntime() {
 function tree(root, runtime) {
   put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
   put(root, 'ds/ds.css', '');
-  put(root, 'ds/styles/x.css', '.is-open { display: block; }\n');
-  put(root, 'ds/scripts/ds-x.js', "el.classList.add('is-shown');\n");
+  put(root, 'ds/components/atoms/X/X.css', '.is-open { display: block; }\n');
+  put(root, 'ds/components/atoms/X/X.js', "el.classList.add('is-shown');\n");
+  for (const d of ['foundations', 'utils', 'docs-kit']) put(root, 'ds/' + d + '/.keep', '');   // раскладка ДС стенда
   cpSync(runtime, path.join(root, '.kit/proto-panel'), { recursive: true, filter: (s) => !path.basename(s).startsWith('.') });
   put(root, LAB + '/app.json', JSON.stringify({ id: 'lab', track: 'rnd', title: 'Лаборатория', desc: 'т', home: 'pages/A.html', icon: 'folder' }));
   put(root, LAB + '/pages/A.html', '<!DOCTYPE html>\n<button id="go" data-x="y">Пуск</button>\n<aside id="pv" hidden></aside>\n<script src="a.js"></script>\n');

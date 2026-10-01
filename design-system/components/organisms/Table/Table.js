@@ -1,7 +1,7 @@
 /* =========================================================================
    DS Table — рантайм таблицы (out-of-box).
-   Зависимости: styles/table.css, styles/table-cell.css;
-   опционально scripts/ds-tooltip.js (тултип на усечённом тексте).
+   Зависимости: components/organisms/Table/Table.css, components/organisms/TableCell/TableCell.css;
+   опционально components/molecules/Tooltip/Tooltip.js (тултип на усечённом тексте).
 
    Экспорт: window.DSTable = {
      bind(bodyEl) · bindAll(root)          — тень липкой шапки .dtable (--scrolled)
@@ -72,7 +72,7 @@
                      Реализация — общий DSTooltip.truncated() (см. регистрацию
                      внизу): делегирование по наведению/фокусу, новые строки
                      подхватываются сами. Подпись чипа — не здесь: это правило
-                     Chip, его держит scripts/ds-chip.js для всей страницы
+                     Chip, его держит components/atoms/Chip/Chip.js для всей страницы
      чипы в ячейке — два и более чипа в одном контейнере ячейки сворачиваются
                     по ширине колонки: не поместившиеся получают hidden, в конец
                     встаёт чип-счётчик «+N» ([data-tc-count]) с тултипом со
@@ -177,7 +177,7 @@
     /* колонка шапки без ячейки в строке — разметка строки разошлась с шапкой.
        Достроить ячейку значило бы выдумать значение, вставить пустую — сдвинуть
        все колонки правее на трек, поэтому строку не трогаем вовсе: расхождение
-       видно глазом и чинится в экране (диагностика — specs/TableCell.md) */
+       видно глазом и чинится в экране (диагностика — components/organisms/TableCell/TableCell.md) */
     for (i = 0; i < hKeys.length; i++) if (hKeys[i] && !byKey[hKeys[i]]) return false;
     if (plain.length !== hPlain) return false;
 

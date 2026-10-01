@@ -2,28 +2,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InputAmountRange — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/input.css">
-<link rel="stylesheet" href="../../styles/input-range.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/input-pages.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../Inputs.css">
+<link rel="stylesheet" href="../InputRanges.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../../docs-kit/input-pages.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../Splitter/Splitter.css">
+<link rel="stylesheet" href="../../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../Tab/Tab.css">
+<link rel="stylesheet" href="../../../../docs-kit/docs-split.css">
 <style>
   /* демо-стадия (docs-split): растяжение на ширину панели демо;
      padding/фон/min-height — из input-pages.css */
@@ -59,7 +59,7 @@
     <div class="meta"><span>Версия: <b>1.007</b></span><span>Обновлено: <b>06.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>InputAmountRange</h1>
-    <p class="lead">Поле ввода числового диапазона: два <a class="inl" href="InputText.html">InputAmount</a> с префиксами «От» / «До», размещённых горизонтально и соединённых линией Range_Line. Общая метка сверху и общий хелпер снизу. Каждое поле — самостоятельный экземпляр со своими состояниями. Стандартная высота поля 40px; размера S у InputAmountRange нет.</p>
+    <p class="lead">Поле ввода числового диапазона: два <a class="inl" href="../InputText/InputText.html">InputAmount</a> с префиксами «От» / «До», размещённых горизонтально и соединённых линией Range_Line. Общая метка сверху и общий хелпер снизу. Каждое поле — самостоятельный экземпляр со своими состояниями. Стандартная высота поля 40px; размера S у InputAmountRange нет.</p>
   </header>
 
   <!-- USAGE -->
@@ -89,7 +89,7 @@
         <li>задать числовой диапазон: сумма, лимит, количество, ставка;</li>
         <li>фильтр «от» / «до» с возможностью открытой границы (одно поле пустое).</li>
       </ul>
-      <p class="desc">Для одиночного числа — <a class="inl" href="InputText.html">InputAmount</a> (числовой InputText). Для диапазона дат — <a class="inl" href="InputDateRange.html">InputDateRange</a>. Для выбора из списка — <a class="inl" href="InputAutocomplete.html">InputAutocomplete</a>.</p>
+      <p class="desc">Для одиночного числа — <a class="inl" href="../InputText/InputText.html">InputAmount</a> (числовой InputText). Для диапазона дат — <a class="inl" href="../InputDateRange/InputDateRange.html">InputDateRange</a>. Для выбора из списка — <a class="inl" href="../InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>.</p>
     </div>
   </section>
 
@@ -208,19 +208,19 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Каждое поле — экземпляр базового <code class="tok">.inp</code> (см. InputText); здесь только обвязка диапазона.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/input.css</code> и <code class="tok">styles/input-range.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Inputs/Inputs.css</code> и <code class="tok">components/molecules/Inputs/InputRanges.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.55fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/input.css</code>
-      <code class="tok">styles/input-range.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/molecules/Inputs/Inputs.css</code>
+      <code class="tok">components/molecules/Inputs/InputRanges.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -281,7 +281,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/input-range.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Inputs/InputRanges.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -299,16 +299,16 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/input-kit.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/input-amount-range.page.js"></script>
+<script src="../../../../foundations/Icons/icons-data.js"></script>
+<script src="../InputKit.js"></script>
+<script src="../../../../docs-kit/ds-nav.js"></script>
+<script src="../../Splitter/Splitter.js"></script>
+<script src="../../Tab/Tab.js"></script>
+<script src="../../../organisms/Table/TableResize.js"></script>
+<script src="../../../organisms/Table/TableReorder.js"></script>
+<script src="InputAmountRange.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Наполнение': { label: 'Заполнено', on: 'value' }, 'Label': 'Показывать метку', 'Helper': 'Показывать helper' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="inp-range">
@@ -326,7 +326,7 @@
   </div>
   <span class="ds-helper ds-helper--left">Helper</span>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/input-amount-range.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Inputs/InputAmountRange/InputAmountRange.page.js)
 // Диапазон строит общий рантайм: window.DSInputKit.makeRange({ kind: 'amount', … })
 const spec = {
   label: 'Сумма, RUB', helper: 'Диапазон «от» и «до»',
@@ -340,7 +340,7 @@ const spec = {
    INPUT RANGE — диапазон из двух полей (InputAmount / InputDate),
    размещённых горизонтально, с компонентом Range_Line между ними.
    Общая метка (Label) сверху и общий хелпер (Helper) снизу.
-   Каждое поле — самостоятельный экземпляр .inp (styles/input.css)
+   Каждое поле — самостоятельный экземпляр .inp (components/molecules/Inputs/Inputs.css)
    со своими состояниями (Hover/Focus/Error/Warning/Disabled).
    Зависимости: input.css, label-helper.css, colors.css.
    Размер только M (40px) — размера S нет.

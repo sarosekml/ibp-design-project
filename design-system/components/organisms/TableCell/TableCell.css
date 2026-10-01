@@ -335,7 +335,7 @@
 .tc--skeleton .tc__text,
 .tc--skeleton .tc__prefix,
 .tc--skeleton .tc__postfix { visibility: hidden; }
-/* плейсхолдер — общий компонент Skeleton, .sk-line--caption (styles/skeleton.css) */
+/* плейсхолдер — общий компонент Skeleton, .sk-line--caption (components/atoms/Skeleton/Skeleton.css) */
 .tc--numbers .sk-line { margin-left: auto; }
 
 /* ================================================================== */
@@ -401,7 +401,7 @@
 /* Ручка на правой границе шапки: зона захвата 9px. Наведение на ЛЮБОЕ место
    шапки проявляет линию приглушённым тоном — границу не нужно искать курсором;
    наведение на саму ручку, фокус с клавиатуры и перетаскивание — активный тон.
-   Ширина колонки не опускается ниже порога 96px (scripts/tbl-resize.js). */
+   Ширина колонки не опускается ниже порога 96px (components/organisms/Table/TableResize.js). */
 .th__resize {
   position: absolute;
   top: 0; right: -4px;

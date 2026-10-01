@@ -2,28 +2,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NavTile — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/illustration.css">
-<link rel="stylesheet" href="../../styles/nav-tile.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/input-pages.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../../../foundations/Illustrations/Illustrations.css">
+<link rel="stylesheet" href="NavTile.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../docs-kit/input-pages.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../Splitter/Splitter.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 <style>
 [data-screen-label="NavTile"] .demo-grid{grid-template-columns:repeat(auto-fill,minmax(460px,1fr))}
 /* каталог тайлов (из ibp-home.js): заголовок группы */
@@ -63,7 +63,7 @@
     <div class="meta"><span>Версия: <b>1.011</b></span><span>Обновлено: <b>05.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>NavTile</h1>
-    <p class="lead">Навигационная плитка главной страницы платформы: иллюстрация, название раздела и краткое описание. Клик по плитке — переход на страницу раздела. Вариант со ссылками добавляет быстрые переходы к подразделам. Иллюстрации — из библиотеки <a class="inl" href="../foundations/Illustrations.html">Иллюстрации</a>. Не путать с дашбордом: NavTile не показывает данные и графики — только вход в раздел.</p>
+    <p class="lead">Навигационная плитка главной страницы платформы: иллюстрация, название раздела и краткое описание. Клик по плитке — переход на страницу раздела. Вариант со ссылками добавляет быстрые переходы к подразделам. Иллюстрации — из библиотеки <a class="inl" href="../../../foundations/Illustrations/Illustrations.html">Иллюстрации</a>. Не путать с дашбордом: NavTile не показывает данные и графики — только вход в раздел.</p>
   </header>
 
   <!-- USAGE -->
@@ -84,10 +84,10 @@
       <h3>Когда не использовать</h3>
       <ul class="bullets" style="margin-bottom:26px;">
         <li>показ показателей, метрик и графиков — это дашборд (отдельная страница платформы), а не NavTile;</li>
-        <li>навигация внутри раздела — используйте <a class="inl" href="Tab.html">Tab</a> или <a class="inl" href="../organisms/NavPanel.html">NavPanel</a>;</li>
-        <li>карточка сущности со статусом и действиями — <a class="inl" href="../organisms/Tile.html">Tile</a>.</li>
+        <li>навигация внутри раздела — используйте <a class="inl" href="../Tab/Tab.html">Tab</a> или <a class="inl" href="../../organisms/NavPanel/NavPanel.html">NavPanel</a>;</li>
+        <li>карточка сущности со статусом и действиями — <a class="inl" href="../../organisms/Tile/Tile.html">Tile</a>.</li>
       </ul>
-      <p class="desc">Соседние компоненты: <a class="inl" href="../organisms/Tile.html">Tile</a> — карточка объекта данных в списках; <a class="inl" href="../organisms/NavPanel.html">NavPanel</a> — постоянная боковая навигация; NavTile — разовая точка входа с главной.</p>
+      <p class="desc">Соседние компоненты: <a class="inl" href="../../organisms/Tile/Tile.html">Tile</a> — карточка объекта данных в списках; <a class="inl" href="../../organisms/NavPanel/NavPanel.html">NavPanel</a> — постоянная боковая навигация; NavTile — разовая точка входа с главной.</p>
     </div>
   </section>
 
@@ -100,7 +100,7 @@
         <div class="anat__stage" id="anat-diagram"></div>
         <ul class="anat__legend">
           <li><span class="n"></span><span class="t"><span class="k">Контейнер</span><span class="d"> — фон <code class="tok">--bg-tile</code>, рамка 1px <code class="tok">--border-light</code>, радиус <code class="tok">--radius-control</code> (8px), паддинг 24px, по умолчанию 483×253px</span></span></li>
-          <li><span class="n"></span><span class="t"><span class="k">Иллюстрация</span><span class="d"> — слот <code class="tok">.illu</code>, фиксированный размер 195×140, вплотную к правому краю и с отступом сверху (24px), из библиотеки <a class="inl" href="../foundations/Illustrations.html">Иллюстрации</a>; опциональна</span></span></li>
+          <li><span class="n"></span><span class="t"><span class="k">Иллюстрация</span><span class="d"> — слот <code class="tok">.illu</code>, фиксированный размер 195×140, вплотную к правому краю и с отступом сверху (24px), из библиотеки <a class="inl" href="../../../foundations/Illustrations/Illustrations.html">Иллюстрации</a>; опциональна</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Название</span><span class="d"> — H4 Strong; в варианте со ссылками обёрнуто в ссылку <code class="tok">.ntile__title-link</code></span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Описание</span><span class="d"> — Body M, <code class="tok">--text-secondary</code>; 1–2 строки, опционально</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Ссылки</span><span class="d"> — до 4 ссылок <code class="tok">.link--accent .link--m</code>, только в варианте со ссылками</span></span></li>
@@ -128,7 +128,7 @@
 
     <div class="subsec" data-screen-label="VarCatalog">
       <h3>Каталог тайлов</h3>
-      <p class="desc">Полный список тайлов главной страницы по группам — единый источник <code class="tok">scripts/ibp-home.js</code> (<code class="tok">window.IBPHome</code>). Сборщик экрана берёт тайлы отсюда; изменение в одном месте подхватывается всеми экранами главной. Пункты меню без тайла («Поиск клиентов в ЕПК») в каталоге не отображаются.</p>
+      <p class="desc">Полный список тайлов главной страницы по группам — единый источник <code class="tok">patterns/HomeRoles/ibp-home.js</code> (<code class="tok">window.IBPHome</code>). Сборщик экрана берёт тайлы отсюда; изменение в одном месте подхватывается всеми экранами главной. Пункты меню без тайла («Поиск клиентов в ЕПК») в каталоге не отображаются.</p>
       <div id="catalog-demo"></div>
     </div>
   </section>
@@ -154,7 +154,7 @@
       <li>название = название раздела в навигации, существительное 1–3 слова: «Сделки», не «Перейти к сделкам»;</li>
       <li>описание — что внутри раздела, 1–2 строки без точки в конце; длиннее двух строк — обрезается многоточием;</li>
       <li>ссылки — названия подразделов, до 4 штук; больше — оставить самые частые, остальное живёт внутри раздела;</li>
-      <li>иллюстрация — из библиотеки <a class="inl" href="../foundations/Illustrations.html">Иллюстрации</a>, одна на раздел, не декоративная иконка.</li>
+      <li>иллюстрация — из библиотеки <a class="inl" href="../../../foundations/Illustrations/Illustrations.html">Иллюстрации</a>, одна на раздел, не декоративная иконка.</li>
     </ul>
     <div class="panel"><div class="demo-grid" id="content-demo"></div></div>
   </section>
@@ -214,7 +214,7 @@
   <!-- DEVELOPER HANDOFF -->
   <section class="section" data-screen-label="Dev">
     <h2>Для разработчиков</h2>
-    <p class="desc">Хендофф-пакет: точные размеры и поведение. CSS — <code class="tok">styles/nav-tile.css</code> + <code class="tok">styles/illustration.css</code>.</p>
+    <p class="desc">Хендофф-пакет: точные размеры и поведение. CSS — <code class="tok">components/molecules/NavTile/NavTile.css</code> + <code class="tok">foundations/Illustrations/Illustrations.css</code>.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
     <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>).</p>
@@ -283,7 +283,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/nav-tile.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/NavTile/NavTile.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -301,17 +301,17 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ibp-home.js"></script>
-<script src="../../scripts/ds-illustrations.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/nav-tile.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../foundations/Illustrations/Illustrations.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="NavTile.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Вариант': 'Со ссылками' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- базовая -->
@@ -334,7 +334,7 @@
 
 <!-- сетка главной -->
 <div class="ntile-grid"> …плитки… </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/nav-tile.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/NavTile/NavTile.page.js)
 function tile(o) {
   // o: { variant: 'base'|'links', title, desc, illu, showIllu, showDesc, links[], state: 'default'|'hover'|'focus'|'disabled' }
   // базовая → <a class="ntile"> (вся плитка — ссылка);

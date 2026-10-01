@@ -12,7 +12,7 @@ const UI_ICONS = {
   download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 20h14"/></svg>',
 };
 
-/* ---------- разметка и позиционирование — общий рантайм, scripts/ds-tooltip.js ---------- */
+/* ---------- разметка и позиционирование — общий рантайм, components/molecules/Tooltip/Tooltip.js ---------- */
 function makeTip(text, o = {}) { return window.DSTooltip.make(text, o); }
 
 /* демо фиксируют позицию, поэтому flip выключен */

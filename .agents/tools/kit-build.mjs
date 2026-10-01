@@ -923,7 +923,8 @@ const DEAL = '<!DOCTYPE html>\n<html><head>\n<script src="../../../ds-config.js"
 
 function tree(r) {
   put(r, 'project.json', JSON.stringify(MANIFEST));
-  put(r, 'ds/pages/atoms/Divider.html', '');                    // ДС стенда: страниц без раскладки не бывает
+  put(r, 'ds/components/atoms/Divider/Divider.html', '');      // ДС стенда: страниц без раскладки не бывает
+  put(r, 'ds/foundations/.keep', '');
   put(r, 'apps/ds-config.js', '');
   put(r, 'apps/ds-body.js', '');
   put(r, MOD + '/app.json', '{}');

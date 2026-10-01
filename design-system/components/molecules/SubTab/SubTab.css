@@ -28,7 +28,7 @@
    Ёмкость: 2–5 пунктов. Переполнения нет by design: трек не переносится
             и не скроллится.
    Requires: typography.css, colors.css, radius.css, spacing.css, badge.css
-   Runtime:  scripts/ds-tabs.js — хук data-subtabs (DSTabs.subtabs)
+   Runtime:  components/molecules/Tab/Tab.js — хук data-subtabs (DSTabs.subtabs)
    ========================================================================= */
 
 /* Парные `[hidden]` — правило B11 линтера. Браузерное `[hidden] {display:none}`

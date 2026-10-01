@@ -2,7 +2,7 @@
    ds-icons.js — иконки ДС на экранах без инлайна SVG в разметку.
    Подключение (в конце body):
      <script src="icons-data.js"></script>
-     <script src="ds-icons.js"></script>
+     <script src="Icons.js"></script>
    Использование:
      <i data-icon="check"></i>
    Цвет — через color родителя (перекрашивается в currentColor).
@@ -12,7 +12,7 @@
    вид не меняется (RulesAudit W0 · K2). Вне компонентов действует
    дефолт 24px через :where() — нулевая специфичность, любое
    компонентное правило перебивает его независимо от порядка загрузки.
-   Имена глифов — specs/Icons.md. Динамика: window.dsIcons.apply(root).
+   Имена глифов — foundations/Icons/Icons.md. Динамика: window.dsIcons.apply(root).
    Строкой в скрипте: window.dsIcons.svg(name).
 
    У каждой копии глифа — свои id внутри SVG (задача 0007). У 141 глифа из
@@ -97,7 +97,7 @@
       if (el.dataset.iconDone === '1') return;
       var name = el.getAttribute('data-icon');
       var markup = svg(name);
-      if (!markup) { console.warn('ds-icons: нет глифа "' + name + '" (см. specs/Icons.md)'); return; }
+      if (!markup) { console.warn('ds-icons: нет глифа "' + name + '" (см. foundations/Icons/Icons.md)'); return; }
       el.innerHTML = markup;
       var node = el.querySelector('svg');
       if (node) recolor(node);

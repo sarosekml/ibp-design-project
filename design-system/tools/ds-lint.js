@@ -4,11 +4,11 @@
    Сам по себе не исполняется — ждёт хелперы readFile/ls снаружи.
    Запуск через обёртку, из корня ДС:
 
-     node scripts/ds-lint-cli.mjs pages/atoms/Badge.html
-     node scripts/ds-check.mjs pages/atoms/Badge.html   # линтер + проверки docs-split
+     node tools/ds-lint-cli.mjs components/atoms/Badge/Badge.html
+     node tools/ds-check.mjs components/atoms/Badge/Badge.html   # линтер + проверки docs-split
 
    Отчёт — плоский текст, только нарушения. Живые проверки (группа E) —
-   в scripts/ds-lint.md, сниппетом для консоли браузера.
+   в tools/ds-lint.md, сниппетом для консоли браузера.
 
    Группа P — гейт парности «документация = код» (Фаза 3, P0 аудита разделов).
    Запускается отдельно, страницы не нужны:
@@ -45,22 +45,22 @@ const HEX_OK = /(chess|checker|shadow-demo|elevation-demo)/i;
 const HEX_ALLOW = [/^#(fff|ffffff|000|000000)$/i, /^rgba?\(\s*255\s*,\s*255\s*,\s*255/i, /^#(f2f5f5|fbfcfc|d9e0e0)$/i, /^rgba?\(\s*40\s*,\s*50\s*,\s*55/i];
 // пары «скрипт ↔ его CSS» (сами скрипты умеют подтягивать стиль, потому WARN)
 const JS_CSS_PAIRS = [['ds-nav.js', 'ds-nav.css'], ['ds-toc.js', 'ds-toc.css'], ['pg-kit.js', 'pg-kit.css'],
-  // ds-product-row.js ставит aria-expanded и класс свёрнутой ветки, но саму
-  // ветку прячет и шеврон поворачивает только product-row.css
-  ['ds-product-row.js', 'product-row.css'],
-  // ds-tooltip.js свой CSS НЕ догружает, а разметку строит: оборачивает подпись в
-  // .tip-anchor и кладёт рядом .tip. Без tooltip.css этот .tip рисуется обычным
+  // ProductRow.js ставит aria-expanded и класс свёрнутой ветки, но саму
+  // ветку прячет и шеврон поворачивает только ProductRow.css
+  ['ProductRow.js', 'ProductRow.css'],
+  // Tooltip.js свой CSS НЕ догружает, а разметку строит: оборачивает подпись в
+  // .tip-anchor и кладёт рядом .tip. Без Tooltip.css этот .tip рисуется обычным
   // текстом — подпись дублируется прямо в компоненте (инцидент 11.09.2026: Tab,
   // Chip, Entity, Table). Потому BLOCKER, а не WARN, как у самодогружающих пар.
-  ['ds-tooltip.js', 'tooltip.css', 'BLOCKER']];
+  ['Tooltip.js', 'Tooltip.css', 'BLOCKER']];
 // рантаймы, которые ds.js (RulesAudit W0/K0) догружает сам — экран не должен подключать их напрямую
-const DS_JS_BUNDLES = ['icons-data.js', 'ds-icons.js', 'ds-float.js', 'screens-chrome.js', 'ds-tabs.js', 'ds-tile.js', 'ds-product-row.js', 'ds-menu.js', 'ds-popover.js', 'ds-tooltip.js', 'ds-modal.js', 'ds-table.js', 'tbl-resize.js', 'tbl-reorder.js', 'tbl-pin.js', 'ds-pagination.js', 'ds-riskmetric.js', 'ds-alert.js', 'ds-chip.js', 'ds-allocationbar.js', 'ds-notify.js', 'ds-datepicker.js', 'input-kit.js', 'ds-nav-panel.js', 'ds-splitter.js', 'ds-illustrations.js'];
+const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
 // утилитарные классы разметки документации — владельца в styles/* не имеют
 const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
 // F5 — реестр «анатомия компонента взята целиком, не урезана под текущий вид». Каждый
 // компонент, у которого есть узлы, обязанные существовать в DOM ВСЕГДА (класс-свап
 // режима/состояния их только показывает/прячет CSS-ом, но не порождает), регистрируется
-// здесь одной строкой вместо кода на каждый инцидент (см. scripts/ds-lint.md, F5).
+// здесь одной строкой вместо кода на каждый инцидент (см. tools/ds-lint.md, F5).
 // when — по этому маркеру лint понимает, что компонент использован; require — список
 // [regex, человекочитаемое имя узла], каждый обязан встретиться в разметке страницы.
 const ANATOMY_CONTRACTS = [
@@ -107,15 +107,15 @@ const RUNTIME_WRAPPERS = /(\w+)\.parentNode\.insertBefore\(\s*(\w+)\s*,\s*(\w+)\
 // fixed), привязанный к якорю ВНУТРИ прокручиваемого предка. При скролле он обязан
 // пересчитаться, а CSS-эквивалента нет — CSS Anchor Positioning в ДС не применяется.
 // Отставание на кадр здесь остаётся, но альтернативы ему нет; у sticky-удержания
-// колонок она есть, поэтому там это дефект (см. B10 в scripts/ds-lint.md).
+// колонок она есть, поэтому там это дефект (см. B10 в tools/ds-lint.md).
 const SCROLL_GEOMETRY_OK = {
-  'ds-tooltip.js:place': 'floating-тултип: position:fixed относительно якоря, следует за ним при скролле любого предка',
-  'ds-popover.js:place': 'floating-поповер: то же — слой вне потока, координаты вьюпорта',
-  'ds-dropdownlist.js:place': 'floating-список: раскрывается вне потока (боундари/флип), координаты вьюпорта',
-  'ds-menu.js:place': 'floating-меню: слой вне потока, координаты вьюпорта',
-  'ds-datepicker.js:reposition': 'floating-календарь: слой вне потока, координаты вьюпорта',
+  'Tooltip.js:place': 'floating-тултип: position:fixed относительно якоря, следует за ним при скролле любого предка',
+  'Popover.js:place': 'floating-поповер: то же — слой вне потока, координаты вьюпорта',
+  'DropdownList.js:place': 'floating-список: раскрывается вне потока (боундари/флип), координаты вьюпорта',
+  'ContextMenu.js:place': 'floating-меню: слой вне потока, координаты вьюпорта',
+  'DatePicker.js:reposition': 'floating-календарь: слой вне потока, координаты вьюпорта',
   'ds-float.js:apply': 'общий слой пере-якорения: плавающий элемент пере-якорен в .ds-float-layer (position:fixed), координаты вьюпорта — закладка на скролл любого предка',
-  'ds-nav-panel.js:placeRailLabels': 'rail-подписи панели навигации — тултипы position:fixed вне скролл-контейнера списка'
+  'NavPanel.js:placeRailLabels': 'rail-подписи панели навигации — тултипы position:fixed вне скролл-контейнера списка'
 };
 
 // нативные таблицы и устаревшие сетки-справочники
@@ -182,8 +182,9 @@ const localFns = (js) => {
 
 async function tree() {
   const files = new Set(), seen = new Set();
+  // глубже всех — папки полей группы: components/molecules/Inputs/<Имя>/ (уровень 4)
   async function walk(dir, depth) {
-    if (depth > 3 || seen.has(dir)) return;
+    if (depth > 4 || seen.has(dir)) return;
     seen.add(dir);
     let items;
     try { items = await ls(dir); } catch (e) { return; }
@@ -257,7 +258,7 @@ async function loadProject() {
      каждый более поздний день журнала (повтор заголовка одного дня — один день);
    - счётчик — файлы .html в pages/atoms, pages/molecules, pages/organisms.
    Вывод зависит только от файлов, не от часов: без правок проверка назавтра не
-   краснеет. Переписывает шапку `node scripts/ds-home.mjs`, сторожит D9. */
+   краснеет. Переписывает шапку `node tools/ds-home.mjs`, сторожит D9. */
 const HOME_DAY_RX = /^##\s+(\d{2})\.(\d{2})\.(\d{4})(?![\d.])([^\r\n]*)$/gm;
 const HOME_MARK_RX = /·\s*ДС\s+(\d+)\.(\d{3})\b/;
 const HOME_VER_RX = /(<p class="ver">)([^<]*)(<\/p>)/;
@@ -453,7 +454,7 @@ async function globalChecks(P, out) {
      горизонтали (низ/верх), запрещён горизонтальный паддинг; `inset ±N 0` = линия идёт по
      вертикали (лево/право), запрещён вертикальный. Тень-кольцо (`inset 0 0 0 N`) — не рейл,
      пропускается. Горизонтальный отступ ряда задаётся ОБЁРТКОЙ без рейла.
-     Заведено 11.09.2026, первый цикл — WARN (scripts/ds-lint.md, «Как расширять», п.4). */
+     Заведено 11.09.2026, первый цикл — WARN (tools/ds-lint.md, «Как расширять», п.4). */
   {
     const railRules = [];
     const allRules = [];
@@ -662,7 +663,7 @@ async function globalChecks(P, out) {
   for (const [what, was, want] of homeApply(P.index, home).diffs) {
     out.push(['BLOCKER', 'D9', was === null
       ? 'index.html: в шапке нет места под «' + what + '» (<p class="ver"> или «Компоненты» в .meta)'
-      : 'index.html: ' + what + ' в шапке «' + was + '», по данным ДС «' + want + '» — запусти node scripts/ds-home.mjs']);
+      : 'index.html: ' + what + ' в шапке «' + was + '», по данным ДС «' + want + '» — запусти node ' + dsLayout.at.homeTool]);
   }
   await runtimeApiCheck(P, out);
   await stickyInHorizontalScrollCheck(P, out);
@@ -834,7 +835,7 @@ async function parityChecks(P, out) {
   const isBemRoot = (c) => !/__|--/.test(c) && cssList.some((k) => k.startsWith(c + '__') || k.startsWith(c + '--'));
   for (const f of specs) {
     const bad = fenceClasses(src.get(f)).filter((c) => !parityIgnore(c) && !known(c));
-    for (const c of bad) out.push(['BLOCKER', 'P1', f + ': сниппет обещает .' + c + ' — в styles/*.css такого класса нет']);
+    for (const c of bad) out.push(['BLOCKER', 'P1', f + ': сниппет обещает .' + c + ' — в CSS ДС такого класса нет']);
   }
   for (const f of screens) {
     const html = src.get(f);
@@ -891,10 +892,10 @@ async function parityChecks(P, out) {
         .filter((c) => !(/^(card__|file$)/.test(c) && f === 'index.html'));
     };
     for (const c of classTokens(scope4)) {
-      out.push(['BLOCKER', 'P4', f + ": рантайм вешает ." + c + ' — в styles/*.css такого класса нет']);
+      out.push(['BLOCKER', 'P4', f + ": рантайм вешает ." + c + ' — в CSS ДС такого класса нет']);
     }
     for (const c of classTokens(scopeDocs)) {
-      out.push(['BLOCKER', 'P3', f + ': код-панель предлагает .' + c + ' — в styles/*.css такого класса нет']);
+      out.push(['BLOCKER', 'P3', f + ': код-панель предлагает .' + c + ' — в CSS ДС такого класса нет']);
     }
   }
   for (const f of [...pageJs, ...pagesOfSpecs, 'index.html']) {
@@ -905,7 +906,7 @@ async function parityChecks(P, out) {
       .flatMap((sn) => all(RX_CHAIN, literalsOnly(sn)))
       .flatMap((chain) => chain.split('.').filter(Boolean)));
     for (const c of toks.filter((c) => !parityIgnore(c) && !known(c))) {
-      out.push(['BLOCKER', 'P3', f + ': код-панель предлагает .' + c + ' — в styles/*.css такого класса нет']);
+      out.push(['BLOCKER', 'P3', f + ': код-панель предлагает .' + c + ' — в CSS ДС такого класса нет']);
     }
   }
 }
@@ -1031,7 +1032,7 @@ async function pageChecks(p, P, opts, out) {
   if (!isScreen && !/<main class="page(?:\s|")/.test(markup) && scripts.some((s) => /ds-(nav|toc)\.js$/.test(s))) say('BLOCKER', 'A6', 'нет <main class="page"> — ds-nav/ds-toc молча не смонтируются');
   /* A4 — иконки без своих скриптов (ds.js на экранах закрывает оба) */
   if (/data-icon="[^"…\s]/.test(markup) && !scripts.some(isEntry)) {
-    const need = ['icons-data.js', 'ds-icons.js'].filter((s) => !scripts.some((x) => base(x) === s));
+    const need = ['icons-data.js', 'Icons.js'].filter((s) => !scripts.some((x) => base(x) === s));
     if (need.length) say('BLOCKER', 'A4', '<i data-icon> есть, не подключено: ' + need.join(', '));
   }
   /* A7 — экран мимо единой точки входа ds.js (K0, RulesAudit W0) */
@@ -1332,7 +1333,7 @@ async function pageChecks(p, P, opts, out) {
   // флагаем только «голый» var(--x) БЕЗ fallback: var(--x, дефолт) — хук переопределения,
   // дефолт и есть определение (та же логика, что в B2 «fallback внутри var() легален»)
   const badTokens = uniq(all(/var\(\s*(--[a-zA-Z0-9-]+)\s*\)/g, html)).filter((t) => !P.tokens.has(t) && !localVars.has(t));
-  for (const t of badTokens) say('BLOCKER', 'B1', 'var(' + t + ') — токена нет в styles/*.css');
+  for (const t of badTokens) say('BLOCKER', 'B1', 'var(' + t + ') — токена нет в CSS ДС');
   /* B2 — хардкод цвета в <style> страницы (fallback внутри var() легален) */
   const hexes = uniq(all(/(#[0-9a-f]{3,8}\b|rgba?\([^)]*\))/gi, styleSrc.replace(/var\([^)]*\)/g, ''), 1))
     .filter((h) => !HEX_ALLOW.some((rx) => rx.test(h.replace(/\s/g, ''))))
@@ -1359,7 +1360,7 @@ async function pageChecks(p, P, opts, out) {
   if (BAD_TABLE.some((rx) => rx.test(visible))) say('BLOCKER', 'B5', 'нативная таблица/устаревшая сетка справочника — переделать на .tbl (Table/TableCell)');
   /* F1 — .chip__info без парного .pop/DSPopover (RiskMetric — половина композиции, RulesAudit W5) */
   if (/\bchip__info\b/.test(markup) && !/class="[^"]*\bpop\b/.test(markup) && !/data-riskmetric/.test(markup)
-      && !scripts.some((s) => base(s) === 'ds-popover.js' || base(s) === 'ds-riskmetric.js')) {
+      && !scripts.some((s) => base(s) === 'Popover.js' || base(s) === 'RiskMetric.js')) {
     say('BLOCKER', 'F1', '.chip__info есть, а .pop/DSPopover рядом нет — композиция Chip+Popover собрана наполовину');
   }
   /* F2 — <i data-icon> внутри слота, который сам не размерен под иконку (не .cb__mark/.rb__mark —
@@ -1367,9 +1368,9 @@ async function pageChecks(p, P, opts, out) {
   if (/class="sw__knob"[^>]*>\s*<i\s+data-icon/.test(markup)) {
     say('BLOCKER', 'F2', '<i data-icon> вставлен прямо в .sw__knob — слот свитча не рассчитан на иконку, анатомия перевёрстана');
   }
-  /* F3 — .tabs--horiz без data-tabs: ds-tabs.js не подключит переполнение (скролл/меню «Ещё») */
+  /* F3 — .tabs--horiz без data-tabs: Tab.js не подключит переполнение (скролл/меню «Ещё») */
   if (/\btabs--horiz\b/.test(markup) && !/\bdata-tabs\b/.test(markup)) {
-    say('BLOCKER', 'F3', '.tabs--horiz без data-tabs — переполнение ряда не подключится (ds-tabs.js молчит без атрибута)');
+    say('BLOCKER', 'F3', '.tabs--horiz без data-tabs — переполнение ряда не подключится (Tab.js молчит без атрибута)');
   }
   /* F4 — одноколоночный grid-track на фиксированной ширине вместо minmax(0,1fr) — трек сжимается по контенту */
   if (/grid-template-columns:\s*[\d.]+px\s*;/.test(styleSrc)) {
@@ -1377,19 +1378,21 @@ async function pageChecks(p, P, opts, out) {
   }
   /* F6 — интерактивная таблица на ЭКРАНЕ без ручек изменения ширины колонки. Изменение
      ширины — базовое, не отключаемое поведение любой таблицы, работает из коробки
-     (tbl-resize.js входит в ds.js), но только если ручка размечена. Ждём .th__resize
+     (TableResize.js входит в ds.js), но только если ручка размечена. Ждём .th__resize
      последним ребёнком каждой .th (кроме .th--separator). Только для screens: redline-
      и справочные таблицы в документации строятся на тех же .th/.th__label и ручки не
-     несут — их не трогаем (инцидент 27.08.2026: tbl-resize.js не был в ds.js, а
-     канонические сниппеты шапки шли без .th__resize — сборщик экрана не получал ресайз). */
+     несут — их не трогаем (инцидент 27.08.2026: tbl-resize.js, ныне TableResize.js, не
+     был в ds.js, а канонические сниппеты шапки шли без .th__resize — сборщик экрана не
+     получал ресайз). */
   if (isScreen && /\bth__label\b/.test(markup) && !/\bth__resize\b/.test(markup)) {
-    say('BLOCKER', 'F6', 'таблица на экране без .th__resize — ручка ширины ставится в каждой .th (кроме разделителей), опция не отключаемая; поведение из коробки через tbl-resize.js (уже в ds.js), свой JS не нужен');
+    say('BLOCKER', 'F6', 'таблица на экране без .th__resize — ручка ширины ставится в каждой .th (кроме разделителей), опция не отключаемая; поведение из коробки через TableResize.js (уже в ds.js), свой JS не нужен');
   }
-  // A8 — страница в pages без window.__DS_ROOT: ds-nav.js подставит пустой префикс,
+  // A8 — страница документации без window.__DS_ROOT: ds-nav.js подставит пустой префикс,
   // и ВСЕ ссылки левой навигации плюс логотип окажутся битыми (Layout.html, 20.08.2026):
-  // страница выглядит нормально, навигация не работает.
+  // страница выглядит нормально, навигация не работает. Нужное значение — путь до
+  // корня ДС по глубине папки страницы.
   if (isDsPage(p) && /ds-nav\.js/.test(html) && !/__DS_ROOT/.test(html))
-    say('BLOCKER', 'A8', "нет window.__DS_ROOT — ds-nav.js даст битые ссылки и логотип; для страниц в pages/<категория>/ нужно '../../'");
+    say('BLOCKER', 'A8', "нет window.__DS_ROOT — ds-nav.js даст битые ссылки и логотип; для этой страницы нужно '" + '../'.repeat(p.split('/').length - 1) + "' (путь до корня ДС)");
   /* F5 — «анатомия компонента взята не целиком»: реестр контрактов, а не код на каждый
      инцидент — новый компонент с обязательными «всегда обязаны присутствовать в DOM»
      узлами (не зависящими от текущего визуального режима/состояния) регистрируется ОДНОЙ
@@ -1456,14 +1459,14 @@ async function pageChecks(p, P, opts, out) {
   /* D1/D2 — реестры */
   if (inRegistry) {
     if (!P.index.includes('"' + p + '"')) say('BLOCKER', 'D1', 'нет карточки в index.html (href="' + p + '")');
-    if (!P.nav.includes("'" + p + "'")) say('BLOCKER', 'D2', 'нет пункта в scripts/ds-nav.js');
+    if (!P.nav.includes("'" + p + "'")) say('BLOCKER', 'D2', 'нет пункта в ' + dsLayout.at.nav);
     /* D5 — спека и манифест */
     const spec = dsLayout.specOf(name);
     if (!P.files.has(spec)) say('BLOCKER', 'D5', 'нет спеки ' + spec);
     else {
-      if (!P.specIndex.includes(spec)) say('BLOCKER', 'D5', 'нет строки в specs/_index.md');
+      if (!P.specIndex.includes(spec)) say('BLOCKER', 'D5', 'нет строки в ' + dsLayout.at.specIndex);
       /* D6 */
-      if (inContract && !new RegExp('^##\\s*' + name + '\\b', 'mi').test(P.cheat)) say('WARN', 'D6', 'нет блока «## ' + name + '» в specs/_cheatsheet.md');
+      if (inContract && !new RegExp('^##\\s*' + name + '\\b', 'mi').test(P.cheat)) say('WARN', 'D6', 'нет блока «## ' + name + '» в ' + dsLayout.at.cheatsheet);
       else if (inContract) {
         const blockM = P.cheat.match(new RegExp('\\n##\\s*' + name + '\\b[\\s\\S]*?(?=\\n## |$)', 'i'));
         const block = blockM ? blockM[0] : '';

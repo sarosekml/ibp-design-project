@@ -3,8 +3,8 @@ component: Entity
 title: "Entity"
 version: "1.008"
 updated: "15.09.2026"
-page: pages/organisms/Entity.html
-css: styles/entity.css
+page: components/organisms/Entity/Entity.html
+css: components/organisms/Entity/Entity.css
 deps: [avatar, chip, icon-button, button, badge]
 status: manual
 ---
@@ -27,7 +27,7 @@ status: manual
 
 ## Диагностика
 - «Заголовок вылезает/переносится на 3+ строки» → `.entity__label--truncate`
-- «Больше двух кнопок в блоке действий теснятся» → кебаб `[data-menu]` + `scripts/ds-menu.js`, не свой список
+- «Больше двух кнопок в блоке действий теснятся» → кебаб `[data-menu]` + `components/molecules/ContextMenu/ContextMenu.js`, не свой список
 - «Subheaders занимают лишние строки» → клэмп `.entity__subs` (2 строки) + счётчик `.entity__subs-more`
 - «Аватар/иконка пуста в скелетоне» → `.entity--skeleton` (`.sk-surface` на иконке, сохраняет размер/радиус)
 - «Клик по вложенной кнопке выбирает/открывает строку» → проверить stopPropagation — элемент должен быть настоящей кнопкой, не div
@@ -62,7 +62,7 @@ status: manual
 - `.entity--interactive` — кликабельный тайл: hover-фон `--bg-table-default-hover`, фокус-обводка. Подложка выносится наружу на 8/10px — несколько строк подряд собираются в `.entity-list`.
 - `.entity--selected` — выбран, фон `--primary-bg`; CSS реагирует и на `[aria-selected="true"]` напрямую — класс нужен только для форс-состояния витрины (RulesAudit W1, 12.08.2026).
 - `.entity--selectable` — реальный чекбокс в `.entity__lead` (множественный выбор).
-- `.entity--skeleton` — загрузка: ведущая иконка получает `.sk-surface` (сохраняет размер/радиус), строки — `.sk-line`; общий компонент Skeleton (styles/skeleton.css), `aria-busy`; шиммер замедляется при reduced-motion.
+- `.entity--skeleton` — загрузка: ведущая иконка получает `.sk-surface` (сохраняет размер/радиус), строки — `.sk-line`; общий компонент Skeleton (components/atoms/Skeleton/Skeleton.css), `aria-busy`; шиммер замедляется при reduced-motion.
 - `.entity--empty` — нет данных: Label = «—», цвет inactive.
 - `.entity--error` — объект удалён: иконка в тоне error, Label зачёркнут, Header в тоне error.
 - Drag-handle — `.entity__drag` (drag-dots) в начале строки.
@@ -140,10 +140,10 @@ interface EntityProps {
 закрывают общие рантаймы ДС:
 
 - **усечение заголовка → тултип**: `data-tooltip="<полный текст>"` +
-  `data-tooltip-truncated="only"` на усекаемом узле, `scripts/ds-tooltip.js`
+  `data-tooltip-truncated="only"` на усекаемом узле, `components/molecules/Tooltip/Tooltip.js`
   сам покажет подсказку только когда текст не помещается;
 - **кебаб при более чем двух действиях**: триггер `[data-menu]` и список
-  `.menu`, `scripts/ds-menu.js` даёт открытие, позиционирование с
+  `.menu`, `components/molecules/ContextMenu/ContextMenu.js` даёт открытие, позиционирование с
   разворотом, клавиатуру и закрытие.
 
 ### Справочник классов

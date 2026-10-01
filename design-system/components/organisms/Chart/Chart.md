@@ -3,10 +3,10 @@ component: Chart
 title: "Chart"
 version: "1.003"
 updated: "21.09.2026"
-page: pages/organisms/Chart.html
-page_js: scripts/chart.page.js
-runtime: scripts/ds-chart.js
-css: styles/chart.css
+page: components/organisms/Chart/Chart.html
+page_js: components/organisms/Chart/Chart.page.js
+runtime: components/organisms/Chart/Chart.js
+css: components/organisms/Chart/Chart.css
 deps: [tooltip, alert, skeleton, segment-control, icon-button, button, table-cell]
 status: curated
 ---
@@ -124,6 +124,6 @@ status: curated
 `.chart-host` (+ `[data-size="s|m|l"]`, `[data-type]`, `--spark`) · `.chart` (+ `--stretch`, `--spark`, `[data-hover]`) · `.chart__head` `__titles` `__title` `__subtitle` `__toolbar` · `.chart__legend` (+ `--bottom`) `__legend-item` `__legend-name` `__legend-val` · `.chart__marker` (+ `--line` `--dot` `--dashed`) · `.chart__plot` `__svg` · `.chart__grid` (+ `.chart__zero`) `__axis` `__axis-title` `__tick` `__vlabel` · `.chart__ser` (+ `.is-active`) `__bar` (+ `--forecast`) `__line` (+ `--dashed`) `__area` `__dot` (+ `--solid`, `.is-active`) `__slice` `__spark-dot` · `.chart__ref` `__ref-label` `__band` (+ `.is-active`) `__hit` `__cursor` · `.chart__tip` `__tip-title` `__tip-row` `__tip-name` `__tip-val` `__tip-total` · `.chart__brush` `__brush-svg` `__brush-spark` `__brush-window` `__brush-handle` (+ `--l` `--r`) · `.chart__foot` `__empty` `__calc` `__calc-title` `__calc-sub` `__sk` `__sk-bars`
 
 ## Рантайм
-`scripts/ds-chart.js` → `window.DSChart.make(cfg)`, `.palette` (12 токенов), `.fmt.number` / `.fmt.compact` / `.fmt.percent`. Подключается единой точкой входа `scripts/ds.js`. Ключи `cfg`: `type` `size` `title` `subtitle` `categories` `series[]` `legend` `tooltip` `crosshair` `grid` `valueLabels` `refLine` `brush` `initialRange` `toolbar` `format` `yTicks` `status` `totalIndexes` `centerLabel` `centerSub` `spark` `tone` `footNote`. Серия: `{ id, name, data[], type, color, dashed, forecastFrom, legendValue }`.
+`components/organisms/Chart/Chart.js` → `window.DSChart.make(cfg)`, `.palette` (12 токенов), `.fmt.number` / `.fmt.compact` / `.fmt.percent`. Подключается единой точкой входа `ds.js`. Ключи `cfg`: `type` `size` `title` `subtitle` `categories` `series[]` `legend` `tooltip` `crosshair` `grid` `valueLabels` `refLine` `brush` `initialRange` `toolbar` `format` `yTicks` `status` `totalIndexes` `centerLabel` `centerSub` `spark` `tone` `footNote`. Серия: `{ id, name, data[], type, color, dashed, forecastFrom, legendValue }`.
 
 - **Размеры · Радиус скругления** — Радиусы не зависят от размера — привязаны к типу элемента. столбец — 2px (--chart-bar-r = --radius-2xs) · маркер линии — 999px · маркер точки — 50% · пункт легенды, brush, Empty, «Расчёт» — 4px (--radius-xs).

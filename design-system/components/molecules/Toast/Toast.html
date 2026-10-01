@@ -2,20 +2,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Toast — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/toast.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="Toast.css">
+<link rel="stylesheet" href="../../atoms/Spinner/Spinner.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -127,11 +127,11 @@
   .callout p { margin:0; font:var(--type-body-s); color:var(--text-primary); text-wrap:pretty; }
   .callout p + p { margin-top:8px; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Toast">
@@ -159,7 +159,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <a class="crumb" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
+    <a class="crumb" href="../../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
     <div class="meta"><span>Версия: <b>1.007</b></span><span>Обновлено: <b>05.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Toast</h1>
@@ -435,18 +435,18 @@
     <p class="desc">Страница ДС собрана на чистом CSS + vanilla JS, но всё ниже не привязано к стеку: команда, которая верстает Toast на React, берёт отсюда анатомию, точные размеры, тайминги, тоны и логику слоя/стека.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены через <code class="tok">getComputedStyle()</code> с реального экземпляра — токены ДС из <code class="tok">styles/toast.css</code>, не хардкод.</p>
+    <p class="desc tight">Значения измерены через <code class="tok">getComputedStyle()</code> с реального экземпляра — токены ДС из <code class="tok">components/molecules/Toast/Toast.css</code>, не хардкод.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:36px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 1.17fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен / источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить:</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/shadow.css</code>
-      <code class="tok">styles/toast.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/molecules/Toast/Toast.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -524,7 +524,7 @@ MAX = 3
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/toast.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Toast/Toast.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -542,17 +542,17 @@ MAX = 3
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-notify.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/toast.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../utils/ds-notify.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="Toast.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Режим': 'ToastLoader (блокирующий)', 'Показ': 'Стек (3)' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- Слой: позиционирует стек по центру у верхней границы рабочей области -->
@@ -580,7 +580,7 @@ MAX = 3
 <!-- ToastLoader — затемняющий слой + слой над снэкбаром -->
 <div class="toast-scrim"></div>
 <div class="toast-layer toast-layer--loader">…</div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/toast.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Toast/Toast.page.js)
 // Тост строит общий рантайм: window.DSToast.make({ … }) — стек ≤3, авто-скрытие,
 // loader со скримом, переход loading → success (спиннер → статус-иконка)
 const spec = {

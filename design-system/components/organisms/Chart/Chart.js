@@ -5,7 +5,7 @@
      .make(cfg)  → DOM-узел .chart-host (перерисовывается по ResizeObserver)
      .palette    → 12 токенов --chart-* в порядке назначения
      .fmt        → { number, compact, percent } — форматтеры ru-RU
-   Разметка: см. specs/Chart.md. Стиль: styles/chart.css.
+   Разметка: см. components/organisms/Chart/Chart.md. Стиль: components/organisms/Chart/Chart.css.
    ========================================================================= */
 (function (global) {
 'use strict';

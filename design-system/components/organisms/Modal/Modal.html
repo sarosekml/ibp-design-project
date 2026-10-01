@@ -2,25 +2,25 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modal — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/alert.css">
-<link rel="stylesheet" href="../../styles/modal.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../molecules/Alert/Alert.css">
+<link rel="stylesheet" href="Modal.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../../atoms/Spinner/Spinner.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -108,11 +108,11 @@
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Modal">
@@ -183,7 +183,7 @@
   <!-- VARIANTS -->
   <section class="section" data-screen-label="Variants">
     <h2>Варианты</h2>
-    <p class="desc">Кроме ширины (см. «Размеры») у модалки одна ось конфигурации — необязательный <a class="inl" href="../molecules/Alert.html">Alert</a> между шапкой и контентной областью. Состав подвала описан в «Использовании», начинка тела — в «Контенте».</p>
+    <p class="desc">Кроме ширины (см. «Размеры») у модалки одна ось конфигурации — необязательный <a class="inl" href="../../molecules/Alert/Alert.html">Alert</a> между шапкой и контентной областью. Состав подвала описан в «Использовании», начинка тела — в «Контенте».</p>
 
 <div class="subsec" data-screen-label="VariantAlert">
     <h3>С алертом между шапкой и телом</h3>
@@ -223,12 +223,12 @@
     <p class="desc tight">Контентная область (Modal_Body) не диктует состав — единственное требование: она прокручивается сама, независимо от шапки и подвала, которые остаются закреплёнными. Правила:</p>
     <div class="panel">
       <ul class="rules">
-        <li><b>Заголовок</b> — H4 Strong (22/24), короткое существительное или конструкция «Действие + объект» («Новая сделка», «Изменить условия»), без точки в конце — подробно в <a class="inl" href="../patterns/Redpolicy.html">Редполитике</a>.</li>
+        <li><b>Заголовок</b> — H4 Strong (22/24), короткое существительное или конструкция «Действие + объект» («Новая сделка», «Изменить условия»), без точки в конце — подробно в <a class="inl" href="../../../patterns/Redpolicy/Redpolicy.html">Редполитике</a>.</li>
         <li><b>Крестик обязателен</b> всегда, даже если внизу есть кнопка «Закрыть» — второй способ выйти без решения.</li>
         <li><b>Отступы контентной области</b> — 24px слева и справа, 16px сверху, 24px снизу (32px — <code class="tok">.modal__body--roomy</code>, когда контенту нужен воздух); зазор между вложенными компонентами — 16px.</li>
         <li><b>Body может быть пустым, формой, таблицей или пустым состоянием</b> — модалка не задаёт для него разметку, только паддинг и скролл.</li>
         <li><b>Длинный контент не тянет модалку выше 80% экрана</b> — после <code class="tok">80vh</code> прокручивается только тело; шапка, алерт и подвал остаются на месте.</li>
-        <li><b>Ошибка внутри контента</b> не закрывает модалку и не убирает подвал — сообщение об ошибке несёт <a class="inl" href="../atoms/LabelHelper.html">Helper</a> конкретного поля.</li>
+        <li><b>Ошибка внутри контента</b> не закрывает модалку и не убирает подвал — сообщение об ошибке несёт <a class="inl" href="../../atoms/LabelHelper/LabelHelper.html">Helper</a> конкретного поля.</li>
       </ul>
     </div>
   </section>
@@ -314,21 +314,21 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/modal.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/organisms/Modal/Modal.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/shadow.css</code>
-      <code class="tok">styles/button.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/alert.css</code>
-      <code class="tok">styles/modal.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/molecules/Alert/Alert.css</code>
+      <code class="tok">components/organisms/Modal/Modal.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -387,7 +387,7 @@ onBodyScroll():
 
 <div class="subsec" data-screen-label="Redpolicy">
     <h3>Редполитика названий модалок</h3>
-    <p class="desc">Правила формулировки названий модалок и действий — на отдельной странице <a class="inl" href="../patterns/Redpolicy.html">Редполитика</a>.</p>
+    <p class="desc">Правила формулировки названий модалок и действий — на отдельной странице <a class="inl" href="../../../patterns/Redpolicy/Redpolicy.html">Редполитика</a>.</p>
   </div>>
   </section>
 
@@ -415,7 +415,7 @@ onBodyScroll():
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники Modal: HTML — из спеки, CSS — styles/modal.css (полностью), JS — выжимка API. Полный исходник демо — в <code class="tok">scripts/modal.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники Modal: HTML — из спеки, CSS — components/organisms/Modal/Modal.css (полностью), JS — выжимка API. Полный исходник демо — в <code class="tok">components/organisms/Modal/Modal.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -433,16 +433,16 @@ onBodyScroll():
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-modal.js"></script>
-<script src="../../scripts/ds-scroll.js"></script>
-<script src="../../scripts/modal.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="Modal.js"></script>
+<script src="../../../foundations/Layout/Layout.js"></script>
+<script src="Modal.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
 
 <!-- самодостаточные подписи свитчеров конструктора (общий слой docs-split.js) -->
 <script>
@@ -450,7 +450,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Подвал · справа': 'Secondary + Primary',
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><div class="modal-scrim">
@@ -479,8 +479,8 @@ window.DS_SPLIT_SWITCH_LABELS = {
   …заголовок + сообщение + <button class="btn btn--accent btn--m btn--danger">Удалить</button>
 </div></script>
 
-<script type="text/plain" id="src-code-js">/* Modal — разметка статична; поведение вынесено в рантайм scripts/ds-modal.js (DSModal).
-   Демо страницы строит инлайн-функция buildModal() из scripts/modal.page.js. */
+<script type="text/plain" id="src-code-js">/* Modal — разметка статична; поведение вынесено в рантайм components/organisms/Modal/Modal.js (DSModal).
+   Демо страницы строит инлайн-функция buildModal() из components/organisms/Modal/Modal.page.js. */
 
 // Открытие: триггер с data-modal="<id скрима>", слой .modal-scrim с этим id (hidden).
 // После закрытия рантайм возвращает hidden — состояние формы сохраняется.
@@ -807,7 +807,7 @@ DSModal.open(scrim, { guarded: true, nested: true, onClose(ok) {} });
 
 /* =========================================================================
    ЗАГРУЗКА КОНТЕНТА (скелетон при открытии) — общий компонент Skeleton
-   (.sk-line/.sk-group, styles/skeleton.css), локальной реализации нет.
+   (.sk-line/.sk-group, components/atoms/Skeleton/Skeleton.css), локальной реализации нет.
    ========================================================================= */
 
 /* =========================================================================

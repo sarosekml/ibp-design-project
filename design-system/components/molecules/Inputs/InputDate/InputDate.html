@@ -2,30 +2,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InputDate — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/datepicker.css">
-<link rel="stylesheet" href="../../styles/input.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/input-pages.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../DatePicker/DatePicker.css">
+<link rel="stylesheet" href="../Inputs.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../../docs-kit/input-pages.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../Splitter/Splitter.css">
+<link rel="stylesheet" href="../../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../Tab/Tab.css">
+<link rel="stylesheet" href="../../../../docs-kit/docs-split.css">
 <style>
   /* демо-стадия (docs-split): растяжение на ширину панели демо;
      padding/фон/min-height — из input-pages.css */
@@ -61,7 +61,7 @@
     <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>InputDate</h1>
-    <p class="lead">Компонент ввода даты: поле с маской и кнопкой-календарём. При фокусе на поле или по кнопке-календарю поднимается <a class="inl" href="DatePicker.html">DatePicker</a>. Построен на той же базе Input_Content, что и <a class="inl" href="InputText.html">InputText</a> и <a class="inl" href="InputAutocomplete.html">InputAutocomplete</a>, — состояния и размеры общие.</p>
+    <p class="lead">Компонент ввода даты: поле с маской и кнопкой-календарём. При фокусе на поле или по кнопке-календарю поднимается <a class="inl" href="../../DatePicker/DatePicker.html">DatePicker</a>. Построен на той же базе Input_Content, что и <a class="inl" href="../InputText/InputText.html">InputText</a> и <a class="inl" href="../InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>, — состояния и размеры общие.</p>
   </header>
 
   <!-- USAGE -->
@@ -91,7 +91,7 @@
         <li>ввод конкретной даты: подписание, транш, плановая дата;</li>
         <li>редактирование даты в ячейке таблицы — размер S (Table Edit).</li>
       </ul>
-      <p class="desc">Для произвольного текста — <a class="inl" href="InputText.html">InputText</a>; для выбора из справочника — <a class="inl" href="InputAutocomplete.html">InputAutocomplete</a>. Диапазон дат («с … по …») собирается из двух InputDate с префиксами «От» / «До».</p>
+      <p class="desc">Для произвольного текста — <a class="inl" href="../InputText/InputText.html">InputText</a>; для выбора из справочника — <a class="inl" href="../InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>. Диапазон дат («с … по …») собирается из двух InputDate с префиксами «От» / «До».</p>
     </div>
   </section>
 
@@ -175,7 +175,7 @@
 
     <div class="subsec" data-screen-label="DatePicker">
       <h3>DatePicker</h3>
-      <p class="desc">При фокусе на поле под ним поднимается календарь DatePicker; клик по кнопке-календарю открывает его явно. Выбор даты в календаре записывает значение в поле (маска ДД.ММ.ГГГГ) и закрывает календарь. Календарь — компонент <a class="inl" href="DatePicker.html">DatePicker</a>; здесь он подключён рантаймом <code class="tok">ds-datepicker.js</code> — кликните по кнопке-календарю в примерах ниже.</p>
+      <p class="desc">При фокусе на поле под ним поднимается календарь DatePicker; клик по кнопке-календарю открывает его явно. Выбор даты в календаре записывает значение в поле (маска ДД.ММ.ГГГГ) и закрывает календарь. Календарь — компонент <a class="inl" href="../../DatePicker/DatePicker.html">DatePicker</a>; здесь он подключён рантаймом <code class="tok">ds-datepicker.js</code> — кликните по кнопке-календарю в примерах ниже.</p>
       <div class="panel"><div class="demo-grid" id="beh-picker"></div></div>
       <p class="desc" style="display:none;"></p>
     </div>
@@ -229,18 +229,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. База (<code class="tok">.inp</code>) общая с InputText — здесь только отличия.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/input.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Inputs/Inputs.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.55fr 1.08fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S (Table Edit)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/input.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/molecules/Inputs/Inputs.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -300,7 +300,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/input.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Inputs/Inputs.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -318,18 +318,18 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-datepicker.js"></script>
-<script src="../../scripts/input-kit.js"></script>
-<script src="../../scripts/ds-input.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/input-date.page.js"></script>
+<script src="../../../../foundations/Icons/icons-data.js"></script>
+<script src="../../DatePicker/DatePicker.js"></script>
+<script src="../InputKit.js"></script>
+<script src="../Inputs.js"></script>
+<script src="../../../../docs-kit/ds-nav.js"></script>
+<script src="../../Splitter/Splitter.js"></script>
+<script src="../../Tab/Tab.js"></script>
+<script src="../../../organisms/Table/TableResize.js"></script>
+<script src="../../../organisms/Table/TableReorder.js"></script>
+<script src="InputDate.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Размер': 'S (Table Edit)', 'Наполнение': 'Заполнено', 'Label': 'Показывать метку', 'Helper': 'Показывать helper', 'Информер': 'Показывать информер' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="inp inp--m">
@@ -343,7 +343,7 @@
   </div>
   <span class="ds-helper ds-helper--left">Helper</span>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/input-date.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Inputs/InputDate/InputDate.page.js)
 // Поле строит общий рантайм: window.DSInputKit.makeInput({ calendar: true, … })
 const spec = {
   label: 'Дата подписания', placeholder: 'ДД.ММ.ГГГГ', inputmode: 'numeric',
@@ -354,7 +354,7 @@ const spec = {
   live: true, width: 260
 };
 // Маска: цифры + автоточки (присоединяется на странице к _control);
-// календарь — DatePicker (scripts/ds-datepicker.js).</script>
+// календарь — DatePicker (components/molecules/DatePicker/DatePicker.js).</script>
 <script type="text/plain" id="src-code-css">/* ============================================================
    INPUT — семейство полей ввода: InputText · InputDate · InputAutocomplete
    Общий компонент подкачки Input_Content (поле с рамкой) + слои

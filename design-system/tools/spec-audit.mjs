@@ -6,7 +6,7 @@
    Что делает: по репозиторию ДС ищет места, где спека/манифест
    обещают поведение, а реализации нет (или она живёт не у владельца).
    Ничего не пишет. Запуск:
-     node scripts/spec-audit.mjs
+     node tools/spec-audit.mjs
 
    Проходы (см. «Ревизия ДС: правило объявлено — кода нет. Отчёт»):
      1. Классы-состояния в styles/*.css, которых нет ни в одном скрипте.
@@ -230,7 +230,7 @@ for (const [sel, fs] of conflicts) say('  · ' + sel + '  ← ' + [...new Set(fs
    и стилизуются чужими классами (`.ibtn`, `.btn`). Находка — только то, чего
    нет НИ в CSS, НИ в скриптах: чисто CSS-модификатор вроде `.tile--card`
    остаётся в области правила. */
-section('Проход 6 · классы, названные в спеке, которых нет в styles/*.css');
+section('Проход 6 · классы, названные в спеке, которых нет в CSS ДС');
 const specClasses = new Set();
 for (const s of Object.values(specs)) {
   if (!/^component:\s*.+$/m.test(s)) continue;   // только компоненты, не _cheatsheet/_TEMPLATE/_index
@@ -258,7 +258,7 @@ for (const f of L.pages().map((p) => L.abs(p.rel))) {
 
 const hasClassRule = (c) => new RegExp('\\.' + c.replace(/-/g, '\\-') + '(?![a-z0-9_-])').test(allStyles);
 const classMiss = [...specClasses].filter((c) => !hasClassRule(c) && !allScripts.includes(c) && !pageClasses.has(c)).sort();
-say('Классов из спек: ' + specClasses.size + ', нет правил в styles/*.css: ' + classMiss.length);
+say('Классов из спек: ' + specClasses.size + ', нет правил в CSS ДС: ' + classMiss.length);
 for (const c of classMiss.slice(0, 40)) say('  · .' + c);
 
 /* ---------- Проход 7: фасет «Классы» чит-шита против styles/*.css ----------
@@ -278,7 +278,7 @@ for (const c of classMiss.slice(0, 40)) say('  · .' + c);
    соседнего компонента (`tc`, `tbl__row` — в table-cell.css, объявлены у
    Table), находятся сами. Фильтры те же, что у прохода 6: хук-класс без
    собственных правил CSS (`.nav__burger`) не дефект — его ищет рантайм. */
-section('Проход 7 · классы из фасета «Классы» чит-шита, которых нет в styles/*.css');
+section('Проход 7 · классы из фасета «Классы» чит-шита, которых нет в CSS ДС');
 const sheet = specs['_cheatsheet.md'] || '';
 const sheetClasses = new Set();
 let sheetBlocks = 0;
@@ -290,7 +290,7 @@ for (const block of sheet.split(/^## /m).slice(1)) {
 }
 const sheetMiss = [...sheetClasses].filter((c) => !hasClassRule(c) && !allScripts.includes(c) && !pageClasses.has(c)).sort();
 say('Блоков с фасетом «Классы»: ' + sheetBlocks + ', классов: ' + sheetClasses.size
-  + ', нет правил в styles/*.css: ' + sheetMiss.length);
+  + ', нет правил в CSS ДС: ' + sheetMiss.length);
 for (const c of sheetMiss.slice(0, 40)) say('  · .' + c);
 
 /* ---------- Проход 8: манифест против каталога в правилах агента ----------
@@ -305,7 +305,7 @@ for (const c of sheetMiss.slice(0, 40)) say('  · .' + c);
    Сверка в обе стороны. Файл правил читается мягко — аудит обязан работать и
    без агентской оснастки, — но пропуск печатается, а не молчит. Разбор, давший
    пустой список, — находка: пустая сверка неотличима от чистой. */
-section('Проход 8 · манифест specs/_index.md против каталога компонентов в правилах агента');
+section('Проход 8 · манифест ' + L.at.specIndex + ' против каталога компонентов в правилах агента');
 const RULES = L.abs('AGENTS.md');
 let catalogMissing = [];
 let catalogExtra = [];
@@ -314,7 +314,8 @@ let catalogBroken = false;
   const manifestTable = (specs['_index.md'] || '').split(/^## /m)[0];
   const manifest = new Set();
   for (const line of manifestTable.split('\n')) {
-    const m = line.match(/^\|\s*([A-Za-z][A-Za-z0-9]*)\s*\|\s*specs\//);
+    // вторая колонка — путь спеки от корня ДС, какой бы ни была раскладка
+    const m = line.match(/^\|\s*([A-Za-z][A-Za-z0-9]*)\s*\|\s*[\w./-]+\.md\s*\|/);
     if (m) manifest.add(m[1]);
   }
   let rules = null;

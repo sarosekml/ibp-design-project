@@ -3,8 +3,8 @@ component: Avatar
 title: "Avatar"
 version: "1.005"
 updated: "05.09.2026"
-page: pages/atoms/Avatar.html
-css: styles/avatar.css
+page: components/atoms/Avatar/Avatar.html
+css: components/atoms/Avatar/Avatar.css
 deps: [badge]
 status: auto
 ---

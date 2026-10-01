@@ -3,9 +3,9 @@ component: SnackBar
 title: "SnackBar"
 version: "1.005"
 updated: "05.09.2026"
-page: pages/organisms/SnackBar.html
-runtime: scripts/ds-notify.js
-css: styles/snackbar.css
+page: components/organisms/SnackBar/SnackBar.html
+runtime: utils/ds-notify.js
+css: components/organisms/SnackBar/SnackBar.css
 deps: [button, link]
 status: auto
 ---
@@ -34,7 +34,7 @@ status: auto
 - **Esc** — закрывает верхний снек стека.
 - **Кнопки** — переиспользуют Button xs из ДС с явным тон-классом (`.btn--info/--warning/--error/--success`), совпадающим с тоном снека; переопределение --primary в контексте .snack__buttons остаётся для ссылок.
 - **Ссылки** — Link из ДС; перекраска через --link-fg / --link-fg-hover.
-- **Слои** — ToastBar < Modal < SnackBar < ToastLoader. Описано в specs/Toast.md.
+- **Слои** — ToastBar < Modal < SnackBar < ToastLoader. Описано в components/molecules/Toast/Toast.md.
 
 ## Токены
 
@@ -82,7 +82,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-notify.js`
+### Рантайм ДС — `utils/ds-notify.js`
 
 Контроллер снекбара вынесен в рантайм; слой создаётся сам при первом показе
 (или берётся элемент с атрибутом `data-ds-snackbar`, если страница задаёт свой).

@@ -2,25 +2,25 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NavPanel — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/avatar.css">
-<link rel="stylesheet" href="../../styles/nav-panel.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/modal.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../atoms/Avatar/Avatar.css">
+<link rel="stylesheet" href="NavPanel.css">
+<link rel="stylesheet" href="../../molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../Modal/Modal.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
   a { color: var(--link); }
@@ -122,11 +122,11 @@
   .backlog > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 24px; max-width:76ch; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="NavPanel">
@@ -264,7 +264,7 @@
     <div class="panel">
       <ul class="rules">
         <li><b>Подпись пункта</b> — короткое существительное или название раздела; длинная подпись усекается многоточием, полный текст — тултипом (в Rail подпись всегда во всплывающем тултипе).</li>
-        <li><b>Иконка</b> — глиф 24×24 из раздела <a class="inl" href="../foundations/Icons.html">Icons</a> (Menu). У каждого пункта своя иконка — именно она опознаёт раздел в Rail.</li>
+        <li><b>Иконка</b> — глиф 24×24 из раздела <a class="inl" href="../../../foundations/Icons/Icons.html">Icons</a> (Menu). У каждого пункта своя иконка — именно она опознаёт раздел в Rail.</li>
         <li><b>Заголовок блока</b> — название подразделения или типа (Origination, Pipeline, Отчёты); в Rail заменяется короткой чертой-разделителем.</li>
         <li><b>Badge</b> — только целое число сущностей; опционален. Пустой или декоративный бейдж не допускается.</li>
         <li><b>Профиль в футере</b> — ФИО (одна строка с усечением), должность и организация с признаком «+N» дополнительных.</li>
@@ -352,17 +352,17 @@
     <p class="desc">Хендофф-пакет: точные размеры и алгоритм поведения режимов. Не привязан к стеку — команда собирает компонент на React, беря отсюда нужное для вёрстки.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>); источник — токены в <code class="tok">styles/nav-panel.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>); источник — токены в <code class="tok">components/organisms/NavPanel/NavPanel.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить:</span>
-      <code class="tok">styles/nav-panel.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/badge.css</code>
-      <code class="tok">styles/avatar.css</code>
+      <code class="tok">components/organisms/NavPanel/NavPanel.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/atoms/Badge/Badge.css</code>
+      <code class="tok">components/atoms/Avatar/Avatar.css</code>
     </div>
 
     <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
@@ -447,7 +447,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники NavPanel: HTML — из спеки, CSS — styles/nav-panel.css (полностью), JS — рантайм режимов. Демо страницы строит <code class="tok">scripts/nav-panel.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники NavPanel: HTML — из спеки, CSS — components/organisms/NavPanel/NavPanel.css (полностью), JS — рантайм режимов. Демо страницы строит <code class="tok">components/organisms/NavPanel/NavPanel.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -465,21 +465,21 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ibp-home.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-float.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-modal.js"></script>
-<script src="../../scripts/ds-nav-panel.js"></script>
-<script src="../../scripts/ds-scroll.js"></script>
-<script src="../../scripts/nav-panel.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../utils/ds-float.js"></script>
+<script src="../../molecules/Tooltip/Tooltip.js"></script>
+<script src="../Modal/Modal.js"></script>
+<script src="NavPanel.js"></script>
+<script src="../../../foundations/Layout/Layout.js"></script>
+<script src="NavPanel.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- статичные подписи свитчей конструктора (бинарные селекты → pg-toggle) -->
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Бейджи': 'Показывать бейджи', 'Заблокированный пункт': 'Показывать заблокированный пункт' };</script>
@@ -519,7 +519,7 @@
 <!-- Развёрнутый вид — nav--drawer (подписи видимы, тень, оверлей).
      Fixed: nav--fixed (шов справа, без тени). --></script>
 
-<script type="text/plain" id="src-code-js">/* NavPanel — режимы rail/drawer/fixed оживляет рантайм scripts/ds-nav-panel.js. */
+<script type="text/plain" id="src-code-js">/* NavPanel — режимы rail/drawer/fixed оживляет рантайм components/organisms/NavPanel/NavPanel.js. */
 DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
 
 // Burger: rail→drawer, drawer→rail; в fixed скрыт.

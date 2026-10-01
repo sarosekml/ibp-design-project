@@ -3,10 +3,10 @@ component: Breadcrumbs
 title: "Breadcrumbs"
 version: "1.006"
 updated: "05.09.2026"
-page: pages/molecules/Breadcrumbs.html
-page_js: scripts/breadcrumbs.page.js
-runtime: scripts/ds-menu.js, scripts/ds-tooltip.js, scripts/ds-breadcrumbs.js
-css: styles/breadcrumbs.css
+page: components/molecules/Breadcrumbs/Breadcrumbs.html
+page_js: components/molecules/Breadcrumbs/Breadcrumbs.page.js
+runtime: components/molecules/ContextMenu/ContextMenu.js, components/molecules/Tooltip/Tooltip.js, components/molecules/Breadcrumbs/Breadcrumbs.js
+css: components/molecules/Breadcrumbs/Breadcrumbs.css
 deps: [link, context-menu, tooltip]
 status: auto
 ---
@@ -14,11 +14,11 @@ status: auto
 > Автоспека для быстрого контекста. Источник истины — CSS-файл и страница компонента. При изменении компонента обновляй эту спеку.
 
 ## Назначение
-Хлебные крошки — трейл ссылок в шапке страницы, показывающий путь до текущего раздела. Состоят из ссылок Link (Breadcrumbs_1 — родительские страницы, Breadcrumbs_2 — текущая, некликабельная) и разделителя «/». Показываются на всех страницах системы, кроме Дашборда; отступ до контента страницы — 0. Компонент сам держит зону 44px над контентом: padding 16px сверху / 12px снизу + 24px по бокам (16 + 16 + 12 = 44), поля совпадают с полями контентной области экрана — см. Каркас экрана (specs/Layout.md).
+Хлебные крошки — трейл ссылок в шапке страницы, показывающий путь до текущего раздела. Состоят из ссылок Link (Breadcrumbs_1 — родительские страницы, Breadcrumbs_2 — текущая, некликабельная) и разделителя «/». Показываются на всех страницах системы, кроме Дашборда; отступ до контента страницы — 0. Компонент сам держит зону 44px над контентом: padding 16px сверху / 12px снизу + 24px по бокам (16 + 16 + 12 = 44), поля совпадают с полями контентной области экрана — см. Каркас экрана (foundations/Layout/Layout.md).
 
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
-- Схлопывание трейла по ширине — рантайм `scripts/ds-breadcrumbs.js` (opt-in `data-breadcrumbs` на `<ol class="crumbs">`): полный список звеньев считывается из разметки один раз, дальше по `ResizeObserver` сам решает полный/схлопнутый вид; тултип обрезанной текущей крошки — `ds-tooltip.js`.
+- Схлопывание трейла по ширине — рантайм `components/molecules/Breadcrumbs/Breadcrumbs.js` (opt-in `data-breadcrumbs` на `<ol class="crumbs">`): полный список звеньев считывается из разметки один раз, дальше по `ResizeObserver` сам решает полный/схлопнутый вид; тултип обрезанной текущей крошки — `ds-tooltip.js`.
 - Единственный размер — S (Body S); второго размера нет.
 - Зона крошек — часть компонента, не экрана: высота 44px и поля 16/24/12 заданы в `.crumbs`; экран их не дублирует и не переопределяет.
 - Строка зоны ровно 16px: ни одно звено (включая «…») не имеет вертикальных паддингов, иначе зона выше 44px.

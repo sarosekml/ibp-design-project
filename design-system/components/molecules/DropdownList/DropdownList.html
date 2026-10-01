@@ -2,21 +2,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DropdownList — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/dropdown-list.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="DropdownList.css">
+<link rel="stylesheet" href="../../atoms/Spinner/Spinner.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -132,11 +132,11 @@
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="DropdownList">
@@ -167,7 +167,7 @@
     <div class="meta"><span>Версия: <b>1.016</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>DropdownList</h1>
-    <p class="lead">Выпадающий список — всплывающая поверхность со списком опций, которая раскрывается под полем <b>Select</b> или <a class="inl" href="../molecules/InputAutocomplete.html">InputAutocomplete</a>. Служит для выбора значения из перечня: одиночного (подсветка выбранной строки), множественного (ведущие чекбоксы) или с поиском по мере набора (подсветка совпадения). В отличие от <a class="inl" href="../molecules/ContextMenu.html">Context Menu</a> — это выбор данных, а не список команд.</p>
+    <p class="lead">Выпадающий список — всплывающая поверхность со списком опций, которая раскрывается под полем <b>Select</b> или <a class="inl" href="../Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>. Служит для выбора значения из перечня: одиночного (подсветка выбранной строки), множественного (ведущие чекбоксы) или с поиском по мере набора (подсветка совпадения). В отличие от <a class="inl" href="../ContextMenu/ContextMenu.html">Context Menu</a> — это выбор данных, а не список команд.</p>
   </header>
 
   <!-- USAGE -->
@@ -197,9 +197,9 @@
     <ul class="bullets" style="margin-bottom:26px;">
       <li>выбрать одно значение из 5+ вариантов (валюта, контрагент, счёт) — вместо радиокнопок;</li>
       <li>выбрать несколько значений — вариант с ведущими чекбоксами;</li>
-      <li>найти значение в длинном справочнике по мере набора — в паре с <a class="inl" href="../molecules/InputAutocomplete.html">InputAutocomplete</a>.</li>
+      <li>найти значение в длинном справочнике по мере набора — в паре с <a class="inl" href="../Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>.</li>
     </ul>
-    <p class="desc">Для 2–4 взаимоисключающих вариантов на виду возьмите <a class="inl" href="../molecules/SegmentControl.html">SegmentControl</a> или <a class="inl" href="../atoms/Radiobutton.html">Radiobutton</a>. Для списка команд-действий над объектом — <a class="inl" href="../molecules/ContextMenu.html">Context Menu</a>: у него hover нейтрально-серый, выбор — галочка справа, а здесь выбор — заливка строки и (для multiselect) чекбокс.</p>
+    <p class="desc">Для 2–4 взаимоисключающих вариантов на виду возьмите <a class="inl" href="../SegmentControl/SegmentControl.html">SegmentControl</a> или <a class="inl" href="../../atoms/Radiobutton/Radiobutton.html">Radiobutton</a>. Для списка команд-действий над объектом — <a class="inl" href="../ContextMenu/ContextMenu.html">Context Menu</a>: у него hover нейтрально-серый, выбор — галочка справа, а здесь выбор — заливка строки и (для multiselect) чекбокс.</p>
   </div>
   </section>
 
@@ -363,19 +363,19 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/dropdown-list.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/DropdownList/DropdownList.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/shadow.css</code>
-      <code class="tok">styles/checkbox.css</code>
-      <code class="tok">styles/dropdown-list.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/atoms/Checkbox/Checkbox.css</code>
+      <code class="tok">components/molecules/DropdownList/DropdownList.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -447,7 +447,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/dropdown-list.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/DropdownList/DropdownList.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -465,17 +465,17 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-dropdownlist.js"></script>
-<script src="../../scripts/ds-scroll.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/dropdown-list.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="DropdownList.js"></script>
+<script src="../../../foundations/Layout/Layout.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="DropdownList.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Вариант': 'Показывать чекбоксы', 'Helper-текст': 'Показывать helper', 'Ведущие иконки': 'Показывать ведущие иконки', 'Подсветка совпадения': 'Подсвечивать совпадение', 'Группировка': 'Показывать группировку', 'Отключённая опция': 'Отключать опцию', 'Строка «Выбрать всё»': 'Показывать «Выбрать всё»', 'Строка создания': 'Показывать строку создания' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- поле-триггер связано со списком через combobox / aria-controls -->
@@ -504,13 +504,13 @@
   <!-- системная строка вместо опций -->
   <div class="ddl__state ddl__state--empty">…Ничего не найдено</div>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/dropdown-list.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/DropdownList/DropdownList.page.js)
 // Опция: makeItem(spec) — { label, helper?, icon?, checkbox?, all?, match?, disabled?, danger?, group?, divider?, system? }
 //   system: 'loading' (spin) | 'empty' | 'error'; checkbox: aria-checked + .cb__box;
 //   match: подсветка .ddl__match; selected: aria-selected
 // Список: makeList(items, o) — o: { floating, pinned, scroll, maxH } → .ddl.ddl--floating…
 // Поле-триггер: makeField({ search?, prefix?, value?, placeholder?, width?, open? }) → .fld
-// Поведение — рантайм ДС scripts/ds-dropdownlist.js (открытие, позиция, клавиатура, три-стейт)</script>
+// Поведение — рантайм ДС components/molecules/DropdownList/DropdownList.js (открытие, позиция, клавиатура, три-стейт)</script>
 <script type="text/plain" id="src-code-css">/* =========================================================================
    Design System — DropdownList (выпадающий список — выбор значения из перечня)
    ---------------------------------------------------------------------

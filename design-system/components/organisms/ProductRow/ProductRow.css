@@ -11,7 +11,7 @@
    States:   default · hover (рамка --primary) · tinted (заливка) · selected
              (строка списка выбора: [aria-checked="true"]) · disabled
              ([aria-disabled="true"]) · collapsed (ветка свёрнута)
-   Runtime:  scripts/ds-product-row.js — сворачивание ветки по .prow__toggle.
+   Runtime:  components/organisms/ProductRow/ProductRow.js — сворачивание ветки по .prow__toggle.
    Requires: typography.css, palette.css, spacing.css, radius.css,
              icon-button.css (действия), context-menu.css (кебаб)
    ========================================================================= */

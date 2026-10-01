@@ -2,7 +2,7 @@
    Использование: <span class="illu" data-illu="deals" aria-hidden="true"></span>
    Путь к файлу: assets/illustrations/<data-illu>.svg (учитывает window.__DS_ROOT,
    как ds-nav.js). Если файл не найден — img удаляет себя, слот пустеет и
-   styles/illustration.css рисует штриховую заглушку (.illu:empty). */
+   foundations/Illustrations/Illustrations.css рисует штриховую заглушку (.illu:empty). */
 (function () {
   function render() {
     var root = window.__DS_ROOT || '';

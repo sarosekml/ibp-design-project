@@ -6,12 +6,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Icons — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/ds-toc.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../Typography/Typography.css">
+<link rel="stylesheet" href="../Colors/Colors.css">
+<link rel="stylesheet" href="../Colors/Palette.css">
+<link rel="stylesheet" href="../Radius/Radius.css">
+<link rel="stylesheet" href="../../docs-kit/ds-toc.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
 <style>
 
   /* masthead */
@@ -113,7 +113,7 @@
   .toast code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:13px; color: var(--primary-light, #58DCCC); }
 
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page" data-screen-label="Icons">
@@ -156,8 +156,8 @@
   <span>Скопировано: <code id="toast-name"></code></span>
 </div>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
+<script src="icons-data.js"></script>
+<script src="Icons.js"></script>
 <script>
 const I = window.DS_ICONS || {};
 
@@ -295,7 +295,7 @@ document.getElementById('cats').addEventListener('click', e => {
   copyName(cell.dataset.name);
 });
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-toc.js"></script>
+<script src="../../docs-kit/ds-nav.js"></script>
+<script src="../../docs-kit/ds-toc.js"></script>
 </body>
 </html>

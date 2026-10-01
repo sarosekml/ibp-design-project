@@ -6,7 +6,7 @@
    Подкоманды:
      map                 — перегенерировать references/pages-index.md
                            (структурная карта всех doc-страниц)
-     inject <page>       — вставить styles/<компонент>.css в блок
+     inject <page>       — вставить CSS компонента (<Имя>.css его папки) в блок
                            <script type="text/plain" id="src-code-css">
                            (CSS берётся из файла, модель его не читает)
      check <page>        — структурные проверки: баланс тегов, остатки
@@ -58,7 +58,7 @@ function fail(msg) { log('ОШИБКА: ' + msg); process.exit(2); }
 async function readUtf8(p) { return readFile(p, 'utf8'); }
 async function writeUtf8(p, s) { return writeFile(p, s, 'utf8'); }
 
-/* компонент → styles/*.css из specs/_index.md (источник истины) */
+/* компонент → его CSS из манифеста ДС `_index.md` (источник истины) */
 async function loadCssMap() {
   const map = {};
   const text = await readUtf8(INDEX_MD);
@@ -84,13 +84,13 @@ async function resolveCss(pagePath, explicitCss) {
   const name = path.basename(pagePath, '.html');
   const cssMap = await loadCssMap();
   if (cssMap[name]) return path.join(DS, cssMap[name]);
-  // fallback: kebab + нижний регистр (snackbar, riskmetric — без дефиса)
-  const cands = [kebab(name) + '.css', name.toLowerCase() + '.css'];
+  // fallback: <Имя>.css папки компонента, затем прежние имена — kebab и нижний регистр
+  const cands = [name + '.css', kebab(name) + '.css', name.toLowerCase() + '.css'];
   for (const c of cands) {
     const hit = L.styles().find((s) => path.posix.basename(s) === c);
     if (hit) return L.abs(hit);
   }
-  fail(`не найден CSS для ${name} — укажи явно: --css ${PRJ.ds}/styles/<файл>.css`);
+  fail(`не найден CSS для ${name} — укажи явно: --css <путь до .css от корня ДС, см. node ${PRJ.ds}/${L.at.paths} ${name}>`);
 }
 
 function pagePath(arg) {
@@ -126,11 +126,19 @@ async function cmdCheck(pageArg) {
   ok(count(/ds-toc\.js/g) === 0, `ДС6 нет ds-toc.js (${count(/ds-toc\.js/g)})`);
   ok(count(/pg-kit\.js/g) === 0, `ДС7 нет pg-kit.js (${count(/pg-kit\.js/g)})`);
   ok(count(/ds-toc\.css/g) === 0, `ДС8 нет ds-toc.css (${count(/ds-toc\.css/g)})`);
-  ok(count(/styles\/tab\.css/) >= 1, `ДС9 tab.css подключён (${count(/styles\/tab\.css/)})`);
-  ok(count(/styles\/segment-control\.css/) >= 1, `ДС10 segment-control.css подключён (${count(/styles\/segment-control\.css/)})`);
+  /* стили Tab и SegmentControl — по имени файла из их спек (модуль путей ДС),
+     с «/» или кавычкой перед именем: `Tab.css` не должен находиться в `SubTab.css` */
+  const linked = (comp) => {
+    const file = path.posix.basename(one(L.cssOf(comp), 'стили ' + comp));
+    const re = new RegExp('["/]' + file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '"');
+    return [file, count(re)];
+  };
+  const [tabCss, tabN] = linked('Tab'), [segCss, segN] = linked('SegmentControl');
+  ok(tabN >= 1, `ДС9 ${tabCss} подключён (${tabN})`);
+  ok(segN >= 1, `ДС10 ${segCss} подключён (${segN})`);
   ok(count(/\{\s*on:\s*'[^']*'\s*,\s*off:/) === 0, `ДС11 нет {on, off} словарей в DS_SPLIT_SWITCH_LABELS (${count(/\{\s*on:\s*'[^']*'\s*,\s*off:/)})`);
   /* .splitpane--app считается по КАРКАСУ (noScript), не по всему файлу: правила
-     --app входят в styles/splitter.css, который inject кладёт в src-code-css
+     --app входят в components/molecules/Splitter/Splitter.css, который inject кладёт в src-code-css
      вкладки «Код» (полный CSS компонента) — упоминания в код-образцах легальны.
      Запрет паттерна касается каркаса main.ds-split (урок Splitter, 30.08.2026). */
   ok(countFrame(/splitpane--app/g) === 0, `ДС12 нет .splitpane--app в каркасе (${countFrame(/splitpane--app/g)})`);
@@ -225,12 +233,13 @@ async function cmdInject(pageArg, explicitCss, wantHtml) {
 
   if (wantHtml) {
     const html = await loadSpecHtml(p);
-    if (html === null) fail(`${name}: в specs/${name}.md нет блока «### Разметка · HTML» — вставь src-code-html вручную`);
+    const spec = L.specOf(path.basename(p, '.html'));
+    if (html === null) fail(`${name}: в ${spec} нет блока «### Разметка · HTML» — вставь src-code-html вручную`);
     const reHtml = /<script type="text\/plain" id="src-code-html">[\s\S]*?<\/script>/i;
     if (!reHtml.test(t)) fail(`${name}: блок src-code-html не найден`);
     const before = t;
     t = t.replace(reHtml, `<script type="text/plain" id="src-code-html">${html}</script>`);
-    if (t !== before) { done.push(`HTML-эталон из specs/${name}.md (${html.length} байт)`); }
+    if (t !== before) { done.push(`HTML-эталон из ${spec} (${html.length} байт)`); }
   }
 
   const cssPath = await resolveCss(p, explicitCss);
@@ -239,7 +248,7 @@ async function cmdInject(pageArg, explicitCss, wantHtml) {
   if (!re.test(t)) fail(`${name}: блок src-code-css не найден`);
   const before = t;
   t = t.replace(re, `<script type="text/plain" id="src-code-css">${css.trimEnd()}</script>`);
-  if (t !== before) done.push(`styles/${path.basename(cssPath)} (${css.length} байт)`);
+  if (t !== before) done.push(`${path.relative(DS, cssPath).split(path.sep).join('/')} (${css.length} байт)`);
 
   if (!done.length) {
     log(`== inject ${name} ==`);
@@ -580,7 +589,7 @@ const args = process.argv.slice(2);
 const cmd = args[0];
 if (args.includes('--rules')) { printRules(); process.exit(0); }
 if (!cmd) {
-  log('Использование: node docs-split.mjs <map|scaffold|inject|rollout|check> [page] [--css styles/x.css] [--html] | --rules');
+  log('Использование: node docs-split.mjs <map|scaffold|inject|rollout|check> [page] [--css <путь до .css от корня ДС>] [--html] | --rules');
   process.exit(1);
 }
 const pageArg = args.slice(1).find((a) => !a.startsWith('--'));

@@ -3,8 +3,8 @@ component: Switch
 title: "Switch"
 version: "1.008"
 updated: "05.09.2026"
-page: pages/atoms/Switch.html
-css: styles/switch.css
+page: components/atoms/Switch/Switch.html
+css: components/atoms/Switch/Switch.css
 deps: [label-helper, spinner]
 status: auto
 ---
@@ -135,7 +135,7 @@ interface SwitchGroupProps {
 | .sw__input | input | Визуально скрытый input[type=checkbox] с role="switch" и aria-checked |
 | .sw__control | span | Трек 36×20px |
 | .sw__thumb | span | Ползунок 16px; все state-слои и анимация перемещения на нём |
-| .spin | span | Индикатор загрузки внутри ползунка — общий Spinner (styles/spinner.css), только loading |
+| .spin | span | Индикатор загрузки внутри ползунка — общий Spinner (components/atoms/Spinner/Spinner.css), только loading |
 | .sw__content | span | Колонка название + хелпер (зазор 2px) |
 | .sw__label | span | Название (Body M) |
 | .sw__req | span | Звёздочка обязательного выбора (--error) — на заголовке группы или названии; независима от группы |

@@ -3,9 +3,9 @@ component: ProductRow
 title: "ProductRow"
 version: "1.001"
 updated: "30.09.2026"
-page: pages/organisms/ProductRow.html
-runtime: scripts/ds-product-row.js
-css: styles/product-row.css
+page: components/organisms/ProductRow/ProductRow.html
+runtime: components/organisms/ProductRow/ProductRow.js
+css: components/organisms/ProductRow/ProductRow.css
 deps: [icon-button, context-menu, tooltip, skeleton]
 status: curated
 ---

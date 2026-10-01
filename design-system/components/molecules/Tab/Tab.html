@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tab — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="Tab.css">
+<link rel="stylesheet" href="../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -117,10 +117,10 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Tab">
@@ -414,17 +414,17 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/tab.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Tab/Tab.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.55fr 0.55fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/tab.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/molecules/Tab/Tab.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -490,7 +490,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/tab.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Tab/Tab.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -508,15 +508,15 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/tab.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../Tooltip/Tooltip.js"></script>
+<script src="Tab.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="Tab.page.js"></script>
 <script>
 /* ---------- DEV: copy-to-clipboard on code panels ---------- */
 (function(){
@@ -544,7 +544,7 @@
 })();
 </script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Ориентация': 'Вертикальный', 'Размер': 'S · 32', 'Selected': 'Выбран', 'Бейдж': 'Показывать бейдж' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- группа: горизонтальные табы, второй выбран -->
@@ -562,7 +562,7 @@
 
 <!-- рантайм: data-tabs на контейнере (roving tabindex, стрелки, Home/End) -->
 <div class="tabs tabs--horiz" role="tablist" data-tabs>…</div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/tab.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Tab/Tab.page.js)
 function makeTab(o) {
   // o: { orient:'horiz'|'vert', size:'m'|'s', label, icon?, badge?, state:'default'|'hover'|'selected', disabled, standalone }
   // button.tab.tab--<size>.tab--<orient>(.tab--selected)(.tab--disabled)(.tab--standalone)

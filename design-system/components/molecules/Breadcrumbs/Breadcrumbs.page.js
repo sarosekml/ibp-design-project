@@ -23,7 +23,7 @@ function crumbCurrentLi(text) {
   return li;
 }
 /* интерактивная версия «…» — клик открывает контекстное меню со скрытыми
-   страницами (переиспользует .menu / .menu__item из styles/context-menu.css).
+   страницами (переиспользует .menu / .menu__item из components/molecules/ContextMenu/ContextMenu.css).
    Меню портируется в document.body (position:fixed) — иначе его обрезал бы
    overflow:hidden контейнера .crumbs, нужный для авто-схлопывания. */
 function crumbMore(hidden) {
@@ -35,7 +35,7 @@ function crumbMore(hidden) {
   btn.setAttribute('aria-label', 'Показать промежуточные страницы: ' + hidden.map(h => h.text).join(', '));
   li.appendChild(btn);
 
-  /* поведение — рантайм ДС (scripts/ds-menu.js): открытие/закрытие, позиция
+  /* поведение — рантайм ДС (components/molecules/ContextMenu/ContextMenu.js): открытие/закрытие, позиция
      с разворотом, клавиатура, Esc. Меню живёт в body с position:fixed —
      иначе его обрезал бы overflow:hidden контейнера .crumbs. */
   const menu = document.createElement('div');
@@ -154,7 +154,7 @@ Object.assign(window, {
 
 /* запуск всех демо-секций только после полной загрузки страницы (window 'load') и шрифтов (document.fonts.ready):
    renderCrumbs() измеряет реальную ширину/шрифт контейнера — если вызвать её до того, как
-   применился styles/breadcrumbs.css и шрифт SB Sans Text, алгоритм схлопывания считает
+   применился components/molecules/Breadcrumbs/Breadcrumbs.css и шрифт SB Sans Text, алгоритм схлопывания считает
    по неверным размерам и молча пропускает схлопывание там, где оно нужно. */
 function whenReady(fn) {
   function run() {

@@ -3,8 +3,8 @@ component: Link
 title: "Link"
 version: "1.007"
 updated: "21.08.2026"
-page: pages/atoms/Link.html
-css: styles/link.css
+page: components/atoms/Link/Link.html
+css: components/atoms/Link/Link.css
 deps: [breadcrumbs]
 status: auto
 ---

@@ -2,47 +2,47 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kanban — Дизайн-система</title>
-<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/spacing.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/tile.css">
-<link rel="stylesheet" href="../../styles/kanban.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/avatar.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/modal.css">
-<link rel="stylesheet" href="../../styles/drawer.css">
-<link rel="stylesheet" href="../../styles/dropdown-list.css">
-<link rel="stylesheet" href="../../styles/input.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/empty-state.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/alert.css">
-<link rel="stylesheet" href="../../styles/progress-bar.css">
-<link rel="stylesheet" href="../../styles/snackbar.css">
-<link rel="stylesheet" href="../../styles/divider.css">
-<link rel="stylesheet" href="../../styles/illustration.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/read-only-field.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="icon" type="image/svg+xml" href="../../../assets/logo.svg">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../Tile/Tile.css">
+<link rel="stylesheet" href="Kanban.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../atoms/Avatar/Avatar.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../Modal/Modal.css">
+<link rel="stylesheet" href="../Drawer/Drawer.css">
+<link rel="stylesheet" href="../../molecules/DropdownList/DropdownList.css">
+<link rel="stylesheet" href="../../molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../molecules/EmptyState/EmptyState.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../molecules/Alert/Alert.css">
+<link rel="stylesheet" href="../../atoms/ProgressBar/ProgressBar.css">
+<link rel="stylesheet" href="../SnackBar/SnackBar.css">
+<link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="../../../foundations/Illustrations/Illustrations.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../molecules/ReadOnlyField/ReadOnlyField.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
 /* Раскладка страницы документации. Токены ДС, своих значений нет. */
 a{color:var(--link);} a:hover{color:var(--link-dark);}
@@ -113,15 +113,15 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия: <b>1.005</b></span>
     <span>Обновлено: <b>21.09.2026</b></span>
-    <span>CSS <b>styles/kanban.css</b></span>
-    <span>Рантайм <b>scripts/ds-kanban.js</b></span>
+    <span>CSS <b>components/organisms/Kanban/Kanban.css</b></span>
+    <span>Рантайм <b>components/organisms/Kanban/Kanban.js</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
   <h1>Kanban</h1>
@@ -143,7 +143,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     </div>
     <div class="guide-card">
       <div class="guide-card__tag">Когда не использовать</div>
-      <div class="guide-card__body">Нужно сравнивать значения между объектами — суммы, ставки, даты: это <a class="inl" href="Table.html">Table</a>, колонки выравнивают числа, доска нет. Больше 7 этапов — горизонтальный скролл съедает обзор. Массовый ввод данных — доска про перемещение, а не про заполнение.</div>
+      <div class="guide-card__body">Нужно сравнивать значения между объектами — суммы, ставки, даты: это <a class="inl" href="../Table/Table.html">Table</a>, колонки выравнивают числа, доска нет. Больше 7 этапов — горизонтальный скролл съедает обзор. Массовый ввод данных — доска про перемещение, а не про заполнение.</div>
     </div>
     <div class="guide-card">
       <div class="guide-card__tag">Kanban vs Table</div>
@@ -151,13 +151,13 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     </div>
     <div class="guide-card">
       <div class="guide-card__tag">Kanban vs Entity</div>
-      <div class="guide-card__body">Отдельный объект в списке без этапов — это <a class="inl" href="Entity.html">Entity</a> в строке, а не карточка на доске. Карточка нужна там, где у объекта есть позиция в процессе и её меняют перетаскиванием.</div>
+      <div class="guide-card__body">Отдельный объект в списке без этапов — это <a class="inl" href="../Entity/Entity.html">Entity</a> в строке, а не карточка на доске. Карточка нужна там, где у объекта есть позиция в процессе и её меняют перетаскиванием.</div>
     </div>
   </div>
 
   <div class="subsec" data-screen-label="Состав">
     <h3>Из чего собрана</h3>
-    <p class="desc">Своего в доске — трек, колонка и раскладка контента карточки. Всё остальное готовое: <a class="inl" href="Tile.html">Card</a> (карточка и её состояния), <a class="inl" href="../atoms/Chip.html">Chip</a>, <a class="inl" href="../atoms/Badge.html">Badge</a> (счётчик колонки), <a class="inl" href="../atoms/Avatar.html">Avatar</a> (исполнители), <a class="inl" href="../atoms/IconButton.html">IconButton</a>, <a class="inl" href="../molecules/ContextMenu.html">ContextMenu</a> (кебабы), <a class="inl" href="Modal.html">Modal</a> (подтверждения и форма поля), <a class="inl" href="../molecules/Tooltip.html">Tooltip</a> (усечения и причина запрета), <a class="inl" href="SnackBar.html">SnackBar</a>, <a class="inl" href="../molecules/EmptyState.html">EmptyState</a> и <a class="inl" href="../atoms/Skeleton.html">Skeleton</a>.</p>
+    <p class="desc">Своего в доске — трек, колонка и раскладка контента карточки. Всё остальное готовое: <a class="inl" href="../Tile/Tile.html">Card</a> (карточка и её состояния), <a class="inl" href="../../atoms/Chip/Chip.html">Chip</a>, <a class="inl" href="../../atoms/Badge/Badge.html">Badge</a> (счётчик колонки), <a class="inl" href="../../atoms/Avatar/Avatar.html">Avatar</a> (исполнители), <a class="inl" href="../../atoms/IconButton/IconButton.html">IconButton</a>, <a class="inl" href="../../molecules/ContextMenu/ContextMenu.html">ContextMenu</a> (кебабы), <a class="inl" href="../Modal/Modal.html">Modal</a> (подтверждения и форма поля), <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> (усечения и причина запрета), <a class="inl" href="../SnackBar/SnackBar.html">SnackBar</a>, <a class="inl" href="../../molecules/EmptyState/EmptyState.html">EmptyState</a> и <a class="inl" href="../../atoms/Skeleton/Skeleton.html">Skeleton</a>.</p>
   </div>
 </section>
 
@@ -198,7 +198,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="Карточка">
     <h3>Карточка</h3>
-    <p class="desc tight">Карточка доски — это <a class="inl" href="Tile.html">Card</a>: <span class="tk">.tile.tile--card</span> плюс класс раскладки <span class="tk">.kbcard</span>. Геометрию, типографику и интерактивные состояния задаёт Card; доска добавляет только содержимое и служебные состояния переноса. Заголовок стоит первым, чипы — под ним: это штатная анатомия TileHeader, а не переопределение.</p>
+    <p class="desc tight">Карточка доски — это <a class="inl" href="../Tile/Tile.html">Card</a>: <span class="tk">.tile.tile--card</span> плюс класс раскладки <span class="tk">.kbcard</span>. Геометрию, типографику и интерактивные состояния задаёт Card; доска добавляет только содержимое и служебные состояния переноса. Заголовок стоит первым, чипы — под ним: это штатная анатомия TileHeader, а не переопределение.</p>
     <div class="anat">
       <div class="anat__stage"><div class="anat-dia" id="anat-card"></div></div>
       <ul class="anat__legend">
@@ -255,7 +255,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="Варианты карточки">
     <h3>Варианты карточки</h3>
-    <p class="desc tight">Карточка — Card, поэтому её геометрия и состояния описаны на странице <a class="inl" href="Tile.html">Tile</a>. Доска добавляет две оси: плотность и состав контента.</p>
+    <p class="desc tight">Карточка — Card, поэтому её геометрия и состояния описаны на странице <a class="inl" href="../Tile/Tile.html">Tile</a>. Доска добавляет две оси: плотность и состав контента.</p>
     <p class="subhead">Плотность</p>
     <p class="desc tight">Базовая следует объявленной геометрии Card (8/16/20/16). Компактная сжимает до 12/12/12/12, ставит заголовок в одну строку и убирает поля с лица. Основание для компактной — зафиксированная потребность: «Operations хотят видеть больше карточек на экране одновременно, сейчас карточки крупные». В той же вертикали, где помещается одна базовая, помещаются две компактных.</p>
     <div class="samples" id="var-card-density"></div>
@@ -266,7 +266,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="Модальные окна">
     <h3>Модальные окна</h3>
-    <p class="desc tight">Доска использует четыре модалки, и все — штатный <a class="inl" href="Modal.html">Modal</a>. Своих окон компонент не заводит; рантайм только наполняет разметку страницы и помнит отложенное действие.</p>
+    <p class="desc tight">Доска использует четыре модалки, и все — штатный <a class="inl" href="../Modal/Modal.html">Modal</a>. Своих окон компонент не заводит; рантайм только наполняет разметку страницы и помнит отложенное действие.</p>
     <p class="desc tight">Правило, по которому окно вообще появляется: <b>подтверждается необратимое, отменяется обратимое</b>. Перенос карточки диалогом не подтверждается — на частом действии подтверждение перестаёт читаться через день работы; вместо него снекбар. Удаление подтверждается: оно необратимо, а «минимизация ошибок» стоит у продукта в критичных требованиях.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
@@ -530,7 +530,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="Перетаскивание">
     <h3>Перетаскивание указателем</h3>
-    <p class="desc tight">Собрано по образцу <span class="tk">scripts/tbl-reorder.js</span> — единственной реализации drag-and-drop в ДС, доведённой до продакшена. Копируются не строки, а решения: они уже проверены на переупорядочивании колонок таблицы.</p>
+    <p class="desc tight">Собрано по образцу <span class="tk">components/organisms/Table/TableReorder.js</span> — единственной реализации drag-and-drop в ДС, доведённой до продакшена. Копируются не строки, а решения: они уже проверены на переупорядочивании колонок таблицы.</p>
     <ol class="crit">
       <li><b>Порог 4px.</b> Перенос начинается только после смещения на 4px от точки нажатия. Без порога любой клик по карточке превращается в микроперенос, и открыть карточку становится нельзя.</li>
       <li><b>Pointer events, не HTML5 DnD.</b> Атрибут <span class="tk">draggable</span> не даёт контроля над видом перетаскиваемого элемента и по-разному работает в браузерах.</li>
@@ -559,7 +559,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="Панель деталей">
     <h3>Панель деталей</h3>
-    <p class="desc tight">Клик по карточке мимо кнопок открывает <a class="inl" href="Drawer.html">Drawer</a> — панель деталей у правого края. Карточка на доске показывает 4 поля из сорока; всё остальное, включая создание собственных полей, живёт в панели. Доска отличает клик от жеста сама: перенос, закончившийся на той же карточке, панель не открывает.</p>
+    <p class="desc tight">Клик по карточке мимо кнопок открывает <a class="inl" href="../Drawer/Drawer.html">Drawer</a> — панель деталей у правого края. Карточка на доске показывает 4 поля из сорока; всё остальное, включая создание собственных полей, живёт в панели. Доска отличает клик от жеста сама: перенос, закончившийся на той же карточке, панель не открывает.</p>
     <p class="desc tight">Разметка панели принадлежит экрану, доска только называет её: <span class="tk">data-kb-drawer="id-скрима"</span>. Рантайм подставляет путь, идентификатор и заголовок из карточки и шлёт <span class="tk">kanban:open</span>.</p>
   </div>
 
@@ -1057,21 +1057,21 @@ API:           DSKanban.bind(board) · bindAll(root) · move(card, col, i) · sy
   </div>
 </div>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-float.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-tile.js"></script>
-<script src="../../scripts/ds-menu.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-modal.js"></script>
-<script src="../../scripts/ds-drawer.js"></script>
-<script src="../../scripts/ds-notify.js"></script>
-<script src="../../scripts/ds-illustrations.js"></script>
-<script src="../../scripts/ds-kanban.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/kanban.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../utils/ds-float.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Tile/Tile.js"></script>
+<script src="../../molecules/ContextMenu/ContextMenu.js"></script>
+<script src="../../molecules/Tooltip/Tooltip.js"></script>
+<script src="../Modal/Modal.js"></script>
+<script src="../Drawer/Drawer.js"></script>
+<script src="../../../utils/ds-notify.js"></script>
+<script src="../../../foundations/Illustrations/Illustrations.js"></script>
+<script src="Kanban.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="Kanban.page.js"></script>
 <!-- самодостаточные подписи свитчей конструктора (общий слой docs-split.js) -->
 <script>
 window.DS_SPLIT_SWITCH_LABELS = {
@@ -1081,7 +1081,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Свернуть первую колонку': 'Свернуть первую колонку'
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html">&lt;!-- Доска. Ограничений переходов у неё нет: их задаёт решение,
@@ -1167,7 +1167,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
    Колонка (.kbcol) — организм доски: шапка, тело, линия вставки.
    Карточка — Card (.tile.tile--card) + раскладка контента (.kbcard).
    Геометрию и интерактивные состояния карточки задаёт Card в
-   styles/tile.css; здесь — только то, что принадлежит доске.
+   components/organisms/Tile/Tile.css; здесь — только то, что принадлежит доске.
 
    Скролл один и он у .kanban__viewport — обе оси сразу. У колонок
    своего скролла нет: доска прокручивается целиком, а шапки колонок
@@ -1628,7 +1628,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 }
 .kbcard--error { border-color: var(--error); }
 </script>
-<script type="text/plain" id="src-code-js">/* Рантайм ds-kanban.js подключается через scripts/ds.js и оживляет
+<script type="text/plain" id="src-code-js">/* Рантайм ds-kanban.js подключается через ds.js и оживляет
    любую разметку с data-kanban сам. Экрану писать нечего. */
 
 /* Ограничений переходов у доски НЕТ: компонент общий, на нём живут

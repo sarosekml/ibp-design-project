@@ -16,7 +16,7 @@
       этот рантайм регистрирует селектор подписи чипа и держит только
       специфическое для чипа: исключение счётчиков «+N» и скан disabled-чипов.
 
-   Зависимости: styles/chip.css; опционально scripts/ds-tooltip.js (без него
+   Зависимости: components/atoms/Chip/Chip.css; опционально components/molecules/Tooltip/Tooltip.js (без него
    тултипов просто нет, остальное работает).
 
    Экспорт: window.DSChip = { refresh(root) } — привязать тултипы у disabled-

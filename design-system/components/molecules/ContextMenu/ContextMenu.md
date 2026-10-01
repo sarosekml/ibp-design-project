@@ -3,10 +3,10 @@ component: ContextMenu
 title: "Context Menu"
 version: "1.010"
 updated: "01.10.2026"
-page: pages/molecules/ContextMenu.html
-page_js: scripts/context-menu.page.js
-runtime: scripts/ds-menu.js
-css: styles/context-menu.css
+page: components/molecules/ContextMenu/ContextMenu.html
+page_js: components/molecules/ContextMenu/ContextMenu.page.js
+runtime: components/molecules/ContextMenu/ContextMenu.js
+css: components/molecules/ContextMenu/ContextMenu.css
 deps: [button]
 status: auto
 ---
@@ -30,7 +30,7 @@ status: auto
 - «Меню, открытое из модалки, не видно или не ловит клики» → рантайм старше 1.009: меню монтировалось в общий слой `DSFloat` (`z-index: 40`) под скрим модалки (`z-index: 1000`) и попадало под её `inert`. С 1.009 `open()` передаёт в `mount` якорь (триггер)
 - «Меню открывается не из того угла» → `--menu-origin` не проставлен рантаймом относительно триггера
 - «Подменю уходит за край экрана» → должен появиться `.menu__sub--left`, разворот считает `ds-menu.js`
-- «Бегунок в `.menu--scroll` не появляется при прокрутке» → на странице нет `scripts/ds-scroll.js` (он в `ds.js`; страница без `ds.js` подключает его сам)
+- «Бегунок в `.menu--scroll` не появляется при прокрутке» → на странице нет `foundations/Layout/Layout.js` (он в `ds.js`; страница без `ds.js` подключает его сам)
 
 ## Ключевые правила (из разделов страницы)
 - **Использование** — Триггер — кнопка действий рядом с объектом. Три типичных места вызова: заголовок таблицы (действия над всей таблицей), строка таблицы (действия над строкой) и карточка (действия над сущностью). Нажмите на kebab в каждом примере.
@@ -83,7 +83,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-menu.js`
+### Рантайм ДС — `components/molecules/ContextMenu/ContextMenu.js`
 
 Поведение меню вынесено из страницы в рантайм: подключите скрипт, и меню работает
 без кода на экране. Разметка — `.menu-anchor` вокруг триггера и меню,

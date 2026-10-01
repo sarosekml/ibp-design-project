@@ -3,15 +3,15 @@ component: InputDateRange
 title: "InputDateRange"
 version: "1.010"
 updated: "13.09.2026"
-page: pages/molecules/InputDateRange.html
-page_js: scripts/input-date-range.page.js
-runtime: scripts/ds-datepicker.js, scripts/ds-input.js
-css: styles/input-range.css
+page: components/molecules/Inputs/InputDateRange/InputDateRange.html
+page_js: components/molecules/Inputs/InputDateRange/InputDateRange.page.js
+runtime: components/molecules/DatePicker/DatePicker.js, components/molecules/Inputs/Inputs.js
+css: components/molecules/Inputs/InputRanges.css
 deps: [input, label-helper, tooltip]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/input-range.css + styles/input.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/molecules/Inputs/InputRanges.css + components/molecules/Inputs/Inputs.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
 Поле ввода диапазона дат: два InputDate с префиксами «От» / «До», размещённых горизонтально и соединённых линией Range_Line, с общей меткой сверху и общим хелпером снизу. При фокусе на поле поднимается DatePicker. Каждое поле — самостоятельный экземпляр `.inp` со своими состояниями.
@@ -27,7 +27,7 @@ status: curated
 ## Диагностика
 - «Поле диапазона дат обрезает иконки при сужении» → `.inp-range--date .inp-range__field{min-width:186px}` не должен переопределяться
 - «Дата, набранная руками, не совпадает с датой на календаре» → маска и `ds-datepicker.js` должны читать день первым (ДД.ММ.ГГГГ, редполитика 05.09.2026 — было ММ.ДД.ГГГГ, расходилось с TableCell)
-- «Плейсхолдер обещает ДД.ММ.ГГГГ, а точки не появляются» → маска до 05.09.2026 жила только в демо-скрипте страницы и на экраны не попадала; нужен `scripts/ds-datepicker.js` версии 1.007+
+- «Плейсхолдер обещает ДД.ММ.ГГГГ, а точки не появляются» → маска до 05.09.2026 жила только в демо-скрипте страницы и на экраны не попадала; нужен `components/molecules/DatePicker/DatePicker.js` версии 1.007+
 
 ## Ключевые правила (из разделов страницы)
 - **Использование** — диапазон дат «с … по …» в фильтрах/формах (период сделки, срок действия, окно отчётности); одно поле может быть пустым (открытая граница). Одиночная дата → InputDate; числовой диапазон → InputAmountRange.
@@ -45,7 +45,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Рендерится на странице через getComputedStyle. Источник — styles/input.css + styles/input-range.css. Поле: высота 40px / паддинг 12px / gap 8px / радиус `--radius-field` / иконки 20px / мин. ширина 186px. Range_Line: зона 14px, линия 1px.
+Рендерится на странице через getComputedStyle. Источник — components/molecules/Inputs/Inputs.css + components/molecules/Inputs/InputRanges.css. Поле: высота 40px / паддинг 12px / gap 8px / радиус `--radius-field` / иконки 20px / мин. ширина 186px. Range_Line: зона 14px, линия 1px.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

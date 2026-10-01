@@ -57,7 +57,7 @@
     return g;
   }
 
-  /* переключение и клавиатура — рантайм ДС (scripts/ds-tabs.js):
+  /* переключение и клавиатура — рантайм ДС (components/molecules/Tab/Tab.js):
      roving tabindex, стрелки по ориентации, Home/End, подскролл выбранного */
   function wireTablist(group) { return window.DSTabs && DSTabs.tabs(group); }
 

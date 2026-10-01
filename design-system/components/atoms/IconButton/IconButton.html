@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IconButton — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="IconButton.css">
+<link rel="stylesheet" href="../Spinner/Spinner.css">
+<link rel="stylesheet" href="../Badge/Badge.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -114,11 +114,11 @@
   .code-panel__name { font: var(--type-body-s-strong); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="IconButton">
@@ -168,7 +168,7 @@
       <li>места мало: тулбары, заголовки карточек, строки таблиц, поля ввода;</li>
       <li>нужно собрать ряд однотипных действий, не перегружая интерфейс текстом.</li>
     </ul>
-    <p class="desc">Если действие основное или его смысл не считывается с иконки — используйте обычную <a class="inl" href="../atoms/Buttons.html">Button</a> с текстом. Иконка без подписи всегда должна сопровождаться <code class="tok">aria-label</code> и, как правило, <a class="inl" href="../molecules/Tooltip.html">Tooltip</a>.</p>
+    <p class="desc">Если действие основное или его смысл не считывается с иконки — используйте обычную <a class="inl" href="../Buttons/Buttons.html">Button</a> с текстом. Иконка без подписи всегда должна сопровождаться <code class="tok">aria-label</code> и, как правило, <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a>.</p>
   
 <div class="subsec" data-screen-label="Toolbar">
     <h3>В тулбаре</h3>
@@ -235,7 +235,7 @@
 
 <div class="subsec" data-screen-label="Badge">
     <h3>С бейджем</h3>
-    <p class="desc">IconButton может нести индикатор-<a class="inl" href="../atoms/Badge.html">Badge</a> — счётчик непрочитанного или точку-индикатор. Бейдж прижимается к правому верхнему углу компонента (верхняя и правая грани касаются граней рамки, не выходя за неё) и не перехватывает клики. Счётчик — не более двух символов: при значении больше 99 показываем «9+».</p>
+    <p class="desc">IconButton может нести индикатор-<a class="inl" href="../Badge/Badge.html">Badge</a> — счётчик непрочитанного или точку-индикатор. Бейдж прижимается к правому верхнему углу компонента (верхняя и правая грани касаются граней рамки, не выходя за неё) и не перехватывает клики. Счётчик — не более двух символов: при значении больше 99 показываем «9+».</p>
     <div class="panel">
       <div class="row" id="badge-row" style="gap:32px;"></div>
     </div>
@@ -272,9 +272,9 @@
     <h2>Контент</h2>
     <p class="desc tight">У IconButton нет видимого текста — контент компонента это иконка и её текстовое описание:</p>
     <ul class="bullets">
-      <li>иконка — только из <a class="inl" href="../foundations/Icons.html">библиотеки ДС</a> (24×24, заливка <code class="tok">currentColor</code>); метафора должна быть общепринятой: корзина — удалить, карандаш — редактировать;</li>
+      <li>иконка — только из <a class="inl" href="../../../foundations/Icons/Icons.html">библиотеки ДС</a> (24×24, заливка <code class="tok">currentColor</code>); метафора должна быть общепринятой: корзина — удалить, карандаш — редактировать;</li>
       <li><code class="tok">aria-label</code> — глагол действия, 1–3 слова: «Удалить», «Скачать PDF»; не название иконки («Корзина»);</li>
-      <li>текст <a class="inl" href="../molecules/Tooltip.html">Tooltip</a> совпадает с aria-label;</li>
+      <li>текст <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> совпадает с aria-label;</li>
       <li>в режиме-переключателе подпись отражает текущее состояние: «В избранное» ↔ «В избранном».</li>
     </ul>
   
@@ -315,7 +315,7 @@
   <!-- ACCESSIBILITY / HIT AREA -->
   <section class="section" data-screen-label="Accessibility">
     <h2>Доступность</h2>
-    <p class="desc">У иконки нет видимого текста, поэтому каждому IconButton обязателен <code class="tok">aria-label</code>, описывающий действие, и, как правило, <a class="inl" href="../molecules/Tooltip.html">Tooltip</a> по наведению. Управление с клавиатуры: <b>Tab</b> ставит фокус, <b>Space</b> / <b>Enter</b> активируют, фокус показывается обводкой <code class="tok">--primary</code>.</p>
+    <p class="desc">У иконки нет видимого текста, поэтому каждому IconButton обязателен <code class="tok">aria-label</code>, описывающий действие, и, как правило, <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> по наведению. Управление с клавиатуры: <b>Tab</b> ставит фокус, <b>Space</b> / <b>Enter</b> активируют, фокус показывается обводкой <code class="tok">--primary</code>.</p>
     <p class="desc">Минимальная рекомендованная область нажатия — 44×44px. Стейт-слой (зона клика) больше иконки (40 / 32 / 24), но всё равно меньше 44px, поэтому в тач-сценариях либо берите размер L, либо ещё расширяйте кликабельную зону невидимым отступом, оставляя видимый стейт-слой прежним.</p>
     <div class="guide">
       <div class="guide-card bad">
@@ -359,18 +359,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая верстает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/icon-button.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/IconButton/IconButton.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:36px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.6fr 0.6fr 0.6fr 0.6fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">L</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/badge.css (если нужен бейдж)</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/atoms/Badge/Badge.css (если нужен бейдж)</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -464,7 +464,7 @@ glyph = selected ? iconSelected : icon
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ---------- icons from DS library ---------- */
 const L = window.DS_ICONS || {};
@@ -885,13 +885,13 @@ document.getElementById('ic-good').innerHTML = UI.good;
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Форма': 'Квадрат', 'Встроенный (input)': 'Встроенный (input)', 'Выбран (toggle)': 'Выбран', 'Бейдж': 'Показывать бейдж' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- базовый вариант: одна иконка, aria-label обязателен -->

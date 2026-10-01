@@ -132,7 +132,7 @@ function closePheadMenus(){
   });
 }
 /* Первый клик по триггеру собирает меню и передаёт его рантайму ДС
-   (scripts/ds-menu.js) — дальше открытие, позиционирование, клавиатура,
+   (components/molecules/ContextMenu/ContextMenu.js) — дальше открытие, позиционирование, клавиатура,
    закрытие по клику вне, Esc и репозиция на scroll/resize за ним. */
 document.addEventListener('click', function(e){
   if (!e.target.closest || !window.DSMenu) return;

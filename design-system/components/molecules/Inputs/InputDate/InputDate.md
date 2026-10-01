@@ -3,18 +3,18 @@ component: InputDate
 title: "InputDate"
 version: "1.015"
 updated: "25.09.2026"
-page: pages/molecules/InputDate.html
-page_js: scripts/input-date.page.js
-runtime: scripts/ds-datepicker.js, scripts/ds-input.js
-css: styles/input.css
+page: components/molecules/Inputs/InputDate/InputDate.html
+page_js: components/molecules/Inputs/InputDate/InputDate.page.js
+runtime: components/molecules/DatePicker/DatePicker.js, components/molecules/Inputs/Inputs.js
+css: components/molecules/Inputs/Inputs.css
 deps: [label-helper, tooltip]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/input.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/molecules/Inputs/Inputs.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
-Поле ввода даты: маска ДД.ММ.ГГГГ (в placeholder) + кнопка-календарь, поднимающая DatePicker (рантайм `scripts/ds-datepicker.js`, модуль `openPicker`, автоподключение по кнопке-календарю). База `.inp` общая с InputText — состояния и размеры общие.
+Поле ввода даты: маска ДД.ММ.ГГГГ (в placeholder) + кнопка-календарь, поднимающая DatePicker (рантайм `components/molecules/DatePicker/DatePicker.js`, модуль `openPicker`, автоподключение по кнопке-календарю). База `.inp` общая с InputText — состояния и размеры общие.
 
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
@@ -30,7 +30,7 @@ status: curated
 - «Календарь не открывается по клику на кнопку» → кнопка должна иметь `aria-label="Открыть календарь"` — по нему рантайм биндит `ds-datepicker.js`
 - «Маска выглядит как введённое значение» → это должен быть `placeholder`, не `value`
 - «Дата, набранная руками, не совпадает с датой на календаре» → проверить, что и маска, и `ds-datepicker.js` читают день первым (ДД.ММ.ГГГГ), не месяц
-- «Точки не проставляются, поле принимает любой текст» → не подключён `scripts/ds-datepicker.js`, либо на `.inp` стоит `data-no-datemask`, либо у поля нет ни кнопки календаря, ни обёртки `.inp-range--date` — по ним рантайм узнаёт поле даты
+- «Точки не проставляются, поле принимает любой текст» → не подключён `components/molecules/DatePicker/DatePicker.js`, либо на `.inp` стоит `data-no-datemask`, либо у поля нет ни кнопки календаря, ни обёртки `.inp-range--date` — по ним рантайм узнаёт поле даты
 
 ## Ключевые правила (из разделов страницы)
 - **Использование** — ввод конкретной даты (подписание, транш, план); редактирование даты в ячейке — размер S. Диапазон — два InputDate «От»/«До». Текст → InputText; справочник → InputAutocomplete.
@@ -48,7 +48,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Рендерится на странице через getComputedStyle. Источник — styles/input.css. M: 40px / паддинг 12px / gap 8px / иконки 20px. S: 32px / 10px / 6px / 18px.
+Рендерится на странице через getComputedStyle. Источник — components/molecules/Inputs/Inputs.css. M: 40px / паддинг 12px / gap 8px / иконки 20px. S: 32px / 10px / 6px / 18px.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

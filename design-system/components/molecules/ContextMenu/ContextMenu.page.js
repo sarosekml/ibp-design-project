@@ -63,7 +63,7 @@ function makeMenu(items, o = {}) {
   return el;
 }
 
-/* ---------- позиционирование: рантайм ДС (scripts/ds-menu.js) ----------
+/* ---------- позиционирование: рантайм ДС (components/molecules/ContextMenu/ContextMenu.js) ----------
    Страница ничего не считает сама — DSMenu.place() делает разворот вверх,
    флип выравнивания и зажим в границах. boundary=null → вьюпорт. */
 function autoPlaceMenu(stage, menu, trigger, prefer, align, gap, boundary) {

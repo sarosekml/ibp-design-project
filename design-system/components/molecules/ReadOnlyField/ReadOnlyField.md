@@ -3,10 +3,10 @@ component: ReadOnlyField
 title: "ReadOnlyField"
 version: "1.010"
 updated: "23.09.2026"
-page: pages/molecules/ReadOnlyField.html
-page_js: scripts/read-only-field.page.js
-runtime: scripts/ds-copy.js, scripts/ds-readonlyfield.js (+ scripts/ds-tooltip.js — тултип переполнения)
-css: styles/read-only-field.css
+page: components/molecules/ReadOnlyField/ReadOnlyField.html
+page_js: components/molecules/ReadOnlyField/ReadOnlyField.page.js
+runtime: utils/ds-copy.js, components/molecules/ReadOnlyField/ReadOnlyField.js (+ components/molecules/Tooltip/Tooltip.js — тултип переполнения)
+css: components/molecules/ReadOnlyField/ReadOnlyField.css
 deps: [label-helper, chip, link, tooltip, segment-control, splitter]
 status: auto
 ---
@@ -18,7 +18,7 @@ status: auto
 
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
-- Копирование по иконке-действию `copy` — общий рантайм `scripts/ds-copy.js` (`DSCopy.write`/`.flash`); визуальный морф иконки в галочку остаётся за компонентом.
+- Копирование по иконке-действию `copy` — общий рантайм `utils/ds-copy.js` (`DSCopy.write`/`.flash`); визуальный морф иконки в галочку остаётся за компонентом.
 - Нет собственного контейнера (без рамки/фона) — это пара «подпись → значение», встраивается в чужой контейнер.
 - Префикс/постфикс — короткие по дизайну (~10–12 символов, символ/аббревиатура), не полное слово; длинная строка обрезается, не растягивает строку.
 - **Прочерк незаполненного поля — значение, а не подсказка.** В дефолтном состоянии он набирается цветом обычного текста (`--text-primary`), своего тона у него нет; приглушается он только вместе со всем полем. Правило от 23.09.2026, общее для полей и ячеек таблицы (пара — `.tc__empty`, см. TableCell). До 1.010 прочерк красился `--text-inactive` классами `.rof--empty` / `.rof__value--muted` — оба сняты, потому что кроме этого цвета ничего не делали, а серый прочерк читался как выключенное поле, хотя значение просто не завели.

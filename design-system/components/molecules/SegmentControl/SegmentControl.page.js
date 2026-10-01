@@ -54,7 +54,7 @@
     return host;
   }
 
-  /* позиция индикатора — рантайм ДС (scripts/ds-tabs.js): измеряется по
+  /* позиция индикатора — рантайм ДС (components/molecules/Tab/Tab.js): измеряется по
      выбранному сегменту, а не считается по индексу */
   function positionThumb(host) { window.DSTabs && DSTabs.positionThumb(host); }
 

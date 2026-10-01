@@ -3,8 +3,8 @@ component: Radius
 title: "Скругления"
 version: "1.000"
 updated: "07.08.2026"
-page: pages/foundations/Radius.html
-css: styles/radius.css
+page: foundations/Radius/Radius.html
+css: foundations/Radius/Radius.css
 status: auto
 ---
 

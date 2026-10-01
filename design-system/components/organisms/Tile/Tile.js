@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Tile — рантайм плашки-аккордеона (out-of-box).
-   Зависимости: styles/tile.css.
+   Зависимости: components/organisms/Tile/Tile.css.
 
    Экспорт: window.DSTile = {
      wire(tileEl, opts) → api      — оживить один аккордеон

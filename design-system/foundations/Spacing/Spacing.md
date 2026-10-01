@@ -3,12 +3,12 @@ component: Spacing
 title: "Сетка и отступы"
 version: "1.005"
 updated: "05.09.2026"
-page: pages/foundations/Spacing.html
-css: styles/spacing.css
+page: foundations/Spacing/Spacing.html
+css: foundations/Spacing/Spacing.css
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/spacing.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — foundations/Spacing/Spacing.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 > Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
 

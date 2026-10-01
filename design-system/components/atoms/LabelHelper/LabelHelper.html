@@ -2,21 +2,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Label / Helper — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/radio.css">
-<link rel="stylesheet" href="../../styles/switch.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../Radiobutton/Radiobutton.css">
+<link rel="stylesheet" href="../Switch/Switch.css">
+<link rel="stylesheet" href="../IconButton/IconButton.css">
+<link rel="stylesheet" href="LabelHelper.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -121,11 +121,11 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="LabelHelper">
@@ -269,7 +269,7 @@
       <li><b>Label</b> — короткое существительное или номинативная фраза, называющая поле («ИНН контрагента», а не «Введите ИНН контрагента»); без двоеточия в конце; не переносится — при нехватке ширины обрезается многоточием;</li>
       <li><b>Helper</b> — короткое пояснение к формату или ограничению значения («10 или 12 цифр»), не дублирует Label; может занимать несколько строк — переносится свободно, без обрезания;</li>
       <li><b>Helper · Error</b> — конкретная причина ошибки («Нужно выбрать хотя бы один вариант»), а не общее «Ошибка» без пояснения;</li>
-      <li>иконки в Label — редкий кейс: добавляйте одну или две иконки, только если одной подписи недостаточно для контекста; каждая иконка — <a class="inl" href="../atoms/IconButton.html">IconButton</a> размера S, тон neutral, с обязательным <code class="tok">aria-label</code> (см. «Доступность»).</li>
+      <li>иконки в Label — редкий кейс: добавляйте одну или две иконки, только если одной подписи недостаточно для контекста; каждая иконка — <a class="inl" href="../IconButton/IconButton.html">IconButton</a> размера S, тон neutral, с обязательным <code class="tok">aria-label</code> (см. «Доступность»).</li>
     </ul>
   
 <div class="subsec" data-screen-label="LabelDetail">
@@ -347,7 +347,7 @@
         <li>Helper связывается через <code class="tok">aria-describedby</code>, указывающий на id текста Helper — иначе скрин-ридер озвучит только значение поля без пояснения;</li>
         <li>Helper в состоянии Error дополнительно получает <code class="tok">role="alert"</code> (или <code class="tok">aria-live="polite"</code>), чтобы сообщение об ошибке озвучивалось сразу при появлении, а не только при переходе фокуса;</li>
         <li>иконка предупреждения в Helper — декоративна (<code class="tok">aria-hidden="true"</code>), сам смысл ошибки несёт текст;</li>
-        <li>иконки в Label (редкий кейс, до двух) — это <a class="inl" href="../atoms/IconButton.html">IconButton</a> S neutral, поэтому <code class="tok">aria-label</code> обязателен всегда: название действия («Удалить», «Изменить»), а не название иконки; если иконка информационная — связывается с <a class="inl" href="../molecules/Tooltip.html">Tooltip</a> тем же способом, что и любой другой информационный тултип.</li>
+        <li>иконки в Label (редкий кейс, до двух) — это <a class="inl" href="../IconButton/IconButton.html">IconButton</a> S neutral, поэтому <code class="tok">aria-label</code> обязателен всегда: название действия («Удалить», «Изменить»), а не название иконки; если иконка информационная — связывается с <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> тем же способом, что и любой другой информационный тултип.</li>
       </ul>
     </div>
   </section>
@@ -378,17 +378,17 @@
     <p class="desc">Label и Helper — не отдельные React-компоненты, а общие текстовые слоты внутри пропсов родительских компонентов. Здесь — точные размеры, разметка и рекомендуемая форма пропсов, которые разработчик передаёт в реализацию поля/контрола.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">styles/label-helper.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.8fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить:</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/label-helper.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -465,11 +465,11 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/label-helper.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="LabelHelper.page.js"></script>
 <script>
 /* ---------- DEV: copy-to-clipboard on code panels ---------- */
 (function(){
@@ -496,11 +496,11 @@
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = {};</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><label class="ds-label" for="field-inn">
@@ -513,7 +513,7 @@
   <span class="ds-helper__icon" aria-hidden="true"><i data-icon="alert-triangle"></i></span>
   <span class="ds-helper__text">Нужно 10 или 12 цифр</span>
 </span></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/label-helper.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/LabelHelper/LabelHelper.page.js)
 function makeLabel(o) {
   // o: { text, icons:0|1|2, align:'left'|'right', disabled }
   // span.ds-label(.ds-label--right)(.ds-label--disabled) → .ds-label__text (+ .ds-label__icon ×N)

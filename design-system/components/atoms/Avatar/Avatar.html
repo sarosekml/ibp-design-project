@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avatar — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/avatar.css">
-<script src="../../scripts/image-slot.js"></script>
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../Badge/Badge.css">
+<link rel="stylesheet" href="Avatar.css">
+<script src="../../../docs-kit/image-slot.js"></script>
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -121,11 +121,11 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Avatar">
@@ -238,7 +238,7 @@
 
 <div class="subsec" data-screen-label="Badge">
     <h3>Бейдж на аватаре</h3>
-    <p class="desc">Аватар может нести дочерний <a class="inl" href="../atoms/Badge.html">Badge</a>. <b>Counter</b> ставится в правый верхний угол (его правая и верхняя грани совпадают с гранями аватара, не выходя за габарит) — непрочитанные сообщения, количество задач; только у размеров <b>L</b> и <b>XL</b>. <b>Dot</b> — индикатор присутствия в правом нижнем углу описанного квадрата, касается его нижней и правой граней; на всех размерах. На фото у бейджа всегда белая обводка (<code class="tok">badge--bordered</code>).</p>
+    <p class="desc">Аватар может нести дочерний <a class="inl" href="../Badge/Badge.html">Badge</a>. <b>Counter</b> ставится в правый верхний угол (его правая и верхняя грани совпадают с гранями аватара, не выходя за габарит) — непрочитанные сообщения, количество задач; только у размеров <b>L</b> и <b>XL</b>. <b>Dot</b> — индикатор присутствия в правом нижнем углу описанного квадрата, касается его нижней и правой граней; на всех размерах. На фото у бейджа всегда белая обводка (<code class="tok">badge--bordered</code>).</p>
     <div class="panel">
       <div class="row" style="gap:44px; justify-content:center; align-items:center; padding:8px 0 28px;" id="badge-demo"></div>
       <p class="desc tight" style="margin:0 0 18px;">Индикатор присутствия — соответствие тона и статуса:</p>
@@ -456,7 +456,7 @@
   <!-- COLORS -->
   <section class="section" data-screen-label="Colors">
     <h2>Цвета</h2>
-    <p class="desc">Аватар по умолчанию использует нейтральную «болотную» подложку. Для сущностей доступен акцентный тон. Индикаторы статуса наследуют семантические токены из <a class="inl" href="../atoms/Badge.html">Badge</a>.</p>
+    <p class="desc">Аватар по умолчанию использует нейтральную «болотную» подложку. Для сущностей доступен акцентный тон. Индикаторы статуса наследуют семантические токены из <a class="inl" href="../Badge/Badge.html">Badge</a>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
@@ -578,7 +578,7 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/avatar.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Avatar/Avatar.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 1.6fr .8fr .8fr .8fr .8fr 8px;">
@@ -659,11 +659,11 @@
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/badge.css</code>
-      <code class="tok">styles/avatar.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/Badge/Badge.css</code>
+      <code class="tok">components/atoms/Avatar/Avatar.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -731,7 +731,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/avatar.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/atoms/Avatar/Avatar.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -749,7 +749,7 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ---------- icons ---------- */
 const ICONS = {
@@ -1169,13 +1169,13 @@ function makeGroup({ size='m', shape='circular', items=[], more=0 }) {
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Форма': 'Rounded' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- самостоятельный аватар с инициалами -->

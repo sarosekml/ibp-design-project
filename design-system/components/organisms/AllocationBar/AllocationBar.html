@@ -2,26 +2,26 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AllocationBar — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/alert.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/allocation-bar.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../../molecules/Alert/Alert.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="AllocationBar.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 .section > p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:76ch;text-wrap:pretty}
 .row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:40px}
@@ -67,7 +67,7 @@
 kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--text-primary);background:var(--bg-table-default-focus);border:1px solid var(--border-primary);border-radius:var(--radius-xs);padding:1px 7px}
 .sw{display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle}
 </style>
-<link rel="stylesheet" href="../../styles/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="AllocationBar">
@@ -95,7 +95,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
     <div class="meta"><span>Версия: <b>1.003</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>AllocationBar</h1>
-    <p class="lead">Итоговое числовое значение и его разбивка по составляющим: заголовок с суммой, стек-бар распределения и список позиций с долями. Компонент не знает предметной области — «Кредит», «РЕПО» и «Комиссия» приходят снаружи как данные. Служебные состояния собраны из <a class="inl" href="../molecules/Alert.html">Alert</a>, кнопка раскрытия — <a class="inl" href="../atoms/Buttons.html">Button</a> Transparent XS, цвета сегментов — только токены <code class="tok">--chart-*</code> из <a class="inl" href="../foundations/Colors.html">Colors</a>.</p>
+    <p class="lead">Итоговое числовое значение и его разбивка по составляющим: заголовок с суммой, стек-бар распределения и список позиций с долями. Компонент не знает предметной области — «Кредит», «РЕПО» и «Комиссия» приходят снаружи как данные. Служебные состояния собраны из <a class="inl" href="../../molecules/Alert/Alert.html">Alert</a>, кнопка раскрытия — <a class="inl" href="../../atoms/Buttons/Buttons.html">Button</a> Transparent XS, цвета сегментов — только токены <code class="tok">--chart-*</code> из <a class="inl" href="../../../foundations/Colors/Colors.html">Colors</a>.</p>
   </header>
 
   <!-- PLAYGROUND: конструктор переехал во вкладку «Конструктор» нижней панели,
@@ -104,7 +104,7 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
   <!-- USAGE -->
   <section class="section" data-screen-label="Usage">
     <h2>Использование</h2>
-    <p class="desc tight">AllocationBar отвечает на вопрос «из чего складывается это число». Ставится в <a class="inl" href="Tile.html">Tile</a> на карточке сделки, в тело <a class="inl" href="Modal.html">Modal</a> с финансовыми метриками, в сайдбар детализации. Компонент read-only: не сортирует, не фильтрует и не редактирует значения.</p>
+    <p class="desc tight">AllocationBar отвечает на вопрос «из чего складывается это число». Ставится в <a class="inl" href="../Tile/Tile.html">Tile</a> на карточке сделки, в тело <a class="inl" href="../Modal/Modal.html">Modal</a> с финансовыми метриками, в сайдбар детализации. Компонент read-only: не сортирует, не фильтрует и не редактирует значения.</p>
 
     <div class="demo-grid demo-grid--2" style="margin-bottom:24px;">
       <div class="demo">
@@ -120,9 +120,9 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
     <div class="panel" style="margin-bottom:20px;">
       <ul class="rules">
         <li><b>Когда использовать.</b> Есть одно итоговое число и 1–12 слагаемых, сумма которых имеет смысл: структура обеспечения, состав задолженности, распределение лимита.</li>
-        <li><b>Когда не использовать.</b> Значения не складываются в осмысленный итог (тогда — <a class="inl" href="Entity.html">Entity</a> или список <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a>); нужен клик по позиции с переходом в детализацию (оборачивайте компонент, не меняйте его); показателей больше 12 — распределение перестаёт читаться в баре.</li>
-        <li><b>Против <a class="inl" href="../atoms/ProgressBar.html">ProgressBar</a>.</b> ProgressBar показывает <i>одну</i> величину относительно максимума («85% готово»). AllocationBar показывает <i>состав</i> целого: сегменты не соревнуются, а делят 100%.</li>
-        <li><b>Против <a class="inl" href="Tile.html">Tile</a>.</b> Tile — контейнер с шапкой и подложкой; AllocationBar собственного фона не имеет и живёт внутри плитки, модалки или ячейки.</li>
+        <li><b>Когда не использовать.</b> Значения не складываются в осмысленный итог (тогда — <a class="inl" href="../Entity/Entity.html">Entity</a> или список <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a>); нужен клик по позиции с переходом в детализацию (оборачивайте компонент, не меняйте его); показателей больше 12 — распределение перестаёт читаться в баре.</li>
+        <li><b>Против <a class="inl" href="../../atoms/ProgressBar/ProgressBar.html">ProgressBar</a>.</b> ProgressBar показывает <i>одну</i> величину относительно максимума («85% готово»). AllocationBar показывает <i>состав</i> целого: сегменты не соревнуются, а делят 100%.</li>
+        <li><b>Против <a class="inl" href="../Tile/Tile.html">Tile</a>.</b> Tile — контейнер с шапкой и подложкой; AllocationBar собственного фона не имеет и живёт внутри плитки, модалки или ячейки.</li>
       </ul>
     </div>
   </section>
@@ -350,12 +350,12 @@ kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;col
 
     <div class="dev-intro">
       <span class="req">Подключить:</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/allocation-bar.css</code>
-      <code class="tok">styles/alert.css</code>
-      <code class="tok">styles/button.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/organisms/AllocationBar/AllocationBar.css</code>
+      <code class="tok">components/molecules/Alert/Alert.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -396,7 +396,7 @@ collapsed = items.length &gt; maxVisibleItems (5) and not expanded
 в баре отрисованы ВСЕ сегменты, в списке — первые maxVisibleItems
 клик по «Показать ещё N» -> expanded = true (обратно в этом сеансе не сворачивается)</code></pre>
     </div>
-    <p class="dev-note">Рабочий референс на vanilla JS — <code class="tok">window.AllocationBar.make(cfg)</code> в <code class="tok">scripts/allocation-bar.page.js</code>. Форматтеры <code class="tok">fmtNumber</code> / <code class="tok">fmtPercent</code> / <code class="tok">fmtCompact</code> экспортируются оттуда же.</p>
+    <p class="dev-note">Рабочий референс на vanilla JS — <code class="tok">window.AllocationBar.make(cfg)</code> в <code class="tok">components/organisms/AllocationBar/AllocationBar.page.js</code>. Форматтеры <code class="tok">fmtNumber</code> / <code class="tok">fmtPercent</code> / <code class="tok">fmtCompact</code> экспортируются оттуда же.</p>
   </section>
 
   <!-- BACKLOG -->
@@ -436,7 +436,7 @@ collapsed = items.length &gt; maxVisibleItems (5) and not expanded
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники AllocationBar: HTML — из спеки, CSS — styles/allocation-bar.css (полностью), JS — публичное API <code class="tok">window.AllocationBar</code>. Полный исходник JS живёт в <code class="tok">scripts/allocation-bar.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники AllocationBar: HTML — из спеки, CSS — components/organisms/AllocationBar/AllocationBar.css (полностью), JS — публичное API <code class="tok">window.AllocationBar</code>. Полный исходник JS живёт в <code class="tok">components/organisms/AllocationBar/AllocationBar.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -454,14 +454,14 @@ collapsed = items.length &gt; maxVisibleItems (5) and not expanded
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/allocation-bar.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="AllocationBar.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
 
 <!-- самодостаточные подписи свитчеров конструктора (общий слой docs-split.js) -->
 <script>
@@ -471,7 +471,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Иконка предупреждения': 'Показывать иконку предупреждения'
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><div class="albar-host">
@@ -627,7 +627,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 /* ---------- печать ---------- */
 @media print{.albar__bar{display:none!important}.albar__more{display:none!important}.albar__row{break-inside:avoid}}</script>
 
-<script type="text/plain" id="src-code-js">/* AllocationBar — публичное API (полный исходник: scripts/allocation-bar.page.js) */
+<script type="text/plain" id="src-code-js">/* AllocationBar — публичное API (полный исходник: components/organisms/AllocationBar/AllocationBar.page.js) */
 window.AllocationBar = {
   make: make,           /* (cfg) → DOM-узел .albar-host */
   palette: PALETTE,     /* 12 токенов --chart-* в порядке назначения */

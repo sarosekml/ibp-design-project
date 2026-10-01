@@ -3,10 +3,10 @@ component: SubTab
 title: "SubTab — табы второго уровня"
 version: "1.001"
 updated: "11.09.2026"
-page: pages/molecules/SubTab.html
-page_js: scripts/sub-tab.page.js
-runtime: scripts/ds-tabs.js
-css: styles/sub-tab.css
+page: components/molecules/SubTab/SubTab.html
+page_js: components/molecules/SubTab/SubTab.page.js
+runtime: components/molecules/Tab/Tab.js
+css: components/molecules/SubTab/SubTab.css
 deps: [badge]
 status: curated
 ---
@@ -82,7 +82,7 @@ status: curated
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-tabs.js`
+### Рантайм ДС — `components/molecules/Tab/Tab.js`
 
 Общий рантайм Tab, SegmentControl и SubTab: roving tabindex, навигация
 стрелками (← → и ↑ ↓), Home / End, активация выбора на месте, пропуск

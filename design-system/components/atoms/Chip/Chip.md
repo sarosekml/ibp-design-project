@@ -3,10 +3,10 @@ component: Chip
 title: "Chip"
 version: "1.018"
 updated: "11.09.2026"
-page: pages/atoms/Chip.html
-page_js: scripts/chip.page.js
-runtime: scripts/ds-chip.js (+ scripts/ds-tooltip.js — тултип усечённой подписи)
-css: styles/chip.css
+page: components/atoms/Chip/Chip.html
+page_js: components/atoms/Chip/Chip.page.js
+runtime: components/atoms/Chip/Chip.js (+ components/molecules/Tooltip/Tooltip.js — тултип усечённой подписи)
+css: components/atoms/Chip/Chip.css
 deps: [label-helper, avatar, spinner]
 status: auto
 ---
@@ -31,7 +31,7 @@ status: auto
 - Чип «Применено: N» у TableFilter (`.tfilter__applied`) — **не зона ответственности этого рантайма**: его снимает `ds-table-filter.js`, он же шлёт наружу `tfilter:reset`. `ds-chip.js` такой чип пропускает и по клику на крестик, и по Backspace/Delete.
 
 ## Диагностика
-- «Чип обрезан многоточием, а тултипа нет» → не подключён `scripts/ds-chip.js` или `scripts/ds-tooltip.js`. С 1.017 тултип навешивает рантайм Chip по первому наведению/фокусу — руками `data-tooltip` на подпись писать не нужно
+- «Чип обрезан многоточием, а тултипа нет» → не подключён `components/atoms/Chip/Chip.js` или `components/molecules/Tooltip/Tooltip.js`. С 1.017 тултип навешивает рантайм Chip по первому наведению/фокусу — руками `data-tooltip` на подпись писать не нужно
 - «Тултип показывается и у короткого чипа» → у подписи проставлен свой `data-tooltip` без `data-tooltip-truncated="only"`; рантайм ставит оба атрибута сам
 - «У чипа всплывают два тултипа сразу» → на чипе остался `title`: рантайм забирает его текст и снимает атрибут, но только когда сам навешивает тултип (то есть при подключённом `ds-tooltip.js`)
 - «Тултип не показывается на обрезанном disabled-чипе» → рантайм ставит `.chip--has-tooltip` при загрузке; чип, построенный позже, попадает под правило только после `DSChip.refresh(root)`
@@ -169,6 +169,6 @@ interface ChiplistProps {
 | .chip__dropdown | span | Шеврон выпадающего списка |
 | .chip__remove | span[role=button] | Крестик удаления — собственный hit-стейт; парный aria-label |
 | .chip__info | button | Info-trigger — открывает Popover с деталями (Предложение). Настоящий `<button>`, а не span[role=button] |
-| .spin | span | Индикатор загрузки (Предложение) — общий Spinner (styles/spinner.css) |
+| .spin | span | Индикатор загрузки (Предложение) — общий Spinner (components/atoms/Spinner/Spinner.css) |
 | .chiplist | div | Flex-контейнер с авто-переносом и единым зазором (8px, --s — 6px) |
 | tabindex="0" / role="button" / aria-label | span | Доступность: фокусируемый Edit-чип и озвучивание крестика |

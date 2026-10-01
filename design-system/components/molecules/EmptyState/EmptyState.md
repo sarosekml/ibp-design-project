@@ -3,8 +3,8 @@ component: EmptyState
 title: "EmptyState"
 version: "1.002"
 updated: "05.09.2026"
-page: pages/molecules/EmptyState.html
-css: styles/empty-state.css
+page: components/molecules/EmptyState/EmptyState.html
+css: components/molecules/EmptyState/EmptyState.css
 deps: [illustration, button]
 status: curated
 ---
@@ -43,7 +43,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `styles/empty-state.css`.
+Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `components/molecules/EmptyState/EmptyState.css`.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

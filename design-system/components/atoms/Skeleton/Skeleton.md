@@ -3,8 +3,8 @@ component: Skeleton
 title: "Skeleton"
 version: "1.002"
 updated: "05.09.2026"
-page: pages/atoms/Skeleton.html
-css: styles/skeleton.css
+page: components/atoms/Skeleton/Skeleton.html
+css: components/atoms/Skeleton/Skeleton.css
 status: curated
 ---
 
@@ -39,7 +39,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `styles/skeleton.css`.
+Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `components/atoms/Skeleton/Skeleton.css`.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

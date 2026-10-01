@@ -3,8 +3,8 @@ component: IconButton
 title: "IconButton"
 version: "1.011"
 updated: "07.09.2026"
-page: pages/atoms/IconButton.html
-css: styles/icon-button.css
+page: components/atoms/IconButton/IconButton.html
+css: components/atoms/IconButton/IconButton.css
 deps: [badge, spinner]
 status: auto
 ---
@@ -135,7 +135,7 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
 | .ibtn--loading | button | Загрузка: pointer-events: none, внутри .spin.spin--current |
 | disabled | button | Отключённое состояние — иконка --text-inactive, без стейт-слоя |
 | .is-hover / .is-pressed / .is-focus | button | Форсированные состояния — только для спецификаций в документации, не для продакшена |
-| .spin.spin--current | span | Лоадер — общий компонент Spinner (styles/spinner.css), currentColor размером с иконку |
+| .spin.spin--current | span | Лоадер — общий компонент Spinner (components/atoms/Spinner/Spinner.css), currentColor размером с иконку |
 | .ibtn__badge | span | Слот для Badge в правом верхнем углу; клики не перехватывает |
 | aria-label | button | Обязателен всегда — глагол действия (см. «Контент») |
 | aria-pressed | button | Только в toggle-режиме; CSS красит toggle и по `[aria-pressed="true"]` напрямую — `.ibtn--selected` нужен только для форс-состояния витрины (RulesAudit W1, 12.08.2026) |

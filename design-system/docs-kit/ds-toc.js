@@ -3,7 +3,7 @@
    Собирает разделы из main section.section > h2, строит
    вертикальную панель в правой верхней части экрана,
    подсвечивает текущий раздел при скролле.
-   Требует: styles/ds-toc.css
+   Требует: docs-kit/ds-toc.css
    ============================================================ */
 (function () {
   var TR = { 'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya' };
@@ -28,7 +28,7 @@
     if (document.querySelector('link[rel="stylesheet"][href$="ds-toc.css"]')) return;
     var l = document.createElement('link');
     l.rel = 'stylesheet';
-    l.href = (window.__DS_ROOT || '') + 'styles/ds-toc.css';
+    l.href = (window.__DS_ROOT || '') + 'docs-kit/ds-toc.css';
     document.head.appendChild(l);
   }
 

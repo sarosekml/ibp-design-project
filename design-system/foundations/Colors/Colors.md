@@ -3,12 +3,12 @@ component: Colors
 title: "Цвета"
 version: "1.004"
 updated: "30.09.2026"
-page: pages/foundations/Colors.html
-css: styles/colors.css, styles/palette.css
+page: foundations/Colors/Colors.html
+css: foundations/Colors/Colors.css, foundations/Colors/Palette.css
 status: curated
 ---
 
-> Значения — только в styles/colors.css (базовые токены). styles/palette.css держит семантику и состоит из ссылок на них. Ниже — имена и карта связи, чтобы grep-ать точечно.
+> Значения — только в foundations/Colors/Colors.css (базовые токены). foundations/Colors/Palette.css держит семантику и состоит из ссылок на них. Ниже — имена и карта связи, чтобы grep-ать точечно.
 
 ## Структура
 
@@ -16,8 +16,8 @@ status: curated
 
 | Слой | Файл | Что внутри |
 |---|---|---|
-| Базовые токены | `styles/colors.css` | 20 полных цветовых рамп из образцов: `--amber-500`, `--deep-orange-700`, `--swamp-A100`. Ступени 50…900 + A100/A200/A400/A700 (где есть). **Единственное место в ДС, где встречается hex** |
-| Семантика | `styles/palette.css` | 119 токенов в 5 группах: Static, Active, Situative, Status, Chart. Значение — всегда `var(--<базовый>)` или `color-mix()` поверх него |
+| Базовые токены | `foundations/Colors/Colors.css` | 20 полных цветовых рамп из образцов: `--amber-500`, `--deep-orange-700`, `--swamp-A100`. Ступени 50…900 + A100/A200/A400/A700 (где есть). **Единственное место в ДС, где встречается hex** |
+| Семантика | `foundations/Colors/Palette.css` | 119 токенов в 5 группах: Static, Active, Situative, Status, Chart. Значение — всегда `var(--<базовый>)` или `color-mix()` поверх него |
 
 **Правило слоя.** В `palette.css` не бывает hex: правка базового токена обязана менять все
 семантические, которые на него ссылаются, — ради этого слой и разведён. Исключение одно —
@@ -33,7 +33,7 @@ A-ступени **заглавной** буквой (`--swamp-A100`). Обра�
 записан как `--cgrey-*`. Имена семантических — из семантической палитры дизайнера
 (Static · Active · Situative · Status · Chart).
 
-## Базовые токены (styles/colors.css)
+## Базовые токены (foundations/Colors/Colors.css)
 
 **Amber**: `--amber-50` `--amber-100` `--amber-200` `--amber-300` `--amber-400` `--amber-500` `--amber-600` `--amber-700` `--amber-800` `--amber-900` `--amber-A100` `--amber-A200` `--amber-A400` `--amber-A700` 
 **Blue**: `--blue-50` `--blue-100` `--blue-200` `--blue-300` `--blue-400` `--blue-500` `--blue-600` `--blue-700` `--blue-800` `--blue-900` `--blue-A100` `--blue-A200` `--blue-A400` `--blue-A700` 
@@ -56,7 +56,7 @@ A-ступени **заглавной** буквой (`--swamp-A100`). Обра�
 **Swamp**: `--swamp-50` `--swamp-100` `--swamp-200` `--swamp-300` `--swamp-400` `--swamp-500` `--swamp-600` `--swamp-A100` `--swamp-A200` `--swamp-A400` `--swamp-A700` 
 **Yellow**: `--yellow-50` `--yellow-100` `--yellow-200` `--yellow-300` `--yellow-400` `--yellow-500` `--yellow-600` `--yellow-700` `--yellow-800` `--yellow-900` `--yellow-A100` `--yellow-A200` `--yellow-A400` `--yellow-A700` 
 
-## Карта: семантика → базовые (styles/palette.css)
+## Карта: семантика → базовые (foundations/Colors/Palette.css)
 
 ### Static
 

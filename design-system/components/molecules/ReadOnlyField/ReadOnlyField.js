@@ -1,8 +1,8 @@
 /* =========================================================================
    ds-readonlyfield.js — общий рантайм ReadOnlyField.
-   Зависимости: styles/read-only-field.css; scripts/ds-copy.js (копирование);
-   scripts/ds-tooltip.js (тултип переполнения, обязателен).
-   Подключение: через scripts/ds.js (единая точка) или поштучно в странице,
+   Зависимости: components/molecules/ReadOnlyField/ReadOnlyField.css; utils/ds-copy.js (копирование);
+   components/molecules/Tooltip/Tooltip.js (тултип переполнения, обязателен).
+   Подключение: через ds.js (единая точка) или поштучно в странице,
    как любой другой рантайм ДС.
 
    Что делает: регистрирует «усечено → тултип» для значения (`.rof__value` —

@@ -2,32 +2,32 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tile — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/divider.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/read-only-field.css">
-<link rel="stylesheet" href="../../styles/alert.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/tile.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../molecules/ReadOnlyField/ReadOnlyField.css">
+<link rel="stylesheet" href="../../molecules/Alert/Alert.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
+<link rel="stylesheet" href="Tile.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
@@ -136,14 +136,14 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия <b>1.015</b></span>
     <span>Обновлено <b>25.09.2026</b></span>
-    <span>CSS <b>styles/tile.css</b></span>
+    <span>CSS <b>components/organisms/Tile/Tile.css</b></span>
     <span>Зависимости <b>icon-button, button, link, chip, badge, alert, divider, read-only-field, table-cell</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
@@ -387,7 +387,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <h3>Card</h3>
     <p class="desc tight">Родственник с хэдером типа Card: Title на ступень ниже (<code class="tok">--type-h6-strong</code>, 16/20 вместо 18/24), отступы контента 8/16/20/16 вместо 10/20/24/20, зазор Title↔Subtitle↔Chiplist 4 вместо 8 и — главное — <b>собственные интерактивные состояния</b>, которых у Tile нет. Применяется в модальных окнах, списках и на канбан-доске. Alert-слот у Card не предполагается.</p>
     <p class="desc tight"><b>Грип переноса</b> — <code class="tok">.tile__grip</code>: IconButton M (20×20, глиф <code class="tok">drag-dots</code>) последним в <code class="tok">.tile__actions</code>, разметка <code class="tok">&lt;button class="ibtn ibtn--neutral ibtn--m tile__grip" aria-label="Перенести"&gt;</code>. Card даёт только точку захвата и курсор; жест переноса — у потребителя. Грип нужен, когда в карточке должно работать выделение текста и тащить за тело нельзя. Собрать карточку с грипом можно в конструкторе.</p>
-    <p class="desc tight">Класс — модификатор <code class="tok">.tile--card</code>: вся анатомия TileHeader (<code class="tok">.tile__header-main</code>, <code class="tok">.tile__title-row</code>, <code class="tok">.tile__chiplist</code>, <code class="tok">.tile__actions</code>) остаётся той же, меняются геометрия, ступень заголовка и набор состояний. Пример сборки на нём — организм <a class="inl" href="Kanban.html">Kanban</a>.</p>
+    <p class="desc tight">Класс — модификатор <code class="tok">.tile--card</code>: вся анатомия TileHeader (<code class="tok">.tile__header-main</code>, <code class="tok">.tile__title-row</code>, <code class="tok">.tile__chiplist</code>, <code class="tok">.tile__actions</code>) остаётся той же, меняются геометрия, ступень заголовка и набор состояний. Пример сборки на нём — организм <a class="inl" href="../Kanban/Kanban.html">Kanban</a>.</p>
     <div class="stagebg">
       <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
         <div>
@@ -1122,7 +1122,7 @@ onToggle():
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники Tile: HTML — из спеки, CSS — styles/tile.css (полностью), JS — рантайм оживления аккордеона. Полный исходник демо — в инлайн-скрипте Tile.html.</p>
+              <p class="desc">Эталонная разметка и исходники Tile: HTML — из спеки, CSS — components/organisms/Tile/Tile.css (полностью), JS — рантайм оживления аккордеона. Полный исходник демо — в инлайн-скрипте Tile.html.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -1140,15 +1140,15 @@ onToggle():
   </div><!-- /splitpane -->
 </main><!-- .page -->
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-tile.js"></script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
+<script src="Tile.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><section class="tile">
@@ -1166,7 +1166,7 @@ onToggle():
 <!-- headless: .tile.tile--headless > .tile__body (без хэдера) -->
 <!-- accordion: .tile.tile--accordion; toggle .tile__toggle (aria-expanded) над .tile__collapsible; свёрнуто — .tile--collapsed --></script>
 
-<script type="text/plain" id="src-code-js">/* Tile — статичная разметка; сворачивание аккордеона — рантайм ДС (scripts/ds-tile.js).
+<script type="text/plain" id="src-code-js">/* Tile — статичная разметка; сворачивание аккордеона — рантайм ДС (components/organisms/Tile/Tile.js).
    Демо страницы строит инлайн-функция buildTile() в Tile.html. */
 
 DSTile.wireAll(document);           // делегированно оживляет все .tile--accordion
@@ -1698,7 +1698,7 @@ function buildTile(){
 });
 buildTile();
 
-/* сворачивание аккордеона — рантайм ДС (scripts/ds-tile.js), делегированно */
+/* сворачивание аккордеона — рантайм ДС (components/organisms/Tile/Tile.js), делегированно */
 
 /* ---- redline ---- */
 function measureRedline(){

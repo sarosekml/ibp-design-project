@@ -3,8 +3,8 @@ component: Badge
 title: "Badge"
 version: "1.003"
 updated: "05.09.2026"
-page: pages/atoms/Badge.html
-css: styles/badge.css
+page: components/atoms/Badge/Badge.html
+css: components/atoms/Badge/Badge.css
 status: auto
 ---
 

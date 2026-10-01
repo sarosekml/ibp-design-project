@@ -10,7 +10,7 @@ const SPL_UI = {
 (function(){ const L=window.DS_ICONS||{}; const m={bad:'close',good:'check'};
   for(const k in m){ if(L[m[k]]) SPL_UI[k]=L[m[k]]; } })();
 
-/* Поведение сплиттера вынесено в рантайм ДС — scripts/ds-splitter.js
+/* Поведение сплиттера вынесено в рантайм ДС — components/molecules/Splitter/Splitter.js
    (перетаскивание с pointer capture, min/max, клавиатура, aria-value*).
    Страница-витрина пользуется тем же публичным API. */
 const makeSplitter = (o) => window.DSSplitter.make(o);

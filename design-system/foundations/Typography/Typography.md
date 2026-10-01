@@ -3,8 +3,8 @@ component: Typography
 title: "Типографика"
 version: "1.002"
 updated: "01.10.2026"
-page: pages/foundations/Typography.html
-css: styles/typography.css
+page: foundations/Typography/Typography.html
+css: foundations/Typography/Typography.css
 status: curated
 ---
 

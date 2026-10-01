@@ -16,7 +16,7 @@
       просто обрезал лишнее по `overflow: hidden`, и сколько значений выбрано
       было не видно.
 
-   Зависимости: styles/input.css, styles/chip.css. Иконка крестика — через
+   Зависимости: components/molecules/Inputs/Inputs.css, components/atoms/Chip/Chip.css. Иконка крестика — через
    `<i data-icon="close">` + ds-icons.js, инлайн-SVG рантайм не пишет.
 
    Экспорт: window.DSInput = {
@@ -247,7 +247,7 @@
     var on = hasValue(inp);
     var btn = on ? ensureClear(inp) : findClear(inp);
     /* .inp__act { display: inline-flex } той же специфичности, что и
-       браузерное [hidden] — парное правило стоит в styles/input.css */
+       браузерное [hidden] — парное правило стоит в components/molecules/Inputs/Inputs.css */
     if (btn) btn.hidden = !on || !canClear(inp);
     layoutChips(inp);
   }

@@ -3,10 +3,10 @@ component: Popover
 title: "Popover"
 version: "1.008"
 updated: "01.10.2026"
-page: pages/organisms/Popover.html
-page_js: scripts/popover.page.js
-runtime: scripts/ds-popover.js
-css: styles/popover.css
+page: components/organisms/Popover/Popover.html
+page_js: components/organisms/Popover/Popover.page.js
+runtime: components/organisms/Popover/Popover.js
+css: components/organisms/Popover/Popover.css
 deps: [button, icon-button, link, chip, label-helper]
 status: curated
 ---
@@ -29,7 +29,7 @@ Popover — нон-модальный всплывающий контейнер,
 - «Поповер, открытый из модалки, не видно или он не ловит клики» → рантайм старше 1.007: поповер монтировался в общий слой `DSFloat` (`z-index: 40`) под скрим модалки (`z-index: 1000`) и попадал под её `inert`. С 1.007 `open()` передаёт в `mount` якорь (триггер)
 - «В поповере не хватает места, скроллит вся страница» → сигнал заменить на Modal, не увеличивать `--pop-w-max`
 - «Стрелка не совпадает цветом с зоной» → проверить, к какой зоне она примыкает по стороне размещения
-- «Бегунок в `.pop__body` не появляется при прокрутке» → на странице нет `scripts/ds-scroll.js` (он в `ds.js`; страница без `ds.js` подключает его сам)
+- «Бегунок в `.pop__body` не появляется при прокрутке» → на странице нет `foundations/Layout/Layout.js` (он в `ds.js`; страница без `ds.js` подключает его сам)
 
 ## Ключевые правила (из разделов страницы)
 - **Использование** — Клик/Enter/Space открывает, контент — текст+интерактив/формы/медиа (не только строка, как у Tooltip), страницу не блокирует (в отличие от Modal). Правило переключения на Modal: ширина контенту нужна больше 560px, либо вертикальной прокрутки тела недостаточно.
@@ -42,7 +42,7 @@ Popover — нон-модальный всплывающий контейнер,
 - **Доступность** — Триггер: aria-haspopup="dialog", aria-expanded, aria-controls. Контейнер: role="dialog", aria-modal="false" (не блокирует), aria-labelledby на заголовок при наличии Header. Фокус переходит внутрь при открытии, но НЕ заперт (нет focus trap) — Tab с последнего элемента уводит из поповера и закрывает его. Esc закрывает и возвращает фокус на триггер. Контент страницы за поповером НЕ получает aria-hidden/inert (в отличие от Modal).
 - **Цвета** — Только семантические токены. Фон Body — --bg-popup; фон Header/Footer — --bg-table-pinned (Pinned Default, #F5F7F7); радиус --radius-m (8px); тень --elevation-5, внешнего бордера нет. Не собственный rgba().
 
-## Рантайм из коробки — `scripts/ds-popover.js`
+## Рантайм из коробки — `components/organisms/Popover/Popover.js`
 Поведение вынесено из витрины в общий рантайм (Фаза 3, 11.08.2026): экрану достаточно подключить скрипт и разметку.
 
 - **Авто-инициализация**: любой триггер с `data-popover="<id поповера>"` (пустое значение — ближайший `.pop` внутри `.pop-anchor`). Рантайм сам проставляет `aria-haspopup`/`aria-expanded`/`aria-controls`, `role="dialog"`, `aria-modal="false"` и класс `.pop--floating`.
@@ -86,7 +86,7 @@ Popover — нон-модальный всплывающий контейнер,
 
 ### Поведение · псевдокод (framework-agnostic)
 
-Рабочая реализация алгоритма — `scripts/ds-popover.js`.
+Рабочая реализация алгоритма — `components/organisms/Popover/Popover.js`.
 
 ```
 // 1. Реестр единственного открытого поповера — новый открывающийся закрывает предыдущий
@@ -143,6 +143,6 @@ interface PopoverProps {
 | `.pop__close` | Обёртка ✕ — кнопка `.ibtn.ibtn--neutral.ibtn--s` |
 | `.pop__body` (+ `--flush`) | Единственная гибкая/прокручиваемая зона; содержать может почти что угодно |
 | `.pop__foot-left` / `-right` | Независимо включаемые группы: слева инфо/ссылка/кнопка, справа Secondary+Primary |
-| `.sk-line` / `.sk-group` | Loading-плейсхолдер (общий компонент Skeleton, styles/skeleton.css) |
+| `.sk-line` / `.sk-group` | Loading-плейсхолдер (общий компонент Skeleton, components/atoms/Skeleton/Skeleton.css) |
 | `role="dialog"` / `aria-modal="false"` | Не блокирующий диалог |
 | `aria-haspopup` / `aria-expanded` / `aria-controls` | На триггере — связь с поповером |

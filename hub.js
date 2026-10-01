@@ -23,7 +23,7 @@
      root   — каталог приложения от корня; у группы 'ds' — null. Всё внутри
               него — часть записи: экраны с меню обязаны вести строкой
               пользователя в футере на хаб;
-     icon   — имя глифа из design-system/specs/Icons.md. */
+     icon   — имя глифа из design-system/foundations/Icons/Icons.md. */
 window.IBPHub = [
   {
     id: 'ds-ibp',

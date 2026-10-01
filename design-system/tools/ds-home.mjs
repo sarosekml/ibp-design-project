@@ -10,8 +10,8 @@
    Расхождение ловит правило D9 линтера; эта команда переписывает обе
    строки по тому же выводу и больше ничего в файле не трогает.
 
-     node scripts/ds-home.mjs           — переписать шапку
-     node scripts/ds-home.mjs --check   — только сверить (код 1 при расхождении)
+     node tools/ds-home.mjs           — переписать шапку
+     node tools/ds-home.mjs --check   — только сверить (код 1 при расхождении)
 
    Когда запускать: после записи в CHANGELOG.md и после добавления или
    удаления страницы компонента. Правило версии — MAINTAINING.md,
@@ -53,7 +53,7 @@ if (!diffs.length) {
 }
 for (const [what, was, want] of diffs) console.log((check ? 'РАСХОЖДЕНИЕ' : 'обновлено') + ': ' + what + ' «' + was + '» → «' + want + '»');
 if (check) {
-  console.log('Запусти node scripts/ds-home.mjs без --check.');
+  console.log('Запусти node tools/ds-home.mjs без --check.');
   process.exit(1);
 }
 await writeFile(L.abs(L.at.home), next, 'utf8');

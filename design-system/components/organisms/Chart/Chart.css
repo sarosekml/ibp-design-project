@@ -1,6 +1,6 @@
 /* =========================================================================
    Chart — графики данных: столбчатые, линейные, области, круговые,
-   точечные, водопад, спарклайн. Геометрию считает scripts/ds-chart.js,
+   точечные, водопад, спарклайн. Геометрию считает components/organisms/Chart/Chart.js,
    этот файл задаёт токены, анатомию и цвет. Все значения — токены ДС.
    Зависимости: colors.css, typography.css, radius.css, tooltip.css,
    skeleton.css, alert.css, button.css, icon-button.css, segment-control.css.

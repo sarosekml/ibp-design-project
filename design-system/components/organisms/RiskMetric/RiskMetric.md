@@ -3,10 +3,10 @@ component: RiskMetric
 title: "Риск-метрика"
 version: "1.007"
 updated: "05.09.2026"
-page: pages/organisms/RiskMetric.html
-page_js: scripts/riskmetric.page.js
-runtime: scripts/ds-riskmetric.js
-css: styles/riskmetric.css
+page: components/organisms/RiskMetric/RiskMetric.html
+page_js: components/organisms/RiskMetric/RiskMetric.page.js
+runtime: components/organisms/RiskMetric/RiskMetric.js
+css: components/organisms/RiskMetric/RiskMetric.css
 deps: [chip, popover, icon-button, divider]
 status: curated
 ---
@@ -39,7 +39,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через `getComputedStyle` на живом инстансе (Chip S + Popover w-m). Точные значения — в `styles/chip.css` (`.chip--s`) и `styles/popover.css` (`.pop--w-m`).
+Таблица рендерится на странице через `getComputedStyle` на живом инстансе (Chip S + Popover w-m). Точные значения — в `components/atoms/Chip/Chip.css` (`.chip--s`) и `components/organisms/Popover/Popover.css` (`.pop--w-m`).
 
 ### Разметка · HTML (эталонная реализация ДС)
 ```html
@@ -64,7 +64,7 @@ status: curated
 ```
 
 ### Поведение · псевдокод (framework-agnostic)
-Сборка и поведение — рантайм `scripts/ds-riskmetric.js` (Chip+Popover из `data-riskmetric`/`data-risk`/`data-zone`/…) поверх `scripts/ds-popover.js` (позиционирование/open-close/single-open/Esc/клик-вне — общие для всех Popover, не переизобретаются).
+Сборка и поведение — рантайм `components/organisms/RiskMetric/RiskMetric.js` (Chip+Popover из `data-riskmetric`/`data-risk`/`data-zone`/…) поверх `components/organisms/Popover/Popover.js` (позиционирование/open-close/single-open/Esc/клик-вне — общие для всех Popover, не переизобретаются).
 ```
 function resolveChip(rating, zone):
   hasZone = zone != null

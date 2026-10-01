@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Tabs — рантайм табов, сегмент-контрола и табов второго уровня (out-of-box).
-   Зависимости: styles/tab.css, styles/segment-control.css, styles/sub-tab.css.
+   Зависимости: components/molecules/Tab/Tab.css, components/molecules/SegmentControl/SegmentControl.css, components/molecules/SubTab/SubTab.css.
 
    Общее у Tab, SegmentControl и SubTab — roving tabindex и навигация стрелками;
    различаются разметкой (role/атрибут выбора) и тем, что у сегмент-контрола

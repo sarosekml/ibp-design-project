@@ -18,8 +18,8 @@
      <link rel="stylesheet" href="../../styles/segment-control.css">
      <link rel="stylesheet" href="../../styles/tab.css">
      <link rel="stylesheet" href="../../styles/docs-split.css">  ← после ds-docs.css
-   и рантаймы: scripts/ds-splitter.js, scripts/ds-tabs.js,
-   scripts/docs-split.js (после page.js страницы).
+   и рантаймы: components/molecules/Splitter/Splitter.js, components/molecules/Tab/Tab.js,
+   docs-kit/docs-split.js (после page.js страницы).
    ========================================================================= */
 
 /* ---------- раскладка: верх — демо, низ — табы ---------- */

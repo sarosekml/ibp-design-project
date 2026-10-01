@@ -128,7 +128,7 @@ function setSummary(field, n) {
   field.querySelector('.fld__value').textContent = n ? String(n) : 'Не выбрано';
 }
 
-/* позиционирование и открытие/закрытие/клавиатура/три-стейт — рантайм scripts/ds-dropdownlist.js */
+/* позиционирование и открытие/закрытие/клавиатура/три-стейт — рантайм components/molecules/DropdownList/DropdownList.js */
 
 /* =========================================================================
    PLAYGROUND

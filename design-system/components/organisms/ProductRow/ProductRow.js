@@ -1,6 +1,6 @@
 /* =========================================================================
    DS ProductRow — рантайм дерева строк (out-of-box).
-   Зависимости: styles/product-row.css.
+   Зависимости: components/organisms/ProductRow/ProductRow.css.
 
    Экспорт: window.DSProductRow = {
      wire(nodeEl, opts) → api      — оживить один узел дерева

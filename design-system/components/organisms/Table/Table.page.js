@@ -212,7 +212,7 @@
     return html;
   }
 
-  /* тень липкой шапки при вертикальном скролле — общий рантайм, scripts/ds-table.js */
+  /* тень липкой шапки при вертикальном скролле — общий рантайм, components/organisms/Table/Table.js */
   function bindScrollFx(root) {
     var body = root.querySelector('.dtable__body');
     if (body && window.DSTable) window.DSTable.bind(body);

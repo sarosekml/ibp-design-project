@@ -3,10 +3,10 @@ component: Pagination
 title: "Pagination"
 version: "1.010"
 updated: "05.09.2026"
-page: pages/molecules/Pagination.html
-page_js: scripts/pagination.page.js
-runtime: scripts/ds-pagination.js
-css: styles/pagination.css
+page: components/molecules/Pagination/Pagination.html
+page_js: components/molecules/Pagination/Pagination.page.js
+runtime: components/molecules/Pagination/Pagination.js
+css: components/molecules/Pagination/Pagination.css
 deps: [dropdown-list, checkbox, label-helper, button, splitter]
 status: auto
 ---
@@ -88,7 +88,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-pagination.js`
+### Рантайм ДС — `components/molecules/Pagination/Pagination.js`
 
 Весь движок пагинатора — в рантайме: окно номеров со свёрткой в «…», дропдаун
 размера страницы, `aria-current` / `aria-disabled`, адаптивный подбор уровня

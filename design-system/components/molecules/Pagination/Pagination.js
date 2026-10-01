@@ -1,7 +1,7 @@
 /* =========================================================================
    DS Pagination — рантайм пагинатора таблицы (out-of-box).
-   Зависимости: styles/pagination.css, styles/dropdown-list.css, styles/divider.css;
-   scripts/icons-data.js подключён ДО этого файла (window.DS_ICONS).
+   Зависимости: components/molecules/Pagination/Pagination.css, components/molecules/DropdownList/DropdownList.css, components/atoms/Divider/Divider.css;
+   foundations/Icons/icons-data.js подключён ДО этого файла (window.DS_ICONS).
 
    Экспорт: window.DSPagination = {
      pager(opts) → HTMLElement       — сам пагинатор (pagesize + range + nav)

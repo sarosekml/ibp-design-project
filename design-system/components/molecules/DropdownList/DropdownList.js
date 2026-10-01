@@ -1,6 +1,6 @@
 /* =========================================================================
    DS DropdownList — рантайм комбобокса Select/Autocomplete (out-of-box).
-   Зависимости: styles/dropdown-list.css. Иконки в разметке опций — как
+   Зависимости: components/molecules/DropdownList/DropdownList.css. Иконки в разметке опций — как
    обычно через icons-data.js + ds-icons.js (рантайм их не требует).
 
    Экспорт: window.DSDropdownList = {

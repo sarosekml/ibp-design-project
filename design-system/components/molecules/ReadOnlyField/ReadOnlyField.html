@@ -2,24 +2,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReadOnlyField — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/read-only-field.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../Splitter/Splitter.css">
+<link rel="stylesheet" href="ReadOnlyField.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -151,9 +151,9 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="ReadOnlyField">
@@ -447,19 +447,19 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/read-only-field.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/ReadOnlyField/ReadOnlyField.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/read-only-field.css</code>
-      <span class="req">— и <code class="tok">styles/chip.css</code> / <code class="tok">styles/link.css</code> / <code class="tok">styles/tooltip.css</code> в зависимости от типа значения.</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/molecules/ReadOnlyField/ReadOnlyField.css</code>
+      <span class="req">— и <code class="tok">components/atoms/Chip/Chip.css</code> / <code class="tok">components/atoms/Link/Link.css</code> / <code class="tok">components/molecules/Tooltip/Tooltip.css</code> в зависимости от типа значения.</span>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -518,7 +518,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/read-only-field.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/ReadOnlyField/ReadOnlyField.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -536,16 +536,16 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-copy.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-readonlyfield.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/read-only-field.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../utils/ds-copy.js"></script>
+<script src="../Tooltip/Tooltip.js"></script>
+<script src="ReadOnlyField.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="ReadOnlyField.page.js"></script>
 <script>
   document.getElementById('uc-a-action').innerHTML = (window.DS_ICONS && window.DS_ICONS['edit']) || '';
   document.getElementById('uc-b-action').innerHTML = (window.DS_ICONS && window.DS_ICONS['arrow-right']) || '';
@@ -577,7 +577,7 @@
 })();
 </script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Label': 'Показывать метку', 'Helper': 'Показывать helper' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- значение-текст, с иконкой слева и копированием справа -->
@@ -595,7 +595,7 @@
   <span class="ds-label"><span class="ds-label__text">Регионы присутствия</span></span>
   <div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s">…</div></div></div>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/read-only-field.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/ReadOnlyField/ReadOnlyField.page.js)
 // Поле: .rof → .ds-label + .rof__row (иконка/префикс/значение/постфикс/иконка) + .ds-helper
 const spec = {
   type: 'text',                    // 'text' | 'chips' | 'link'
@@ -775,7 +775,7 @@ div.rof__value.rof__value--negative { color: var(--error-dark); }
    цвета они ничего не делали. */
 
 /* ---------- Loading skeleton — PROPOSED ---------------------------------------- */
-/* Общий компонент Skeleton (.sk-line, styles/skeleton.css), локальной реализации нет. */
+/* Общий компонент Skeleton (.sk-line, components/atoms/Skeleton/Skeleton.css), локальной реализации нет. */
 
 /* =========================================================================
    ROF-GRID — usage pattern for laying out several fields inside a card

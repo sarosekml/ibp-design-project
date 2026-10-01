@@ -9,14 +9,14 @@
     {
       cat: 'Основы',
       items: [
-        { label: 'Иконки',      href: 'pages/foundations/Icons.html' },
-        { label: 'Иллюстрации', href: 'pages/foundations/Illustrations.html' },
-        { label: 'Каркас экрана', href: 'pages/foundations/Layout.html' },
-        { label: 'Сетка и отступы', href: 'pages/foundations/Spacing.html' },
-        { label: 'Скругления',  href: 'pages/foundations/Radius.html' },
-        { label: 'Тени',        href: 'pages/foundations/Elevation.html' },
-        { label: 'Типографика', href: 'pages/foundations/Typography.html' },
-        { label: 'Цвета',       href: 'pages/foundations/Colors.html' }
+        { label: 'Иконки',      href: 'foundations/Icons/Icons.html' },
+        { label: 'Иллюстрации', href: 'foundations/Illustrations/Illustrations.html' },
+        { label: 'Каркас экрана', href: 'foundations/Layout/Layout.html' },
+        { label: 'Сетка и отступы', href: 'foundations/Spacing/Spacing.html' },
+        { label: 'Скругления',  href: 'foundations/Radius/Radius.html' },
+        { label: 'Тени',        href: 'foundations/Elevation/Elevation.html' },
+        { label: 'Типографика', href: 'foundations/Typography/Typography.html' },
+        { label: 'Цвета',       href: 'foundations/Colors/Colors.html' }
       ]
     },
     {
@@ -25,67 +25,67 @@
         {
           group: 'Атомы',
           items: [
-            { label: 'Avatar',       href: 'pages/atoms/Avatar.html' },
-            { label: 'Badge',        href: 'pages/atoms/Badge.html' },
-            { label: 'Button',       href: 'pages/atoms/Buttons.html' },
-            { label: 'Checkbox',     href: 'pages/atoms/Checkbox.html' },
-            { label: 'Chip',         href: 'pages/atoms/Chip.html' },
-            { label: 'Divider',      href: 'pages/atoms/Divider.html' },
-            { label: 'IconButton',   href: 'pages/atoms/IconButton.html' },
-            { label: 'Label / Helper', href: 'pages/atoms/LabelHelper.html' },
-            { label: 'Link',         href: 'pages/atoms/Link.html' },
-            { label: 'ProgressBar',  href: 'pages/atoms/ProgressBar.html' },
-            { label: 'Radiobutton',  href: 'pages/atoms/Radiobutton.html' },
-            { label: 'Skeleton',     href: 'pages/atoms/Skeleton.html' },
-            { label: 'Spinner',      href: 'pages/atoms/Spinner.html' },
-            { label: 'Switch',       href: 'pages/atoms/Switch.html' }
+            { label: 'Avatar',       href: 'components/atoms/Avatar/Avatar.html' },
+            { label: 'Badge',        href: 'components/atoms/Badge/Badge.html' },
+            { label: 'Button',       href: 'components/atoms/Buttons/Buttons.html' },
+            { label: 'Checkbox',     href: 'components/atoms/Checkbox/Checkbox.html' },
+            { label: 'Chip',         href: 'components/atoms/Chip/Chip.html' },
+            { label: 'Divider',      href: 'components/atoms/Divider/Divider.html' },
+            { label: 'IconButton',   href: 'components/atoms/IconButton/IconButton.html' },
+            { label: 'Label / Helper', href: 'components/atoms/LabelHelper/LabelHelper.html' },
+            { label: 'Link',         href: 'components/atoms/Link/Link.html' },
+            { label: 'ProgressBar',  href: 'components/atoms/ProgressBar/ProgressBar.html' },
+            { label: 'Radiobutton',  href: 'components/atoms/Radiobutton/Radiobutton.html' },
+            { label: 'Skeleton',     href: 'components/atoms/Skeleton/Skeleton.html' },
+            { label: 'Spinner',      href: 'components/atoms/Spinner/Spinner.html' },
+            { label: 'Switch',       href: 'components/atoms/Switch/Switch.html' }
           ]
         },
         {
           group: 'Молекулы',
           items: [
-            { label: 'Alert',            href: 'pages/molecules/Alert.html' },
-            { label: 'Breadcrumbs',       href: 'pages/molecules/Breadcrumbs.html' },
-            { label: 'ButtonGroup',      href: 'pages/molecules/ButtonGroup.html' },
-            { label: 'Context Menu',     href: 'pages/molecules/ContextMenu.html' },
-            { label: 'DatePicker',       href: 'pages/molecules/DatePicker.html' },
-            { label: 'DropdownList',     href: 'pages/molecules/DropdownList.html' },
-            { label: 'EmptyState',       href: 'pages/molecules/EmptyState.html' },
-            { label: 'InputAmountRange', href: 'pages/molecules/InputAmountRange.html' },
-            { label: 'InputAutocomplete', href: 'pages/molecules/InputAutocomplete.html' },
-            { label: 'InputDate',        href: 'pages/molecules/InputDate.html' },
-            { label: 'InputDateRange',   href: 'pages/molecules/InputDateRange.html' },
-            { label: 'InputText',        href: 'pages/molecules/InputText.html' },
-            { label: 'NavTile',          href: 'pages/molecules/NavTile.html' },
-            { label: 'Pagination',       href: 'pages/molecules/Pagination.html' },
-            { label: 'ReadOnlyField',    href: 'pages/molecules/ReadOnlyField.html' },
-            { label: 'SegmentControl',   href: 'pages/molecules/SegmentControl.html' },
-            { label: 'Splitter',         href: 'pages/molecules/Splitter.html' },
-            { label: 'SubTab',           href: 'pages/molecules/SubTab.html' },
-            { label: 'Tab',              href: 'pages/molecules/Tab.html' },
-            { label: 'Toast',            href: 'pages/molecules/Toast.html' },
-            { label: 'Tooltip',          href: 'pages/molecules/Tooltip.html' }
+            { label: 'Alert',            href: 'components/molecules/Alert/Alert.html' },
+            { label: 'Breadcrumbs',       href: 'components/molecules/Breadcrumbs/Breadcrumbs.html' },
+            { label: 'ButtonGroup',      href: 'components/molecules/ButtonGroup/ButtonGroup.html' },
+            { label: 'Context Menu',     href: 'components/molecules/ContextMenu/ContextMenu.html' },
+            { label: 'DatePicker',       href: 'components/molecules/DatePicker/DatePicker.html' },
+            { label: 'DropdownList',     href: 'components/molecules/DropdownList/DropdownList.html' },
+            { label: 'EmptyState',       href: 'components/molecules/EmptyState/EmptyState.html' },
+            { label: 'InputAmountRange', href: 'components/molecules/Inputs/InputAmountRange/InputAmountRange.html' },
+            { label: 'InputAutocomplete', href: 'components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html' },
+            { label: 'InputDate',        href: 'components/molecules/Inputs/InputDate/InputDate.html' },
+            { label: 'InputDateRange',   href: 'components/molecules/Inputs/InputDateRange/InputDateRange.html' },
+            { label: 'InputText',        href: 'components/molecules/Inputs/InputText/InputText.html' },
+            { label: 'NavTile',          href: 'components/molecules/NavTile/NavTile.html' },
+            { label: 'Pagination',       href: 'components/molecules/Pagination/Pagination.html' },
+            { label: 'ReadOnlyField',    href: 'components/molecules/ReadOnlyField/ReadOnlyField.html' },
+            { label: 'SegmentControl',   href: 'components/molecules/SegmentControl/SegmentControl.html' },
+            { label: 'Splitter',         href: 'components/molecules/Splitter/Splitter.html' },
+            { label: 'SubTab',           href: 'components/molecules/SubTab/SubTab.html' },
+            { label: 'Tab',              href: 'components/molecules/Tab/Tab.html' },
+            { label: 'Toast',            href: 'components/molecules/Toast/Toast.html' },
+            { label: 'Tooltip',          href: 'components/molecules/Tooltip/Tooltip.html' }
           ]
         },
         {
           group: 'Организмы',
           items: [
-            { label: 'AllocationBar', href: 'pages/organisms/AllocationBar.html' },
-            { label: 'Chart',    href: 'pages/organisms/Chart.html' },
-            { label: 'Drawer',   href: 'pages/organisms/Drawer.html' },
-            { label: 'Entity',     href: 'pages/organisms/Entity.html' },
-            { label: 'Kanban',   href: 'pages/organisms/Kanban.html' },
-            { label: 'Modal',    href: 'pages/organisms/Modal.html' },
-            { label: 'NavPanel', href: 'pages/organisms/NavPanel.html' },
-            { label: 'PageHeader', href: 'pages/organisms/PageHeader.html' },
-            { label: 'Popover',  href: 'pages/organisms/Popover.html' },
-            { label: 'ProductRow', href: 'pages/organisms/ProductRow.html' },
-            { label: 'RiskMetric', href: 'pages/organisms/RiskMetric.html' },
-            { label: 'SnackBar',   href: 'pages/organisms/SnackBar.html' },
-            { label: 'Table',      href: 'pages/organisms/Table.html' },
-            { label: 'TableCell',  href: 'pages/organisms/TableCell.html' },
-            { label: 'TableFilter', href: 'pages/organisms/TableFilter.html' },
-            { label: 'Tile',       href: 'pages/organisms/Tile.html' }
+            { label: 'AllocationBar', href: 'components/organisms/AllocationBar/AllocationBar.html' },
+            { label: 'Chart',    href: 'components/organisms/Chart/Chart.html' },
+            { label: 'Drawer',   href: 'components/organisms/Drawer/Drawer.html' },
+            { label: 'Entity',     href: 'components/organisms/Entity/Entity.html' },
+            { label: 'Kanban',   href: 'components/organisms/Kanban/Kanban.html' },
+            { label: 'Modal',    href: 'components/organisms/Modal/Modal.html' },
+            { label: 'NavPanel', href: 'components/organisms/NavPanel/NavPanel.html' },
+            { label: 'PageHeader', href: 'components/organisms/PageHeader/PageHeader.html' },
+            { label: 'Popover',  href: 'components/organisms/Popover/Popover.html' },
+            { label: 'ProductRow', href: 'components/organisms/ProductRow/ProductRow.html' },
+            { label: 'RiskMetric', href: 'components/organisms/RiskMetric/RiskMetric.html' },
+            { label: 'SnackBar',   href: 'components/organisms/SnackBar/SnackBar.html' },
+            { label: 'Table',      href: 'components/organisms/Table/Table.html' },
+            { label: 'TableCell',  href: 'components/organisms/TableCell/TableCell.html' },
+            { label: 'TableFilter', href: 'components/organisms/TableFilter/TableFilter.html' },
+            { label: 'Tile',       href: 'components/organisms/Tile/Tile.html' }
           ]
         }
       ]
@@ -93,9 +93,9 @@
     {
       cat: 'Правила и паттерны',
       items: [
-        { label: 'Локальные компоненты',  href: 'pages/patterns/LocalComponents.html' },
-        { label: 'Главная страница · роли', href: 'pages/patterns/HomeRoles.html' },
-        { label: 'Редполитика',           href: 'pages/patterns/Redpolicy.html' },
+        { label: 'Локальные компоненты',  href: 'patterns/LocalComponents/LocalComponents.html' },
+        { label: 'Главная страница · роли', href: 'patterns/HomeRoles/HomeRoles.html' },
+        { label: 'Редполитика',           href: 'patterns/Redpolicy/Redpolicy.html' },
         { label: 'Тон оф войс',           soon: true },
         { label: 'Паттерны интерфейса',   soon: true }
       ],
@@ -103,7 +103,7 @@
     {
       cat: 'RND',
       items: [
-        { label: 'Общий бэклог',            href: 'pages/rnd/Backlog.html' }
+        { label: 'Общий бэклог',            href: 'rnd/Backlog/Backlog.html' }
       ]
     }
   ];
@@ -212,7 +212,7 @@
     if (document.querySelector('link[rel="stylesheet"][href$="ds-nav.css"]')) return;
     var l = document.createElement('link');
     l.rel = 'stylesheet';
-    l.href = (window.__DS_ROOT || '') + 'styles/ds-nav.css';
+    l.href = (window.__DS_ROOT || '') + 'docs-kit/ds-nav.css';
     document.head.appendChild(l);
   }
 

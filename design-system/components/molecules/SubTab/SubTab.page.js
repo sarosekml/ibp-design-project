@@ -56,7 +56,7 @@
     return host;
   }
 
-  /* клик и клавиатура — рантайм ДС (scripts/ds-tabs.js), своего JS нет */
+  /* клик и клавиатура — рантайм ДС (components/molecules/Tab/Tab.js), своего JS нет */
   function wireSubTabs(host, onChange) {
     window.DSTabs && DSTabs.subtabs(host, { onChange: onChange });
     return host;

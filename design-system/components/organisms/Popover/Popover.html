@@ -2,24 +2,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Popover — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/popover.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="Popover.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -124,11 +124,11 @@
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Popover">
@@ -158,7 +158,7 @@
     <div class="meta"><span>Версия: <b>1.008</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>Popover</h1>
-    <p class="lead">Popover — нон-модальный всплывающий контейнер, привязанный к триггеру. Показывает расширенный контекстный контент (текст с форматированием, интерактивные элементы, формы, легенды, списки). В отличие от <a class="inl" href="../molecules/Tooltip.html">Tooltip</a> — требует клика для открытия и не закрывается при уходе курсора; в отличие от <b>Modal</b> — не блокирует страницу, не имеет скрима и закрывается кликом вне себя.</p>
+    <p class="lead">Popover — нон-модальный всплывающий контейнер, привязанный к триггеру. Показывает расширенный контекстный контент (текст с форматированием, интерактивные элементы, формы, легенды, списки). В отличие от <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> — требует клика для открытия и не закрывается при уходе курсора; в отличие от <b>Modal</b> — не блокирует страницу, не имеет скрима и закрывается кликом вне себя.</p>
   </header>
 
   <!-- 1. КОНСТРУКТОР: демо — в верхнюю панель сплиттера (#pg-stage),
@@ -371,27 +371,27 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/popover.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/organisms/Popover/Popover.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/shadow.css</code>
-      <code class="tok">styles/button.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/link.css</code>
-      <code class="tok">styles/chip.css</code>
-      <code class="tok">styles/popover.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/atoms/Link/Link.css</code>
+      <code class="tok">components/atoms/Chip/Chip.css</code>
+      <code class="tok">components/organisms/Popover/Popover.css</code>
     </div>
 
     <div class="dev-intro">
       <span class="req">Рантайм из коробки — поведение ниже уже реализовано:</span>
-      <code class="tok">scripts/ds-popover.js</code>
+      <code class="tok">components/organisms/Popover/Popover.js</code>
     </div>
     <p class="dev-note" style="margin:-6px 0 20px;">Подключённый <code class="tok">ds-popover.js</code> сам навешивает поведение на любой триггер с <code class="tok">data-popover="&lt;id поповера&gt;"</code>: 12 позиций, авто-flip стороны и выравнивания, стрелка по центру триггера, один открытый поповер, 5 способов закрытия, тени шапки/подвала при прокрутке. Настройки — атрибутами триггера (<code class="tok">data-popover-placement</code>, <code class="tok">data-popover-align</code>, <code class="tok">data-popover-gap</code>, <code class="tok">data-popover-flip="no"</code>, <code class="tok">data-popover-boundary</code>), императивно — <code class="tok">DSPopover.bind / place / closeAll</code>.</p>
 
@@ -441,9 +441,9 @@ onBodyScroll():
   foot.classList.toggle('is-scrolled', body.scrollTop + body.clientHeight < body.scrollHeight - 1)</span>
 
 <span class="tk-cm">// 6. prefers-reduced-motion: анимация появления/исчезновения отключается —
-//    поповер появляется/скрывается мгновенно (см. styles/popover.css)</span></code></pre>
+//    поповер появляется/скрывается мгновенно (см. components/organisms/Popover/Popover.css)</span></code></pre>
     </div>
-    <p class="dev-note">Это не готовый сниппет для вставки — алгоритм поверх вашего стека. Рабочая реализация алгоритма на vanilla JS — <code class="tok">scripts/ds-popover.js</code> (функции <code class="tok">place</code> и <code class="tok">bind</code>); сборка разметки для демо витрины — <code class="tok">buildPopover</code> в <code class="tok">popover.page.js</code>.</p>
+    <p class="dev-note">Это не готовый сниппет для вставки — алгоритм поверх вашего стека. Рабочая реализация алгоритма на vanilla JS — <code class="tok">components/organisms/Popover/Popover.js</code> (функции <code class="tok">place</code> и <code class="tok">bind</code>); сборка разметки для демо витрины — <code class="tok">buildPopover</code> в <code class="tok">popover.page.js</code>.</p>
 
     </section>
 
@@ -483,7 +483,7 @@ onBodyScroll():
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники Popover: HTML — из спеки, CSS — styles/popover.css (полностью), JS — рантайм. Демо страницы строит <code class="tok">scripts/popover.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники Popover: HTML — из спеки, CSS — components/organisms/Popover/Popover.css (полностью), JS — рантайм. Демо страницы строит <code class="tok">components/organisms/Popover/Popover.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -501,16 +501,16 @@ onBodyScroll():
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-popover.js"></script>
-<script src="../../scripts/ds-scroll.js"></script>
-<script src="../../scripts/popover.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="Popover.js"></script>
+<script src="../../../foundations/Layout/Layout.js"></script>
+<script src="Popover.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
 
 <!-- самодостаточные подписи свитчеров конструктора (общий слой docs-split.js) -->
 <script>
@@ -518,7 +518,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Стрелка': 'Показывать стрелку',
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><span class="pop-anchor">
@@ -545,7 +545,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   </div>
 </span></script>
 
-<script type="text/plain" id="src-code-js">/* Popover — позиционирование и закрытие вынесены в рантайм scripts/ds-popover.js. */
+<script type="text/plain" id="src-code-js">/* Popover — позиционирование и закрытие вынесены в рантайм components/organisms/Popover/Popover.js. */
 
 // Реестр единственного открытого поповера — новый открывающийся закрывает предыдущий.
 // Триггер: data-popover="<id>" — aria-haspopup/aria-expanded/aria-controls проставляет рантайм.
@@ -802,7 +802,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 
 /* =========================================================================
    ЗАГРУЗКА КОНТЕНТА — общий компонент Skeleton (.sk-line/.sk-group,
-   styles/skeleton.css), локальной реализации нет.
+   components/atoms/Skeleton/Skeleton.css), локальной реализации нет.
    ========================================================================= */
 
 /* =========================================================================

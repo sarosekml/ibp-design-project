@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Divider — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/divider.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../Buttons/Buttons.css">
+<link rel="stylesheet" href="Divider.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -141,11 +141,11 @@
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Divider">
@@ -189,7 +189,7 @@
   <!-- USAGE (moved from Examples) -->
   <section class="section" data-screen-label="Usage">
     <h2>Использование</h2>
-    <p class="desc">Разделители встроены в другие компоненты — модальное окно выбора КНП: горизонтальные включены в шапку и подвал, вертикальные разделяют колонки. В списках уместен Inset-вариант, в меню — Full, в тулбаре — вертикальные линии между группами действий. Линию разделителя переиспользуют и молекулы: <a class="inl" href="../molecules/ContextMenu.html">Context Menu</a> (<code class="tok">.menu__divider</code>) и <a class="inl" href="../molecules/DropdownList.html">Select · DropdownList</a> (<code class="tok">.ddl__divider</code>) — обе берут цвет и толщину из токенов Divider (<code class="tok">--dvd-color</code> / <code class="tok">--dvd-thickness</code>), поэтому линия задаётся в одном месте.</p>
+    <p class="desc">Разделители встроены в другие компоненты — модальное окно выбора КНП: горизонтальные включены в шапку и подвал, вертикальные разделяют колонки. В списках уместен Inset-вариант, в меню — Full, в тулбаре — вертикальные линии между группами действий. Линию разделителя переиспользуют и молекулы: <a class="inl" href="../../molecules/ContextMenu/ContextMenu.html">Context Menu</a> (<code class="tok">.menu__divider</code>) и <a class="inl" href="../../molecules/DropdownList/DropdownList.html">Select · DropdownList</a> (<code class="tok">.ddl__divider</code>) — обе берут цвет и толщину из токенов Divider (<code class="tok">--dvd-color</code> / <code class="tok">--dvd-thickness</code>), поэтому линия задаётся в одном месте.</p>
 
     <div class="panel" style="display:flex; justify-content:center; padding:36px;">
       <div id="ex-modal"></div>
@@ -507,7 +507,7 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/divider.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Divider/Divider.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 1.8fr 1fr 8px;">
@@ -557,9 +557,9 @@
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/divider.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">components/atoms/Divider/Divider.css</code>
     </div>
 
     <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
@@ -640,15 +640,15 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/divider.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="Divider.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Ориентация': 'Вертикальный', 'Контрастная линия': 'Показывать контрастную линию', 'Пунктир': 'Показывать пунктир', 'С подписью': 'Показывать подпись' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- горизонтальный: нативный <hr>, уже имеет role=separator -->
@@ -669,7 +669,7 @@
 
 <!-- чисто декоративная линия (напр. граница карточки) — скрыть от скрин-ридера -->
 <hr class="dvd dvd--h" aria-hidden="true"></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/divider.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/Divider/Divider.page.js)
 function makeDiv(o) {
   // o: { orientation:'h'|'v', variant:'full'|'inset'|'middle'|'section', strong?, dashed?, withText?, align }
   // hr.dvd.dvd--<variant>(.dvd--strong)(.dvd--dashed)(.dvd--with-text) → текст подписи .dvd__label

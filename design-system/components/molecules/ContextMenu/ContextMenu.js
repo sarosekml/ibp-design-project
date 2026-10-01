@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Menu — рантайм контекстного меню (out-of-box).
-   Зависимости: styles/context-menu.css. Иконки в разметке — как обычно
+   Зависимости: components/molecules/ContextMenu/ContextMenu.css. Иконки в разметке — как обычно
    через icons-data.js + ds-icons.js (рантайм их не требует).
 
    Экспорт: window.DSMenu = {

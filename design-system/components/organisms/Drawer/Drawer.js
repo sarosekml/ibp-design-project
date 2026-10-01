@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Drawer — рантайм панели деталей (out-of-box).
-   Зависимости: styles/drawer.css, styles/modal.css, scripts/ds-modal.js.
+   Зависимости: components/organisms/Drawer/Drawer.css, components/organisms/Modal/Modal.css, components/organisms/Modal/Modal.js.
 
    Слой Drawer НЕ пишет: скрим, портал в body, блокировку прокрутки, inert
    фона, focus trap, стек, Esc и возврат фокуса даёт ds-modal.js — один

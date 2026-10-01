@@ -557,11 +557,19 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     const dsCssLinks = (html.match(/href="[^"]*\bds\.css"/g) || []);
     ok(dsCssLinks.length === 1,
       `Б1 ровно один ds.css (${dsCssLinks.length})`);
-    ok((html.match(/scripts\/ds\.js/g) || []).length === 1,
-      `Б1 ровно один scripts/ds.js (${(html.match(/scripts\/ds\.js/g) || []).length})`);
+    const dsJsTags = (html.match(/src="(?:[^"]*\/)?ds\.js"/g) || []).length;
+    ok(dsJsTags === 1, `Б1 ровно один ds.js (${dsJsTags})`);
   }
-  ok(!/href="[^"]*styles\//.test(html), 'Б1 нет поштучных styles/* (только ds.css)');
-  ok(!/src="[^"]*scripts\/ds-[a-z-]+\.js/.test(html), 'Б1 нет поштучных scripts/ds-*');
+  /* Поштучные файлы ДС: ссылка разрешается от папки экрана, а вид файла
+     называет модуль путей ДС — не префикс папки в строке (RE0002: после
+     переезда раскладки литерал `styles/` молча перестал бы что-либо ловить). */
+  const dsKindsOf = (attr) => (pagePath ? [...html.matchAll(new RegExp('\\b' + attr + '="([^"#?]+)', 'g'))] : [])
+    .map((m) => {
+      const abs = path.resolve(path.dirname(pagePath), m[1]);
+      return abs.startsWith(DS + path.sep) ? L.kindOf(path.relative(DS, abs).split(path.sep).join('/')) : null;
+    }).filter(Boolean);
+  ok(!dsKindsOf('href').some((k) => k.kind === 'style'), 'Б1 нет поштучных CSS ДС (только ds.css)');
+  ok(!dsKindsOf('src').some((k) => k.kind === 'script' && k.role !== 'entry'), 'Б1 нет поштучных рантаймов ДС (только ds.js)');
 
   /* Б34 — путь до ДС записан ровно в одном месте (решение владельца Р5).
      В экране проекта с загрузчиком нет литерала каталога ДС (адрес — строка
@@ -1096,7 +1104,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      · строки может строить рантайм, а содержимое <script> здесь погашено —
        поэтому «строк в разметке нет» само по себе не значит «таблица пуста»;
        смотрим в `raw`, собирает ли страница строки скриптом;
-     · EmptyState в ДС — это `.es` (styles/empty-state.css), а не выдуманный
+     · EmptyState в ДС — это `.es` (components/molecules/EmptyState/EmptyState.css), а не выдуманный
        `.empty-state`; проверка по несуществующему классу дала бы находку на
        экране, где состояние как раз описано. */
   const rowsFromJs = [...raw.matchAll(/tbl__row/g)].length > [...html.matchAll(/tbl__row/g)].length;
@@ -1175,7 +1183,7 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   }
   if (dsClasses.size) {
     ok(invented.length === 0, invented.length
-      ? `Б4 классов нет ни в styles/*.css, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
+      ? `Б4 классов нет ни в CSS ДС, ни в <style> экрана, ни в подключённых им CSS-файлах: ${invented.slice(0, 8).join(', ')}${invented.length > 8 ? ` и ещё ${invented.length - 8}` : ''} — блок отрисуется без оформления`
       : `Б4 все классы разметки существуют в ДС, в <style> экрана или в подключённых CSS-файлах (${seenCls.size}${styles.linked.length ? '; файлов экрана: ' + styles.linked.length : ''})`);
   }
 
@@ -1657,7 +1665,7 @@ function checkOne(pageArg, width) {
     return { status: 'пропущен', path: p, printed, fails: 0, warns: 0 };
   }
 
-  /* иконки из specs/Icons.md (формат: строка имён через ·) */
+  /* иконки из foundations/Icons/Icons.md (формат: строка имён через ·) */
   const iconsText = readFileSync(L.abs(L.specOf('Icons')), 'utf8');
   const iconsSection = iconsText.slice(iconsText.indexOf('## Все глифы'));
   const icons = new Set(iconsSection.split('·').map((s) => s.trim()).filter(Boolean));

@@ -3,10 +3,10 @@ component: TableFilter
 title: "TableFilter"
 version: "1.010"
 updated: "05.09.2026"
-page: pages/organisms/TableFilter.html
-page_js: scripts/table-filter.page.js
-runtime: scripts/ds-menu.js, scripts/ds-modal.js, scripts/ds-table-filter.js
-css: styles/table-filter.css
+page: components/organisms/TableFilter/TableFilter.html
+page_js: components/organisms/TableFilter/TableFilter.page.js
+runtime: components/molecules/ContextMenu/ContextMenu.js, components/organisms/Modal/Modal.js, components/organisms/TableFilter/TableFilter.js
+css: components/organisms/TableFilter/TableFilter.css
 deps: [button, button-group, context-menu, icon-button, chip, modal, tab, input, input-date-range, checkbox, label-helper]
 status: curated
 ---
@@ -19,7 +19,7 @@ TableFilter — панель фильтра над таблицей. Кнопк�
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
 - **Кнопка «Фильтр» и модалка фильтра — неотъемлемые части друг друга, созависимы** (как чип и поповер у RiskMetric): кнопка открывает модалку, модалка не существует без кнопки. Собирать фильтр — значит собирать и модалку (`.tfm`-структура, см. «Для разработчиков»). Модель данных (какие секции/поля/пресеты) — потребителя; **структура** модалки (`.tfm__nav` + `.tfm__panel` + `.tfm__sec` + `.tfm__grid`) — ДС.
-- Сброс чипа «Применено: N» (клик по `.chip__remove` или Backspace/Delete на сфокусированном чипе) — общий рантайм `scripts/ds-table-filter.js`: фейд, удаление, всплытие `tfilter:reset` на `.tfilter` — потребитель слушает событие, чтобы очистить параметры. Открытие модалки — `ds-modal.js`; содержимое модалки (секции, пресеты) держит модель данных потребителя, как и колонки/данные у Table — из коробки не даём.
+- Сброс чипа «Применено: N» (клик по `.chip__remove` или Backspace/Delete на сфокусированном чипе) — общий рантайм `components/organisms/TableFilter/TableFilter.js`: фейд, удаление, всплытие `tfilter:reset` на `.tfilter` — потребитель слушает событие, чтобы очистить параметры. Открытие модалки — `ds-modal.js`; содержимое модалки (секции, пресеты) держит модель данных потребителя, как и колонки/данные у Table — из коробки не даём.
 - Ядро — кнопка «Фильтр» + один чип-счётчик «Применено: N»; крестик чипа сбрасывает ВСЕ параметры фильтра целиком, не один.
 - Модалка фильтра растёт по контенту до 80vh — высота не фиксируется, скроллится только Modal_Body (правило Modal).
 - Вторичная кнопка подвала модалки — **«Очистить фильтр»** (конвенция Modal/EmptyState), не «Очистить».
@@ -55,7 +55,7 @@ TableFilter — панель фильтра над таблицей. Кнопк�
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через getComputedStyle на живом баре. Значения — токены в `styles/table-filter.css`, `styles/chip.css`, `styles/button.css`: зазор бара, высота/паддинги/радиус кнопки и чипа, типографика чипа.
+Таблица рендерится на странице через getComputedStyle на живом баре. Значения — токены в `components/organisms/TableFilter/TableFilter.css`, `components/atoms/Chip/Chip.css`, `components/atoms/Buttons/Buttons.css`: зазор бара, высота/паддинги/радиус кнопки и чипа, типографика чипа.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

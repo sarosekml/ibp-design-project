@@ -2,29 +2,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InputAutocomplete — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/dropdown-list.css">
-<link rel="stylesheet" href="../../styles/input.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/input-pages.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../DropdownList/DropdownList.css">
+<link rel="stylesheet" href="../Inputs.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../../docs-kit/input-pages.css">
+<link rel="stylesheet" href="../../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../Splitter/Splitter.css">
+<link rel="stylesheet" href="../../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../Tab/Tab.css">
+<link rel="stylesheet" href="../../../../docs-kit/docs-split.css">
 <style>
   /* список вставляется скриптом внутрь .inp сразу под полем (openUnder) —
      здесь только гарантируем, что он тянется на всю ширину компонента */
@@ -63,7 +63,7 @@
     <div class="meta"><span>Версия: <b>1.017</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>InputAutocomplete</h1>
-    <p class="lead">Поле с выпадающим списком: пользователь вводит запрос, а под полем раскрывается <a class="inl" href="DropdownList.html">DropdownList</a> с подходящими опциями. Список содержит как текстовые опции (одиночный выбор), так и опции с чекбоксами (множественный выбор). Выбранные значения показываются в поле сводкой, чипами внутри поля или чипами во внешнем стеке под полем. Построен на той же базе Input_Content, что и <a class="inl" href="InputText.html">InputText</a> и <a class="inl" href="InputDate.html">InputDate</a>.</p>
+    <p class="lead">Поле с выпадающим списком: пользователь вводит запрос, а под полем раскрывается <a class="inl" href="../../DropdownList/DropdownList.html">DropdownList</a> с подходящими опциями. Список содержит как текстовые опции (одиночный выбор), так и опции с чекбоксами (множественный выбор). Выбранные значения показываются в поле сводкой, чипами внутри поля или чипами во внешнем стеке под полем. Построен на той же базе Input_Content, что и <a class="inl" href="../InputText/InputText.html">InputText</a> и <a class="inl" href="../InputDate/InputDate.html">InputDate</a>.</p>
   </header>
 
   <!-- USAGE -->
@@ -94,7 +94,7 @@
         <li>множественный выбор из перечня — с чипами или сводкой;</li>
         <li>ввод с подсказками, где допустимо и свободное значение (action-строка «создать»).</li>
       </ul>
-      <p class="desc">Если вариантов мало и поиск не нужен — <a class="inl" href="DropdownList.html">Select</a>. Для свободного текста без списка — <a class="inl" href="InputText.html">InputText</a>. Устройство самого списка (опции, состояния, системные строки) описано на странице <a class="inl" href="DropdownList.html">Select · DropdownList</a>.</p>
+      <p class="desc">Если вариантов мало и поиск не нужен — <a class="inl" href="../../DropdownList/DropdownList.html">Select</a>. Для свободного текста без списка — <a class="inl" href="../InputText/InputText.html">InputText</a>. Устройство самого списка (опции, состояния, системные строки) описано на странице <a class="inl" href="../../DropdownList/DropdownList.html">Select · DropdownList</a>.</p>
     </div>
   </section>
 
@@ -141,7 +141,7 @@
 
     <div class="subsec" data-screen-label="ListContent">
       <h3>Наполнение списка</h3>
-      <p class="desc">DropdownList под полем: одиночный выбор — текстовые опции с подсветкой совпадения; множественный — опции с ведущим чекбоксом. Подробнее — на странице <a class="inl" href="DropdownList.html">Select · DropdownList</a>.</p>
+      <p class="desc">DropdownList под полем: одиночный выбор — текстовые опции с подсветкой совпадения; множественный — опции с ведущим чекбоксом. Подробнее — на странице <a class="inl" href="../../DropdownList/DropdownList.html">Select · DropdownList</a>.</p>
       <div class="panel"><div class="row" id="var-list" style="gap:32px;"></div></div>
     </div>
 
@@ -174,7 +174,7 @@
       <li>сводка множественного выбора — «первое значение, +N»; N — число остальных;</li>
       <li>подсветка совпадения (<code class="tok">.ddl__match</code>) показывает, почему опция найдена;</li>
       <li>текст чипа обрезается многоточием при переполнении, полный текст — в тултипе;</li>
-      <li>системные строки списка (загрузка, «ничего не найдено», ошибка) — по правилам <a class="inl" href="DropdownList.html">DropdownList</a>.</li>
+      <li>системные строки списка (загрузка, «ничего не найдено», ошибка) — по правилам <a class="inl" href="../../DropdownList/DropdownList.html">DropdownList</a>.</li>
     </ul>
     <div class="panel"><div class="demo-grid" id="content-demo"></div></div>
   </section>
@@ -200,7 +200,7 @@
   <!-- STATES -->
   <section class="section" data-screen-label="States">
     <h2>Состояния</h2>
-    <p class="desc">Восемь состояний поля-триггера, общих со всеми типами поля. Текст ошибки или предупреждения по умолчанию не выносится в хелпер — хелпер остаётся правилом заполнения — и показывается только в тултипе в ErrorFocus и WarningFocus. Тултип не смещает хелпер: лежит поверх потока, z-index выше поля. Исключение из правила допустимо, если оно намеренно заложено при разработке. Состояния опций списка — на странице <a class="inl" href="DropdownList.html">DropdownList</a>.</p>
+    <p class="desc">Восемь состояний поля-триггера, общих со всеми типами поля. Текст ошибки или предупреждения по умолчанию не выносится в хелпер — хелпер остаётся правилом заполнения — и показывается только в тултипе в ErrorFocus и WarningFocus. Тултип не смещает хелпер: лежит поверх потока, z-index выше поля. Исключение из правила допустимо, если оно намеренно заложено при разработке. Состояния опций списка — на странице <a class="inl" href="../../DropdownList/DropdownList.html">DropdownList</a>.</p>
     <div class="panel"><div class="demo-grid" id="states-demo"></div></div>
   </section>
 
@@ -237,21 +237,21 @@
   <!-- DEVELOPER HANDOFF -->
   <section class="section" data-screen-label="Dev">
     <h2>Для разработчиков</h2>
-    <p class="desc">Хендофф-пакет: точные размеры триггера, эталонная структура DOM (поле + список), поведение и рекомендуемый API. Устройство списка берётся из компонента <a class="inl" href="DropdownList.html">DropdownList</a>.</p>
+    <p class="desc">Хендофф-пакет: точные размеры триггера, эталонная структура DOM (поле + список), поведение и рекомендуемый API. Устройство списка берётся из компонента <a class="inl" href="../../DropdownList/DropdownList.html">DropdownList</a>.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/input.css</code> и <code class="tok">styles/dropdown-list.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Inputs/Inputs.css</code> и <code class="tok">components/molecules/DropdownList/DropdownList.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.55fr 1.08fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S (Table Edit)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/checkbox.css</code>
-      <code class="tok">styles/chip.css</code>
-      <code class="tok">styles/dropdown-list.css</code>
-      <code class="tok">styles/input.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/atoms/Checkbox/Checkbox.css</code>
+      <code class="tok">components/atoms/Chip/Chip.css</code>
+      <code class="tok">components/molecules/DropdownList/DropdownList.css</code>
+      <code class="tok">components/molecules/Inputs/Inputs.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -316,7 +316,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/input.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Inputs/Inputs.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -334,17 +334,17 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/input-kit.js"></script>
-<script src="../../scripts/ds-input.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/input-autocomplete.page.js"></script>
+<script src="../../../../foundations/Icons/icons-data.js"></script>
+<script src="../InputKit.js"></script>
+<script src="../Inputs.js"></script>
+<script src="../../../../docs-kit/ds-nav.js"></script>
+<script src="../../Splitter/Splitter.js"></script>
+<script src="../../Tab/Tab.js"></script>
+<script src="../../../organisms/Table/TableResize.js"></script>
+<script src="../../../organisms/Table/TableReorder.js"></script>
+<script src="InputAutocomplete.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Размер': 'S (Table Edit)', 'Тип списка': 'Чекбоксы' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="inp inp--m is-open">
@@ -363,7 +363,7 @@
   </div>
   <!-- Chips Ext: <div class="inp-ext" role="group">…чипы…</div> вместо .inp__chips -->
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/input-autocomplete.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Inputs/InputAutocomplete/InputAutocomplete.page.js)
 // Поле и список строит общий рантайм: window.DSInputKit.makeInput({ … })
 const spec = {
   label: 'Контрагент', placeholder: 'Поиск…',

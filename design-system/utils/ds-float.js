@@ -34,7 +34,7 @@
    локальной починкой, затем тултипы чипов в модалке фильтра.)
 
    Слой: <div class="ds-float-layer">, статичный контейнер (БЕЗ position и БЕЗ
-   z-index) + pointer-events:none (правило — styles/shadow.css). Важно: никакого position:fixed — иначе слой
+   z-index) + pointer-events:none (правило — foundations/Elevation/Elevation.css). Важно: никакого position:fixed — иначе слой
    становится stacking context и «запирает» z-index детей на своём уровне.
    Дети сами получают position:fixed в mount() и позиционируются от вьюпорта,
    поэтому слой остаётся нулевого размера и нейтрален для раскладки.
@@ -55,7 +55,7 @@
     layer = document.createElement('div');
     layer.className = 'ds-float-layer';
     layer.setAttribute('data-ds-float', '');
-    /* pointer-events:none — в styles/shadow.css (.ds-float-layer), не инлайном:
+    /* pointer-events:none — в foundations/Elevation/Elevation.css (.ds-float-layer), не инлайном:
        правило класса, который вешает рантайм, обязано жить в CSS ДС */
     (document.body || document.documentElement).appendChild(layer);
     return layer;

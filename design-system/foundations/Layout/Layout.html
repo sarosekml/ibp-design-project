@@ -6,26 +6,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Каркас экрана — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/spacing.css">
-<link rel="stylesheet" href="../../styles/layout.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/breadcrumbs.css">
-<link rel="stylesheet" href="../../styles/nav-panel.css">
-<link rel="stylesheet" href="../../styles/page-header.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../Typography/Typography.css">
+<link rel="stylesheet" href="../Colors/Colors.css">
+<link rel="stylesheet" href="../Colors/Palette.css">
+<link rel="stylesheet" href="../Radius/Radius.css">
+<link rel="stylesheet" href="../Elevation/Elevation.css">
+<link rel="stylesheet" href="../Spacing/Spacing.css">
+<link rel="stylesheet" href="Layout.css">
+<link rel="stylesheet" href="../../components/atoms/Link/Link.css">
+<link rel="stylesheet" href="../../components/molecules/Breadcrumbs/Breadcrumbs.css">
+<link rel="stylesheet" href="../../components/organisms/NavPanel/NavPanel.css">
+<link rel="stylesheet" href="../../components/organisms/PageHeader/PageHeader.css">
+<link rel="stylesheet" href="../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../components/organisms/TableCell/TableCell.css">
 <!-- нужны пробе-измерителю в layout.page.js: высота зоны тулбара (.dtable-toolbar
      с Button S внутри) и шапки страницы читаются с живого экземпляра -->
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/table.css">
-<link rel="stylesheet" href="../../styles/table-filter.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
+<link rel="stylesheet" href="../../components/atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../components/organisms/Table/Table.css">
+<link rel="stylesheet" href="../../components/organisms/TableFilter/TableFilter.css">
+<link rel="stylesheet" href="../../components/atoms/IconButton/IconButton.css">
 <style>
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 /* ---- демо-каркас: схема экрана в натуральную величину ---- */
@@ -112,10 +112,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   .scroll-demo__area { height:180px; padding:var(--space-12) var(--space-8) var(--space-12) var(--space-16); }
   .scroll-demo__row { margin:0; padding:var(--space-8) 0; font:var(--type-body-m); color:var(--text-primary); border-bottom:1px solid var(--border-light); }
 </style>
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../components/molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../components/molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../components/molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Layout">
@@ -213,7 +213,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <p class="desc">Точка входа в продукт: навигационные тайлы, разложенные по группам. Шапки страницы у неё нет — заголовок несёт каждая группа, — и контентная область содержит ровно один блок: сетку групп. Эталон — главная страница направления ДИД.</p>
     <div class="panel" style="padding:0;overflow:hidden;margin-bottom:32px"><div id="homeTable"></div></div>
     <p class="desc"><b>Видимый ритм — 16px, а не 24px.</b> Зазор блоков контентной области здесь не работает ни разу: блок один. Всё, что видно между объектами, — зазор сетки <code class="tok">--grid-gutter</code>, одинаковый по горизонтали и по вертикали: между группами, между рядами групп, между заголовком группы и тайлами, между тайлами. Экран для этого ничего не пишет — 16px даёт <code class="tok">.grid12</code>.</p>
-    <p class="desc"><b>Перестроение — три шага, и два из них штатные.</b> Группа объявляет обе ширины сразу — широкую и узкую (<code class="tok">.col-3 colw-6</code>), а экран включает узкую порогом от ширины рабочей области (см. <a class="link link--accent" href="Spacing.html">Сетка и отступы</a>). Шаги главной: 4 группы в ряд при рабочей области шире 1700px, ≤1700px — 2 группы, ≤900px — одна. Третий шаг парой <code class="tok">colw-</code> не выражается, его экран дописывает своим правилом — ограничение механизма, а не выбор экрана (пункт в «Бэклоге»).</p>
+    <p class="desc"><b>Перестроение — три шага, и два из них штатные.</b> Группа объявляет обе ширины сразу — широкую и узкую (<code class="tok">.col-3 colw-6</code>), а экран включает узкую порогом от ширины рабочей области (см. <a class="link link--accent" href="../Spacing/Spacing.html">Сетка и отступы</a>). Шаги главной: 4 группы в ряд при рабочей области шире 1700px, ≤1700px — 2 группы, ≤900px — одна. Третий шаг парой <code class="tok">colw-</code> не выражается, его экран дописывает своим правилом — ограничение механизма, а не выбор экрана (пункт в «Бэклоге»).</p>
     <p class="desc"><b>Страница обычная, не app-shell.</b> Рабочая область без <code class="tok">.screen--app</code>: контент растёт под число групп, страница скроллится, крошки залипают у верхней кромки. Это противоположность реестру — и единственное, чем два типа экрана отличаются по правилам скролла. Зона крошек при этом есть и на главной, но трейла в ней нет: одна крошка, она же текущая страница.</p>
 
     <h3>Экран-реестр: состав и отступы</h3>
@@ -225,7 +225,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
     <h3>Высота вьюпорта</h3>
     <p class="desc">По умолчанию рабочая область растёт под контент — страница скроллится. Вариант <code class="tok">.screen--app</code> (app-shell) фиксирует рабочую область на высоту вьюпорта (<code class="tok">height:100vh; overflow:hidden</code>), контентная область получает <code class="tok">min-height:0</code>: страница не скроллится, скролл живёт внутри контентного блока.</p>
-    <p class="desc"><b>Правило высоты главной таблицы.</b> Если на странице одна таблица — или она основной контентный блок — она занимает <b>всю свободную высоту экрана</b> за вычетом полей контента, крошек, шапки страницы и тулбара/фильтра таблицы: на рабочую область ставится <code class="tok">.screen--app</code>, на таблицу — <code class="tok">.dtable--fill</code> (см. <a class="link link--accent" href="../organisms/Table.html">Table</a>, вариант «На всю высоту»); тело таблицы скроллится внутри, шапка/тулбар/пагинация закреплены. Если над/под таблицей есть тайлы — кейс рассматривается индивидуально, но, как правило, таблица всё равно занимает всю оставшуюся высоту (с учётом тайлов).</p>
+    <p class="desc"><b>Правило высоты главной таблицы.</b> Если на странице одна таблица — или она основной контентный блок — она занимает <b>всю свободную высоту экрана</b> за вычетом полей контента, крошек, шапки страницы и тулбара/фильтра таблицы: на рабочую область ставится <code class="tok">.screen--app</code>, на таблицу — <code class="tok">.dtable--fill</code> (см. <a class="link link--accent" href="../../components/organisms/Table/Table.html">Table</a>, вариант «На всю высоту»); тело таблицы скроллится внутри, шапка/тулбар/пагинация закреплены. Если над/под таблицей есть тайлы — кейс рассматривается индивидуально, но, как правило, таблица всё равно занимает всю оставшуюся высоту (с учётом тайлов).</p>
   </section>
 
   <!-- РАЗМЕРЫ -->
@@ -242,7 +242,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <p class="desc">Первый блок контентной области — заголовок страницы (PageHeader). Исключение — стартовая страница: её контентная область — один блок, сетка групп, без PageHeader. Дальше блоки идут в один поток с зазором 24px; вложенная структура — сетка колонок. Последний блок заканчивается полем 24px — закреплённого снизу подвала действий в продукте нет, кнопки форм живут в своём блоке потока.</p>
     <p class="desc">У экрана-реестра порядок блоков не выбирается: шапка страницы → зона тулбара (<code class="tok">.dtable-toolbar</code>) → таблица. Фильтр и настройка колонок живут в зоне тулбара, а не в шапке страницы: в шапке — действия над сущностями реестра («Новая сделка»), в зоне тулбара — управление самой выборкой. Счётчик записей не дублируется в заголовке — он остаётся в футере пагинации.</p>
     <h3>Колоночная сетка</h3>
-    <p class="desc">Горизонтальную структуру задаёт сетка из основ — <a class="link link--accent" href="Spacing.html">Сетка и отступы</a>: 12 резиновых колонок, зазор 16px, поля внутри контентной области 0 (боковые 24px уже дал каркас). Каркас сетку не переопределяет и своих колонок не вводит.</p>
+    <p class="desc">Горизонтальную структуру задаёт сетка из основ — <a class="link link--accent" href="../Spacing/Spacing.html">Сетка и отступы</a>: 12 резиновых колонок, зазор 16px, поля внутри контентной области 0 (боковые 24px уже дал каркас). Каркас сетку не переопределяет и своих колонок не вводит.</p>
     <div class="dev-code" style="margin-bottom:20px"><button class="dev-copy" data-copy="#gridSample">Копировать</button><pre id="gridSample">&lt;main class="screen__content"&gt;
   &lt;header class="phead"&gt;…PageHeader…&lt;/header&gt;
   &lt;div class="grid12"&gt;
@@ -322,7 +322,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   <!-- ДЛЯ РАЗРАБОТЧИКОВ -->
   <section class="section" data-screen-label="Dev">
     <h2>Для разработчиков</h2>
-    <p class="desc tight">Значения считаны с живого каркаса (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/layout.css</code>, <code class="tok">styles/breadcrumbs.css</code>, <code class="tok">styles/nav-panel.css</code>.</p>
+    <p class="desc tight">Значения считаны с живого каркаса (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">foundations/Layout/Layout.css</code>, <code class="tok">components/molecules/Breadcrumbs/Breadcrumbs.css</code>, <code class="tok">components/organisms/NavPanel/NavPanel.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden;margin-bottom:34px"><div id="redlineTable"></div></div>
     <h3>Разметка каркаса</h3>
     <div class="dev-code" style="margin-bottom:34px"><button class="dev-copy" data-copy="#devMarkup">Копировать</button><pre id="devMarkup">&lt;div class="nav-layout"&gt;
@@ -480,13 +480,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-scroll.js"></script>
-<script src="../../scripts/layout.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
+<script src="../../components/molecules/Splitter/Splitter.js"></script>
+<script src="../../components/molecules/Tab/Tab.js"></script>
+<script src="Layout.js"></script>
+<script src="Layout.page.js"></script>
+<script src="../../docs-kit/ds-nav.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = {};</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="nav-layout">
@@ -502,7 +502,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     </main>
   </div>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/layout.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — foundations/Layout/Layout.page.js)
 // Зоны каркаса: панель навигации (rail 56 / fixed 272) + рабочая область
 // → .screen: крошки (.crumbs) + контентная область (.screen__content)
 // Конструктор: pgNav (rail/fixed), pgKind (home/table/entity), pgZones, pgCrumbs
@@ -514,15 +514,15 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    справа. Рабочая область = зона хлебных крошек (44px, залипает сверху) и
    контентная область (поля 8px сверху, 24px слева/справа, 24px снизу).
 
-   Зоны:      NavPanel (`.nav-layout` / `.nav`, styles/nav-panel.css)
-              Крошки   (`.crumbs`, styles/breadcrumbs.css — свои поля 24px)
+   Зоны:      NavPanel (`.nav-layout` / `.nav`, components/organisms/NavPanel/NavPanel.css)
+              Крошки   (`.crumbs`, components/molecules/Breadcrumbs/Breadcrumbs.css — свои поля 24px)
               Контент  (`.screen__content`)
    Инварианты: между панелью и рабочей областью отступа нет;
               между крошками и контентом отступ 8px (--layout-pad-top);
               контентная область резиновая, на узком окне раскладка перестраивается
               по брейкпоинтам — горизонтального скролла нет.
    Прокрутка: .ds-scroll — общая полоса прокрутки внутренних областей
-              (только бегунок, гаснет после прокрутки; рантайм scripts/ds-scroll.js).
+              (только бегунок, гаснет после прокрутки; рантайм foundations/Layout/Layout.js).
               .ds-page-scroll — полоса прокрутки самой страницы: системная
               скрыта, бегунок ДС лежит оверлеем в правом поле контента, ширина
               рабочей области от прокрутки не зависит (тот же рантайм).
@@ -553,7 +553,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 }
 
 /* зона крошек залипает у верхней кромки при скролле контента;
-   собственные поля 16/24/12 живут в компоненте (styles/breadcrumbs.css) */
+   собственные поля 16/24/12 живут в компоненте (components/molecules/Breadcrumbs/Breadcrumbs.css) */
 .screen > .crumbs {
   position: sticky;
   top: 0;
@@ -577,7 +577,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    растёт под контент (страница не скроллится), а контентная область получает
    ограничение по высоте, чтобы таблица (.dtable--fill) могла заполнить
    свободную высоту и скроллить своё тело внутри. Применять вместе
-   с .dtable--fill на таблице (см. styles/table.css). */
+   с .dtable--fill на таблице (см. components/organisms/Table/Table.css). */
 .screen--app { height: 100vh; overflow: hidden; }
 .screen--app .screen__content { min-height: 0; }
 
@@ -589,7 +589,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    (колонки модального окна, списки в панели). Только бегунок: дорожки и
    стрелок нет, скругление полное, цвет Secondary. В покое бегунок скрыт,
    появляется при прокрутке и плавно гаснет: класс .is-scrolling ставит и
-   снимает рантайм scripts/ds-scroll.js — делегированно, привязывать не нужно.
+   снимает рантайм foundations/Layout/Layout.js — делегированно, привязывать не нужно.
    Место под бегунок зарезервировано (scrollbar-gutter: stable): контент не
    сдвигается, когда у области появляется скролл.
    Как гаснет. Переход у псевдоэлемента скроллбара браузеры не поддерживают,
@@ -660,7 +660,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    скруглением --radius-full, в покое скрыт, появляется при прокрутке и
    гаснет через 800 мс; ещё — при наведении на бегунок и пока его тянут.
    Дорожку и бегунок вставляет, размеряет и двигает рантайм
-   scripts/ds-scroll.js, в разметке экрана их нет. Прокручивать нечего
+   foundations/Layout/Layout.js, в разметке экрана их нет. Прокручивать нечего
    (контент ниже окна, .screen--app) — дорожка [hidden].
    Слой — выше контента и липких крошек (z-index 3), ниже меню и поповеров
    (40), панели навигации и модалок. Системная полоса скрыта только у

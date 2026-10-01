@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Splitter — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="Splitter.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -119,10 +119,10 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Splitter">
@@ -164,7 +164,7 @@
       <li>дать пользователю самому распределить пространство между двумя областями — список и карточку, дерево и контент, редактор и превью;</li>
       <li>сохранить обе области видимыми, но позволить расширить ту, что важнее в текущей задаче.</li>
     </ul>
-    <p class="desc">Сплиттер — интерактивный элемент, в отличие от <a class="inl" href="../atoms/Divider.html">Divider</a>, который только визуально отделяет блоки и не двигается. Если менять размеры не нужно — используйте обычный разделитель.</p>
+    <p class="desc">Сплиттер — интерактивный элемент, в отличие от <a class="inl" href="../../atoms/Divider/Divider.html">Divider</a>, который только визуально отделяет блоки и не двигается. Если менять размеры не нужно — используйте обычный разделитель.</p>
   
 <div class="subsec" data-screen-label="Example">
     <h3>Пример использования</h3>
@@ -317,16 +317,16 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/splitter.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Splitter/Splitter.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/splitter.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/molecules/Splitter/Splitter.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -392,7 +392,7 @@ pct = clamp( (позиция_курсора - начало_контейнера)
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/splitter.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Splitter/Splitter.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -410,13 +410,13 @@ pct = clamp( (позиция_курсора - начало_контейнера)
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/splitter.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="Splitter.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="Splitter.page.js"></script>
 <script>
 /* ---------- DEV: copy-to-clipboard on code panels ---------- */
 (function(){
@@ -444,7 +444,7 @@ pct = clamp( (позиция_курсора - начало_контейнера)
 })();
 </script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Ориентация': 'Горизонтальный' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- вертикальный сплиттер между двумя панелями -->
@@ -466,7 +466,7 @@ pct = clamp( (позиция_курсора - начало_контейнера)
   <div class="spl" role="separator"><span class="spl__grip">…</span></div>
   <div class="splitpane__panel splitpane__b">…</div>
 </div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/splitter.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Splitter/Splitter.page.js)
 // Поведение — рантайм ДС: window.DSSplitter.make({ orientation:'v'|'h', state })
 //  .spl (role="separator", tabindex="0") + .spl__grip; spl--h — горизонтальный;
 //  состояния: spl--hover / spl--move / spl--disabled / is-focus;

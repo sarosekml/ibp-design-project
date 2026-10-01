@@ -9,7 +9,7 @@
       (скрытый <select> остаётся источником истины — страница получает
       обычное событие change).
    4. Селекты со списком иконок ДС заменяет на сетку глифов.
-   Требует styles/pg-kit.css (импортирует splitter.css и segment-control.css).
+   Требует docs-kit/pg-kit.css (импортирует splitter.css и segment-control.css).
    ========================================================================= */
 (function () {
   'use strict';
@@ -173,7 +173,7 @@
     if (document.querySelector('link[rel="stylesheet"][href$="pg-kit.css"]')) return;
     var l = document.createElement('link');
     l.rel = 'stylesheet';
-    l.href = (window.__DS_ROOT || '') + 'styles/pg-kit.css';
+    l.href = (window.__DS_ROOT || '') + 'docs-kit/pg-kit.css';
     document.head.appendChild(l);
   }
 

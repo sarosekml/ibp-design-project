@@ -3,10 +3,10 @@ component: Splitter
 title: "Splitter"
 version: "1.004"
 updated: "05.09.2026"
-page: pages/molecules/Splitter.html
-page_js: scripts/splitter.page.js
-runtime: scripts/ds-splitter.js
-css: styles/splitter.css
+page: components/molecules/Splitter/Splitter.html
+page_js: components/molecules/Splitter/Splitter.page.js
+runtime: components/molecules/Splitter/Splitter.js
+css: components/molecules/Splitter/Splitter.css
 deps: [button]
 status: auto
 ---
@@ -67,7 +67,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-splitter.js`
+### Рантайм ДС — `components/molecules/Splitter/Splitter.js`
 
 Поведение разделителя вынесено в рантайм: перетаскивание с pointer capture и
 курсором, зафиксированным на `body` (работает поверх любых элементов под
@@ -96,7 +96,7 @@ status: auto
 `onChange(pct)`, `resetOnDblClick`.
 
 Композиция пары панелей (`.splitpane`, `.splitpane__panel`, `.splitpane__ph`,
-`.splitpane--app`) с 12.08.2026 лежит в `styles/splitter.css` — раньше она была
+`.splitpane--app`) с 12.08.2026 лежит в `components/molecules/Splitter/Splitter.css` — раньше она была
 только в инлайн-стилях витрины и на экран не переносилась.
 
 ### Поведение · псевдокод (framework-agnostic)

@@ -2,7 +2,7 @@
    INPUT RANGE — диапазон из двух полей (InputAmount / InputDate),
    размещённых горизонтально, с компонентом Range_Line между ними.
    Общая метка (Label) сверху и общий хелпер (Helper) снизу.
-   Каждое поле — самостоятельный экземпляр .inp (styles/input.css)
+   Каждое поле — самостоятельный экземпляр .inp (components/molecules/Inputs/Inputs.css)
    со своими состояниями (Hover/Focus/Error/Warning/Disabled).
    Зависимости: input.css, label-helper.css, colors.css.
    Размер только M (40px) — размера S нет.

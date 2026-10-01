@@ -270,6 +270,6 @@
 
 /* ---------- state: LOADING ------------------------------------------------- */
 /* While loading the button is non-interactive (treated as disabled).
-   Индикатор — общий компонент Spinner (styles/spinner.css): <span class="spin spin--current">,
+   Индикатор — общий компонент Spinner (components/atoms/Spinner/Spinner.css): <span class="spin spin--current">,
    размер задают правила выше (.btn--m/s/xs .spin). */
 .btn--loading { pointer-events: none; }

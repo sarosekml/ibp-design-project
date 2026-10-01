@@ -3,9 +3,9 @@ component: LabelHelper
 title: "Label / Helper"
 version: "1.007"
 updated: "22.09.2026"
-page: pages/atoms/LabelHelper.html
-page_js: scripts/label-helper.page.js
-css: styles/label-helper.css
+page: components/atoms/LabelHelper/LabelHelper.html
+page_js: components/atoms/LabelHelper/LabelHelper.page.js
+css: components/atoms/LabelHelper/LabelHelper.css
 deps: [checkbox, radio, switch, icon-button]
 status: auto
 ---

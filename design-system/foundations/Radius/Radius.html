@@ -6,13 +6,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Скругления — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../Typography/Typography.css">
+<link rel="stylesheet" href="../Colors/Colors.css">
+<link rel="stylesheet" href="../Colors/Palette.css">
+<link rel="stylesheet" href="Radius.css">
+<link rel="stylesheet" href="../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../components/organisms/TableCell/TableCell.css">
 <style>
 
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -99,10 +99,10 @@
   .nest-card.bad .nest-inner { border-radius: var(--radius-2xl); }
   .nest-label { font: var(--type-body-xs); color: var(--text-inactive); margin:10px 0 0; text-align:center; }
 </style>
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../components/molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../components/molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../components/molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Radius">
@@ -274,8 +274,8 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../components/molecules/Splitter/Splitter.js"></script>
+<script src="../../components/molecules/Tab/Tab.js"></script>
 
 <script>
   // ---------- данные шкалы ----------
@@ -408,9 +408,9 @@
     render();
   })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
+<script src="../../docs-kit/ds-nav.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = {};</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- токен радиуса на элементе -->
@@ -419,13 +419,13 @@
      --radius-xl 14 · --radius-2xl 16 · --radius-3xl 20 -->
 <div style="border-radius: var(--radius-m);">8px</div></script>
 <script type="text/plain" id="src-code-js">// Выжимка API (полный код — инлайн-скрипт страницы)
-// Шкала радиусов: --radius-xs … --radius-3xl (styles/radius.css)
+// Шкала радиусов: --radius-xs … --radius-3xl (foundations/Radius/Radius.css)
 // Конструктор: select#pgToken + range#pgSize (размер элемента) →
 //   превью меняет border-radius по токену, сводка roToken/roVal читается
 //   из getComputedStyle (реальные px).</script>
 <script type="text/plain" id="src-code-css">/* ============================================================
    RADIUS — токены радиусов скругления
-   Часть основ дизайн-системы. Подключается как styles/radius.css
+   Часть основ дизайн-системы. Подключается как foundations/Radius/Radius.css
    Шкала намеренно расширена «на будущее» — компоненты ссылаются
    на семантические алиасы, а не на числовые примитивы.
    ============================================================ */

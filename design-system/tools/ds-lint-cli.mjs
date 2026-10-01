@@ -6,10 +6,10 @@
    dsLint.run(...). Сам линтер не трогается.
 
    Запуск:
-     node scripts/ds-lint-cli.mjs                         # только глобальные правила
-     node scripts/ds-lint-cli.mjs pages/molecules/SegmentControl.html
-     node scripts/ds-lint-cli.mjs pages/atoms/*.html      # несколько страниц
-     node scripts/ds-lint-cli.mjs --parity                # гейт парности «доки = код»
+     node tools/ds-lint-cli.mjs                         # только глобальные правила
+     node tools/ds-lint-cli.mjs components/molecules/SegmentControl/SegmentControl.html
+     node tools/ds-lint-cli.mjs pages/atoms/*.html      # несколько страниц
+     node tools/ds-lint-cli.mjs --parity                # гейт парности «доки = код»
 
    Код выхода: 1 если в отчёте есть BLOCKER (NEEDS-WORK), иначе 0.
    ============================================================ */
@@ -33,7 +33,7 @@ const ls = async (dir) => {
     .map((e) => (e.isDirectory() ? e.name + '/' : e.name));
 };
 
-// загрузка линтера тем же способом, что в scripts/ds-lint.md
+// загрузка линтера тем же способом, что в tools/ds-lint.md
 const src = await readFile(L.at.linter);
 const { run } = new Function('readFile', 'ls', 'dsLayout', src + ';return dsLint;')(readFile, ls, L);
 

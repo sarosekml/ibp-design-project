@@ -3,14 +3,14 @@ component: InputAmountRange
 title: "InputAmountRange"
 version: "1.007"
 updated: "06.09.2026"
-page: pages/molecules/InputAmountRange.html
-page_js: scripts/input-amount-range.page.js
-css: styles/input-range.css
+page: components/molecules/Inputs/InputAmountRange/InputAmountRange.html
+page_js: components/molecules/Inputs/InputAmountRange/InputAmountRange.page.js
+css: components/molecules/Inputs/InputRanges.css
 deps: [input, label-helper, tooltip]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/input-range.css + styles/input.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/molecules/Inputs/InputRanges.css + components/molecules/Inputs/Inputs.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
 Поле ввода числового диапазона: два InputAmount с префиксами «От» / «До», размещённых горизонтально и соединённых линией Range_Line, с общей меткой сверху и общим хелпером снизу. Каждое поле — самостоятельный экземпляр `.inp` со своими состояниями.
@@ -41,7 +41,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Рендерится на странице через getComputedStyle. Источник — styles/input.css + styles/input-range.css. Поле: высота 40px / паддинг 12px / gap 8px / радиус `--radius-field` / иконки 20px. Range_Line: зона 14px, линия 1px.
+Рендерится на странице через getComputedStyle. Источник — components/molecules/Inputs/Inputs.css + components/molecules/Inputs/InputRanges.css. Поле: высота 40px / паддинг 12px / gap 8px / радиус `--radius-field` / иконки 20px. Range_Line: зона 14px, линия 1px.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

@@ -1,6 +1,6 @@
 /* =========================================================================
    DS Tooltip — рантайм тултипа (out-of-box).
-   Зависимости: styles/tooltip.css.
+   Зависимости: components/molecules/Tooltip/Tooltip.css.
 
    Экспорт: window.DSTooltip = {
      bind(target, opts) → api | null   — навесить поведение на цель
@@ -424,7 +424,7 @@
          attachTrunc строит разметку: оборачивает подпись в .tip-anchor и
          кладёт рядом .tip. Для неусечённой подписи тултип потом не покажется
          (allowed() = truncatedOnly && isTruncated), но узлы уже вставлены и
-         остаются в DOM навсегда. Страница без styles/tooltip.css рисует такой
+         остаются в DOM навсегда. Страница без components/molecules/Tooltip/Tooltip.css рисует такой
          .tip обычным текстом — подпись таба/чипа дублируется по наведению.
          Ветки focusin и refresh() проверяли усечение изначально, эта — нет. */
       if (!isTruncated(el)) return;

@@ -3,8 +3,8 @@ component: Checkbox
 title: "Checkbox"
 version: "1.007"
 updated: "05.09.2026"
-page: pages/atoms/Checkbox.html
-css: styles/checkbox.css
+page: components/atoms/Checkbox/Checkbox.html
+css: components/atoms/Checkbox/Checkbox.css
 deps: [label-helper]
 status: auto
 ---

@@ -2,37 +2,37 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Table — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/button-group.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/illustration.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/table-filter.css">
-<link rel="stylesheet" href="../../styles/pagination.css">
-<link rel="stylesheet" href="../../styles/modal.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/divider.css">
-<link rel="stylesheet" href="../../styles/table.css">
-<link rel="stylesheet" href="../../styles/table-settings.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../molecules/ButtonGroup/ButtonGroup.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../../foundations/Illustrations/Illustrations.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
+<link rel="stylesheet" href="../TableFilter/TableFilter.css">
+<link rel="stylesheet" href="../../molecules/Pagination/Pagination.css">
+<link rel="stylesheet" href="../Modal/Modal.css">
+<link rel="stylesheet" href="../../molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="Table.css">
+<link rel="stylesheet" href="TableSettings.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
 a{color:var(--link);} a:hover{color:var(--link-dark);}
 .section>p.desc{font:var(--type-body-m);color:var(--text-secondary);margin:0 0 28px;max-width:80ch;text-wrap:pretty;}
@@ -52,7 +52,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 /* неактуальные свитчи конструктора скрываются целиком (label.pg-toggle) */
 .toggles .pg-toggle.is-off{display:none;}
 .ws-cap{font:var(--type-body-xs);color:var(--text-inactive);margin:12px 0 0;text-wrap:pretty;}
-/* columns modal chrome — styles/table-settings.css (общий слой рантайма ds-table-settings.js) */
+/* columns modal chrome — components/organisms/Table/TableSettings.css (общий слой рантайма ds-table-settings.js) */
 /* anatomy */
 .anat{display:flex;flex-direction:column;gap:28px;}
 .anat__stage{background:color-mix(in srgb,var(--primary) 5%,#fff);border:1px solid var(--border-light);border-radius:14px;padding:44px 40px;display:flex;justify-content:center;overflow-x:auto;}
@@ -107,14 +107,14 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия <b>1.020</b></span>
     <span>Обновлено <b>27.09.2026</b></span>
-    <span>CSS <b>styles/table.css</b></span>
+    <span>CSS <b>components/organisms/Table/Table.css</b></span>
     <span>Зависимости <b>table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
@@ -173,11 +173,11 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 
   <div class="subsec" data-screen-label="ColumnWidth">
     <h3>Ширина колонки</h3>
-    <p class="desc">Не отключаемая опция и не часть «Настройки колонок»: ручка <code class="tok">.th__resize</code> стоит последним ребёнком каждой <code class="tok">.th</code> (кроме разделителей) всегда. Перетаскивание правой границы шапки и клавиши <b>← →</b> (шаг 16px, минимум 96px) меняют ширину вживую — детали см. <a class="inl" href="TableCell.html">TableCell</a>, раздел «Поведение». Поведение приходит из общего скрипта <code class="tok">scripts/tbl-resize.js</code>, который входит в <code class="tok">scripts/ds.js</code>: на собранном экране ресайз колонок работает из коробки, отдельного подключения и <code class="tok">data-</code>-атрибутов не требует.</p>
+    <p class="desc">Не отключаемая опция и не часть «Настройки колонок»: ручка <code class="tok">.th__resize</code> стоит последним ребёнком каждой <code class="tok">.th</code> (кроме разделителей) всегда. Перетаскивание правой границы шапки и клавиши <b>← →</b> (шаг 16px, минимум 96px) меняют ширину вживую — детали см. <a class="inl" href="../TableCell/TableCell.html">TableCell</a>, раздел «Поведение». Поведение приходит из общего скрипта <code class="tok">components/organisms/Table/TableResize.js</code>, который входит в <code class="tok">ds.js</code>: на собранном экране ресайз колонок работает из коробки, отдельного подключения и <code class="tok">data-</code>-атрибутов не требует.</p>
   </div>
   <div class="subsec" data-screen-label="ColumnsSettings">
     <h3>Настройка колонок</h3>
-    <p class="desc">Кнопка-шестерёнка (<code class="tok">settings</code>) в тулбаре открывает Modal <code class="tok">--w4</code> со списком колонок. Это — стандартная модалка «Настройка таблицы» для всех таблиц; собирает её рантайм <code class="tok">scripts/ds-table-settings.js</code> (в <code class="tok">ds.js</code>) по хуку <code class="tok">data-table-settings</code> на кнопке, читая колонки из шапки таблицы. В теле — описание «Выберите столбцы для отображения», родительский чекбокс «Выбрать все» (массово переключает видимость, с <code class="tok">indeterminate</code>-состоянием) и серый разделитель перед списком. В каждой строке списка: чекбокс видимости, IconButton закрепления и иконка перетаскивания (<code class="tok">drag-dots</code>) — самой крайней справа; перетаскивание за неё меняет порядок в таблице. В футере — «Отменить» (Transparent) и «Применить» (Accent). Поддерживается закрепление нескольких колонок; изменения применяются по «Применить» (перестановка, скрытие/показ, закрепление реальных колонок таблицы), «Отменить»/Escape/клик по скриму откатывают. Колонки без подписи <code class="tok">.th__label</code> (выбор/действие) — «служебные», в настройке не участвуют. Настройка всегда показывает таблицу такой, какая она сейчас: колонку, закреплённую булавкой или перенесённую за подпись в шапке, «Применить» не возвращает назад. Таблица может помнить свой вид на время сессии: после перехода на другую страницу и возврата колонки остаются в том же порядке, с той же видимостью, закреплением и шириной, сортировка — той же, а тело таблицы прокручено туда же, где его оставили. Всё это держится, пока открыта вкладка браузера. Собрать несколько вариантов представления, структура и удаление — раздел «Настройка таблицы» спеки.</p>
+    <p class="desc">Кнопка-шестерёнка (<code class="tok">settings</code>) в тулбаре открывает Modal <code class="tok">--w4</code> со списком колонок. Это — стандартная модалка «Настройка таблицы» для всех таблиц; собирает её рантайм <code class="tok">components/organisms/Table/TableSettings.js</code> (в <code class="tok">ds.js</code>) по хуку <code class="tok">data-table-settings</code> на кнопке, читая колонки из шапки таблицы. В теле — описание «Выберите столбцы для отображения», родительский чекбокс «Выбрать все» (массово переключает видимость, с <code class="tok">indeterminate</code>-состоянием) и серый разделитель перед списком. В каждой строке списка: чекбокс видимости, IconButton закрепления и иконка перетаскивания (<code class="tok">drag-dots</code>) — самой крайней справа; перетаскивание за неё меняет порядок в таблице. В футере — «Отменить» (Transparent) и «Применить» (Accent). Поддерживается закрепление нескольких колонок; изменения применяются по «Применить» (перестановка, скрытие/показ, закрепление реальных колонок таблицы), «Отменить»/Escape/клик по скриму откатывают. Колонки без подписи <code class="tok">.th__label</code> (выбор/действие) — «служебные», в настройке не участвуют. Настройка всегда показывает таблицу такой, какая она сейчас: колонку, закреплённую булавкой или перенесённую за подпись в шапке, «Применить» не возвращает назад. Таблица может помнить свой вид на время сессии: после перехода на другую страницу и возврата колонки остаются в том же порядке, с той же видимостью, закреплением и шириной, сортировка — той же, а тело таблицы прокручено туда же, где его оставили. Всё это держится, пока открыта вкладка браузера. Собрать несколько вариантов представления, структура и удаление — раздел «Настройка таблицы» спеки.</p>
   </div>
   <div class="subsec" data-screen-label="SavedFilters">
     <h3>Сохранённые фильтры</h3>
@@ -202,7 +202,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   </div>
   <div class="subsec" data-screen-label="FillHeight">
     <h3>На всю высоту</h3>
-    <p class="desc">Таблица как основной контент экрана: вариант <code class="tok">.dtable--fill</code> растягивает контейнер на всю свободную высоту (минус крошки, шапка страницы, тулбар), тело скроллится внутри, тулбар и пагинация остаются на месте. Требует фиксированной высоты родителя — на рабочую область ставится <code class="tok">.screen--app</code> (см. <a class="inl" href="../foundations/Layout.html">Layout</a>, вариант app-shell). Используйте, когда на странице одна таблица (реестр); если над/под таблицей есть тайлы — кейс индивидуальный, но по умолчанию таблица всё равно занимает оставшуюся высоту.</p>
+    <p class="desc">Таблица как основной контент экрана: вариант <code class="tok">.dtable--fill</code> растягивает контейнер на всю свободную высоту (минус крошки, шапка страницы, тулбар), тело скроллится внутри, тулбар и пагинация остаются на месте. Требует фиксированной высоты родителя — на рабочую область ставится <code class="tok">.screen--app</code> (см. <a class="inl" href="../../../foundations/Layout/Layout.html">Layout</a>, вариант app-shell). Используйте, когда на странице одна таблица (реестр); если над/под таблицей есть тайлы — кейс индивидуальный, но по умолчанию таблица всё равно занимает оставшуюся высоту.</p>
   </div>
   <div class="subsec" data-screen-label="ToolbarFloat">
     <h3>Тулбар над таблицей</h3>
@@ -304,7 +304,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <!-- 11. ЦВЕТА -->
 <section class="section" id="colors" data-screen-label="Цвета">
   <h2>Цвета</h2>
-  <p class="desc">Строки и ячейки — токены <a class="inl" href="../organisms/TableCell.html">TableCell</a> (<code class="tok">--bg-table-default*</code>, <code class="tok">--text-*</code>); фон ряда массового действия — токены Pagination. Ниже — токены, которые задаёт сам контейнер Table.</p>
+  <p class="desc">Строки и ячейки — токены <a class="inl" href="../TableCell/TableCell.html">TableCell</a> (<code class="tok">--bg-table-default*</code>, <code class="tok">--text-*</code>); фон ряда массового действия — токены Pagination. Ниже — токены, которые задаёт сам контейнер Table.</p>
   <div class="panel" style="padding:0;overflow:hidden;">
     <div class="tbl" id="color-table" style="grid-template-columns:none;border:none;border-radius:0;"></div>
   </div>
@@ -460,7 +460,7 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники Table: HTML — из спеки, CSS — styles/table.css (полностью), JS — публичный API <code class="tok">window.DSTable</code>. Полный исходник рендера демо — в <code class="tok">scripts/table.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники Table: HTML — из спеки, CSS — components/organisms/Table/Table.css (полностью), JS — публичный API <code class="tok">window.DSTable</code>. Полный исходник рендера демо — в <code class="tok">components/organisms/Table/Table.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -478,19 +478,19 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-illustrations.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-table.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/tbl-pin.js"></script>
-<script src="../../scripts/table.page.js"></script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../molecules/Tooltip/Tooltip.js"></script>
+<script src="../../../foundations/Illustrations/Illustrations.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="Table.js"></script>
+<script src="TableResize.js"></script>
+<script src="TableReorder.js"></script>
+<script src="TablePin.js"></script>
+<script src="Table.page.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><div class="dtable">
@@ -562,7 +562,7 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 
 /* вариант «на всю высоту»: таблица — основной контент экрана и занимает всю
    свободную высоту (минус крошки/шапка/тулбар); тело скроллится внутри.
-   Требует фиксированной высоты родителя: .screen--app (styles/layout.css). */
+   Требует фиксированной высоты родителя: .screen--app (foundations/Layout/Layout.css). */
 .dtable--fill { flex: 1 1 auto; min-height: 0; }
 .dtable--fill .dtable__body { flex: 1 1 auto; min-height: 0; }
 
@@ -701,8 +701,8 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 .dtable[aria-busy="true"] .th__resize,
 .dtable[aria-busy="true"] .th__tools { pointer-events: none; opacity: .5; }</script>
 
-<script type="text/plain" id="src-code-js">/* Table — публичный API (рантайм: scripts/ds-table.js → window.DSTable).
-   Демо-рендер страницы: scripts/table.page.js (строит тулбар, тело, футер). */
+<script type="text/plain" id="src-code-js">/* Table — публичный API (рантайм: components/organisms/Table/Table.js → window.DSTable).
+   Демо-рендер страницы: components/organisms/Table/Table.page.js (строит тулбар, тело, футер). */
 
 /* Оживить готовую разметку .dtable: липкая шапка, тень при скролле,
    переключение в режим массового действия (0 → N выбранных) */
@@ -714,7 +714,7 @@ body.innerHTML = skeletonRows;   /* Loading: N строк .tc--skeleton, тул�
 body.innerHTML = emptyState;     /* Empty: .dtable__empty (иллюстрация + заголовок + текст + действие) */
 body.innerHTML = dataRows;       /* Default: .tbl со строками/ячейками TableCell */
 
-/* Ширина колонок — общий scripts/tbl-resize.js (в составе ds.js):
+/* Ширина колонок — общий components/organisms/Table/TableResize.js (в составе ds.js):
    ручка .th__resize в каждой .th; drag и ← → пересчитывают
    grid-template-columns всех строк, минимум 96px. Подключения на экране
    не требуется — работает из коробки. */

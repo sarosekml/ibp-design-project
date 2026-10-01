@@ -4,12 +4,12 @@ purpose: Чит-шит по всем компонентам для сборки 
 
 # IBP DS — чит-шит компонентов
 
-Подключение на экране: один `<link rel="stylesheet" href="ds.css">` (всё включено) + один `<script src="ds.js"></script>` в конце body (единая точка входа, RulesAudit W0 · K0 — сам догружает icons-data.js/ds-icons.js и все остальные рантаймы ДС в нужном порядке; напрямую эти файлы больше не подключать). Иконки: `<i data-icon="имя"></i>`, имена — specs/Icons.md. **Слот иконки принимает обе формы** — вставленный `<svg>` и `<i data-icon>`: размер задаёт слот (правила CSS написаны на `:is(svg,[data-icon])`), замена одной формы на другую вид не меняет и правки CSS не требует (RulesAudit W0 · K2, 12.08.2026). Экранный скрипт с данными/логикой конкретного экрана (если есть) — отдельным тегом сразу после `ds.js`. Токены: цвета — specs/Colors.md, типографика — specs/Typography.md, радиусы — specs/Radius.md, тени — specs/Elevation.md. Начинай экран с копии `templates/screen/Screen.html`.
+Подключение на экране: один `<link rel="stylesheet" href="ds.css">` (всё включено) + один `<script src="ds.js"></script>` в конце body (единая точка входа, RulesAudit W0 · K0 — сам догружает icons-data.js/ds-icons.js и все остальные рантаймы ДС в нужном порядке; напрямую эти файлы больше не подключать). Иконки: `<i data-icon="имя"></i>`, имена — foundations/Icons/Icons.md. **Слот иконки принимает обе формы** — вставленный `<svg>` и `<i data-icon>`: размер задаёт слот (правила CSS написаны на `:is(svg,[data-icon])`), замена одной формы на другую вид не меняет и правки CSS не требует (RulesAudit W0 · K2, 12.08.2026). Экранный скрипт с данными/логикой конкретного экрана (если есть) — отдельным тегом сразу после `ds.js`. Токены: цвета — foundations/Colors/Colors.md, типографика — foundations/Typography/Typography.md, радиусы — foundations/Radius/Radius.md, тени — foundations/Elevation/Elevation.md. Начинай экран с копии `templates/screen/Screen.html`.
 
 **Атрибут `hidden` работает на любом компоненте ДС.** Корень каждого компонента объявляет парное `[hidden] { display: none }` — соглашение от 05.09.2026, охраняется правилом B11 линтера. Без него браузерное `[hidden]` (специфичность 0,0,0, UA-стиль) проигрывает правилу класса (0,1,0), и атрибут молча перестаёт работать: разметка выглядит правильной, скрипт ставит атрибут, элемент виден. Поэтому скрывать компонент на экране можно и нужно атрибутом `hidden`, а не своим классом и не инлайновым `style="display:none"`.
 
 ## AllocationBar
-css: `styles/allocation-bar.css` · deps: [alert, button]
+css: `components/organisms/AllocationBar/AllocationBar.css` · deps: [alert, button]
 **Оси:** контейнерные брейкпоинты (600/480/320/200/160) · состояния (loaded/loading fast/slow/error/empty/partial/overflow) · предупреждение (поверх любого состояния) · ограничение по высоте (`data-height="A|B|C"`) · растяжение (`--stretch`).
 **Инварианты:** хост обязан иметь `container-type: inline-size`; цвета сегментов — только `--chart-*` по индексу; высота бара всегда 8px; строка — колонки 50 / 20 / 30% (наименование с маркером · процент · сумма), значения друг под другом, усечение — многоточие + тултип; иконка-предупреждение — сразу за подписью, итог прижат вправо.
 **Диагностика:** «Компонент не подстраивается под сужение контейнера» → на хосте не выставлен `container-type: inline-size` · «Цвет сегмента не совпадает со строкой списка» → сверить индекс позиции с палитрой `--chart-*`, не задавать цвет напрямую · «Проценты или суммы в строках не друг под другом» → у строки переопределён `grid-template-columns` или ячейке снята явная колонка (`grid-column`) · «В растянутом баре суммы левее итога» → старая версия (< 1.003) ограничивала строки `--stretch` 600px
@@ -38,10 +38,10 @@ css: `styles/allocation-bar.css` · deps: [alert, button]
 </div>
 ```
 
-Состояния: loading — `.albar__sk` (шиммер) на итоге/баре/строках, долгий расчёт — плашка `.albar__calc`; error — Alert error + Button Outline XS «Повторить»; empty — итог «—» + `.albar__empty` «Нет данных»; partial/overflow — Alert warning/error в `.albar__foot` (+ серый `.albar__seg--rest`). Ограничение высоты — `data-height="A|B|C"` на хосте. Растяжение — `.albar--stretch` (шапка, бар и строки во всю ширину). Рантайм-референс: `window.AllocationBar.make(cfg)`. Полная спека: specs/AllocationBar.md.
+Состояния: loading — `.albar__sk` (шиммер) на итоге/баре/строках, долгий расчёт — плашка `.albar__calc`; error — Alert error + Button Outline XS «Повторить»; empty — итог «—» + `.albar__empty` «Нет данных»; partial/overflow — Alert warning/error в `.albar__foot` (+ серый `.albar__seg--rest`). Ограничение высоты — `data-height="A|B|C"` на хосте. Растяжение — `.albar--stretch` (шапка, бар и строки во всю ширину). Рантайм-референс: `window.AllocationBar.make(cfg)`. Полная спека: components/organisms/AllocationBar/AllocationBar.md.
 
 ## Alert
-css: `styles/alert.css` · deps: [button, link]
+css: `components/molecules/Alert/Alert.css` · deps: [button, link]
 **Оси:** тон (info/warning/error/success) · состав (иконка/заголовок/текст/кнопки/действия — независимо) · кнопки-ссылки (1/2/текстовая ссылка) · раскладка (`--row`/`--flush`) · сворачивание/закрытие.
 **Инварианты:** тон красит заливку и акцент одновременно; кнопки/ссылки — только `.btn--<тон>`/`.link--<тон>`, совпадающий с тоном плашки.
 **Классы:** `.alert` · `.alert--info/--warning/--error/--success` · `.alert--m` · `.alert--collapsed` · `.alert--row` · `.alert--flush` · `.alert__icon` · `.alert__body` · `.alert__title` · `.alert__text` · `.alert__buttons` · `.alert__actions` · `.alert__act` · `.alert__collapse / .alert__close` · `[role][aria-live]`
@@ -68,12 +68,12 @@ css: `styles/alert.css` · deps: [button, link]
 </div>
 ```
 
-Тоны — заливка/акцент: `--info-bg/--info` · `--warning-bg/--warning` · `--error-bg-light/--error` · `--success-bg/--success`. role/aria-live: error·warning → alert/assertive, info·success → status/polite. Кнопки и ссылки несут явный тон-класс Button (`.btn--info/--warning/--error/--success`, совпадающий с тоном Алерта); переопределение --primary/--link на .alert остаётся для ссылок. Свёрнуто — `.alert--collapsed`. Заголовок/текст независимы (можно только один из них — для любых тонов, размеров, раскладок). Раскладка в строку — `.alert--row`: текст+кнопки в одну строку, кнопки прижаты вправо, без действий; иконка top-aligned рядом с заголовком, центрируется только блок кнопок; рамка 1px + радиус 8px в цвете тона (16% непрозрачности); при двух кнопках прозрачная — слева, аутлайн (основная) — справа. Встроенный в Плитку/Модалку без скруглений и отступов — `.alert--flush`. Полная анатомия: specs/Alert.md.
+Тоны — заливка/акцент: `--info-bg/--info` · `--warning-bg/--warning` · `--error-bg-light/--error` · `--success-bg/--success`. role/aria-live: error·warning → alert/assertive, info·success → status/polite. Кнопки и ссылки несут явный тон-класс Button (`.btn--info/--warning/--error/--success`, совпадающий с тоном Алерта); переопределение --primary/--link на .alert остаётся для ссылок. Свёрнуто — `.alert--collapsed`. Заголовок/текст независимы (можно только один из них — для любых тонов, размеров, раскладок). Раскладка в строку — `.alert--row`: текст+кнопки в одну строку, кнопки прижаты вправо, без действий; иконка top-aligned рядом с заголовком, центрируется только блок кнопок; рамка 1px + радиус 8px в цвете тона (16% непрозрачности); при двух кнопках прозрачная — слева, аутлайн (основная) — справа. Встроенный в Плитку/Модалку без скруглений и отступов — `.alert--flush`. Полная анатомия: components/molecules/Alert/Alert.md.
 
 Тон задаётся классом `.alert--info/--warning/--error/--success` — класс самодостаточен. Атрибут `data-alert-tone="<тон>"` равнозначен и оставлен для совместимости; дублировать оба не нужно.
 
 ## Avatar
-css: `styles/avatar.css` · deps: [badge]
+css: `components/atoms/Avatar/Avatar.css` · deps: [badge]
 **Оси:** форма (circular/rounded) · размер (XL/L/M/S) · тип содержимого (фото→инициалы→иконка, по цепочке деградации) · бейдж (counter/dot через `.av-stack`) · группа (стек + чип «+N») · интерактивность (hover/focus/pressed).
 **Инварианты:** деградация контента фото→инициалы→иконка не смешивается; счётчик-бейдж — только у L/XL.
 **Корнер-кейсы:** `.av__text` — ellipsis в фикс. боксе.
@@ -98,10 +98,10 @@ css: `styles/avatar.css` · deps: [badge]
 
 Badge на аватаре: Counter — правый верхний угол описанного квадрата (top:0/right:0), только L/XL; Dot — правый нижний угол (right:0/bottom:0), на всех размерах, размер точки XL 22 / L 12 / M 10 / S 8.
 
-Полная анатомия: specs/Avatar.md.
+Полная анатомия: components/atoms/Avatar/Avatar.md.
 
 ## Badge
-css: `styles/badge.css`
+css: `components/atoms/Badge/Badge.css`
 **Оси:** тип (counter/dot) · размер (M/S/XS/XXS/dot) · тон (neutral/accent/статусные) · позиционирование (`.badge-anchor`, top-right counter / bottom-right dot) · переполнение (max 99 → «99+», безфоновый `--text` вариант «+N»).
 **Инварианты:** dot не входит в размерный ряд counter; `.badge--muted` гасит тон через `!important`.
 **Классы:** .badge · .badge--m / --s / --xs / --xxs · .badge--dot · .badge--neutral / --accent / --success / --info / --warning / --error · .badge--text · .badge--bordered · .badge--muted · .badge--animate · .badge-anchor · .badge-anchor--dot-tr · aria-hidden="true"
@@ -121,10 +121,10 @@ css: `styles/badge.css`
 <span class="badge badge--m badge--neutral badge--text">+99</span>
 ```
 
-Полная анатомия: specs/Badge.md.
+Полная анатомия: components/atoms/Badge/Badge.md.
 
 ## Breadcrumbs
-css: `styles/breadcrumbs.css` · js: `scripts/ds-menu.js` (меню «…»), `scripts/ds-tooltip.js` (тултип обрезанной крошки), `scripts/ds-breadcrumbs.js` (авто-сворацивание по ширине, opt-in `data-breadcrumbs`) · deps: [link, context-menu, tooltip]
+css: `components/molecules/Breadcrumbs/Breadcrumbs.css` · js: `components/molecules/ContextMenu/ContextMenu.js` (меню «…»), `components/molecules/Tooltip/Tooltip.js` (тултип обрезанной крошки), `components/molecules/Breadcrumbs/Breadcrumbs.js` (авто-сворацивание по ширине, opt-in `data-breadcrumbs`) · deps: [link, context-menu, tooltip]
 **Оси:** длина трейла (норм / срединные звенья схлопнуты в «…» / текущая крошка усечена тултипом) · размер (единственный S).
 **Инварианты:** компонент сам держит зону 44px над контентом — padding 16px сверху / 12px снизу / 24px по бокам (16+16+12=44), поля совпадают с полями контентной области экрана (см. Layout); первое и текущее звено видимы всегда, схлопывается только середина; пересчёт по ResizeObserver на каждый ресайз, не только при первом рендере.
 **Классы:** .crumbs · .crumbs__item · .crumbs__item--current · .link.link--muted · .crumbs__current + aria-current="page" · .crumbs__more + aria-haspopup / aria-expanded · .menu.menu--floating.crumbs__popup · .tip.tip--floating
@@ -153,10 +153,10 @@ css: `styles/breadcrumbs.css` · js: `scripts/ds-menu.js` (меню «…»), `s
 
 Свёртка длинного трейла — только `.crumbs__more` (кнопка «…», раскрывает ContextMenu со скрытыми уровнями). Другого элемента свёртки в ДС нет.
 
-Полная анатомия: specs/Breadcrumbs.md.
+Полная анатомия: components/molecules/Breadcrumbs/Breadcrumbs.md.
 
 ## ButtonGroup
-css: `styles/button-group.css` · js: `scripts/ds-buttongroup.js` (toggle: клик по `.btn[aria-pressed]` в `.btn-group--toggle` — `role="radiogroup"` эксклюзивно, `role="group"` независимо) · deps: [button] · Split Button: реальный ContextMenu + `DSMenu.bind` (`scripts/ds-menu.js`), не своя разметка меню.
+css: `components/molecules/ButtonGroup/ButtonGroup.css` · js: `components/molecules/ButtonGroup/ButtonGroup.js` (toggle: клик по `.btn[aria-pressed]` в `.btn-group--toggle` — `role="radiogroup"` эксклюзивно, `role="group"` независимо) · deps: [button] · Split Button: реальный ContextMenu + `DSMenu.bind` (`components/molecules/ContextMenu/ContextMenu.js`), не своя разметка меню.
 **Оси:** тип (accent/outline/transparent) · размер (M/S/XS, один на всю группу) · ориентация (horizontal/vertical) · Split Button · сегментированный выбор (одиночный radio-like / множественный checkbox-like) · fullwidth.
 **Инварианты:** все кнопки группы — один тип и размер; Disabled — только на всю группу целиком; Split Button — текст+стрелка всегда вдвоём.
 **Корнер-кейсы:** наследуется от Button (`.btn`/`.btn__label` min-width:0 + ellipsis), держит fullwidth-группу.
@@ -182,10 +182,10 @@ css: `styles/button-group.css` · js: `scripts/ds-buttongroup.js` (toggle: кл�
 <div class="btn-group btn-group--outline btn-group--vertical btn-group--disabled" role="group" aria-disabled="true">…</div>
 ```
 
-Полная анатомия: specs/ButtonGroup.md.
+Полная анатомия: components/molecules/ButtonGroup/ButtonGroup.md.
 
 ## Buttons
-css: `styles/button.css` · deps: [spinner]
+css: `components/atoms/Buttons/Buttons.css` · deps: [spinner]
 **Оси:** type (accent/outline/transparent) · тон-модификатор (error/warning/success/info) · размер (M/S/XS) · кнопка-меню (chevron) · fullwidth · loader · icon-only.
 **Инварианты:** справа — либо шеврон, либо иконка, не одновременно; на области экрана — только один Accent.
 **Корнер-кейсы:** `.btn{min-width:0}` + `.btn__label` ellipsis — длинный текст не распирает fullwidth/flex-родителя.
@@ -214,10 +214,10 @@ css: `styles/button.css` · deps: [spinner]
 <button type="button" class="btn btn--accent btn--m btn--error"><span class="btn__label">Удалить</span></button>
 ```
 
-Полная анатомия: specs/Buttons.md.
+Полная анатомия: components/atoms/Buttons/Buttons.md.
 
 ## Chart
-css: `styles/chart.css` · js: `scripts/ds-chart.js` · deps: [tooltip, alert, skeleton, segment-control, icon-button, button, table-cell]
+css: `components/organisms/Chart/Chart.css` · js: `components/organisms/Chart/Chart.js` · deps: [tooltip, alert, skeleton, segment-control, icon-button, button, table-cell]
 **Оси:** тип (bar/hbar/grouped/stacked/stacked100/line/area/stackedArea/combo/pie/donut/scatter/waterfall/spark) · размер (S 132px / M 220px / L 320px) · анатомия (заголовок, тулбар, легенда, сетка, тултип, кросс-хэйр, подписи значений, опорная линия, brush) · состояния (loaded/loading fast/slow/error/empty) · признаки данных (пропуски, прогноз).
 **Инварианты:** ширина от контейнера, высота от размера (`data-size` → `--chart-h`); цвет серии — токен на группе `.chart__ser { --chart-c }`, не на элементе; палитра `--chart-*` по индексу и не циклится; `null` — разрыв ряда, `0` — точка на нулевой линии; минимальный столбец 2px; тултип — компонент Tooltip, не своя плашка. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
 **Классы:** `.chart-host` (+`[data-size]`,`[data-type]`,`--spark`) · `.chart` (+`--stretch`,`--spark`,`[data-hover]`) · `.chart__head` / `__titles` / `__title` / `__subtitle` / `__toolbar` · `.chart__legend` (+`--bottom`) / `__legend-item` / `__legend-name` / `__legend-val` · `.chart__marker` (+`--line`,`--dot`,`--dashed`) · `.chart__plot` / `__svg` · `.chart__grid` / `__axis` / `__tick` / `__vlabel` / `__axis-title` · `.chart__ser` / `__bar` (+`--forecast`) / `__line` (+`--dashed`) / `__area` / `__dot` (+`--solid`) / `__slice` / `__spark-dot` · `.chart__ref` / `__ref-label` / `__band` / `__hit` / `__cursor` · `.chart__tip` / `__tip-title` / `__tip-row` / `__tip-name` / `__tip-val` / `__tip-total` · `.chart__brush` / `__brush-svg` / `__brush-spark` / `__brush-window` / `__brush-handle` (+`--l`,`--r`) · `.chart__foot` / `__empty` / `__calc` / `__calc-title` / `__calc-sub` / `__sk` / `__sk-bars` · `.chart__gap-note` · `.chart__zero`
@@ -256,10 +256,10 @@ css: `styles/chart.css` · js: `scripts/ds-chart.js` · deps: [tooltip, alert, s
 
 Типы: сравнение — `bar`/`hbar`/`grouped`; состав — `stacked`/`stacked100`/`pie`/`donut`; динамика — `line`/`area`/`stackedArea`; разнородные величины — `combo`; связь двух чисел — `scatter`; вклад в итог — `waterfall`; форма тренда в строке — `spark`. Серий: линейный и стек до 6, группированные до 3, круговой 2–6 секторов; `bar`/`hbar` с двумя и более сериями сами становятся группами (наложения серий не бывает). Цвет: по индексу из `--chart-*` либо семантика (`--success`/`--error` — рост/падение, `--primary` + `--st-grey-midlight` — факт/план, `--primary` — итог водопада); смешивать оба принципа в одном графике нельзя. Прогноз — `series[].forecastFrom` (штрих у линии, штриховка у столбцов). Легенда: клик выключает серию (последнюю нельзя), наведение гасит остальные до .28. Brush включать от 12 точек. Подписи значений — до 8 точек и не на стеках.
 
-Полная анатомия: specs/Chart.md.
+Полная анатомия: components/organisms/Chart/Chart.md.
 
 ## Checkbox
-css: `styles/checkbox.css` · deps: [label-helper]
+css: `components/atoms/Checkbox/Checkbox.css` · deps: [label-helper]
 **Оси:** состояние выбора (unselected/selected/indeterminate) · интерактивное состояние (default/hover/focus/pressed/disabled/error) · состав (label/helper/icon-only) · группа + обязательность (независимые опции).
 **Инварианты:** три состояния выбора взаимоисключающие; активная область — весь `.cb`, не только визуальная метка.
 **Классы:** .cb · .cb--unselected / --selected / --indeterminate · .cb--hover / --focus / --pressed · .cb--error · .cb--disabled · .cb--no-content · .cb__input · .cb__box · .cb__mark · .cb__content · .cb__label · .cb__req · .ds-helper.ds-helper--left · .cb-group · .cb-group__title · .cb-group__items · .cb-group--indent · .cb-group__error · aria-invalid / role="group" / aria-labelledby
@@ -284,17 +284,17 @@ css: `styles/checkbox.css` · deps: [label-helper]
 </label>
 <div class="cb-group" role="group" aria-labelledby="grp-t">
   <p class="cb-group__title" id="grp-t">Выберите каналы</p>
-<!-- … полная анатомия: specs/Checkbox.md -->
+<!-- … полная анатомия: components/atoms/Checkbox/Checkbox.md -->
 ```
 
 Классы состояния выбора (`cb--unselected` / `--selected` / `--indeterminate`) собственных правил в CSS не имеют — их вешает рантайм как маркер состояния; в стартовом сниппете не нужны.
 
 ## Chip
-css: `styles/chip.css` · deps: [label-helper, avatar, spinner]
+css: `components/atoms/Chip/Chip.css` · deps: [label-helper, avatar, spinner]
 **Оси:** тип (edit/readonly) · стиль (fill/outline) · размер (L/M/S/XS) · тон (системный StSystem · семантический success/info/warning/error · тональный по имени рампы green/lblue/orange/red/dpurple/grey/primary · алиасы accent=primary, dark=grey · solid-модификатор `-solid` на любой тон) · ведущий элемент (иконка/маркер/аватар) · действие (крестик ИЛИ шеврон — взаимоисключающе).
 **Инварианты:** max-width 320px фиксирован на всех размерах; чип сжимаем (`min-width: 0`) — в чужой flex-строке уступает место и усекает подпись внутри плашки, а не вылезает за границу контейнера; `.chip--fit` — несжимаемый вариант для коротких фиксированных значений (код валюты, PE, «Применено: N»): подпись показывается целиком, не усекается до «R…»; hover/selected — только у Edit, Readonly не реагирует на курсор; атрибут `hidden` работает (`.chip[hidden]{display:none}` рядом с базовым `display:inline-flex`) — им `ds-input.js` прячет чипы, свёрнутые в «+N».
-**Диагностика:** «Чип обрезан многоточием, тултипа нет» → не подключён `scripts/ds-tooltip.js` (механизм) или `scripts/ds-chip.js` (регистрация); с 1.018 тултип навешивает общий `DSTooltip.truncated`, руками `data-tooltip` не пишут · «У чипа два тултипа сразу» → на чипе остался `title` (рантайм забирает его текст и снимает атрибут только когда навешивает свой) · «Тултип не показывается на обрезанном disabled-чипе» → чип построен после загрузки: `.chip--has-tooltip` ставит проход `DSChip.refresh(root)` · «Инфо-кнопка внутри readonly-чипа не фокусируется» → она должна быть отдельным `<button class="chip__info">`, не декоративным span · «Крестик чипа «Применено: N» убирает чип, но фильтр остаётся» → рантайм старше 1.014: `ds-chip.js` снимал чип раньше `ds-table-filter.js` и обрывал событие `tfilter:reset`; теперь `.tfilter__applied` он пропускает
-**Из коробки:** подключить `scripts/ds-chip.js` (входит в `ds.js`). Удаление: клик по `.chip__remove` или Backspace/Delete на сфокусированном `.chip--edit` (чип `.tfilter__applied` пропускается — владелец `ds-table-filter.js`). **Тултип на усечённой подписи** — правило Chip, работает везде, где стоит чип; механизм общий — `DSTooltip.truncated` (ds-tooltip.js), регистрация — `ds-chip.js`: по первому наведению или фокусу подпись получает `data-tooltip` с полным текстом, `data-tooltip-truncated="only"` и `data-tooltip-multiline="yes"`, дальше её ведёт `ds-tooltip.js` (нужен на странице); показ — только при реальном усечении, `title` цели забирается в текст и снимается. Счётчики «+N» (`[data-tc-count]`, `[data-inp-count]`) исключены — у них собственный тултип со списком скрытых значений от владельца стека. Disabled-чип событий не даёт (`pointer-events:none`), поэтому обслуживается проходом при загрузке и вызовом `DSChip.refresh(root)`: усечённой подписи ставится `.chip--has-tooltip` (хук CSS вернёт указатель).
+**Диагностика:** «Чип обрезан многоточием, тултипа нет» → не подключён `components/molecules/Tooltip/Tooltip.js` (механизм) или `components/atoms/Chip/Chip.js` (регистрация); с 1.018 тултип навешивает общий `DSTooltip.truncated`, руками `data-tooltip` не пишут · «У чипа два тултипа сразу» → на чипе остался `title` (рантайм забирает его текст и снимает атрибут только когда навешивает свой) · «Тултип не показывается на обрезанном disabled-чипе» → чип построен после загрузки: `.chip--has-tooltip` ставит проход `DSChip.refresh(root)` · «Инфо-кнопка внутри readonly-чипа не фокусируется» → она должна быть отдельным `<button class="chip__info">`, не декоративным span · «Крестик чипа «Применено: N» убирает чип, но фильтр остаётся» → рантайм старше 1.014: `ds-chip.js` снимал чип раньше `ds-table-filter.js` и обрывал событие `tfilter:reset`; теперь `.tfilter__applied` он пропускает
+**Из коробки:** подключить `components/atoms/Chip/Chip.js` (входит в `ds.js`). Удаление: клик по `.chip__remove` или Backspace/Delete на сфокусированном `.chip--edit` (чип `.tfilter__applied` пропускается — владелец `ds-table-filter.js`). **Тултип на усечённой подписи** — правило Chip, работает везде, где стоит чип; механизм общий — `DSTooltip.truncated` (ds-tooltip.js), регистрация — `ds-chip.js`: по первому наведению или фокусу подпись получает `data-tooltip` с полным текстом, `data-tooltip-truncated="only"` и `data-tooltip-multiline="yes"`, дальше её ведёт `ds-tooltip.js` (нужен на странице); показ — только при реальном усечении, `title` цели забирается в текст и снимается. Счётчики «+N» (`[data-tc-count]`, `[data-inp-count]`) исключены — у них собственный тултип со списком скрытых значений от владельца стека. Disabled-чип событий не даёт (`pointer-events:none`), поэтому обслуживается проходом при загрузке и вызовом `DSChip.refresh(root)`: усечённой подписи ставится `.chip--has-tooltip` (хук CSS вернёт указатель).
 
 Чип — компактный интерактивный элемент для фильтрации и группировки данных.
 
@@ -314,10 +314,10 @@ css: `styles/chip.css` · deps: [label-helper, avatar, spinner]
 
 ReadOnly-чип — база `.chip`: модификатора `chip--readonly` в CSS нет, редактируемый вариант помечается `.chip--edit`.
 
-Полная анатомия: specs/Chip.md.
+Полная анатомия: components/atoms/Chip/Chip.md.
 
 ## ContextMenu
-css: `styles/context-menu.css` · js: `scripts/ds-menu.js` · deps: [button]
+css: `components/molecules/ContextMenu/ContextMenu.css` · js: `components/molecules/ContextMenu/ContextMenu.js` · deps: [button]
 **Оси:** тип пункта (текст/иконка/шорткат/каретка-подменю/чекбокс-радио выбор) · позиционирование (start/end, авто-flip вверх/по горизонтали) · подменю (flyout по наведению) · переполнение (скролл, группировка, ~10 пунктов — предел).
 **Инварианты:** галочка выбранного пункта — справа (trailing), не слева; до открытия меню невидимо и не участвует в layout. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
 **Классы:** .menu · .menu--scroll · .menu--floating · .menu__item · .menu__item--danger · .menu__item--wrap · .menu__item--sub · .menu__item-icon / -label / -hint / -caret / -check · .menu__label · .menu__divider · .is-hover / .is-focus / .is-active · role / aria-haspopup / aria-expanded / aria-checked / aria-disabled
@@ -351,13 +351,13 @@ API: `DSMenu.bind(trigger, opts)` · `bindAll(root)` · `place(menu, trigger, op
   <button class="menu__item" role="menuitem" aria-disabled="true">Архив</button>
 </div>
 </span>
-<script src="scripts/ds-menu.js"></script>
+<script src="components/molecules/ContextMenu/ContextMenu.js"></script>
 ```
 
-Полная анатомия: specs/ContextMenu.md.
+Полная анатомия: components/molecules/ContextMenu/ContextMenu.md.
 
 ## EmptyState
-css: `styles/empty-state.css` · deps: [illustration, button]
+css: `components/molecules/EmptyState/EmptyState.css` · deps: [illustration, button]
 **Оси:** размер (M/L) · поверхность (обычная/`--card`) · действия (0/1/2 кнопки).
 **Инварианты:** рендерится только после завершения запроса, не как промежуточное состояние; при подстановке в ответ на действие пользователя — `role="status" aria-live="polite"` на родителе.
 **Корнер-кейсы:** `.es__title` ellipsis (одна строка по спеке), `.es__text` overflow-wrap.
@@ -378,18 +378,18 @@ css: `styles/empty-state.css` · deps: [illustration, button]
     <button class="btn btn--transparent btn--m">Завести сделку</button>
   </div>
 </div>
-<!-- … полная анатомия: specs/EmptyState.md -->
+<!-- … полная анатомия: components/molecules/EmptyState/EmptyState.md -->
 ```
 
 ## DatePicker
-css: `styles/datepicker.css` · deps: [icon-button, button]
+css: `components/molecules/DatePicker/DatePicker.css` · deps: [icon-button, button]
 **Оси:** режим (single/range/month) · представление (day/month/year) · футер (нет/кнопки/«Сегодня») · размещение (floating/inline).
 **Инварианты:** один открытый календарь одновременно; клик раньше начала диапазона перезапускает выбор; рантайм отвечает и за маску ручного ввода поля даты — делегированный `input` в фазе перехвата приводит цифры к ДД.ММ.ГГГГ (`DSDatePicker.maskValue`), поле узнаётся по кнопке календаря или `.inp-range--date`, отказ — `data-no-datemask`.
 **Корнер-кейсы:** `.dpk__caption` текст-заголовок ellipsis.
 **Классы:** `.dpk` (+ `--inline` / `--panel`) · `.dpk__head` / `.dpk__caption` / `.dpk__cap-icon` / `.dpk__nav` · `.dpk__weekdays` / `.dpk__weekday` · `.dpk__grid` / `.dpk__day` / `.dpk__daynum` · `.dpk__day--outside/--today/--selected/--disabled` · `.dpk__day--range-start/--range-end/--in-range` · `.dpk__panel(.--years)` / `.dpk__panel-cell(.--current/--selected/--disabled)` · `.dpk__foot` / `.dpk__foot-left` / `.dpk__foot-right` · `role="dialog"` / `aria-modal="false"` · `role="grid"` / `role="gridcell"` / `aria-selected` / `aria-disabled`
 **Диагностика:** «Заголовок календаря обрезается непредсказуемо» → `.dpk__caption` требует ellipsis на первом `span` внутри `max-width:100%` · «Клик по дате раньше начала диапазона не перезапускает выбор» → проверить логику рантайма выбора диапазона
 
-Рантайм `scripts/ds-datepicker.js` (out-of-box): `makeCalendar` · `openPicker(anchor, spec)` · автоподключение кнопки-календаря полей InputDate / InputDateRange.
+Рантайм `components/molecules/DatePicker/DatePicker.js` (out-of-box): `makeCalendar` · `openPicker(anchor, spec)` · автоподключение кнопки-календаря полей InputDate / InputDateRange.
 
 Календарь — всплывающая поверхность выбора даты/диапазона. Поднимается InputDate / InputDateRange (floating) или встраивается в панель/модалку (inline). Material в токенах ДС, неделя с Пн, локаль RU. Ширина 304px, ячейка дня 40×40 (единая для всех вариантов футера, футерные кнопки — XS).
 
@@ -420,10 +420,10 @@ css: `styles/datepicker.css` · deps: [icon-button, button]
 </div>
 ```
 
-Режимы: single / range / month · представления: day / month / year (`.dpk--panel` + `.dpk__panel(.--years)` > `.dpk__panel-cell`, переключаются заголовком/стрелками — стрелки навигации остаются видимыми и в month/year, листая блок ±1 год / ±12 лет). Состояния дня: default · hover · today (обводка `--primary`) · selected/концы диапазона (заливка `--primary`, число `--text-on-dark`) · in-range (полоса `--primary-bg`) · disabled (`--st-disabled`) · outside. Размещение: `--inline` (рамка, без тени) vs floating (`--elevation-5`, под полем, авто-flip как Popover). Полная анатомия: specs/DatePicker.md.
+Режимы: single / range / month · представления: day / month / year (`.dpk--panel` + `.dpk__panel(.--years)` > `.dpk__panel-cell`, переключаются заголовком/стрелками — стрелки навигации остаются видимыми и в month/year, листая блок ±1 год / ±12 лет). Состояния дня: default · hover · today (обводка `--primary`) · selected/концы диапазона (заливка `--primary`, число `--text-on-dark`) · in-range (полоса `--primary-bg`) · disabled (`--st-disabled`) · outside. Размещение: `--inline` (рамка, без тени) vs floating (`--elevation-5`, под полем, авто-flip как Popover). Полная анатомия: components/molecules/DatePicker/DatePicker.md.
 
 ## Divider
-css: `styles/divider.css` · deps: [button]
+css: `components/atoms/Divider/Divider.css` · deps: [button]
 **Оси:** ориентация (horizontal/vertical) · отступы (full/inset/middle) · толщина/контраст (`--border-light`/`--border-primary`/блок-секция 8px) · подпись (центр/край).
 **Инварианты:** `.dvd--section` — заливка фоном, не бордер; inset-модификаторы работают только у horizontal.
 **Корнер-кейсы:** `.dvd-text__label` сжимается с ellipsis вместо распирания шва.
@@ -445,10 +445,10 @@ css: `styles/divider.css` · deps: [button]
 
 Текст по центру — база `.dvd-text`: класса `dvd-text--center` в CSS нет, смещения — `--left` / `--right`.
 
-Полная анатомия: specs/Divider.md.
+Полная анатомия: components/atoms/Divider/Divider.md.
 
 ## IconButton
-css: `styles/icon-button.css` · deps: [badge, spinner]
+css: `components/atoms/IconButton/IconButton.css` · deps: [badge, spinner]
 **Оси:** тон (neutral/primary/danger/contrast) · размер (L/M/S = размеру иконки) · форма стейт-слоя (квадрат — по умолчанию / круг `.ibtn--circle`) · режим-переключатель (selected) · встроенный вариант (`--embedded`, без рипла) · бейдж.
 **Инварианты:** обязателен `aria-label` — нет видимого текста.
 **Корнер-кейсы:** `.ibtn{flex:none}` — не сжимается в тесном flex-ряду.
@@ -475,19 +475,19 @@ css: `styles/icon-button.css` · deps: [badge, spinner]
 
 `.ibtn__badge` — правый верхний угол рамки (top:0/right:0), не выходит за габарит; счётчик ≤ 2 символов, при значении > 99 показываем «9+».
 
-Полная анатомия: specs/IconButton.md.
+Полная анатомия: components/atoms/IconButton/IconButton.md.
 
 ## Illustrations (Иллюстрации)
-css: styles/illustration.css · deps: — · 1.003
-Слот продуктовой иллюстрации; scripts/ds-illustrations.js подставляет реальный SVG из assets/illustrations/<data-illu>.svg (32 тайловых 195×140 + 4 состояния + 1 фоновая). Размер = width/height слота, object-fit:contain. Неизвестное имя → штриховая заглушка (.illu:empty). Скрипт авто-дорендерит слоты, добавленные в DOM позже (MutationObserver) — динамически пересобранные конструкторы/тайквики не остаются без иллюстрации; рендер также через window.DSIllustrations.render().dth/height слота (дефолт 96×96). Всегда aria-hidden. Имена: deals, partners, reports, tasks, admin, empty-search.
+css: foundations/Illustrations/Illustrations.css · deps: — · 1.003
+Слот продуктовой иллюстрации; foundations/Illustrations/Illustrations.js подставляет реальный SVG из assets/illustrations/<data-illu>.svg (32 тайловых 195×140 + 4 состояния + 1 фоновая). Размер = width/height слота, object-fit:contain. Неизвестное имя → штриховая заглушка (.illu:empty). Скрипт авто-дорендерит слоты, добавленные в DOM позже (MutationObserver) — динамически пересобранные конструкторы/тайквики не остаются без иллюстрации; рендер также через window.DSIllustrations.render().dth/height слота (дефолт 96×96). Всегда aria-hidden. Имена: deals, partners, reports, tasks, admin, empty-search.
 ```
 <span class="illu" data-illu="deals" aria-hidden="true"></span>
 ```
 
-Полная анатомия: specs/Illustrations.md.
+Полная анатомия: foundations/Illustrations/Illustrations.md.
 
 ## Layout (Каркас экрана)
-css: `styles/layout.css` · runtime: `scripts/ds-scroll.js` · deps: [nav-panel, breadcrumbs, spacing] · 1.013
+css: `foundations/Layout/Layout.css` · runtime: `foundations/Layout/Layout.js` · deps: [nav-panel, breadcrumbs, spacing] · 1.013
 **Оси:** режим навигации (rail 56 / drawer оверлей / fixed 320) · тип контента (стартовая страница: .grid12, группа .col-3 colw-6 / экран-реестр: шапка → .dtable-toolbar → .dtable--fill / карточка сущности) · высота вьюпорта (обычный / app-shell `.screen--app`).
 **Инварианты:** между панелью и рабочей областью отступа нет; между крошками и контентом отступ 8px (--layout-pad-top); поля контентной области — 8px сверху, 24px слева/справа и 24px снизу; зона крошек 44px и её поля 24px принадлежат компоненту Breadcrumbs, экран их не задаёт; крошки и контент выровнены по одной вертикали; **у экрана горизонтального скролла не бывает никогда — адаптивная вёрстка закладывается при проектировании, объект за границей экрана — баг**; исключение — контейнер со скроллом в собственной раскладке (тело таблицы, отдельный тайл), не сама рабочая область; скроллится только контент — крошки sticky, панель fixed на 100vh со своим внутренним скроллом списка; сетка не дублируется — .grid12/.col-N из Spacing; **единственная/основная таблица страницы занимает всю свободную высоту** (минус крошки/шапка/тулбар) — `.screen--app` на `.screen` + `.dtable--fill` на таблице, тело скроллится внутри; тайлы над/под таблицей — индивидуально, но таблица по умолчанию всё равно на оставшуюся высоту; **вертикальный ритм экрана-реестра — 12px, а не 24px** (заголовок → зона тулбара → таблица), задаёт экран строкой `.screen__content { gap: var(--space-12) }` — единственное разрешённое отклонение; нижнее поле 24px одинаково для всех типов контента, своего `margin-bottom` у таблицы нет; **внутренняя прокручиваемая область — `.ds-scroll`**: только бегунок 8px `--secondary`, скругление `--radius-full`, без дорожки и стрелок, в покое скрыт, появляется при прокрутке и гаснет через 800 мс (рантайм `ds-scroll.js`), место под бегунок зарезервировано; у самой области своей рамки нет — цвет бегунка берётся из её `border-color`, рамку ставят обёртке; тела Modal, Drawer, Popover и списки ContextMenu, DropdownList, NavPanel несут ту же полосу сами, класс им не нужен (Layout 1.014); **системной полосы у страницы нет** — бегунок ДС `.ds-page-scroll` (вставляет `ds-scroll.js` при `body > .nav-layout`) лежит оверлеем по центру правого поля 24px, ширина рабочей области от прокрутки не меняется, поле остаётся 24px; вид и затухание — как у `.ds-scroll`.
 **Раскладка стартовой страницы:** шапки страницы нет, крошка одна (текущая); контентная область = один блок, сетка групп .grid12 (12 колонок, зазор 16). Группа .col-3 colw-6 (4 в ряд), внутри — заголовок H5 Strong + тайлы NavTile (ширина от колонки, высота от 190) с тем же зазором 16. Фон — иллюстрация cover, opacity .6. Перестроение 4 → 2 → 1 (пороги главной 1700 / 900): первые два шага — штатная пара .col-N/.colw-N, третий пишет экран правилом ТОЙ ЖЕ специфичности и ниже по файлу. Рабочая область обычная, страница скроллится.
@@ -508,15 +508,15 @@ css: `styles/layout.css` · runtime: `scripts/ds-scroll.js` · deps: [nav-panel,
 </div>
 ```
 
-Полная анатомия: specs/Layout.md.
+Полная анатомия: foundations/Layout/Layout.md.
 
 ## InputText
-css: `styles/input.css` · deps: [label-helper, tooltip, chip]
+css: `components/molecules/Inputs/Inputs.css` · deps: [label-helper, tooltip, chip]
 **Оси:** слой (текст/пароль/многострочный/InputAmount) · размер (M/S Table Edit) · ограничение длины (`maxLength` → счётчик) · resizable.
 **Инварианты:** текст ошибки/предупреждения — только в тултипе при *Focus, не в хелпере.
 **Классы:** `.inp` · `.inp--m` / `.inp--s` · `.inp--error` / `--warning` / `--disabled` · `.inp--multiline` · `.is-hover` / `.is-focus` / `.is-open` · `.inp__field` · `.inp__lead` · `.inp__prefix` / `.inp__postfix` · `.inp__control` · `.inp__acts` / `.inp__act` · `.ds-label` / `.ds-helper`
-**Диагностика:** «Ошибка показана и в хелпере, и в тултипе одновременно» → убрать текст ошибки из хелпера, оставить только тултип на фокусе · «Крестик очистки виден на disabled-поле» → должен скрываться правилом `.inp--disabled .inp__act[aria-label="Очистить поле"]` · «Значение есть, а крестика нет» / «крестик висит на пустом поле» → не подключён `scripts/ds-input.js`, поле помечено `data-input-static`, либо значение поставлено присваиванием `.value` без `DSInput.sync`/`syncAll` · «Поле при фокусе толкает соседей / текст внутри сдвигается на 1px» → стили старше 1.015: фокус менял толщину бордера на 2px; обводка фокуса — бордер 1px + `inset`-тень 1px, габариты поля фокус не меняет
-**Из коробки:** подключить `scripts/ds-input.js` (входит в `scripts/ds.js`). Крестик очистки живёт по значению: виден, когда в контроле есть текст или в `.inp__chips` есть чипы, иначе скрыт атрибутом `hidden` (парное правило `.inp__act[hidden]` — в `styles/input.css`). Нет крестика в разметке — рантайм добавит сам, в порядке информер → крестик → календарь → шеврон. Очистка стирает только DOM поля и всплывает наружу как `ds-input:clear` на `.inp` (плюс `input`/`change` на контроле) — модель потребителя рантайму неизвестна. Демо-поля документации помечаются `data-input-static` и не обслуживаются. **Значение, поставленное кодом, рантайм не видит** — присваивание `.value` событий не шлёт, поэтому заполнил форму данными → позови `DSInput.syncAll(область)`; выбор из списка синхронизирует сам DropdownList (1.014). API: `DSInput.{bind,bindAll,sync,syncAll,clear}`.
+**Диагностика:** «Ошибка показана и в хелпере, и в тултипе одновременно» → убрать текст ошибки из хелпера, оставить только тултип на фокусе · «Крестик очистки виден на disabled-поле» → должен скрываться правилом `.inp--disabled .inp__act[aria-label="Очистить поле"]` · «Значение есть, а крестика нет» / «крестик висит на пустом поле» → не подключён `components/molecules/Inputs/Inputs.js`, поле помечено `data-input-static`, либо значение поставлено присваиванием `.value` без `DSInput.sync`/`syncAll` · «Поле при фокусе толкает соседей / текст внутри сдвигается на 1px» → стили старше 1.015: фокус менял толщину бордера на 2px; обводка фокуса — бордер 1px + `inset`-тень 1px, габариты поля фокус не меняет
+**Из коробки:** подключить `components/molecules/Inputs/Inputs.js` (входит в `ds.js`). Крестик очистки живёт по значению: виден, когда в контроле есть текст или в `.inp__chips` есть чипы, иначе скрыт атрибутом `hidden` (парное правило `.inp__act[hidden]` — в `components/molecules/Inputs/Inputs.css`). Нет крестика в разметке — рантайм добавит сам, в порядке информер → крестик → календарь → шеврон. Очистка стирает только DOM поля и всплывает наружу как `ds-input:clear` на `.inp` (плюс `input`/`change` на контроле) — модель потребителя рантайму неизвестна. Демо-поля документации помечаются `data-input-static` и не обслуживаются. **Значение, поставленное кодом, рантайм не видит** — присваивание `.value` событий не шлёт, поэтому заполнил форму данными → позови `DSInput.syncAll(область)`; выбор из списка синхронизирует сам DropdownList (1.014). API: `DSInput.{bind,bindAll,sync,syncAll,clear}`.
 
 Базовое поле ввода текста. База `.inp` (метка + поле Input_Content + хелпер) общая для InputText / InputDate / InputAutocomplete. Текстовый слой: иконка слева (любая из библиотеки ДС, не привязана к поиску), префикс, значение, постфикс. Действия справа: информер → крестик очистки (или «показать/скрыть» для пароля — крестика тогда нет) → календарь → шеврон. Опционально — счётчик символов (`maxLength`, справа под полем) и resize по вертикали у многострочного (`--resizable`). Размеры M (40px) / S (32px, только Table Edit). Состояния: Default/Hover/Focus/Error/ErrorFocus/Warning/WarningFocus/Disabled.
 
@@ -540,10 +540,10 @@ css: `styles/input.css` · deps: [label-helper, tooltip, chip]
 
 Размер объявляется явно: `.inp--m` (40px) или `.inp--s` (32px, Table Edit). `.inp` без модификатора размера не имеет — теряет высоту, паддинги, gap и шрифт молча, поэтому пропуск ловит правило линтера B12. Рантайм `input-kit.js` выдаёт модификатор всегда, включая M. (До 06.09.2026 M был молчаливым дефолтом `.inp`, а класса `.inp--m` в CSS не существовало — разметка вешала его вручную, и он не делал ничего.)
 
-Полная анатомия: specs/InputText.md.
+Полная анатомия: components/molecules/Inputs/InputText/InputText.md.
 
 ## InputDate
-css: `styles/input.css` · deps: [label-helper, tooltip]
+css: `components/molecules/Inputs/Inputs.css` · deps: [label-helper, tooltip]
 **Оси:** размер (M/S Table Edit) · информер (опц.).
 **Инварианты:** база `.inp` общая с InputText; календарь самоподключается по `.inp__act[aria-label="Открыть календарь"]` — через `ds-datepicker.js`, без глу-кода на странице.
 **Классы:** `.inp / --m / --s / --error / --warning / --disabled` · `.inp__act[aria-label="Открыть календарь"]` · `input[inputmode="numeric"]` · `aria-haspopup="dialog"` / `aria-expanded`
@@ -565,15 +565,15 @@ css: `styles/input.css` · deps: [label-helper, tooltip]
 </div>
 ```
 
-Полная анатомия: specs/InputDate.md.
+Полная анатомия: components/molecules/Inputs/InputDate/InputDate.md.
 
 ## InputAutocomplete
-css: `styles/input.css` · deps: [label-helper, checkbox, chip, tooltip, dropdown-list]
+css: `components/molecules/Inputs/Inputs.css` · deps: [label-helper, checkbox, chip, tooltip, dropdown-list]
 **Оси:** показ выбора (сводка/чипы в поле/внешний стек) · наполнение списка (текст/чекбоксы) · размер (M/S Table Edit).
 **Инварианты:** список опций и способ показа выбранного — по одному варианту на инстанс, не смешиваются.
 **Классы:** `.inp / --m / --s / --error / --warning / --disabled` · `.inp.is-open` · `.inp__summary` · `.inp__chips` · `.inp-ext` · `.inp__act--chev` · `.chip.chip--edit.chip--s / --xs` · `.ddl / .ddl__item / .ddl__item--checkbox / .ddl__match` · `role="combobox"/listbox/option` · `aria-expanded/-controls/-multiselectable/-selected/-checked`
-**Диагностика:** «Список открывается своей ширины, не по полю» → DropdownList должен наследовать ширину триггера, не `--ddl-min/max` · «Выбранные значения показаны и чипами, и сводкой одновременно» → оставить один способ показа на инстанс · «Чипы обрезаются краем поля, «+N» не появляется» → не подключён `scripts/ds-input.js` или поле `data-input-static` · «У «+N» нет тултипа со скрытыми значениями» → рантайм старше 1.015 · «Появился тултип — и сломался счёт чипов» → счётчик привязан обычным `bind()` без параметра `tip`, обёртка `.tip-anchor` встала прямым ребёнком `.inp__chips`
-**Из коробки:** подключить `scripts/ds-dropdownlist.js` — `DSDropdownList.bind(field, {...})` даёт открытие/закрытие/фильтрацию/клавиатуру. Плюс `scripts/ds-input.js`: крестик очистки по значению (см. InputText) и **«+N» при переполнении стека чипов** — не поместившиеся чипы скрываются атрибутом `hidden`, последним встаёт счётчик `.chip--fit[data-inp-count]` (без крестика удаления, из числа значений исключён), пересчёт по составу чипов и по ширине поля (ResizeObserver). Последнее видимое значение помечается `data-inp-last` — сжимается только оно, иначе длинный чип вытолкнет счётчик за границу поля. **Тултип счётчика обязателен** (с 1.015): по наведению и фокусу перечисляет скрытые значения через запятую, то же в `aria-label` («Ещё N: …»). Разметка тултипа передаётся в `DSTooltip.bind` параметром `tip` — привязка по умолчанию обернула бы счётчик в `.tip-anchor` и сломала перебор прямых детей `.inp__chips` и правило `.inp__chips .chip--fit:last-child`. Тултип усечённой подписи самого значения поле не навешивает — это правило Chip (`ds-chip.js`).
+**Диагностика:** «Список открывается своей ширины, не по полю» → DropdownList должен наследовать ширину триггера, не `--ddl-min/max` · «Выбранные значения показаны и чипами, и сводкой одновременно» → оставить один способ показа на инстанс · «Чипы обрезаются краем поля, «+N» не появляется» → не подключён `components/molecules/Inputs/Inputs.js` или поле `data-input-static` · «У «+N» нет тултипа со скрытыми значениями» → рантайм старше 1.015 · «Появился тултип — и сломался счёт чипов» → счётчик привязан обычным `bind()` без параметра `tip`, обёртка `.tip-anchor` встала прямым ребёнком `.inp__chips`
+**Из коробки:** подключить `components/molecules/DropdownList/DropdownList.js` — `DSDropdownList.bind(field, {...})` даёт открытие/закрытие/фильтрацию/клавиатуру. Плюс `components/molecules/Inputs/Inputs.js`: крестик очистки по значению (см. InputText) и **«+N» при переполнении стека чипов** — не поместившиеся чипы скрываются атрибутом `hidden`, последним встаёт счётчик `.chip--fit[data-inp-count]` (без крестика удаления, из числа значений исключён), пересчёт по составу чипов и по ширине поля (ResizeObserver). Последнее видимое значение помечается `data-inp-last` — сжимается только оно, иначе длинный чип вытолкнет счётчик за границу поля. **Тултип счётчика обязателен** (с 1.015): по наведению и фокусу перечисляет скрытые значения через запятую, то же в `aria-label` («Ещё N: …»). Разметка тултипа передаётся в `DSTooltip.bind` параметром `tip` — привязка по умолчанию обернула бы счётчик в `.tip-anchor` и сломала перебор прямых детей `.inp__chips` и правило `.inp__chips .chip--fit:last-child`. Тултип усечённой подписи самого значения поле не навешивает — это правило Chip (`ds-chip.js`).
 
 Поле-триггер + DropdownList под ним. Список: текстовые опции (одиночный выбор) ИЛИ опции с чекбоксами (`ddl__item--checkbox`, множественный). Показ выбора — три способа: сводка `.inp__summary` («Value 1, +4»), чипы в поле `.inp__chips` (при переполнении чип-счётчик «+N» — без крестика удаления), внешний стек чипов `.inp-ext` под полем. Чип берётся на размер меньше поля (M→S, S→XS). Обязательный шеврон `.inp__act--chev` (поворот в `.is-open`). Фильтрация по вводу с подсветкой `.ddl__match`. Устройство списка — см. Select · DropdownList. Размеры M / S (Table Edit — только сводкой). Состояния — как у InputText.
 Корнер-кейс: живой filter-демо (`input-autocomplete.page.js`) закрывается по клику вне/Esc; стрелочная клавиатура (↑↓/Enter активной опции) в демо ещё не реализована — только клик (13.08.2026).
@@ -601,10 +601,10 @@ css: `styles/input.css` · deps: [label-helper, checkbox, chip, tooltip, dropdow
 </div>
 ```
 
-Полная анатомия: specs/InputAutocomplete.md.
+Полная анатомия: components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md.
 
 ## InputAmountRange
-css: `styles/input-range.css` · deps: [input, label-helper, tooltip]
+css: `components/molecules/Inputs/InputRanges.css` · deps: [input, label-helper, tooltip]
 **Оси:** наполнение (пусто/одно поле/оба) · только размер M.
 **Инварианты:** поля независимы — hover/focus/error одного не влияют на другое, оба могут быть в ошибке одновременно.
 **Классы:** `.inp-range / --m` · `.inp-range--disabled` · `.inp-range__row` · `.inp-range__field` · `.inp-range__line` · `.inp__prefix` · `.inp--error / --warning / --disabled`
@@ -630,10 +630,10 @@ css: `styles/input-range.css` · deps: [input, label-helper, tooltip]
 </div>
 ```
 
-Полная анатомия: specs/InputAmountRange.md.
+Полная анатомия: components/molecules/Inputs/InputAmountRange/InputAmountRange.md.
 
 ## InputDateRange
-css: `styles/input-range.css` · deps: [input, label-helper, tooltip]
+css: `components/molecules/Inputs/InputRanges.css` · deps: [input, label-helper, tooltip]
 **Оси:** наполнение (пусто/одно поле/оба) · только размер M (мин. ширина поля 186px).
 **Инварианты:** календарь и маска ручного ввода ДД.ММ.ГГГГ самоподключаются через `ds-datepicker.js` (как InputDate; обёртка `.inp-range--date` сама по себе признак поля даты); поля независимы между собой; крестик очистки у каждой половины свой и живёт по её значению (`ds-input.js`).
 **Классы:** `.inp-range / --m / --date` · `.inp-range--disabled` · `.inp-range__row` · `.inp-range__field` · `.inp-range__line` · `.inp__prefix` · `.inp__act[aria-label="Открыть календарь"]` · `.inp--error / --warning / --disabled`
@@ -662,10 +662,10 @@ css: `styles/input-range.css` · deps: [input, label-helper, tooltip]
 </div>
 ```
 
-Полная анатомия: specs/InputDateRange.md.
+Полная анатомия: components/molecules/Inputs/InputDateRange/InputDateRange.md.
 
 ## LabelHelper
-css: `styles/label-helper.css` · deps: [checkbox, radio, switch, icon-button]
+css: `components/atoms/LabelHelper/LabelHelper.css` · deps: [checkbox, radio, switch, icon-button]
 **Оси:** независимое подключение (только Label / только Helper / оба) · выравнивание (left/right, одно на оба слота).
 **Инварианты:** не самостоятельный компонент, без своего контейнера — только в составе родителя; в списках «из чего собрано» и в поле `ds` паспорта отдельной строкой не числится (1.007). Текст Label — одна строка с многоточием; перенос до 2 строк — только модификатором `.ds-label--wrap` (узкие колонки).
 **Диагностика:** «Label и Helper выровнены в разные стороны» → привести оба к одному направлению (`--left`/`--right`) · «Ошибка не видна» → она рендерится только в Helper (`.ds-helper--error`), не в Label
@@ -689,10 +689,10 @@ css: `styles/label-helper.css` · deps: [checkbox, radio, switch, icon-button]
 
 Перенос подписи в две строки — `<span class="ds-label ds-label--wrap">…</span>` (дальше многоточие; с `--right` текст выровнен вправо).
 
-Полная анатомия: specs/LabelHelper.md.
+Полная анатомия: components/atoms/LabelHelper/LabelHelper.md.
 
 ## Link
-css: `styles/link.css` · deps: [breadcrumbs]
+css: `components/atoms/Link/Link.css` · deps: [breadcrumbs]
 **Оси:** тон (accent/muted/neutral/info/warning/error/success) · размер (M/S) · инлайн/standalone.
 **Инварианты:** тон Neutral (Breadcrumbs_2) не кликабелен — только Default.
 **Классы:** .link · .link--accent / --muted / --neutral · .link--m / --s · .link--inline · .link--with-icon · .link--truncate · .link--disabled / aria-disabled="true" · .is-hover / .is-pressed / .is-focus · .link__icon · target="_blank" · rel="noopener" · .crumbs · разделитель «/» · .crumbs__current + aria-current="page" · .crumbs__more
@@ -718,11 +718,11 @@ css: `styles/link.css` · deps: [breadcrumbs]
   <li class="crumbs__item crumbs__item--current">
     <span class="crumbs__current" aria-current="page">Договор №4521</span>
   </li>
-<!-- … полная анатомия: specs/Link.md -->
+<!-- … полная анатомия: components/atoms/Link/Link.md -->
 ```
 
 ## Modal
-css: `styles/modal.css` · js: `scripts/ds-modal.js` · deps: [button, icon-button, label-helper, checkbox, alert]
+css: `components/organisms/Modal/Modal.css` · js: `components/organisms/Modal/Modal.js` · deps: [button, icon-button, label-helper, checkbox, alert]
 **Слой ≠ геометрия:** `ds-modal.js` — единственный владелец модального слоя в ДС (скрим, портал в body, inert фона, focus trap, стек, Esc, возврат фокуса). Геометрий на нём две: `.modal` (окно по центру) и `.drawer` (панель у края — см. блок Drawer). Корень слоя ищется по `[data-layer-root], .modal, .drawer`, тело — по `.modal__body, .drawer__body`. Новая геометрия добавляется расширением этих селекторов, а не вторым рантаймом слоя.
 **Оси:** ширина (`--modal-w-2…12`, шаг колонок, 3–9 типичны) · подвал (слева опц./справа Primary обязателен) · `--body--roomy`.
 **Инварианты:** варианта в одну колонку нет и не может быть; левые+правые кнопки одновременно не используются.
@@ -758,19 +758,19 @@ css: `styles/modal.css` · js: `scripts/ds-modal.js` · deps: [button, icon-butt
     …заголовок + сообщение + <button class="btn btn--accent btn--m btn--danger"><span class="btn__label">Удалить</span></button>
   </div>
 </div>
-<!-- … полная анатомия: specs/Modal.md -->
+<!-- … полная анатомия: components/organisms/Modal/Modal.md -->
 ```
 
-**Из коробки:** подключить `scripts/ds-modal.js`. Триггер — `data-modal="<id скрима>"`, скрим лежит в разметке с `hidden`; рантайм даёт портал в body, блокировку прокрутки, inert фона, начальный фокус (`[autofocus]` → первое поле ввода тела → первый интерактивный элемент тела → крестик), focus trap, закрытие крестиком/Esc/скримом, тени шапки и подвала, стек вложенных диалогов. `data-modal-guarded` — форма с несохранённым вводом (скрим не закрывает), `data-modal-nested` — слой поверх текущего, `data-modal-close` — кнопка закрытия.
+**Из коробки:** подключить `components/organisms/Modal/Modal.js`. Триггер — `data-modal="<id скрима>"`, скрим лежит в разметке с `hidden`; рантайм даёт портал в body, блокировку прокрутки, inert фона, начальный фокус (`[autofocus]` → первое поле ввода тела → первый интерактивный элемент тела → крестик), focus trap, закрытие крестиком/Esc/скримом, тени шапки и подвала, стек вложенных диалогов. `data-modal-guarded` — форма с несохранённым вводом (скрим не закрывает), `data-modal-nested` — слой поверх текущего, `data-modal-close` — кнопка закрытия.
 
 ## NavPanel
-css: `styles/nav-panel.css` · deps: [icon-button, badge, avatar]
+css: `components/organisms/NavPanel/NavPanel.css` · deps: [icon-button, badge, avatar]
 **Оси:** режим (rail/drawer/fixed) · элементы (burger/item/item+badge/footer/divider/пункт-родитель, каждый в двух обликах Rail/Drawer) · сворачивание drawer кликом вне / Esc (только не-fixed).
 **Инварианты:** три режима — один компонент, не три разных; в Rail подпись скрыта и появляется только тултипом. **Хост-контракт — из коробки:** оборачивать `.nav` + контент в `.nav-layout` (сам компонент это уже умеет через CSS `:has()`) — `.nav` всегда `position:fixed;height:100vh`, отступ контента = ширине Rail и в Rail, и в Drawer (оверлей, не раздвигает), увеличивается до 320px только в `nav--fixed`.
 **Классы:** `.nav` · `.nav--rail` / `.nav--drawer` / `.nav--fixed` · `.nav__top` · `.nav__burger` / `.nav__pin` · `.nav__list` · `.nav__block` · `.nav__block-label` · `.nav__item` · `.nav__item--selected` / `.nav__item--disabled` · `.nav__item--acc` · `.nav__caret` · `.nav__sub` / `.nav__sub-in` · `.nav__ico` / `.nav__label` / `.nav__badge` · `.nav__footer` / `.nav__user` / `.nav__logout`
-**Диагностика:** «В Rail подпись пункта видна постоянно» → должна быть скрыта, появляться только тултипом на hover/focus · «Иконки/бургер/аватар не на одной вертикальной линии» → все три должны считаться от общей оси 28px, не выравниваться по отдельности · «Подпись пункта/футера в drawer обрезана, тултипа нет» → нужен `scripts/ds-tooltip.js` (подписи `.nav__label`/`.nav__user-*` регистрирует `ds-nav-panel.js` через `DSTooltip.truncated`)
+**Диагностика:** «В Rail подпись пункта видна постоянно» → должна быть скрыта, появляться только тултипом на hover/focus · «Иконки/бургер/аватар не на одной вертикальной линии» → все три должны считаться от общей оси 28px, не выравниваться по отдельности · «Подпись пункта/футера в drawer обрезана, тултипа нет» → нужен `components/molecules/Tooltip/Tooltip.js` (подписи `.nav__label`/`.nav__user-*` регистрирует `ds-nav-panel.js` через `DSTooltip.truncated`)
 
-Главная навигация приложения слева. Три режима: `nav--rail` (56px, иконки, тултип по hover, без тени), `nav--drawer` (320px, оверлей, тень Shadow4.0_modalform), `nav--fixed` (320px, закреплён, шов справа). Drawer (не fixed) сворачивается в rail кликом вне `.nav` или по Esc; клики внутри открытых модалок (например, смена роли из футера) панель не сворачивают. Список = «Главная» + navigation-block'и (заголовок-секция + пункты), внизу футер: строка пользователя — ссылка на личный кабинет + кнопка выхода. Иконки пунктов — глифы раздела Menu (specs/Icons.md). Пункт с тайлом-со-ссылками (`item.tile.links`) — аккордеон-родитель `.nav__item--acc`: ссылки тайла — под-пунктами `.nav__sub` (без иконок, по умолчанию свёрнуты).
+Главная навигация приложения слева. Три режима: `nav--rail` (56px, иконки, тултип по hover, без тени), `nav--drawer` (320px, оверлей, тень Shadow4.0_modalform), `nav--fixed` (320px, закреплён, шов справа). Drawer (не fixed) сворачивается в rail кликом вне `.nav` или по Esc; клики внутри открытых модалок (например, смена роли из футера) панель не сворачивают. Список = «Главная» + navigation-block'и (заголовок-секция + пункты), внизу футер: строка пользователя — ссылка на личный кабинет + кнопка выхода. Иконки пунктов — глифы раздела Menu (foundations/Icons/Icons.md). Пункт с тайлом-со-ссылками (`item.tile.links`) — аккордеон-родитель `.nav__item--acc`: ссылки тайла — под-пунктами `.nav__sub` (без иконок, по умолчанию свёрнуты).
 
 ```html
 <nav class="nav nav--rail" aria-label="Главное меню">
@@ -803,18 +803,18 @@ css: `styles/nav-panel.css` · deps: [icon-button, badge, avatar]
 <!-- Развёрнутый вид — nav--drawer (подписи видимы, тень, оверлей). Fixed: nav--fixed (шов справа, без тени). -->
 ```
 
-Пункт: Default текст/иконка `--text-secondary`; Hover заливка `--bg-table-default-hover`; Selected заливка `--bg-table-default-focus` + подпись Strong; Disabled `--text-inactive` + бейдж `badge--muted`. Высота пункта 44px, иконка 24, badge XS accent. **Бургер, пин и выход — строго `ibtn--m`**: вертикальная ось панели (28px от левого края во всех режимах) рассчитана в `styles/nav-panel.css` именно от него (`top 18 + 10 = 28`); `ibtn--s` ломает выравнивание бургера с иконками пунктов и аватаром. **Строка пользователя в футере — ссылка на личный кабинет** (`<a class="nav__user" aria-label="Открыть личный кабинет">`), ховер фоном по всей полосе (`.nav__footer:hover`); должность — заглушка по текущей роли; **разметка футера — `IBPHome.footerHTML(role)`** (единая, строки организации нет); **каретка аккордеона прижата вправо** (`margin-left:auto`, независимо от длины подписи); **кнопка `.nav__logout` открывает модалку смены ролей** (`data-modal`). Состав меню — по роли из `scripts/ibp-home.js` (`window.IBPHome`, единый каталог с тайлами главной; `tile: null` — пункт без тайла); мастер-состав групп и модель ролей (full/partial) — в specs/NavPanel.md. Полная анатомия: specs/NavPanel.md.
+Пункт: Default текст/иконка `--text-secondary`; Hover заливка `--bg-table-default-hover`; Selected заливка `--bg-table-default-focus` + подпись Strong; Disabled `--text-inactive` + бейдж `badge--muted`. Высота пункта 44px, иконка 24, badge XS accent. **Бургер, пин и выход — строго `ibtn--m`**: вертикальная ось панели (28px от левого края во всех режимах) рассчитана в `components/organisms/NavPanel/NavPanel.css` именно от него (`top 18 + 10 = 28`); `ibtn--s` ломает выравнивание бургера с иконками пунктов и аватаром. **Строка пользователя в футере — ссылка на личный кабинет** (`<a class="nav__user" aria-label="Открыть личный кабинет">`), ховер фоном по всей полосе (`.nav__footer:hover`); должность — заглушка по текущей роли; **разметка футера — `IBPHome.footerHTML(role)`** (единая, строки организации нет); **каретка аккордеона прижата вправо** (`margin-left:auto`, независимо от длины подписи); **кнопка `.nav__logout` открывает модалку смены ролей** (`data-modal`). Состав меню — по роли из `patterns/HomeRoles/ibp-home.js` (`window.IBPHome`, единый каталог с тайлами главной; `tile: null` — пункт без тайла); мастер-состав групп и модель ролей (full/partial) — в components/organisms/NavPanel/NavPanel.md. Полная анатомия: components/organisms/NavPanel/NavPanel.md.
 
-**Из коробки:** подключить `scripts/ds-nav-panel.js` — самоинициализация по `.nav`: бургер сворачивает/разворачивает панель (rail ↔ последний развёрнутый режим), пин переключает drawer ↔ fixed (aria-pressed и иконка pin-menu/unpin-menu меняются сами), подписи пунктов в rail позиционируются как тултипы (`position:fixed`, пересчёт по hover/focus, скроллу списка и resize), пункт-родитель `.nav__item--acc` (рендер — по `item.tile.links`, по умолчанию свёрнут) раскрывает/сворачивает под-список (в rail клик разворачивает панель и сразу раскрывает пункт). Закреплённый (fixed) режим живой панели (внутри `.nav-layout`) сохраняется в `localStorage` (`ibp.navpanel.mode`) и восстанавливается при переходе на другую страницу; переход в rail/drawer ключ очищает. Настройки на панели: `data-nav-collapsed-mode` (drawer|fixed — куда разворачивает бургер), `data-nav-modes="no"` (только rail-тултипы, режимы не переключаются), `data-nav-auto="no"` (не подключать). API: `DSNavPanel.bind(nav, opts)`, `bindAll(root)`, `setMode(nav, mode)`, `placeRailLabels(nav)`. Событие `ds-nav-mode` на `.nav` с `detail {mode, prev}`.
+**Из коробки:** подключить `components/organisms/NavPanel/NavPanel.js` — самоинициализация по `.nav`: бургер сворачивает/разворачивает панель (rail ↔ последний развёрнутый режим), пин переключает drawer ↔ fixed (aria-pressed и иконка pin-menu/unpin-menu меняются сами), подписи пунктов в rail позиционируются как тултипы (`position:fixed`, пересчёт по hover/focus, скроллу списка и resize), пункт-родитель `.nav__item--acc` (рендер — по `item.tile.links`, по умолчанию свёрнут) раскрывает/сворачивает под-список (в rail клик разворачивает панель и сразу раскрывает пункт). Закреплённый (fixed) режим живой панели (внутри `.nav-layout`) сохраняется в `localStorage` (`ibp.navpanel.mode`) и восстанавливается при переходе на другую страницу; переход в rail/drawer ключ очищает. Настройки на панели: `data-nav-collapsed-mode` (drawer|fixed — куда разворачивает бургер), `data-nav-modes="no"` (только rail-тултипы, режимы не переключаются), `data-nav-auto="no"` (не подключать). API: `DSNavPanel.bind(nav, opts)`, `bindAll(root)`, `setMode(nav, mode)`, `placeRailLabels(nav)`. Событие `ds-nav-mode` на `.nav` с `detail {mode, prev}`.
 
 ## NavTile
-css: styles/nav-tile.css · deps: illustration, link · 1.010
+css: components/molecules/NavTile/NavTile.css · deps: illustration, link · 1.010
 **Оси:** вариант (базовая-ссылка/со ссылками — div без hover) · состояния (default/hover/focus/disabled).
 **Инварианты:** плитка не сжимается меньше 400px; вариант «со ссылками» — `<div>`, не `<a>`.
 **Корнер-кейсы:** `.ntile__title` ellipsis, `.ntile__desc` clamp 2 строки.
 **Диагностика:** «Текст наезжает на иллюстрацию при сужении» → не опускать ширину контейнера ниже `min-width:400px` · «В варианте со ссылками кликабельна вся плитка» → контейнер должен быть `<div>`, кликабелен только `.ntile__title-link`
 Навигационная плитка главной страницы: слева название (H4 Strong) + описание (Body M), справа иллюстрация фиксированного размера 195×140, прижатая к правому краю плитки и центрированная по вертикали. Клик — переход в раздел. По умолчанию (вне сетки) 442×190px, минимальная ширина 400px; внутри `.ntile-grid` — `repeat(auto-fill, minmax(400px, 1fr))`, гэп 16px, перенос на следующий ряд автоматически (без контейнерных запросов), мин. высота 190 (полная, с паддингами — `box-sizing: border-box`; выше — только под контент, плитки в ряду не выравниваются по высоте), паддинг 32, справа фиксированные 160px под текст (чуть меньше ширины иллюстрации — текст ложится поверх, картинка не перекрывает текст), радиус `--radius-control` (8px). Состояния: hover (рамка --border-primary + elevation-2), focus (outline --primary), disabled (.is-disabled: текст --text-inactive, illu grayscale). Вариант --links: контейнер div (не <a> в <a>), название-ссылка .ntile__title-link + до 4 ссылок .link--m сразу за описанием (не внизу). НЕ дашборд — без данных и графиков.
-**Каталог тайлов:** полный список тайлов главной страницы по группам — единый источник `scripts/ibp-home.js` (`window.IBPHome`), витрина на странице («Варианты → Каталог тайлов»); сборщик экрана берёт тайлы отсюда; пункт меню без тайла — `tile: null`.
+**Каталог тайлов:** полный список тайлов главной страницы по группам — единый источник `patterns/HomeRoles/ibp-home.js` (`window.IBPHome`), витрина на странице («Варианты → Каталог тайлов»); сборщик экрана берёт тайлы отсюда; пункт меню без тайла — `tile: null`.
 ```
 <a class="ntile" href="/deals">
   <span class="illu ntile__illu" data-illu="deals" aria-hidden="true"></span>
@@ -824,10 +824,10 @@ css: styles/nav-tile.css · deps: illustration, link · 1.010
 <div class="ntile-grid"> …плитки… </div>
 ```
 
-Полная анатомия: specs/NavTile.md.
+Полная анатомия: components/molecules/NavTile/NavTile.md.
 
 ## PageHeader
-css: `styles/page-header.css` · js: `scripts/ds-menu.js` (MenuButton «Ещё действия»), `scripts/ds-actions-overflow.js` (переполнение `.phead__actions` в меню «Ещё», opt-in `data-actions-overflow`) · deps: [button, icon-button, chip, badge, context-menu, tooltip, breadcrumbs]
+css: `components/organisms/PageHeader/PageHeader.css` · js: `components/molecules/ContextMenu/ContextMenu.js` (MenuButton «Ещё действия»), `utils/ds-actions-overflow.js` (переполнение `.phead__actions` в меню «Ещё», opt-in `data-actions-overflow`) · deps: [button, icon-button, chip, badge, context-menu, tooltip, breadcrumbs]
 **Оси:** состав (title±icon±edit, chips, return, subtitle, actions±menu — 16 комбинаций) · dashboard-подложка (`--dashboard`).
 **Инварианты:** IconLeft+Title+Edit — неразрывная группа; заголовок не усекается никогда.
 **Классы:** `.phead` · `.phead__main` · `.phead__title-row` · `.phead__title-group` · `.phead__title-ico` · `.phead__title` · `.phead__edit` · `.phead__chips` · `.phead__return` · `.phead__subtitle` · `.phead__subtitle-ico` · `.phead__meta` / `.phead__meta-ico(--ok)` · `.phead__actions` · `.phead__extras` · `.phead--dashboard` · `.phead--stack`
@@ -860,10 +860,10 @@ css: `styles/page-header.css` · js: `scripts/ds-menu.js` (MenuButton «Ещё �
 </div>
 ```
 
-Title `--type-h3-strong` (28/32), усечение + Tooltip; Subtitle Body S; мета Body XS `--text-inactive`. Адаптивность: <1024 второстепенные actions → MenuButton, чипы и Return — отдельной строкой под Subtitle (`.phead__extras`); <720 `.phead--stack`. Полная анатомия: specs/PageHeader.md.
+Title `--type-h3-strong` (28/32), усечение + Tooltip; Subtitle Body S; мета Body XS `--text-inactive`. Адаптивность: <1024 второстепенные actions → MenuButton, чипы и Return — отдельной строкой под Subtitle (`.phead__extras`); <720 `.phead--stack`. Полная анатомия: components/organisms/PageHeader/PageHeader.md.
 
 ## Pagination
-css: `styles/pagination.css` · js: `scripts/ds-pagination.js` · deps: [dropdown-list, checkbox, label-helper, button, splitter]
+css: `components/molecules/Pagination/Pagination.css` · js: `components/molecules/Pagination/Pagination.js` · deps: [dropdown-list, checkbox, label-helper, button, splitter]
 **Оси:** уровень навигации (`data-tier` l/m/sm/c/xs) · раскладка (`data-layout` row/stack) · инфо-слот слева (opt).
 **Инварианты:** инфо-сводка не обрезается никогда — сокращается сам пагинатор; bulk-панель и пагинатор не взаимоисключающие.
 **Классы:** .pgn-row · .pgn-row__left / __right · .pgn · .pgn--compact · data-tier · data-layout · .pgn__pagesize · .pgn__pagesize-label · .pgn__pagesize-btn · .pgn__range · .pgn__nav · .pgn__arrow · .pgn__num · .pgn__ellipsis · .pgn-footer · .pgn-row--bulk · .pgn-bulk · .pgn-bulk__count / __actions · .pgn-info · .pgn-info__item / __warn
@@ -888,19 +888,19 @@ css: `styles/pagination.css` · js: `scripts/ds-pagination.js` · deps: [dropdow
         <button class="pgn__num">16</button>
         <button class="pgn__arrow" aria-label="Следующая страница">›</button>
       </nav>
-<!-- … полная анатомия: specs/Pagination.md -->
+<!-- … полная анатомия: components/molecules/Pagination/Pagination.md -->
 ```
 
-**Из коробки:** подключить `scripts/ds-pagination.js`. Либо разметкой — `<div data-pagination data-total="800" data-page="3" data-page-size="50"></div>` (события `pagechange` / `pagesizechange`), либо из кода — `DSPagination.footer({total,page,pageSize,onChange,onPageSizeChange})` / `.row()` / `.pager()`. Внутри: окно номеров со свёрткой «…», дропдаун размера страницы, адаптивный уровень навигации измерением.
+**Из коробки:** подключить `components/molecules/Pagination/Pagination.js`. Либо разметкой — `<div data-pagination data-total="800" data-page="3" data-page-size="50"></div>` (события `pagechange` / `pagesizechange`), либо из кода — `DSPagination.footer({total,page,pageSize,onChange,onPageSizeChange})` / `.row()` / `.pager()`. Внутри: окно номеров со свёрткой «…», дропдаун размера страницы, адаптивный уровень навигации измерением.
 
 ## Popover
-css: `styles/popover.css` · deps: [button, icon-button, link, chip, label-helper]
+css: `components/organisms/Popover/Popover.css` · deps: [button, icon-button, link, chip, label-helper]
 **Оси:** ширина (5 шагов `--pop-w-s…max`, 240–560px) · состав (header/body/footer/arrow) · размещение (floating/pinned).
 **Инварианты:** >560px — переход на Modal. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
 **Классы:** `.pop-anchor` · `.pop` · `.pop--w-s … --w-max` · `.pop--floating` / `.pop--pinned` · `.pop--top/-bottom/-left/-right` + `--start/-center/-end` · `.pop--arrow` · `.pop__head` / `.pop__foot` · `.pop__head-main` · `.pop__title` · `.pop__close` · `.pop__body` (+ `--flush`) · `.pop__foot-left` / `-right` · `.sk-line` / `.sk-group` · `role="dialog"` / `aria-modal="false"` · `aria-haspopup` / `aria-expanded` / `aria-controls`
 **Диагностика:** «В поповере не хватает места, скроллит вся страница» → сигнал заменить на Modal, не увеличивать `--pop-w-max` · «Стрелка не совпадает цветом с зоной» → проверить, к какой зоне она примыкает по стороне размещения · «Поповер из модалки не видно / не ловит клики» → рантайм старше 1.007: поповер уходил в общий слой `DSFloat` под скрим
 
-Рантайм `scripts/ds-popover.js` (out-of-box): авто-инициализация любого триггера с `data-popover="<id поповера>"` (настройки — `data-popover-placement/-align/-gap/-flip/-boundary`), императивно `DSPopover.bind(trigger, opts)` · `place(pop, trigger, opts) → {placement, align}` · `bindAll(root)` · `watchScroll(pop)` · `closeAll()`. Из коробки: 12 позиций, авто-flip стороны и выравнивания, clamp 8px, стрелка по центру триггера, один открытый поповер, 5 способов закрытия (✕ / клик вне / Esc / Tab-out / `[data-pop-close]`), тени `.is-scrolled` шапки и подвала, репозиция по resize/scroll. Экрану нужны только этот скрипт и разметка ниже.
+Рантайм `components/organisms/Popover/Popover.js` (out-of-box): авто-инициализация любого триггера с `data-popover="<id поповера>"` (настройки — `data-popover-placement/-align/-gap/-flip/-boundary`), императивно `DSPopover.bind(trigger, opts)` · `place(pop, trigger, opts) → {placement, align}` · `bindAll(root)` · `watchScroll(pop)` · `closeAll()`. Из коробки: 12 позиций, авто-flip стороны и выравнивания, clamp 8px, стрелка по центру триггера, один открытый поповер, 5 способов закрытия (✕ / клик вне / Esc / Tab-out / `[data-pop-close]`), тени `.is-scrolled` шапки и подвала, репозиция по resize/scroll. Экрану нужны только этот скрипт и разметка ниже.
 
 Нон-модальный всплывающий контейнер, привязанный к триггеру: расширенный контекстный контент — почти любой, без жёстких ограничений (текст, интерактив, формы, легенды), лишь бы умещался в шкалу ширины/высоты. В отличие от Tooltip — открывается по клику; в отличие от Modal — не блокирует страницу. Header — высота 48px, фон Pinned Default (--bg-table-pinned), заголовок Body S Strong 14px по центру вертикали + опц. чип/ссылка (gap 8px) + ✕ (без кнопок действий). Footer — тот же фон, foot-left и foot-right включаются независимо (инфо/ссылка/кнопка слева, Secondary+Primary справа). 5 ширин (240–560px), 12 позиций размещения, опциональная стрелка (по умолчанию выключена). Радиус 8px (--radius-m), тень --elevation-5, без внешнего бордера.
 
@@ -926,11 +926,11 @@ css: `styles/popover.css` · deps: [button, icon-button, link, chip, label-helpe
     <span class="pop__arrow"></span>
   </div>
 </span>
-<!-- … полная анатомия: specs/Popover.md -->
+<!-- … полная анатомия: components/organisms/Popover/Popover.md -->
 ```
 
 ## SnackBar
-css: `styles/snackbar.css` · js: `scripts/ds-notify.js` · deps: [button, link]
+css: `components/organisms/SnackBar/SnackBar.css` · js: `utils/ds-notify.js` · deps: [button, link]
 **Оси:** тон (info/warning/error/success) · состав (иконка/заголовок/текст/кнопки/ссылка).
 **Инварианты:** видимых ≤ 5, дальше — overflow-плашка «+N»; дубликаты (тон+заголовок+текст) схлопываются в один со счётчиком ×N.
 **Классы:** .snackbar-layer · .snack · .snack--info/warning/error/success · .snack--leave · .snack__icon · .snack__body · .snack__title · .snack__dupe · .snack__text · .snack__buttons · .snack__close · .snack-more · role="alert" · role="status"
@@ -971,16 +971,16 @@ css: `styles/snackbar.css` · js: `scripts/ds-notify.js` · deps: [button, link]
 
 Тона — фон/иконка/кнопки: `--info-bg/--info` · `--warning-bg/--warning` · `--error-bg-light/--error` · `--success-bg/--success`. Заголовок: Body S 400 `--text-primary`. Текст: Body XS `--text-secondary`. Кнопки несут явный тон-класс Button (`.btn--info/--warning/--error/--success`, совпадающий с тоном снека); переопределение `--primary` в `.snack__buttons` остаётся для ссылок.
 
-**Из коробки:** подключить `scripts/ds-notify.js`. `DSSnack.show({tone,title,text,buttons,dedup})` → id; слой создаётся сам (или элемент с `data-ds-snackbar`). Внутри: стек новым сверху, видимых ≤5 и плашка «+N уведомл.», авто-скрытие 5с с паузой на hover/focus, дедупликация `×N`, Esc закрывает верхний. `DSSnack.dismiss(id)` / `dismissAll()` / `expand()`.
+**Из коробки:** подключить `utils/ds-notify.js`. `DSSnack.show({tone,title,text,buttons,dedup})` → id; слой создаётся сам (или элемент с `data-ds-snackbar`). Внутри: стек новым сверху, видимых ≤5 и плашка «+N уведомл.», авто-скрытие 5с с паузой на hover/focus, дедупликация `×N`, Esc закрывает верхний. `DSSnack.dismiss(id)` / `dismissAll()` / `expand()`.
 
-Полная анатомия: specs/SnackBar.md.
+Полная анатомия: components/organisms/SnackBar/SnackBar.md.
 
 ## Entity
-css: `styles/entity.css` · deps: [avatar, chip, icon-button, button, badge]
+css: `components/organisms/Entity/Entity.css` · deps: [avatar, chip, icon-button, button, badge]
 **Оси:** размер (S 32/M 40/L 96) · ведущий элемент (иконка/аватар/чекбокс/грип) · состав (chips/actions ≤в кебаб/subheaders с клэмпом 2 строк).
 **Инварианты:** Label — только одна строка; действия — максимум 2, больше → кебаб; `.entity--interactive` выносит подложку hover наружу на 8px по вертикали и 10px по бокам (отрицательный margin) → **соседние интерактивные строки — только в `.entity-list`** (зазор 16px), у родителя списка поля ≥ 8/10px; корень может быть `<a>` (строка-ссылка, подчёркивание сбрасывает компонент).
 **Классы:** .entity-list · .entity · .entity--s/--m/--l · .entity--inline · .entity__lead · .entity__icon · .entity__main · .entity__titles · .entity__header · .entity__labelrow · .entity__label · .entity__label--truncate · .entity__prefix / __postfix · .entity__bookmark · .entity__subs · .entity__subs--single · .entity__subs-more · .entity__chips · .entity__icons · .entity__actions · .entity__drag · .entity--interactive · .entity--selected · .entity--skeleton · .entity--empty · .entity--error
-**Диагностика:** «Заголовок вылезает/переносится на 3+ строки» → `.entity__label--truncate` · «Больше двух кнопок в блоке действий теснятся» → кебаб `[data-menu]` + `scripts/ds-menu.js`, не свой список · «Subheaders занимают лишние строки» → клэмп `.entity__subs` (2 строки) + счётчик `.entity__subs-more` · «Аватар/иконка пуста в скелетоне» → `.entity--skeleton` (`.sk-surface` на иконке, сохраняет размер/радиус) · «Клик по вложенной кнопке выбирает/открывает строку» → проверить stopPropagation — элемент должен быть настоящей кнопкой, не div · «Подложка hover накрывает соседнюю строку» → строки не в `.entity-list` (свой контейнер с зазором < 16px; сенсор экранов — Б33)
+**Диагностика:** «Заголовок вылезает/переносится на 3+ строки» → `.entity__label--truncate` · «Больше двух кнопок в блоке действий теснятся» → кебаб `[data-menu]` + `components/molecules/ContextMenu/ContextMenu.js`, не свой список · «Subheaders занимают лишние строки» → клэмп `.entity__subs` (2 строки) + счётчик `.entity__subs-more` · «Аватар/иконка пуста в скелетоне» → `.entity--skeleton` (`.sk-surface` на иконке, сохраняет размер/радиус) · «Клик по вложенной кнопке выбирает/открывает строку» → проверить stopPropagation — элемент должен быть настоящей кнопкой, не div · «Подложка hover накрывает соседнюю строку» → строки не в `.entity-list` (свой контейнер с зазором < 16px; сенсор экранов — Б33)
 
 Отображение объектов (компании, люди, файлы, метрики) в тайлах, списках и формах. Ведущий элемент + Header · Label · Subheaders + Chips + IconButton-группа + действия. Собственного фона нет, тянется на ширину контейнера. Размеры: `--s` 32 · `--m` 40 · `--l` 96.
 
@@ -1017,18 +1017,18 @@ css: `styles/entity.css` · deps: [avatar, chip, icon-button, button, badge]
 </div>
 ```
 
-Ведущий: `.entity__icon` (тон `--accent`/`--neutral`) или `.av` из ДС. Состояния: `--interactive` (hover-тайл) · `--selected` (--primary-bg) · `--skeleton` (иконка `.sk-surface` + строки `.sk-line`, компонент Skeleton) · `--empty` (Label «—») · `--error` (зачёркнут, иконка error).ка + шиммер, aria-busy) · `--empty` (Label «—») · `--error` (объект удалён, зачёркнут). Label усекается (`--truncate`) + Tooltip. Действий max 2 → иначе кебаб. Полная анатомия: specs/Entity.md.
+Ведущий: `.entity__icon` (тон `--accent`/`--neutral`) или `.av` из ДС. Состояния: `--interactive` (hover-тайл) · `--selected` (--primary-bg) · `--skeleton` (иконка `.sk-surface` + строки `.sk-line`, компонент Skeleton) · `--empty` (Label «—») · `--error` (зачёркнут, иконка error).ка + шиммер, aria-busy) · `--empty` (Label «—») · `--error` (объект удалён, зачёркнут). Label усекается (`--truncate`) + Tooltip. Действий max 2 → иначе кебаб. Полная анатомия: components/organisms/Entity/Entity.md.
 
 Размер M — дефолт: `.entity` без модификатора, отдельных правил не требует.
 
 **Из коробки:** своего рантайма нет — вёрстка статична. Усечение заголовка закрывает `ds-tooltip.js` (`data-tooltip` + `data-tooltip-truncated="only"`), кебаб при >2 действиях — `ds-menu.js` (`[data-menu]` + `.menu`).
 
 ## Table
-css: `styles/table.css` · deps: [table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu]
+css: `components/organisms/Table/Table.css` · deps: [table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu]
 **Оси:** toolbar (вкл/выкл) · массовые действия (Footer) · настройка колонок (Modal --w4) · сохранённые фильтры (Split Button меню пресетов, см. TableFilter) · высота: по контенту / `--fill` (на всю свободную высоту) · положение тулбара: внутри таблицы / над таблицей (`.dtable-toolbar`).
 **Инварианты:** Table добавляет только обёртку/тулбар/липкую шапку — строки и ячейки строит TableCell; Disabled у таблицы нет. Полоса прокрутки тела — бегунок как `.ds-scroll` по обеим осям (8px, `--secondary`; вертикальный в покое скрыт, `.is-scrolling` ставит `ds-table.js`; горизонтальный виден всегда, в Firefox — только при прокрутке); своей рамки у `.dtable__body` нет.
 **Классы:** `.dtable` · `.dtable__toolbar` / `-left` / `-right` · `.dtable-toolbar` (зона над таблицей, без подложки) · `.dtable__title` / `__count` · `.dtable__body` · `.dtable--scrolled` · `.dtable--fill` · `.dtable__footer` · `.dtable__empty` / `-title` / `-text` · `aria-busy="true"` · `.tbl` / `.tbl__row` / `.tbl__row--head` (**обязателен на строке шапки внутри `.dtable__body`** — на нём липкая шапка) / `.th` / `.tc` · `.pgn-row` / `.pgn-bulk`
-**Диагностика:** «Тень под шапкой видна без скролла» → нужен класс `.dtable--scrolled`, навешиваемый по факту scrollTop>0 · «Таблица выглядит disabled целиком» → у Table такого состояния нет, приглушать нужно точечно (тулбар/инструменты) · «`--fill` не растягивает таблицу / тело не скроллится» → у родителя нет фиксированной высоты: нужен `.screen--app` (Layout), иначе flex-цепочка не ограничена · «Шапка уезжает при вертикальном скролле» → на строке шапки нет `.tbl__row--head`: липкость с 1.013 держит строка, а не `.th` (ячейке негде двигаться внутри своей grid-строки) · «Значение ячейки/подпись шапки обрезаны, тултипа нет» → нужен `scripts/ds-tooltip.js` (тултип усечения `.tc__text--truncate`/`.th__label` — делегированный `DSTooltip.truncated`)
+**Диагностика:** «Тень под шапкой видна без скролла» → нужен класс `.dtable--scrolled`, навешиваемый по факту scrollTop>0 · «Таблица выглядит disabled целиком» → у Table такого состояния нет, приглушать нужно точечно (тулбар/инструменты) · «`--fill` не растягивает таблицу / тело не скроллится» → у родителя нет фиксированной высоты: нужен `.screen--app` (Layout), иначе flex-цепочка не ограничена · «Шапка уезжает при вертикальном скролле» → на строке шапки нет `.tbl__row--head`: липкость с 1.013 держит строка, а не `.th` (ячейке негде двигаться внутри своей grid-строки) · «Значение ячейки/подпись шапки обрезаны, тултипа нет» → нужен `components/molecules/Tooltip/Tooltip.js` (тултип усечения `.tc__text--truncate`/`.th__label` — делегированный `DSTooltip.truncated`)
 
 Контейнер-организм: Toolbar (заголовок+счётчик слева, TableFilter+действия справа, опц.) → прокручиваемое тело (липкая шапка + строки TableCell) → Footer (Pagination, опц.). Своего оформления строк/ячеек не рисует. Массовые действия — существующий `.pgn-bulk` из `pagination.css` (ряд над `.pgn-row`, показывается при выборе строк).
 
@@ -1058,18 +1058,18 @@ css: `styles/table.css` · deps: [table-cell, pagination, table-filter, button, 
 
 **API `wire()`:** `{ el, selected(), sort(column, dir), refresh(), rowsChanged() }`. `DSTable.cell(row, key)` — ячейка колонки по `data-col`, в том числе скрытой настройкой (для обновления ячейки на месте). `refresh()` — чекбокс шапки + тултипы усечения. `rowsChanged()` — то же плюс переустановка исходного порядка строк: звать после того, как строка добавлена/удалена мимо рантайма (иначе `data-sort-rows` не увидит новую строку при сортировке).
 
-**Из коробки:** подключить `scripts/ds-table.js` — самоинициализация по `.dtable__body` (scroll + ResizeObserver), выставляет `.dtable--scrolled` (тень под липкой шапкой при вертикальном скролле). Императивно на динамически вставленный узел — `DSTable.bind(bodyEl)` или `DSTable.bindAll(root)`. **Изменение ширины колонки работает из коробки** — ручка `.th__resize` стоит в каждой `.th`, скрипт `scripts/tbl-resize.js` входит в `scripts/ds.js` (делегирование на document, инициализация не нужна). **Перетаскивание колонок — тоже из коробки** — перенос за подпись шапки `.th__label`, скрипт `scripts/tbl-reorder.js` входит в `scripts/ds.js` (исключаются только разделители; закреплённые переносятся — класс pin едет с колонкой, маркер не нужен). **Закрепление колонок — из коробки** — клик по `.th__pin`; удержание при скролле — нативный `position: sticky`, рантайм `scripts/tbl-pin.js` (входит в `scripts/ds.js`) считает только инсеты `left`/`right` и на скролл не подписан: left-pinned у левого края, right-pinned (хвостовой блок) у правого, примыкающий сепаратор прилипает; вставку строки рантайм ловит сам, новой строке инсеты проставляются наравне с остальными. **Строка, дописанная экраном, принимает текущую форму колонок** — `DSTable.adoptRow` (порядок после переноса, треки после ресайза, ячейка скрытой колонки — на склад строки), хук `data-col="<ключ>"` на `.th` и на `.tc`; вызывается сам на вставку строки. **Сортировка — из коробки** — `data-table` на `.tbl` + `data-sort="<ключ поля>"` на кнопке `.th__sort` (ds-table.js): цикл none → asc → desc → none, рантайм сам меняет глиф, `aria-sort`, `aria-label` и подсветку `.th--sorted`, активна одна колонка, стартовое направление читается из `aria-sort` разметки; наружу — событие `sort` с `{ column, dir }`. **Порядок строк — опция `data-sort-rows` на `.tbl`**: рантайм переставляет строки сам, тип колонки — `data-sort-type="date|number|text"` на `.th` (иначе определяется по данным), значение ячейки — `data-sort-value` на `.tc`, иначе `.tc__text`/подписи чипов (голый `textContent` не берётся: `ds-tooltip.js` дописывает в ячейку копию значения), пустые всегда внизу, `dir = none` возвращает исходный порядок, поддерево дерева едет за своим корнем. Это механизм макета (значения из DOM) — реестр на бэкенде атрибут не ставит и сортирует на сервере по событию `sort`. Выбор строк и bulk-режим — модель данных на стороне потребителя. Отдельная колонка «Действие» — кнопки видны всегда (не по hover, в отличие от `.tc__hidden`); действие массового удаления в `.pgn-bulk` обязательно дублируется на уровне строки в этой колонке.
+**Из коробки:** подключить `components/organisms/Table/Table.js` — самоинициализация по `.dtable__body` (scroll + ResizeObserver), выставляет `.dtable--scrolled` (тень под липкой шапкой при вертикальном скролле). Императивно на динамически вставленный узел — `DSTable.bind(bodyEl)` или `DSTable.bindAll(root)`. **Изменение ширины колонки работает из коробки** — ручка `.th__resize` стоит в каждой `.th`, скрипт `components/organisms/Table/TableResize.js` входит в `ds.js` (делегирование на document, инициализация не нужна). **Перетаскивание колонок — тоже из коробки** — перенос за подпись шапки `.th__label`, скрипт `components/organisms/Table/TableReorder.js` входит в `ds.js` (исключаются только разделители; закреплённые переносятся — класс pin едет с колонкой, маркер не нужен). **Закрепление колонок — из коробки** — клик по `.th__pin`; удержание при скролле — нативный `position: sticky`, рантайм `components/organisms/Table/TablePin.js` (входит в `ds.js`) считает только инсеты `left`/`right` и на скролл не подписан: left-pinned у левого края, right-pinned (хвостовой блок) у правого, примыкающий сепаратор прилипает; вставку строки рантайм ловит сам, новой строке инсеты проставляются наравне с остальными. **Строка, дописанная экраном, принимает текущую форму колонок** — `DSTable.adoptRow` (порядок после переноса, треки после ресайза, ячейка скрытой колонки — на склад строки), хук `data-col="<ключ>"` на `.th` и на `.tc`; вызывается сам на вставку строки. **Сортировка — из коробки** — `data-table` на `.tbl` + `data-sort="<ключ поля>"` на кнопке `.th__sort` (ds-table.js): цикл none → asc → desc → none, рантайм сам меняет глиф, `aria-sort`, `aria-label` и подсветку `.th--sorted`, активна одна колонка, стартовое направление читается из `aria-sort` разметки; наружу — событие `sort` с `{ column, dir }`. **Порядок строк — опция `data-sort-rows` на `.tbl`**: рантайм переставляет строки сам, тип колонки — `data-sort-type="date|number|text"` на `.th` (иначе определяется по данным), значение ячейки — `data-sort-value` на `.tc`, иначе `.tc__text`/подписи чипов (голый `textContent` не берётся: `ds-tooltip.js` дописывает в ячейку копию значения), пустые всегда внизу, `dir = none` возвращает исходный порядок, поддерево дерева едет за своим корнем. Это механизм макета (значения из DOM) — реестр на бэкенде атрибут не ставит и сортирует на сервере по событию `sort`. Выбор строк и bulk-режим — модель данных на стороне потребителя. Отдельная колонка «Действие» — кнопки видны всегда (не по hover, в отличие от `.tc__hidden`); действие массового удаления в `.pgn-bulk` обязательно дублируется на уровне строки в этой колонке.
 
-**Настройка таблицы — из коробки (стандарт для всех таблиц):** `data-table-settings` на кнопке-шестерёнке в тулбаре (`ibtn` с глифом `settings`) — рантайм `scripts/ds-table-settings.js` (входит в `ds.js`) собирает стандартную модалку «Настройка таблицы» (Modal `--w4`) по колонкам из шапки: описание Body M secondary → «Выбрать все» (indeterminate) → серый `divider` → список `[checkbox + pin + drag]` (M neutral), футер «Отменить»+«Применить» справа. Мультизакрепление, отложенное применение (снимок на открытие, «Применить» реально переставляет/скрывает/закрепляет колонки), drag за `col-item__drag` с линией вставки `--primary`. Колонки без `.th__label` (выбор/действие) — служебные, не настраиваются. Хром — `styles/table-settings.css` (`.`col-desc` `.col-list` `.col-item` `.col-item__pin`/`__drag` `.drop-before`/`.drop-after`). Перед каждым открытием модель сверяется с шапкой: булавка и перенос за подпись не откатываются «Применить». **На время сессии** — `data-table-persist="<ключ>"` на `.tbl` (колонкам нужен `data-col` на `.th`): порядок, видимость, закрепление и ширина колонок, сортировка и скролл тела пишутся в `sessionStorage` и возвращаются на загрузке в порядке колонки → сортировка (`sort` с `restored: true` — экран с пагинацией не сбрасывает страницу) → скролл. Страницу пагинации и фильтр хранит экран.
+**Настройка таблицы — из коробки (стандарт для всех таблиц):** `data-table-settings` на кнопке-шестерёнке в тулбаре (`ibtn` с глифом `settings`) — рантайм `components/organisms/Table/TableSettings.js` (входит в `ds.js`) собирает стандартную модалку «Настройка таблицы» (Modal `--w4`) по колонкам из шапки: описание Body M secondary → «Выбрать все» (indeterminate) → серый `divider` → список `[checkbox + pin + drag]` (M neutral), футер «Отменить»+«Применить» справа. Мультизакрепление, отложенное применение (снимок на открытие, «Применить» реально переставляет/скрывает/закрепляет колонки), drag за `col-item__drag` с линией вставки `--primary`. Колонки без `.th__label` (выбор/действие) — служебные, не настраиваются. Хром — `components/organisms/Table/TableSettings.css` (`.`col-desc` `.col-list` `.col-item` `.col-item__pin`/`__drag` `.drop-before`/`.drop-after`). Перед каждым открытием модель сверяется с шапкой: булавка и перенос за подпись не откатываются «Применить». **На время сессии** — `data-table-persist="<ключ>"` на `.tbl` (колонкам нужен `data-col` на `.th`): порядок, видимость, закрепление и ширина колонок, сортировка и скролл тела пишутся в `sessionStorage` и возвращаются на загрузке в порядке колонки → сортировка (`sort` с `restored: true` — экран с пагинацией не сбрасывает страницу) → скролл. Страницу пагинации и фильтр хранит экран.
 
-Полная анатомия: specs/Table.md.
+Полная анатомия: components/organisms/Table/Table.md.
 
 ## TableCell
-css: `styles/table-cell.css` · js: `scripts/ds-table.js`, `scripts/tbl-pin.js` · deps: [checkbox, chip, icon-button, button, input, dropdown-list, tooltip]
+css: `components/organisms/TableCell/TableCell.css` · js: `components/organisms/Table/Table.js`, `components/organisms/Table/TablePin.js` · deps: [checkbox, chip, icon-button, button, input, dropdown-list, tooltip]
 **Оси:** тип содержимого (текст/числа/дерево/чипы/контролы) · свёртка стека чипов в «+N» по ширине колонки (из коробки, от двух чипов) · сортировка (none→asc→desc→none, активна максимум одна колонка) · закрепление (тогл `.th__pin` из коробки; удержание — нативный `position: sticky`, инсеты `left`/`right` пишет `tbl-pin.js` при изменении состава/ширин колонок и при вставке строки, на скролл не подписан: left-pinned у левого края, right-pinned — хвостовой блок у правого; сепаратор прилипает с примыкающей закреплённой — заливка `--bg-table-default` в покое, `--bg-table-pinned` при прилипании; условие работы sticky — `min-width: max-content` у строки **прокручиваемой** таблицы (`.tbl--scroll .tbl__row`, `.dtable__body .tbl__row`), иначе grid ужмёт треки под контейнер и прокручивать будет нечего).
 **Инварианты:** интерактивные состояния — на строке, служебные — на ячейке; Disabled у таблицы нет. Подпись колонки (`.th__label`) переносится до 2 строк, затем усечение ellipsis + тултип с полным текстом. Сумма в `.tc--numbers` не переносится — многоточие + тултип (перенос только по `.tc--wrap`). Строка скрывается только атрибутом `hidden` (`.tbl__row[hidden] { display:none }`) — свой класс видимости не заводить, `display:grid` на `.tbl__row` иначе перебивает браузерный UA-стиль (тот же дефект, что чинили в Modal 1.005).
 **Классы:** `.tc` · `.tc--right` / `--center` · `.tc--numbers` · `.tc--accent` / `--pinned` · `[data-tc-count]` (чип-счётчик «+N», ставит рантайм) · `.tbl__row--hover` / `--focus` / `--selected` · `.tc--hover` / `--focus` / `--selected` · `.tc--error` / `--error-bg` / `--skeleton` · `.tc--edited` · `.tc__row` · `.tc__text` / `--truncate` · `.tc__prefix` / `__postfix` · `.tc__icon` / `--lead` · `.tc__empty` · `.tc--wrap` · `.tc__body` / `__subtext` · `.tc--tree` + `--tc-level` · `.tc__twisty` / `--leaf` · `.tc__controls` · `.tc__hidden` · `.tc--input` · `.tc--separator` / `.th--separator` (заливка `--bg-table-default`, при прилипании `--bg-table-pinned`) · `.tc__spark` · `.sk-line--caption` · `.th` · `.th__label` · `.th__tools` · `.th__sort` / `.th--sorted` · `.th__pin` / `.th--pinned` · `data-pin-side` (left/right) · `.th__resize` / `.th--resizing` · `.th--dragging` / `.tc--dragging` · `.tbl__guide` / `.tbl--resizing` / `.tbl--reordering` · `.th--select` / `.tc--select` · `.th__action` · `aria-sort` / `aria-pressed` / `aria-busy` / `aria-expanded` · `.tbl` / `.tbl--scroll` / `.tbl__row`
-**Диагностика:** «Чипы в ячейке уезжают под соседнюю колонку» → не подключён `scripts/ds-table.js` или на `.tbl` нет `data-table`: свёртку в «+N» делает рантайм таблицы, сам чип несжимаем (`.chip--fit`) · «Счётчик «+N» при двух чипах» → колонка узкая: два кода по 3 символа в Body S ≈ 104px + 32px паддингов ячейки, под два чипа нужно от 150px · «Hover подсвечивает только одну ячейку, а не строку» → фон должен задаваться через `.tbl__row:hover > .tc`, не точечным классом на ячейке · «Ширина колонки выбора скачет между шапкой и строками» → класс `.th--select`/`.tc--select` должен стоять на всех ячейках колонки одинаково · «Закреплённые колонки дрожат при горизонтальном скролле — уезжают и возвращаются» → удержание считается на событии `scroll`, а не через `position: sticky`: компоновщик применяет скролл раньше JS-обработчика, коррекция всегда на кадр позади. На Windows дискретное колесо это скрывает, на трекпаде macOS видно на каждом кадре (инцидент 04.09.2026, TableCell 2.013) · «Закрепление не работает вовсе» → строка не шире скроллпорта: нет `min-width: max-content` у `.tbl--scroll .tbl__row` / `.dtable__body .tbl__row`
+**Диагностика:** «Чипы в ячейке уезжают под соседнюю колонку» → не подключён `components/organisms/Table/Table.js` или на `.tbl` нет `data-table`: свёртку в «+N» делает рантайм таблицы, сам чип несжимаем (`.chip--fit`) · «Счётчик «+N» при двух чипах» → колонка узкая: два кода по 3 символа в Body S ≈ 104px + 32px паддингов ячейки, под два чипа нужно от 150px · «Hover подсвечивает только одну ячейку, а не строку» → фон должен задаваться через `.tbl__row:hover > .tc`, не точечным классом на ячейке · «Ширина колонки выбора скачет между шапкой и строками» → класс `.th--select`/`.tc--select` должен стоять на всех ячейках колонки одинаково · «Закреплённые колонки дрожат при горизонтальном скролле — уезжают и возвращаются» → удержание считается на событии `scroll`, а не через `position: sticky`: компоновщик применяет скролл раньше JS-обработчика, коррекция всегда на кадр позади. На Windows дискретное колесо это скрывает, на трекпаде macOS видно на каждом кадре (инцидент 04.09.2026, TableCell 2.013) · «Закрепление не работает вовсе» → строка не шире скроллпорта: нет `min-width: max-content` у `.tbl--scroll .tbl__row` / `.dtable__body .tbl__row`
 
 Ячейка таблицы (`.tc`) и ячейка шапки (`.th`, TableHeader). Универсальный контейнер контента строки: текст, дерево, чипы, контролы, редактируемые поля. Фона нет — наследует фон строки; скругления даёт контейнер таблицы. Нет плотностей — высота строки фикс. **48px**, растёт только у `.tc--wrap`. Каждая строка начинается/заканчивается структурной ячейкой-разделителем `.tc--separator`/`.th--separator` (8px, не выбирается как тип контента). Внутрь ставятся компоненты ДС (Checkbox, Chip, IconButton, Input S) — своих аналогов ячейка не рисует.
 
@@ -1093,12 +1093,12 @@ css: `styles/table-cell.css` · js: `scripts/ds-table.js`, `scripts/tbl-pin.js` 
 </div>
 ```
 
-Значение всегда в `.tc__row` (иконка слева · prefix · text · postfix · иконка справа — каждый независимая опция; иконки 16px стоят вплотную к тексту, не у границы). Выравнивание: слева / справа (по центру — только служебное для контролов). Числа: `.tc--numbers` — один класс даёт и правое выравнивание, и tabular-nums; разряды через Intl.NumberFormat('ru-RU'). Вторая строка — опция любого типа: `.tc__body` > `.tc__row` + `.tc__subtext`. Дерево: `--tree` (`.tc__twisty` + `--tc-level`, лист `.tc__twisty--leaf`), раскрывает дочерние строки. Чекбокс — компонент Checkbox `.cb--no-content` (галочка/минус — инлайн-глиф, не иконка 24px); в колонке выбора чекбокс шапки центрирован по колонке над чекбоксами строк, инструменты шапки прижаты к правому краю абсолютом, колонке ставится порог ширины классом `.th--select`/`.tc--select` (124px) на всех её ячейках. Чипы/кнопки в `.tc__controls`. Динамика показателя — слот `.tc__spark` (72×24px, `--tc-spark-w` меняет ширину), внутрь ставится Chart с `type: 'spark'`: без осей, легенды и тултипа, значение всегда рядом отдельной колонкой. Редактируемая ячейка: `.tc--input` + `.inp.inp--s` (Input «Table Edit»); в покое поле без рамки, иконки действий (очистка/календарь/шеврон, 16px, тон `--secondary`) видны только в фокусе строки. `.tc__hidden` — скрытые действия: настройка поверх ячейки, появляются по hover/focus строки. Усечение по умолчанию вкл. (`.tc__text--truncate` + floating Tooltip по scrollWidth>clientWidth); выкл. → `.tc--wrap`. Подпись шапки (`.th__label`) переносится до 2 строк (line-clamp), затем ellipsis + тултип с полным текстом. Контент не выходит за границу ячейки: любой элемент `.tc__row` сжимается (`min-width: 0`) и усекается внутри колонки — у Chip подпись уходит в многоточие в самой плашке, а не выезжает под соседнюю колонку (её непрозрачный фон обрезал бы текст без многоточия). Идентификатор (номер сделки, ИНН) выравнивается по ЛЕВОМУ краю как текст; `.tc--numbers` — только для величин, которые сравнивают по столбцу. Фон колонки: `--accent` / `--pinned` (закреплённая; удержание при скролле — нативный `position: sticky`, инсеты `left`/`right` пишет рантайм `tbl-pin.js`: left-pinned у левого края, right-pinned — хвостовой блок у правого). Сепаратор — структурная ячейка 8px с заливкой `--bg-table-default`; прилипая к закреплённой колонке, красится `--bg-table-pinned` (`data-pin-side` на сепараторе, по факту прилипания) и сливается с ней в сплошную полосу; несёт z-index закреплённой колонки (рисуется поверх проезжающих ячеек) и наследует её hover/focus/selected. Тень-разделитель блока — только на граничной колонке (`data-pin-side="left"`→справа, `"right"`→слева), внутренние колонки — без тени. `min-width: max-content` у строки **прокручиваемой** таблицы (`.tbl--scroll .tbl__row`, `.dtable__body .tbl__row`) — условие работы закрепления: строка обязана быть шире скроллпорта, иначе grid ужимает треки под контейнер и sticky ездить не от чего. Состояния Hover/Focus/Selected — на строке (`.tbl__row--hover/--focus/--selected`), красят ВСЕ ячейки строки включая разделители; служебные Error(+`--error-bg`)/Empty/Skeleton/EditMark(`--edited`, правый верхний угол) — на ячейке. **Disabled у таблицы нет.** Шапка — Body S: `.th__label` · `.th__tools` (`.th__pin` pin→pin-filled, `.th__sort` arrow-up-down→arrow-narrow-up/down; обе IconButton neutral S, активные `--secondary-dark`) · `.th__action` (кебаб по hover), `aria-sort`/`aria-pressed`. Настройка колонок: ширина — ручка `.th__resize` на правой границе шапки (9px, минимум 96px, клавиши ← → шагом 16px); линия проявляется по наведению на любое место шапки колонки (`--secondary`), при захвате — `--secondary-dark`; не отключаемая опция — есть у каждой колонки шапки всегда и работает функционально из коробки (`scripts/tbl-resize.js`, делегирование на document, скрипт входит в `scripts/ds.js` — на экране подключать отдельно не нужно); свободное место справа забирает замыкающий разделитель (`grid: 8px … minmax(8px,1fr)`), строка всегда тянется до правой границы таблицы без пустого поля; порядок — ТОЛЬКО перетаскивание за `.th__label` (порог 4px, `.th--dragging`/`.tc--dragging` + линия `.tbl__guide`); переносятся все колонки, кроме разделителей и закреплённых, автоматически — маркер не нужен (`scripts/tbl-reorder.js` в `ds.js`); кнопок/меню, дублирующих перенос, у колонки нет. Полная анатомия: specs/TableCell.md.
+Значение всегда в `.tc__row` (иконка слева · prefix · text · postfix · иконка справа — каждый независимая опция; иконки 16px стоят вплотную к тексту, не у границы). Выравнивание: слева / справа (по центру — только служебное для контролов). Числа: `.tc--numbers` — один класс даёт и правое выравнивание, и tabular-nums; разряды через Intl.NumberFormat('ru-RU'). Вторая строка — опция любого типа: `.tc__body` > `.tc__row` + `.tc__subtext`. Дерево: `--tree` (`.tc__twisty` + `--tc-level`, лист `.tc__twisty--leaf`), раскрывает дочерние строки. Чекбокс — компонент Checkbox `.cb--no-content` (галочка/минус — инлайн-глиф, не иконка 24px); в колонке выбора чекбокс шапки центрирован по колонке над чекбоксами строк, инструменты шапки прижаты к правому краю абсолютом, колонке ставится порог ширины классом `.th--select`/`.tc--select` (124px) на всех её ячейках. Чипы/кнопки в `.tc__controls`. Динамика показателя — слот `.tc__spark` (72×24px, `--tc-spark-w` меняет ширину), внутрь ставится Chart с `type: 'spark'`: без осей, легенды и тултипа, значение всегда рядом отдельной колонкой. Редактируемая ячейка: `.tc--input` + `.inp.inp--s` (Input «Table Edit»); в покое поле без рамки, иконки действий (очистка/календарь/шеврон, 16px, тон `--secondary`) видны только в фокусе строки. `.tc__hidden` — скрытые действия: настройка поверх ячейки, появляются по hover/focus строки. Усечение по умолчанию вкл. (`.tc__text--truncate` + floating Tooltip по scrollWidth>clientWidth); выкл. → `.tc--wrap`. Подпись шапки (`.th__label`) переносится до 2 строк (line-clamp), затем ellipsis + тултип с полным текстом. Контент не выходит за границу ячейки: любой элемент `.tc__row` сжимается (`min-width: 0`) и усекается внутри колонки — у Chip подпись уходит в многоточие в самой плашке, а не выезжает под соседнюю колонку (её непрозрачный фон обрезал бы текст без многоточия). Идентификатор (номер сделки, ИНН) выравнивается по ЛЕВОМУ краю как текст; `.tc--numbers` — только для величин, которые сравнивают по столбцу. Фон колонки: `--accent` / `--pinned` (закреплённая; удержание при скролле — нативный `position: sticky`, инсеты `left`/`right` пишет рантайм `tbl-pin.js`: left-pinned у левого края, right-pinned — хвостовой блок у правого). Сепаратор — структурная ячейка 8px с заливкой `--bg-table-default`; прилипая к закреплённой колонке, красится `--bg-table-pinned` (`data-pin-side` на сепараторе, по факту прилипания) и сливается с ней в сплошную полосу; несёт z-index закреплённой колонки (рисуется поверх проезжающих ячеек) и наследует её hover/focus/selected. Тень-разделитель блока — только на граничной колонке (`data-pin-side="left"`→справа, `"right"`→слева), внутренние колонки — без тени. `min-width: max-content` у строки **прокручиваемой** таблицы (`.tbl--scroll .tbl__row`, `.dtable__body .tbl__row`) — условие работы закрепления: строка обязана быть шире скроллпорта, иначе grid ужимает треки под контейнер и sticky ездить не от чего. Состояния Hover/Focus/Selected — на строке (`.tbl__row--hover/--focus/--selected`), красят ВСЕ ячейки строки включая разделители; служебные Error(+`--error-bg`)/Empty/Skeleton/EditMark(`--edited`, правый верхний угол) — на ячейке. **Disabled у таблицы нет.** Шапка — Body S: `.th__label` · `.th__tools` (`.th__pin` pin→pin-filled, `.th__sort` arrow-up-down→arrow-narrow-up/down; обе IconButton neutral S, активные `--secondary-dark`) · `.th__action` (кебаб по hover), `aria-sort`/`aria-pressed`. Настройка колонок: ширина — ручка `.th__resize` на правой границе шапки (9px, минимум 96px, клавиши ← → шагом 16px); линия проявляется по наведению на любое место шапки колонки (`--secondary`), при захвате — `--secondary-dark`; не отключаемая опция — есть у каждой колонки шапки всегда и работает функционально из коробки (`components/organisms/Table/TableResize.js`, делегирование на document, скрипт входит в `ds.js` — на экране подключать отдельно не нужно); свободное место справа забирает замыкающий разделитель (`grid: 8px … minmax(8px,1fr)`), строка всегда тянется до правой границы таблицы без пустого поля; порядок — ТОЛЬКО перетаскивание за `.th__label` (порог 4px, `.th--dragging`/`.tc--dragging` + линия `.tbl__guide`); переносятся все колонки, кроме разделителей и закреплённых, автоматически — маркер не нужен (`components/organisms/Table/TableReorder.js` в `ds.js`); кнопок/меню, дублирующих перенос, у колонки нет. Полная анатомия: components/organisms/TableCell/TableCell.md.
 
-**Из коробки:** подключить `scripts/ds-table.js` и поставить `data-table` на `.tbl`. **Свёртка чипов «+N»** — правило ячейки, работает само: два и более чипа в одном контейнере (`.tc__row`, `.tc__controls`) считаются по ширине колонки, не поместившиеся получают `hidden`, последним встаёт чип-счётчик `[data-tc-count]` (тот же размер и форма, `.chip--fit`) с тултипом со списком скрытых значений; один чип не сворачивается — усекает подпись; не влезает даже один — остаётся только счётчик; подпись «+N» не попадает в ключ сортировки; пересчёт на `wire()`/`refresh()`/`rowsChanged()` и по `ResizeObserver` (ручка `.th__resize`, перенос колонок). Делегированием: сортировка по `[data-sort]` (none→asc→desc; глиф, `aria-sort`, `aria-label` и `.th--sorted` красит рантайм; значение `data-sort` — ключ поля, оно же в событии `sort`; порядок строк — опция `data-sort-rows`, см. Table), дерево по `.tc__twisty` (`[data-node]`/`[data-parent]`, прячет всё поддерево), выбор строк чекбоксами с промежуточным состоянием в шапке (событие `rowselect`), фокус строки — шапку рантайм узнаёт по наличию `.th` внутри строки, класс `tbl__row--head` необязателен, тултип на усечённом тексте — `.tc__text--truncate` и `.th__label`, только при реальном усечении, с переносом полного значения (нужен `ds-tooltip.js`). Подписи чипов таблица не обслуживает (с 2.018) — усечённый чип объясняет себя сам, правилом Chip (`ds-chip.js`), одинаково внутри ячейки и вне её.
+**Из коробки:** подключить `components/organisms/Table/Table.js` и поставить `data-table` на `.tbl`. **Свёртка чипов «+N»** — правило ячейки, работает само: два и более чипа в одном контейнере (`.tc__row`, `.tc__controls`) считаются по ширине колонки, не поместившиеся получают `hidden`, последним встаёт чип-счётчик `[data-tc-count]` (тот же размер и форма, `.chip--fit`) с тултипом со списком скрытых значений; один чип не сворачивается — усекает подпись; не влезает даже один — остаётся только счётчик; подпись «+N» не попадает в ключ сортировки; пересчёт на `wire()`/`refresh()`/`rowsChanged()` и по `ResizeObserver` (ручка `.th__resize`, перенос колонок). Делегированием: сортировка по `[data-sort]` (none→asc→desc; глиф, `aria-sort`, `aria-label` и `.th--sorted` красит рантайм; значение `data-sort` — ключ поля, оно же в событии `sort`; порядок строк — опция `data-sort-rows`, см. Table), дерево по `.tc__twisty` (`[data-node]`/`[data-parent]`, прячет всё поддерево), выбор строк чекбоксами с промежуточным состоянием в шапке (событие `rowselect`), фокус строки — шапку рантайм узнаёт по наличию `.th` внутри строки, класс `tbl__row--head` необязателен, тултип на усечённом тексте — `.tc__text--truncate` и `.th__label`, только при реальном усечении, с переносом полного значения (нужен `ds-tooltip.js`). Подписи чипов таблица не обслуживает (с 2.018) — усечённый чип объясняет себя сам, правилом Chip (`ds-chip.js`), одинаково внутри ячейки и вне её.
 
 ## RiskMetric
-css: `styles/riskmetric.css` · deps: [chip, popover, icon-button, divider] · runtime: `scripts/ds-riskmetric.js` (+ `ds-popover.js`)
+css: `components/organisms/RiskMetric/RiskMetric.css` · deps: [chip, popover, icon-button, divider] · runtime: `components/organisms/RiskMetric/RiskMetric.js` (+ `ds-popover.js`)
 **Инварианты:** композиция, не самостоятельный компонент — Chip+`.chip__info`+Popover; цвет чипа — только Local-токены по зоне.
 **Классы:** `.chip.chip--rounded.chip--s` · `.chip--success / --warning` · `.chip--error-solid / --dark-solid` · `.chip--outline` · `.chip__label` · `.chip__info` · `.pop-anchor` · `.pop.pop--w-m` · `.rm-blocks` · `.rm-block / .rm-block__row / .rm-block__label / .rm-block__value` · `.rm-field / .rm-field__label / .rm-field__value` · `aria-busy="true"` (на `.pop__body`) · `role="alert"` (на `.pop__body`)
 **Диагностика:** «Клик по информеру не открывает Popover» → проверить, что `.chip__info` — настоящий `<button>`, привязанный к Popover через `ds-popover.js` · «Цвет чипа не совпадает с зоной риска» → сверить с таблицей алиасов Local-токенов, не задавать цвет напрямую
@@ -1126,11 +1126,11 @@ css: `styles/riskmetric.css` · deps: [chip, popover, icon-button, divider] · r
     </div>
   </div>
 </span>
-<!-- полная анатомия: specs/RiskMetric.md -->
+<!-- полная анатомия: components/organisms/RiskMetric/RiskMetric.md -->
 ```
 
 ## Skeleton
-css: `styles/skeleton.css`
+css: `components/atoms/Skeleton/Skeleton.css`
 **Оси:** форма (Line/Block/Surface) · высота строки (title 20/body 16/caption 12) · форма блока (rect/rounded/circle) · состав (одиночная/`.sk-group`/`.sk-row`/`.sk-surface`).
 **Инварианты:** повторяет геометрию будущего контента; не для короткой мгновенной паузы — там Spinner.
 **Классы:** `.sk-line` · `.sk-line--title` / `--caption` · `.sk-block` · `.sk-block--rounded` / `--circle` · `.sk-group` · `.sk-row` · `.sk-surface` · `aria-hidden="true"` · `aria-busy="true"`
@@ -1146,11 +1146,11 @@ css: `styles/skeleton.css`
     <span class="sk-line" style="--sk-w:72%" aria-hidden="true"></span>
   </div>
 </div>
-<!-- … полная анатомия: specs/Skeleton.md -->
+<!-- … полная анатомия: components/atoms/Skeleton/Skeleton.md -->
 ```
 
 ## Spinner
-css: `styles/spinner.css`
+css: `components/atoms/Spinner/Spinner.css`
 **Оси:** тон (accent/success/warning/error/info/system/inverse) · размер (XS/S/M/L) · состав (кольцо/кольцо+подпись row/stack/оверлей).
 **Инварианты:** для неизвестной длительности; известное значение — ProgressBar.
 **Корнер-кейсы:** `.spin-group__label`/`.spin-overlay__label` overflow-wrap.
@@ -1170,11 +1170,11 @@ css: `styles/spinner.css`
   <span class="spin spin--l spin--accent" aria-hidden="true"></span>
   <span class="spin-overlay__label">Обновление…</span>
 </div>
-<!-- … полная анатомия: specs/Spinner.md -->
+<!-- … полная анатомия: components/atoms/Spinner/Spinner.md -->
 ```
 
 ## ProgressBar
-css: `styles/progress-bar.css` · deps: [label-helper]
+css: `components/atoms/ProgressBar/ProgressBar.css` · deps: [label-helper]
 **Оси:** размер (S 4/M 6/L 8px) · состав (bare/заголовок+значение/+хелпер/плавающее значение/компактный) · тон · состояние (default/empty/complete/indeterminate).
 **Инварианты:** track всегда нейтрален, цвет несёт только Fill; sliver — только явно, не на 0% автоматически.
 **Классы:** `.pbar` · `.pbar--s / --m / --l` · `.pbar--accent/--success/--warning/--error/--info/--system` · `.pbar--indeterminate` · `.pbar--floating` · `.pbar--compact` · `.pbar__head` · `.pbar__label` / `.pbar__value` · `.pbar__track` · `.pbar__fill` · `.pbar__fill--sliver` · `.pbar__marker` · `.pbar__helper` · `.pbar__track--stack` / `.pbar__seg-stack` · `role="progressbar"` / `aria-valuenow/min/max/text`
@@ -1213,13 +1213,13 @@ css: `styles/progress-bar.css` · deps: [label-helper]
 <div class="pbar pbar--accent pbar--indeterminate" role="progressbar" aria-valuetext="Загрузка">
   <div class="pbar__track"><div class="pbar__fill"></div></div>
 </div>
-<!-- … полная анатомия: specs/ProgressBar.md -->
+<!-- … полная анатомия: components/atoms/ProgressBar/ProgressBar.md -->
 ```
 
 Размер M — дефолт: `.pbar` без модификатора, отдельных правил не требует.
 
 ## Radiobutton
-css: `styles/radio.css` · deps: [label-helper]
+css: `components/atoms/Radiobutton/Radiobutton.css` · deps: [label-helper]
 **Оси:** состояние выбора (unselected/selected) · интерактивное состояние (default/hover/focus/pressed/disabled/error) · состав (label/helper/icon-only).
 **Инварианты:** только в составе группы, не как единственная опция.
 **Классы:** .rb · .rb--unselected / --selected · .rb--hover / --focus / --pressed · .rb--error · .rb--disabled · .rb--no-content · .rb__input · .rb__box · .rb__mark · .rb__content · .rb__label · .rb__req · .ds-helper.ds-helper--left · .rb-group · .rb-group--horizontal · .rb-group__title · .rb-group__items · .rb-group--indent · .rb-group__error · role="radiogroup" / aria-labelledby / aria-describedby
@@ -1244,17 +1244,17 @@ css: `styles/radio.css` · deps: [label-helper]
   </div>
 </div>
 <div class="rb-group" role="radiogroup" aria-labelledby="grp-t2" aria-describedby="grp-e2">
-<!-- … полная анатомия: specs/Radiobutton.md -->
+<!-- … полная анатомия: components/atoms/Radiobutton/Radiobutton.md -->
 ```
 
 Классы состояния (`rb--unselected` / `--selected`) собственных правил в CSS не имеют — их вешает рантайм; в стартовом сниппете не нужны.
 
 ## ReadOnlyField
-css: `styles/read-only-field.css` · js: `scripts/ds-copy.js` (`DSCopy.write`/`.flash` — копирование значения по иконке-действию `copy`) · `scripts/ds-readonlyfield.js` + `scripts/ds-tooltip.js` («усечено → тултип» значения/аффиксов, механизм `DSTooltip.truncated`) · deps: [label-helper, chip, link, tooltip, segment-control, splitter]
+css: `components/molecules/ReadOnlyField/ReadOnlyField.css` · js: `utils/ds-copy.js` (`DSCopy.write`/`.flash` — копирование значения по иконке-действию `copy`) · `components/molecules/ReadOnlyField/ReadOnlyField.js` + `components/molecules/Tooltip/Tooltip.js` («усечено → тултип» значения/аффиксов, механизм `DSTooltip.truncated`) · deps: [label-helper, chip, link, tooltip, segment-control, splitter]
 **Оси:** тип значения (текст/чипы/ссылка) · доп. слоты (иконка слева/справа, префикс/постфикс, скрытие лейбла, выравнивание — независимы, любая комбинация).
 **Инварианты:** аффиксы — только у типа «текст».
-**Диагностика:** «Ссылка-значение окрашена в error/success» → семантический цвет применяется только к text/chips, ссылка держит свой цвет Link · «Префикс распирает строку» → должен обрезаться эллипсисом при `max-width:12ch`, не расти · «Длинное значение обрезано, тултипа нет» → не подключён `scripts/ds-readonlyfield.js` (или `ds-tooltip.js`); значение (`.rof__value`, одна строка / N строк) и аффиксы (`.rof__affix`) объясняют себя по наведению/фокусу
-**Из коробки:** подключить `scripts/ds-readonlyfield.js` (входит в `ds.js`); копирование по иконке — `scripts/ds-copy.js`, отдельно.
+**Диагностика:** «Ссылка-значение окрашена в error/success» → семантический цвет применяется только к text/chips, ссылка держит свой цвет Link · «Префикс распирает строку» → должен обрезаться эллипсисом при `max-width:12ch`, не расти · «Длинное значение обрезано, тултипа нет» → не подключён `components/molecules/ReadOnlyField/ReadOnlyField.js` (или `ds-tooltip.js`); значение (`.rof__value`, одна строка / N строк) и аффиксы (`.rof__affix`) объясняют себя по наведению/фокусу
+**Из коробки:** подключить `components/molecules/ReadOnlyField/ReadOnlyField.js` (входит в `ds.js`); копирование по иконке — `utils/ds-copy.js`, отдельно.
 
 Поле для отображения данных без возможности редактирования. Аффиксы (prefix/postfix) и цвет значения — только у типа «Текст»; чипам доступны иконки слева/справа, лейбл и хэлпер. Чип-счётчик «+N» обязан иметь тултип со списком скрытых чипов.
 
@@ -1273,10 +1273,10 @@ css: `styles/read-only-field.css` · js: `scripts/ds-copy.js` (`DSCopy.write`/`.
 </div>
 ```
 
-Полная анатомия: specs/ReadOnlyField.md.
+Полная анатомия: components/molecules/ReadOnlyField/ReadOnlyField.md.
 
 ## SegmentControl
-css: `styles/segment-control.css` · js: `scripts/ds-tabs.js` · deps: [tab, button, button-group, badge]
+css: `components/molecules/SegmentControl/SegmentControl.css` · js: `components/molecules/Tab/Tab.js` · deps: [tab, button, button-group, badge]
 **Оси:** размер (M/S/XS) · состав сегмента (текст/иконка+текст/иконка/+счётчик) · fullwidth.
 **Инварианты:** 2–6 сегментов — больше замена на Select. · Полная высота контрола = высота сегмента + обводка трека (padding) сверху и снизу, совпадает с Button того же размера. M: 34+2×3=40 · S: 28+2×2=32 · XS: 20+2×2=24. `--seg-h` — высота внутреннего сегмента, не контрола.
 **Классы:** .segctrl · .segctrl--s / --xs · .segctrl--fullwidth · .segctrl--disabled / [aria-disabled="true"] · .segctrl__thumb · .segctrl__item · .segctrl__item--icon-only · .segctrl__label · [aria-checked="true"] · [aria-disabled="true"] · .badge.badge--text.badge--{s\
@@ -1302,12 +1302,12 @@ css: `styles/segment-control.css` · js: `scripts/ds-tabs.js` · deps: [tab, but
 
 Размер M — дефолт: `.segctrl` без модификатора, отдельных правил не требует; компактные — `.segctrl--s` / `--xs`.
 
-**Из коробки:** подключить `scripts/ds-tabs.js` и поставить `data-tabs` / `data-segctrl` на контейнер — рантайм даёт roving tabindex, стрелки, Home/End, пропуск отключённых; у сегмент-контрола сам измеряет и двигает индикатор, у табов подскролливает выбранный. API: `DSTabs.tabs(el,{onChange})`, `DSTabs.segment(el,{onChange})`, `DSTabs.positionThumb(el)`.
+**Из коробки:** подключить `components/molecules/Tab/Tab.js` и поставить `data-tabs` / `data-segctrl` на контейнер — рантайм даёт roving tabindex, стрелки, Home/End, пропуск отключённых; у сегмент-контрола сам измеряет и двигает индикатор, у табов подскролливает выбранный. API: `DSTabs.tabs(el,{onChange})`, `DSTabs.segment(el,{onChange})`, `DSTabs.positionThumb(el)`.
 
-Полная анатомия: specs/SegmentControl.md.
+Полная анатомия: components/molecules/SegmentControl/SegmentControl.md.
 
 ## DropdownList
-css: `styles/dropdown-list.css` · deps: [checkbox, label-helper, spinner] · runtime: `scripts/ds-dropdownlist.js`
+css: `components/molecules/DropdownList/DropdownList.css` · deps: [checkbox, label-helper, spinner] · runtime: `components/molecules/DropdownList/DropdownList.js`
 **Инварианты:** одиночный выбор — заливка строки; множественный — только чекбокс, без заливки; «Выбрать всё» всегда первая строка; после `onSelect` список сам зовёт `DSInput.sync` для поля-триггера (1.014) — иначе крестик очистки не появился бы, значение ставит потребитель присваиванием.
 **Классы:** .ddl · .ddl--scroll · .ddl--floating · .ddl__item · .ddl__item--checkbox · .ddl__item--wrap · .ddl__item--action · .ddl__item-check / -icon / -body / -label / -trail · .ds-helper · .ddl__match · .ddl__group · .ddl__divider · .ddl__state (--loading / --empty / --error) · .is-hover / .is-focus / .is-active · role=listbox / option · aria-selected / -checked / -disabled / -activedescendant
 **Диагностика:** «Список открылся с подсвеченной первой строкой» → рантайм старше 1.010: `open()` активировал первую опцию, теперь активной на открытии нет · «В множественном выборе строка красится целиком» → снять фон, состояние должен нести только чекбокс (`.ddl__item--checkbox`) · «Список у́же текста своих опций» → длинная подпись должна обрезаться эллипсисом, список не растягивается сверх `--ddl-max` · «Поле в модалке не открывает список / список не ловит клики» → рантайм старше 1.009: список уходил в общий слой `DSFloat` (z-index 40) под скрим модалки (z-index 1000) и под её `inert` · «Длинный хелпер опции уходит за край списка» → стили старше 1.015: хелпер держался в одну строку (`nowrap`); теперь переносится, опция растёт по высоте
@@ -1339,10 +1339,10 @@ css: `styles/dropdown-list.css` · deps: [checkbox, label-helper, spinner] · ru
 </div>
 ```
 
-Полная анатомия: specs/DropdownList.md.
+Полная анатомия: components/molecules/DropdownList/DropdownList.md.
 
 ## Splitter
-css: `styles/splitter.css` · js: `scripts/ds-splitter.js` · deps: [button]
+css: `components/molecules/Splitter/Splitter.css` · js: `components/molecules/Splitter/Splitter.js` · deps: [button]
 **Оси:** ориентация (vertical col-resize / horizontal row-resize) · состояния (default/hover/move/focus/disabled).
 **Инварианты:** мин/макс панелей (25%/75%) — ни одна не схлопывается.
 **Диагностика:** «Курсор resize пропадает при быстром драге» → должен держаться класс `body.spl-dragging`/`spl-dragging-h` на всё время перетаскивания · «Сплиттер не реагирует на клик рядом с линией» → зона захвата 11px, а не 1px видимой линии
@@ -1361,12 +1361,12 @@ css: `styles/splitter.css` · js: `scripts/ds-splitter.js` · deps: [button]
 </div>
 ```
 
-**Из коробки:** подключить `scripts/ds-splitter.js` и поставить `data-splitter` на `.splitpane` (`data-min` / `data-max` / `data-initial`) — рантайм даёт перетаскивание, min/max, стрелки, Home/End, `aria-value*`, сброс двойным кликом. Из кода: `DSSplitter.pane({orientation,min,max,initial,onChange})` или `DSSplitter.wire(splEl)` для готовой разметки. Композиция `.splitpane*` — в `styles/splitter.css`.
+**Из коробки:** подключить `components/molecules/Splitter/Splitter.js` и поставить `data-splitter` на `.splitpane` (`data-min` / `data-max` / `data-initial`) — рантайм даёт перетаскивание, min/max, стрелки, Home/End, `aria-value*`, сброс двойным кликом. Из кода: `DSSplitter.pane({orientation,min,max,initial,onChange})` или `DSSplitter.wire(splEl)` для готовой разметки. Композиция `.splitpane*` — в `components/molecules/Splitter/Splitter.css`.
 
-Полная анатомия: specs/Splitter.md.
+Полная анатомия: components/molecules/Splitter/Splitter.md.
 
 ## SubTab
-css: `styles/sub-tab.css` · js: `scripts/ds-tabs.js` · deps: [badge]
+css: `components/molecules/SubTab/SubTab.css` · js: `components/molecules/Tab/Tab.js` · deps: [badge]
 **Оси:** размер (m 40 · s 32 · xs 24, класс на ТРЕКЕ: `.subtabs--m|--s|--xs`; без класса — S) · счётчик (есть / нет). Ориентации, тона и иконок нет намеренно.
 **Инварианты:** размер НЕ КРУПНЕЕ первого уровня — рекомендуется шаг вниз (`.tab--m` → `.subtabs--s`, `.tab--s` → `.subtabs--xs`), равный допустим, крупнее запрещено (линтер не стережёт, сверять на приёмке) · только вместе с рядом первого уровня (`.tabs--horiz` с `.tab`) и как содержимое выбранного таба первого уровня — одиночный `.subtabs` дефект, ловит правило B14 линтера · ёмкость 2–5 пунктов, переполнения нет by design (трек не переносится и не скроллится; 6+ подразделов — это Tab `.tab--s` + `.tabs--bare`) · роль навигационная (`role="tablist"`), несмотря на сегментированный вид · начертание подписи при выборе не меняется — вес несёт заливка, иначе ряд «прыгает» по ширине · disabled — `aria-disabled`, не нативный `disabled`.
 **Диагностика:** «Ряд вылезает за контейнер» → больше пяти пунктов, переполнения нет by design · «Два ряда читаются как один уровень» → размеры совпали; допустимо, но различимость держится тогда на одной механике — взять шаг вниз · «Подразделы весят больше, чем раздел» → второй уровень крупнее первого, инверсия иерархии · «Фокусное кольцо не видно на выбранном» → ожидаемо: на заливке `--primary` кольцо перекрашено в `--text-on-dark` · «Границы ряда почти не видны» → трек полупрозрачный, класть на белую плашку `--bg-tile`, не на `--bg-page`
@@ -1401,10 +1401,10 @@ css: `styles/sub-tab.css` · js: `scripts/ds-tabs.js` · deps: [badge]
 
 **Из коробки:** `data-subtabs` на `.subtabs` — рантайм `ds-tabs.js` даёт roving tabindex, стрелки ← → ↑ ↓, Home/End, активацию на месте, пропуск отключённых. Из кода: `DSTabs.subtabs(el, {onChange})`. Переполнения нет — у `subtabs()` нет ни обёрток скролла, ни меню «Ещё»: ёмкость держит правило применения, а не рантайм.
 
-Полная анатомия: specs/SubTab.md.
+Полная анатомия: components/molecules/SubTab/SubTab.md.
 
 ## Switch
-css: `styles/switch.css` · deps: [label-helper, spinner]
+css: `components/atoms/Switch/Switch.css` · deps: [label-helper, spinner]
 **Оси:** состояние (off/on) · интерактивное состояние (default/hover/focus/pressed/disabled/loading) · состав (label/helper) · группа+обязательность (независимы).
 **Инварианты:** мгновенное действие без подтверждения; Loading сохраняет текущий цвет on/off.
 **Классы:** .sw · .sw--off / --on · .sw--hover / --focus / --pressed · .sw--loading · .sw--disabled · .sw--no-content · .sw__input · .sw__control · .sw__thumb · .spin · .sw__content · .sw__label · .sw__req · .ds-helper.ds-helper--left · .sw-row · .sw-group · .sw-group__title · role="switch" / aria-checked
@@ -1437,13 +1437,13 @@ css: `styles/switch.css` · deps: [label-helper, spinner]
 
 Классы состояния (`sw--off` / `--on`) собственных правил в CSS не имеют — их вешает рантайм; в стартовом сниппете не нужны.
 
-Полная анатомия: specs/Switch.md.
+Полная анатомия: components/atoms/Switch/Switch.md.
 
 ## Tab
-css: `styles/tab.css`
+css: `components/molecules/Tab/Tab.css`
 **Оси:** ориентация (horizontal/vertical) · размер (M/S) · бейдж-счётчик · переполнение (`ds-tabs.js`: скролл со стрелками / fit+меню «Ещё» через `data-tabs-overflow`).
 **Инварианты:** hover=focus держится после клика до `mouseleave`; роль — переключение вьюх страницы, не значения параметра (это SegmentControl); `.tab__badge[hidden] { display: none; }` — иначе счётчик той же специфичности (0,1,0) перебивает браузерное `[hidden]`.
-**Диагностика:** «После клика подсветка не гаснет при уходе курсора» → ожидаемо: hover держится до `mouseleave`, не сбрасывается кликом · «Disabled-таб выпадает из клавиатурной навигации» → должен быть `aria-disabled`, не атрибут `disabled` · «Бейдж-счётчик с `hidden` всё равно виден» → проверить `.tab__badge[hidden]` в `tab.css` · «Вертикальный таб: подпись обрезана, тултипа нет» → нужен `scripts/ds-tooltip.js` (подпись `.tab__label` регистрирует `ds-tabs.js` через `DSTooltip.truncated`; `tab--has-tooltip` ставится для disabled-таба)
+**Диагностика:** «После клика подсветка не гаснет при уходе курсора» → ожидаемо: hover держится до `mouseleave`, не сбрасывается кликом · «Disabled-таб выпадает из клавиатурной навигации» → должен быть `aria-disabled`, не атрибут `disabled` · «Бейдж-счётчик с `hidden` всё равно виден» → проверить `.tab__badge[hidden]` в `tab.css` · «Вертикальный таб: подпись обрезана, тултипа нет» → нужен `components/molecules/Tooltip/Tooltip.js` (подпись `.tab__label` регистрирует `ds-tabs.js` через `DSTooltip.truncated`; `tab--has-tooltip` ставится для disabled-таба)
 
 Таб — инструмент переключения между разными вьюхами одного экрана.
 
@@ -1462,12 +1462,12 @@ css: `styles/tab.css`
 
 Ориентацию задаёт контейнер `.tabs--horiz`; на кнопке `.tab` модификатора ориентации нет.
 
-**Из коробки:** подключить `scripts/ds-tabs.js` и поставить `data-tabs` / `data-segctrl` на контейнер — рантайм даёт roving tabindex, стрелки, Home/End, пропуск отключённых; у сегмент-контрола сам измеряет и двигает индикатор, у табов подскролливает выбранный. У горизонтальной группы (`.tabs--horiz`) рантайм сам оборачивает переполнение — скролл со стрелками по умолчанию, `data-tabs-overflow="menu"` — fit + меню «Ещё» (`"none"` выключает). API: `DSTabs.tabs(el,{onChange})`, `DSTabs.segment(el,{onChange})`, `DSTabs.positionThumb(el)`.
+**Из коробки:** подключить `components/molecules/Tab/Tab.js` и поставить `data-tabs` / `data-segctrl` на контейнер — рантайм даёт roving tabindex, стрелки, Home/End, пропуск отключённых; у сегмент-контрола сам измеряет и двигает индикатор, у табов подскролливает выбранный. У горизонтальной группы (`.tabs--horiz`) рантайм сам оборачивает переполнение — скролл со стрелками по умолчанию, `data-tabs-overflow="menu"` — fit + меню «Ещё» (`"none"` выключает). API: `DSTabs.tabs(el,{onChange})`, `DSTabs.segment(el,{onChange})`, `DSTabs.positionThumb(el)`.
 
-Полная анатомия: specs/Tab.md.
+Полная анатомия: components/molecules/Tab/Tab.md.
 
 ## Toast
-css: `styles/toast.css` · js: `scripts/ds-notify.js` · deps: [button, spinner]
+css: `components/molecules/Toast/Toast.css` · js: `utils/ds-notify.js` · deps: [button, spinner]
 **Оси:** режим (ToastBar фоновый / ToastLoader блокирующий) · тон (neutral/success/error/info) · ведущий слот (спиннер/иконка, взаимоисключающе).
 **Инварианты:** ведущий слот — спиннер ИЛИ иконка, не оба; ширина ≤60% рабочей области.
 **Классы:** .toast-layer · .toast-layer--bar / --loader · .toast-scrim · .toast-stack · .toast · .toast--success / --error / --info · .toast--enter / --leave · .toast__lead · .spin.spin--current · .toast__icon · .toast__msg · [role="status"] / [role="alert"]
@@ -1492,13 +1492,13 @@ css: `styles/toast.css` · js: `scripts/ds-notify.js` · deps: [button, spinner]
     </div>
   </div>
 </div>
-<!-- … полная анатомия: specs/Toast.md -->
+<!-- … полная анатомия: components/molecules/Toast/Toast.md -->
 ```
 
-**Из коробки:** подключить `scripts/ds-notify.js`. `DSToast.show({message, kind:"bar"|"loader", tone, duration})` → `handle`; стек ≤3 с вытеснением нижнего, авто-скрытие 3с у bar без спиннера, loader единичен и добавляет затемнение, `handle.update({tone:"success"})` меняет спиннер на иконку и уводит через 1с. `DSToast.make(opts)` — только узел для статичных примеров.
+**Из коробки:** подключить `utils/ds-notify.js`. `DSToast.show({message, kind:"bar"|"loader", tone, duration})` → `handle`; стек ≤3 с вытеснением нижнего, авто-скрытие 3с у bar без спиннера, loader единичен и добавляет затемнение, `handle.update({tone:"success"})` меняет спиннер на иконку и уводит через 1с. `DSToast.make(opts)` — только узел для статичных примеров.
 
 ## Tooltip
-css: `styles/tooltip.css` · deps: [button]
+css: `components/molecules/Tooltip/Tooltip.css` · deps: [button]
 **Оси:** позиция (12) · тип (main/error) · триггер (hover 400мс/focus мгновенно) · усечение (`data-tooltip-truncated="only"`) · перенос (`data-tooltip-multiline="yes"` / `.tip--multiline`).
 **Инварианты:** по умолчанию одна строка с эллипсисом, перенос — только `.tip--multiline`; `.tip--rich` — единственный интерактивный вариант. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation. Слой тултипа — максимальный z-index `--tip-z` (2147483647, `:root`): поверх панели навигации, модалок, календаря и снекбара; инлайновый `z-index` на `.tip` не ставится.
 **Корнер-кейсы:** `.tip` ellipsis-фолбэк, если контент длиннее `--tip-max` и JS не включил `--multiline`.
@@ -1525,12 +1525,12 @@ css: `styles/tooltip.css` · deps: [button]
 </span>
 ```
 
-**Из коробки:** подключить `scripts/ds-tooltip.js`. Автоподключение: `<button data-tooltip="Удалить">` (рантайм сам оборачивает цель в `.tip-anchor` и строит тултип) либо своя разметка — цель с `aria-describedby` на `.tip` внутри `.tip-anchor`. Настройки на цели: `data-tooltip-placement` (top|bottom|left|right, деф. top), `data-tooltip-align` (start|center|end, center), `data-tooltip-type` (main|error), `data-tooltip-gap` (8), `data-tooltip-delay` (400), `data-tooltip-flip="no"`, `data-tooltip-boundary="<селектор>"`, `data-tooltip-truncated="only"` — показывать только при усечении текста цели, `data-tooltip-multiline="yes"` — переносить длинный текст по `--tip-max` вместо усечения самого тултипа. Якорь `.tip-anchor` раскладочно прозрачен (`min-width:0; max-width:100%`) — он не мешает цели сжиматься и усекаться. Императивно: `DSTooltip.bind(target, {tip, placement, align, offsetParent})`, `DSTooltip.make(text, opts)`, `DSTooltip.place(tip, target, opts)`, `DSTooltip.hideAll()`. Из коробки: 12 позиций, авто-flip стороны и выравнивания, стрелка доводится до центра цели, 400 мс по hover / мгновенно по focus, мгновенное скрытие, Esc, один показанный тултип одновременно, rich остаётся открытым под курсором (300 мс).
+**Из коробки:** подключить `components/molecules/Tooltip/Tooltip.js`. Автоподключение: `<button data-tooltip="Удалить">` (рантайм сам оборачивает цель в `.tip-anchor` и строит тултип) либо своя разметка — цель с `aria-describedby` на `.tip` внутри `.tip-anchor`. Настройки на цели: `data-tooltip-placement` (top|bottom|left|right, деф. top), `data-tooltip-align` (start|center|end, center), `data-tooltip-type` (main|error), `data-tooltip-gap` (8), `data-tooltip-delay` (400), `data-tooltip-flip="no"`, `data-tooltip-boundary="<селектор>"`, `data-tooltip-truncated="only"` — показывать только при усечении текста цели, `data-tooltip-multiline="yes"` — переносить длинный текст по `--tip-max` вместо усечения самого тултипа. Якорь `.tip-anchor` раскладочно прозрачен (`min-width:0; max-width:100%`) — он не мешает цели сжиматься и усекаться. Императивно: `DSTooltip.bind(target, {tip, placement, align, offsetParent})`, `DSTooltip.make(text, opts)`, `DSTooltip.place(tip, target, opts)`, `DSTooltip.hideAll()`. Из коробки: 12 позиций, авто-flip стороны и выравнивания, стрелка доводится до центра цели, 400 мс по hover / мгновенно по focus, мгновенное скрытие, Esc, один показанный тултип одновременно, rich остаётся открытым под курсором (300 мс).
 
-Полная анатомия: specs/Tooltip.md.
+Полная анатомия: components/molecules/Tooltip/Tooltip.md.
 
 ## TableFilter
-css: `styles/table-filter.css` · js: `scripts/ds-menu.js` (меню пресетов), `scripts/ds-table-filter.js` (сброс чипа «Применено: N» — клик/Backspace-Delete, всплывает `tfilter:reset`), `scripts/ds-modal.js` (модалка), `scripts/ds-dropdownlist.js` (автокомплиты `data-ddl`) · deps: [button, button-group, context-menu, chip, modal, tab, input, input-date-range, checkbox, icon-button]
+css: `components/organisms/TableFilter/TableFilter.css` · js: `components/molecules/ContextMenu/ContextMenu.js` (меню пресетов), `components/organisms/TableFilter/TableFilter.js` (сброс чипа «Применено: N» — клик/Backspace-Delete, всплывает `tfilter:reset`), `components/organisms/Modal/Modal.js` (модалка), `components/molecules/DropdownList/DropdownList.js` (автокомплиты `data-ddl`) · deps: [button, button-group, context-menu, chip, modal, tab, input, input-date-range, checkbox, icon-button]
 **Оси:** состояние бара (Filtered No/Yes) · с пресетами (ButtonGroup Split + ContextMenu) · чип «Применено: N».
 **Инварианты:** **кнопка «Фильтр» и модалка — неотъемлемые части (созависимы, как чип+поповер у RiskMetric)** — собирая фильтр, собирай и модалку `.tfm`; крестик чипа-счётчика сбрасывает ВСЕ параметры фильтра, не один; вторичная кнопка подвала — «Очистить фильтр».
 **Классы:** `.tfilter` · `.tfilter--disabled` · `.tfilter__open` · `.tfilter__applied` · `.tfilter__split` / `.tfilter__presets` / `.tfilter__menu` · `.tfm` · `.tfm__body` / `.tfm__nav` / `.tfm__panel` / `.tfm__sec` / `.tfm__sec-title` · `.tfm__grid` / `.tfm__span-2` · `.preset-item` / `.preset-row` / `.preset-item__body` / `.preset-params` · LEGACY: `.tfilter__trigger`, `.tfilter__chips`, `.tfilter__tail`, `.tfilter__more`, `.tfilter__toggle`, `.tfilter--collapsed`
@@ -1563,10 +1563,10 @@ css: `styles/table-filter.css` · js: `scripts/ds-menu.js` (меню пресе�
 
 Модалка фильтра (Modal w6): Modal_Top «Фильтр» + крестик; Modal_Body `--flush` = сетка [nav 232px | контентная область]; Modal_Bottom — слева «Сохранить пресет», справа «Очистить фильтр» + «Применить». Высота модалки не задаётся: контент до 80vh, прокручивается сам `.modal__body`, `.tfm__nav` — sticky, head/foot получают `.is-scrolled`. Вертикальные табы (`.tabs--vert`, Tab M vertical) прижаты вплотную к левой границе модалки (padding: 16px 0) и работают как ЯКОРНЫЕ ССЫЛКИ: контентная область содержит все разделы подряд и прокручивается, клик доводит до раздела, scroll spy ставит `aria-current="true"`; бейдж таба = число заполненных параметров раздела. Форма внутри разделов — двухколоночная сетка `.tfm__grid` (grid 2×minmax(0,1fr), gap 16px), широкое поле — `.tfm__span-2`. Раздел «Даты» — два InputDateRange («Дата сделки», «Дата изменения») на всю ширину. Разделы: «Общая информация», «Даты», «Сохранённые пресеты». Пока модалка открыта, скролл страницы под скримом заблокирован (body overflow:hidden + компенсация ширины скроллбара, счётчик замков для вложенных диалогов). Карточка пресета — шеврон-аккордеон (IconButton Neutral S, `aria-expanded`/`aria-controls`) раскрывает таблицу «Параметр — значение», рядом «Применить» (Button Outline XS) и корзина (IconButton Neutral S). Сохранение пресета — кнопка «Сохранить пресет» в подвале → вложенный диалог w3 с одним полем. Открытие модалки: скролл body заблокирован, фон inert/aria-hidden, focus trap, возврат фокуса на инициатор.
 
-Полная анатомия: specs/TableFilter.md.
+Полная анатомия: components/organisms/TableFilter/TableFilter.md.
 
 ## Tile
-css: `styles/tile.css` · js: `scripts/ds-tile.js` · deps: [icon-button, button, link, chip, badge, alert, divider, read-only-field]
+css: `components/organisms/Tile/Tile.css` · js: `components/organisms/Tile/Tile.js` · deps: [icon-button, button, link, chip, badge, alert, divider, read-only-field]
 **Оси:** вариант (обычный/Accordion/Headless/Card) · alert-слот (warning/info/error, у Card нет) · ширина (3–12 колонок).
 **Инварианты:** высота тайла в ряду = высоте самого высокого (`align-self:stretch`+Grid); своих интерактивных состояний у Tile нет — они есть только у родственника Card (`.tile--card`): Default · Hover · Active · Move · Disabled · Selected (выбрана в списке с выбором — `aria-checked`/`aria-selected`, подложка `--primary-bg`, рамка `--primary`). Тип TileHeader определяет, чем становится тайл: M — плашка, без хэдера — TileHeadless, Card — карточка. Button в контенте Tile — S (`btn--s`), в шапке — XS (`btn--outline btn--xs`), если макет/ТЗ не задают иное; M (40) — только модальные окна (решение человека 25.09.2026).
 **Классы:** `.tile` · `.tile--headless` · `.tile--accordion` · `.tile--collapsed` · `.tile__header` · `.tile__header-main` · `.tile__title-row` · `.tile__title` · `.tile__title-add` (+ `--icon`, тон `--success` / `--warning` / `--error` / `--info`) · `.tile__subtitle` · `.tile__subtitle-icon` (тон `--success` / `--warning` / `--error` / `--info`) · `.tile__chiplist` · `.tile__actions` · `.tile__toggle` / `.tile__chevron` · `.tile__alert` · `.tile__body` · `.tile__collapsible` · `.tile__grid` / `.tile__rows` · `.tile__grid-full` (элемент на всю ширину сетки) · `.tile--card` (+ `.is-hover` / `.is-pressed` / `.is-move` / `.is-disabled` / `[aria-disabled]` / `.is-selected` / `[aria-checked="true"]` / `[aria-selected="true"]`) · `.tile__grip` (грип переноса Card) · `.tile-row` · `.tile-group` (обёртка рядов, зазор 16px) · `.tile-stack`
@@ -1662,21 +1662,21 @@ css: `styles/tile.css` · js: `scripts/ds-tile.js` · deps: [icon-button, button
 </section>
 ```
 
-Паддинги хэдера 20/20/10/20 · отступы контента 0/20/24/20 — визуально 10/20/24/20 (headless 20/20/32/20) · строки 16/24 · колонки 16 · зазор в header-main 8, в actions 12, в chiplist 4. Title `--type-h5-strong`, Subtitle Body XS. Полная анатомия: specs/Tile.md.
+Паддинги хэдера 20/20/10/20 · отступы контента 0/20/24/20 — визуально 10/20/24/20 (headless 20/20/32/20) · строки 16/24 · колонки 16 · зазор в header-main 8, в actions 12, в chiplist 4. Title `--type-h5-strong`, Subtitle Body XS. Полная анатомия: components/organisms/Tile/Tile.md.
 
 
 `.tile__toggle` — JS-хук на кнопке-шевроне (собственных правил в CSS нет, стилизует IconButton), обязателен: обработчик аккордеона делегирует по нему.
 
-**Из коробки:** подключить `scripts/ds-tile.js` — любая `.tile--accordion` с `.tile__toggle` сворачивается сама (делегированно, переживает перерисовку). Рантайм держит `.tile--collapsed`, `aria-expanded`/`aria-label`/`aria-controls` и шлёт событие `tiletoggle`. Свёрнуто по умолчанию — просто добавить класс в разметке. API: `DSTile.wire(el,{collapsed,onToggle})`, `DSTile.toggle(el,v)`.
+**Из коробки:** подключить `components/organisms/Tile/Tile.js` — любая `.tile--accordion` с `.tile__toggle` сворачивается сама (делегированно, переживает перерисовку). Рантайм держит `.tile--collapsed`, `aria-expanded`/`aria-label`/`aria-controls` и шлёт событие `tiletoggle`. Свёрнуто по умолчанию — просто добавить класс в разметке. API: `DSTile.wire(el,{collapsed,onToggle})`, `DSTile.toggle(el,v)`.
 
 ## Drawer
-css: `styles/drawer.css` · js: `scripts/ds-drawer.js` · deps: [modal, button, icon-button, read-only-field, label-helper]
+css: `components/organisms/Drawer/Drawer.css` · js: `components/organisms/Drawer/Drawer.js` · deps: [modal, button, icon-button, read-only-field, label-helper]
 **Оси:** ширина (w3 442 · w4 595 дефолт · w5 747 · w6 900) · подвал (есть / нет) · путь в шапке (есть / нет) · монтирование (слой `.drawer-scrim` / встроенная `.drawer--inline` — только витрины).
-**Инварианты:** слой у Drawer и Modal ОБЩИЙ — `scripts/ds-modal.js` (скрим, портал в body, блокировка прокрутки, inert фона, focus trap, стек, Esc, возврат фокуса); своей копии этой логики Drawer не заводит. Скрим несёт оба класса — `.modal-scrim` и `.drawer-scrim`; без второго панель встаёт по центру. Сторона одна, правая: левый край занят NavPanel. Прокручивается только `.drawer__body`, шапка и подвал закреплены. Высота — 100% вьюпорта, `max-height` у панели нет (в отличие от Modal с 80vh). Подвал необязателен; пустого подвала не бывает.
+**Инварианты:** слой у Drawer и Modal ОБЩИЙ — `components/organisms/Modal/Modal.js` (скрим, портал в body, блокировка прокрутки, inert фона, focus trap, стек, Esc, возврат фокуса); своей копии этой логики Drawer не заводит. Скрим несёт оба класса — `.modal-scrim` и `.drawer-scrim`; без второго панель встаёт по центру. Сторона одна, правая: левый край занят NavPanel. Прокручивается только `.drawer__body`, шапка и подвал закреплены. Высота — 100% вьюпорта, `max-height` у панели нет (в отличие от Modal с 80vh). Подвал необязателен; пустого подвала не бывает.
 **Классы:** `.drawer-scrim` · `.drawer` · `.drawer--w3` / `--w4` / `--w5` / `--w6` · `.drawer--inline` · `.drawer__head` / `__headmain` / `__path` / `__title` / `__acts` / `__close` · `.drawer__alert` · `.drawer__body` / `__body--flush` · `.drawer__sec` / `__sechead` / `__sectitle` / `__secact` · `.drawer__grid` / `--1col` / `.drawer__grid-full` · `.drawer__foot` / `__foot-left` / `__foot-right` · `.is-scrolled` · `data-drawer` / `data-drawer-guarded` / `data-modal-close` / `data-modal-nested`
 **Диагностика:** «Панель встала по центру с полями по краям» → на скриме нет `.drawer-scrim` · «Не открывается по клику, ошибок нет» → триггер добавлен после загрузки, нужен `DSDrawer.bindAll(scope)` · «Фокус гуляет по фону» → подключён `drawer.css`, но не `ds-modal.js` · «Шапка уезжает при прокрутке» → `overflow` стоит на корне `.drawer`, а не на теле
 
-Рантайм `scripts/ds-drawer.js` (out-of-box): авто-привязка `[data-drawer="id"]`, класс скрима, делегирование слоя в `DSModal.open`. API: `DSDrawer.open(scrim, opts)` · `bind(trigger)` · `bindAll(root)` · `close()` · `current()`.
+Рантайм `components/organisms/Drawer/Drawer.js` (out-of-box): авто-привязка `[data-drawer="id"]`, класс скрима, делегирование слоя в `DSModal.open`. API: `DSDrawer.open(scrim, opts)` · `bind(trigger)` · `bindAll(root)` · `close()` · `current()`.
 
 Drawer — когда пользователь остаётся в списке и открывает объекты подряд (карточка доски, строка реестра). Modal — когда задачу надо закончить или бросить. Отдельная страница — когда у объекта своя навигация и свой адрес. Форма поверх открытой панели — вложенным слоем (`data-modal-nested`); второй просмотр поверх первого запрещён.
 
@@ -1704,17 +1704,17 @@ Drawer — когда пользователь остаётся в списке 
     <div class="drawer__foot">…</div>
   </aside>
 </div>
-<!-- … полная анатомия: specs/Drawer.md -->
+<!-- … полная анатомия: components/organisms/Drawer/Drawer.md -->
 ```
 
 ## Kanban
-css: `styles/kanban.css` · js: `scripts/ds-kanban.js` · deps: [tile, chip, badge, avatar, icon-button, button, context-menu, modal, tooltip, snackbar, empty-state, skeleton, illustration]
+css: `components/organisms/Kanban/Kanban.css` · js: `components/organisms/Kanban/Kanban.js` · deps: [tile, chip, badge, avatar, icon-button, button, context-menu, modal, tooltip, snackbar, empty-state, skeleton, illustration]
 **Оси:** доска (группировка · плотность · состав полей · число колонок 3–7) · колонка (тон маркера · свёрнутость) · карточка (плотность · состав чипов).
 **Инварианты:** оба скролла принадлежат `.kanban__viewport`, ряд колонок `.kanban__track` — отдельный элемент внутри него с высотой `auto`. Свести обе роли в один элемент нельзя: у скроллпорта высота определённая, и `stretch` растянет колонки по видимой области, а не по контенту — лишние карточки торчат за коробкой колонки, липкая шапка отваливается на первом экране прокрутки. Хост-контракт: доска обязана быть flex-элементом (`flex: 1; min-height: 0`) в колоночном родителе с заданной высотой. У колонок своего скролла нет, шапки залипают. Липкая шапка обязана иметь непрозрачную заливку: тона состояний в ДС полупрозрачные и кладутся `background-image`-слоем поверх базы `--bg-page`, а не вместо неё. Колонки прижаты друг к другу (`gap: 0`), 16px между карточками соседних колонок даёт паддинг колонок 8+8; по вертикали зазор 8. Своей заливки в покое у колонки нет; под указателем и при переносе тон один — `--primary-bg`, цель дропа отличает кольцо `--primary`, поэтому модификатор пишется как `.kbcol.kbcol--drop`, а гашение hover на время жеста — с `:not(.kbcol--drop)`. Геометрию и состояния карточки задаёт Card (`.tile--card`), а не доска. Статусной модели внутри НЕТ и не будет: компонент общий, на доске живут сделки, задачи и заметки. Ограничения переходов реализует решение — отменяемым `kanban:beforemove`. Колонки тянутся по высоте самой длинной (`align-items` у ряда не переопределять, высоту ряду не задавать). Порядок карточек в колонке значим — автосортировки нет.
 **Классы:** `.kanban` · `.kanban__toolbar` / `__title` / `__toolbar-right` · `.kanban__viewport` · `.kanban__track` · `.kanban__addcol` · `.kanban__flying` · `.kanban__colguide` · `.kanban.is-dragging` / `body.kb-dragging` · `.kbcol` · `.kbcol__head` · `.kbcol__marker` · `.kbcol__name` / `__vname` · `.kbcol__acts` · `.kbcol__body` · `.kbcol__guide` · `.kbcol--drop` / `--collapsed` / `--ghost` / `--selected` / `--moving` · `.kbcol--green/--lblue/--orange/--dpurple/--primary` · `.kbcard` (+ `.tile.tile--card`) · `.kbcard__fields` / `__field` / `__flabel` / `__fvalue` · `.kbcard__meta` / `__stat` · `.kbcard__foot` / `__id` · `.kbcard--compact` / `--ghost` / `--selected` / `--error` · `data-kanban` · `data-kb-col` / `-name` / `-body` / `-count` / `-total` / `-add` / `-addcol` / `-collapse` / `-delcard` / `-delcol` / `-star` / `-confirm` / `-drawer` / `-card-tpl`
 **Диагностика:** «Шапка колонки просвечивает, под ней видно карточки» → тон положен вместо непрозрачной базы, а не слоем поверх · «Скроллится вся страница вместо доски» → треку не задан `min-height: 0` во flex-родителе · «Между карточками соседних колонок 8 вместо 16» → у трека выставлен `gap`, он должен быть 0 · «Список схлопывается при перетаскивании» → нет призрака `.kbcard--ghost` · «Esc снял захват, но карточка осталась в чужой колонке» → не сохранено исходное место · «Кебаб удаляет не ту карточку» → меню общее на доску, нужен запомненный триггер открытия · «Меню на доске не открываются после перерисовки» → `DSMenu.bindAll(scope)` не позван заново · «Колонка не подсвечивается как цель дропа» → `.kbcol:hover` (0,2,0) перебивает `.kbcol--drop` (0,1,0) · «При перетаскивании выделяется текст» → на время жеста нужен `body.kb-dragging`
 
-Рантайм `scripts/ds-kanban.js` (out-of-box): авто-инициализация любой разметки с `data-kanban`. Перетаскивание КАРТОЧЕК указателем (порог 4px, плавающий клон, призрак, линия вставки, автоскролл по обеим осям, отмена по Esc) и КОЛОНОК за шапку (клон шапки, вертикальная линия вставки), клавиатурный эквивалент для обоих (Space — взять, стрелки — перенести, Space — положить, Esc — отменить с возвратом на исходный индекс), гашение выделения текста на время жеста, счётчики и `aria-label` колонок, пустые состояния, звезда, сворачивание, добавление и удаление карточек и колонок, открытие панели деталей по клику на карточке. Меню, подтверждения, снекбар, панель деталей и «усечено → тултип» делегируются `DSMenu` / `DSModal` / `DSSnack` / `DSDrawer` / `DSTooltip`. API: `DSKanban.bind(board)` · `bindAll(root)` · `move(card, col, i)` · `sync(board)`. События: `kanban:beforemove` (ОТМЕНЯЕМОЕ — точка для статусной модели решения) · `kanban:move {card, from, to, index}` · `kanban:add` · `kanban:remove` · `kanban:star` · `kanban:colmove {column, from, to}` · `kanban:colremove` · `kanban:open`.
+Рантайм `components/organisms/Kanban/Kanban.js` (out-of-box): авто-инициализация любой разметки с `data-kanban`. Перетаскивание КАРТОЧЕК указателем (порог 4px, плавающий клон, призрак, линия вставки, автоскролл по обеим осям, отмена по Esc) и КОЛОНОК за шапку (клон шапки, вертикальная линия вставки), клавиатурный эквивалент для обоих (Space — взять, стрелки — перенести, Space — положить, Esc — отменить с возвратом на исходный индекс), гашение выделения текста на время жеста, счётчики и `aria-label` колонок, пустые состояния, звезда, сворачивание, добавление и удаление карточек и колонок, открытие панели деталей по клику на карточке. Меню, подтверждения, снекбар, панель деталей и «усечено → тултип» делегируются `DSMenu` / `DSModal` / `DSSnack` / `DSDrawer` / `DSTooltip`. API: `DSKanban.bind(board)` · `bindAll(root)` · `move(card, col, i)` · `sync(board)`. События: `kanban:beforemove` (ОТМЕНЯЕМОЕ — точка для статусной модели решения) · `kanban:move {card, from, to, index}` · `kanban:add` · `kanban:remove` · `kanban:star` · `kanban:colmove {column, from, to}` · `kanban:colremove` · `kanban:open`.
 
 Доска отвечает на вопрос «как распределена работа и что застряло», реестр — «какие объекты есть и что в них»; это две вьюхи одних данных, переключатель обязателен и фильтр переживает переключение. Колонка — организм доски (288px вместе с паддингом 8, свёрнутая 48, имя читается снизу вверх, действия в свёрнутой подняты над именем через `order: -1`). Имя колонки — клэмп 2 строки, место под две зарезервировано всегда, поэтому шапки всех колонок равны по высоте (52px); маркер, счётчик и действия стоят на первой строке. Карточка — вложенный компонент на Card: Title `--type-h6-strong` клэмпом 2 строки, чипы под заголовком (иконок у них нет, исключение — «Ключевая сделка» с `zap` в тоне orange), не больше 4 полей в две колонки, метрики и подвал с аватарами. Перенос не подтверждается диалогом (снекбар с «Отменить»), удаление подтверждается alertdialog.
 
@@ -1748,11 +1748,11 @@ css: `styles/kanban.css` · js: `scripts/ds-kanban.js` · deps: [tile, chip, bad
    </div>
   </div>
 </div>
-<!-- … полная анатомия: specs/Kanban.md -->
+<!-- … полная анатомия: components/organisms/Kanban/Kanban.md -->
 ```
 
 ## ProductRow
-css: `styles/product-row.css` · js: `scripts/ds-product-row.js` · deps: [icon-button, context-menu, tooltip, skeleton]
+css: `components/organisms/ProductRow/ProductRow.css` · js: `components/organisms/ProductRow/ProductRow.js` · deps: [icon-button, context-menu, tooltip, skeleton]
 **Оси:** вариант (обычная / корневая `.prow--root`) · заливка (`.prow--tinted`) · заголовок-ссылка (`.prow__title--link`) · состав (только заголовок 48px / со значениями 72px / со статусом и значениями 92px) · набор действий (IconButton L + кебаб — решает потребитель) · выбор в списке (`role="radio"`/`"checkbox"` + `aria-checked`) · уровень в дереве (отступ 24px, дети корня без отступа).
 **Инварианты:** рамка — внутренняя тень, не `border` (наведение и корень без рамки не сдвигают содержимое); кнопки в `<a>` не вкладываются — ссылкой становится только заголовок `a.prow__title--link`, его `::after` растягивает клик на строку; метка `.prow__mark` — своя кнопка, не IconButton: нажатая меняет только глиф `star` → `star-filled`, цвет `--secondary`; пустое значение — «–», пара значения не скрывается; группа детей корня не сдвигается. Предметных слов в ДС нет: что за объекты, нумерация и действия — у потребителя.
 **Классы:** .prow · .prow--root · .prow--tinted · .is-hover · [aria-checked="true"] · .is-selected · [aria-disabled="true"] · .prow__lead · .prow__toggle · .prow__main · .prow__head · .prow__title · .prow__title--link · .prow__mark · .prow__status · .prow__status--success · .prow__status-text · .prow__meta · .prow__meta-item · .prow__meta-text · .prow__meta-affix · .prow__actions · .prow-tree · .prow-tree__node · .prow-tree__node--collapsed · .prow-tree__group
@@ -1798,10 +1798,10 @@ css: `styles/product-row.css` · js: `scripts/ds-product-row.js` · deps: [icon-
 
 **Из коробки:** `ds-product-row.js` (через `ds.js`) сворачивает ветку по клику на `.prow__toggle` делегированием — перерисованное дерево повторной привязки не требует; выставляет `aria-expanded` / `aria-controls` / подпись, шлёт `prowtoggle` с `{ collapsed }`. API: `DSProductRow.wire(node, opts)` · `wireAll(root)` · `toggle(node, collapsed)`. Метку, нумерацию и действия ведёт потребитель; после перерисовки `innerHTML` — `dsIcons.apply`, `DSMenu.bindAll`, `DSTooltip.bindAll`.
 
-Полная анатомия: specs/ProductRow.md.
+Полная анатомия: components/organisms/ProductRow/ProductRow.md.
 
 ## Spacing (Сетка и отступы)
-css: `styles/spacing.css` · deps: — · 1.004
+css: `foundations/Spacing/Spacing.css` · deps: — · 1.004
 Модуль 4 px: все отступы/зазоры/размеры кратны 4 (основной шаг 8). Полушаги 2/6/10/14 — только микро-оптика. Шкала `--space-0…96` (0·4·8·12·16·20·24·32·40·48·64·80·96) + алиасы: `--gap-icon-text` 8 · `--gap-label-field` 4 · `--gap-inline` 8 · `--gap-stack` 16 · `--gap-group` 24 · `--gap-section` 40 · `--pad-control-s` 8 · `--pad-control` 12 · `--pad-card` 16 · `--pad-panel` 24 · `--pad-page` 32. Сетка: контентная область = 12 резиновых колонок, зазор `--grid-gutter` 16 px постоянный, поля `--grid-margin` 0 (задаёт лайаут). col = (W − 2·margin − 11·gutter)/12, дробная ширина — норма. Раскладки: 12 · 8+4 · 6+6 · 4+4+4 · 3+3+3+3. Утилиты: `.grid12` + `.col-1…12`; подмена зазора — инлайн `style="--grid-gutter:var(--space-16)"`.
 
 ```html
@@ -1814,4 +1814,4 @@ css: `styles/spacing.css` · deps: — · 1.004
 
 Ширина блока — любое число колонок 1–12; правило — привязка к колонке, исключение (редко) — кастомный фиксированный размер или ширина по контенту, помеченный `data-off-grid="причина"`. Перестроение при сужении — пара span'ов на блоке: `class="col-3 colw-6"` (основная / узкая ширина). `.colw-N` сама ничего не меняет — узкие ширины включает экран: `@container screen (max-width: …) { .grid12 > [class*="colw-"] { grid-column: span var(--colw) } }` либо класс `.grid12--narrow` на сетке. Общих брейкпоинтов в ДС нет — порог задаёт экран.
 
-Полная анатомия: specs/Spacing.md.
+Полная анатомия: foundations/Spacing/Spacing.md.

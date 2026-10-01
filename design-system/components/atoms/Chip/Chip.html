@@ -2,21 +2,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chip — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/avatar.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../Avatar/Avatar.css">
+<link rel="stylesheet" href="Chip.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../Spinner/Spinner.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -136,11 +136,11 @@
   .a11y-demo:focus-visible { outline: none; }
   .rof-mock { display: flex; flex-direction: column; gap: 4px; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Chip">
@@ -214,7 +214,7 @@
             <span class="ds-label"><span class="ds-label__text">Регионы присутствия</span></span>
             <div id="use-readonly"></div>
           </div>
-          <p class="surface__cap">Тип ReadOnly, размер <b>XS</b> — так чип используется в <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a> (значение типа «Чипы»); как и любое значение в ReadOnlyField, оно всегда идёт с лейблом; без рамки и фона у самого поля, без крестика.</p>
+          <p class="surface__cap">Тип ReadOnly, размер <b>XS</b> — так чип используется в <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> (значение типа «Чипы»); как и любое значение в ReadOnlyField, оно всегда идёт с лейблом; без рамки и фона у самого поля, без крестика.</p>
         </div>
       </div>
     </div>
@@ -287,7 +287,7 @@
   
 <div class="subsec" data-screen-label="Types">
     <h3>Типы</h3>
-    <p class="desc">Компонент имеет два типа. <b>Edit</b> — интерактивный чип, реагирует на наведение и поддерживает удаление. <b>ReadOnly</b> — для показа значения без редактирования (например, в <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a>) и на наведение не реагирует.</p>
+    <p class="desc">Компонент имеет два типа. <b>Edit</b> — интерактивный чип, реагирует на наведение и поддерживает удаление. <b>ReadOnly</b> — для показа значения без редактирования (например, в <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a>) и на наведение не реагирует.</p>
     <div class="cols2">
       <div class="panel">
         <p class="demo-col__title">Edit</p>
@@ -296,7 +296,7 @@
       </div>
       <div class="panel">
         <p class="demo-col__title">ReadOnly</p>
-        <p class="demo-col__sub">Показ значения без редактирования. Не реагирует на наведение. Размеры L / M / S / XS — <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a> использует XS для значений-чипов.</p>
+        <p class="demo-col__sub">Показ значения без редактирования. Не реагирует на наведение. Размеры L / M / S / XS — <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> использует XS для значений-чипов.</p>
         <div class="demo-rows" id="type-readonly"></div>
       </div>
     </div>
@@ -321,7 +321,7 @@
 
 <div class="subsec" data-screen-label="Leading">
     <h3>Ведущие элементы</h3>
-    <p class="desc">Слева к тексту можно добавить дополнительный элемент. <code class="tok">.Chip_Content</code> — иконка-маркер; <b>Иконка</b> — смысловая пиктограмма, не завязанная на тон/статус; <b>Аватар</b> — компонент <a class="inl" href="../atoms/Avatar.html">Avatar</a> с выбираемым содержимым (текст-инициалы, иконка или фото). Отдельный слот «бейдж» убран — он объединён с аватаром. Справа — действие: крестик удаления или шеврон выпадающего списка (<code class="tok">.Chip_Action</code>) — взаимоисключающие, вместе не ставятся.</p>
+    <p class="desc">Слева к тексту можно добавить дополнительный элемент. <code class="tok">.Chip_Content</code> — иконка-маркер; <b>Иконка</b> — смысловая пиктограмма, не завязанная на тон/статус; <b>Аватар</b> — компонент <a class="inl" href="../Avatar/Avatar.html">Avatar</a> с выбираемым содержимым (текст-инициалы, иконка или фото). Отдельный слот «бейдж» убран — он объединён с аватаром. Справа — действие: крестик удаления или шеврон выпадающего списка (<code class="tok">.Chip_Action</code>) — взаимоисключающие, вместе не ставятся.</p>
     <div class="panel">
       <div class="slot-tiles" id="slot-tiles"></div>
     </div>
@@ -357,7 +357,7 @@
   <!-- SIZES -->
   <section class="section" data-screen-label="Sizes">
     <h2>Размеры</h2>
-    <p class="desc">Четыре размера. <b>L</b> — крупный ReadOnly-показ (зарезервирован). <b>M</b> и <b>S</b> — базовые для чиплистов и фильтров. <b>XS</b> — для компактных мест (плотные таблицы, инлайн-метки, значения-чипы в <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a>).</p>
+    <p class="desc">Четыре размера. <b>L</b> — крупный ReadOnly-показ (зарезервирован). <b>M</b> и <b>S</b> — базовые для чиплистов и фильтров. <b>XS</b> — для компактных мест (плотные таблицы, инлайн-метки, значения-чипы в <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a>).</p>
     <div class="panel">
       <div class="matrix-wrap"><div class="sizes-grid" id="sizes-grid"></div></div>
     </div>
@@ -434,7 +434,7 @@
       </ul>
       <div class="chiplist" id="a11y-focus-demo" style="margin-bottom:22px;"></div>
       <ul class="bullets">
-        <li>усечённая подпись объясняет себя тултипом из коробки (<code class="tok">scripts/ds-chip.js</code> + <code class="tok">scripts/ds-tooltip.js</code>): по первому наведению или фокусу рантайм навешивает тултип с полным текстом и показывает его только при реальном усечении — <code class="tok">data-tooltip</code> руками писать не нужно, а оставленный <code class="tok">title</code> рантайм заберёт в текст и снимет, чтобы поверх не всплыл нативный;</li>
+        <li>усечённая подпись объясняет себя тултипом из коробки (<code class="tok">components/atoms/Chip/Chip.js</code> + <code class="tok">components/molecules/Tooltip/Tooltip.js</code>): по первому наведению или фокусу рантайм навешивает тултип с полным текстом и показывает его только при реальном усечении — <code class="tok">data-tooltip</code> руками писать не нужно, а оставленный <code class="tok">title</code> рантайм заберёт в текст и снимет, чтобы поверх не всплыл нативный;</li>
         <li>Disabled-чип исключён из таб-порядка (<code class="tok">pointer-events:none</code>), но если текст обрезан — класс <code class="tok">.chip--has-tooltip</code> возвращает наведение для тултипа; класс ставит рантайм при загрузке, чипу, построенному позже, — вызов <code class="tok">DSChip.refresh(root)</code>;</li>
         <li>не полагайтесь только на тон (цвет) для критичных статусов (например, Error против Success) — для пользователей с нарушениями цветовосприятия дублируйте смысл маркером/иконкой;</li>
         <li>для чипов-фильтров с выбором (<code class="tok">chip--selected</code>, Предложение) рекомендуем <code class="tok">aria-pressed</code> на каждом чипе и <code class="tok">role="group"</code> на чиплисте.</li>
@@ -468,17 +468,17 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead2">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/chip.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Chip/Chip.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.4fr 0.55fr 0.55fr 0.55fr 0.55fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">L</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">XS</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/chip.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/Chip/Chip.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -560,11 +560,11 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/image-slot.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/chip.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../docs-kit/image-slot.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="Chip.page.js"></script>
 <script>
 /* ---------- DEV: copy-to-clipboard on code panels ---------- */
 (function(){
@@ -591,11 +591,11 @@
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Тип': 'Читаемый (ReadOnly)', 'Стиль': 'Контурный (Outline)', 'Крестик удаления': 'Показывать крестик удаления', 'Выпадающий список': 'Показывать выпадающий список', 'Счётчик': 'Показывать счётчик', 'Rounded': 'Скруглённые углы', 'Solid': 'Solid-заливка' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- Edit-чип с маркером и крестиком удаления -->
@@ -610,7 +610,7 @@
 
 <!-- чиплист: контейнер с авто-переносом и единым зазором -->
 <div class="chiplist" role="group" aria-label="Фильтры">…</div></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/chip.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/Chip/Chip.page.js)
 function makeChip(o) {
   // o: { type:'edit'|'readonly', style:'fill'|'outline', size, tone, label, leading, removable, dropdown, count, rounded, state, disabled }
   // span.chip.chip--<size>(.chip--outline)(.chip--<tone>)(.chip--removable)(.chip--rounded)
@@ -838,7 +838,7 @@ function makeChip(o) {
 
 /* ---------- rounded (full pill) ------------------------------------------- *
    Статусные чипы ВСЕГДА скруглённые: .chip--rounded (пилюля) — обязательное
-   правило для любых чипов-статусов (см. specs/Chip.md «Тон и статусы»). */
+   правило для любых чипов-статусов (см. components/atoms/Chip/Chip.md «Тон и статусы»). */
 .chip--rounded { border-radius: var(--radius-pill); }
 
 /* ---------- hover (Edit only) --------------------------------------------- */

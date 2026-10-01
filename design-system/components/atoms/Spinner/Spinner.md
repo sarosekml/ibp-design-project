@@ -3,8 +3,8 @@ component: Spinner
 title: "Spinner"
 version: "1.001"
 updated: "05.09.2026"
-page: pages/atoms/Spinner.html
-css: styles/spinner.css
+page: components/atoms/Spinner/Spinner.html
+css: components/atoms/Spinner/Spinner.css
 status: curated
 ---
 
@@ -40,7 +40,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `styles/spinner.css`.
+Таблица рендерится на странице через `getComputedStyle`. Точные значения — в `components/atoms/Spinner/Spinner.css`.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

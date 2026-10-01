@@ -2,25 +2,25 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SnackBar — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/snackbar.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="SnackBar.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
@@ -130,14 +130,14 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия <b>1.005</b></span>
     <span>Обновлено <b>05.09.2026</b></span>
-    <span>CSS <b>styles/snackbar.css</b></span>
+    <span>CSS <b>components/organisms/SnackBar/SnackBar.css</b></span>
     <span>Зависимости <b>button, link</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
@@ -528,7 +528,7 @@ function dismiss(id):
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники SnackBar: HTML — из спеки, CSS — styles/snackbar.css (полностью), JS — рантайм стека. Демо страницы читает настройки конструктора и вызывает <code class="tok">DSSnack.show()</code>.</p>
+              <p class="desc">Эталонная разметка и исходники SnackBar: HTML — из спеки, CSS — components/organisms/SnackBar/SnackBar.css (полностью), JS — рантайм стека. Демо страницы читает настройки конструктора и вызывает <code class="tok">DSSnack.show()</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -546,15 +546,15 @@ function dismiss(id):
   </div><!-- /splitpane -->
 </main><!-- .page -->
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-notify.js"></script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
+<script src="../../../utils/ds-notify.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><div class="snackbar-layer" aria-label="Уведомления">
@@ -758,7 +758,7 @@ var TITLES = { info:'Информация', warning:'Внимание', error:'�
 var TEXTS  = { info:'Плановая дата подписания находится в прошлом году.', warning:'Плановая дата подписания находится в прошлом году. Проверьте условия.', error:'Плановая дата подписания находится в прошлом году. Измените сроки или обновите статус сделки.', success:'Сделка успешно обновлена.' };
 var BTNLBL = { info:'Подробнее', warning:'Изменить', error:'Изменить сроки', success:'К сделке' };
 
-/* ---- демо: контролы Конструктора → рантайм ДС (scripts/ds-notify.js) ----
+/* ---- демо: контролы Конструктора → рантайм ДС (utils/ds-notify.js) ----
    стек, дедупликация, переполнение «+N», авто-скрытие с паузой на hover/focus
    и Esc живут в DSSnack; страница только читает настройки и вызывает show() */
 var BTNSETS = {

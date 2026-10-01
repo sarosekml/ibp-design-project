@@ -201,7 +201,7 @@
         ['Сетка групп', tok('.grid12'), '12 резиновых колонок, зазор ' + m.gridGap + ' (' + tok('--grid-gutter') + ')', '—'],
         ['Группа', tok('.col-3') + ' ' + tok('.colw-6'), '3 колонки из 12 — 4 группы в ряд; узкая ширина 6 колонок объявлена рядом', m.gridGap + ' — зазор сетки, по горизонтали и между рядами'],
         ['Заголовок группы', 'H5 Strong', 'по контенту', m.gridGap + ' до первого тайла'],
-        ['Тайл', tok('.ntile'), 'ширина — от колонки (' + tok('width:auto') + '), высота от 190 px — размер <a class="link link--accent" href="../molecules/NavTile.html">NavTile</a>', m.gridGap + ' между тайлами'],
+        ['Тайл', tok('.ntile'), 'ширина — от колонки (' + tok('width:auto') + '), высота от 190 px — размер <a class="link link--accent" href="../../components/molecules/NavTile/NavTile.html">NavTile</a>', m.gridGap + ' между тайлами'],
         ['Фоновая иллюстрация', tok('background-size: cover'), 'за контентом на всю рабочую область, ' + tok('opacity: .6'), '—']
       ]);
 

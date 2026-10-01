@@ -6,14 +6,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Цвета — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/ds-toc.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/tab.css">
+<link rel="stylesheet" href="../Typography/Typography.css">
+<link rel="stylesheet" href="Colors.css">
+<link rel="stylesheet" href="Palette.css">
+<link rel="stylesheet" href="../Radius/Radius.css">
+<link rel="stylesheet" href="../../docs-kit/ds-toc.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../components/organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../components/molecules/Tab/Tab.css">
 <style>
 
   /* masthead */
@@ -61,7 +61,7 @@
   .pgroup .gname { font: var(--type-h5-strong); color: var(--text-primary); margin: 0 0 10px; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page" data-screen-label="Colors">
@@ -109,7 +109,7 @@
 
 <script>
 /* row: [токен, базовый токен | null, hex, opacity | null]
-   Блок сгенерирован из styles/palette.css и styles/colors.css — руками не
+   Блок сгенерирован из foundations/Colors/Palette.css и foundations/Colors/Colors.css — руками не
    править: таблица обязана совпадать с токенами, а не жить своей жизнью. */
 const data = [
   {
@@ -194,7 +194,7 @@ function tableHtml(g) {
 
 /* ---------- вкладка «Базовые токены» ----------
    [имя палитры, префикс токена, [[ступень, hex], …]]; данные сняты с образцов
-   палитр дизайнера и совпадают со styles/colors.css один в один */
+   палитр дизайнера и совпадают со foundations/Colors/Colors.css один в один */
 const base = [
   ["Amber", "amber", [["50","#FFF8E1"], ["100","#FFECB3"], ["200","#FFE082"], ["300","#FFD54F"], ["400","#FFCA28"], ["500","#FFC107"], ["600","#FFB300"], ["700","#FFA000"], ["800","#FF8F00"], ["900","#FF6F00"], ["A100","#FEF0C2"], ["A200","#FCE9AE"], ["A400","#FFC400"], ["A700","#FFAB00"]]],
   ["Blue", "blue", [["50","#E3F2FD"], ["100","#BBDEFB"], ["200","#90CAF9"], ["300","#64B5F6"], ["400","#42A5F5"], ["500","#2196F3"], ["600","#1E88E5"], ["700","#1976D2"], ["800","#1565C0"], ["900","#0D47A1"], ["A100","#82B1FF"], ["A200","#448AFF"], ["A400","#2979FF"], ["A700","#2962FF"]]],
@@ -249,7 +249,7 @@ document.getElementById("rootBase").innerHTML = base.map(baseTableHtml).join("")
    рантайм ds-tabs.js держит roving tabindex и aria-selected, здесь только
    связка «таб ↔ панель». Клик читает data-pane самой кнопки и не зависит от
    порядка обработчиков; клавиатура — через setTimeout(0), то есть после того,
-   как рантайм обновил aria-selected (тот же приём, что в scripts/docs-split.js).
+   как рантайм обновил aria-selected (тот же приём, что в docs-kit/docs-split.js).
    Оглавление ds-toc.js собрано по секциям первой вкладки и обновляться не умеет:
    на второй его прячем, иначе скроллспай подсвечивает скрытые секции. */
 const tablist = document.querySelector('.tabs[data-tabs]');
@@ -280,8 +280,8 @@ document.getElementById("root").innerHTML = data.map(cat => `
   </section>
 `).join("");
 </script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-toc.js"></script>
+<script src="../../components/molecules/Tab/Tab.js"></script>
+<script src="../../docs-kit/ds-nav.js"></script>
+<script src="../../docs-kit/ds-toc.js"></script>
 </body>
 </html>

@@ -8,13 +8,13 @@
    что просили.
 
    Запуск (из корня ДС):
-     node scripts/ds-icon.mjs check              # SVG одного глифа
-     node scripts/ds-icon.mjs --list             # все имена (247 шт.)
-     node scripts/ds-icon.mjs --list deal        # имена по подстроке
-     node scripts/ds-icon.mjs --selftest         # рантайм ds-icons.js: уникальные id копий
+     node tools/ds-icon.mjs check              # SVG одного глифа
+     node tools/ds-icon.mjs --list             # все имена (247 шт.)
+     node tools/ds-icon.mjs --list deal        # имена по подстроке
+     node tools/ds-icon.mjs --selftest         # рантайм ds-icons.js: уникальные id копий
 
    Имя не найдено — печатаются похожие, код выхода 1.
-   Полный каталог с картинками — pages/foundations/Icons.html.
+   Полный каталог с картинками — foundations/Icons/Icons.html.
 
    --selftest (задача 0007) исполняет icons-data.js и ds-icons.js в vm на
    заглушках DOM и проверяет: копии глифа не делят id, ссылки url(#…) и
@@ -37,6 +37,7 @@ const L = layout(ROOT);
 const ENTRY_DIR = path.posix.dirname(L.at.entryJs);
 const fromEntry = (rel) => path.posix.relative(ENTRY_DIR, rel);
 const DATA_JS = fromEntry(L.at.iconsData), RUNTIME_JS = fromEntry(L.at.iconsRuntime);
+const RT_NAME = path.posix.basename(L.at.iconsRuntime);   // имя рантайма иконок — в сообщениях
 
 const src = await readFile(L.abs(L.at.iconsData), 'utf8');
 // формат файла: window.DS_ICONS = {"имя":"<svg …>", …};
@@ -133,7 +134,7 @@ async function selftest() {
   });
 
   /* 3. DS_ICONS после ds-icons.js отдаёт копии; при обратном порядке загрузки — замена при первом обращении. */
-  await guard('3 DS_ICONS после ds-icons.js', async () => {
+  await guard('3 DS_ICONS после ' + RT_NAME, async () => {
     const ctx = page([], []);
     vm.runInContext(dataSrc, ctx);
     vm.runInContext(runtimeSrc, ctx);
@@ -148,12 +149,13 @@ async function selftest() {
     const D2 = ctx2.window.DS_ICONS;
     pass(keysOk && D.__dsUnique === true && idsOf(r1).every((x) => !idsOf(r2).includes(x))
       && D2.__dsUnique === true && idsOf(els[0].innerHTML).length > 0 && !idsOf(els[0].innerHTML).some((x) => idsOf(icons['message-text']).includes(x)),
-      '3 DS_ICONS после ds-icons.js: те же ключи, каждое чтение — копия со своими id; рантайм раньше данных — замена при первом apply()');
+      '3 DS_ICONS после ' + RT_NAME + ': те же ключи, каждое чтение — копия со своими id; рантайм раньше данных — замена при первом apply()');
   });
 
   /* 4. Порядок в ds.js: ds-icons.js сразу за icons-data.js и раньше каждого рантайма, который читает DS_ICONS. */
   await guard('4 порядок в ds.js', async () => {
-    const list = [...dsSrc.matchAll(/'([\w.-]+\.js)'/g)].map((m) => m[1]);
+    // пути в FILES — с папками (foundations/Icons/Icons.js): «/» обязан входить в класс
+    const list = [...dsSrc.matchAll(/'([\w./-]+\.js)'/g)].map((m) => m[1]);
     const iData = list.indexOf(DATA_JS), iRt = list.indexOf(RUNTIME_JS);
     const readers = [];
     for (const f of list) {
@@ -164,8 +166,8 @@ async function selftest() {
     }
     const early = readers.filter((f) => list.indexOf(f) < iRt);
     pass(iData >= 0 && iRt === iData + 1 && !early.length,
-      '4 ds.js: ds-icons.js сразу за icons-data.js и раньше рантаймов, читающих DS_ICONS (' + readers.join(', ') + ')',
-      'icons-data.js — ' + iData + ', ds-icons.js — ' + iRt + (early.length ? ', раньше рантайма иконок: ' + early.join(', ') : ''));
+      '4 ds.js: ' + RT_NAME + ' сразу за icons-data.js и раньше рантаймов, читающих DS_ICONS (' + readers.join(', ') + ')',
+      'icons-data.js — ' + iData + ', ' + RT_NAME + ' — ' + iRt + (early.length ? ', раньше рантайма иконок: ' + early.join(', ') : ''));
   });
 
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
@@ -185,7 +187,7 @@ if (args[0] === '--list') {
 
 const name = args[0];
 if (!name) {
-  console.error('Использование: node scripts/ds-icon.mjs <имя глифа> | --list [подстрока]');
+  console.error('Использование: node tools/ds-icon.mjs <имя глифа> | --list [подстрока]');
   process.exit(2);
 }
 
@@ -197,5 +199,5 @@ if (icons[name]) {
 const near = names.filter((n) => n.toLowerCase().includes(name.toLowerCase()));
 console.error(`Глифа «${name}» нет (всего ${names.length}).`);
 if (near.length) console.error('Похожие: ' + near.slice(0, 15).join(', '));
-else console.error('Список имён: node scripts/ds-icon.mjs --list');
+else console.error('Список имён: node tools/ds-icon.mjs --list');
 process.exit(1);

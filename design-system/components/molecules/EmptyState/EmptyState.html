@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EmptyState — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/illustration.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/empty-state.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Illustrations/Illustrations.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="EmptyState.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
   .badge-proposal { display:inline-block; font: var(--type-button-xs); letter-spacing:.06em; text-transform:uppercase; color: var(--text-secondary); background: var(--cgrey-100); border:1px solid var(--border-light); padding:3px 9px; border-radius:999px; margin-left:12px; vertical-align:middle; }
 
@@ -40,11 +40,11 @@
   .demo-grid { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; }
   .es-frame { min-width:280px; }
 </style>
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../Splitter/Splitter.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="EmptyState">
@@ -87,7 +87,7 @@
       <li>запрос данных завершился ошибкой (сервер недоступен) и нужно показать это на весь экран/раздел, а не всплывающим сообщением;</li>
       <li>нужно не просто сообщить «пусто», а подсказать следующее действие — сбросить фильтр, создать первую запись, повторить запрос.</li>
     </ul>
-    <p class="desc">Не используйте EmptyState для короткой паузы загрузки — там <a class="inl" href="../atoms/Spinner.html">Spinner</a> (пауза без известной структуры) или <a class="inl" href="../atoms/Skeleton.html">Skeleton</a> (структура уже известна). Не используйте для одного пустого поля — в <a class="inl" href="../organisms/Entity.html">Entity</a> и <a class="inl" href="../molecules/ReadOnlyField.html">ReadOnlyField</a> отсутствие значения решается тире «—» на месте поля. Для системной строки внутри выпадающего списка (нет опций после фильтра) — компактное состояние <code class="tok">.ddl__state--empty</code> в <a class="inl" href="DropdownList.html">DropdownList</a>, не полноразмерный EmptyState: там нет места для иллюстрации 96px.</p>
+    <p class="desc">Не используйте EmptyState для короткой паузы загрузки — там <a class="inl" href="../../atoms/Spinner/Spinner.html">Spinner</a> (пауза без известной структуры) или <a class="inl" href="../../atoms/Skeleton/Skeleton.html">Skeleton</a> (структура уже известна). Не используйте для одного пустого поля — в <a class="inl" href="../../organisms/Entity/Entity.html">Entity</a> и <a class="inl" href="../ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> отсутствие значения решается тире «—» на месте поля. Для системной строки внутри выпадающего списка (нет опций после фильтра) — компактное состояние <code class="tok">.ddl__state--empty</code> в <a class="inl" href="../DropdownList/DropdownList.html">DropdownList</a>, не полноразмерный EmptyState: там нет места для иллюстрации 96px.</p>
   </section>
 
   <!-- ANATOMY -->
@@ -164,7 +164,7 @@
     <p class="desc">Сам компонент статичен. Правила касаются момента, когда он появляется или сменяется контентом.</p>
     <ul class="bullets">
       <li>EmptyState не анимирован и не запрашивает данные сам — он рендерится, когда запрос уже завершился и в ответе нет строк (или запрос завершился ошибкой).</li>
-      <li>Пока идёт сам запрос — <a class="inl" href="../atoms/Spinner.html">Spinner</a>/<a class="inl" href="../atoms/Skeleton.html">Skeleton</a> в том же месте; переключение между ними и EmptyState — целиком, не переход с анимацией между состояниями.</li>
+      <li>Пока идёт сам запрос — <a class="inl" href="../../atoms/Spinner/Spinner.html">Spinner</a>/<a class="inl" href="../../atoms/Skeleton/Skeleton.html">Skeleton</a> в том же месте; переключение между ними и EmptyState — целиком, не переход с анимацией между состояниями.</li>
       <li>Если EmptyState появляется в ответ на действие пользователя (применил фильтр, изменил поиск) — родительский контейнер несёт <code class="tok">role="status" aria-live="polite"</code> на момент подстановки, чтобы переход был озвучен один раз.</li>
       <li>Действие в EmptyState должно вести к разблокировке (сброс фильтра, повтор запроса, переход к созданию записи) — это часть контракта компонента, не декоративная кнопка.</li>
     </ul>
@@ -175,7 +175,7 @@
     <h2>Состояния</h2>
     <p class="desc tight">Одно статическое состояние — показан, пока нет данных для отображения. Соседние состояния того же места в интерфейсе принадлежат другим компонентам, не модификаторам EmptyState:</p>
     <ul class="bullets">
-      <li><b>Загрузка</b> — <a class="inl" href="../atoms/Spinner.html">Spinner</a> или <a class="inl" href="../atoms/Skeleton.html">Skeleton</a>, не EmptyState.</li>
+      <li><b>Загрузка</b> — <a class="inl" href="../../atoms/Spinner/Spinner.html">Spinner</a> или <a class="inl" href="../../atoms/Skeleton/Skeleton.html">Skeleton</a>, не EmptyState.</li>
       <li><b>Есть данные</b> — реальный контент занимает то же место, EmptyState убирается из DOM целиком.</li>
       <li><b>Ошибка запроса</b> — EmptyState с иллюстрацией из набора «состояния» и действием «Повторить» — тот же компонент, другая иллюстрация и текст.</li>
     </ul>
@@ -213,19 +213,19 @@
     <p class="desc">Хендофф-пакет: точные размеры и поведение как алгоритм — не привязан к стеку.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/empty-state.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/EmptyState/EmptyState.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" id="dev-spec-table" style="border:none;border-radius:0;"></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/illustration.css</code>
-      <code class="tok">styles/button.css</code>
-      <code class="tok">styles/empty-state.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Illustrations/Illustrations.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/molecules/EmptyState/EmptyState.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -289,7 +289,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/empty-state.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/EmptyState/EmptyState.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -560,14 +560,14 @@ function renderIllu() { if (window.DSIllustrations) window.DSIllustrations.rende
   });
 })();
 </script>
-<script src="../../scripts/ds-illustrations.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Illustrations/Illustrations.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Размер': 'L — полноэкранный', 'Поверхность': 'Карточка', 'Текст': { label: 'Показывать текст', on: 'on' } };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="es es--m">

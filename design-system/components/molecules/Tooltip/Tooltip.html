@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tooltip — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="Tooltip.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -140,11 +140,11 @@
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Tooltip">
@@ -207,7 +207,7 @@
     <h3>Когда использовать</h3>
     <p class="desc tight">Используйте тултип, когда нужно:</p>
     <ul class="bullets" style="margin-bottom:26px;">
-      <li>пояснить назначение иконки или <a class="inl" href="../atoms/IconButton.html">IconButton</a> без подписи;</li>
+      <li>пояснить назначение иконки или <a class="inl" href="../../atoms/IconButton/IconButton.html">IconButton</a> без подписи;</li>
       <li>показать полное значение обрезанного текста;</li>
       <li>дать короткое уточнение или сообщение об ошибке рядом с полем.</li>
     </ul>
@@ -284,7 +284,7 @@
         <ul class="bullets">
           <li><b>Обычный</b> — до одной строки: пояснение иконки, полное значение обрезанного текста. Не интерактивен.</li>
           <li><b>Богатый</b> — заголовок + описание, опционально одно действие. Открывается тем же hover / focus, но не закрывается, пока курсор на самом тултипе (задержка скрытия 300&nbsp;мс).</li>
-          <li>Больше одного действия, форма, список или закрытие крестиком — это уже <a class="inl" href="../organisms/Popover.html">Popover</a>, а не тултип.</li>
+          <li>Больше одного действия, форма, список или закрытие крестиком — это уже <a class="inl" href="../../organisms/Popover/Popover.html">Popover</a>, а не тултип.</li>
           <li>Действие внутри — не единственный способ его выполнить: то же должно быть доступно со страницы.</li>
         </ul>
       </div>
@@ -448,17 +448,17 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/tooltip.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/Tooltip/Tooltip.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/tooltip.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/molecules/Tooltip/Tooltip.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -522,7 +522,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/tooltip.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/Tooltip/Tooltip.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -540,15 +540,15 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/tooltip.page.js"></script>
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="Tooltip.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="Tooltip.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* подставляем иконку-цель из библиотеки ДС */
 (function(){ const i=(window.DS_ICONS||{})['info-circle']; if(!i) return;
@@ -556,7 +556,7 @@
 })();
 </script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Тип': 'Показывать Error', 'Стрелка': 'Показывать стрелку', 'Богатый контент': 'Показывать богатый контент', 'Перенос (multiline)': 'Перенос текста' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- триггер ссылается на тултип через aria-describedby -->
@@ -570,7 +570,7 @@
 
 <!-- без стрелки / с переносом -->
 <span class="tip tip--error tip--bottom tip--start tip--no-arrow tip--multiline" role="tooltip">…</span></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/tooltip.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/Tooltip/Tooltip.page.js)
 // Тултип и позиционирование — общий рантайм: window.DSTooltip.make(text, o) / .place(tip, target, o)
 const spec = {
   type: 'main',                      // 'main' | 'error'

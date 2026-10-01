@@ -3,10 +3,10 @@ component: Toast
 title: "Toast"
 version: "1.007"
 updated: "05.09.2026"
-page: pages/molecules/Toast.html
-page_js: scripts/toast.page.js
-runtime: scripts/ds-notify.js
-css: styles/toast.css
+page: components/molecules/Toast/Toast.html
+page_js: components/molecules/Toast/Toast.page.js
+runtime: utils/ds-notify.js
+css: components/molecules/Toast/Toast.css
 deps: [button, spinner]
 status: auto
 ---
@@ -78,7 +78,7 @@ status: auto
 <div class="toast-layer toast-layer--loader">…</div>
 ```
 
-### Рантайм ДС — `scripts/ds-notify.js`
+### Рантайм ДС — `utils/ds-notify.js`
 
 Показ тостов вынесен в рантайм — очередь, лимит и тайминги больше не нужно
 воспроизводить на экране:
@@ -171,7 +171,7 @@ interface ToastController {
 | .toast--success / --error / --info | пилюля | Тон статус-иконки |
 | .toast--enter / --leave | пилюля | Анимация появления (сверху) / скрытия (фейд вниз) |
 | .toast__lead | span | Ведущий слот — спиннер и/или иконка; высота 1lh, центрирован по первой строке текста (при переносе остаётся у верхней строки) |
-| .spin.spin--current | span | Индикатор — общий Spinner (styles/spinner.css), 16×16, currentColor; aria-hidden |
+| .spin.spin--current | span | Индикатор — общий Spinner (components/atoms/Spinner/Spinner.css), 16×16, currentColor; aria-hidden |
 | .toast__icon | span | Статус-иконка 16×16, цвет по тону; aria-hidden |
 | .toast__msg | span | Текст сообщения, перенос при 60% ширины |
 | [role="status"] / [role="alert"] | пилюля | Live-region: status (polite) для bar/success, alert (assertive) для error/loader |

@@ -137,7 +137,7 @@ function buildModal(o = {}) {
   modal.appendChild(foot);
   scrim.appendChild(modal);
 
-  /* тени шапки и подвала при прокрутке тела — рантайм ДС (scripts/ds-modal.js) */
+  /* тени шапки и подвала при прокрутке тела — рантайм ДС (components/organisms/Modal/Modal.js) */
   window.DSModal && DSModal.wireScroll(modal);
 
   window.dsIcons && window.dsIcons.apply(scrim);

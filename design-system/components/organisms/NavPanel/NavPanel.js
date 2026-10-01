@@ -1,6 +1,6 @@
 /* =========================================================================
    DS NavPanel — рантайм панели навигации (out-of-box).
-   Зависимости: styles/nav-panel.css; иконки — icons-data.js + ds-icons.js.
+   Зависимости: components/organisms/NavPanel/NavPanel.css; иконки — icons-data.js + ds-icons.js.
 
    Экспорт: window.DSNavPanel = {
      bind(nav, opts) → api | null   — навесить поведение на .nav

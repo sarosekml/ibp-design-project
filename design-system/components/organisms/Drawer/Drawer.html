@@ -2,38 +2,38 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Drawer — Дизайн-система</title>
-<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/spacing.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/modal.css">
-<link rel="stylesheet" href="../../styles/drawer.css">
-<link rel="stylesheet" href="../../styles/tile.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/read-only-field.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/input.css">
-<link rel="stylesheet" href="../../styles/checkbox.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/alert.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="icon" type="image/svg+xml" href="../../../assets/logo.svg">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../Modal/Modal.css">
+<link rel="stylesheet" href="Drawer.css">
+<link rel="stylesheet" href="../Tile/Tile.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../molecules/ReadOnlyField/ReadOnlyField.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../../atoms/Checkbox/Checkbox.css">
+<link rel="stylesheet" href="../../molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../../molecules/Alert/Alert.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
 /* Раскладка страницы документации. Токены ДС, своих значений нет. */
 a{color:var(--link);} a:hover{color:var(--link-dark);}
@@ -101,15 +101,15 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия: <b>1.001</b></span>
     <span>Обновлено: <b>01.10.2026</b></span>
-    <span>CSS <b>styles/drawer.css</b></span>
-    <span>Рантайм <b>scripts/ds-drawer.js</b></span>
+    <span>CSS <b>components/organisms/Drawer/Drawer.css</b></span>
+    <span>Рантайм <b>components/organisms/Drawer/Drawer.js</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
   <h1>Drawer</h1>
@@ -309,7 +309,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     <div>
       <h4>Что даёт коробка</h4>
       <ul>
-        <li>Подключить <span class="tk">scripts/ds.js</span> — <span class="tk">ds-drawer.js</span> и <span class="tk">ds-modal.js</span> загрузятся сами.</li>
+        <li>Подключить <span class="tk">ds.js</span> — <span class="tk">ds-drawer.js</span> и <span class="tk">ds-modal.js</span> загрузятся сами.</li>
         <li>Триггер — <span class="tk">data-drawer="id"</span>. Больше на экране писать нечего.</li>
         <li>Разметку, добавленную после загрузки страницы, надо связать заново: <span class="tk">DSDrawer.bindAll(scope)</span>.</li>
       </ul>
@@ -397,19 +397,19 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   <button type="button" class="menu__item menu__item--danger" role="menuitem"><span class="menu__item-icon"><i data-icon="trash"></i></span><span class="menu__item-label">Удалить</span></button>
 </div>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-float.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-tile.js"></script>
-<script src="../../scripts/ds-menu.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-modal.js"></script>
-<script src="../../scripts/ds-drawer.js"></script>
-<script src="../../scripts/ds-readonlyfield.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/drawer.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../utils/ds-float.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Tile/Tile.js"></script>
+<script src="../../molecules/ContextMenu/ContextMenu.js"></script>
+<script src="../../molecules/Tooltip/Tooltip.js"></script>
+<script src="../Modal/Modal.js"></script>
+<script src="Drawer.js"></script>
+<script src="../../molecules/ReadOnlyField/ReadOnlyField.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="Drawer.page.js"></script>
 <!-- самодостаточные подписи свитчей конструктора (общий слой docs-split.js) -->
 <script>
 window.DS_SPLIT_SWITCH_LABELS = {
@@ -418,7 +418,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Alert под шапкой': 'Показывать Alert под шапкой'
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html">&lt;!-- Триггер: рантайм сам найдёт скрим по id, допишет ему .drawer-scrim
@@ -488,7 +488,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
    на вопрос «что внутри вот этого объекта из списка», не уводя со списка:
    доска, реестр, дерево остаются на месте, у объекта есть «следующий».
 
-   Слой у Drawer и Modal ОБЩИЙ — scripts/ds-modal.js: скрим, портал в body,
+   Слой у Drawer и Modal ОБЩИЙ — components/organisms/Modal/Modal.js: скрим, портал в body,
    блокировка прокрутки страницы, inert фона, focus trap, стек слоёв, Esc,
    возврат фокуса. Drawer не заводит второго экземпляра этой логики: две
    реализации одного механизма расходятся на первой же правке. Своё у
@@ -763,7 +763,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 
 <script type="text/plain" id="src-code-js">/* =========================================================================
    DS Drawer — рантайм панели деталей (out-of-box).
-   Зависимости: styles/drawer.css, styles/modal.css, scripts/ds-modal.js.
+   Зависимости: components/organisms/Drawer/Drawer.css, components/organisms/Modal/Modal.css, components/organisms/Modal/Modal.js.
 
    Слой Drawer НЕ пишет: скрим, портал в body, блокировку прокрутки, inert
    фона, focus trap, стек, Esc и возврат фокуса даёт ds-modal.js — один

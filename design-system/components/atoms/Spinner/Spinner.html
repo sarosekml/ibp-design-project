@@ -2,17 +2,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spinner — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="Spinner.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
 <style>
   .row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:40px; }
 
@@ -80,11 +80,11 @@
   .subhead2 { font: var(--type-body-m-strong); color: var(--text-primary); margin:34px 0 16px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Spinner">
@@ -134,7 +134,7 @@
       <li>нужен компактный самодостаточный индикатор рядом с текстом или вместо иконки — без бара, под который пришлось бы выделять отдельную полосу в разметке;</li>
       <li>нужно заблокировать конкретную область экрана на время обновления, не трогая остальной интерфейс — режим <b>Оверлей</b>.</li>
     </ul>
-    <p class="desc">Не используйте Spinner, если доля выполнения известна — линейный индикатор с реальным значением (<code class="tok">value</code>) даёт пользователю больше информации, чем «просто крутится»; см. <a class="inl" href="../atoms/ProgressBar.html">ProgressBar</a>. Круговой индикатор с процентом внутри (например, для аватара или миниатюры файла) — отдельная задача, она в бэклоге ProgressBar, а не форма этого компонента: Spinner всегда неопределённый и не несёт числового значения. Для загрузки внутри кнопки не собирайте Spinner отдельно — состояние <code class="tok">.btn--loading</code> уже включает свой спиннер, см. <a class="inl" href="../atoms/Buttons.html">Buttons</a>. Если под загрузкой уже известна структура будущего контента (карточка, строка таблицы), предпочтительнее сохраняющий разметку скелетон-паттерн — самостоятельного компонента Skeleton в ДС пока нет (см. «Бэклог»).</p>
+    <p class="desc">Не используйте Spinner, если доля выполнения известна — линейный индикатор с реальным значением (<code class="tok">value</code>) даёт пользователю больше информации, чем «просто крутится»; см. <a class="inl" href="../ProgressBar/ProgressBar.html">ProgressBar</a>. Круговой индикатор с процентом внутри (например, для аватара или миниатюры файла) — отдельная задача, она в бэклоге ProgressBar, а не форма этого компонента: Spinner всегда неопределённый и не несёт числового значения. Для загрузки внутри кнопки не собирайте Spinner отдельно — состояние <code class="tok">.btn--loading</code> уже включает свой спиннер, см. <a class="inl" href="../Buttons/Buttons.html">Buttons</a>. Если под загрузкой уже известна структура будущего контента (карточка, строка таблицы), предпочтительнее сохраняющий разметку скелетон-паттерн — самостоятельного компонента Skeleton в ДС пока нет (см. «Бэклог»).</p>
   </section>
 
   <!-- ANATOMY -->
@@ -268,17 +268,17 @@
     <p class="desc">Хендофф-пакет: точные размеры и поведение как алгоритм — не привязан к стеку.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/spinner.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Spinner/Spinner.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" id="dev-spec-table" style="border:none;border-radius:0;"></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/spinner.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/Spinner/Spinner.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -316,7 +316,7 @@
     <p class="desc">Компонент закрывает индикатор неопределённой длительности. Смежные задачи, которые сознательно не входят в эту версию:</p>
     <ul class="bullets">
       <li><b>Skeleton</b> — самостоятельный переиспользуемый примитив (строки/блоки + шиммер), который сохраняет разметку будущего контента вместо Spinner/оверлея. Сейчас шиммер существует только как локальный <code class="tok">.modal__skeleton</code> внутри Modal — не переиспользуемый компонент. См. общий бэклог ДС (раздел «Недостающие компоненты», P2).</li>
-      <li><b>Круговой ProgressBar с известным значением</b> — кольцо с процентом внутри (аватары, миниатюры файлов, виджеты дашборда). Другая задача и другая разметка: у Spinner нет значения по определению. Уже описано в бэклоге <a class="inl" href="../atoms/ProgressBar.html">ProgressBar</a>.</li>
+      <li><b>Круговой ProgressBar с известным значением</b> — кольцо с процентом внутри (аватары, миниатюры файлов, виджеты дашборда). Другая задача и другая разметка: у Spinner нет значения по определению. Уже описано в бэклоге <a class="inl" href="../ProgressBar/ProgressBar.html">ProgressBar</a>.</li>
       <li><b>Составной Upload-индикатор с отменой/повтором</b> — carточка загрузки файла с действиями. Требует состояний ошибки — отдельный организм поверх Spinner/ProgressBar, не расширение этого компонента.</li>
     </ul>
   </section>
@@ -672,13 +672,13 @@ function makeOverlayCard(spinOpts) {
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Подпись': 'Показывать подпись', 'Подпись снизу': 'Подпись снизу', 'Демо оверлея': 'Показывать демо оверлея' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- голое кольцо -->

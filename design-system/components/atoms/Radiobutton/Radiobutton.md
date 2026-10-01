@@ -3,8 +3,8 @@ component: Radiobutton
 title: "Radiobutton"
 version: "2.008"
 updated: "05.09.2026"
-page: pages/atoms/Radiobutton.html
-css: styles/radio.css
+page: components/atoms/Radiobutton/Radiobutton.html
+css: components/atoms/Radiobutton/Radiobutton.css
 deps: [label-helper]
 status: auto
 ---

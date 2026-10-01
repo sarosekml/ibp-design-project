@@ -3,14 +3,14 @@ component: Tile
 title: "Tile"
 version: "1.015"
 updated: "30.09.2026"
-page: pages/organisms/Tile.html
-runtime: scripts/ds-tile.js
-css: styles/tile.css
+page: components/organisms/Tile/Tile.html
+runtime: components/organisms/Tile/Tile.js
+css: components/organisms/Tile/Tile.css
 deps: [icon-button, button, link, chip, badge, alert, divider, read-only-field]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/tile.css и страница компонента. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/organisms/Tile/Tile.css и страница компонента. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
 Tile — основная плашка рабочей области страницы: группирует связанные поля и действия по объекту (сделка, продукт, инструмент, контрагент). Состоит из TileHeader (размер M) и контентной области; наполнение контента индивидуально под задачу и тип тайла. Родственники: TileHeadless (без хэдера) и Card (`.tile--card`) — карточка с хэдером типа Card, собственной геометрией и собственными интерактивными состояниями; применяется в модалках, списках и на канбан-доске.
@@ -63,7 +63,7 @@ Tile — основная плашка рабочей области стран�
 <!-- accordion: .tile.tile--accordion; toggle .tile__toggle (aria-expanded) над .tile__collapsible; свёрнуто — .tile--collapsed -->
 ```
 
-### Рантайм ДС — `scripts/ds-tile.js`
+### Рантайм ДС — `components/organisms/Tile/Tile.js`
 
 Сворачивание аккордеона вынесено в рантайм и работает делегированно: любая
 `.tile--accordion` с кнопкой `.tile__toggle` оживает сама, включая плашки,

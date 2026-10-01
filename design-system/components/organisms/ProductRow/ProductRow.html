@@ -2,30 +2,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProductRow — Дизайн-система</title>
-<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/spacing.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/tooltip.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/product-row.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="icon" type="image/svg+xml" href="../../../assets/logo.svg">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../molecules/ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../../molecules/Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="ProductRow.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
 a{color:var(--link);} a:hover{color:var(--link-dark);}
@@ -85,15 +85,15 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
             <div class="docs-main">
 
 <header class="masthead">
-  <a class="crumb" href="../../index.html">
+  <a class="crumb" href="../../../index.html">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Обзор компонентов
   </a>
   <div class="meta">
     <span>Версия <b>1.001</b></span>
     <span>Обновлено <b>30.09.2026</b></span>
-    <span>CSS <b>styles/product-row.css</b></span>
-    <span>Рантайм <b>scripts/ds-product-row.js</b></span>
+    <span>CSS <b>components/organisms/ProductRow/ProductRow.css</b></span>
+    <span>Рантайм <b>components/organisms/ProductRow/ProductRow.js</b></span>
     <span>Зависимости <b>icon-button, context-menu, tooltip, skeleton</b></span>
   </div>
   <div class="eyebrow">Дизайн-система · Организмы</div>
@@ -212,7 +212,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <section class="section" id="behavior" data-screen-label="Поведение">
   <h2>Поведение</h2>
   <h3>Сворачивание ветки</h3>
-  <p class="desc">Кнопка <code class="tok">.prow__toggle</code> в строке узла сворачивает и разворачивает группу его детей. Рантайм <code class="tok">scripts/ds-product-row.js</code> работает делегированием: дерево, перерисованное скриптом, повторной привязки не требует. Состояние — класс <code class="tok">.prow-tree__node--collapsed</code> на узле; рантайм выставляет кнопке <code class="tok">aria-expanded</code>, <code class="tok">aria-controls</code> и подпись «Свернуть» / «Развернуть», шеврон поворачивается вниз, с узла всплывает событие <code class="tok">prowtoggle</code> с <code class="tok">{ collapsed }</code>.</p>
+  <p class="desc">Кнопка <code class="tok">.prow__toggle</code> в строке узла сворачивает и разворачивает группу его детей. Рантайм <code class="tok">components/organisms/ProductRow/ProductRow.js</code> работает делегированием: дерево, перерисованное скриптом, повторной привязки не требует. Состояние — класс <code class="tok">.prow-tree__node--collapsed</code> на узле; рантайм выставляет кнопке <code class="tok">aria-expanded</code>, <code class="tok">aria-controls</code> и подпись «Свернуть» / «Развернуть», шеврон поворачивается вниз, с узла всплывает событие <code class="tok">prowtoggle</code> с <code class="tok">{ collapsed }</code>.</p>
   <h3>Отступы уровней</h3>
   <p class="desc">Вложенная группа сдвинута на 24px, поэтому строка на 24px уже родителя; правый край у всех уровней общий. Исключение — дети корневого узла: их группа не сдвигается, корень и его дети одной ширины.</p>
   <h3>Наведение и клик</h3>
@@ -434,7 +434,7 @@ on click(mark):
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники ProductRow: HTML — из спеки, CSS — styles/product-row.css (полностью), JS — API рантайма scripts/ds-product-row.js.</p>
+              <p class="desc">Эталонная разметка и исходники ProductRow: HTML — из спеки, CSS — components/organisms/ProductRow/ProductRow.css (полностью), JS — API рантайма components/organisms/ProductRow/ProductRow.js.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -452,18 +452,18 @@ on click(mark):
   </div><!-- /splitpane -->
 </main><!-- .page -->
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-float.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-tooltip.js"></script>
-<script src="../../scripts/ds-menu.js"></script>
-<script src="../../scripts/ds-product-row.js"></script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../../utils/ds-float.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
+<script src="../../molecules/Tooltip/Tooltip.js"></script>
+<script src="../../molecules/ContextMenu/ContextMenu.js"></script>
+<script src="ProductRow.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><ul class="prow-tree">
@@ -504,7 +504,7 @@ on click(mark):
   </li>
 </ul></script>
 
-<script type="text/plain" id="src-code-js">/* ProductRow — рантайм scripts/ds-product-row.js (подключает ds.js).
+<script type="text/plain" id="src-code-js">/* ProductRow — рантайм components/organisms/ProductRow/ProductRow.js (подключает ds.js).
    Разметка статична; рантайм оживляет только сворачивание веток. */
 
 window.DSProductRow = {
@@ -533,7 +533,7 @@ tree.addEventListener('prowtoggle', (e) => e.detail.collapsed);
    States:   default · hover (рамка --primary) · tinted (заливка) · selected
              (строка списка выбора: [aria-checked="true"]) · disabled
              ([aria-disabled="true"]) · collapsed (ветка свёрнута)
-   Runtime:  scripts/ds-product-row.js — сворачивание ветки по .prow__toggle.
+   Runtime:  components/organisms/ProductRow/ProductRow.js — сворачивание ветки по .prow__toggle.
    Requires: typography.css, palette.css, spacing.css, radius.css,
              icon-button.css (действия), context-menu.css (кебаб)
    ========================================================================= */

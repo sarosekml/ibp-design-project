@@ -3,8 +3,8 @@ component: ProgressBar
 title: "ProgressBar"
 version: "1.003"
 updated: "05.09.2026"
-page: pages/atoms/ProgressBar.html
-css: styles/progress-bar.css
+page: components/atoms/ProgressBar/ProgressBar.html
+css: components/atoms/ProgressBar/ProgressBar.css
 deps: [label-helper]
 status: curated
 ---

@@ -115,7 +115,7 @@
 }
 
 /* попап со скрытыми звеньями — контекстное меню (переиспользует .menu /
-   .menu__item из styles/context-menu.css): список страниц, клик по строке
+   .menu__item из components/molecules/ContextMenu/ContextMenu.css): список страниц, клик по строке
    переходит на неё */
 .crumbs__popup.menu { min-width: 160px; max-width: 320px; padding: 6px 0; }
 .crumbs__popup .menu__item { min-height: 36px; font: var(--type-body-s); }

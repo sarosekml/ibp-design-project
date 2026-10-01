@@ -1,5 +1,5 @@
 /* ds-breadcrumbs.js — авто-схлопывание трейла Breadcrumbs по ширине (out-of-box, RulesAudit Фаза 3).
-   Зависимости: styles/breadcrumbs.css, ds-menu.js («…»), ds-tooltip.js (тултип обрезанной крошки).
+   Зависимости: components/molecules/Breadcrumbs/Breadcrumbs.css, ds-menu.js («…»), ds-tooltip.js (тултип обрезанной крошки).
 
    Подключение (opt-in, чтобы не оживлять статичные примеры витрин):
      <ol class="crumbs" data-breadcrumbs>

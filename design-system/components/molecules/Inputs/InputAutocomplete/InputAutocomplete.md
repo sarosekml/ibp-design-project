@@ -3,15 +3,15 @@ component: InputAutocomplete
 title: "InputAutocomplete"
 version: "1.017"
 updated: "25.09.2026"
-page: pages/molecules/InputAutocomplete.html
-page_js: scripts/input-autocomplete.page.js
-runtime: scripts/ds-dropdownlist.js, scripts/ds-input.js
-css: styles/input.css
+page: components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html
+page_js: components/molecules/Inputs/InputAutocomplete/InputAutocomplete.page.js
+runtime: components/molecules/DropdownList/DropdownList.js, components/molecules/Inputs/Inputs.js
+css: components/molecules/Inputs/Inputs.css
 deps: [label-helper, checkbox, chip, tooltip, dropdown-list]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/input.css, styles/dropdown-list.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/molecules/Inputs/Inputs.css, components/molecules/DropdownList/DropdownList.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
 Поле-триггер + раскрывающийся под ним DropdownList. Пользователь вводит запрос, список фильтруется. Список содержит текстовые опции (одиночный выбор) или опции с чекбоксами (множественный). База `.inp` общая с InputText/InputDate; устройство списка — компонент Select · DropdownList.
@@ -19,7 +19,7 @@ status: curated
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
 - Список опций — текстовые (одиночный выбор) ИЛИ с чекбоксами (множественный) — режимы не смешиваются в одном инстансе.
-- Список подключается штатным рантаймом `scripts/ds-dropdownlist.js` (`DSDropdownList.bind(field, {...})`) — открытие/закрытие/фильтрация/клавиатура не пишутся заново на странице.
+- Список подключается штатным рантаймом `components/molecules/DropdownList/DropdownList.js` (`DSDropdownList.bind(field, {...})`) — открытие/закрытие/фильтрация/клавиатура не пишутся заново на странице.
 - Показ выбранного — сводка (`.inp__summary`) ИЛИ чипы в поле (`.inp__chips`) ИЛИ внешний стек (`.inp-ext`) — один способ на инстанс, не два одновременно.
 - Ширина DropdownList под автокомплитом равна ширине поля-триггера (в отличие от самостоятельного DropdownList с собственной шириной).
 - Крестик очистки и шеврон в `.inp__acts` могут быть одновременно (в отличие от Button, где это взаимоисключающая пара).
@@ -32,7 +32,7 @@ status: curated
 ## Диагностика
 - «Список открывается своей ширины, не по полю» → DropdownList должен наследовать ширину триггера, не `--ddl-min/max`
 - «Выбранные значения показаны и чипами, и сводкой одновременно» → оставить один способ показа на инстанс
-- «Чипы обрезаются краем поля, счётчика «+N» нет» → не подключён `scripts/ds-input.js`, либо поле помечено `data-input-static`
+- «Чипы обрезаются краем поля, счётчика «+N» нет» → не подключён `components/molecules/Inputs/Inputs.js`, либо поле помечено `data-input-static`
 - «Счётчик «+N» вылезает за границу поля» → последнему видимому чипу не досталось `data-inp-last`; сжимается именно он, остальные чипы `flex: none`
 - «У счётчика «+N» нет тултипа со скрытыми значениями» → рантайм старше 1.015: тултипов поле не навешивало вовсе, у счётчика был только `aria-label`
 - «После появления тултипа сломался счёт чипов / «+N» задвоился» → тултип счётчика привязан обычным `DSTooltip.bind(counter)` без параметра `tip`: обёртка `.tip-anchor` встала прямым ребёнком `.inp__chips`, и перебор `children` перестал видеть чипы

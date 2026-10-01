@@ -3,10 +3,10 @@ component: Tab
 title: "Tab"
 version: "1.012"
 updated: "11.09.2026"
-page: pages/molecules/Tab.html
-page_js: scripts/tab.page.js
-runtime: scripts/ds-tabs.js (+ scripts/ds-tooltip.js — тултип усечённой подписи)
-css: styles/tab.css
+page: components/molecules/Tab/Tab.html
+page_js: components/molecules/Tab/Tab.page.js
+runtime: components/molecules/Tab/Tab.js (+ components/molecules/Tooltip/Tooltip.js — тултип усечённой подписи)
+css: components/molecules/Tab/Tab.css
 status: auto
 ---
 
@@ -69,7 +69,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-tabs.js`
+### Рантайм ДС — `components/molecules/Tab/Tab.js`
 
 Общий рантайм Tab и SegmentControl: roving tabindex, навигация стрелками
 (← → и ↑ ↓), Home / End, активация выбора на месте, пропуск отключённых

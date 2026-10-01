@@ -3,10 +3,10 @@ component: SegmentControl
 title: "SegmentControl"
 version: "1.006"
 updated: "05.09.2026"
-page: pages/molecules/SegmentControl.html
-page_js: scripts/segment-control.page.js
-runtime: scripts/ds-tabs.js
-css: styles/segment-control.css
+page: components/molecules/SegmentControl/SegmentControl.html
+page_js: components/molecules/SegmentControl/SegmentControl.page.js
+runtime: components/molecules/Tab/Tab.js
+css: components/molecules/SegmentControl/SegmentControl.css
 deps: [tab, button, button-group, badge]
 status: auto
 ---
@@ -74,7 +74,7 @@ status: auto
 </div>
 ```
 
-### Рантайм ДС — `scripts/ds-tabs.js`
+### Рантайм ДС — `components/molecules/Tab/Tab.js`
 
 Общий рантайм Tab и SegmentControl: roving tabindex, навигация стрелками
 (← → и ↑ ↓), Home / End, активация выбора на месте, пропуск отключённых

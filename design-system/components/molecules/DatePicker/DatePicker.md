@@ -3,18 +3,18 @@ component: DatePicker
 title: "DatePicker"
 version: "1.008"
 updated: "05.09.2026"
-page: pages/molecules/DatePicker.html
-page_js: scripts/datepicker.page.js
-runtime: scripts/ds-datepicker.js
-css: styles/datepicker.css
+page: components/molecules/DatePicker/DatePicker.html
+page_js: components/molecules/DatePicker/DatePicker.page.js
+runtime: components/molecules/DatePicker/DatePicker.js
+css: components/molecules/DatePicker/DatePicker.css
 deps: [icon-button, button]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/datepicker.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/molecules/DatePicker/DatePicker.css и страница. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
-Календарь — всплывающая поверхность выбора даты или диапазона дат. Поднимается полями InputDate / InputDateRange (floating над полем) либо встраивается в панель/модалку (inline). Material-подход на токенах ДС; неделя с понедельника, локаль русская. Рантайм — `scripts/ds-datepicker.js` (out-of-box): `makeCalendar`, `openPicker(anchor, spec)` и автоподключение — клик по кнопке-календарю поля (`.inp__act[aria-label="Открыть календарь"]`) поднимает календарь; одиночное поле → выбор даты, поле в `.inp-range--date` → выбор диапазона.
+Календарь — всплывающая поверхность выбора даты или диапазона дат. Поднимается полями InputDate / InputDateRange (floating над полем) либо встраивается в панель/модалку (inline). Material-подход на токенах ДС; неделя с понедельника, локаль русская. Рантайм — `components/molecules/DatePicker/DatePicker.js` (out-of-box): `makeCalendar`, `openPicker(anchor, spec)` и автоподключение — клик по кнопке-календарю поля (`.inp__act[aria-label="Открыть календарь"]`) поднимает календарь; одиночное поле → выбор даты, поле в `.inp-range--date` → выбор диапазона.
 
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
@@ -47,7 +47,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Рендерится на странице через getComputedStyle. Источник — styles/datepicker.css. Контейнер 304px / паддинг 12px / радиус 8px; шапка 40px; ячейка дня 40×40; кружок 36×36; дни недели 32px.
+Рендерится на странице через getComputedStyle. Источник — components/molecules/DatePicker/DatePicker.css. Контейнер 304px / паддинг 12px / радиус 8px; шапка 40px; ячейка дня 40×40; кружок 36×36; дни недели 32px.
 
 ### Разметка · HTML (эталонная реализация ДС)
 

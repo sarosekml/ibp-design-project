@@ -3,9 +3,9 @@ component: ButtonGroup
 title: "ButtonGroup"
 version: "1.005"
 updated: "21.09.2026"
-page: pages/molecules/ButtonGroup.html
-runtime: scripts/ds-menu.js, scripts/ds-buttongroup.js
-css: styles/button-group.css
+page: components/molecules/ButtonGroup/ButtonGroup.html
+runtime: components/molecules/ContextMenu/ContextMenu.js, components/molecules/ButtonGroup/ButtonGroup.js
+css: components/molecules/ButtonGroup/ButtonGroup.css
 deps: [button]
 status: auto
 ---
@@ -22,7 +22,7 @@ status: auto
 - Disabled — только на всю группу целиком (`.btn-group--disabled` + `aria-disabled` на контейнере); нельзя блокировать отдельную кнопку.
 - Split Button — текстовая кнопка (действие по умолчанию) и стрелка (ContextMenu) — всегда вдвоём, одной без другой не бывает.
 - Toggle-схема (одиночный radio-like / множественный checkbox-like) задаётся на уровне группы целиком, не смешивается внутри одной.
-- Toggle-переключение — общий рантайм `scripts/ds-buttongroup.js`: различает схему по `role` группы (`radiogroup` — одиночный, `group` — множественный).
+- Toggle-переключение — общий рантайм `components/molecules/ButtonGroup/ButtonGroup.js`: различает схему по `role` группы (`radiogroup` — одиночный, `group` — множественный).
 - Outline в группе не меняет цвет обводки на Hover/Active — иначе соседний шов «прыгает».
 
 ## Диагностика
@@ -145,7 +145,7 @@ interface SplitButtonProps {
 | .btn-group--disabled | div | pointer-events:none на всюй группе; парный aria-disabled |
 | .btn-group--toggle | div | Сегментированный выбор; стилизует кнопки с aria-pressed="true" |
 | .btn-group--split | div | Split Button: текстовая + icon-only стрелка |
-| .menu.menu--floating / .menu__item | div/button | Контекстное меню Split Button — компонент ContextMenu, поведение из `scripts/ds-menu.js` (`DSMenu.bind`), не своя разметка |
+| .menu.menu--floating / .menu__item | div/button | Контекстное меню Split Button — компонент ContextMenu, поведение из `components/molecules/ContextMenu/ContextMenu.js` (`DSMenu.bind`), не своя разметка |
 | role="group" / aria-label | div | Доступность: описывает назначение группы целиком |
 | aria-pressed | button | Состояние кнопки в сегментированном выборе |
 | aria-haspopup / aria-expanded | button | Стрелка Split Button — связь с контекстным меню |

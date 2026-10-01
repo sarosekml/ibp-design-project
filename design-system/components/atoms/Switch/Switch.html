@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Switch — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/switch.css">
-<link rel="stylesheet" href="../../styles/spinner.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="Switch.css">
+<link rel="stylesheet" href="../Spinner/Spinner.css">
+<link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -109,11 +109,11 @@
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Switch">
@@ -162,8 +162,8 @@
       <li>дать пользователю возможность мгновенно включить / выключить или показать / скрыть что-либо;</li>
       <li>дать мгновенный ответ без подтверждения действия.</li>
     </ul>
-    <p class="desc">Свитчи всегда мгновенно выполняют действие, поэтому не стоит использовать их в сценариях с кнопкой отправки данных или кнопкой сохранения — это может запутать пользователя. В этих случаях используйте <a class="inl" href="../atoms/Radiobutton.html">Radiobutton</a> или <a class="inl" href="../atoms/Checkbox.html">Checkbox</a>.</p>
-    <p class="desc">Свитч нельзя использовать для выбора пунктов в списке из нескольких вариантов. Для этого используйте группу <a class="inl" href="../atoms/Checkbox.html">Checkbox</a>.</p>
+    <p class="desc">Свитчи всегда мгновенно выполняют действие, поэтому не стоит использовать их в сценариях с кнопкой отправки данных или кнопкой сохранения — это может запутать пользователя. В этих случаях используйте <a class="inl" href="../Radiobutton/Radiobutton.html">Radiobutton</a> или <a class="inl" href="../Checkbox/Checkbox.html">Checkbox</a>.</p>
+    <p class="desc">Свитч нельзя использовать для выбора пунктов в списке из нескольких вариантов. Для этого используйте группу <a class="inl" href="../Checkbox/Checkbox.html">Checkbox</a>.</p>
   
 </section>
 
@@ -180,7 +180,7 @@
           <li><span class="n"></span><span class="t"><span class="k">Заголовок группы</span><span class="d"> — опционально, H6 Strong</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Свитч-контрол</span><span class="d"> — трек 20×36px, ползунок 16px</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Название свитча</span><span class="d"> — Body M, справа от контрола</span></span></li>
-          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, общий компонент подкачки — см. <a class="inl" href="../atoms/LabelHelper.html">Label / Helper</a></span></span></li>
+          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, общий компонент подкачки — см. <a class="inl" href="../LabelHelper/LabelHelper.html">Label / Helper</a></span></span></li>
         </ul>
       </div>
     </div>
@@ -238,7 +238,7 @@
     <p class="desc tight">Текстовый контент свитча — название и опциональный хелпер. Краткий свод правил (подробно — в «Название свитча» ниже):</p>
     <ul class="bullets" style="margin-bottom:26px;">
       <li><b>Название</b> (Body M, справа от контрола; слева в строке настроек) — короткое, описывает действие в состоянии On, в положительном ключе, без указания текущего состояния в скобках;</li>
-      <li><b>Хелпер</b> (Body XS под названием) — поясняет неочевидный эффект включения, может отражать текущий статус (например, «Применяем…» в Loading); общий компонент — см. <a class="inl" href="../atoms/LabelHelper.html">Label / Helper</a>;</li>
+      <li><b>Хелпер</b> (Body XS под названием) — поясняет неочевидный эффект включения, может отражать текущий статус (например, «Применяем…» в Loading); общий компонент — см. <a class="inl" href="../LabelHelper/LabelHelper.html">Label / Helper</a>;</li>
       <li>в строке настроек название слева, свитч прижат к правому краю (см. «Свитч в строке настроек»);</li>
       <li>не обрезайте название многоточием — оно может переноситься в несколько строк (см. «Описание работы»).</li>
     </ul>
@@ -377,18 +377,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/switch.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Switch/Switch.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.8fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/switch.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/atoms/Switch/Switch.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -475,7 +475,7 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ---------- icons ---------- */
 const UI_ICONS = {
@@ -1007,13 +1007,13 @@ function wireToggle(root, onChange){
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Состояние': 'Включён', 'Название': 'Показывать название', 'Хелпер': 'Показывать хелпер', 'Группа': 'Показывать группу', 'Обязательный выбор (*)': 'Обязательный выбор' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- свитч с названием и хелпером; контрол и текст — внутри <label> -->

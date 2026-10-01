@@ -713,7 +713,7 @@
      DealsStore — баланс, PE, продукты и валюты реестра читают их оттуда -->
 <script src="../data/mock-product-catalog.js"></script>
 <script src="../data/product-tree-store.js"></script>
-<script src="../../../ds-body.js" data-ds="scripts/ibp-home.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script>
 /* Экранный скрипт: меню панели навигации строится из каталога ibp-home.js
    (window.IBPHome) по роли «Финансист ДИД»; пункт «Текущий портфель» selected. */
@@ -790,7 +790,7 @@
 /* Модалка фильтра — вертикальные табы как ЯКОРНЫЕ ссылки по контентной области
    (TableFilter, правило `.tmsf__nav` + scroll-spy). Рантайма ДС для этого нет
    (ds-table-filter.js умеет только сброс чипа), поэтому поведение повторяет
-   эталонного демо (design-system/scripts/table-filter.page.js, 497–531). Слушатели
+   эталонного демо (design-system/components/organisms/TableFilter/TableFilter.page.js, 497–531). Слушатели
    вешаются на статичные элементы — DSModal порталит скрим в body, но НЕ клонирует
    его, поэтому обработчики переживают перенос. */
 (function () {

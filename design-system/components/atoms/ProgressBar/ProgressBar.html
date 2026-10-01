@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProgressBar — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/progress-bar.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="ProgressBar.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -114,11 +114,11 @@
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="ProgressBar">
@@ -168,7 +168,7 @@
       <li>визуализировать величину в диапазоне 0–100 без бинарного статуса — например, вероятность сделки, скор, заполненность лимита;</li>
       <li>показать, что процесс идёт, но точный процент неизвестен — режим <b>Indeterminate</b>;</li>
     </ul>
-    <p class="desc">Не используйте ProgressBar, чтобы просто показать факт статуса без величины («Активна», «В архиве») — для этого есть <a class="inl" href="../atoms/Chip.html">Chip</a> или <a class="inl" href="../atoms/Badge.html">Badge</a>. Для мгновенного действия внутри кнопки (сохранение, отправка) используйте <code class="tok">.btn--loading</code> в <a class="inl" href="../atoms/Buttons.html">Buttons</a>, а не отдельный ProgressBar. Для уведомления о фоновом процессе, который не привязан к конкретному месту на экране, используйте <a class="inl" href="../molecules/Toast.html">Toast</a>.</p>
+    <p class="desc">Не используйте ProgressBar, чтобы просто показать факт статуса без величины («Активна», «В архиве») — для этого есть <a class="inl" href="../Chip/Chip.html">Chip</a> или <a class="inl" href="../Badge/Badge.html">Badge</a>. Для мгновенного действия внутри кнопки (сохранение, отправка) используйте <code class="tok">.btn--loading</code> в <a class="inl" href="../Buttons/Buttons.html">Buttons</a>, а не отдельный ProgressBar. Для уведомления о фоновом процессе, который не привязан к конкретному месту на экране, используйте <a class="inl" href="../../molecules/Toast/Toast.html">Toast</a>.</p>
   </section>
 
   <!-- ANATOMY -->
@@ -183,7 +183,7 @@
           <li><span class="n"></span><span class="t"><span class="k">Значение (Value)</span><span class="d"> — опционально, Body S Strong, справа над треком, синхронизировано с заливкой</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Трек (Track)</span><span class="d"> — фон на 100% ширины родителя, скругление <code class="tok">--radius-pill</code></span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Заливка (Fill)</span><span class="d"> — ширина = value / max, тот же радиус, что и трек</span></span></li>
-          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, под треком; общий компонент — см. <a class="inl" href="../atoms/LabelHelper.html">Label / Helper</a></span></span></li>
+          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, под треком; общий компонент — см. <a class="inl" href="../LabelHelper/LabelHelper.html">Label / Helper</a></span></span></li>
         </ul>
       </div>
     </div>
@@ -310,18 +310,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/progress-bar.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/ProgressBar/ProgressBar.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.8fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/progress-bar.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/atoms/ProgressBar/ProgressBar.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -414,7 +414,7 @@ widthPercent = (value / max) * 100;
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ================= ProgressBar factory ================= */
 function pbClamp(v, max){ v = Number(v); if (Number.isNaN(v)) v = 0; return Math.max(0, Math.min(max, v)); }
@@ -503,7 +503,7 @@ function makePbar(o = {}) {
   return root;
 }
 /* clamp floating markers to stay within the track after layout.
-   The marker has an explicit `width: max-content` in CSS (styles/progress-bar.css)
+   The marker has an explicit `width: max-content` in CSS (components/atoms/ProgressBar/ProgressBar.css)
    so its offsetWidth is a reliable content-based measurement. Positioning must not
    rely on requestAnimationFrame as the retry mechanism: rAF is throttled/paused
    entirely while the document is hidden (background tab / not-yet-focused preview
@@ -936,13 +936,13 @@ function positionFloatingMarkers(scope) {
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Формат значения': { label: 'Показывать проценты', on: 'percent' }, 'Заголовок': 'Показывать заголовок', 'Значение в заголовке': 'Показывать значение в заголовке', 'Хелпер': 'Показывать хелпер', 'Плавающее значение': 'Плавающее значение', 'Неопределённый': 'Неопределённый', 'Авто-тон по порогам': 'Авто-тон по порогам' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- определённый режим -->

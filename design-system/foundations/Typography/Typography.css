@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: "SB Sans Display";
-  src: url("../fonts/SBSansDisplay-Light.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansDisplay-Light.otf") format("opentype");
   ascent-override: 80%;
   descent-override: 29%;
   font-weight: 300;
@@ -24,7 +24,7 @@
 }
 @font-face {
   font-family: "SB Sans Display";
-  src: url("../fonts/SBSansDisplay-Regular.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansDisplay-Regular.otf") format("opentype");
   ascent-override: 80%;
   descent-override: 29%;
   font-weight: 400;
@@ -33,7 +33,7 @@
 }
 @font-face {
   font-family: "SB Sans Display";
-  src: url("../fonts/SBSansDisplay-SemiBold.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansDisplay-SemiBold.otf") format("opentype");
   ascent-override: 80%;
   descent-override: 29%;
   font-weight: 600;
@@ -43,14 +43,14 @@
 
 @font-face {
   font-family: "SB Sans Text";
-  src: url("../fonts/SBSansText-Regular.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansText-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "SB Sans Text";
-  src: url("../fonts/SBSansText-Semibold.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansText-Semibold.otf") format("opentype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -58,7 +58,7 @@
 
 @font-face {
   font-family: "SB Sans Screen";
-  src: url("../fonts/SBSansScreen.otf") format("opentype");
+  src: url("../../assets/fonts/SBSansScreen.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

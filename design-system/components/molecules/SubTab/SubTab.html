@@ -2,22 +2,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SubTab — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/spacing.css">
-<link rel="stylesheet" href="../../styles/sub-tab.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/badge.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="SubTab.css">
+<link rel="stylesheet" href="../Tab/Tab.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* section */
@@ -95,9 +95,9 @@
   /* ---------- developer code panels ---------- */
   .code-panel__name { font: var(--type-body-s-strong); color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="SubTab">
@@ -125,7 +125,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <a class="crumb" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
+    <a class="crumb" href="../../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
     <div class="meta"><span>Версия: <b>1.001</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>SubTab</h1>
@@ -214,7 +214,7 @@
 
   <div class="subsec" data-screen-label="Badge">
     <h3>Со счётчиком</h3>
-    <p class="desc">Счётчик показывает количество элементов в подразделе — документов, замечаний, задач. Это реальный атом <a href="../atoms/Badge.html">Badge</a> в варианте <code class="tok">.badge--neutral</code>: светлая плашка с тёмным текстом одинаково читается на светлом треке и на акцентной заливке выбранного сегмента, поэтому цвет счётчика не меняется ни в одном состоянии. Размер плашки идёт за размером ряда — <code class="tok">.badge--xs</code> в M, <code class="tok">.badge--xxs</code> в S и XS, — и задаётся классом самого Badge в разметке: перекрывать габариты чужого компонента из <code class="tok">sub-tab.css</code> нельзя.</p>
+    <p class="desc">Счётчик показывает количество элементов в подразделе — документов, замечаний, задач. Это реальный атом <a href="../../atoms/Badge/Badge.html">Badge</a> в варианте <code class="tok">.badge--neutral</code>: светлая плашка с тёмным текстом одинаково читается на светлом треке и на акцентной заливке выбранного сегмента, поэтому цвет счётчика не меняется ни в одном состоянии. Размер плашки идёт за размером ряда — <code class="tok">.badge--xs</code> в M, <code class="tok">.badge--xxs</code> в S и XS, — и задаётся классом самого Badge в разметке: перекрывать габариты чужого компонента из <code class="tok">sub-tab.css</code> нельзя.</p>
     <div class="panel">
       <p class="demo-rowlabel">Без счётчиков</p>
       <div id="var-plain" style="margin-bottom:26px;"></div>
@@ -227,7 +227,7 @@
   <!-- SIZES -->
   <section class="section" data-screen-label="Sizes">
     <h2>Размеры</h2>
-    <p class="desc">Три размера. <b>M</b> и <b>S</b> совпадают с размерным рядом <a href="Tab.html">Tab</a> не случайно: компоненты стоят в паре на одном экране, и шаг «второй уровень на размер ниже первого» возможен только при общей шкале. <b>XS</b> продолжает её вниз для плотных мест — узких модалок, тайлов, боковых панелей. Базовый размер без модификатора — <b>S</b>: это партнёр базового первого уровня <code class="tok">.tab--m</code>.</p>
+    <p class="desc">Три размера. <b>M</b> и <b>S</b> совпадают с размерным рядом <a href="../Tab/Tab.html">Tab</a> не случайно: компоненты стоят в паре на одном экране, и шаг «второй уровень на размер ниже первого» возможен только при общей шкале. <b>XS</b> продолжает её вниз для плотных мест — узких модалок, тайлов, боковых панелей. Базовый размер без модификатора — <b>S</b>: это партнёр базового первого уровня <code class="tok">.tab--m</code>.</p>
     <div class="panel">
       <p class="demo-rowlabel">M 40 · S 32 · XS 24 — переключайте, ряды рабочие</p>
       <div id="size-demo"></div>
@@ -294,7 +294,7 @@
 
   <div class="subsec" data-screen-label="Keyboard">
     <h3>Клавиатура и выбор</h3>
-    <p class="desc">Поведение — общий рантайм <code class="tok">scripts/ds-tabs.js</code>, хук <code class="tok">data-subtabs</code>. Клик или стрелка сразу меняет выбор (активация на месте, без отдельного Enter). Стрелки ← → и ↑ ↓ ходят по ряду с зацикливанием, <code class="tok">Home</code> / <code class="tok">End</code> уводят на края, отключённые сегменты пропускаются. В таб-последовательности участвует только выбранный сегмент — roving tabindex.</p>
+    <p class="desc">Поведение — общий рантайм <code class="tok">components/molecules/Tab/Tab.js</code>, хук <code class="tok">data-subtabs</code>. Клик или стрелка сразу меняет выбор (активация на месте, без отдельного Enter). Стрелки ← → и ↑ ↓ ходят по ряду с зацикливанием, <code class="tok">Home</code> / <code class="tok">End</code> уводят на края, отключённые сегменты пропускаются. В таб-последовательности участвует только выбранный сегмент — roving tabindex.</p>
   </div>
 
   <div class="subsec" data-screen-label="Surface">
@@ -326,7 +326,7 @@
     <div class="panel">
       <p class="subhead">Принятое отступление · контраст подписи выбранного</p>
       <p class="desc tight" style="margin-bottom:14px;">Белая подпись <code class="tok">--text-on-dark</code> на заливке <code class="tok">--primary</code> (#00AA9B) даёт контраст <b>2.91:1</b> при норме 4.5:1 по <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" target="_blank" rel="noopener">WCAG 2.2 · 1.4.3</a>. Отступление принято сознательно, ради консистентности с <code class="tok">.btn--accent</code> и <code class="tok">.chip--primary-solid</code>, у которых ровно та же величина: это свойство акцентного тона ДС, а не дефект компонента. Заливка к белому фону — те же 2.91:1, то есть ниже 3:1 по 1.4.11 (Non-text Contrast).</p>
-      <p class="desc tight" style="margin-bottom:14px;">Вопрос ведётся общим: контраст белого на <code class="tok">--primary</code> заведён отдельной записью в <a href="../rnd/Backlog.html">общий бэклог ДС</a> — решать его нужно на уровне токена, одним ходом для всех акцентных заливок. Тон <code class="tok">--primary-dark</code> (#007A6D) даёт 5.24:1 и остаётся готовым решением, если по бэклогу примут смену тона.</p>
+      <p class="desc tight" style="margin-bottom:14px;">Вопрос ведётся общим: контраст белого на <code class="tok">--primary</code> заведён отдельной записью в <a href="../../../rnd/Backlog/Backlog.html">общий бэклог ДС</a> — решать его нужно на уровне токена, одним ходом для всех акцентных заливок. Тон <code class="tok">--primary-dark</code> (#007A6D) даёт 5.24:1 и остаётся готовым решением, если по бэклогу примут смену тона.</p>
       <p class="desc tight" style="margin:0;">Замеренные пары, чтобы утверждения выше не расходились с реальностью: текст счётчика на его плашке — <b>8.28:1</b>, сама плашка <code class="tok">--cgrey-100</code> к акцентной заливке — <b>2.46:1</b>. Плашка ниже 3:1, но носитель смысла здесь — число внутри неё, а не граница плашки, поэтому 1.4.11 держится на первой паре. Подпись невыбранного подраздела <code class="tok">--text-secondary</code> на белом — <b>4.17:1</b>: это свойство токена, общее для Tab и SegmentControl, не частность второго уровня.</p>
     </div>
   </section>
@@ -355,19 +355,19 @@
     <p class="desc">Эта страница ДС собрана на чистых CSS-классах и vanilla JS, но всё ниже не привязано к стеку: команда, которая верстает компонент на другом фреймворке, берёт отсюда размеры, состояния и алгоритм поведения, не заглядывая в этот код построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения сняты с реально отрендеренного экземпляра через <code class="tok">getComputedStyle</code>, не выписаны руками — поэтому таблица не может разъехаться с <code class="tok">styles/sub-tab.css</code>.</p>
+    <p class="desc tight">Значения сняты с реально отрендеренного экземпляра через <code class="tok">getComputedStyle</code>, не выписаны руками — поэтому таблица не может разъехаться с <code class="tok">components/molecules/SubTab/SubTab.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:36px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.5fr 0.8fr 0.8fr 0.8fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">XS</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/spacing.css</code>
-      <code class="tok">styles/sub-tab.css</code>
-      <span class="req">— и <code class="tok">styles/badge.css</code>, если используется счётчик.</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Spacing/Spacing.css</code>
+      <code class="tok">components/molecules/SubTab/SubTab.css</code>
+      <span class="req">— и <code class="tok">components/atoms/Badge/Badge.css</code>, если используется счётчик.</span>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -403,7 +403,7 @@
 <span class="tk-cm">// 6. Переполнения НЕТ: ни скролла, ни меню «Ещё». Ряд шире контейнера —</span>
 <span class="tk-cm">//    это ошибка данных (больше 5 подразделов), а не случай для рантайма.</span></code></pre>
     </div>
-    <p class="dev-note">Это не готовый сниппет для вставки, а алгоритм. Рабочий референс на vanilla JS — <code class="tok">scripts/ds-tabs.js</code>, функция <code class="tok">subtabs()</code>: она переиспользует общий движок <code class="tok">roving()</code> вместе с Tab и SegmentControl, отличаясь только селектором элемента и отсутствием переполнения.</p>
+    <p class="dev-note">Это не готовый сниппет для вставки, а алгоритм. Рабочий референс на vanilla JS — <code class="tok">components/molecules/Tab/Tab.js</code>, функция <code class="tok">subtabs()</code>: она переиспользует общий движок <code class="tok">roving()</code> вместе с Tab и SegmentControl, отличаясь только селектором элемента и отсутствием переполнения.</p>
     </section>
 
     <!-- BACKLOG -->
@@ -415,7 +415,7 @@
         <li><b>XS на реальном экране</b> — размер собран, но на живых данных не проверен: 24&nbsp;px с подписью 12&nbsp;px — предел читаемости для интерфейса, в котором работают по многу часов. Нужен прогон на «Карточке сделки», где первый уровень собран на <code class="tok">.tab--s</code>.</li>
         <li><b>Сверка пары линтером</b> — правило «второй уровень не крупнее первого» механизируемо: обе высоты заданы классами (<code class="tok">.tab--m</code>/<code class="tok">--s</code> и <code class="tok">.subtabs--m</code>/<code class="tok">--s</code>/<code class="tok">--xs</code>), и ветка к правилу <code class="tok">B14</code> ловила бы инверсию иерархии автоматически. Пока держится текстом и приёмкой — решение осознанное, не забытое.</li>
         <li><b>Поведение на цветной поверхности</b> — на <code class="tok">--bg-page</code> и внутри тайлов полупрозрачный трек даёт слабый тональный шаг. Нужен либо вариант с более плотным треком, либо правило «только на белой плашке».</li>
-        <li><b>Контраст подписи на акцентной заливке</b> — 2.91:1, общий вопрос для всех акцентных заливок ДС. Ведётся в <a href="../rnd/Backlog.html">общем бэклоге</a>, решается на уровне токена, не компонента.</li>
+        <li><b>Контраст подписи на акцентной заливке</b> — 2.91:1, общий вопрос для всех акцентных заливок ДС. Ведётся в <a href="../../../rnd/Backlog/Backlog.html">общем бэклоге</a>, решается на уровне токена, не компонента.</li>
       </ul>
     </div>
   </section>
@@ -444,7 +444,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/sub-tab.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/SubTab/SubTab.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -462,16 +462,16 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/sub-tab.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="SubTab.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Счётчик (badge)': 'Показывать счётчик', 'Отключённый подраздел': 'Показывать отключённый подраздел' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html">&lt;!-- ряд первого уровня обязателен: без него второй уровень не применяется --&gt;
@@ -503,7 +503,7 @@
     &lt;span class="subtab__label"&gt;История&lt;/span&gt;
   &lt;/button&gt;
 &lt;/div&gt;</script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/sub-tab.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/SubTab/SubTab.page.js)
 function makeSubTabs(o) {
   // o: { items:[{ label, badge, disabled }], selected, label, size, static }
   // size: 'm' | 's' | 'xs' — по умолчанию 's'; класс .subtabs--<size> на трек
@@ -543,7 +543,7 @@ function makeSubTabs(o) {
    Ёмкость: 2–5 пунктов. Переполнения нет by design: трек не переносится
             и не скроллится.
    Requires: typography.css, colors.css, radius.css, spacing.css, badge.css
-   Runtime:  scripts/ds-tabs.js — хук data-subtabs (DSTabs.subtabs)
+   Runtime:  components/molecules/Tab/Tab.js — хук data-subtabs (DSTabs.subtabs)
    ========================================================================= */
 
 /* Парные `[hidden]` — правило B11 линтера. Браузерное `[hidden] {display:none}`

@@ -3,9 +3,9 @@ component: Divider
 title: "Divider"
 version: "2.001"
 updated: "05.09.2026"
-page: pages/atoms/Divider.html
-page_js: scripts/divider.page.js
-css: styles/divider.css
+page: components/atoms/Divider/Divider.html
+page_js: components/atoms/Divider/Divider.page.js
+css: components/atoms/Divider/Divider.css
 deps: [button]
 status: auto
 ---

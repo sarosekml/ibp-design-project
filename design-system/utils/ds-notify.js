@@ -1,7 +1,7 @@
 /* =========================================================================
    DS Notify — рантайм уведомлений: SnackBar и Toast (out-of-box).
-   Зависимости: styles/snackbar.css, styles/toast.css, styles/spinner.css,
-   styles/button.css, styles/link.css; scripts/icons-data.js (window.DS_ICONS).
+   Зависимости: components/organisms/SnackBar/SnackBar.css, components/molecules/Toast/Toast.css, components/atoms/Spinner/Spinner.css,
+   components/atoms/Buttons/Buttons.css, components/atoms/Link/Link.css; foundations/Icons/icons-data.js (window.DS_ICONS).
 
    Экспорт:
      window.DSSnack = { show(opts) → id, dismiss(id), dismissAll(),

@@ -8,7 +8,7 @@
 
   const TONE_ICON = { success: 'check-circle', error: 'alert-circle', info: 'info-circle', neutral: null };
 
-  /* Узел тоста и вся логика показа — рантайм ДС (scripts/ds-notify.js):
+  /* Узел тоста и вся логика показа — рантайм ДС (utils/ds-notify.js):
      стек ≤3, авто-скрытие, loader со скримом, переход loading → success.
      Витрине нужен только сам узел для статичных примеров. */
   const makeToast = (o) => window.DSToast.make(o || {});

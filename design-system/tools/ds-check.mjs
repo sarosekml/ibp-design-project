@@ -4,12 +4,12 @@
 
    Два режима, вердикт один:
 
-     node scripts/ds-check.mjs <страница>   — гейт страницы:
-       1. scripts/ds-lint-cli.mjs <page>        — статический ревизор целостности ДС
+     node tools/ds-check.mjs <страница>   — гейт страницы:
+       1. tools/ds-lint-cli.mjs <page>        — статический ревизор целостности ДС
        2. docs-split.mjs check <page>           — структурные проверки docs-split
           (только для страниц на docs-split)
 
-     node scripts/ds-check.mjs --all        — проверка всей ДС своими силами,
+     node tools/ds-check.mjs --all        — проверка всей ДС своими силами,
        без харнеса агента (реструктуризация, шаг Ш4: ДС проверяет себя сама):
        1. ds-lint-cli.mjs                       — глобальные правила и реестры
        2. ds-lint-cli.mjs --parity              — документация = код
@@ -45,7 +45,7 @@ const argv = process.argv.slice(2);
 const all = argv.includes('--all');
 const page = argv.find((a) => !a.startsWith('--'));
 if (!page && !all) {
-  console.error('Использование: node scripts/ds-check.mjs <страница> | --all');
+  console.error('Использование: node tools/ds-check.mjs <страница> | --all');
   process.exit(2);
 }
 

@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ButtonGroup — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/button-group.css">
-<link rel="stylesheet" href="../../styles/context-menu.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="ButtonGroup.css">
+<link rel="stylesheet" href="../ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -100,11 +100,11 @@
   /* ---------- developer handoff ---------- */
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+  <link rel="stylesheet" href="../Splitter/Splitter.css">
+  <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="ButtonGroup">
@@ -132,7 +132,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <a class="crumb" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
+    <a class="crumb" href="../../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Дизайн-система</a>
     <div class="meta"><span>Версия: <b>1.005</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>ButtonGroup</h1>
@@ -257,7 +257,7 @@
   <!-- CONTENT -->
   <section class="section" data-screen-label="Content">
     <h2>Контент</h2>
-    <p class="desc tight">Текстовые правила наследуются от <a class="crumb" style="display:inline; margin:0; padding:0;" href="../atoms/Buttons.html">Button</a>, но внутри группы есть дополнительные ограничения:</p>
+    <p class="desc tight">Текстовые правила наследуются от <a class="crumb" style="display:inline; margin:0; padding:0;" href="../../atoms/Buttons/Buttons.html">Button</a>, но внутри группы есть дополнительные ограничения:</p>
     <ul class="bullets" style="margin-bottom:26px;">
       <li>текст кнопки — короткий глагол в повелительном наклонении («Сохранить», «Неделя»), без точки в конце;</li>
       <li>группу не подписывают отдельным заголовком сверху — каждая кнопка называет свой вариант целиком и понятна без подписи: «1 чип / 2 чипа / 3 чипа», а не «1 / 2 / 3» под заголовком «Количество чипов». Так же подписывают Switch;</li>
@@ -299,7 +299,7 @@
   <!-- TYPOGRAPHY -->
   <section class="section" data-screen-label="Typography">
     <h2>Типографика</h2>
-    <p class="desc">Не применимо: группа не вводит собственной типографики — кнопки внутри используют токены компонента <a class="crumb" style="display:inline; margin:0; padding:0;" href="../atoms/Buttons.html">Button</a>.</p>
+    <p class="desc">Не применимо: группа не вводит собственной типографики — кнопки внутри используют токены компонента <a class="crumb" style="display:inline; margin:0; padding:0;" href="../../atoms/Buttons/Buttons.html">Button</a>.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 2.97fr 0.68fr 0.86fr 0.9fr 1.35fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Часть</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Гарнитура</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Начертание</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Размер / интерлиньяж</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 2.97fr 0.68fr 0.86fr 0.9fr 1.35fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Не применимо — компонент не содержит собственного текста</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
@@ -309,7 +309,7 @@
   <!-- COLORS -->
   <section class="section" data-screen-label="Colors">
     <h2>Цвета</h2>
-    <p class="desc">Группа наследует цвета от <a class="crumb" style="display:inline; margin:0; padding:0;" href="../atoms/Buttons.html">Button</a> и добавляет собственные токены только для шва между кнопками.</p>
+    <p class="desc">Группа наследует цвета от <a class="crumb" style="display:inline; margin:0; padding:0;" href="../../atoms/Buttons/Buttons.html">Button</a> и добавляет собственные токены только для шва между кнопками.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Раздел</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Hex</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Accent</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заливка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Accent</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заливка (hover)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary-dark</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary-dark)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#007A6D</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Accent</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Шов между кнопками</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--btng-divider-accent</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Accent</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Шов (disabled)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--btng-divider-disabled</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Outline</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Обводка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Outline</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Disabled</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заливка / обводка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--disabled</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--disabled)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#BEC5C8</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Disabled</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст (Outline/Transparent)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-inactive</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-inactive)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#AAB2B1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Toggle (нажато)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Заливка</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.13fr 1.66fr 1.49fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Toggle (нажато)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-on-dark</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-on-dark)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#FFFFFF</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
@@ -322,18 +322,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/button-group.css</code> и <code class="tok">styles/button.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/ButtonGroup/ButtonGroup.css</code> и <code class="tok">components/atoms/Buttons/Buttons.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.55fr 0.55fr 0.55fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">M</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">S</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">XS</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/button.css</code>
-      <code class="tok">styles/button-group.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/molecules/ButtonGroup/ButtonGroup.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -400,7 +400,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/button-group.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/ButtonGroup/ButtonGroup.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -418,9 +418,9 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-menu.js"></script>
-<script src="../../scripts/ds-buttongroup.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../ContextMenu/ContextMenu.js"></script>
+<script src="ButtonGroup.js"></script>
 <script>
 /* ---------- icons ---------- */
 const ICONS = {
@@ -824,13 +824,13 @@ mount('do-demo', makeGroup({ type:'outline', items:[{text:'День'},{text:'Н�
   render();
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Ориентация': 'Вертикально', 'Состояние': 'Показывать Disabled', 'Fullwidth': 'На всю ширину' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- горизонтальная группа Accent из кнопок Button -->

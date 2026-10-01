@@ -3,14 +3,14 @@ component: PageHeader
 title: "PageHeader"
 version: "1.010"
 updated: "13.09.2026"
-page: pages/organisms/PageHeader.html
-runtime: scripts/ds-menu.js, scripts/ds-actions-overflow.js
-css: styles/page-header.css
+page: components/organisms/PageHeader/PageHeader.html
+runtime: components/molecules/ContextMenu/ContextMenu.js, utils/ds-actions-overflow.js
+css: components/organisms/PageHeader/PageHeader.css
 deps: [button, icon-button, chip, badge, context-menu, tooltip, breadcrumbs]
 status: curated
 ---
 
-> Спека для быстрого контекста. Источник истины — styles/page-header.css и страница компонента. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
+> Спека для быстрого контекста. Источник истины — components/organisms/PageHeader/PageHeader.css и страница компонента. При изменении обновляй эту спеку и блок в specs/_cheatsheet.md.
 
 ## Назначение
 PageHeader — заголовок страницы рабочей области: идентифицирует открытую сущность (сделка, инструмент, раздел) и несёт основные действия страницы. Состоит из независимых частей: неразрывная группа Title (+IconLeft, +Edit), Chips, кнопка возврата (Return), Subtitle, Actions (+MenuButton). Адаптируется вплоть до мобильной раскладки. Breadcrumbs — отдельный компонент, ставится строкой НАД PageHeader.
@@ -18,7 +18,7 @@ PageHeader — заголовок страницы рабочей области
 ## Инварианты
 - Корень компонента объявляет парное `[hidden] { display: none }`: браузерное правило имеет специфичность (0,0,0) и приходит из UA-стиля, а `display` компонента — (0,1,0) и перебивает его, из-за чего атрибут `hidden` молча перестаёт работать. Соглашение ДС от 05.09.2026, охраняется правилом B11 линтера.
 - Заголовок многострочный, без усечения (`.phead__title{white-space:normal}`) — эллипсиса и тултипа по обрезке у него нет и не планируется.
-- Переполнение `.phead__actions` в меню «Ещё» — общий рантайм `scripts/ds-actions-overflow.js` (opt-in `data-actions-overflow`), тот же принцип, что у переполнения табов (`ds-tabs.js`).
+- Переполнение `.phead__actions` в меню «Ещё» — общий рантайм `utils/ds-actions-overflow.js` (opt-in `data-actions-overflow`), тот же принцип, что у переполнения табов (`ds-tabs.js`).
 - IconLeft + Title + Edit — неразрывная группа (`.phead__title-group`), не переносится отдельно от заголовка при wrap.
 - Заголовок не усекается никогда — многострочный, полностью виден (`white-space:normal`, без ellipsis).
 - Return и Chips прижаты к заголовку в основной раскладке; на мобильной (`--stack`) переезжают в `.phead__extras` отдельной строкой.

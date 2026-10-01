@@ -3,10 +3,10 @@ component: Alert
 title: "Alert"
 version: "1.010"
 updated: "05.09.2026"
-page: pages/molecules/Alert.html
-page_js: scripts/alert.page.js
-runtime: scripts/ds-alert.js
-css: styles/alert.css
+page: components/molecules/Alert/Alert.html
+page_js: components/molecules/Alert/Alert.page.js
+runtime: components/molecules/Alert/Alert.js
+css: components/molecules/Alert/Alert.css
 deps: [button, link]
 status: curated
 ---
@@ -44,7 +44,7 @@ status: curated
 ## Для разработчиков (выжимка)
 
 ### Точные размеры (redline)
-Таблица рендерится на странице через getComputedStyle с реального экземпляра. Значения — токены ДС из styles/alert.css, не хардкод.
+Таблица рендерится на странице через getComputedStyle с реального экземпляра. Значения — токены ДС из components/molecules/Alert/Alert.css, не хардкод.
 
 | Параметр | M | Токен |
 |---|---|---|
@@ -75,7 +75,7 @@ status: curated
 </div>
 ```
 
-Глифы иконки по тону: info → `Info-circle-filled`, warning → `alert-triangle-filled`, error → `alert-circle-filled`, success → `check-circle-filled`. Кнопка внутри несёт явный тон-класс Button (`.btn--<тон>`), совпадающий с тоном Алерта — переиспользование модификатора Тон из specs/Buttons.md.
+Глифы иконки по тону: info → `Info-circle-filled`, warning → `alert-triangle-filled`, error → `alert-circle-filled`, success → `check-circle-filled`. Кнопка внутри несёт явный тон-класс Button (`.btn--<тон>`), совпадающий с тоном Алерта — переиспользование модификатора Тон из components/atoms/Buttons/Buttons.md.
 
 ### Поведение · псевдокод (framework-agnostic)
 

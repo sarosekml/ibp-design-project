@@ -163,7 +163,7 @@ div.rof__value.rof__value--negative { color: var(--error-dark); }
    цвета они ничего не делали. */
 
 /* ---------- Loading skeleton — PROPOSED ---------------------------------------- */
-/* Общий компонент Skeleton (.sk-line, styles/skeleton.css), локальной реализации нет. */
+/* Общий компонент Skeleton (.sk-line, components/atoms/Skeleton/Skeleton.css), локальной реализации нет. */
 
 /* =========================================================================
    ROF-GRID — usage pattern for laying out several fields inside a card

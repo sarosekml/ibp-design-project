@@ -386,7 +386,7 @@ const appJson = (id, track, home = 'pages/Start.html', patch = {}) =>
 
 function cleanTree(root) {
   put(root, 'project.json', JSON.stringify(MANIFEST, null, 2));
-  put(root, 'design-system/specs/Icons.md', '# Иконки\n\n## Все глифы (2)\nfolder · layer-01\n');
+  put(root, 'design-system/foundations/Icons/Icons.md', '# Иконки\n\n## Все глифы (2)\nfolder · layer-01\n');
   put(root, 'design-system/index.html', '<!DOCTYPE html><title>ДС</title>');
   put(root, 'index.html', '<!DOCTYPE html><title>Хаб</title>');
   put(root, 'hub.js', registryJs(CLEAN_ENTRIES));

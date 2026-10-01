@@ -3,8 +3,8 @@ component: Buttons
 title: "Button"
 version: "1.011"
 updated: "05.09.2026"
-page: pages/atoms/Buttons.html
-css: styles/button.css
+page: components/atoms/Buttons/Buttons.html
+css: components/atoms/Buttons/Buttons.css
 deps: [spinner]
 status: auto
 ---
@@ -138,6 +138,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 | .is-hover / .is-active | button | Форсированные состояния — только для спецификаций в документации, не для продакшена |
 | .btn__label | span | Текст кнопки, не переносится |
 | .btn__chevron | svg | Шеврон кнопки-меню — 80% размера иконки, поворачивается при открытом меню |
-| .spin.spin--current | span | Лоадер — общий компонент Spinner (styles/spinner.css), currentColor, размер = размеру иконки |
+| .spin.spin--current | span | Лоадер — общий компонент Spinner (components/atoms/Spinner/Spinner.css), currentColor, размер = размеру иконки |
 
 > Обновление 17.07.2026: в Конструктор добавлен выбор тона (Без тона / Error / Warning / Success / Info). Сами тоновые классы `.btn--<tone>` не менялись.

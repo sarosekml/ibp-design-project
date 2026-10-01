@@ -11,7 +11,7 @@
   function paint(root) { if (window.dsIcons) window.dsIcons.apply(root); }
 
   /* ---------------- данные меню ----------------
-     Первичный источник — единый каталог scripts/ibp-home.js (window.IBPHome):
+     Первичный источник — единый каталог patterns/HomeRoles/ibp-home.js (window.IBPHome):
      меню рендерится по выбранной роли (itemsFor). BLOCKS ниже — фолбэк для
      страниц, где ibp-home.js не подключён (бандл карточек). */
   var HOME = { icon: 'main-page', label: 'Главная', selected: true };
@@ -168,7 +168,7 @@
     return f;
   }
 
-  /* ---------------- rail-тултипы и режимы — общий рантайм, scripts/ds-nav-panel.js --- */
+  /* ---------------- rail-тултипы и режимы — общий рантайм, components/organisms/NavPanel/NavPanel.js --- */
   function bindRailTooltips(scope, opts) {
     if (!window.DSNavPanel) return;
     (scope || document).querySelectorAll('.nav').forEach(function (nav) { window.DSNavPanel.bind(nav, opts || {}); });

@@ -2,26 +2,26 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RiskMetric — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/link.css">
-<link rel="stylesheet" href="../../styles/divider.css">
-<link rel="stylesheet" href="../../styles/chip.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/skeleton.css">
-<link rel="stylesheet" href="../../styles/popover.css">
-  <link rel="stylesheet" href="../../styles/riskmetric.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Link/Link.css">
+<link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../atoms/Skeleton/Skeleton.css">
+<link rel="stylesheet" href="../Popover/Popover.css">
+  <link rel="stylesheet" href="RiskMetric.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -74,7 +74,7 @@
   .rm-usage-row__name { font: var(--type-body-m); color: var(--text-primary); }
   .rm-usage-row__metric { position:relative; flex:none; }
 
-  /* композиция поповера (.rm-body/.rm-block*/.rm-field*) вынесена в styles/riskmetric.css */
+  /* композиция поповера (.rm-body/.rm-block*/.rm-field*) вынесена в components/organisms/RiskMetric/RiskMetric.css */
 
   /* ---------- feeder blocks (standalone demo) ---------- */
   .feeder-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:22px; align-items:start; }
@@ -113,11 +113,11 @@
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 
 </style>
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="RiskMetric">
@@ -147,7 +147,7 @@
     <div class="meta"><span>Версия: <b>1.007</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>RiskMetric</h1>
-    <p class="lead">Компонент для обозначения уровня надёжности контрагентов: рейтинг (число) и зона проблемности (цвет). Собран из <a class="inl" href="../atoms/Chip.html">Chip</a> (ReadOnly, S, pill) и <a class="inl" href="Popover.html">Popover</a>. <b>Popover_RiskMetric — неотъемлемая часть компонента</b>, а не опциональная зависимость: клик по иконке-информеру всегда открывает карточку с деталями расчёта. Собственных состояний наведения или клика по самому чипу нет.</p>
+    <p class="lead">Компонент для обозначения уровня надёжности контрагентов: рейтинг (число) и зона проблемности (цвет). Собран из <a class="inl" href="../../atoms/Chip/Chip.html">Chip</a> (ReadOnly, S, pill) и <a class="inl" href="../Popover/Popover.html">Popover</a>. <b>Popover_RiskMetric — неотъемлемая часть компонента</b>, а не опциональная зависимость: клик по иконке-информеру всегда открывает карточку с деталями расчёта. Собственных состояний наведения или клика по самому чипу нет.</p>
   </header>
 
   <!-- 1. КОНСТРУКТОР: демо — в верхнюю панель сплиттера (#pg-stage),
@@ -162,7 +162,7 @@
     </div>
     <div class="panel">
       <ul class="rules">
-        <li><b>Popover_RiskMetric — неотъемлемая часть компонента.</b> Это <a class="inl" href="Popover.html">Popover</a> шириной <code class="tok">--pop-w-m</code> (320px): Header — заголовок «Рейтинг и зона проблемности» + ✕; Body — два серых блока подкачки (Зона / Рейтинг), каждый с датой расчёта, и два текстовых поля (Риск-сегмент, Риск-профиль). <b>Footer у RiskMetric нет</b> — контент только информационный, подтверждать нечего.</li>
+        <li><b>Popover_RiskMetric — неотъемлемая часть компонента.</b> Это <a class="inl" href="../Popover/Popover.html">Popover</a> шириной <code class="tok">--pop-w-m</code> (320px): Header — заголовок «Рейтинг и зона проблемности» + ✕; Body — два серых блока подкачки (Зона / Рейтинг), каждый с датой расчёта, и два текстовых поля (Риск-сегмент, Риск-профиль). <b>Footer у RiskMetric нет</b> — контент только информационный, подтверждать нечего.</li>
         <li><b>Одновременно открыт только один поповер</b> — как и в базовом Popover: открытие нового закрывает предыдущий (демо — раздел «Состояния»).</li>
         <li>Компонент не диктует ширину колонки — чип растёт по контенту (число 1–2 цифры + иконка), высота фиксирована размером Chip S.</li>
       </ul>
@@ -226,7 +226,7 @@
         <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-chip-table"></div></div>
       </div>
     </div>
-    <p class="dev-note">Popover_RiskMetric фиксирован на шаге <code class="tok">--pop-w-m</code> (320px) — стандартная ширина для заголовка и коротких строк данных; см. <a class="inl" href="Popover.html">шкалу размеров Popover</a>.</p>
+    <p class="dev-note">Popover_RiskMetric фиксирован на шаге <code class="tok">--pop-w-m</code> (320px) — стандартная ширина для заголовка и коротких строк данных; см. <a class="inl" href="../Popover/Popover.html">шкалу размеров Popover</a>.</p>
   
 <div class="subsec" data-screen-label="Radius">
     <h3>Радиус скругления</h3>
@@ -344,12 +344,12 @@
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/chip.css</code>
-      <code class="tok">styles/popover.css</code>
-      <code class="tok">styles/divider.css</code>
-      <code class="tok">styles/icon-button.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">components/atoms/Chip/Chip.css</code>
+      <code class="tok">components/organisms/Popover/Popover.css</code>
+      <code class="tok">components/atoms/Divider/Divider.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -382,7 +382,7 @@ bind(infoButton, { pop: popoverEl, placement: 'bottom', align: 'start' })
 //               + 2 × rm-field (Риск-сегмент / Риск-профиль), зазор тела 16px, без Divider
 //    отсутствующие значения выводятся прочерком «—», поля не скрываются</span></code></pre>
     </div>
-    <p class="dev-note">Рабочий референс на vanilla JS — рантайм <code class="tok">scripts/ds-riskmetric.js</code> (сборка Chip + Popover из <code class="tok">data-riskmetric</code>) поверх <code class="tok">scripts/ds-popover.js</code>.</p>
+    <p class="dev-note">Рабочий референс на vanilla JS — рантайм <code class="tok">components/organisms/RiskMetric/RiskMetric.js</code> (сборка Chip + Popover из <code class="tok">data-riskmetric</code>) поверх <code class="tok">components/organisms/Popover/Popover.js</code>.</p>
 
     </section>
 
@@ -422,7 +422,7 @@ bind(infoButton, { pop: popoverEl, placement: 'bottom', align: 'start' })
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка и исходники RiskMetric: HTML — из спеки, CSS — styles/riskmetric.css (полностью), JS — рантайм сборки. Демо страницы строит <code class="tok">scripts/riskmetric.page.js</code>.</p>
+              <p class="desc">Эталонная разметка и исходники RiskMetric: HTML — из спеки, CSS — components/organisms/RiskMetric/RiskMetric.css (полностью), JS — рантайм сборки. Демо страницы строит <code class="tok">components/organisms/RiskMetric/RiskMetric.page.js</code>.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -440,16 +440,16 @@ bind(infoButton, { pop: popoverEl, placement: 'bottom', align: 'start' })
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-popover.js"></script>
-<script src="../../scripts/ds-riskmetric.js"></script>
-<script src="../../scripts/riskmetric.page.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../Popover/Popover.js"></script>
+<script src="RiskMetric.js"></script>
+<script src="RiskMetric.page.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../Table/TableResize.js"></script>
+<script src="../Table/TableReorder.js"></script>
 
 <!-- самодостаточные подписи свитчеров конструктора (общий слой docs-split.js) -->
 <script>
@@ -457,7 +457,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   'Риск-сегмент и профиль': 'Показывать риск-сегмент и профиль',
 };
 </script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично, синхронизировать с ДС) ===== -->
 <script type="text/plain" id="src-code-html"><span class="pop-anchor">
@@ -479,8 +479,8 @@ window.DS_SPLIT_SWITCH_LABELS = {
   </div>
 </span></script>
 
-<script type="text/plain" id="src-code-js">/* RiskMetric — сборку Chip+Popover делает рантайм scripts/ds-riskmetric.js
-   (поверх scripts/ds-popover.js: позиционирование/open-close/single-open/Esc). */
+<script type="text/plain" id="src-code-js">/* RiskMetric — сборку Chip+Popover делает рантайм components/organisms/RiskMetric/RiskMetric.js
+   (поверх components/organisms/Popover/Popover.js: позиционирование/open-close/single-open/Esc). */
 
 // Хук: пустой <span data-riskmetric data-risk="26" data-zone="red" …>
 // Рантайм строит чип + поповер; aria-label «Рейтинг N, зона — …» проставляется сам.

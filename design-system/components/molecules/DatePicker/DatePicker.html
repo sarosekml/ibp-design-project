@@ -2,26 +2,26 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DatePicker — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/shadow.css">
-<link rel="stylesheet" href="../../styles/icon-button.css">
-<link rel="stylesheet" href="../../styles/button.css">
-<link rel="stylesheet" href="../../styles/datepicker.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
-<link rel="stylesheet" href="../../styles/input-pages.css">
-<link rel="stylesheet" href="../../styles/ds-nav.css">
-<link rel="stylesheet" href="../../styles/splitter.css">
-<link rel="stylesheet" href="../../styles/segment-control.css">
-<link rel="stylesheet" href="../../styles/tab.css">
-<link rel="stylesheet" href="../../styles/docs-split.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/IconButton/IconButton.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="DatePicker.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../../docs-kit/input-pages.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../Splitter/Splitter.css">
+<link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 <style>
   /* демо-стадия (docs-split): растяжение на ширину панели демо;
      padding/фон/min-height — из input-pages.css */
@@ -57,7 +57,7 @@
     <div class="meta"><span>Версия: <b>1.008</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>DatePicker</h1>
-    <p class="lead">Календарь — всплывающая поверхность выбора даты или диапазона дат. Поднимается полями <a class="inl" href="InputDate.html">InputDate</a> и <a class="inl" href="InputDateRange.html">InputDateRange</a> при фокусе или по кнопке-календарю. Material-подход, собранный на токенах и шрифтах ДС. Неделя начинается с понедельника, локаль — русская.</p>
+    <p class="lead">Календарь — всплывающая поверхность выбора даты или диапазона дат. Поднимается полями <a class="inl" href="../Inputs/InputDate/InputDate.html">InputDate</a> и <a class="inl" href="../Inputs/InputDateRange/InputDateRange.html">InputDateRange</a> при фокусе или по кнопке-календарю. Material-подход, собранный на токенах и шрифтах ДС. Неделя начинается с понедельника, локаль — русская.</p>
   </header>
 
   <!-- USAGE -->
@@ -88,14 +88,14 @@
         <li>выбор периода «с … по …» — режим диапазона для InputDateRange;</li>
         <li>выбор месяца целиком (отчётный период) — режим «Месяц».</li>
       </ul>
-      <p class="desc">Для ручного ввода одной даты по маске поле <a class="inl" href="InputDate.html">InputDate</a> достаточно и без открытия календаря. Выбор из справочника значений — <a class="inl" href="InputAutocomplete.html">InputAutocomplete</a>, не календарь.</p>
+      <p class="desc">Для ручного ввода одной даты по маске поле <a class="inl" href="../Inputs/InputDate/InputDate.html">InputDate</a> достаточно и без открытия календаря. Выбор из справочника значений — <a class="inl" href="../Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>, не календарь.</p>
     </div>
 
     <div class="subsec" data-screen-label="WhenNotToUse">
       <h3>Когда не использовать</h3>
       <ul class="bullets">
         <li>для быстрого ввода известной даты, когда календарь только мешает, — оставьте ввод по маске в поле;</li>
-        <li>для выбора из 2–6 фиксированных периодов (Неделя / Месяц / Год) — это <a class="inl" href="SegmentControl.html">SegmentControl</a>.</li>
+        <li>для выбора из 2–6 фиксированных периодов (Неделя / Месяц / Год) — это <a class="inl" href="../SegmentControl/SegmentControl.html">SegmentControl</a>.</li>
       </ul>
     </div>
   </section>
@@ -196,7 +196,7 @@
 
     <div class="subsec" data-screen-label="Positioning">
       <h3>Позиционирование</h3>
-      <p class="desc">В режиме floating календарь всплывает под полем с зазором и авто-разворотом вверх, если внизу не хватает места, — приём идентичен <a class="inl" href="../organisms/Popover.html">Popover</a> (<code class="tok">role="dialog"</code>, <code class="tok">aria-modal="false"</code>). Одновременно открыт только один календарь. В режиме inline поверхность встроена в контейнер и не позиционируется.</p>
+      <p class="desc">В режиме floating календарь всплывает под полем с зазором и авто-разворотом вверх, если внизу не хватает места, — приём идентичен <a class="inl" href="../../organisms/Popover/Popover.html">Popover</a> (<code class="tok">role="dialog"</code>, <code class="tok">aria-modal="false"</code>). Одновременно открыт только один календарь. В режиме inline поверхность встроена в контейнер и не позиционируется.</p>
     </div>
   </section>
 
@@ -243,20 +243,20 @@
     <p class="desc">Хендофф-пакет: точные размеры поверхности и алгоритм построения сетки/выбора. Календарь framework-agnostic — верстка на токенах, логика описана псевдокодом.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/datepicker.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/molecules/DatePicker/DatePicker.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.84fr 0.81fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/shadow.css</code>
-      <code class="tok">styles/icon-button.css</code>
-      <code class="tok">styles/button.css</code>
-      <code class="tok">styles/datepicker.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/atoms/IconButton/IconButton.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/molecules/DatePicker/DatePicker.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -323,7 +323,7 @@
           <div class="docs-layout">
             <div class="docs-main">
               <h2>Код компонента</h2>
-              <p class="desc">Эталонная разметка, полный CSS компонента (styles/datepicker.css) и выжимка API для интеграции.</p>
+              <p class="desc">Эталонная разметка, полный CSS компонента (components/molecules/DatePicker/DatePicker.css) и выжимка API для интеграции.</p>
               <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
                 <div class="segctrl__thumb"></div>
                 <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
@@ -341,17 +341,17 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
-<script src="../../scripts/ds-icons.js"></script>
-<script src="../../scripts/ds-datepicker.js"></script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/datepicker.page.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="DatePicker.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../Splitter/Splitter.js"></script>
+<script src="../Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="DatePicker.page.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Кнопки Отменить / Применить': 'Показывать кнопки Отменить / Применить', 'Быстрое «Сегодня»': 'Показывать «Сегодня»' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><div class="dpk" role="dialog" aria-modal="false" aria-label="Выбор даты">
@@ -379,7 +379,7 @@
   </div>
 </div>
 <!-- панель месяца/года: root + .dpk--panel, тело .dpk__panel(.--years) > .dpk__panel-cell(.--current/.--selected/.--disabled) --></script>
-<script type="text/plain" id="src-code-js">// Выжимка API (полный код — scripts/datepicker.page.js)
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/DatePicker/DatePicker.page.js)
 // Календарь строит общий рантайм: window.DSDatePicker.makeCalendar(spec)
 const spec = {
   today: new Date(2025, 9, 15),   // фикс. «сегодня» для стабильной документации
@@ -397,7 +397,7 @@ const spec = {
    DatePicker (Календарь) — всплывающая поверхность выбора даты/диапазона.
    Поднимается полями InputDate / InputDateRange. Material-подход в токенах ДС.
    Только семантические токены; собственных цветов/радиусов/теней нет.
-   Зависимости на экране: styles/icon-button.css (стрелки, ✕), styles/button.css (футер).
+   Зависимости на экране: components/atoms/IconButton/IconButton.css (стрелки, ✕), components/atoms/Buttons/Buttons.css (футер).
    ========================================================================= */
 
 /* Парные `[hidden]` — правило B11 линтера.

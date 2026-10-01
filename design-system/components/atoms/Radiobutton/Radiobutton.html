@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>window.__DS_ROOT = '../../';</script>
+<script>window.__DS_ROOT = '../../../';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Radiobutton — Дизайн-система</title>
-<link rel="stylesheet" href="../../styles/typography.css">
-<link rel="stylesheet" href="../../styles/colors.css">
-<link rel="stylesheet" href="../../styles/palette.css">
-<link rel="stylesheet" href="../../styles/radius.css">
-<link rel="stylesheet" href="../../styles/radio.css">
-<link rel="stylesheet" href="../../styles/label-helper.css">
-<link rel="stylesheet" href="../../styles/ds-docs.css">
-<link rel="stylesheet" href="../../styles/table-cell.css">
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="Radiobutton.css">
+<link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
 <style>
 
   /* masthead */
@@ -102,11 +102,11 @@
   .subhead.mt { margin-top: 34px; }
   .code-panel__name { color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12.5px; letter-spacing:.02em; font-weight:600; }
 </style>
-  <link rel="stylesheet" href="../../styles/ds-nav.css">
-    <link rel="stylesheet" href="../../styles/splitter.css">
-  <link rel="stylesheet" href="../../styles/segment-control.css">
-  <link rel="stylesheet" href="../../styles/tab.css">
-  <link rel="stylesheet" href="../../styles/docs-split.css">
+  <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+    <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+  <link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+  <link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+  <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Radiobutton">
@@ -150,11 +150,11 @@
   <!-- WHEN TO USE -->
   <section class="section" data-screen-label="WhenToUse">
     <h2>Использование</h2>
-    <p class="desc">Используется только в составе группы радиокнопок и не может использоваться как единственная доступная опция — в этом случае используйте <a class="inl" href="../atoms/Checkbox.html">Чекбокс</a>.</p>
+    <p class="desc">Используется только в составе группы радиокнопок и не может использоваться как единственная доступная опция — в этом случае используйте <a class="inl" href="../Checkbox/Checkbox.html">Чекбокс</a>.</p>
     <p class="desc">Группу радиокнопок используют, когда вариантов выбора немного — 2–5. Может использоваться в тайлах, таблицах, модальных окнах, в формах и на стандартных страницах.</p>
     <p class="desc">Используется для переключения с одной настройки на другую. Часто может выступать в качестве механизма фильтрации.</p>
-    <p class="desc">Если пунктов слишком много (от 5 до 15) или они не помещаются в ограниченном пространстве — используйте <a class="inl" href="../molecules/DropdownList.html">Выпадающий список</a>.</p>
-    <p class="desc">Если нужно дать возможность выбрать один или несколько пунктов — используйте <a class="inl" href="../atoms/Checkbox.html">Чекбокс</a>.</p>
+    <p class="desc">Если пунктов слишком много (от 5 до 15) или они не помещаются в ограниченном пространстве — используйте <a class="inl" href="../../molecules/DropdownList/DropdownList.html">Выпадающий список</a>.</p>
+    <p class="desc">Если нужно дать возможность выбрать один или несколько пунктов — используйте <a class="inl" href="../Checkbox/Checkbox.html">Чекбокс</a>.</p>
   
 </section>
 
@@ -171,7 +171,7 @@
           <li><span class="n"></span><span class="t"><span class="k">Заголовок группы</span><span class="d"> — опционально, H6 Strong</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Радиокнопка</span><span class="d"> — круглый шейп 16px в охранном поле 20px</span></span></li>
           <li><span class="n"></span><span class="t"><span class="k">Название радиокнопки</span><span class="d"> — Body M, справа от шейпа</span></span></li>
-          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, общий компонент подкачки — см. <a class="inl" href="../atoms/LabelHelper.html">Label / Helper</a></span></span></li>
+          <li><span class="n"></span><span class="t"><span class="k">Хелпер</span><span class="d"> — опционально, Body XS, общий компонент подкачки — см. <a class="inl" href="../LabelHelper/LabelHelper.html">Label / Helper</a></span></span></li>
         </ul>
       </div>
     </div>
@@ -234,7 +234,7 @@
     <p class="desc tight">Текстовый контент радиокнопки — название, опциональный хелпер и заголовок группы. Краткий свод правил (подробно — в разделах ниже):</p>
     <ul class="bullets" style="margin-bottom:26px;">
       <li><b>Название</b> (Body M, справа от шейпа) — с заглавной буквы, без пунктуации в конце; чётко и кратко описывает эффект выбора;</li>
-      <li><b>Хелпер</b> (Body XS под названием) — поясняет неочевидный эффект выбора; общий компонент — см. <a class="inl" href="../atoms/LabelHelper.html">Label / Helper</a>;</li>
+      <li><b>Хелпер</b> (Body XS под названием) — поясняет неочевидный эффект выбора; общий компонент — см. <a class="inl" href="../LabelHelper/LabelHelper.html">Label / Helper</a>;</li>
       <li><b>Заголовок группы</b> (H6 Strong) — добавляется для ясности или чтобы вынести повторяющиеся в пунктах слова; формулируйте так, чтобы было понятно: выбрать можно только один вариант;</li>
       <li><b>Обязательность и ошибка</b> — у обязательного заголовка группы ставится звёздочка <code class="tok">*</code>; текст ошибки группы — Body XS цвета <code class="tok">--error</code>;</li>
       <li>не давайте пересекающиеся варианты и не обрезайте название многоточием — при нехватке места переформулируйте его короче.</li>
@@ -376,18 +376,18 @@
     <p class="desc">Хендофф-пакет: точные размеры, эталонная структура DOM, поведение и рекомендуемый API. Не привязан к стеку — команда, которая собирает компонент на React, берёт отсюда нужное для вёрстки, не читая код этой страницы построчно.</p>
 
     <p class="subhead">Точные размеры (redline)</p>
-    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">styles/radio.css</code>.</p>
+    <p class="desc tight">Значения измерены на живом экземпляре компонента (<code class="tok">getComputedStyle</code>), источник — токены в <code class="tok">components/atoms/Radiobutton/Radiobutton.css</code>.</p>
     <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.8fr 1fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Параметр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Значение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="dev-spec-table"></div></div>
     </div>
 
     <div class="dev-intro">
       <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
-      <code class="tok">styles/typography.css</code>
-      <code class="tok">styles/colors.css</code>
-      <code class="tok">styles/radius.css</code>
-      <code class="tok">styles/label-helper.css</code>
-      <code class="tok">styles/radio.css</code>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Colors.css</code>
+      <code class="tok">foundations/Radius/Radius.css</code>
+      <code class="tok">components/atoms/LabelHelper/LabelHelper.css</code>
+      <code class="tok">components/atoms/Radiobutton/Radiobutton.css</code>
     </div>
 
     <p class="subhead2">Поведение · псевдокод (framework-agnostic)</p>
@@ -477,7 +477,7 @@
   </div><!-- /splitpane -->
 </main>
 
-<script src="../../scripts/icons-data.js"></script>
+<script src="../../../foundations/Icons/icons-data.js"></script>
 <script>
 /* ---------- icons ---------- */
 const UI_ICONS = {
@@ -995,13 +995,13 @@ function wireGroup(items, onChange){
   });
 })();
 </script>
-<script src="../../scripts/ds-nav.js"></script>
-<script src="../../scripts/tbl-resize.js"></script>
-<script src="../../scripts/tbl-reorder.js"></script>
-<script src="../../scripts/ds-splitter.js"></script>
-<script src="../../scripts/ds-tabs.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../organisms/Table/TableReorder.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
 <script>window.DS_SPLIT_SWITCH_LABELS = { 'Состояние выбора': 'Выбран', 'Название': 'Показывать название', 'Хелпер': 'Показывать хелпер', 'Группа': 'Показывать группу', 'Обязательный выбор (*)': 'Обязательный выбор', 'Ошибка': 'Показывать ошибку' };</script>
-<script src="../../scripts/docs-split.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html"><!-- группа радиокнопок: заголовок + пункты с общим name -->

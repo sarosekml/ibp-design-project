@@ -29,7 +29,7 @@
 
 /* вариант «на всю высоту»: таблица — основной контент экрана и занимает всю
    свободную высоту (минус крошки/шапка/тулбар); тело скроллится внутри.
-   Требует фиксированной высоты родителя: .screen--app (styles/layout.css). */
+   Требует фиксированной высоты родителя: .screen--app (foundations/Layout/Layout.css). */
 .dtable--fill { flex: 1 1 auto; min-height: 0; }
 .dtable--fill .dtable__body { flex: 1 1 auto; min-height: 0; }
 

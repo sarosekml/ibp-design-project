@@ -2,7 +2,7 @@
    DOCS-SPLIT — логика страницы документации со сплиттером и табами
    (пилот AllocationBar2 → общий слой, 29.08.2026).
 
-   Требует: styles/docs-split.css, рантаймы ds-splitter.js и ds-tabs.js
+   Требует: docs-kit/docs-split.css, рантаймы ds-splitter.js и ds-tabs.js
    (таблицу рантайм-хуков см. design-system/specs/_runtime-hooks.md).
 
    Запускается только на страницах-хостах: <main class="page ds-split">.
@@ -282,17 +282,19 @@ ready(function () {
      Разметка — по спеке ButtonGroup: outline, toggle, fullwidth (ширина
      колонки, как у списка), кнопки M (40px, как селект). Длинная подпись
      режется многоточием по правилу Button, полный текст — в title.
-     aria-pressed ставится здесь, а не рантаймом ds-buttongroup.js: страницы
+     aria-pressed ставится здесь, а не рантаймом ButtonGroup.js: страницы
      ДС грузят рантаймы поштучно, и его на них нет. */
   function ensureButtonCss() {
     if (ensureButtonCss.done) return;
     ensureButtonCss.done = true;
     var barrel = document.querySelector('link[rel="stylesheet"][href$="/ds.css"]');
-    ['button.css', 'button-group.css'].forEach(function (f) {
-      if (barrel || document.querySelector('link[rel="stylesheet"][href$="/' + f + '"]')) return;
+    // пути от корня ДС; уже подключён ли файл — по его имени
+    ['components/atoms/Buttons/Buttons.css', 'components/molecules/ButtonGroup/ButtonGroup.css'].forEach(function (f) {
+      var name = f.slice(f.lastIndexOf('/') + 1);
+      if (barrel || document.querySelector('link[rel="stylesheet"][href$="/' + name + '"]')) return;
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = (window.__DS_ROOT || '') + 'styles/' + f;
+      l.href = (window.__DS_ROOT || '') + f;
       document.head.appendChild(l);
     });
   }
