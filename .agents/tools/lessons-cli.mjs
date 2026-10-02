@@ -1529,6 +1529,9 @@ function gateStepsFor(rel, deleted) {
   if (rel === DS_REL + '/AGENTS.md') add('spec-audit');
   // шаблон экрана ДС — единственный каркас экрана, эталон для --etalons (Ш3)
   if (underDs('templates/screen/[^/]+\\.html$').test(rel)) add('etalons');
+  // шаблон локального компонента ДС — источник канона разделов витрины (RE0004):
+  // правка заголовков «##» меняет канон, и витрина должна пересобраться (шаг kit)
+  if (underDs('templates/local-component/Component\\.md$').test(rel)) add('kit');
 
   // корпус экранов линтера — подпапка fixtures оснастки, но сенсор его не читает
   if (rel === TOOL_REL + '/layout-check.mjs' || (rel.startsWith(TOOL_REL + '/fixtures/') && !rel.startsWith(SCREEN_FIXTURES_REL + '/'))) add('verify-sensor', 'anchors', 'etalons');

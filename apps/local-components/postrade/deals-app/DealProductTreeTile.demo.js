@@ -9,8 +9,9 @@
      второй строки не заполнены), empty (в просмотре — сделка без правки);
    - «Заполнено частично» — состояние, которое CSS не различает: разметка
      та же, отличаются данные;
-   - контрол «Пример дерева» — три стадии макета для «Данные есть»,
-     «Загрузка», «Обновление»: прикреплены к ФИ / без ФИ / длинные названия.
+   - контрол «Пример данных» — стадии макета для «Данные есть»: прикреплены
+     к ФИ / без прикрепления к ФИ; «Длинные значения» — отдельная ось
+     (перенос заголовка строки), а не третья стадия того же списка.
    Состояния ошибки нет (ответ человека 30.09.2026, 21).
    Витрина правки дерева не сохраняет: ProductTreeStore.persist(false).
    Деревья рисует DealProductTreeTile.js (PostTileProductTree.render) по
@@ -32,7 +33,8 @@
   function dealOf(st, fx) {
     if (st.state === 'empty') return st.mode === 'view' && fx.empty.viewDealId ? fx.empty.viewDealId : fx.empty.dealId;
     if (st.state === 'partial') return fx.partial.dealId;
-    return (fx[st.tree] || fx.data).dealId;
+    if (st.long) return fx.long.dealId;
+    return (fx[st.example] || fx.data).dealId;
   }
 
   function snapshot(S, fx) {
@@ -60,8 +62,11 @@
   window.IBPKitDemo.register('DealProductTreeTile', {
     states: ['partial'],
     controls: function (defs) {
-      return defs.concat([{ key: 'tree', label: 'Пример дерева', value: 'data',
-        options: [['data', 'Прикреплены к ФИ'], ['instruments', 'Без прикрепления к ФИ'], ['long', 'Длинные названия']] }]);
+      return defs.concat([
+        { key: 'example', label: 'Пример данных', value: 'data',
+          options: [['data', 'Прикреплены к ФИ'], ['instruments', 'Без прикрепления к ФИ']] },
+        { key: 'long', label: 'Длинные значения', bool: true, value: false }
+      ]);
     },
     apply: function (tile, st, ctx) {
       var T = window.PostTileProductTree, S = window.ProductTreeStore;

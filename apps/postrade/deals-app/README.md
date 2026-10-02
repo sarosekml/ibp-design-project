@@ -177,6 +177,7 @@ deals-app/
 ├── widgets/
 │   ├── modals/                                 ← модальные окна
 │   │   ├── CounterpartiesEcmModal/             ← Модальное окно «Документы по сделке»
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── CounterpartiesEcmModal.css
 │   │   │   ├── CounterpartiesEcmModal.html
 │   │   │   ├── CounterpartiesEcmModal.js
@@ -184,6 +185,7 @@ deals-app/
 │   │   │   └── EcmModal/
 │   │   │       └── EcmModal.html
 │   │   ├── DealDescriptionModal/               ← Модальное окно описания сделки
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealDescriptionModal.css
 │   │   │   ├── DealDescriptionModal.html
 │   │   │   ├── DealDescriptionModal.js
@@ -203,26 +205,31 @@ deals-app/
 │   │   │   ├── DealFinancialInstrumentEditModal.md
 │   │   │   └── fixtures.json
 │   │   ├── DealFinancialMetricsModal/          ← Модальное окно финансовых метрик сделки
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealFinancialMetricsModal.css
 │   │   │   ├── DealFinancialMetricsModal.html
 │   │   │   ├── DealFinancialMetricsModal.js
 │   │   │   ├── DealFinancialMetricsModal.md
 │   │   │   └── fixtures.json
 │   │   ├── DealPeriodModal/                    ← Модальное окно сроков сделки
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealPeriodModal.html
 │   │   │   ├── DealPeriodModal.js
 │   │   │   └── DealPeriodModal.md
 │   │   ├── DealProjectInformationModal/        ← Модальное окно сведений о проекте
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealProjectInformationModal.css
 │   │   │   ├── DealProjectInformationModal.html
 │   │   │   ├── DealProjectInformationModal.js
 │   │   │   └── DealProjectInformationModal.md
 │   │   ├── DealTeamModal/                      ← Модальное окно команды сделки
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealTeamModal.css
 │   │   │   ├── DealTeamModal.html
 │   │   │   ├── DealTeamModal.js
 │   │   │   └── DealTeamModal.md
 │   │   ├── DealTitleModal/                     ← Модальное окно редактирования сделки
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── DealTitleModal.html
 │   │   │   ├── DealTitleModal.js
 │   │   │   └── DealTitleModal.md
@@ -233,6 +240,7 @@ deals-app/
 │   │   │   ├── DidProductsModal.md
 │   │   │   └── fixtures.json
 │   │   ├── InstrumentsCounterpartiesModal/     ← Модальное окно контрагентов
+│   │   │   ├── CHANGELOG.md
 │   │   │   ├── CounterpartyCard/
 │   │   │   │   ├── CHANGELOG.md
 │   │   │   │   ├── CounterpartyCard.css
@@ -288,6 +296,7 @@ deals-app/
 │   │       └── RepaymentModal.md
 │   ├── popovers/                               ← поповеры и тултипы
 │   │   └── RelatedDealsPopover/                ← Поповер связанных сделок
+│   │       ├── CHANGELOG.md
 │   │       ├── RelatedDealsPopover.css
 │   │       ├── RelatedDealsPopover.html
 │   │       ├── RelatedDealsPopover.js
@@ -295,6 +304,7 @@ deals-app/
 │   ├── README.md
 │   ├── tables/                                 ← таблицы
 │   │   └── DealCounterpartiesTable/            ← Контрагенты сделки
+│   │       ├── CHANGELOG.md
 │   │       ├── DealCounterpartiesTable.css
 │   │       ├── DealCounterpartiesTable.html
 │   │       └── DealCounterpartiesTable.md
@@ -321,6 +331,7 @@ deals-app/
 │       │   ├── DealFinancialMetricsTile.md
 │       │   └── fixtures.json
 │       ├── DealMetricsCalculationTile/         ← Финансовые метрики
+│       │   ├── CHANGELOG.md
 │       │   ├── DealMetricsCalculationTile.css
 │       │   ├── DealMetricsCalculationTile.html
 │       │   └── DealMetricsCalculationTile.md
@@ -339,10 +350,12 @@ deals-app/
 │       │   ├── DealProductTreeTile.md
 │       │   └── fixtures.json
 │       ├── DealRelatedCollateralsTile/         ← Связанные обеспечения
+│       │   ├── CHANGELOG.md
 │       │   ├── DealRelatedCollateralsTile.css
 │       │   ├── DealRelatedCollateralsTile.html
 │       │   └── DealRelatedCollateralsTile.md
 │       ├── DealSetupTile/                      ← Заведение сделки
+│       │   ├── CHANGELOG.md
 │       │   ├── DealSetupTile.css
 │       │   ├── DealSetupTile.html
 │       │   └── DealSetupTile.md
@@ -354,6 +367,7 @@ deals-app/
 │       │   ├── DealTeamTile.md
 │       │   └── fixtures.json
 │       ├── EpsVbsImpactTile/                   ← Влияние на ЭПС/ВБС
+│       │   ├── CHANGELOG.md
 │       │   ├── EpsVbsImpactTile.css
 │       │   ├── EpsVbsImpactTile.html
 │       │   └── EpsVbsImpactTile.md

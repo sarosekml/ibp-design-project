@@ -15,7 +15,7 @@ metadata:
 | Что описываешь | Файл | Шаблон |
 |---|---|---|
 | Страница `pages/<Имя>.html` | `pages/<Имя>.screen.md` рядом | `.agents/skills/screen-spec/references/template.md` |
-| Виджет `widgets/<группа>/<Имя>/<Имя>.html` | `widgets/<группа>/<Имя>/<Имя>.md` рядом | `.agents/skills/screen-spec/references/widget-template.md` |
+| Виджет `widgets/<группа>/<Имя>/<Имя>.html` | `widgets/<группа>/<Имя>/<Имя>.md` рядом | `design-system/templates/local-component/Component.md` |
 | Демо-данные | `data/<сущность>.js` | `.agents/skills/screen-spec/references/data-template.js` |
 
 ## Кто это читает

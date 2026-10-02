@@ -25,7 +25,8 @@ API. Привести их к шаблону. Язык не меняется —
 
 Шаблоны:
 - страница — `.agents/skills/screen-spec/references/template.md`;
-- виджет — `.agents/skills/screen-spec/references/widget-template.md`.
+- виджет — `design-system/templates/local-component/Component.md` (с 02.10.2026,
+  задача RE0004: один шаблон паспорта в ДС; `references/widget-template.md` удалён).
 
 ## Tasks
 
@@ -37,10 +38,12 @@ API. Привести их к шаблону. Язык не меняется —
 - [ ] `apps/ib/drafts/ai-bankster-prototype-v01/pages/` — 7 спек
 - [ ] `apps/ib/drafts/ai-bankster-prototype-v02/pages/` — 8 спек
 
-Виджеты (паспорта `<Имя>.md`), 13 файлов:
+Виджеты (паспорта `<Имя>.md`), 13 файлов — **закрыто задачей RE0004** (02.10.2026):
+единый шаблон паспорта, миграция всех 32 паспортов, генератор витрины по канону.
+Осталась только виджетная часть ниже по списку страниц.
 
-- [ ] `apps/postrade/deals-app/widgets/tiles/*` — дополнить паспорта локального
-  компонента ДС разделами шаблона виджета
+- [x] `apps/postrade/deals-app/widgets/tiles/*` — паспорта приведены к шаблону ДС
+  (задача RE0004)
 
 В каждом файле:
 

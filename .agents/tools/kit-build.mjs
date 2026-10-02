@@ -260,15 +260,39 @@ function trackWeights(head, rows) {
 }
 const LIST_ITEM = /^(\s*)([-*]|\d+\.)\s+(.*)$/;
 
-/** Тело паспорта → разделы страницы: [{ title, html }]. `#` пропускается —
-    это имя компонента, оно уже в шапке страницы. */
+/* Русская часть заголовка «Описание (Purpose)» → «Описание». По ней паспорт
+   сопоставляется с каноном (шаблон ДС) и по ней показывается заголовок на
+   странице: английская скобка — для агента разработки, не для витрины. */
+const canonRu = (t) => String(t || '').trim().replace(/\s*\([^)]*\)\s*$/, '').replace(/`/g, '').trim();
+
+/* Заголовки «##» тела паспорта и признак текста до первого «##» (после имени
+   «#»). Это лёгкий разбор для КТ2 — без превращения тела в HTML. */
+function passportOutline(body) {
+  const lines = stripComments(body).replace(/\r\n/g, '\n').split('\n');
+  const titles = [];
+  let head = false, seen = false;
+  for (const l of lines) {
+    const m = /^##\s+(.*)$/.exec(l);
+    if (m) { seen = true; titles.push(m[1].trim()); continue; }
+    if (!seen) {
+      const t = l.trim();
+      if (t && !/^#\s/.test(l) && t !== '---') head = true;
+    }
+  }
+  return { titles, head };
+}
+
+/** Тело паспорта → { sections, head }: sections — [{ ru, title, html }] по «##»,
+    head — текст до первого «##» (после имени «#»). HTML-комментарии вырезаются,
+    «#» (имя) пропускается — оно уже в шапке страницы. */
 export function mdSections(md, link) {
-  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const lines = stripComments(md).replace(/\r\n/g, '\n').split('\n');
   const sections = [];
   let cur = null;
+  const head = [];
   const push = (html) => {
-    if (!cur) { cur = { title: 'Коротко', html: '' }; sections.push(cur); }
-    cur.html += html + '\n';
+    if (cur) cur.html += html + '\n';
+    else head.push(html);
   };
   const blockStart = (l) => /^#{1,6}\s/.test(l) || /^```/.test(l) || LIST_ITEM.test(l) || /^>\s?/.test(l) || l.trim().startsWith('|');
   let i = 0;
@@ -278,7 +302,7 @@ export function mdSections(md, link) {
     let m;
     if ((m = /^(#{1,6})\s+(.*)$/.exec(l))) {
       const level = m[1].length, text = m[2].trim();
-      if (level === 2) { cur = { title: text.replace(/`/g, ''), html: '' }; sections.push(cur); }
+      if (level === 2) { cur = { ru: canonRu(text), title: text.replace(/`/g, ''), html: '' }; sections.push(cur); }
       else if (level >= 3) { const h = Math.min(level, 4); push('<h' + h + ' class="kit-md__h' + h + '">' + inline(text, link) + '</h' + h + '>'); }
       i++;
       continue;
@@ -332,7 +356,27 @@ export function mdSections(md, link) {
     while (i < lines.length && lines[i].trim() && !(para.length && blockStart(lines[i]))) para.push(lines[i++].trim());
     push('<p class="desc">' + inline(para.join(' '), link) + '</p>');
   }
-  return sections;
+  return { sections, head: head.join('\n').trim() };
+}
+
+/* Канон разделов паспорта — заголовки «##» шаблона ДС
+   templates/local-component/Component.md (источник один, в ДС). Нет шаблона —
+   КТ1: собирать неоткуда. Русские части заголовков — порядок вкладки
+   «Документация». */
+function canonHeadings(P) {
+  const tpl = path.join(P.dsAbs, DS_HERE.at.templates, 'local-component', 'Component.md');
+  if (!existsSync(tpl)) {
+    return { headings: [], defects: ['КТ1 нет ' + P.rel(tpl) + ' — шаблона локального компонента ДС нет, неоткуда взять канон разделов'] };
+  }
+  const headings = [];
+  for (const l of read(tpl).split('\n')) {
+    const m = /^##\s+(.*)$/.exec(l);
+    if (m) headings.push({ full: m[1].trim(), ru: canonRu(m[1]) });
+  }
+  if (!headings.length) {
+    return { headings: [], defects: ['КТ1 ' + P.rel(tpl) + ' — в шаблоне нет ни одного раздела «##»'] };
+  }
+  return { headings, defects: [] };
 }
 
 /* ---------------- фрагмент и CSS ---------------- */
@@ -467,6 +511,30 @@ export function collect(P) {
     if (!c.htmlAbs) defects.push('КТ4 ' + P.rel(c.dir) + '/ — нет фрагмента ' + c.id + '.html');
   }
 
+  /* Канон разделов — из шаблона ДС; без него разделы паспорта не проверить.
+     Сопоставление по русской части «##»; свой, пропущенный, повторённый раздел
+     и текст до первого «##» — КТ2. */
+  const canon = canonHeadings(P);
+  if (canon.defects.length) defects.push(...canon.defects);
+  const canonNames = canon.headings.map((h) => h.ru);
+  if (canonNames.length) {
+    for (const c of comps) {
+      const { titles, head } = passportOutline(c.body);
+      if (head) defects.push('КТ2 ' + P.rel(c.mdAbs) + ' — текст до первого «##» (выводится в конце — текст не теряется)');
+      const seen = new Map();
+      for (const t of titles) {
+        const ru = canonRu(t);
+        const idx = canonNames.indexOf(ru);
+        if (idx < 0) defects.push('КТ2 ' + P.rel(c.mdAbs) + ' — раздел «' + ru + '» не в каноне');
+        else if (seen.has(idx)) defects.push('КТ2 ' + P.rel(c.mdAbs) + ' — раздел «' + ru + '» повторён');
+        else seen.set(idx, ru);
+      }
+      for (let i = 0; i < canonNames.length; i++) {
+        if (!seen.has(i)) defects.push('КТ2 ' + P.rel(c.mdAbs) + ' — нет канонического раздела «' + canonNames[i] + '»');
+      }
+    }
+  }
+
   /* Связи: имя виджета или путь до его .md в строке паспорта. */
   const ids = [...byId.keys()].sort((a, b) => b.length - a.length);
   const findId = (text, self) => {
@@ -503,7 +571,7 @@ export function collect(P) {
     c.stub = !!(c.htmlAbs && /class="[^"]*__stub\b/.test(read(c.htmlAbs)));
   }
   comps.sort((a, b) => (a.module < b.module ? -1 : a.module > b.module ? 1 : 0) || a.id.localeCompare(b.id, 'en'));
-  return { cfg, comps, byId, hosts, defects, warnings };
+  return { cfg, comps, byId, hosts, defects, warnings, canon: canonNames };
 }
 
 /* ---------------- страница компонента ---------------- */
@@ -593,6 +661,20 @@ function docPage(P, cfg, c, ctx) {
     return '<a class="inl" href="' + esc(H(existsSync(prev) ? prev : h.page.abs)) + '">' + esc(P.rel(h.page.abs)) + '</a>';
   }).filter((x, k, a) => a.indexOf(x) === k);
   const artifacts = ctx.comps.filter((o) => o.owner === c.id);
+  /* Связь «тайл → окно» записана с двух сторон: opens тайла и artifactOf окна.
+     На странице — одна строка с каждой стороны, компонент один раз, в едином
+     виде «имя (id)»; не найденное в витрине — текстом паспорта. */
+  const named = (o) => compLink({ text: o.name + ' (' + o.id + ')', id: o.id });
+  const opened = [];
+  const openedText = [];
+  for (const r of c.opens) {
+    if (r.id && ctx.byId.has(r.id)) { if (!opened.includes(r.id)) opened.push(r.id); }
+    else openedText.push(esc(r.text));
+  }
+  for (const o of artifacts) if (!opened.includes(o.id)) opened.push(o.id);
+  const openedBy = c.owner ? [named(ctx.byId.get(c.owner))]
+    : c.artifactOfRef.map((r) => (r.id && ctx.byId.has(r.id) ? named(ctx.byId.get(r.id)) : esc(r.text)));
+  /* «Паспорт» — одна карточка: шапка паспорта и связи вместе (раздел 0 канона). */
   const card = kv([
     ['Тип', esc(TYPE_LABEL[c.type])],
     ['Модуль', '<code class="tok">' + esc(P.appsDir + '/' + c.module) + '</code>'],
@@ -600,10 +682,17 @@ function docPage(P, cfg, c, ctx) {
     ['Пара во фронтенде', c.fm.frontend ? '<code class="tok">' + esc(c.fm.frontend) + '</code>' : 'в паспорте не указана'],
     ['Где стоит', esc(listOf(c.fm.usedOn).join(', '))],
     ['Страницы', hostLinks.join('<br>')],
+    ['Открывает', [...opened.map((id) => named(ctx.byId.get(id))), ...openedText].join('<br>')],
+    ['Открывается из', openedBy.join('<br>')],
+    /* opensFrom — описание триггера фразой; запятые делят её на элементы списка, собираем обратно */
+    ['Как открывается', c.opensFrom.map(compLink).join(', ')],
+    ['Зависит от', c.dependsOn.map(compLink).join('<br>')],
     ['Варианты', listOf(c.fm.variants).map(esc).join('<br>')],
-    ['Версия', esc([c.fm.version, c.fm.updated && 'обновлено ' + c.fm.updated].filter(Boolean).join(' · '))],
     ['Владелец', esc(c.fm.owner)],
     ['Дизайнер', esc(c.fm.designer)],
+    ['Требования', listOf(c.fm.requirements).map(esc).join('<br>')],
+    ['Версия', esc([c.fm.version, c.fm.updated && 'обновлено ' + c.fm.updated].filter(Boolean).join(' · '))],
+    ['Версия правил', esc(c.fm.rulesVersion)],
   ]);
   const dsLinks = listOf(c.fm.ds).map((n) => (ctx.dsPages.has(n)
     ? '<a class="inl" href="' + esc(R(ctx.dsPages.get(n))) + '">' + esc(n) + '</a>' : esc(n)));
@@ -618,36 +707,19 @@ function docPage(P, cfg, c, ctx) {
     ['Файлы', joinLinks(files)],
     ['Подчасти', joinLinks(subs)],
   ]);
-  /* Связь «тайл → окно» записана с двух сторон: opens тайла и artifactOf
-     окна. На странице — одна строка с каждой стороны, компонент — один раз,
-     в едином виде «имя (id)»; не найденное в витрине — текстом паспорта. */
-  const named = (o) => compLink({ text: o.name + ' (' + o.id + ')', id: o.id });
-  const opened = [];
-  const openedText = [];
-  for (const r of c.opens) {
-    if (r.id && ctx.byId.has(r.id)) { if (!opened.includes(r.id)) opened.push(r.id); }
-    else openedText.push(esc(r.text));
-  }
-  for (const o of artifacts) if (!opened.includes(o.id)) opened.push(o.id);
-  const openedBy = c.owner ? [named(ctx.byId.get(c.owner))]
-    : c.artifactOfRef.map((r) => (r.id && ctx.byId.has(r.id) ? named(ctx.byId.get(r.id)) : esc(r.text)));
-  const ties = kv([
-    ['Открывает', [...opened.map((id) => named(ctx.byId.get(id))), ...openedText].join('<br>')],
-    ['Открывается из', openedBy.join('<br>')],
-    /* opensFrom — описание триггера фразой; запятые делят её на элементы списка, собираем обратно */
-    ['Как открывается', c.opensFrom.map(compLink).join(', ')],
-    ['Зависит от', c.dependsOn.map(compLink).join('<br>')],
-  ]);
   const casesHtml = '<div class="kit-cases' + (WIDTH_TYPES.has(c.type) && c.type !== 'table' ? '' : ' kit-cases--wide') + '" id="kit-cases"></div>';
-  const md = mdSections(c.body, link);
-  let casesPlaced = false;
-  for (const s of md) {
-    if (!casesPlaced && /^Состояния/i.test(s.title)) {
-      s.html += '<h3 class="kit-md__h3">Все состояния рядом</h3>\n<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>\n' + casesHtml + '\n';
-      casesPlaced = true;
-    }
-  }
+  /* Разделы паспорта — по канону шаблона ДС; свой «##» (не в каноне) и текст
+     до первого «##» выводятся в конце — текст не теряется. */
+  const { sections, head } = mdSections(c.body, link);
+  const ordered = ctx.canon.map((ru) => sections.find((s) => s.ru === ru)).filter(Boolean);
+  const extra = sections.filter((s) => !ctx.canon.includes(s.ru));
   const section = (title, html) => '<section class="section kit-md" data-screen-label="' + esc(title) + '">\n<h2>' + esc(title) + '</h2>\n' + html + '\n</section>';
+  const docSections = ordered.map((s) => {
+    let html = s.html;
+    if (s.ru === 'Компоненты' && made) html += '<h3 class="kit-md__h3">Из чего собран</h3>\n' + made + '\n';
+    if (s.ru === 'Состояния') html += '<h3 class="kit-md__h3">Все состояния рядом</h3>\n<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>\n' + casesHtml + '\n';
+    return section(s.ru, html);
+  });
   const docs = [
     '<header class="masthead">',
     '  <div class="meta"><span>Тип: <b>' + esc(TYPE_LABEL[c.type]) + '</b></span>'
@@ -658,11 +730,10 @@ function docPage(P, cfg, c, ctx) {
     '  <h1>' + esc(c.name) + '</h1>',
     '  <p class="lead">' + esc(c.purpose) + '</p>',
     '</header>',
-    section('Паспорт коротко', card),
-    section('Из чего собран', made),
-    ties ? section('Связи', ties) : '',
-    casesPlaced ? '' : section('Состояния', '<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>\n' + casesHtml),
-    ...md.map((s) => section(s.title, s.html)),
+    section('Паспорт', card),
+    ...docSections,
+    ...extra.map((s) => section(s.ru, s.html)),
+    head ? section('Коротко', head) : '',
     '<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">' + esc(P.rel(c.mdAbs)) + '</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node ' + esc(P.tools) + '/' + GEN + '</code>.</p></footer>',
   ].filter(Boolean).join('\n');
 
@@ -837,6 +908,7 @@ export function plan(P) {
   const ctx = {
     comps: res.comps, byId: res.byId, defects: res.defects, dsPages: dsPages(P),
     byMd: new Map(res.comps.map((c) => [c.mdAbs, c])),
+    canon: res.canon,
   };
   for (const c of res.comps) {
     if (!c.htmlAbs || res.byId.get(c.id) !== c) continue;
@@ -912,9 +984,28 @@ const MANIFEST = {
 const MOD = 'apps/postrade/deals-app';
 const TILE = MOD + '/widgets/tiles/KnrTile/KnrTile';
 const MODAL = MOD + '/widgets/modals/KnrModal/KnrModal';
+/* Канон разделов стенда — тот же, что в шаблоне ДС. Стенд держит свой шаблон
+   (нет шаблона — КТ1) и канонические паспорта: иначе КТ2 краснел бы на самой
+   стендовой сборке. */
+const CANON = ['Описание (Purpose)', 'Раскладка (Layout)', 'Компоненты (Components)', 'Поля (Fields)', 'Права (Permissions)', 'Состояния (States)', 'Обязательность заполнения (Required)', 'Переполнение (Overflow)', 'Поведение (Behavior)', 'Данные (Data dependencies)', 'Для разработчиков (Implementation)', 'Осознанные отклонения (Deviations)', 'Открытые вопросы (Open questions)'];
+const TPL = '# <Имя>\n\n' + CANON.map((h) => '## ' + h + '\n\nраздел\n').join('\n');
+const BODY_TILE = '## Описание (Purpose)\n\nТайл **КНР**, окно — [KnrModal.md](../../modals/KnrModal/KnrModal.md).\n\n'
+  + '## Раскладка (Layout)\n\nTile\n\n'
+  + '## Компоненты (Components)\n\nTile\n\n'
+  + '## Поля (Fields)\n\n—\n\n'
+  + '## Права (Permissions)\n\n—\n\n'
+  + '## Состояния (States)\n\n| Состояние | Вид |\n|---|---|\n| Данные | строки `a | b` |\n\n'
+  + '## Обязательность заполнения (Required)\n\n—\n\n'
+  + '## Переполнение (Overflow)\n\n—\n\n'
+  + '## Поведение (Behavior)\n\n—\n\n'
+  + '## Данные (Data dependencies)\n\n—\n\n'
+  + '## Для разработчиков (Implementation)\n\n—\n\n'
+  + '## Осознанные отклонения (Deviations)\n\nОтклонений нет\n\n'
+  + '## Открытые вопросы (Open questions)\n\nОткрытых вопросов нет\n';
+const BODY_MODAL = CANON.map((h) => '## ' + h + '\n\n—\n').join('\n');
 const MD_TILE = (patch = '') => '---\nname: КНР\ncategory: Сделка\npurpose: Показать КНР\nds: [Tile, Link]\nopens: [KnrModal]\n' + patch
-  + '---\n\n# КНР\n\n## Описание\n\nТайл **КНР**, окно — [KnrModal.md](../../modals/KnrModal/KnrModal.md).\n\n## Состояния\n\n| Состояние | Вид |\n|---|---|\n| Данные | строки `a | b` |\n';
-const MD_MODAL = (patch = 'artifactOf: КНР (../../tiles/KnrTile/KnrTile.md)\n') => '---\nname: Окно КНР\ncategory: Сделка\npurpose: Выбрать КНР\n' + patch + '---\n\n# Окно\n';
+  + '---\n\n# КНР\n\n' + BODY_TILE;
+const MD_MODAL = (patch = 'artifactOf: КНР (../../tiles/KnrTile/KnrTile.md)\n') => '---\nname: Окно КНР\ncategory: Сделка\npurpose: Выбрать КНР\n' + patch + '---\n\n# Окно\n\n' + BODY_MODAL;
 const DEAL = '<!DOCTYPE html>\n<html><head>\n<script src="../../../ds-config.js"></script>\n<!-- @lc-css -->\n</head><body>\n'
   + '<ds-include src="../widgets/tiles/KnrTile/KnrTile.html" class="col-3 colw-6" id="tile-knr" state="loading"></ds-include>\n'
   + '<ds-include src="../widgets/modals/KnrModal/KnrModal.html"></ds-include>\n'
@@ -925,6 +1016,7 @@ function tree(r) {
   put(r, 'project.json', JSON.stringify(MANIFEST));
   put(r, 'ds/components/atoms/Divider/Divider.html', '');      // ДС стенда: страниц без раскладки не бывает
   put(r, 'ds/foundations/.keep', '');
+  put(r, 'ds/templates/local-component/Component.md', TPL);    // шаблон — источник канона разделов
   put(r, 'apps/ds-config.js', '');
   put(r, 'apps/ds-body.js', '');
   put(r, MOD + '/app.json', '{}');
@@ -964,6 +1056,16 @@ const CASES = [
     } },
   { name: 'манифест без localKit', expect: 'КТ1',
     mutate: (r) => { const { localKit, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
+  { name: 'нет шаблона канона в ДС', expect: 'шаблона локального компонента ДС нет',
+    mutate: (r) => rmSync(path.join(r, 'ds/templates/local-component/Component.md')) },
+  { name: 'раздел мимо канона', expect: 'раздел «Свой раздел» не в каноне',
+    mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Открытые вопросы (Open questions)', '## Свой раздел\n\nсвоё\n\n## Открытые вопросы (Open questions)')) },
+  { name: 'канонический раздел пропущен', expect: 'нет канонического раздела «Переполнение»',
+    mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Переполнение (Overflow)\n\n—\n\n', '')) },
+  { name: 'канонический раздел повторён', expect: 'раздел «Описание» повторён',
+    mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Описание (Purpose)', '## Описание (Purpose)\n\nдубль\n\n## Описание (Purpose)')) },
+  { name: 'текст до первого ##', expect: 'текст до первого «##»',
+    mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('# КНР\n\n', '# КНР\n\nТекст без раздела.\n\n')) },
   { name: 'CRLF в собранной странице — не расхождение', expect: null, build: true,
     mutate: (r) => { const f = path.join(r, 'apps/local-components/postrade/deals-app/KnrTile.doc.html'); writeFileSync(f, readFileSync(f, 'utf8').replace(/\n/g, '\r\n')); } },
 ];
@@ -1008,7 +1110,7 @@ function selftest() {
     check(project(root), true);
     const html = readFileSync(path.join(root, 'apps/local-components/postrade/deals-app/KnrTile.doc.html'), 'utf8');
     const modal = readFileSync(path.join(root, 'apps/local-components/postrade/deals-app/KnrModal.doc.html'), 'utf8');
-    const tiesOf = (page) => (page.match(/data-screen-label="Связи">[\s\S]*?<\/section>/) || [''])[0];
+    const tiesOf = (page) => (page.match(/data-screen-label="Паспорт">[\s\S]*?<\/section>/) || [''])[0];
     const want = {
       'фрагмент вшит': html.includes('<section class="tile lc-knr" data-state="data" data-mode="edit" id="tile-knr">'),
       'окно рядом': html.includes('<div class="modal-scrim" id="knr-scrim" hidden>'),
@@ -1024,6 +1126,10 @@ function selftest() {
         && tiesOf(html).includes('<a class="inl" href="KnrModal.doc.html">Окно КНР (KnrModal)</a>'),
       'у окна — откуда открывается': tiesOf(modal).split('href="KnrTile.doc.html"').length === 2
         && tiesOf(modal).includes('<b>Открывается из</b>'),
+      'заголовки — русская часть': html.includes('data-screen-label="Описание"') && !html.includes('data-screen-label="Описание (Purpose)"'),
+      'паспорт — одна карточка': html.includes('data-screen-label="Паспорт"') && html.includes('<b>Открывает</b>') && !html.includes('data-screen-label="Связи"'),
+      'из чего собран — в компонентах': html.includes('<h3 class="kit-md__h3">Из чего собран</h3>'),
+      'все состояния — в состояниях': html.includes('<h3 class="kit-md__h3">Все состояния рядом</h3>'),
     };
     const bad = Object.keys(want).filter((k) => !want[k]);
     ok(!bad.length, 'страница тайла собрана как у хозяина', bad.length ? 'нет: ' + bad.join(', ') : 'всё на месте');

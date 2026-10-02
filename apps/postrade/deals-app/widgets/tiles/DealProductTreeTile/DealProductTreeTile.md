@@ -1,23 +1,20 @@
 ---
-widget: DealProductTreeTile
-type: tile
-file: apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.html
-module: postrade/deals-app
-frontend: postrade/deals-app/widgets/tiles/DealProductTreeNew
 name: Продукты сделки
-version: 1.003
-updated: "30.09.2026"
-rulesVersion: 1.006
-owner: не решено (19.09.2026)
-designer: Роман Эсэф
+type: tile
 category: Сделка
 purpose: Дерево продуктов сделки — продукты ДИД, продукты, инструменты и транши с номерами, основной продукт и точки входа в добавление, удаление, погашение, перенос и связь с ФИ
+version: 1.003
+updated: "02.10.2026"
+rulesVersion: 2.000
+owner: не решено (19.09.2026)
+designer: Роман Эсэф
+frontend: postrade/deals-app/widgets/tiles/DealProductTreeNew
 ds: [Tile, ProductRow, IconButton, ContextMenu, Tooltip, Buttons, Skeleton, Spinner]
 usedOn: [Страница сделки — таб «Финансовые данные», первый ряд, 6 колонок из 12 (узкая ширина — 12)]
 opens: [Окно «Продукты ДИД» (../../modals/DidProductsModal/DidProductsModal.md), Окно «Продукты» (../../modals/ProductsModal/ProductsModal.md), Окно «Инструменты» (../../modals/InstrumentsModal/InstrumentsModal.md), Подтверждение действия над деревом (../../modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md), Окно погашения (../../modals/RepaymentModal/RepaymentModal.md), Окно «Перенос инструмента» (../../modals/InstrumentTransferModal/InstrumentTransferModal.md), Окно «Изменить связь с ФИ» (../../modals/LinkChangeModal/LinkChangeModal.md)]
+dependsOn: []
 variants: []
 modifiers: []
-dependsOn: []
 requirements: [ТЗ страницы сделки 19.09.2026, макеты дизайнера 29.09.2026 («Tile-Deal_Products», «ProductRow»), ответы и макеты дизайнера 30.09.2026 («Погашение», «Перенос инструмента», «Перенос из дерева в ФИ»), задача docs/tasks/RE0001-product-row-tree.md]
 knowledge: []
 ---
@@ -87,17 +84,23 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `.sk-line` в `.prow__head` строк ProductRow с `aria-busy` |
 | Spinner | ДС — `design-system/components/atoms/Spinner/Spinner.md` | `spin--s spin--accent` в `.tile__actions` |
 
-## Параметры метки (Props)
+## Поля (Fields)
 
-Что страница задаёт виджету атрибутами метки `<ds-include>`:
+| Поле | Смысл | Тип, единица | Источник | Обязательное |
+|---|---|---|---|---|
+| `number` + `name` | номер узла по месту в дереве и название | строка, одним текстом: «1.1. Кредитный мезонин» | номер считает `ProductTreeStore.view()`, название — каталог продуктов (`data/mock-product-catalog.js`) | да |
+| `isMain` | основной продукт ДИД сделки | да / нет, один на сделку | `productsDid[].isMain` (`MOCK_DEAL_TREES`) | да — у сделки с продуктами ДИД он есть всегда |
+| `signedAt` | дата подписания договора | дата `ДД.ММ.ГГГГ` | узел инструмента или транша | нет, прочерк |
+| `purchaseCost` · `strikePrice` · `limitAmount` | стоимость покупки (акции, дебиторская задолженность) · цена исполнения (пут и колл РЕПО) · сумма лимита (транш) | деньги, 2 знака, код валюты `currency` | узел инструмента или транша, поле `amount` | нет, прочерк |
+| `didEntryAt` · `didExitAt` | дата входа и дата выхода ДИД («НКЛ с баланса ПАО») | даты `ДД.ММ.ГГГГ` | узел инструмента | нет, прочерк |
+| `repaidAt` | фактическая дата погашения | дата `ДД.ММ.ГГГГ` | узел инструмента или транша | нет — строки нет, пока не погашен |
+| `fiIds` | карточки ФИ, к которым прикреплён узел (не больше двух) | идентификаторы, в тайле не выводятся | узел инструмента или транша | нет |
 
-| Атрибут метки | На корне виджета | Значения | Смысл |
-|---|---|---|---|
-| `class` | `class` (слияние) | `col-6 colw-12` | место в сетке страницы; на странице сделки тайл стоит в `.tile-stack` |
-| `state` | `data-state` | `loading` · `data` · `partial` · `empty` · `updating` | состояние данных; `render` ставит его сам |
-| `mode` | `data-mode` | `edit` · `view` | режим прав |
+Имена полей — как в typedef `data/mock-deal-trees.js` и `ProductTreeNodeView`. Подписи
+значений второй строки — `PRODUCT_DETAIL_LABELS` (ответ человека 30.09.2026, 22), тайл
+показывает их тултипом на значении.
 
-## Типы узлов
+### Типы узлов
 
 Модель представления узла — `ProductTreeNodeView` (`data/product-tree-store.js`). Тайл
 рисует её как есть: какие кнопки и пункты меню есть у узла, решает стор.
@@ -125,22 +128,6 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | `repaidAt` | строка статуса «✓ Фактическая дата погашения ДД.ММ.ГГГГ»; в меню «Погасить» → «Отменить погашение» |
 | `hasPage = true` | заголовок — ссылка `a.prow__title--link`; страниц пока нет, адрес `#`, перехода нет |
 | `details` | вторая строка: дата — глиф `calendar`, сумма — глиф `bar-chart-square` и код валюты; пустое значение — «–» |
-
-## Поля
-
-| Поле | Смысл | Тип, единица | Источник | Обязательное |
-|---|---|---|---|---|
-| `number` + `name` | номер узла по месту в дереве и название | строка, одним текстом: «1.1. Кредитный мезонин» | номер считает `ProductTreeStore.view()`, название — каталог продуктов (`data/mock-product-catalog.js`) | да |
-| `isMain` | основной продукт ДИД сделки | да / нет, один на сделку | `productsDid[].isMain` (`MOCK_DEAL_TREES`) | да — у сделки с продуктами ДИД он есть всегда |
-| `signedAt` | дата подписания договора | дата `ДД.ММ.ГГГГ` | узел инструмента или транша | нет, прочерк |
-| `purchaseCost` · `strikePrice` · `limitAmount` | стоимость покупки (акции, дебиторская задолженность) · цена исполнения (пут и колл РЕПО) · сумма лимита (транш) | деньги, 2 знака, код валюты `currency` | узел инструмента или транша, поле `amount` | нет, прочерк |
-| `didEntryAt` · `didExitAt` | дата входа и дата выхода ДИД («НКЛ с баланса ПАО») | даты `ДД.ММ.ГГГГ` | узел инструмента | нет, прочерк |
-| `repaidAt` | фактическая дата погашения | дата `ДД.ММ.ГГГГ` | узел инструмента или транша | нет — строки нет, пока не погашен |
-| `fiIds` | карточки ФИ, к которым прикреплён узел (не больше двух) | идентификаторы, в тайле не выводятся | узел инструмента или транша | нет |
-
-Имена полей — как в typedef `data/mock-deal-trees.js` и `ProductTreeNodeView`. Подписи
-значений второй строки — `PRODUCT_DETAIL_LABELS` (ответ человека 30.09.2026, 22), тайл
-показывает их тултипом на значении.
 
 ## Права (Permissions)
 
@@ -170,8 +157,7 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | Ошибка (Error) | нет — пока без неё (ответ человека 30.09.2026, 21) | — |
 | Обновление | да | дерево остаётся на месте, в шапке — Spinner S «Обновление» вместо «+ Продукт ДИД», кнопка под деревом скрыта. Макета нет — вид по правилам локальных компонентов. В прототипе не наступает: стор сохраняет мгновенно |
 | Редактирование доступно | да | `data-mode="edit"` |
-| Только просмотр | да | `data-mode="view"` — состав и порядок узлов те же |
-| Правка временно запрещена (Disabled) | нет в тайле | выключенная строка ProductRow нужна в окнах, в тайле её нет (ответ человека 30.09.2026, 23) |
+| Только просмотр | да | `data-mode="view"` — состав и порядок узлов те же; выключенной строки ProductRow в тайле нет — она нужна в окнах (ответ человека 30.09.2026, 23) |
 | Нет права видеть | не решено (19.09.2026) | решает экран, не компонент |
 
 ### Свои состояния
@@ -182,7 +168,7 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | Узел прикреплён к ФИ | у инструмента или транша есть `fiIds` | заливка `.prow--tinted`; «Удалить» у него и у его родителей недоступно |
 | Узел погашен | у инструмента или транша есть `repaidAt` | строка статуса над второй строкой; «Погасить» → «Отменить погашение» |
 
-## Обязательность заполнения
+## Обязательность заполнения (Required)
 
 - Компонент обязателен к заполнению целиком: не решено (19.09.2026).
 - Обязательные поля внутри: номер и название узла. Обязательный продукт продукта ДИД
@@ -196,7 +182,7 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
   их в `DealsStore` при сохранении, их читает реестр портфеля; погашенные инструменты в
   балансы, валюты и PE не входят (допущение, вопрос 33 задачи).
 
-## Переполнение
+## Переполнение (Overflow)
 
 | Случай | Правило |
 |---|---|
@@ -205,7 +191,9 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | Узкая ширина | пары значений второй строки переносятся на следующий ряд, действия не сжимаются (ProductRow). Своих брейкпоинтов у тайла нет |
 | Полная ширина | тайл на 12 колонках (`colw-12`): строки растягиваются, вложенность — по-прежнему 24px на уровень |
 
-## Связанные артефакты (Behavior)
+## Поведение (Behavior)
+
+### Связанные артефакты
 
 | Триггер | Тип | Что внутри | Что меняется после | Кто ещё вызывает |
 |---|---|---|---|---|
@@ -219,6 +207,45 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | «Перенести» у инструмента | модальное окно [`InstrumentTransferModal`](../../modals/InstrumentTransferModal/InstrumentTransferModal.md) «Перенос инструмента» | «Откуда» / «Куда», выбор продукта, «Сохранить» | инструмент с траншами — в выбранном продукте, номера пересчитаны; сохраняется | — |
 | ⇄ «Изменить связь с ФИ» у инструмента или транша | модальное окно [`LinkChangeModal`](../../modals/LinkChangeModal/LinkChangeModal.md) «N. Имя узла» | карточки ФИ сделки, выбор до двух, «Сохранить» | связь с ФИ изменена, заливка строки по ней; сохраняется | — |
 | Заголовок-ссылка инструмента или транша | переход на страницу инструмента или транша | страниц пока нет (ответ человека 30.09.2026, 4) — адрес `#`, перехода нет | — | — |
+
+## Данные (Data dependencies)
+
+### API — что нужно от бэкенда
+Дерево продуктов сделки — `DealProductTreeRsDto` (`data/mock-deal-trees.js`), справочники
+продуктов ДИД, продуктов и типов инструментов (`data/mock-product-catalog.js`), карточки ФИ
+сделки (`data/mock-fin-instruments.js`). Сохранение дерева в прототипе — ресурс
+`product-trees` адаптера `PostApi` (`data/API.md`). Имена методов API не придумываются: их
+выбирает разработка.
+
+### Mock — демо-данные прототипа
+
+| Файл | Глобальная переменная | Тип | Источник имён |
+|---|---|---|---|
+| `../../../data/mock-product-catalog.js` | `window.PRODUCT_DID_CATALOG`, `PRODUCT_CATALOG`, `INSTRUMENT_TYPE_CATALOG`, `PRODUCT_TREE_RULES`, `PRODUCT_MENU_ACTION_LABELS`, `PRODUCT_DETAIL_LABELS` | `ProductDidCatalogItemRsDto[]` … | invented (29.09.2026), ответы 30.09.2026 |
+| `../../../data/mock-fin-instruments.js` | `window.MOCK_DEAL_FIN_INSTRUMENTS` | `DealFinInstrumentCardRsDto[]` по id сделки | invented (30.09.2026) |
+| `../../../data/mock-deal-trees.js` | `window.MOCK_DEAL_TREES` | `DealProductTreeRsDto` по id сделки | invented |
+| `../../../data/product-tree-store.js` | `window.ProductTreeStore` | помощник: `view()` → `ProductTreeNodeView[]`, правка, черновик, хранение | модель представления, не DTO |
+| `fixtures.json` (рядом) | — | сделки-образцы по состояниям витрины | — |
+
+На странице сделки экранный скрипт ждёт `ProductTreeStore.ready` (сохранённые деревья) и
+зовёт `ProductTreeStore.use(<id сделки>)` и `PostTileProductTree.bind(tile, ProductTreeStore)`;
+режим тайлу ставит страница по статусу сделки (`DealsStore.isEditable`). Витрина рисует
+тайл сценарием `apps/local-components/postrade/deals-app/DealProductTreeTile.demo.js`:
+сделки-образцы из `fixtures.json`, «Заполнено частично» и контрол «Пример дерева»
+(прикреплены к ФИ / без прикрепления / длинные названия) объявляет сценарий; правки на
+витрине не сохраняются.
+
+## Для разработчиков (Implementation)
+
+### Параметры метки
+
+Что страница задаёт виджету атрибутами метки `<ds-include>`:
+
+| Атрибут метки | На корне виджета | Значения | Смысл |
+|---|---|---|---|
+| `class` | `class` (слияние) | `col-6 colw-12` | место в сетке страницы; на странице сделки тайл стоит в `.tile-stack` |
+| `state` | `data-state` | `loading` · `data` · `partial` · `empty` · `updating` | состояние данных; `render` ставит его сам |
+| `mode` | `data-mode` | `edit` · `view` | режим прав |
 
 ### Скрипт тайла
 
@@ -248,34 +275,7 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 живут в общем слое `DSFloat`, вне тайла. Их владельца тайл находит по кнопке-триггеру
 меню, а не по цели клика (урок Л88).
 
-## Данные (Data dependencies)
-
-### API — что нужно от бэкенда
-Дерево продуктов сделки — `DealProductTreeRsDto` (`data/mock-deal-trees.js`), справочники
-продуктов ДИД, продуктов и типов инструментов (`data/mock-product-catalog.js`), карточки ФИ
-сделки (`data/mock-fin-instruments.js`). Сохранение дерева в прототипе — ресурс
-`product-trees` адаптера `PostApi` (`data/API.md`). Имена методов API не придумываются: их
-выбирает разработка.
-
-### Mock — демо-данные прототипа
-
-| Файл | Глобальная переменная | Тип | Источник имён |
-|---|---|---|---|
-| `../../../data/mock-product-catalog.js` | `window.PRODUCT_DID_CATALOG`, `PRODUCT_CATALOG`, `INSTRUMENT_TYPE_CATALOG`, `PRODUCT_TREE_RULES`, `PRODUCT_MENU_ACTION_LABELS`, `PRODUCT_DETAIL_LABELS` | `ProductDidCatalogItemRsDto[]` … | invented (29.09.2026), ответы 30.09.2026 |
-| `../../../data/mock-fin-instruments.js` | `window.MOCK_DEAL_FIN_INSTRUMENTS` | `DealFinInstrumentCardRsDto[]` по id сделки | invented (30.09.2026) |
-| `../../../data/mock-deal-trees.js` | `window.MOCK_DEAL_TREES` | `DealProductTreeRsDto` по id сделки | invented |
-| `../../../data/product-tree-store.js` | `window.ProductTreeStore` | помощник: `view()` → `ProductTreeNodeView[]`, правка, черновик, хранение | модель представления, не DTO |
-| `fixtures.json` (рядом) | — | сделки-образцы по состояниям витрины | — |
-
-На странице сделки экранный скрипт ждёт `ProductTreeStore.ready` (сохранённые деревья) и
-зовёт `ProductTreeStore.use(<id сделки>)` и `PostTileProductTree.bind(tile, ProductTreeStore)`;
-режим тайлу ставит страница по статусу сделки (`DealsStore.isEditable`). Витрина рисует
-тайл сценарием `apps/local-components/postrade/deals-app/DealProductTreeTile.demo.js`:
-сделки-образцы из `fixtures.json`, «Заполнено частично» и контрол «Пример дерева»
-(прикреплены к ФИ / без прикрепления / длинные названия) объявляет сценарий; правки на
-витрине не сохраняются.
-
-## Соответствие файлов (Implementation mapping)
+### Соответствие файлов
 
 | Элемент | Прототип | Фронтенд (предложение) |
 |---|---|---|
@@ -289,7 +289,7 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
 | Погашение, перенос, связь с ФИ | `widgets/modals/RepaymentModal/`, `InstrumentTransferModal/`, `LinkChangeModal/` | `src/features/modals/RepaymentModal/`, `InstrumentTransferModal/`, `LinkChangeModal/` |
 | Подтверждения | `widgets/modals/ProductTreeConfirmModal/` | общий диалог подтверждения модуля |
 
-## Осознанные отклонения
+## Осознанные отклонения (Deviations)
 
 | Правило | Как сделано | Почему |
 |---|---|---|
@@ -358,3 +358,4 @@ Tile (заголовок «Продукты сделки»; в шапке — Sp
     (задача, 33).
 23. **Тексты подтверждения удаления продукта, инструмента и транша** — допущение агента
     (задача, 42).
+

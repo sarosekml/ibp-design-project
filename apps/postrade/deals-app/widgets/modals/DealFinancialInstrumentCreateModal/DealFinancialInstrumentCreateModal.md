@@ -1,24 +1,21 @@
 ---
-widget: DealFinancialInstrumentCreateModal
-type: modal
-file: apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html
-module: postrade/deals-app
-frontend: postrade/deals-app/features/modals/DealFinancialInstrumentCreateModal
 name: Окно «Создание финансового инструмента»
+type: modal
+category: Сделка
+purpose: Создать карточку финансового инструмента сделки — выбрать тип ФИ и тип отчётности
 version: 1.000
 updated: "02.10.2026"
-rulesVersion: 1.006
+rulesVersion: 2.000
 owner: не решено (02.10.2026)
 designer: Роман Эсэф
-category: Сделка
-artifactOf: Финансовые инструменты (../../tiles/FinInstrumentsTile/FinInstrumentsTile.md)
-opensFrom: [Тайл «Финансовые инструменты» — Button «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить вручную» в пустом тайле (правка)]
-purpose: Создать карточку финансового инструмента сделки — выбрать тип ФИ и тип отчётности
+frontend: postrade/deals-app/features/modals/DealFinancialInstrumentCreateModal
 ds: [Modal, InputAutocomplete, DropdownList, Tooltip, IconButton, Buttons]
 usedOn: [Страница сделки — таб «Финансовые данные», из тайла «Финансовые инструменты»]
+artifactOf: Финансовые инструменты (../../tiles/FinInstrumentsTile/FinInstrumentsTile.md)
+opensFrom: [Тайл «Финансовые инструменты» — Button «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить вручную» в пустом тайле (правка)]
+dependsOn: [Финансовые инструменты (../../tiles/FinInstrumentsTile/FinInstrumentsTile.md) — окно добавляет карточку тайла через FinInstrumentsStore]
 variants: []
 modifiers: []
-dependsOn: [Финансовые инструменты (../../tiles/FinInstrumentsTile/FinInstrumentsTile.md) — окно добавляет карточку тайла через FinInstrumentsStore]
 requirements: [макет дизайнера «Создание финансового инструмента (кнопка Заполнить вручную)» 02.10.2026]
 knowledge: []
 ---
@@ -61,11 +58,7 @@ Modal modal--w4 (595px — ширина макета)
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
 | Buttons | ДС — `design-system/components/atoms/Buttons/Buttons.md` | «Сохранить» `btn--accent btn--m` |
 
-## Параметры метки (Props)
-
-Метка `<ds-include>` атрибутов не несёт: окно открывает событие тайла.
-
-## Поля
+## Поля (Fields)
 
 | Поле | Смысл | Тип | Источник | Обязательное |
 |---|---|---|---|---|
@@ -93,39 +86,27 @@ Modal modal--w4 (595px — ширина макета)
 | Обновление | не решено (02.10.2026) | в прототипе сохранение мгновенное |
 | Редактирование доступно | да | единственный режим |
 | Только просмотр | нет | окно не открывается |
-| Правка временно запрещена (Disabled) | нет | — |
 | Нет права видеть | не решено (19.09.2026) | решает страница |
 
-## Обязательность заполнения
+## Обязательность заполнения (Required)
 
 - Оба поля обязательны: без них «Сохранить» не создаёт карточку.
 - Что отдаёт наружу: новая карточка в `FinInstrumentsStore`, сохранённая через `PostApi`.
 
-## Переполнение
+## Переполнение (Overflow)
 
 | Случай | Правило |
 |---|---|
 | Длинная подпись опции | усечение в поле, список — по правилам DropdownList |
 | Узкая ширина | ширина фиксирована шкалой Modal (`modal--w4`) |
 
-## Связанные артефакты (Behavior)
+## Поведение (Behavior)
+
+### Связанные артефакты
 
 | Триггер | Тип | Что внутри | Что меняется после | Кто ещё вызывает |
 |---|---|---|---|---|
 | «+ Фин. инструмент», «+ Финансовый инструмент», «Заполнить вручную» (событие `fiaction`, action `CREATE`) | это окно | два списка, «Сохранить» | новая карточка «не заполнено» в тайле, сохраняется; крестик, Esc и подложка — без изменений | — |
-
-### Скрипт окна
-
-`DealFinancialInstrumentCreateModal.js`:
-
-| Глобал / функция | Что делает |
-|---|---|
-| `PostModalFinInstrumentCreate.open()` | открыть пустое окно |
-| `PostModalFinInstrumentCreate.use(input)` | заполнить без открытия — для витрины |
-| `PostFinInstrumentForm.select(scrim, id, opts)` | список: значение только из опций, крестик снимает значение |
-| `PostFinInstrumentForm.fieldError(input)` | ошибка поля: `inp--error` и тултип при фокусе |
-
-«Сохранить» — `FinInstrumentsStore.create({ typeCode, reportingType })` и `commit`.
 
 ## Данные (Data dependencies)
 
@@ -142,13 +123,36 @@ Modal modal--w4 (595px — ширина макета)
 
 Витрина рисует окно сценарием `apps/local-components/postrade/deals-app/DealFinancialInstrumentCreateModal.demo.js`.
 
-## Соответствие файлов (Implementation mapping)
+## Для разработчиков (Implementation)
+
+### Параметры метки
+
+Метка `<ds-include>` атрибутов не несёт: окно открывает событие тайла.
+
+### Скрипт окна
+
+`DealFinancialInstrumentCreateModal.js`:
+
+| Глобал / функция | Что делает |
+|---|---|
+| `PostModalFinInstrumentCreate.open()` | открыть пустое окно |
+| `PostModalFinInstrumentCreate.use(input)` | заполнить без открытия — для витрины |
+| `PostFinInstrumentForm.select(scrim, id, opts)` | список: значение только из опций, крестик снимает значение |
+| `PostFinInstrumentForm.fieldError(input)` | ошибка поля: `inp--error` и тултип при фокусе |
+
+«Сохранить» — `FinInstrumentsStore.create({ typeCode, reportingType })` и `commit`.
+
+### Соответствие файлов
 
 | Элемент | Прототип | Фронтенд (предложение) |
 |---|---|---|
 | Окно | `widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html` | `src/features/modals/DealFinancialInstrumentCreateModal/` |
 | Поведение | `DealFinancialInstrumentCreateModal.js` | в компоненте окна |
 | Общий слой полей окон ФИ | `PostFinInstrumentForm` в `DealFinancialInstrumentCreateModal.js` | общие поля формы модуля |
+
+## Осознанные отклонения (Deviations)
+
+Отклонений нет.
 
 ## Открытые вопросы (Open questions)
 
@@ -158,3 +162,4 @@ Modal modal--w4 (595px — ширина макета)
    закрывается, карточка появляется в списке.
 3. **Тип ФИ «Доп. доходность»** — создаётся, но к нему пока ничего не прикрепляется (вопрос 9
    паспорта тайла).
+

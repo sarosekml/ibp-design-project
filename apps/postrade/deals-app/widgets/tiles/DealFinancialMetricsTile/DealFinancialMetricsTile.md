@@ -1,30 +1,27 @@
 ---
-widget: DealFinancialMetricsTile
-type: tile
-file: apps/postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html
-module: postrade/deals-app
-frontend: postrade/deals-app/widgets/tiles/DealFinancialMetricsTile
 name: Финансовые метрики сделки
-version: 1.002
-updated: "27.09.2026"
-rulesVersion: 1.006
-owner: не решено (19.09.2026)
-designer: Роман Эсэф
+type: tile
 category: Сделка
 purpose: ВБС сделки в разрезе продуктов, резерв, обесценение, RWA и переоценка по PE — сводка с входом в окно метрик
+version: 1.002
+updated: "02.10.2026"
+rulesVersion: 2.000
+owner: не решено (19.09.2026)
+designer: Роман Эсэф
+frontend: postrade/deals-app/widgets/tiles/DealFinancialMetricsTile
 ds: [Tile, AllocationBar, ReadOnlyField, Tooltip, IconButton, Alert, Skeleton]
 usedOn: [Страница сделки — блок «Общая информация», второй ряд]
 opens: [DealFinancialMetricsModal]
+dependsOn: []
 variants: []
 modifiers: []
-dependsOn: []
 requirements: [ТЗ страницы сделки 19.09.2026, макеты дизайнера 25.09.2026, решения человека 25.09.2026]
 knowledge: []
 ---
 
 # Финансовые метрики сделки
 
-## Описание
+## Описание (Purpose)
 
 Тайл страницы сделки: во что вложена сделка и какой под неё резерв. Сверху —
 **ВБС** сделки на дату в разрезе продуктов:
@@ -45,7 +42,33 @@ AllocationBar ДС — итог, полоса распределения и ст
 `DealFinancialMetricsRsDto`); рисует их `DealFinancialMetricsTile.js`
 (`PostTileDealFinMetrics.render`).
 
-## Поля
+## Раскладка (Layout)
+
+```
+Tile (заголовок «Финансовые метрики сделки», действие шапки «Развернуть»)
+└── тело
+    ├── ВБС по сделке — AllocationBar (`albar--stretch`): итог, полоса, строки продуктов
+    ├── четыре ReadOnlyField: «Сумма резерва · Ставка резерва · RWA» в ряд,
+    │   «Ставка обесценения» вторым рядом; пояснение — IconButton info-circle в подписи
+    └── «Переоценка по PE» (только data-pe=yes): плашка — дата, сумма и Δ
+```
+
+Другие состояния: загрузка — скелетон бара и сетка полей; «Нет данных» — строка под
+заголовком; ошибка — подпись бара и Alert error в подвале бара.
+
+## Компоненты (Components)
+
+| Компонент | Откуда | Варианты и ключевые параметры |
+|---|---|---|
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | заголовок, действие шапки «Развернуть» |
+| AllocationBar | ДС — `design-system/components/organisms/AllocationBar/AllocationBar.md` | `albar--stretch` — ВБС по продуктам; цвета сегментов привязаны к продукту |
+| ReadOnlyField | ДС — `design-system/components/molecules/ReadOnlyField/ReadOnlyField.md` | четыре поля, единица постфиксом (`rof__affix`) |
+| Tooltip | ДС — `design-system/components/molecules/Tooltip/Tooltip.md` | пояснения у подписей — `data-tooltip-multiline="yes"` |
+| IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | `maximize` «Развернуть», `info-circle` в подписях полей |
+| Alert | ДС — `design-system/components/molecules/Alert/Alert.md` | `alert--error alert--m` — ошибка, без кнопки повтора (отклонение) |
+| Skeleton | ДС — `design-system/components/atoms/Skeleton/Skeleton.md` | `albar__sk`, `sk-line` — каркас загрузки |
+
+## Поля (Fields)
 
 В порядке отображения. Источник у всех — метрики сделки: они складываются из
 финансовых инструментов сделки (суммы ВБС по продуктам — по ФИ, резерв и
@@ -98,7 +121,7 @@ AllocationBar ДС — итог, полоса распределения и ст
 постфиксе суммы резерва, в плашке PE. На макете в подписи бара «руб.» — см.
 «Осознанные отклонения».
 
-## Права
+## Права (Permissions)
 
 | Роль | Просмотр | Редактирование |
 |---|---|---|
@@ -108,7 +131,7 @@ AllocationBar ДС — итог, полоса распределения и ст
 роли и статусе. Действие шапки одно — «Развернуть» (окно на просмотр); это не
 правка, поэтому оно есть и в просмотре.
 
-## Состояния
+## Состояния (States)
 
 | Состояние | Есть в продукте | Вид |
 |---|---|---|
@@ -129,13 +152,13 @@ AllocationBar ДС — итог, полоса распределения и ст
 | ВБС рассчитывается (`vbs.calcStatus = CALCULATING`) | в месте бара — подпись без итога и плашка ДС «Данные рассчитываются / Это может занять несколько секунд» (макет «Состояния лайн чарта»). Поля и плашка PE показываются как обычно |
 | Сделка с PE (`data-pe="yes"`) | внизу — плашка «Переоценка по PE, RUB», дата «на {дата последней оценки}», справа сумма и Δ. Без PE плашки нет совсем: пустая плашка читалась бы как «переоценки нет» |
 
-## Обязательность заполнения
+## Обязательность заполнения (Required)
 
 - Компонент обязателен к заполнению целиком: не применимо — значения считает
   система, пользователь их не вводит.
 - Обязательные поля внутри: не применимо.
 
-## Переполнение
+## Переполнение (Overflow)
 
 | Случай | Правило |
 |---|---|
@@ -144,19 +167,60 @@ AllocationBar ДС — итог, полоса распределения и ст
 | Узкая ширина | бар перестраивается по своим контейнерным брейкпоинтам ДС. Поля: уже 420px ширины тайла — две колонки, «Сумма резерва» на всю строку (`@container`) |
 | Полная ширина | поля в три колонки 2 : 1 : 1, «Ставка обесценения» — вторым рядом. Бар растянут (`albar--stretch`): шапка, полоса и строки во всю ширину, суммы стоят под итогом (AllocationBar 1.003) |
 
-## Связанные артефакты
+## Поведение (Behavior)
+
+### Связанные артефакты
 
 | Триггер | Тип | Что внутри | Что меняется после | Кто ещё вызывает |
 |---|---|---|---|---|
 | IconButton «Развернуть» в шапке (есть только в состоянии «Данные есть») | модальное окно, только просмотр | бары ВБС и ОСЗ, «Резервы на {дата}» — сводка и таблица по ФИ, «Переоценка по PE» — сводка и таблица по ФИ (только у сделки с PE) | ничего. Фокус возвращается на «Развернуть» (рантайм Modal) | никто |
 
-### Окно «Финансовые метрики сделки»
+#### Окно «Финансовые метрики сделки»
 
 Паспорт — `widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md`.
 Бары окна рисует функция этого тайла (`PostTileDealFinMetrics.albarHTML`) —
 разметка бара ВБС в тайле и в окне одна.
 
-## Осознанные отклонения
+## Данные (Data dependencies)
+
+### API — что нужно от бэкенда
+
+Метрики сделки — ВБС, резерв, ставки, RWA, обесценение, переоценка по PE — считает система.
+Имена методов и хуков API не придумываются: их выбирает разработка.
+
+### Mock — демо-данные прототипа
+
+| Файл | Глобальная переменная | Тип | Источник имён |
+|---|---|---|---|
+| `../../../data/mock-financial-metrics.js` | `window.MOCK_DEAL_FIN_METRICS`, `window.MOCK_DEAL_FIN_METRICS_FAILED`, `window.DEAL_FIN_METRICS_LABELS` | `DealFinancialMetricsRsDto` | invented (25.09.2026) — заменить, когда придёт DTO |
+
+Какая демо-сделка какое состояние показывает — в шапке файла; ошибку показывают сделки из
+`MOCK_DEAL_FIN_METRICS_FAILED`.
+
+## Для разработчиков (Implementation)
+
+### Параметры метки
+
+| Атрибут метки | На корне компонента | Значения | Смысл |
+|---|---|---|---|
+| `class` | `class` (слияние) | `col-6 colw-12` | место в сетке страницы (6 колонок из 12, узкая — 12) |
+| `id` | `id` | `tile-deal-fin-metrics` | по нему страница находит тайл |
+| `state` | `data-state` | `loading` · `data` · `empty` · `error` | состояние данных; после загрузки его ставит `DealFinancialMetricsTile.js` |
+| `mode` | `data-mode` | `view` | всегда view: метрики считает система, править нечего |
+
+Признак Private Equity (`data-pe="yes"`) меткой не передаётся — его ставит
+`DealFinancialMetricsTile.js` по данным сделки.
+
+### Соответствие файлов
+
+| Элемент | Прототип | Фронтенд (предложение) |
+|---|---|---|
+| Тайл | `widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.html` | `src/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.tsx` |
+| Стили раскладки и состояний | `widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.css` | по соглашениям модуля |
+| Раскладка значений (и баров окна) | `widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js` (`PostTileDealFinMetrics.render`) | — |
+| Окно метрик | `widgets/modals/DealFinancialMetricsModal/` | `src/features/modals/DealFinancialMetricsModal/` |
+
+## Осознанные отклонения (Deviations)
 
 | Правило | Как сделано | Почему |
 |---|---|---|
@@ -165,7 +229,7 @@ AllocationBar ДС — итог, полоса распределения и ст
 | Валюта — кодом (сенсор Б26) | «RUB» в подписи бара | на макете «руб.»; код валюты — правило проекта |
 | Пустота в компоненте шире четырёх колонок собирается EmptyState | строка «Нет данных» без иллюстрации | тайлы страницы сделки стоят в минимальной высоте 200px (решение человека 21.09.2026), EmptyState с иллюстрацией растянул бы ряд; на макете в этом состоянии тоже одна строка. Действия нет — метрики не заполняют руками |
 
-## Открытые вопросы
+## Открытые вопросы (Open questions)
 
 1. Владелец компонента — `не решено (19.09.2026)`.
 2. Состав ролей с правом видеть метрики — `не решено (25.09.2026)`.
@@ -184,3 +248,4 @@ AllocationBar ДС — итог, полоса распределения и ст
 
 Закрыты 25.09.2026 правкой ДС: строки растянутого бара больше не ограничены
 600px, у строки бара есть пара `[hidden]` (AllocationBar 1.003).
+

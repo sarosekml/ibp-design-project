@@ -86,7 +86,7 @@ description: Собирает экран продукта по ТЗ из ком�
 компонентом (тайл, таблица, модалка, контекстное меню, поповер), — виджет:
 `widgets/<группа>/<Имя>/<Имя>.html` (фрагмент с одним корневым элементом,
 без `<html>`/`<head>`/`<script>`) и паспорт `<Имя>.md` по
-`.agents/skills/screen-spec/references/widget-template.md`. Страница ставит на
+`design-system/templates/local-component/Component.md`. Страница ставит на
 его место метку `<ds-include src="../widgets/<группа>/<Имя>/<Имя>.html"
 class="col-…">`, собранную страницу `<Имя>.preview.html` пишет
 `node .agents/tools/assemble.mjs`. Виджет соседнего приложения того же раздела

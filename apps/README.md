@@ -222,7 +222,7 @@ apps/
 
 Спеки рядом с файлами — скилл `screen-spec`: страница — `<Имя>.screen.md`
 (`../.agents/skills/screen-spec/references/template.md`), виджет — паспорт
-`<Имя>.md` (`…/references/widget-template.md`). Их читают агент
+`<Имя>.md` (`../design-system/templates/local-component/Component.md`). Их читают агент
 фронтенд-разработчика и человек, который проверяет прототип, поэтому спеки —
 по-русски, а английское имя раздела стоит в скобках: разделы — как в
 дизайнерском дереве спек (Purpose, Route, Layout, Components, States, Data

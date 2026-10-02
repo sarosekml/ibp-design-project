@@ -1,24 +1,32 @@
 /* Локальный компонент <Имя>.
-   Только внутренняя раскладка и перестроение по СВОЕЙ ширине.
+   Только внутренняя раскладка и показ своих блоков по состоянию и режиму.
    Цвета, шрифты, отступы, радиусы, тени — токены ДС; своих значений здесь нет.
+   Состояния компонентов ДС отсюда не переопределяются.
    Префикс lc-component заменить на lc-<имя>. */
 
-.lc-component{container-type:inline-size;display:flex;flex-direction:column;gap:16px}
-.lc-component__head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.lc-component__title{margin:0;font:var(--type-h5-strong);color:var(--text-primary)}
-.lc-component__actions{display:flex;align-items:center;gap:8px}
-.lc-component__body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px}
+/* Перестроение — по СВОЕЙ ширине, а не по ширине окна: один и тот же компонент
+   стоит и на трёх колонках, и на двенадцати. */
+.lc-component { container-type: inline-size; }
+.lc-component__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-/* режим прав: в просмотре действия не рисуются, а не выключаются */
-.lc-component[data-mode="view"] .lc-component__actions{display:none}
+/* Что видно в каком состоянии. База — «данные есть» и «заполнено частично»:
+   та же сетка, незаполненное прочерком. Сетка загрузки несёт два класса сетки,
+   поэтому скрывается правилом с двумя классами. */
+.lc-component__grid.lc-component__loading,
+.lc-component__empty,
+.lc-component__error { display: none; }
 
-/* состояния данных: пустота и ошибка живут внутри компонента */
-.lc-component[data-state="empty"] .lc-component__body,
-.lc-component[data-state="error"] .lc-component__body{display:none}
+.lc-component[data-state="loading"] .lc-component__grid,
+.lc-component[data-state="empty"] .lc-component__grid,
+.lc-component[data-state="error"] .lc-component__grid { display: none; }
+
+.lc-component[data-state="loading"] .lc-component__grid.lc-component__loading { display: grid; }
 .lc-component[data-state="empty"] .lc-component__empty,
-.lc-component[data-state="error"] .lc-component__error{display:block}
+.lc-component[data-state="error"] .lc-component__error { display: block; }
 
-/* перестроение от ширины компонента, а не окна */
-@container (max-width: 480px){
-  .lc-component__body{grid-template-columns:minmax(0,1fr)}
+/* Режим прав: в просмотре действия правки не рисуются, а не выключаются. */
+.lc-component[data-mode="view"] .tile__actions { display: none; }
+
+@container (max-width: 480px) {
+  .lc-component__grid { grid-template-columns: minmax(0, 1fr); }
 }

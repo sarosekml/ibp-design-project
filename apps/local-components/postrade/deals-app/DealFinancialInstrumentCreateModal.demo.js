@@ -4,46 +4,48 @@
    собирает kit-build.mjs и подключает этот файл последним.
 
    Что добавляет к общему демо:
-   - контрол «Вид»: заполненное окно макета (fixtures.json, data), пустое —
-     как оно открывается из тайла, и ошибка — «Сохранить» на пустом окне
+   - состояния данных «Заполнено / Пусто / Ошибка» — осью state, а не своим
+     контролом «Вид»: CSS окна их не различает, поэтому список состояний
+     задаёт сценарий. Заполнено — окно макета (fixtures.json, data), пусто —
+     как оно открывается из тайла, ошибка — «Сохранить» на пустом окне
      подсвечивает оба поля;
    - значения ставит само окно (PostModalFinInstrumentCreate.use) — те же
      функции, что на странице сделки. Витрина правки не сохраняет
      (FinInstrumentsStore.persist(false));
-   - копии «Все состояния рядом» — снимок значений и ошибок живого окна.
+   - копии «Все состояния рядом» — снимок: окно привязано к живому скриму,
+     копию рисуем напрямую по st.state (в фикстуре состояние — это значения
+     полей, а не разметка).
    ============================================================ */
 (function () {
   'use strict';
 
-  function copy(from, to) {
-    var a = from.querySelectorAll('.inp'), b = to.querySelectorAll('.inp');
-    Array.prototype.forEach.call(a, function (inp, i) {
-      if (!b[i]) return;
-      b[i].classList.toggle('inp--error', inp.classList.contains('inp--error'));
-      var x = inp.querySelector('.inp__control'), y = b[i].querySelector('.inp__control');
-      if (x && y) y.value = x.value;
+  function renderCopy(el, st) {
+    var err = st.state === 'error';
+    ['fi-create-type', 'fi-create-reporting'].forEach(function (id) {
+      var inp = el.querySelector('#' + id);
+      if (!inp) return;
+      /* «Данные есть» — как во фрагменте (пример макета); пусто и ошибка —
+         поля очищены, у ошибки оба поля подсвечены. */
+      if (st.state !== 'data') inp.value = '';
+      var field = inp.closest('.inp');
+      if (field) field.classList.toggle('inp--error', err);
+      if (err) inp.setAttribute('aria-invalid', 'true');
+      else inp.removeAttribute('aria-invalid');
     });
   }
 
   window.IBPKitDemo.register('DealFinancialInstrumentCreateModal', {
-    controls: function (defs) {
-      return defs.concat([{ key: 'view', label: 'Вид', value: 'data',
-        options: [['data', 'Заполнено (макет)'], ['empty', 'Пусто'], ['error', 'Ошибка — не выбраны поля']] }]);
-    },
+    states: ['data', 'empty', 'error'],
     apply: function (scrim, st, ctx) {
       var M = window.PostModalFinInstrumentCreate;
       var fx = ctx.fixtures || {};
+      if (!ctx.live) { renderCopy(scrim, st); return; }
       if (!M) return;
-      if (ctx.live) {
-        if (window.FinInstrumentsStore) window.FinInstrumentsStore.persist(false);
-        M.use(st.view === 'data' ? fx.data : null);
-        if (st.view === 'error') {
-          var save = scrim.querySelector('[data-fi-create-save]');
-          if (save) save.click();
-        }
-      } else {
-        var live = document.getElementById(scrim.id);
-        if (live && live !== scrim) copy(live, scrim);
+      if (window.FinInstrumentsStore) window.FinInstrumentsStore.persist(false);
+      M.use(st.state === 'data' ? fx.data : null);
+      if (st.state === 'error') {
+        var save = scrim.querySelector('[data-fi-create-save]');
+        if (save) save.click();
       }
     }
   });

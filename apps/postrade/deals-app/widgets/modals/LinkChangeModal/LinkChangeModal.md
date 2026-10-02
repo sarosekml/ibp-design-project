@@ -1,24 +1,21 @@
 ---
-widget: LinkChangeModal
-type: modal
-file: apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.html
-module: postrade/deals-app
-frontend: postrade/deals-app/features/modals/LinkChangeModal
 name: Окно «Изменить связь с ФИ»
+type: modal
+category: Сделка
+purpose: Прикрепить инструмент или транш к одной-двум карточкам ФИ сделки или снять связь
 version: 1.001
 updated: "02.10.2026"
-rulesVersion: 1.006
+rulesVersion: 2.000
 owner: не решено (30.09.2026)
 designer: Роман Эсэф
-category: Сделка
-artifactOf: Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md)
-opensFrom: [Тайл «Продукты сделки» — IconButton ⇄ «Изменить связь с ФИ» у инструмента или транша (правка)]
-purpose: Прикрепить инструмент или транш к одной-двум карточкам ФИ сделки или снять связь
+frontend: postrade/deals-app/features/modals/LinkChangeModal
 ds: [Modal, Tile, IconButton, Buttons, Typography, Spinner]
 usedOn: [Страница сделки — таб «Финансовые данные», из тайла «Продукты сделки»]
+artifactOf: Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md)
+opensFrom: [Тайл «Продукты сделки» — IconButton ⇄ «Изменить связь с ФИ» у инструмента или транша (правка)]
+dependsOn: [Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore]
 variants: []
 modifiers: []
-dependsOn: [Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore]
 requirements: [макет дизайнера «Перенос из дерева в ФИ» 30.09.2026, ответы дизайнера 30.09.2026 (вопросы 2, 4), решение человека 30.09.2026 (выбор до двух карточек), задача docs/tasks/RE0001-product-row-tree.md, решения человека 02.10.2026 (карточки ФИ в сторе, баланс и валюта — из прикреплённых узлов)]
 knowledge: []
 ---
@@ -76,15 +73,7 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
 | Typography | ДС — `design-system/foundations/Typography/Typography.md` | подзаголовок — `ds-h6-strong`; строки карточки — `--type-body-s`, `--text-secondary` |
 
-## Параметры метки (Props)
-
-Метка `<ds-include>` атрибутов не несёт. Узел передаёт скрипт.
-
-| Атрибут | На корне окна (`.modal`) | Значения | Смысл |
-|---|---|---|---|
-| — | `data-state` | `data` · `updating` | `updating` — идёт сохранение |
-
-## Поля
+## Поля (Fields)
 
 | Поле | Смысл | Тип | Источник | Обязательное |
 |---|---|---|---|---|
@@ -113,15 +102,20 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Обновление | да | идёт сохранение: тело приглушено, «Сохранить» с индикатором. В прототипе не наступает |
 | Редактирование доступно | да | единственный режим |
 | Только просмотр | нет | окно не открывается |
-| Правка временно запрещена (Disabled) | да, у карточки | ФИ другого типа |
 | Нет права видеть | не решено (19.09.2026) | решает страница |
 
-## Обязательность заполнения
+### Свои состояния
+
+| Состояние | Когда | Вид |
+|---|---|---|
+| Карточка ФИ выключена | ФИ другого типа | карточка выключена |
+
+## Обязательность заполнения (Required)
 
 - Выбирать не обязательно: пустой выбор снимает связь.
 - Что отдаёт наружу: `fiIds` узла; заливка строки в тайле и запрет удаления — по ним.
 
-## Переполнение
+## Переполнение (Overflow)
 
 | Случай | Правило |
 |---|---|
@@ -129,26 +123,13 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Много карточек | тело окна прокручивается, шапка и подвал на месте |
 | Узкая ширина | ширина фиксирована шкалой Modal (`modal--w4`) |
 
-## Связанные артефакты (Behavior)
+## Поведение (Behavior)
+
+### Связанные артефакты
 
 | Триггер | Тип | Что внутри | Что меняется после | Кто ещё вызывает |
 |---|---|---|---|---|
 | ⇄ «Изменить связь с ФИ» у инструмента или транша (событие `ptreeaction`, action `ATTACH`) | это окно | карточки ФИ, «Сохранить» | связь узла с ФИ изменена и сохранена; заливка строки в тайле по ней | — |
-
-### Скрипт окна
-
-`LinkChangeModal.js`, глобал `PostModalLinkChange`:
-
-| Функция | Что делает |
-|---|---|
-| `open(nodeId)` | открыть окно для узла |
-| `use(nodeId)` | нарисовать без открытия — для витрины |
-| `cardsHTML(cards)` | разметка карточек из `ProductTreeStore.fiCards` |
-| `choose(ids)` | поставить выбор — для витрины |
-| `mirror(scrim)` | `data-state="updating"` → `.modal--saving` и `btn--loading` |
-
-Клик, Пробел и Enter выбирают карточку или снимают выбор. «Сохранить» —
-`ProductTreeStore.linkFi(id, fiIds)` и `commit`.
 
 ## Данные (Data dependencies)
 
@@ -173,7 +154,32 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 «Обновление» объявляет сценарий; правки на витрине не сохраняются. Пример во фрагменте —
 транш «1.1.1.2. Транш» сделки 1027, разметка — вывод `cardsHTML`.
 
-## Соответствие файлов (Implementation mapping)
+## Для разработчиков (Implementation)
+
+### Параметры метки
+
+Метка `<ds-include>` атрибутов не несёт. Узел передаёт скрипт.
+
+| Атрибут | На корне окна (`.modal`) | Значения | Смысл |
+|---|---|---|---|
+| — | `data-state` | `data` · `updating` | `updating` — идёт сохранение |
+
+### Скрипт окна
+
+`LinkChangeModal.js`, глобал `PostModalLinkChange`:
+
+| Функция | Что делает |
+|---|---|
+| `open(nodeId)` | открыть окно для узла |
+| `use(nodeId)` | нарисовать без открытия — для витрины |
+| `cardsHTML(cards)` | разметка карточек из `ProductTreeStore.fiCards` |
+| `choose(ids)` | поставить выбор — для витрины |
+| `mirror(scrim)` | `data-state="updating"` → `.modal--saving` и `btn--loading` |
+
+Клик, Пробел и Enter выбирают карточку или снимают выбор. «Сохранить» —
+`ProductTreeStore.linkFi(id, fiIds)` и `commit`.
+
+### Соответствие файлов
 
 | Элемент | Прототип | Фронтенд (предложение) |
 |---|---|---|
@@ -181,6 +187,10 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Карточки ФИ | Card ДС в разметке окна | `FICards` |
 | Раскладка тела | `widgets/modals/LinkChangeModal/LinkChangeModal.css` | в компоненте окна |
 | Поведение | `widgets/modals/LinkChangeModal/LinkChangeModal.js` | в компоненте окна |
+
+## Осознанные отклонения (Deviations)
+
+Отклонений нет.
 
 ## Открытые вопросы (Open questions)
 
@@ -196,3 +206,4 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
    Макеты дизайнера 02.10.2026: в карточке ФИ — список «Инструменты» с прикреплёнными узлами
    (номер, название, дата подписания, сумма, погашение); так и сделано в тайле. Что делает ⇄
    у строки инструмента в карточке ФИ — не решено (02.10.2026).
+
