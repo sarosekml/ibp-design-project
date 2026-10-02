@@ -5,7 +5,7 @@
 
    Что добавляет к общему демо (состояния и режимы из CSS виджета):
    - строки КНР — из fixtures.json тайла, а не пример из фрагмента: data,
-     partial (рейтинг не рассчитан) и long (длинные наименования);
+     partial (рейтинг не рассчитан) и long (длинные значения);
    - текст ошибки — из fixtures.json → error.
    Строки рисует CounterpartiesTile.js (PostTileKNR.rowsHTML) — та же
    функция, что на странице сделки, поэтому разметка строки одна.
@@ -30,7 +30,7 @@
        «Данные есть», отличаются данные — рейтинг не рассчитан. */
     states: ['partial'],
     controls: function (defs) {
-      return defs.concat([{ key: 'long', label: 'Длинные наименования', bool: true, value: false }]);
+      return defs.concat([{ key: 'long', label: 'Длинные значения', bool: true, value: false }]);
     },
     apply: function (tile, st, ctx) {
       var fx = ctx.fixtures;

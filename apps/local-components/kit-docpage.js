@@ -34,11 +34,15 @@
 
   var STATE_LABELS = {
     loading: 'Загрузка', data: 'Данные есть', partial: 'Заполнено частично', empty: 'Данных нет',
-    error: 'Ошибка', updating: 'Обновление', found: 'Найден в поиске', member: 'Участник сделки'
+    error: 'Ошибка', updating: 'Обновление'
   };
   var MODE_LABELS = { edit: 'Редактирование', view: 'Только просмотр', select: 'Выбор' };
   var STATE_ORDER = ['loading', 'data', 'partial', 'empty', 'error', 'updating'];
   var label = function (map, v) { return map[v] || v; };
+  /* Порядок контролов конструктора по ключу (раздел 3 канона): оси, вариант,
+     пример, длинные значения, свои — по порядку сценария, ширина — последней. */
+  var CONTROL_ORDER = { state: 0, mode: 1, variant: 2, example: 3, long: 4, width: 6 };
+  var rankOf = function (d) { var r = CONTROL_ORDER[d.key]; return r === undefined ? 5 : r; };
 
   /* ---------- контролы конструктора (разметка — конвенция ДС: .ctl > .lbl + контрол) ---------- */
   function makeSelect(def, state, onChange) {
@@ -202,6 +206,11 @@
     if (!subject) return;
     var pristine = subject.cloneNode(true);
     var sc = scenarios[P.id] || {};
+    /* Подписи своих состояний и режимов — полем labels сценария, а не в общем
+       рантайме (раздел 3 канона). Ключ один на оба словаря: значения состояний
+       и режимов не пересекаются. */
+    var stateLabels = Object.assign({}, STATE_LABELS, sc.labels);
+    var modeLabels = Object.assign({}, MODE_LABELS, sc.labels);
     /* Состояние, которое CSS не различает (заполнено частично — та же
        разметка, другие данные), добавляет сценарий; порядок — как у правил ДС. */
     if (sc.states) {
@@ -213,14 +222,16 @@
     var defs = [];
     if (P.states.length > 1) {
       defs.push({ key: 'state', label: 'Состояние данных', value: P.state,
-        options: P.states.map(function (s) { return [s, label(STATE_LABELS, s)]; }) });
+        options: P.states.map(function (s) { return [s, label(stateLabels, s)]; }) });
     }
     if (P.modes.length > 1) {
       defs.push({ key: 'mode', label: 'Режим прав', value: P.mode,
-        options: P.modes.map(function (m) { return [m, label(MODE_LABELS, m)]; }) });
+        options: P.modes.map(function (m) { return [m, label(modeLabels, m)]; }) });
     }
     if (P.width) defs.push({ key: 'width', label: 'Ширина, px', range: { min: 180, max: 1600, step: 10 }, value: P.width });
     if (sc.controls) defs = sc.controls(defs) || defs;
+    /* Порядок контролов — по ключу, а не по тому, как их добавил сценарий. */
+    defs.sort(function (a, b) { return rankOf(a) - rankOf(b); });
 
     function applyTo(el, st, live) {
       var s = axisEl(el, 'data-state');
@@ -244,7 +255,7 @@
     var cases = [];
     states.forEach(function (s) {
       modes.forEach(function (m) {
-        var name = [s && label(STATE_LABELS, s), modes.length > 1 && m && label(MODE_LABELS, m)].filter(Boolean).join(' · ');
+        var name = [s && label(stateLabels, s), modes.length > 1 && m && label(modeLabels, m)].filter(Boolean).join(' · ');
         cases.push([name || 'Как во фрагменте', { state: s, mode: m }]);
       });
     });

@@ -613,7 +613,7 @@ API — частый случай) описывается там же блоко
 | Состояние журнала уроков, долг курации, давность ритуальных прогонов | `lessons-cli.mjs state` |
 | Что случилось после закрепления (регресс, живые и исчезнувшие коды) | `lessons-cli.mjs stats` |
 | Сквозные принципы: чтение ДС, запреты, не выдумывать неизвестное, вердикт строкой, граница статики, экономия контекста | `rules/process.md` §3, §4, §7, §8, §9, §13; границы записи — §4–§5 и `agents/ai-designer.md` («Границы») |
-| Формат спек (страница и виджет), демо-данные с типами и выходные артефакты | скилл `screen-spec` + `references/template.md`, `references/widget-template.md`, `references/data-template.js`; handoff — `commands/handoff.md` |
+| Формат спек (страница и виджет), демо-данные с типами и выходные артефакты | скилл `screen-spec` + `references/template.md`, `references/data-template.js`; паспорт виджета — шаблон ДС `design-system/templates/local-component/Component.md`; handoff — `commands/handoff.md` |
 | Панель прототипа: форматы, устройство, горячие клавиши, коды ПН, кандидаты в ДС | `proto-panel/README.md`; процедура агента — скилл `proto-panel`; `proto-panel.mjs --selftest` |
 
 ## 17. Панель прототипа

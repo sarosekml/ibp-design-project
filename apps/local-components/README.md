@@ -199,7 +199,7 @@ node .agents/tools/kit-build.mjs --check    # сверить, ничего не 
    модуля (его `widgets/README.md`) и заготовке ДС
    [`templates/local-component/`](../../design-system/templates/local-component/).
 2. Положите фрагмент `<Имя>.html` и паспорт `<Имя>.md` по шаблону
-   [`widget-template.md`](../../.agents/skills/screen-spec/references/widget-template.md). Для
+   [`Component.md`](../../design-system/templates/local-component/Component.md). Для
    витрины обязательны `name`, `category` и `purpose`; категория — из
    `project.json → localKit.categories`.
 3. Вшейте виджет в страницу модуля меткой `<ds-include>` — так у демо появятся окна и
@@ -332,7 +332,7 @@ node .agents/tools/kit-build.mjs --selftest   # откат на временно
 | Приложения: форма, модули, виджеты, сборка страниц | [`apps/README.md`](../README.md) |
 | Виджеты модуля сделок: подключение, режимы, связи | [`postrade/deals-app/widgets/README.md`](../postrade/deals-app/widgets/README.md) |
 | Правила локальных компонентов в ДС | [`LocalComponents.html`](../../design-system/patterns/LocalComponents/LocalComponents.html), заготовка — [`templates/local-component/`](../../design-system/templates/local-component/) |
-| Шаблон паспорта виджета | [`widget-template.md`](../../.agents/skills/screen-spec/references/widget-template.md) |
+| Шаблон паспорта виджета | [`Component.md`](../../design-system/templates/local-component/Component.md) |
 | Генератор: что делает, коды, самопроверка | шапка [`kit-build.mjs`](../../.agents/tools/kit-build.mjs) |
 
 <p align="center"><sub>Локальные компоненты · прототипы IBP</sub></p>

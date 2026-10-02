@@ -1,20 +1,43 @@
-<!-- Разметка локального компонента: только компоненты ДС, без обвязки страницы.
-     Префикс классов lc-component заменить на lc-<имя>.
-     Внешние отступы и место в колонках задаёт экран, здесь их нет.
-     data-state — состояние компонента: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:            edit | view (view — и при роли без права,
-                                          и когда статус сущности не допускает правку) -->
-<section class="lc-component" data-state="data" data-mode="view">
-  <header class="lc-component__head">
-    <h3 class="lc-component__title">Заголовок компонента</h3>
-    <!-- действия: показываются только в data-mode="edit"; в view не рисуются вовсе -->
-    <div class="lc-component__actions"></div>
+<!-- Фрагмент локального компонента <Имя>: один корневой элемент, только компоненты ДС,
+     без обвязки страницы (<html>, <link>, <script>). Внешние отступы и место в колонках
+     задаёт страница меткой <ds-include>, здесь их нет. Префикс своих классов lc-component
+     заменить на lc-<имя>.
+
+     data-state — состояние данных: loading | data | partial | empty | error | updating
+     data-mode  — режим прав: edit | view. view — и у роли без права, и когда статус
+                  сущности не допускает правку. Ставит страница, компонент режим не вычисляет.
+
+     Разметка держит все состояния сразу, нужное показывает <Имя>.css по data-state и
+     data-mode. Состояния компонентов ДС не переопределяются: переключается только
+     присутствие своих блоков .lc-<имя>__* и слотов Tile.
+
+     Корень — по типу компонента (страница правил ДС, «Из чего состоит»):
+       тайл, таблица  — Tile ДС, как ниже: <section class="tile lc-<имя>" data-state data-mode>;
+       модальное окно — <div class="modal-scrim" id="<id>" hidden>
+                          <div class="modal modal--w<N> lc-<имя>" role="dialog" aria-modal="true"
+                               aria-labelledby="<id>-title" data-mode="edit">…</div>
+                        </div>
+                        окно подтверждения внутри окна — свой файл в папке окна,
+                        .modal-scrim--nested, паспорт общий с окном;
+       поповер        — <div id="<id>" class="pop pop--floating lc-<имя>" role="dialog">…</div>;
+       подчасть, которую рисует скрипт потребителя, — <template id="lc-<имя>-tpl">…</template>.
+     Анатомию компонента ДС — брать из его блока в чит-шите ДС дословно. -->
+<section class="tile lc-component" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Заголовок компонента</h3></div>
+    </div>
+    <!-- действия правки: только в data-mode="edit"; в просмотре не рисуются вовсе -->
+    <div class="tile__actions"></div>
   </header>
-  <div class="lc-component__body">
-    <!-- поля в порядке из паспорта; незаполненное — прочерком, с места не уходит -->
+  <div class="tile__body">
+    <!-- поля в порядке паспорта; незаполненное — прочерк, поле с места не уходит -->
+    <div class="tile__grid lc-component__grid"></div>
+    <!-- загрузка: скелетоны в габаритах итогового содержимого, каркас уже на месте -->
+    <div class="tile__grid lc-component__grid lc-component__loading" aria-busy="true"></div>
+    <!-- данных нет: причина одной строкой + действие, если у роли есть право заполнить -->
+    <div class="lc-component__empty"></div>
+    <!-- ошибка: причина словами пользователя + повтор запроса; остальной экран работает -->
+    <div class="lc-component__error"></div>
   </div>
-  <!-- пустое состояние: одна строка причины + действие, если у роли есть право заполнить -->
-  <div class="lc-component__empty" hidden></div>
-  <!-- ошибка: причина словами пользователя + повтор запроса; экран продолжает работать -->
-  <div class="lc-component__error" hidden></div>
 </section>

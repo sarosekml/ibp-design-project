@@ -1,24 +1,21 @@
 ---
-widget: InstrumentTransferModal
-type: modal
-file: apps/postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.html
-module: postrade/deals-app
-frontend: postrade/deals-app/features/modals/InstrumentTransferModal
 name: Окно «Перенос инструмента»
+type: modal
+category: Сделка
+purpose: Перенести инструмент в другой подходящий продукт этой же сделки
 version: 1.000
-updated: "30.09.2026"
-rulesVersion: 1.006
+updated: "02.10.2026"
+rulesVersion: 2.000
 owner: не решено (30.09.2026)
 designer: Роман Эсэф
-category: Сделка
-artifactOf: Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md)
-opensFrom: [Тайл «Продукты сделки» — пункт «Перенести» в меню инструмента (правка)]
-purpose: Перенести инструмент в другой подходящий продукт этой же сделки
+frontend: postrade/deals-app/features/modals/InstrumentTransferModal
 ds: [Modal, ProductRow, IconButton, Buttons, Typography, Spinner]
 usedOn: [Страница сделки — таб «Финансовые данные», из тайла «Продукты сделки»]
+artifactOf: Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md)
+opensFrom: [Тайл «Продукты сделки» — пункт «Перенести» в меню инструмента (правка)]
+dependsOn: [Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore]
 variants: []
 modifiers: []
-dependsOn: [Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore]
 requirements: [макет дизайнера «Перенос инструмента» 30.09.2026, ответ дизайнера 30.09.2026 (вопрос 3), задача docs/tasks/RE0001-product-row-tree.md]
 knowledge: []
 ---
@@ -72,15 +69,7 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | IconButton | ДС — `design-system/components/atoms/IconButton/IconButton.md` | крестик шапки `ibtn--neutral ibtn--l` |
 | Typography | ДС — `design-system/foundations/Typography/Typography.md` | «Откуда», «Куда» — `ds-h6-strong`; пояснение — `--type-body-m`, `--text-secondary` |
 
-## Параметры метки (Props)
-
-Метка `<ds-include>` атрибутов не несёт. Инструмент передаёт скрипт.
-
-| Атрибут | На корне окна (`.modal`) | Значения | Смысл |
-|---|---|---|---|
-| — | `data-state` | `data` · `updating` | `updating` — идёт сохранение |
-
-## Поля
+## Поля (Fields)
 
 | Поле | Смысл | Тип | Источник | Обязательное |
 |---|---|---|---|---|
@@ -106,16 +95,21 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Обновление | да | идёт сохранение: тело приглушено, «Сохранить» с индикатором (третий кадр макета). В прототипе не наступает — стор сохраняет сразу |
 | Редактирование доступно | да | единственный режим |
 | Только просмотр | нет | окно не открывается |
-| Правка временно запрещена (Disabled) | да, у строки | текущий и неподходящие продукты выключены |
 | Нет права видеть | не решено (19.09.2026) | решает страница |
 
-## Обязательность заполнения
+### Свои состояния
+
+| Состояние | Когда | Вид |
+|---|---|---|
+| Продукт выключен | текущий и неподходящие продукты | строка выключена |
+
+## Обязательность заполнения (Required)
 
 - Выбор продукта обязателен: без него «Сохранить» недоступна.
 - Что отдаёт наружу: инструмент в новом продукте; производные поля записи сделки
   пересчитываются и сохраняются.
 
-## Переполнение
+## Переполнение (Overflow)
 
 | Случай | Правило |
 |---|---|
@@ -123,27 +117,13 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Много продуктов ДИД | тело окна прокручивается, шапка и подвал на месте; ветку продукта ДИД можно свернуть |
 | Узкая ширина | ширина фиксирована шкалой Modal (`modal--w4`) |
 
-## Связанные артефакты (Behavior)
+## Поведение (Behavior)
+
+### Связанные артефакты
 
 | Триггер | Тип | Что внутри | Что меняется после | Кто ещё вызывает |
 |---|---|---|---|---|
 | «Перенести» в меню инструмента (событие `ptreeaction`, action `MOVE`) | это окно | «Откуда», «Куда», «Сохранить» | инструмент с траншами — в выбранном продукте, номера пересчитаны, сохранено | — |
-
-### Скрипт окна
-
-`InstrumentTransferModal.js`, глобал `PostModalInstrumentTransfer`:
-
-| Функция | Что делает |
-|---|---|
-| `open(instrumentId)` | открыть окно для инструмента |
-| `use(instrumentId)` | нарисовать без открытия — для витрины |
-| `listHTML(targets, section)` | разметка «Откуда» (`from`) и «Куда» (`to`) из `ProductTreeStore.moveTargets` |
-| `select(productId)` | выбрать продукт — для витрины |
-| `mirror(scrim)` | `data-state="updating"` → `.modal--saving` и `btn--loading` |
-
-Выбор — радиогруппа: клик, Пробел и Enter выбирают строку, стрелки переходят по доступным
-строкам; в порядке Tab — выбранная (или первая доступная). «Сохранить» —
-`ProductTreeStore.moveInstrument(id, productId)` и `commit`.
 
 ## Данные (Data dependencies)
 
@@ -165,7 +145,33 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 объявляет сценарий, в нём выбран продукт из фикстуры. Пример во фрагменте — «1.2.1. Корп.
 договор» сделки 1027, подходит только «2.1. Долевое в ЖН»; разметка — вывод `listHTML`.
 
-## Соответствие файлов (Implementation mapping)
+## Для разработчиков (Implementation)
+
+### Параметры метки
+
+Метка `<ds-include>` атрибутов не несёт. Инструмент передаёт скрипт.
+
+| Атрибут | На корне окна (`.modal`) | Значения | Смысл |
+|---|---|---|---|
+| — | `data-state` | `data` · `updating` | `updating` — идёт сохранение |
+
+### Скрипт окна
+
+`InstrumentTransferModal.js`, глобал `PostModalInstrumentTransfer`:
+
+| Функция | Что делает |
+|---|---|
+| `open(instrumentId)` | открыть окно для инструмента |
+| `use(instrumentId)` | нарисовать без открытия — для витрины |
+| `listHTML(targets, section)` | разметка «Откуда» (`from`) и «Куда» (`to`) из `ProductTreeStore.moveTargets` |
+| `select(productId)` | выбрать продукт — для витрины |
+| `mirror(scrim)` | `data-state="updating"` → `.modal--saving` и `btn--loading` |
+
+Выбор — радиогруппа: клик, Пробел и Enter выбирают строку, стрелки переходят по доступным
+строкам; в порядке Tab — выбранная (или первая доступная). «Сохранить» —
+`ProductTreeStore.moveInstrument(id, productId)` и `commit`.
+
+### Соответствие файлов
 
 | Элемент | Прототип | Фронтенд (предложение) |
 |---|---|---|
@@ -173,6 +179,10 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 | Строка продукта ДИД с шевроном | ProductRow ДС, `.prow--root` | `AccordionProductRow` |
 | Раскладка тела | `widgets/modals/InstrumentTransferModal/InstrumentTransferModal.css` | в компоненте окна |
 | Поведение | `widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js` | в компоненте окна |
+
+## Осознанные отклонения (Deviations)
+
+Отклонений нет.
 
 ## Открытые вопросы (Open questions)
 
@@ -186,3 +196,4 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 3. **Нет подходящих продуктов** — все строки «Куда» выключены; нужен ли отдельный вид —
    не решено (30.09.2026).
 4. **Пояснение** — текст с макета; запятая перед «в который» добавлена по правилам.
+
