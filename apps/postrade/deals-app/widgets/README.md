@@ -106,6 +106,14 @@ node .agents/tools/assemble.mjs <файл>   # один
 нет. Ни один из двух тайлов про другой не знает — иначе получился бы цикл, который правила
 запрещают.
 
+Третий случай — **узлы дерева в карточках ФИ** (02.10.2026) — это и есть первый пункт
+списка выше. Инструмент или транш прикрепляют к карточке ФИ в тайле «Продукты сделки» (окно
+`LinkChangeModal`, `fiIds` узла); в дереве он остаётся с заливкой, а в тайле «Финансовые
+инструменты» появляется в списке «Инструменты» карточки, и из него же карточка берёт баланс,
+валюту, сумму и дату. Связь живёт в сторах (`ProductTreeStore` — узлы, `FinInstrumentsStore`
+— карточки), тайлы друг друга не знают; зависимость односторонняя и записана у зависимого —
+`FinInstrumentsTile` объявляет `dependsOn: [DealProductTreeTile]`.
+
 ## Режим правки
 
 Режим прав приходит на модуль атрибутом `data-mode` и бывает двух видов: `edit` — действия
@@ -139,12 +147,13 @@ node .agents/tools/assemble.mjs <файл>   # один
 
 ## Состав
 
-12 тайлов и таблица страницы сделки (`../pages/Deal.html`), 15 модальных окон, две подчасти окон
-и один поповер. Наполнены семь тайлов: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
+12 тайлов и таблица страницы сделки (`../pages/Deal.html`), 17 модальных окон, две подчасти окон
+и один поповер. Наполнены восемь тайлов: `CounterpartiesTile` — на странице сделки «КНР» (20.09.2026),
 `DealPeriodTile` (22.09.2026), `DealTeamTile` (23.09.2026), `DealDescriptionTile` (24.09.2026),
 `DealFinancialMetricsTile` (25.09.2026), `ProjectInformationTile` (28.09.2026), `DealProductTreeTile`
-(30.09.2026) — у каждого свои окна. Окно `DealTitleModal` (01.10.2026) — не тайла, а шапки страницы.
-Остальные 5 тайлов и таблица `DealCounterpartiesTable` — заглушки (`data-state="empty"`): оболочка есть,
+(30.09.2026), `FinInstrumentsTile` (02.10.2026) — у каждого свои окна. Окно `DealTitleModal`
+(01.10.2026) — не тайла, а шапки страницы. Остальные 4 тайла и таблица `DealCounterpartiesTable` —
+заглушки (`data-state="empty"`): оболочка есть,
 состав полей не согласован.
 
 **Заглушка не растягивает ряд** (решение человека 22.09.2026). Тело заглушки — одна строка
@@ -165,7 +174,7 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `DealDescriptionTile` (наполнен) · `DealFinancialMetricsTile` (наполнен) | Общая информация, второй ряд (6 + 6) |
 | `ProjectInformationTile` (наполнен) | Общая информация, третий ряд (12, опциональный; только деск «Недвижимость»; высота по содержимому) |
 | `DealSetupTile` | Общая информация, правая колонка 320px |
-| `DealProductTreeTile` · `FinInstrumentsTile` | таб «Финансовые данные», первый ряд (6 + 6, в стопках) |
+| `DealProductTreeTile` (наполнен) · `FinInstrumentsTile` (наполнен) | таб «Финансовые данные», первый ряд (6 + 6, в стопках) |
 | `EpsVbsImpactTile` · `DealMetricsCalculationTile` | таб «Финансовые данные», второй ряд (6 + 6) |
 | `tables/DealCounterpartiesTable` | таб «Контрагенты» (12) |
 | `DealRelatedCollateralsTile` | таб «Обеспечения» (12) |
@@ -179,4 +188,5 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `modals/DealFinancialMetricsModal` | конец `body`; открывается из `DealFinancialMetricsTile` («Развернуть», только просмотр) |
 | `modals/DealProjectInformationModal` | конец `body`; открывается из `ProjectInformationTile` (карандаш и «Заполнить», только правка) |
 | `modals/DidProductsModal` · `ProductsModal` · `InstrumentsModal` · `RepaymentModal` · `InstrumentTransferModal` · `LinkChangeModal` · `ProductTreeConfirmModal` (последним) | конец `body`; открываются событиями `ptreeaction` тайла `DealProductTreeTile` |
+| `modals/DealFinancialInstrumentCreateModal` · `DealFinancialInstrumentEditModal` | конец `body`; открываются событиями `fiaction` тайла `FinInstrumentsTile`; общий слой полей окон ФИ — в окне создания |
 | `modals/DealTitleModal` | конец `body`; открывается карандашом в шапке страницы сделки — номер и наименование («Редактирование сделки») |

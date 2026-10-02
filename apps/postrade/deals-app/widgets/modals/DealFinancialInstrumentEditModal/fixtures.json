@@ -1,0 +1,12 @@
+{
+  "_": "Демо-данные витрины: карточки ФИ сделки-образца из data/mock-fin-instruments.js, окно заполняет само (PostModalFinInstrumentEdit.use) по FinInstrumentsStore. Контрол «Тип ФИ» показывает состав окна у каждого типа.",
+
+  "dealId": 1027,
+  "cards": {
+    "LOAN": "FI-1027-1",
+    "SHARES": "FI-1027-3",
+    "ADDITIONAL_YIELD": "FI-1027-8",
+    "REPO": "FI-1027-7",
+    "LOAN_EMPTY": "FI-1027-4"
+  }
+}

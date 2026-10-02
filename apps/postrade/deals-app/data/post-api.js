@@ -18,9 +18,14 @@
      trees.get(dealId) → Promise<{ tree, updated } | null>
      trees.put(dealId, { tree }) → Promise<{ ok, updated }>
      trees.reset() → Promise
+     — карточки финансовых инструментов сделки (FinInstrumentsStore):
+     finInstruments.all() → Promise<{ dealId: { cards, updated } }>
+     finInstruments.get(dealId) → Promise<{ cards, updated } | null>
+     finInstruments.put(dealId, { cards }) → Promise<{ ok, updated }>
+     finInstruments.reset() → Promise
    }
 
-   Два режима, общие для обоих ресурсов:
+   Два режима, общие для всех ресурсов:
    – server — страница открыта с локального сервера данных (в этом репозитории
      пока не заведён, data/API.md) и он отвечает на /api/post/participants: данные пишутся в его базу;
    – local — страница открыта двойным кликом (file://) или с чужого сервера без
@@ -32,7 +37,9 @@
    – участники — members (id контрагентов из базы mock-counterparties.js) и
      knr (те из них, кто отмечен КНР);
    – дерево продуктов — tree (DealProductTreeRsDto, mock-deal-trees.js)
-     целиком: сохранённое дерево перекрывает демо-дерево сделки.
+     целиком: сохранённое дерево перекрывает демо-дерево сделки;
+   – карточки ФИ — cards (DealFinInstrumentCardRsDto[], mock-fin-instruments.js)
+     целиком: сохранённый список перекрывает демо-карточки сделки.
    ========================================================================= */
 (function () {
   'use strict';
@@ -122,7 +129,7 @@
   var ready = detect().then(function (m) {
     mode = m;
     if (m === 'local' && window.console) {
-      console.info('PostApi: сервер данных не найден — правки состава участников и дерева продуктов сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
+      console.info('PostApi: сервер данных не найден — правки состава участников, дерева продуктов и карточек ФИ сохраняются только в этом браузере (localStorage). Контракт сервера — data/API.md');
     }
     return m;
   });
@@ -133,6 +140,9 @@
   var trees = resource('/api/post/product-trees', 'ibp.post.product-trees', function (rec) {
     return { tree: JSON.parse(JSON.stringify(rec.tree)) };
   });
+  var finInstruments = resource('/api/post/fin-instruments', 'ibp.post.fin-instruments', function (rec) {
+    return { cards: JSON.parse(JSON.stringify(rec.cards)) };
+  });
 
   window.PostApi = {
     mode: function () { return mode; },
@@ -141,6 +151,7 @@
     get: participants.get,
     put: participants.put,
     reset: participants.reset,
-    trees: trees
+    trees: trees,
+    finInstruments: finInstruments
   };
 })();

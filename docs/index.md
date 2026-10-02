@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 254.
+Документов: 260.
 
 ## Корень (4)
 
@@ -236,7 +236,7 @@
 | [.agents/skills/screen-spec/references/widget-template.md](../.agents/skills/screen-spec/references/widget-template.md) | Widget: DealTeamTile — Команда сделки |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (117)
+## Приложения (122)
 
 | Документ | Аннотация |
 |---|---|
@@ -393,6 +393,10 @@
 | [apps/postrade/deals-app/widgets/README.md](../apps/postrade/deals-app/widgets/README.md) | widgets — виджеты модуля deals-app |
 | [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.md) | Widget: CounterpartiesEcmModal — Модальное окно «Документы по сделке» |
 | [apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md](../apps/postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.md) | Widget: DealDescriptionModal — Модальное окно описания сделки |
+| [apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/CHANGELOG.md) | Окно «Создание финансового инструмента» (DealFinancialInstrumentCreateModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.md](../apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.md) | Окно «Создание финансового инструмента» (DealFinancialInstrumentCreateModal) |
+| [apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/CHANGELOG.md) | Окно «ФИ — изменение» (DealFinancialInstrumentEditModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.md](../apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.md) | Окно «ФИ — изменение» (DealFinancialInstrumentEditModal) |
 | [apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md](../apps/postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.md) | Модальное окно финансовых метрик сделки |
 | [apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md](../apps/postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.md) | Модальное окно сроков сделки |
 | [apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md](../apps/postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.md) | Widget: DealProjectInformationModal — Модальное окно сведений о проекте |
@@ -433,7 +437,8 @@
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md) | Команда сделки — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
 | [apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md](../apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md) | Влияние на ЭПС/ВБС |
-| [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты |
+| [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/CHANGELOG.md) | Финансовые инструменты (FinInstrumentsTile) — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
 
@@ -513,7 +518,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (21)
+## Задачи и заметки (22)
 
 ### Архив/черновики
 
@@ -550,6 +555,7 @@
 | [docs/tasks/0006-docs-index.handoff.md](tasks/0006-docs-index.handoff.md) | DocsIndex — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
 | [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
+| [docs/tasks/RE0003-fin-instruments-tile.handoff.md](tasks/RE0003-fin-instruments-tile.handoff.md) | RE0003 FinInstrumentsTile — handoff |
 
 ## Служебное (1)
 

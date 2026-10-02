@@ -200,7 +200,7 @@
             <ds-include src="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.html" id="tile-deal-products" state="loading" mode="edit"></ds-include>
           </div>
           <div class="tile-stack col-6 colw-12">
-            <ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.html"></ds-include>
+            <ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.html" id="tile-fin-instruments" state="loading" mode="edit"></ds-include>
           </div>
         </div>
         <!-- Второй ряд: обычный ряд — высоты выравниваются по самому высокому -->
@@ -260,6 +260,11 @@
 <!-- Окно тайла «Сведения о проекте»: правка; открывают карандаш и
      «Заполнить» тайла. -->
 <ds-include src="../widgets/modals/DealProjectInformationModal/DealProjectInformationModal.html"></ds-include>
+<!-- Окна тайла «Финансовые инструменты»: создание и изменение карточки ФИ.
+     Открывают их события тайла fiaction, данные окна берут из
+     FinInstrumentsStore. -->
+<ds-include src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html"></ds-include>
+<ds-include src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.html"></ds-include>
 <!-- Окна тайла «Продукты сделки»: выбор продуктов ДИД, продуктов и
      инструментов, погашение, перенос инструмента, связь с ФИ и общее
      подтверждение удаления и назначения основного (вложенный скрим — сосед
@@ -295,6 +300,10 @@
 <script src="../data/mock-fin-instruments.js"></script>
 <script src="../data/mock-deal-trees.js"></script>
 <script src="../data/product-tree-store.js"></script>
+<!-- карточки ФИ сделки: стор — после стора дерева и стора контрагентов, баланс,
+     валюту, суммы и список инструментов карточки он считает из прикреплённых узлов
+     дерева, контрагентов берёт из базы. Хранение — data/API.md -->
+<script src="../data/fin-instruments-store.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <!-- после ds.js и синхронно: его DSTabs.tabs(...) должен успеть раньше
      автопривязки wireAll на DOMContentLoaded.
@@ -326,6 +335,11 @@
 <script src="../widgets/modals/RepaymentModal/RepaymentModal.js"></script>
 <script src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
 <script src="../widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<!-- тайл «Финансовые инструменты» и его окна: общий слой полей окон ФИ живёт в
+     окне создания, поэтому оно раньше окна изменения -->
+<script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
    меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
@@ -455,6 +469,7 @@
     fillFinMetrics(deal);
     fillProjectInfo(deal);
     fillProducts(deal);
+    fillFinInstruments(deal);
   }
 
   /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
@@ -689,6 +704,27 @@
       store.use(deal.id);
       window.PostTileProductTree.bind(tile, store);
     });
+  }
+
+  /* Тайл «Финансовые инструменты» — карточки ФИ этой сделки из
+     FinInstrumentsStore (../data/fin-instruments-store.js поверх
+     mock-fin-instruments.js). Баланс, валюта, суммы и инструменты карточки
+     — из узлов дерева продуктов, прикреплённых к ней, поэтому стор ФИ
+     открывается после стора дерева. Тайл связывает со сторами его
+     собственный скрипт: перерисовка после «Сохранить» в окнах ФИ и в окне
+     связи с ФИ у дерева. Окна создания и изменения слушают события тайла
+     сами. Режим (data-mode) тайлу уже поставил applyMode. До загрузки
+     сохранённых карточек и деревьев тайл стоит в «Загрузке». */
+  function fillFinInstruments(deal) {
+    var store = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    var tile = document.getElementById('tile-fin-instruments');
+    if (!store || !tile || !window.PostTileFinInstruments) return;
+    Promise.all([store.ready, trees ? trees.ready : null, window.CounterpartiesStore ? window.CounterpartiesStore.ready : null])
+      .then(function () {
+        store.use(deal.id);
+        window.PostTileFinInstruments.bind(tile, store);
+      });
   }
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты

@@ -1,24 +1,137 @@
-/* Локальный компонент «Финансовые инструменты».
-   Пока модуль — заглушка, его CSS держит режим прав и строку-заглушку. Режим (data-mode)
-   ставит страница: edit | view. В просмотре — в том числе когда статус сделки
-   не допускает правку — действие правки (добавление инструмента) не рисуется
-   вовсе, а не выключается. Меню «Действия» остаётся: что в нём — не решено,
-   и правкой оно не считается, пока это не решено. */
-.lc-fin-instruments[data-mode="view"] .lc-fin-instruments__add { display: none; }
+/* Локальный компонент «Финансовые инструменты» (FinInstrumentsTile).
+   Только внутренняя раскладка. Цвета, шрифты, отступы — токены ДС;
+   своих значений здесь нет. Карточка ФИ — Card ДС с аккордеоном
+   (.tile--card.tile--accordion), поля — ReadOnlyField, строки инструментов
+   — ProductRow: их размеры и состояния отсюда не переопределяются,
+   переключается только присутствие собственных блоков
+   .lc-fin-instruments__* и раскладка внутри карточки .lc-fin-card__*.
+   Режим (data-mode) ставит страница: edit | view. */
 
-/* Заглушка: состав полей не согласован. Строка по центру тела тайла, без
-   иллюстрации: помещается в минимальную высоту тайла, которую задаёт
-   страница, и не растягивает ряд (решение человека 22.09.2026). Тело
-   занимает свободную высоту тайла — тайл колонка флексом (Tile). */
-.lc-fin-instruments[data-state="empty"] .tile__body {
-  flex: 1;
+/* ── Данные есть: вкладки, список карточек, кнопка под списком ──────── */
+/* Зазор между вкладками, карточками и кнопкой — как между корневыми
+   узлами дерева в соседнем тайле «Продукты сделки» (16px). */
+.lc-fin-instruments__data,
+.lc-fin-instruments__list,
+.lc-fin-instruments__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* ── Карточка ФИ ────────────────────────────────────────────────────── */
+/* Сетка значений: баланс шире остальных, валюта — узкая, как на макете
+   «Card-Fininstrument». Колонки сжимаемые: длинное значение усекается
+   (ReadOnlyField, одна строка), а не распирает соседей. Второй ряд —
+   сумма под балансом, дата подписания под типом отчётности, плановая
+   дата погашения — под FV/AC. */
+.lc-fin-card__grid {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 3fr);
+}
+.lc-fin-card__grid--irr {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 2fr);
+}
+.lc-fin-card__amount { grid-column: 1; }
+.lc-fin-card__signed { grid-column: 2 / 4; }
+.lc-fin-card__planned { grid-column: 4 / -1; }
+
+/* Контрагент: наименование — две строки с усечением, риск-метрика
+   прижата вправо и с места не уходит. */
+.lc-fin-card__party .rof__value { flex: 1; }
+.lc-fin-card__party [data-riskmetric] { flex: none; }
+
+/* Признаки «Участие ДККК», «Связанный безусловный опцион» — в строку. */
+.lc-fin-card__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-24);
+}
+
+/* Подзаголовок «Инструменты» со счётчиком и кнопкой справа. */
+.lc-fin-card__nodes-head {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: var(--space-8);
+  min-width: 0;
 }
-.lc-fin-instruments__stub {
+.lc-fin-card__nodes-title {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}
+.lc-fin-card__add-node { margin-left: auto; }
+
+/* Строки инструментов — ProductRow вне дерева: зазор между строками как
+   в ветке дерева (8px). */
+.lc-fin-card__nodes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-fin-card__no-nodes {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Private Equity — тег, а не статус: не rounded, не сжимается. Цвет — как
+   у чипа PE реестра «Текущий портфель» (Portfolio.html, .chip--pe):
+   правило Chip ДС — цвет флаг-категории задаёт кейс. */
+.lc-fin-card__pe {
+  background: var(--st-orange-mid);
+  border-color: var(--st-orange-mid);
+  color: var(--text-primary);
+}
+
+/* ── Не заполнено ───────────────────────────────────────────────────── */
+/* Правка: две кнопки слева вверху тела (макет «Нет данных»). */
+.lc-fin-instruments__fill {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+/* Просмотр: одна строка причины, действия нет. */
+.lc-fin-instruments__empty {
   margin: 0;
   font: var(--type-body-m);
   color: var(--text-inactive);
-  text-align: center;
 }
+
+/* ── Что видно в каком состоянии ────────────────────────────────────── */
+/* База — «данные есть» (и «заполнено частично»: та же разметка, прочерки
+   в значениях). «Обновление» — тоже список: прежние значения остаются на
+   месте, в шапке Spinner. Скрытие — через корень тайла: у классов ДС
+   (.spin, .tile) своя display той же специфичности. */
+.lc-fin-instruments .lc-fin-instruments__loading,
+.lc-fin-instruments .lc-fin-instruments__fill,
+.lc-fin-instruments .lc-fin-instruments__empty,
+.lc-fin-instruments .lc-fin-instruments__spin { display: none; }
+
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__data,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__data { display: none; }
+
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__loading { display: flex; }
+.lc-fin-instruments[data-state="empty"][data-mode="edit"] .lc-fin-instruments__fill { display: flex; }
+.lc-fin-instruments[data-state="empty"][data-mode="view"] .lc-fin-instruments__empty { display: block; }
+.lc-fin-instruments[data-state="updating"] .lc-fin-instruments__spin { display: inline-block; }
+
+/* ── Действия правки ────────────────────────────────────────────────── */
+/* В просмотре действия не выключаются, а не рисуются вовсе (правило прав
+   локальных компонентов): FinInstrumentsTile.js в режиме view строит
+   карточки без меню, «+ Добавить» и ⇄. Для примера во фрагменте, где
+   карточки уже с кнопками, тот же режим прячет их здесь. Меню шапки в
+   просмотре тоже не рисуется (макет «Недоступно редактирование»). Пока
+   данных нет, пока они грузятся и во время обновления действий в шапке и
+   под списком нет. */
+.lc-fin-instruments[data-mode="view"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-mode="view"] .lc-fin-instruments__menu,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card .menu-anchor,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card__add-node,
+.lc-fin-instruments[data-mode="view"] .lc-fin-card__move { display: none; }
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="updating"] .lc-fin-instruments__add,
+.lc-fin-instruments[data-state="loading"] .lc-fin-instruments__menu,
+.lc-fin-instruments[data-state="empty"] .lc-fin-instruments__menu { display: none; }

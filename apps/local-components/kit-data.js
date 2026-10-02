@@ -105,6 +105,34 @@ window.IBPKit = {
       "updated": "25.09.2026"
     },
     {
+      "id": "DealFinancialInstrumentCreateModal",
+      "name": "Окно «Создание финансового инструмента»",
+      "category": "Сделка",
+      "purpose": "Создать карточку финансового инструмента сделки — выбрать тип ФИ и тип отчётности",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/DealFinancialInstrumentCreateModal.doc.html",
+      "owner": "FinInstrumentsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.10.2026"
+    },
+    {
+      "id": "DealFinancialInstrumentEditModal",
+      "name": "Окно «ФИ — изменение»",
+      "category": "Сделка",
+      "purpose": "Поправить параметры карточки финансового инструмента — наименование, контрагентов, FV/AC, IRR, признаки",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/DealFinancialInstrumentEditModal.doc.html",
+      "owner": "FinInstrumentsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.10.2026"
+    },
+    {
       "id": "DealFinancialMetricsModal",
       "name": "Модальное окно финансовых метрик сделки",
       "category": "Сделка",
@@ -304,15 +332,15 @@ window.IBPKit = {
       "id": "FinInstrumentsTile",
       "name": "Финансовые инструменты",
       "category": "Сделка",
-      "purpose": "Финансовые инструменты сделки с параметрами лимита, контрагентами и вложенными инструментами",
+      "purpose": "Финансовые инструменты сделки — карточки ФИ с параметрами, контрагентами и прикреплёнными инструментами дерева продуктов",
       "type": "tile",
       "typeLabel": "тайл",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
-      "stub": true,
-      "version": "0.004",
-      "updated": "22.09.2026"
+      "stub": false,
+      "version": "1.000",
+      "updated": "02.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",
@@ -367,8 +395,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/LinkChangeModal.doc.html",
       "owner": "DealProductTreeTile",
       "stub": false,
-      "version": "1.000",
-      "updated": "30.09.2026"
+      "version": "1.001",
+      "updated": "02.10.2026"
     },
     {
       "id": "ProductsModal",

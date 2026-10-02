@@ -5,8 +5,8 @@ file: apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.htm
 module: postrade/deals-app
 frontend: postrade/deals-app/features/modals/LinkChangeModal
 name: Окно «Изменить связь с ФИ»
-version: 1.000
-updated: "30.09.2026"
+version: 1.001
+updated: "02.10.2026"
 rulesVersion: 1.006
 owner: не решено (30.09.2026)
 designer: Роман Эсэф
@@ -19,7 +19,7 @@ usedOn: [Страница сделки — таб «Финансовые дан�
 variants: []
 modifiers: []
 dependsOn: [Продукты сделки (../../tiles/DealProductTreeTile/DealProductTreeTile.md) — окно правит дерево тайла через ProductTreeStore]
-requirements: [макет дизайнера «Перенос из дерева в ФИ» 30.09.2026, ответы дизайнера 30.09.2026 (вопросы 2, 4), решение человека 30.09.2026 (выбор до двух карточек), задача docs/tasks/RE0001-product-row-tree.md]
+requirements: [макет дизайнера «Перенос из дерева в ФИ» 30.09.2026, ответы дизайнера 30.09.2026 (вопросы 2, 4), решение человека 30.09.2026 (выбор до двух карточек), задача docs/tasks/RE0001-product-row-tree.md, решения человека 02.10.2026 (карточки ФИ в сторе, баланс и валюта — из прикреплённых узлов)]
 knowledge: []
 ---
 
@@ -90,8 +90,8 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 |---|---|---|---|---|
 | `number` + `typeCode` | номер и тип ФИ в сделке — заголовок карточки | «1. Кредит» | `MOCK_DEAL_FIN_INSTRUMENTS`, подписи `FIN_INSTRUMENT_TYPE_LABELS` | да |
 | `name` | наименование ФИ | строка «127-Кредит-201» | карточка ФИ | да |
-| `balance` | баланс | строка | карточка ФИ | да |
-| `currency` | валюта | код ISO 4217 | карточка ФИ | да |
+| `balance` | баланс | строка; несколько разных — через запятую | производное: балансы узлов дерева, прикреплённых к карточке (у транша — баланс его инструмента), `FinInstrumentsStore.view()`; у свободной карточки — «—» (решение человека 02.10.2026) | нет |
+| `currency` | валюта | код ISO 4217; несколько — через запятую | производное: валюты прикреплённых узлов; у свободной карточки — «—» | нет |
 | `reportingType` | тип отчётности | «МСФО и РСБУ» · «МСФО» · «РСБУ» | карточка ФИ, подписи `FIN_INSTRUMENT_REPORTING_LABELS` | да |
 | `fiIds` | к каким ФИ прикреплён узел | до двух id карточек | узел дерева | нет — пусто, если не прикреплён |
 
@@ -153,15 +153,18 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 ## Данные (Data dependencies)
 
 ### API — что нужно от бэкенда
-Карточки ФИ сделки и связь узла дерева с ФИ. Тайл «Финансовые инструменты» пока заглушка:
-как прикреплённые инструменты показываются в карточках ФИ — не решено (вопрос 9 спеки
-страницы сделки). Имена методов API не придумываются: их выбирает разработка.
+Карточки ФИ сделки и связь узла дерева с ФИ. Карточки окно берёт у стора дерева
+(`ProductTreeStore.fiCards`), а тот — у стора ФИ (`FinInstrumentsStore`), если он открыт на
+той же сделке: тогда в окне видны и карточки, созданные в тайле «Финансовые инструменты».
+Прикреплённые узлы тайл показывает списком «Инструменты» в карточке ФИ. Имена методов API
+не придумываются: их выбирает разработка.
 
 ### Mock — демо-данные прототипа
 
 | Файл | Глобальная переменная | Тип | Источник имён |
 |---|---|---|---|
-| `../../../data/mock-fin-instruments.js` | `window.MOCK_DEAL_FIN_INSTRUMENTS`, `FIN_INSTRUMENT_TYPE_LABELS`, `FIN_INSTRUMENT_REPORTING_LABELS` | `DealFinInstrumentCardRsDto[]` по id сделки | invented (30.09.2026) |
+| `../../../data/mock-fin-instruments.js` | `window.MOCK_DEAL_FIN_INSTRUMENTS`, `FIN_INSTRUMENT_TYPE_LABELS`, `FIN_INSTRUMENT_REPORTING_LABELS` | `DealFinInstrumentCardRsDto[]` по id сделки | invented (30.09.2026, расширен 02.10.2026) |
+| `../../../data/fin-instruments-store.js` | `window.FinInstrumentsStore` | `view()` → `FinInstrumentCardView[]`: карточки с балансом и валютой из прикреплённых узлов | модель представления, не DTO |
 | `../../../data/mock-product-catalog.js` | `window.INSTRUMENT_TYPE_CATALOG`, `PRODUCT_TREE_RULES` | `fiType` — тип ФИ узла | invented, ответы 30.09.2026 |
 | `../../../data/product-tree-store.js` | `window.ProductTreeStore` | `node`, `fiCards`, `linkFi`, `commit` | модель представления, не DTO |
 | `fixtures.json` (рядом) | — | узел сделки-образца для витрины | — |
@@ -190,3 +193,6 @@ Modal modal--w4 (595px — ширина макета), высота по кон�
 3. **Пара во фронтенде** — `LinkChangeModal` с `FICards` (решение человека 30.09.2026); у
    фронтенда есть и `TransferringInstrumentsToFIModal` — что в нём, не разбирали.
 4. **Карточки ФИ в тайле «Финансовые инструменты»** — как видна связь с деревом, не решено.
+   Макеты дизайнера 02.10.2026: в карточке ФИ — список «Инструменты» с прикреплёнными узлами
+   (номер, название, дата подписания, сумма, погашение); так и сделано в тайле. Что делает ⇄
+   у строки инструмента в карточке ФИ — не решено (02.10.2026).

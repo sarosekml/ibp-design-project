@@ -1,0 +1,131 @@
+<!-- DealFinancialInstrumentEditModal — окно «ФИ: <номер>. <тип>», изменение карточки ФИ.
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается пунктом
+     «Изменить» меню карточки (событие fiaction, action EDIT; пункт временный — что в
+     меню, не решено). Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Изменение ФИ» (02.10.2026): состав полей — по типу ФИ. В разметке все поля,
+     лишние типу DealFinancialInstrumentEditModal.js прячет атрибутом hidden по
+     FinInstrumentsStore.fieldsOf(<тип>):
+       Кредит                     — наименование, контрагент, FV/AC, контрагенты для
+                                    резервирования и аллокации, «Участие ДККК»;
+       Акции                      — то же + IRR, «Private Equity», «Связанный безусловный
+                                    опцион»;
+       Доп. доходность, РЕПО      — то же, что у кредита + номер связанного договора и
+                                    опцион, включённый в расчёт МСФО;
+       Дебиторская задолженность  — то же, что у кредита + IRR.
+     Обязательно только наименование. Опции списков подставляет скрипт окна из стора:
+     контрагенты — база контрагентов (участники сделки первыми), FV/AC — справочник,
+     опцион — «Пут: РЕПО» и «Колл: РЕПО» дерева продуктов сделки. Ниже — пример
+     заполненного окна акций с макета. «Сохранить» без data-modal-close: окно закрывает
+     скрипт. -->
+<div class="modal-scrim" id="fi-edit-scrim" hidden>
+  <div class="modal modal--w3 lc-fi-edit" role="dialog" aria-modal="true" aria-labelledby="fi-edit-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-edit-title">ФИ: 3. Акции</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-edit__fields">
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="name">
+          <label class="ds-label" for="fi-edit-name"><span class="ds-label__text">Наименование финансового инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="fi-edit-name" autocomplete="off" value="127-Акции-203">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="counterpartyId">
+          <label class="ds-label" for="fi-edit-counterparty"><span class="ds-label__text">Контрагент</span></label>
+          <div class="inp__field" data-ddl="fi-edit-counterparty-list">
+            <input class="inp__control" id="fi-edit-counterparty" autocomplete="off" value="ООО «ГорноКапитал»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-counterparty-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- FV/AC и IRR — в один ряд, как на макете; у типа без IRR FV/AC остаётся
+             в левой колонке. -->
+        <div class="lc-fi-edit__row">
+          <div class="inp inp--m inp--fullwidth" data-fi-field="fvAcCode">
+            <label class="ds-label" for="fi-edit-fvac"><span class="ds-label__text">FV/AC</span></label>
+            <div class="inp__field" data-ddl="fi-edit-fvac-list">
+              <input class="inp__control" id="fi-edit-fvac" autocomplete="off" value="FV">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="fi-edit-fvac-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth" data-fi-field="targetIrr">
+            <label class="ds-label" for="fi-edit-irr"><span class="ds-label__text">IRR</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="fi-edit-irr" inputmode="decimal" autocomplete="off" value="17,03">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="reserveCounterpartyId">
+          <label class="ds-label" for="fi-edit-reserve"><span class="ds-label__text">Контрагент для целей резервирования</span></label>
+          <div class="inp__field" data-ddl="fi-edit-reserve-list">
+            <input class="inp__control" id="fi-edit-reserve" autocomplete="off" value="АО «МеталлИнвест»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-reserve-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="allocationCounterpartyId">
+          <label class="ds-label" for="fi-edit-allocation"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></label>
+          <div class="inp__field" data-ddl="fi-edit-allocation-list">
+            <input class="inp__control" id="fi-edit-allocation" autocomplete="off" value="ООО «ЖилСтрой»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-allocation-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="linkedContractNumber" hidden>
+          <label class="ds-label" for="fi-edit-contract"><span class="ds-label__text">Номер связанного договора</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fi-edit-contract" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="ifrsOptionNodeId" hidden>
+          <label class="ds-label" for="fi-edit-option"><span class="ds-label__text">Опцион включенный в расчет МСФО</span></label>
+          <div class="inp__field" data-ddl="fi-edit-option-list">
+            <input class="inp__control" id="fi-edit-option" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-option-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="cb-group">
+          <label class="cb" data-fi-field="isPE">
+            <input type="checkbox" class="cb__input" id="fi-edit-pe" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Private Equity</span></span>
+          </label>
+          <label class="cb" data-fi-field="isDkkk">
+            <input type="checkbox" class="cb__input" id="fi-edit-dkkk" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Участие ДККК</span></span>
+          </label>
+          <label class="cb" data-fi-field="hasLinkedUnconditionalOption">
+            <input type="checkbox" class="cb__input" id="fi-edit-option-flag" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Связанный безусловный опцион</span></span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-edit-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -6,6 +6,9 @@
    их читает реестр портфеля). Реестру деревья и карточки ФИ не нужны:
    ему хватает каталога, PostApi и этого файла.
 
+   Карточки ФИ для связи узла — из FinInstrumentsStore (fin-instruments-store.js),
+   если он подключён и открыт на той же сделке, иначе из mock-fin-instruments.js.
+
    Экспорт: window.ProductTreeStore = {
      ready → Promise                       — загружены сохранённые деревья
      persist(on)                           — false: витрина не читает и не
@@ -514,13 +517,22 @@
     return true;
   }
 
+  /* Карточки ФИ сделки. Стор ФИ открыт на той же сделке — его карточки,
+     с балансом и валютой из прикреплённых узлов (решение человека
+     02.10.2026); стора нет — демо-карточки из mock-fin-instruments.js. */
+  function fiList() {
+    var S = window.FinInstrumentsStore;
+    if (S && String(S.dealId()) === String(current.dealId)) return S.view();
+    return FI[String(current.dealId)] || [];
+  }
+
   /* Карточки ФИ сделки для узла: доступна карточка того же типа, что узел. */
   function fiCards(id) {
     var hit = find(id);
     if (!hit) return [];
     var type = fiTypeOf(hit.node, hit.kind);
     if (!type) return [];
-    var list = FI[String(current.dealId)] || [];
+    var list = fiList();
     var chosen = hit.node.fiIds || [];
     return list.map(function (c) {
       var card = clone(c);
