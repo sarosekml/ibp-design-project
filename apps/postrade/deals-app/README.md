@@ -27,10 +27,10 @@
 
 ## Виджеты
 
-12 тайлов и таблица страницы сделки, 15 модальных окон и поповер. Наполнены семь
+12 тайлов и таблица страницы сделки, 17 модальных окон и поповер. Наполнены восемь
 тайлов — «КНР», «Сроки сделки», «Команда сделки», «Описание сделки», «Финансовые метрики
-сделки», «Сведения о проекте», «Продукты сделки», у каждого свои окна; остальные 5 тайлов и
-таблица — заглушки (`data-state="empty"`): оболочка есть, состав полей не
+сделки», «Сведения о проекте», «Продукты сделки», «Финансовые инструменты», у каждого свои
+окна; остальные 4 тайла и таблица — заглушки (`data-state="empty"`): оболочка есть, состав полей не
 согласован. Имена сверены с деревом фронтенда 24.09.2026: где пара нашлась,
 имя — как у фронтенда; где нет — осталось нашим, с типом в конце.
 
@@ -44,7 +44,7 @@
 | `widgets/tiles/ProjectInformationTile` — наполнен | Общая информация, третий ряд (12, опциональный; только деск «Недвижимость») | `ProjectInformationTile` (было `ProjectInfoTile`) |
 | `widgets/tiles/DealSetupTile` | Общая информация, правая колонка 320px | ближайшее — виджет `Navigator` (у фронтенда не тайл) — имя оставлено |
 | `widgets/tiles/DealProductTreeTile` — наполнен | «Финансовые данные», первый ряд (6) | `DealProductTreeTile` (было `DealProductsTile`; у фронтенда в папке `DealProductTreeNew`) |
-| `widgets/tiles/FinInstrumentsTile` | «Финансовые данные», первый ряд (6) | ближайшее — группа `DealFinancialInstrumentsGroup` из `DealFinancialInstrumentTile` — имя оставлено |
+| `widgets/tiles/FinInstrumentsTile` — наполнен | «Финансовые данные», первый ряд (6) | ближайшее — группа `DealFinancialInstrumentsGroup` из `DealFinancialInstrumentTile` — имя оставлено |
 | `widgets/tiles/EpsVbsImpactTile` | «Финансовые данные», второй ряд (6) | точной нет; рядом по теме `DealEirIbsvFixationTile` (фиксация, а не влияние) — имя оставлено |
 | `widgets/tiles/DealMetricsCalculationTile` | «Финансовые данные», второй ряд (6) | `DealMetricsCalculationTile` (было `FinMetricsTile`) |
 | `widgets/tables/DealCounterpartiesTable` | вкладка «Контрагенты» (12) | нет — новая сущность, имя наше (было `widgets/tiles/CounterpartiesTile`, до того `widgets/tables/CounterpartiesTable`; корень — тайл без шапки) |
@@ -63,6 +63,8 @@
 | `widgets/modals/RepaymentModal` | конец `body`; окно тайла «Продукты сделки» — погашение и отмена погашения | `RepaymentModal` |
 | `widgets/modals/InstrumentTransferModal` | конец `body`; окно тайла «Продукты сделки» — перенос инструмента | `InstrumentTransferModal` (подчасти `AccordionProductRow`, `ConfirmTransferGrid` — у нас строка ProductRow, шага подтверждения нет) |
 | `widgets/modals/LinkChangeModal` | конец `body`; окно тайла «Продукты сделки» — связь инструмента или транша с ФИ | `LinkChangeModal` (+ `FICards` — у нас карточки в разметке окна; решение человека 30.09.2026) |
+| `widgets/modals/DealFinancialInstrumentCreateModal` | конец `body`; окно тайла «Финансовые инструменты» — создание карточки ФИ (+ общий слой полей окон ФИ `PostFinInstrumentForm`) | `DealFinancialInstrumentCreateModal` |
+| `widgets/modals/DealFinancialInstrumentEditModal` | конец `body`; окно тайла «Финансовые инструменты» — изменение карточки ФИ, поля по типу | `DealFinancialInstrumentEditModal` |
 | `widgets/modals/ProductTreeConfirmModal` | конец `body`, последним: вложенное подтверждение удаления узла и назначения основного продукта ДИД | нет — имя наше |
 | `widgets/modals/DealTitleModal` | конец `body`; окно шапки страницы «Редактирование сделки» — номер и наименование, открывает карандаш у заголовка | `DealTitleModal` (создание — отдельное окно `DealCreateModal`; у нас оно в разметке `Portfolio.html`) |
 
@@ -147,66 +149,90 @@ node .agents/tools/module-readme.mjs
 сделка какую стадию тайла «Продукты сделки» показывает — в шапке
 `mock-deal-trees.js`.
 
+Карточки финансовых инструментов сделки — `window.FinInstrumentsStore`
+(`fin-instruments-store.js` поверх `mock-fin-instruments.js`; решения человека 02.10.2026).
+В записи карточки — только её собственные поля: номер, тип, наименование, тип отчётности и
+то, что правит окно изменения. Баланс, валюта, сумма, дата подписания, список инструментов и
+погашение стор считает из узлов дерева, прикреплённых к карточке (`fiIds`), а «Сгенерировать
+автоматически» создаёт карточки по дереву и прикрепляет узлы. Окно связи с ФИ у дерева берёт
+карточки у этого же стора. Карточки сохраняются через `PostApi` (ресурс `fin-instruments`,
+`data/API.md`). Какая сделка какое состояние тайла «Финансовые инструменты» показывает — в
+шапке `mock-fin-instruments.js`.
+
 ## Что лежит
 
 <!-- @tree — дерево генерирует .agents/tools/module-readme.mjs, руками не править -->
 ```
 deals-app/
-├── app.json                                 ← запись хаба: «Post — ДИД», трек product
+├── app.json                                    ← запись хаба: «Post — ДИД», трек product
 ├── README.md
 ├── pages/
-│   ├── Deal.html                            ← Сделка — источник, собирается в Deal.preview.html
-│   ├── Deal.preview.html                    ← собранная страница — открывать её
-│   ├── Deal.screen.md                       ← спека
-│   ├── MainPage.html                        ← Главная страница
-│   ├── MainPage.screen.md                   ← спека
-│   ├── Portfolio.html                       ← Текущий портфель ДИД
-│   └── Portfolio.screen.md                  ← спека
+│   ├── Deal.html                               ← Сделка — источник, собирается в Deal.preview.html
+│   ├── Deal.preview.html                       ← собранная страница — открывать её
+│   ├── Deal.screen.md                          ← спека
+│   ├── MainPage.html                           ← Главная страница
+│   ├── MainPage.screen.md                      ← спека
+│   ├── Portfolio.html                          ← Текущий портфель ДИД
+│   └── Portfolio.screen.md                     ← спека
 ├── widgets/
-│   ├── modals/                              ← модальные окна
-│   │   ├── CounterpartiesEcmModal/          ← Модальное окно «Документы по сделке»
+│   ├── modals/                                 ← модальные окна
+│   │   ├── CounterpartiesEcmModal/             ← Модальное окно «Документы по сделке»
 │   │   │   ├── CounterpartiesEcmModal.css
 │   │   │   ├── CounterpartiesEcmModal.html
 │   │   │   ├── CounterpartiesEcmModal.js
 │   │   │   ├── CounterpartiesEcmModal.md
 │   │   │   └── EcmModal/
 │   │   │       └── EcmModal.html
-│   │   ├── DealDescriptionModal/            ← Модальное окно описания сделки
+│   │   ├── DealDescriptionModal/               ← Модальное окно описания сделки
 │   │   │   ├── DealDescriptionModal.css
 │   │   │   ├── DealDescriptionModal.html
 │   │   │   ├── DealDescriptionModal.js
 │   │   │   └── DealDescriptionModal.md
-│   │   ├── DealFinancialMetricsModal/       ← Модальное окно финансовых метрик сделки
+│   │   ├── DealFinancialInstrumentCreateModal/ ← Окно «Создание финансового инструмента»
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── DealFinancialInstrumentCreateModal.css
+│   │   │   ├── DealFinancialInstrumentCreateModal.html
+│   │   │   ├── DealFinancialInstrumentCreateModal.js
+│   │   │   ├── DealFinancialInstrumentCreateModal.md
+│   │   │   └── fixtures.json
+│   │   ├── DealFinancialInstrumentEditModal/   ← Окно «ФИ — изменение»
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── DealFinancialInstrumentEditModal.css
+│   │   │   ├── DealFinancialInstrumentEditModal.html
+│   │   │   ├── DealFinancialInstrumentEditModal.js
+│   │   │   ├── DealFinancialInstrumentEditModal.md
+│   │   │   └── fixtures.json
+│   │   ├── DealFinancialMetricsModal/          ← Модальное окно финансовых метрик сделки
 │   │   │   ├── DealFinancialMetricsModal.css
 │   │   │   ├── DealFinancialMetricsModal.html
 │   │   │   ├── DealFinancialMetricsModal.js
 │   │   │   ├── DealFinancialMetricsModal.md
 │   │   │   └── fixtures.json
-│   │   ├── DealPeriodModal/                 ← Модальное окно сроков сделки
+│   │   ├── DealPeriodModal/                    ← Модальное окно сроков сделки
 │   │   │   ├── DealPeriodModal.html
 │   │   │   ├── DealPeriodModal.js
 │   │   │   └── DealPeriodModal.md
-│   │   ├── DealProjectInformationModal/     ← Модальное окно сведений о проекте
+│   │   ├── DealProjectInformationModal/        ← Модальное окно сведений о проекте
 │   │   │   ├── DealProjectInformationModal.css
 │   │   │   ├── DealProjectInformationModal.html
 │   │   │   ├── DealProjectInformationModal.js
 │   │   │   └── DealProjectInformationModal.md
-│   │   ├── DealTeamModal/                   ← Модальное окно команды сделки
+│   │   ├── DealTeamModal/                      ← Модальное окно команды сделки
 │   │   │   ├── DealTeamModal.css
 │   │   │   ├── DealTeamModal.html
 │   │   │   ├── DealTeamModal.js
 │   │   │   └── DealTeamModal.md
-│   │   ├── DealTitleModal/                  ← Модальное окно редактирования сделки
+│   │   ├── DealTitleModal/                     ← Модальное окно редактирования сделки
 │   │   │   ├── DealTitleModal.html
 │   │   │   ├── DealTitleModal.js
 │   │   │   └── DealTitleModal.md
-│   │   ├── DidProductsModal/                ← Окно «Продукты ДИД»
+│   │   ├── DidProductsModal/                   ← Окно «Продукты ДИД»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── DidProductsModal.html
 │   │   │   ├── DidProductsModal.js
 │   │   │   ├── DidProductsModal.md
 │   │   │   └── fixtures.json
-│   │   ├── InstrumentsCounterpartiesModal/  ← Модальное окно контрагентов
+│   │   ├── InstrumentsCounterpartiesModal/     ← Модальное окно контрагентов
 │   │   │   ├── CounterpartyCard/
 │   │   │   │   ├── CHANGELOG.md
 │   │   │   │   ├── CounterpartyCard.css
@@ -219,123 +245,126 @@ deals-app/
 │   │   │   ├── InstrumentsCounterpartiesModal.js
 │   │   │   ├── InstrumentsCounterpartiesModal.md
 │   │   │   └── KNRConfirmModal.html
-│   │   ├── InstrumentsModal/                ← Окно «Инструменты»
+│   │   ├── InstrumentsModal/                   ← Окно «Инструменты»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
 │   │   │   ├── InstrumentsModal.html
 │   │   │   ├── InstrumentsModal.js
 │   │   │   └── InstrumentsModal.md
-│   │   ├── InstrumentTransferModal/         ← Окно «Перенос инструмента»
+│   │   ├── InstrumentTransferModal/            ← Окно «Перенос инструмента»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
 │   │   │   ├── InstrumentTransferModal.css
 │   │   │   ├── InstrumentTransferModal.html
 │   │   │   ├── InstrumentTransferModal.js
 │   │   │   └── InstrumentTransferModal.md
-│   │   ├── LinkChangeModal/                 ← Окно «Изменить связь с ФИ»
+│   │   ├── LinkChangeModal/                    ← Окно «Изменить связь с ФИ»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
 │   │   │   ├── LinkChangeModal.css
 │   │   │   ├── LinkChangeModal.html
 │   │   │   ├── LinkChangeModal.js
 │   │   │   └── LinkChangeModal.md
-│   │   ├── ProductsModal/                   ← Окно «Продукты»
+│   │   ├── ProductsModal/                      ← Окно «Продукты»
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
 │   │   │   ├── ProductsModal.css
 │   │   │   ├── ProductsModal.html
 │   │   │   ├── ProductsModal.js
 │   │   │   └── ProductsModal.md
-│   │   ├── ProductTreeConfirmModal/         ← Подтверждение действия над деревом
+│   │   ├── ProductTreeConfirmModal/            ← Подтверждение действия над деревом
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── fixtures.json
 │   │   │   ├── ProductTreeConfirmModal.css
 │   │   │   ├── ProductTreeConfirmModal.html
 │   │   │   ├── ProductTreeConfirmModal.js
 │   │   │   └── ProductTreeConfirmModal.md
-│   │   └── RepaymentModal/                  ← Окно погашения
+│   │   └── RepaymentModal/                     ← Окно погашения
 │   │       ├── CHANGELOG.md
 │   │       ├── fixtures.json
 │   │       ├── RepaymentModal.css
 │   │       ├── RepaymentModal.html
 │   │       ├── RepaymentModal.js
 │   │       └── RepaymentModal.md
-│   ├── popovers/                            ← поповеры и тултипы
-│   │   └── RelatedDealsPopover/             ← Поповер связанных сделок
+│   ├── popovers/                               ← поповеры и тултипы
+│   │   └── RelatedDealsPopover/                ← Поповер связанных сделок
 │   │       ├── RelatedDealsPopover.css
 │   │       ├── RelatedDealsPopover.html
 │   │       ├── RelatedDealsPopover.js
 │   │       └── RelatedDealsPopover.md
 │   ├── README.md
-│   ├── tables/                              ← таблицы
-│   │   └── DealCounterpartiesTable/         ← Контрагенты сделки
+│   ├── tables/                                 ← таблицы
+│   │   └── DealCounterpartiesTable/            ← Контрагенты сделки
 │   │       ├── DealCounterpartiesTable.css
 │   │       ├── DealCounterpartiesTable.html
 │   │       └── DealCounterpartiesTable.md
-│   └── tiles/                               ← тайлы
-│       ├── CounterpartiesTile/              ← Контрагенты
+│   └── tiles/                                  ← тайлы
+│       ├── CounterpartiesTile/                 ← Контрагенты
 │       │   ├── CHANGELOG.md
 │       │   ├── CounterpartiesTile.css
 │       │   ├── CounterpartiesTile.html
 │       │   ├── CounterpartiesTile.js
 │       │   ├── CounterpartiesTile.md
 │       │   └── fixtures.json
-│       ├── DealDescriptionTile/             ← Описание сделки
+│       ├── DealDescriptionTile/                ← Описание сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealDescriptionTile.css
 │       │   ├── DealDescriptionTile.html
 │       │   ├── DealDescriptionTile.js
 │       │   ├── DealDescriptionTile.md
 │       │   └── fixtures.json
-│       ├── DealFinancialMetricsTile/        ← Финансовые метрики сделки
+│       ├── DealFinancialMetricsTile/           ← Финансовые метрики сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealFinancialMetricsTile.css
 │       │   ├── DealFinancialMetricsTile.html
 │       │   ├── DealFinancialMetricsTile.js
 │       │   ├── DealFinancialMetricsTile.md
 │       │   └── fixtures.json
-│       ├── DealMetricsCalculationTile/      ← Финансовые метрики
+│       ├── DealMetricsCalculationTile/         ← Финансовые метрики
 │       │   ├── DealMetricsCalculationTile.css
 │       │   ├── DealMetricsCalculationTile.html
 │       │   └── DealMetricsCalculationTile.md
-│       ├── DealPeriodTile/                  ← Сроки сделки
+│       ├── DealPeriodTile/                     ← Сроки сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealPeriodTile.css
 │       │   ├── DealPeriodTile.html
 │       │   ├── DealPeriodTile.js
 │       │   ├── DealPeriodTile.md
 │       │   └── fixtures.json
-│       ├── DealProductTreeTile/             ← Продукты сделки
+│       ├── DealProductTreeTile/                ← Продукты сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealProductTreeTile.css
 │       │   ├── DealProductTreeTile.html
 │       │   ├── DealProductTreeTile.js
 │       │   ├── DealProductTreeTile.md
 │       │   └── fixtures.json
-│       ├── DealRelatedCollateralsTile/      ← Связанные обеспечения
+│       ├── DealRelatedCollateralsTile/         ← Связанные обеспечения
 │       │   ├── DealRelatedCollateralsTile.css
 │       │   ├── DealRelatedCollateralsTile.html
 │       │   └── DealRelatedCollateralsTile.md
-│       ├── DealSetupTile/                   ← Заведение сделки
+│       ├── DealSetupTile/                      ← Заведение сделки
 │       │   ├── DealSetupTile.css
 │       │   ├── DealSetupTile.html
 │       │   └── DealSetupTile.md
-│       ├── DealTeamTile/                    ← Команда сделки
+│       ├── DealTeamTile/                       ← Команда сделки
 │       │   ├── CHANGELOG.md
 │       │   ├── DealTeamTile.css
 │       │   ├── DealTeamTile.html
 │       │   ├── DealTeamTile.js
 │       │   ├── DealTeamTile.md
 │       │   └── fixtures.json
-│       ├── EpsVbsImpactTile/                ← Влияние на ЭПС/ВБС
+│       ├── EpsVbsImpactTile/                   ← Влияние на ЭПС/ВБС
 │       │   ├── EpsVbsImpactTile.css
 │       │   ├── EpsVbsImpactTile.html
 │       │   └── EpsVbsImpactTile.md
-│       ├── FinInstrumentsTile/              ← Финансовые инструменты
+│       ├── FinInstrumentsTile/                 ← Финансовые инструменты
+│       │   ├── CHANGELOG.md
 │       │   ├── FinInstrumentsTile.css
 │       │   ├── FinInstrumentsTile.html
-│       │   └── FinInstrumentsTile.md
-│       └── ProjectInformationTile/          ← Сведения о проекте
+│       │   ├── FinInstrumentsTile.js
+│       │   ├── FinInstrumentsTile.md
+│       │   └── fixtures.json
+│       └── ProjectInformationTile/             ← Сведения о проекте
 │           ├── CHANGELOG.md
 │           ├── ProjectInformationTile.css
 │           ├── ProjectInformationTile.html
@@ -343,17 +372,18 @@ deals-app/
 │           └── ProjectInformationTile.md
 ├── data/
 │   ├── API.md
-│   ├── counterparties-store.js              ← CounterpartiesStore — база контрагентов и состав участников сделки.
-│   ├── deals-store.js                       ← DealsStore — единственная точка доступа к базе сделок ДИД (мок).
-│   ├── mock-counterparties.js               ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
-│   ├── mock-deal-trees.js                   ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
-│   ├── mock-deals.js                        ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
-│   ├── mock-fin-instruments.js              ← Карточки финансовых инструментов (ФИ) сделок — демо-данные прототипа.
-│   ├── mock-financial-metrics.js            ← Финансовые метрики сделок — демо-данные (window.MOCK_DEAL_FIN_METRICS).
-│   ├── mock-product-catalog.js              ← Каталог продуктов сделки — демо-данные прототипа.
-│   ├── mock-team.js                         ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
-│   ├── post-api.js                          ← PostApi — адаптер хранения данных направления Post.
-│   └── product-tree-store.js                ← ProductTreeStore — дерево продуктов текущей сделки.
+│   ├── counterparties-store.js                 ← CounterpartiesStore — база контрагентов и состав участников сделки.
+│   ├── deals-store.js                          ← DealsStore — единственная точка доступа к базе сделок ДИД (мок).
+│   ├── fin-instruments-store.js                ← FinInstrumentsStore — карточки финансовых инструментов (ФИ) текущей сде…
+│   ├── mock-counterparties.js                  ← Мок-данные ДИД — база контрагентов (window.MOCK_COUNTERPARTIES) и
+│   ├── mock-deal-trees.js                      ← Деревья продуктов сделок ДИД (window.MOCK_DEAL_TREES), ключ — id сделки.
+│   ├── mock-deals.js                           ← Мок-данные ДИД — реестр сделок (window.MOCK_DEALS) и перечни (window.DE…
+│   ├── mock-fin-instruments.js                 ← Карточки финансовых инструментов (ФИ) сделок — демо-данные прототипа.
+│   ├── mock-financial-metrics.js               ← Финансовые метрики сделок — демо-данные (window.MOCK_DEAL_FIN_METRICS).
+│   ├── mock-product-catalog.js                 ← Каталог продуктов сделки — демо-данные прототипа.
+│   ├── mock-team.js                            ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
+│   ├── post-api.js                             ← PostApi — адаптер хранения данных направления Post.
+│   └── product-tree-store.js                   ← ProductTreeStore — дерево продуктов текущей сделки.
 └── refs/
     └── Текущий портфель.md
 ```

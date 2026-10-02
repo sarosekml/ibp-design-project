@@ -10,7 +10,8 @@
 
 ```
 страница ─▶ CounterpartiesStore (counterparties-store.js) ─┐
-страница ─▶ ProductTreeStore (product-tree-store.js) ──────┴▶ PostApi (post-api.js) ─▶ API
+страница ─▶ ProductTreeStore (product-tree-store.js) ──────┼▶ PostApi (post-api.js) ─▶ API
+страница ─▶ FinInstrumentsStore (fin-instruments-store.js) ┘
 ```
 
 - Страницы и компоненты зовут только стор.
@@ -20,7 +21,7 @@
 | Режим | Когда | Куда пишется |
 |---|---|---|
 | `server` | страница открыта по http(s), и `GET /api/post/participants` ответил 2xx | база сервера |
-| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants` и `ibp.post.product-trees` |
+| `local` | страница открыта двойным кликом (`file://`) или с сервера без этого API | `localStorage` браузера, ключи `ibp.post.participants`, `ibp.post.product-trees` и `ibp.post.fin-instruments` |
 
 В режиме `local` правки видны только в этом браузере. Консоль сообщает об этом один раз.
 
@@ -62,6 +63,26 @@
 `currencies`, `isPE`) стор вычисляет из дерева (`ProductTreeStore.summary`), поэтому
 отдельно не хранятся. Правки в прототипе — ответ человека 30.09.2026 (задача
 `docs/tasks/RE0001-product-row-tree.md`, вопрос 15): в продукте дерево сохраняется.
+
+## Карточки финансовых инструментов сделки
+
+Запись о сделке хранит список карточек ФИ целиком (typedef `DealFinInstrumentCardRsDto`,
+`mock-fin-instruments.js`) — только собственные поля карточки:
+
+```json
+{ "cards": [ { "id": "FI-1027-1", "number": 1, "typeCode": "LOAN", "name": "127-Кредит-201", "reportingType": "IFRS_RAS", "counterpartyId": "ul-22", … } ], "updated": "2026-10-02T12:00:00.000Z" }
+```
+
+| Поле | Что это |
+|---|---|
+| `cards` | карточки ФИ сделки; сохранённый список перекрывает демо-карточки из `mock-fin-instruments.js` |
+| `updated` | время сохранения, ISO 8601; ставит сервер |
+
+Если сделку не сохраняли, записи нет — стор показывает карточки из `mock-fin-instruments.js`.
+Баланс, валюта, сумма, дата подписания и список инструментов карточки не хранятся: стор
+считает их из узлов дерева продуктов, прикреплённых к карточке (`fiIds` узла, ресурс
+`product-trees`; решение человека 02.10.2026). «Сгенерировать автоматически» пишет оба
+ресурса: новые карточки — сюда, связь узлов — в дерево.
 
 ## Команда сделки
 
@@ -141,13 +162,19 @@ DealsStore.update(id, { desk: 'Недвижимость',   // запись: о�
 | `GET /api/post/product-trees/:dealId` | `200` — запись; `404` — дерево сделки не сохраняли |
 | `PUT /api/post/product-trees/:dealId` | тело `{ tree }` → `200` `{ ok: true, updated }` |
 | `DELETE /api/post/product-trees` | `204` — база деревьев очищена (для показов) |
+| `GET /api/post/fin-instruments` | `200` — `{ "<номер сделки>": { cards, updated }, … }`; только сохранённые сделки |
+| `GET /api/post/fin-instruments/:dealId` | `200` — запись; `404` — карточки сделки не сохраняли |
+| `PUT /api/post/fin-instruments/:dealId` | тело `{ cards }` → `200` `{ ok: true, updated }` |
+| `DELETE /api/post/fin-instruments` | `204` — база карточек ФИ очищена (для показов) |
 
 **Проверки при записи** (`400` с `{ error }`):
 
 - номер сделки и id контрагентов — `[A-Za-z0-9_-]`, от 1 до 32 символов;
 - `members` и `knr` — массивы без повторов, не больше 500 записей;
 - каждый id из `knr` есть в `members`;
-- `tree.id` совпадает с номером сделки из пути; у узла `fiIds` — не больше двух.
+- `tree.id` совпадает с номером сделки из пути; у узла `fiIds` — не больше двух;
+- у карточки ФИ `id` уникален в сделке, `typeCode` и `reportingType` — из справочников
+  `mock-fin-instruments.js`, `name` не пустой.
 
 Тело больше 64 КБ — `413`. Другие методы — `405`.
 

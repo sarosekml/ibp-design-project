@@ -344,6 +344,7 @@
 <script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
 <script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
 <script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script src="../../kit-data.js"></script>
 <script src="../../kit-nav.js"></script>
@@ -372,6 +373,9 @@
 <script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
 <script>
 window.IBPKitPage = {"id":"DealPeriodTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty"],"modes":["edit","view"],"state":"data","mode":"edit","width":400,"scenario":false,"fixtures":{"_":"Демо-данные витрины: по одному объекту на состояние. Даты — формата ДД.ММ.ГГГГ, пустая — пустая строка. Длина значения фиксирована, поэтому данных «максимальной длины» нет: переполнение проверяется шириной тайла.","data":{"signDate":"01.01.2021","endDate":"01.01.2023","firstDisb":"21.01.2021"},"partial":{"_":"Даты заключения и окончания пришли из инструментов, дату первой выдачи ещё не ввели: поле на месте, значение — прочерк.","signDate":"01.01.2021","endDate":"01.01.2023","firstDisb":""},"empty":{"_":"В сделке нет инструментов с данными и дату первой выдачи не вводили. С правом на правку — кнопка «Заполнить», без права — строка «Не заполнено».","signDate":"","endDate":"","firstDisb":""},"outOfRange":{"_":"Окно: дата первой выдачи раньше даты заключения — ошибка проверки при «Сохранить».","signDate":"01.01.2021","endDate":"01.01.2023","firstDisb":"15.12.2020"}}};
 window.IBPKitDoc.page(window.IBPKitPage);

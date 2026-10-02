@@ -1,0 +1,22 @@
+/* Окно «ФИ: <номер>. <тип>» — связанный артефакт тайла FinInstrumentsTile.
+   Здесь стопка полей и ряд «FV/AC + IRR». Отступы тела окна даёт Modal,
+   зазоры — токены ДС (поля формы между собой — 16). Какие поля видны —
+   решает DealFinancialInstrumentEditModal.js атрибутом hidden. */
+.lc-fi-edit__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* FV/AC и IRR — две равные колонки, как на макете; спрятанный IRR
+   оставляет FV/AC в левой. Колонки сжимаемые: длинное значение списка не
+   распирает соседнее поле. */
+.lc-fi-edit__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+/* hidden у полей окна: у .inp своя display той же специфичности. */
+.lc-fi-edit [data-fi-field][hidden] { display: none; }

@@ -1,0 +1,9 @@
+/* Окно «Создание финансового инструмента» — связанный артефакт тайла
+   FinInstrumentsTile. Здесь только стопка полей: отступы тела окна даёт
+   Modal, зазор между полями — токен ДС (поля формы между собой — 16). */
+.lc-fi-create__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}

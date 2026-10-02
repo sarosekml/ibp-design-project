@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно «Создание финансового инструмента» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно «Создание финансового инструмента»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- DealFinancialInstrumentCreateModal — окно «Создание финансового инструмента».
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается кнопками
+     «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить
+     вручную» пустого тайла (событие fiaction, action CREATE). Фрагмент вшивается
+     отдельной меткой ds-include: скрим лежит в конце body.
+
+     Макет «Создание финансового инструмента (кнопка Заполнить вручную)» (02.10.2026):
+     два списка — «Тип инструмента» и «Тип отчетности», кнопка «Сохранить». Оба
+     обязательны: пустой список при «Сохранить» — ошибка поля (тултип при фокусе,
+     правило InputText). Опции подставляет DealFinancialInstrumentCreateModal.js из
+     FinInstrumentsStore (typeOptions, reportingOptions). Ниже — заполненный пример
+     макета: «Кредит», «МСФО». «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+<div id="fi-create-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="fi-create-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-create-title">Создание финансового инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-type"><span class="ds-label__text">Тип инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-type-list">
+              <input class="inp__control" id="fi-create-type" autocomplete="off" value="Кредит">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-reporting"><span class="ds-label__text">Тип отчетности</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-reporting-list">
+              <input class="inp__control" id="fi-create-reporting" autocomplete="off" value="МСФО">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-reporting-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-create-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>02.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <h1>Окно «Создание финансового инструмента»</h1>
+  <p class="lead">Создать карточку финансового инструмента сделки — выбрать тип ФИ и тип отчётности</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт коротко">
+<h2>Паспорт коротко</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal">apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/DealFinancialInstrumentCreateModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — таб «Финансовые данные», из тайла «Финансовые инструменты»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 02.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Из чего собран">
+<h2>Из чего собран</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.css">DealFinancialInstrumentCreateModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html">DealFinancialInstrumentCreateModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js">DealFinancialInstrumentCreateModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.md">DealFinancialInstrumentCreateModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Связи">
+<h2>Связи</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FinInstrumentsTile.doc.html">Финансовые инструменты (FinInstrumentsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Финансовые инструменты» — Button «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить вручную» в пустом тайле (правка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FinInstrumentsTile.doc.html">Финансовые инструменты (../../tiles/FinInstrumentsTile/FinInstrumentsTile.md) — окно добавляет карточку тайла через FinInstrumentsStore</a></span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание (Purpose)">
+<h2>Описание (Purpose)</h2>
+<p class="desc">Артефакт тайла «Финансовые инструменты»: первый шаг жизни карточки ФИ. В окне выбирают тип ФИ (Кредит, Акции, Доп. доходность, РЕПО, Дебиторская задолженность) и тип отчётности (МСФО и РСБУ, МСФО, РСБУ). «Сохранить» создаёт карточку в конце списка тайла в состоянии «не заполнено»: номер — следующий в сделке, наименование — по образцу карточек сделки (допущение агента 02.10.2026). Остальные параметры правят окном изменения, а баланс, валюту и суммы карточка получает из узлов дерева продуктов, прикреплённых к ней.</p>
+<p class="desc">Окно только правки: в просмотре его кнопок в тайле нет.</p>
+<p class="desc">В скрипте окна живёт общий слой форм окон ФИ — <code class="tok">PostFinInstrumentForm</code> (список из InputAutocomplete + DropdownList и ошибка поля тултипом); им же собрано окно изменения ФИ, поэтому страница подключает этот скрипт раньше.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка (Layout)">
+<h2>Раскладка (Layout)</h2>
+<pre class="kit-md__pre"><code>Modal modal--w4 (595px — ширина макета)
+├── шапка: «Создание финансового инструмента» + крестик
+├── тело: два поля стопкой через 16
+│   ├── «Тип инструмента» — список
+│   └── «Тип отчетности» — список
+└── подвал справа: Button accent M «Сохранить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты (Components)">
+<h2>Компоненты (Components)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w4</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md</code>, <code class="tok">design-system/components/molecules/DropdownList/DropdownList.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m inp--fullwidth</code>, шеврон, крестик очистки от рантайма; ошибка — <code class="tok">inp--error</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Tooltip/Tooltip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип <code class="tok">error</code> у поля с ошибкой, при фокусе (правило InputText)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сохранить» <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Параметры метки (Props)">
+<h2>Параметры метки (Props)</h2>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт: окно открывает событие тайла.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">typeCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список: <code class="tok">FIN_INSTRUMENT_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinInstrumentsStore.typeOptions()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">reportingType</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип отчётности</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список: <code class="tok">FIN_INSTRUMENT_REPORTING_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FinInstrumentsStore.reportingOptions()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Значение списка — только из опций: набранный текст, не совпавший ни с одной, при уходе с поля откатывается.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права (Permissions)">
+<h2>Права (Permissions)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026) — как у тайла</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния (States)">
+<h2>Состояния (States)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочники локальные</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбранные значения в полях</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одно поле выбрано</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно открывается пустым — как на макете</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да, у поля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустое обязательное поле при «Сохранить» — рамка ошибки и тултип при фокусе: «Выберите тип инструмента», «Выберите тип отчетности»; окно остаётся открытым</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (02.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе сохранение мгновенное</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правка временно запрещена (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Оба поля обязательны: без них «Сохранить» не создаёт карточку.</li><li>Что отдаёт наружу: новая карточка в <code class="tok">FinInstrumentsStore</code>, сохранённая через <code class="tok">PostApi</code>.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинная подпись опции</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">усечение в поле, список — по правилам DropdownList</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина фиксирована шкалой Modal (<code class="tok">modal--w4</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Связанные артефакты (Behavior)">
+<h2>Связанные артефакты (Behavior)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,0.8fr) minmax(0,1.2fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,0.8fr) minmax(0,1.2fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«+ Фин. инструмент», «+ Финансовый инструмент», «Заполнить вручную» (событие <code class="tok">fiaction</code>, action <code class="tok">CREATE</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">два списка, «Сохранить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новая карточка «не заполнено» в тайле, сохраняется; крестик, Esc и подложка — без изменений</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">DealFinancialInstrumentCreateModal.js</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Глобал / функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">PostModalFinInstrumentCreate.open()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">открыть пустое окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">PostModalFinInstrumentCreate.use(input)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнить без открытия — для витрины</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">PostFinInstrumentForm.select(scrim, id, opts)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список: значение только из опций, крестик снимает значение</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">PostFinInstrumentForm.fieldError(input)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибка поля: <code class="tok">inp--error</code> и тултип при фокусе</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">«Сохранить» — <code class="tok">FinInstrumentsStore.create({ typeCode, reportingType })</code> и <code class="tok">commit</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные (Data dependencies)">
+<h2>Данные (Data dependencies)</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Справочники типов ФИ и типов отчётности; создание карточки ФИ сделки. Имена методов API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,1.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,1.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-fin-instruments.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FIN_INSTRUMENT_TYPE_LABELS</code>, <code class="tok">FIN_INSTRUMENT_REPORTING_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочники</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (30.09.2026, 02.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.7fr) minmax(0,3fr) minmax(0,1.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fin-instruments-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FinInstrumentsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">typeOptions</code>, <code class="tok">reportingOptions</code>, <code class="tok">create</code>, <code class="tok">commit</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления, не DTO</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Витрина рисует окно сценарием <code class="tok">apps/local-components/postrade/deals-app/DealFinancialInstrumentCreateModal.demo.js</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Соответствие файлов (Implementation mapping)">
+<h2>Соответствие файлов (Implementation mapping)</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/DealFinancialInstrumentCreateModal/</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealFinancialInstrumentCreateModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Общий слой полей окон ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">PostFinInstrumentForm</code> в <code class="tok">DealFinancialInstrumentCreateModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">общие поля формы модуля</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы (Open questions)">
+<h2>Открытые вопросы (Open questions)</h2>
+<ol class="kit-md__ol"><li><b>Имя новой карточки</b> — по образцу карточек сделки, допущение агента (02.10.2026); правило — не решено (вопрос 10 паспорта тайла).</li><li><b>Открывать ли после создания окно изменения</b> — не решено (02.10.2026): пока окно просто закрывается, карточка появляется в списке.</li><li><b>Тип ФИ «Доп. доходность»</b> — создаётся, но к нему пока ничего не прикрепляется (вопрос 9 паспорта тайла).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">DealFinancialInstrumentCreateModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="DealFinancialInstrumentCreateModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"DealFinancialInstrumentCreateModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины: справочники окна — из data/mock-fin-instruments.js через FinInstrumentsStore. Состояния окна — пустое (как открывается из тайла) и заполненное, как на макете.","data":{"_":"Заполненное окно макета: «Кредит», «МСФО».","typeCode":"LOAN","reportingType":"IFRS"},"empty":{"_":"Окно, как оно открывается из тайла: поля пустые."}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- DealFinancialInstrumentCreateModal — окно «Создание финансового инструмента».
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается кнопками
+     «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить
+     вручную» пустого тайла (событие fiaction, action CREATE). Фрагмент вшивается
+     отдельной меткой ds-include: скрим лежит в конце body.
+
+     Макет «Создание финансового инструмента (кнопка Заполнить вручную)» (02.10.2026):
+     два списка — «Тип инструмента» и «Тип отчетности», кнопка «Сохранить». Оба
+     обязательны: пустой список при «Сохранить» — ошибка поля (тултип при фокусе,
+     правило InputText). Опции подставляет DealFinancialInstrumentCreateModal.js из
+     FinInstrumentsStore (typeOptions, reportingOptions). Ниже — заполненный пример
+     макета: «Кредит», «МСФО». «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+<div class="modal-scrim" id="fi-create-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="fi-create-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-create-title">Создание финансового инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-type"><span class="ds-label__text">Тип инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-type-list">
+              <input class="inp__control" id="fi-create-type" autocomplete="off" value="Кредит">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-reporting"><span class="ds-label__text">Тип отчетности</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-reporting-list">
+              <input class="inp__control" id="fi-create-reporting" autocomplete="off" value="МСФО">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-reporting-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-create-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Создание финансового инструмента» — связанный артефакт тайла
+   FinInstrumentsTile. Здесь только стопка полей: отступы тела окна даёт
+   Modal, зазор между полями — токен ДС (поля формы между собой — 16). */
+.lc-fi-create__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   DealFinancialInstrumentCreateModal.js — окно «Создание финансового
+   инструмента» (макет 02.10.2026) и общий слой форм окон ФИ.
+
+   Общий слой PostFinInstrumentForm — им же собраны поля окна изменения ФИ
+   (DealFinancialInstrumentEditModal.js подключается после этого файла):
+     select(scrim, id, opts) → { set(code), get() → code|null, refresh() }
+       Список из InputAutocomplete + DropdownList: значение — только из
+       списка; набранный текст, не совпавший с опцией, при уходе с поля
+       откатывается к выбранному; крестик снимает значение.
+       opts.options() → {code, label}[] · opts.onChange(code)
+     fieldError(input) → { set(message), clear() }
+       Ошибка поля — состояние InputText (.inp--error) и тултип при фокусе
+       (правило InputText: текст ошибки — не в хелпере). Тултип строится
+       DSTooltip и висит на .inp__box поля, как в окне «Сроки сделки».
+
+   Окно:
+     – открывается событием 'fiaction' (action CREATE) тайла «Финансовые
+       инструменты»: поля пустые, как на макете;
+     – «Сохранить»: оба списка обязательны — пустой подсвечивается ошибкой,
+       окно остаётся открытым; иначе FinInstrumentsStore.create и commit,
+       окно закрывается, тайл перерисовывается по commit стора.
+   Крестик, Esc и подложка — без изменений.
+
+   API: PostModalFinInstrumentCreate.open() · use() — заполнить без открытия
+        (витрина)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function has(v) { return v !== null && v !== undefined && v !== ''; }
+
+  /* ── Общий слой: список ─────────────────────────────────────────── */
+
+  function optionHTML(o, selected) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="' + (selected ? 'true' : 'false') + '" data-code="' + esc(o.code) + '">'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">' + esc(o.label) + '</span></span></button>';
+  }
+
+  function select(scrim, id, opts) {
+    opts = opts || {};
+    var control = scrim.querySelector('#' + id);
+    var list = scrim.querySelector('#' + id + '-list');
+    var field = scrim.querySelector('[data-ddl="' + id + '-list"]');
+    var cur = null;
+
+    function options() { return opts.options ? opts.options() : []; }
+    function labelOf(code) {
+      var o = options().filter(function (x) { return x.code === code; })[0];
+      return o ? o.label : '';
+    }
+    function paint() {
+      if (list) list.innerHTML = options().map(function (o) { return optionHTML(o, o.code === cur); }).join('');
+    }
+    function set(code, silent) {
+      cur = has(code) ? code : null;
+      if (control) control.value = labelOf(cur);
+      paint();
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+      if (!silent && opts.onChange) opts.onChange(cur);
+    }
+    /* Набранный руками текст: совпал с опцией — выбор; пусто — значение
+       снято; иначе — откат к выбранному. */
+    function commitTyped() {
+      if (!control || control.disabled) return;
+      var s = String(control.value || '').trim().toLowerCase();
+      if (!s) { if (cur) set(null); return; }
+      var hit = options().filter(function (o) { return o.label.toLowerCase() === s; })[0];
+      if (hit) { if (hit.code !== cur) set(hit.code); else set(cur, true); return; }
+      set(cur, true);
+    }
+
+    paint();
+    if (field && list && window.DSDropdownList) {
+      window.DSDropdownList.bind(field, {
+        list: list,
+        onSelect: function (it) { set(it.getAttribute('data-code')); }
+      });
+    }
+    if (control) {
+      control.addEventListener('change', commitTyped);
+      var inp = control.closest('.inp');
+      if (inp) inp.addEventListener('ds-input:clear', function () { set(null); });
+    }
+    return {
+      set: function (code) { set(code, true); },
+      get: function () { return cur; },
+      refresh: function () { set(cur, true); },
+      commitTyped: commitTyped
+    };
+  }
+
+  /* ── Общий слой: ошибка поля ────────────────────────────────────── */
+
+  /* bind() навешивает показ тултипа на наведение и фокус навсегда, поэтому,
+     пока ошибки нет, показ гасится сразу за ним (как в DealPeriodModal.js). */
+  function fieldError(input) {
+    var inp = input && input.closest('.inp');
+    var box = input && input.closest('.inp__box');
+    var message = '';
+    var api = null;
+
+    function ensure() {
+      if (api || !window.DSTooltip || !box) return api;
+      var o = { type: 'error', placement: 'bottom', align: 'start', multiline: true };
+      var tip = window.DSTooltip.make('', o);
+      box.appendChild(tip);
+      o.tip = tip;
+      api = window.DSTooltip.bind(input, o);
+      ['mouseenter', 'focus'].forEach(function (ev) {
+        input.addEventListener(ev, function () { if (!message && api) api.hide(true); });
+      });
+      return api;
+    }
+
+    return {
+      set: function (msg) {
+        if (!inp) return;
+        message = msg;
+        inp.classList.add('inp--error');
+        input.setAttribute('aria-invalid', 'true');
+        var a = ensure();
+        if (!a) return;
+        a.tip.firstChild.textContent = msg;
+        if (document.activeElement === input) a.show(true);
+      },
+      clear: function () {
+        if (!inp) return;
+        message = '';
+        inp.classList.remove('inp--error');
+        input.removeAttribute('aria-invalid');
+        if (api) api.hide(true);
+      }
+    };
+  }
+
+  window.PostFinInstrumentForm = { select: select, fieldError: fieldError, optionHTML: optionHTML };
+
+  /* ── Окно ───────────────────────────────────────────────────────── */
+
+  var scrim = typeof document !== 'undefined' && document.getElementById('fi-create-scrim');
+  if (!scrim) return;
+
+  function store() { return window.FinInstrumentsStore; }
+
+  var errType = fieldError(scrim.querySelector('#fi-create-type'));
+  var errReporting = fieldError(scrim.querySelector('#fi-create-reporting'));
+  var type = select(scrim, 'fi-create-type', {
+    options: function () { return store() ? store().typeOptions() : []; },
+    onChange: function (code) { if (code) errType.clear(); }
+  });
+  var reporting = select(scrim, 'fi-create-reporting', {
+    options: function () { return store() ? store().reportingOptions() : []; },
+    onChange: function (code) { if (code) errReporting.clear(); }
+  });
+
+  function reset() {
+    type.set(null);
+    reporting.set(null);
+    errType.clear();
+    errReporting.clear();
+  }
+
+  function open() {
+    reset();
+    if (window.DSModal && !scrim.classList.contains('modal-scrim--inline')) window.DSModal.open(scrim);
+  }
+
+  function validate() {
+    type.commitTyped();
+    reporting.commitTyped();
+    var ok = true;
+    if (!type.get()) { errType.set('Выберите тип инструмента'); ok = false; }
+    if (!reporting.get()) { errReporting.set('Выберите тип отчетности'); ok = false; }
+    if (!ok) {
+      var first = scrim.querySelector('.inp--error .inp__control');
+      if (first) first.focus();
+    }
+    return ok;
+  }
+
+  var save = scrim.querySelector('[data-fi-create-save]');
+  if (save) {
+    save.addEventListener('click', function () {
+      var S = store();
+      if (!S || !validate()) return;
+      if (S.create({ typeCode: type.get(), reportingType: reporting.get() })) S.commit();
+      if (scrim.classList.contains('modal-scrim--inline')) return;
+      if (window.DSModal) window.DSModal.closeTop();
+    });
+  }
+
+  /* «+ Фин. инструмент», «+ Финансовый инструмент», «Заполнить вручную» */
+  document.addEventListener('fiaction', function (e) {
+    var d = e.detail || {};
+    if (d.action === 'CREATE') open();
+  });
+
+  window.PostModalFinInstrumentCreate = {
+    open: open,
+    use: function (input) {
+      reset();
+      if (input && input.typeCode) type.set(input.typeCode);
+      if (input && input.reportingType) reporting.set(input.reportingType);
+    }
+  };
+})();
+</script>
+</body>
+</html>

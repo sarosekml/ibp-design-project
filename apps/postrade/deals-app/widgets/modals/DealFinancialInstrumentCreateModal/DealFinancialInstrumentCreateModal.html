@@ -1,0 +1,54 @@
+<!-- DealFinancialInstrumentCreateModal — окно «Создание финансового инструмента».
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается кнопками
+     «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить
+     вручную» пустого тайла (событие fiaction, action CREATE). Фрагмент вшивается
+     отдельной меткой ds-include: скрим лежит в конце body.
+
+     Макет «Создание финансового инструмента (кнопка Заполнить вручную)» (02.10.2026):
+     два списка — «Тип инструмента» и «Тип отчетности», кнопка «Сохранить». Оба
+     обязательны: пустой список при «Сохранить» — ошибка поля (тултип при фокусе,
+     правило InputText). Опции подставляет DealFinancialInstrumentCreateModal.js из
+     FinInstrumentsStore (typeOptions, reportingOptions). Ниже — заполненный пример
+     макета: «Кредит», «МСФО». «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+<div class="modal-scrim" id="fi-create-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="fi-create-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-create-title">Создание финансового инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-type"><span class="ds-label__text">Тип инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-type-list">
+              <input class="inp__control" id="fi-create-type" autocomplete="off" value="Кредит">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-reporting"><span class="ds-label__text">Тип отчетности</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-reporting-list">
+              <input class="inp__control" id="fi-create-reporting" autocomplete="off" value="МСФО">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-reporting-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-create-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
