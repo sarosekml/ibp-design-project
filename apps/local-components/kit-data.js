@@ -143,8 +143,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialMetricsModal.doc.html",
       "owner": "DealFinancialMetricsTile",
       "stub": false,
-      "version": "1.002",
-      "updated": "02.10.2026"
+      "version": "1.004",
+      "updated": "04.10.2026"
     },
     {
       "id": "DealFinancialMetricsTile",
@@ -157,8 +157,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialMetricsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.002",
-      "updated": "02.10.2026"
+      "version": "1.003",
+      "updated": "04.10.2026"
     },
     {
       "id": "DealMetricsCalculationTile",
@@ -339,8 +339,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.000",
-      "updated": "02.10.2026"
+      "version": "1.001",
+      "updated": "04.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",

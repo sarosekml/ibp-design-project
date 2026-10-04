@@ -39,7 +39,7 @@
   gap: var(--space-16);
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-control);
-  background: var(--bg-page);
+  background: var(--tertiary-bg-light);
 }
 .lc-deal-metrics__pe-main,
 .lc-deal-metrics__pe-values {

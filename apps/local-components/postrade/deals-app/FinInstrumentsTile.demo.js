@@ -9,7 +9,10 @@
      генерировать; в просмотре — 1042);
    - «Заполнено частично» — состояние, которое CSS не различает: разметка
      та же, отличаются данные (у карточек 1027 есть прочерки);
-   - «Загрузка» и «Обновление» — на карточках сделки data.
+   - «Загрузка» и «Обновление» — на карточках сделки data;
+   - свитч «Погашенная сделка» — карточки сделки 1048 (Погашена): все её
+     карточки погашены, и в шапке каждой виден сабхедер с фактической датой
+     погашения; выключен — сделка-образец data (1027).
    Витрина правки не сохраняет: FinInstrumentsStore.persist(false),
    ProductTreeStore.persist(false). Карточки рисует FinInstrumentsTile.js
    (PostTileFinInstruments.render) по FinInstrumentsStore — те же функции и
@@ -42,7 +45,7 @@
     if (views) return;
     views = {};
     Object.keys(fx).forEach(function (k) {
-      [fx[k] && fx[k].dealId, fx[k] && fx[k].viewDealId].forEach(function (id) {
+      [fx[k] && fx[k].dealId, fx[k] && fx[k].viewDealId, fx[k] && fx[k].repaidDealId].forEach(function (id) {
         if (id == null || views[id]) return;
         open(id);
         var S = window.FinInstrumentsStore;
@@ -59,17 +62,24 @@
     return o;
   }
 
+  /* Свитч «Погашенная сделка»: включён — показываем сделку, где все карточки
+     погашены (id из fixtures), выключен — сделку-образец data. Признак
+     погашения приходит из данных (карточка погашена, когда все её узлы
+     погашены), а не задаётся сценарием. */
   if (window.FinInstrumentsStore) window.FinInstrumentsStore.persist(false);
   if (window.ProductTreeStore) window.ProductTreeStore.persist(false);
 
   window.IBPKitDemo.register('FinInstrumentsTile', {
     states: ['partial'],
+    controls: function (defs) {
+      return defs.concat([{ key: 'repaid', label: 'Погашенная сделка', bool: true, value: false }]);
+    },
     apply: function (tile, st, ctx) {
       var T = window.PostTileFinInstruments, S = window.FinInstrumentsStore;
       var fx = ctx.fixtures || {};
       if (!T || !S || !window.ProductTreeStore || !fx.data) return;
       snapshot(fx);
-      var id = dealOf(st, fx);
+      var id = st.repaid && fx.data.repaidDealId ? fx.data.repaidDealId : dealOf(st, fx);
       if (!ctx.live) { T.render(tile, views[id].cards, opts(st, views[id].gen)); return; }
       if (String(S.dealId()) !== String(id)) open(id);
       if (!bound) { T.bind(tile, S); T.watchTabs(tile); bound = true; }

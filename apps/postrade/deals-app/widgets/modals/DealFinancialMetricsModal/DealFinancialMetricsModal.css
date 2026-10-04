@@ -22,21 +22,22 @@
 .lc-deal-metrics-modal__panel {
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-m);
-  background: var(--bg-page);
+  background: var(--tertiary-bg-light);
 }
 
 /* Плашка «Данные рассчитываются» в ДС залита --bg-page — тем же цветом, что
    подложка бара, и на подложке пропадает целиком. На макете она темнее
-   подложки; ближе всего к ней --cgrey-100 (им же ДС заливает скелетон бара).
+   подложки — залита семантикой --tertiary-bg, а не рампой: рампа в новых темах
+   ДС не перекрашивается (решение человека 02.10.2026, задача RE0005).
    Только внутри подложки окна и до правки ДС (паспорт, «Открытые вопросы»). */
-.lc-deal-metrics-modal__panel .albar__calc { background: var(--cgrey-100); }
+.lc-deal-metrics-modal__panel .albar__calc { background: var(--tertiary-bg); }
 
 /* ── Разделы «Резервы» и «Переоценка по PE» ─────────────────────────── */
 /* Tile Accordion ДС на подложке окна: фон страницы вместо фона плашки и
    без рамки — на макете раздел лежит серой подложкой, а белое внутри него
    — карточки и таблица. */
 .lc-deal-metrics-modal__section {
-  background: var(--bg-page);
+  background: var(--tertiary-bg-light);
   border-color: transparent;
 }
 
