@@ -28,6 +28,15 @@
    больше двух (ответ человека 30.09.2026). Правки дерева, сохранённые на
    странице сделки, живут в PostApi (post-api.js) и перекрывают этот файл.
 
+   Правила заполнения портфеля (решение человека 04.10.2026): в сделках
+   статусов «Активная», «Погашена» и «Ожидает подтверждения» все
+   прикрепляемые к ФИ узлы (акции, пут и колл РЕПО, дебиторская задолженность
+   и транши) прикреплены к карточкам ФИ своего типа; в «Погашена» (1030, 1039,
+   1048) прикреплённые узлы погашены датой погашения сделки; у сделок с PE
+   (1025, 1032, 1045, 1053, 1060, 1068) признак стоит на акциях, прикреплённых
+   к карточке ФИ с признаком PE, — у 1025, 1045 и 1060 для этого добавлен
+   продукт ДИД «Долевое участие в капитале».
+
    Значения — рыба: даты ISO, суммы — числа, валюта — код ISO 4217.
    ========================================================================= */
 
@@ -265,7 +274,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Договор займа (НКЛ)",
                 "currency": "USD",
                 "balance": "SBERFIN",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2021-02-07",
                 "amount": 1500000,
                 "didEntryAt": null,
@@ -279,7 +288,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2021-02-07",
                     "amount": 750000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1025-1"
+                    ],
                     "repaidAt": null
                   },
                   {
@@ -288,7 +299,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2021-05-07",
                     "amount": 750000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1025-2"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -309,6 +322,54 @@ window.MOCK_DEAL_TREES = {
             "name": "Корп. контроль для старшего кредита",
             "isMandatory": true,
             "instruments": []
+          }
+        ]
+      },
+      {
+        "id": "1025.d3",
+        "code": "EQUITY_PARTICIPATION",
+        "name": "Долевое участие в капитале",
+        "isMain": false,
+        "products": [
+          {
+            "id": "1025.d3.p1",
+            "code": "EQUITY_STAKE",
+            "name": "Долевое участие",
+            "isMandatory": true,
+            "instruments": [
+              {
+                "id": "1025.d3.p1.i1",
+                "code": "SHARES",
+                "name": "Акции / Доли",
+                "currency": "USD",
+                "balance": "SBERFIN",
+                "isPE": true,
+                "signedAt": "2024-05-15",
+                "amount": 120000000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [
+                  "FI-1025-3"
+                ],
+                "repaidAt": null,
+                "tranches": []
+              },
+              {
+                "id": "1025.d3.p1.i2",
+                "code": "CORPORATE_AGREEMENT",
+                "name": "Корп. договор",
+                "currency": "USD",
+                "balance": "SBERFIN",
+                "isPE": false,
+                "signedAt": "2024-05-15",
+                "amount": 50000000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [],
+                "repaidAt": null,
+                "tranches": []
+              }
+            ]
           }
         ]
       }
@@ -780,8 +841,10 @@ window.MOCK_DEAL_TREES = {
                     "currency": "EUR",
                     "signedAt": "2021-08-11",
                     "amount": 9800000,
-                    "fiIds": [],
-                    "repaidAt": null
+                    "fiIds": [
+                      "FI-1030-1"
+                    ],
+                    "repaidAt": "2023-02-11"
                   }
                 ]
               }
@@ -1009,7 +1072,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Пут: РЕПО",
                 "currency": "RUB",
                 "balance": "ООО «СБИ»",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2021-10-24",
                 "amount": 3500000,
                 "didEntryAt": null,
@@ -1061,7 +1124,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2021-11-28",
                     "amount": 1500000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1033-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -1098,7 +1163,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 25000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1034-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -1113,7 +1180,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 120000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1034-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -1153,7 +1222,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "EUR",
                     "signedAt": "2022-01-06",
                     "amount": 3500000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1034-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -1463,8 +1534,10 @@ window.MOCK_DEAL_TREES = {
                 "amount": 450000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
-                "repaidAt": null,
+                "fiIds": [
+                  "FI-1039-3"
+                ],
+                "repaidAt": "2024-10-10",
                 "tranches": []
               },
               {
@@ -1478,8 +1551,10 @@ window.MOCK_DEAL_TREES = {
                 "amount": 800000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
-                "repaidAt": null,
+                "fiIds": [
+                  "FI-1039-4"
+                ],
+                "repaidAt": "2024-10-10",
                 "tranches": []
               }
             ]
@@ -1699,7 +1774,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "JPY",
                     "signedAt": "2022-12-05",
                     "amount": 120000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1043-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -1731,7 +1808,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 3500000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1043-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -1746,7 +1825,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 64000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1043-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -1859,7 +1940,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Договор займа (НКЛ)",
                 "currency": "USD",
                 "balance": "ТрансКапитал",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2023-02-17",
                 "amount": 64000000,
                 "didEntryAt": null,
@@ -1904,6 +1985,54 @@ window.MOCK_DEAL_TREES = {
                 "isPE": false,
                 "signedAt": "2023-02-17",
                 "amount": 9800000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [],
+                "repaidAt": null,
+                "tranches": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1045.d2",
+        "code": "EQUITY_PARTICIPATION",
+        "name": "Долевое участие в капитале",
+        "isMain": false,
+        "products": [
+          {
+            "id": "1045.d2.p1",
+            "code": "EQUITY_STAKE",
+            "name": "Долевое участие",
+            "isMandatory": true,
+            "instruments": [
+              {
+                "id": "1045.d2.p1.i1",
+                "code": "SHARES",
+                "name": "Акции / Доли",
+                "currency": "USD",
+                "balance": "ТрансКапитал",
+                "isPE": true,
+                "signedAt": "2024-05-15",
+                "amount": 120000000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [
+                  "FI-1045-3"
+                ],
+                "repaidAt": null,
+                "tranches": []
+              },
+              {
+                "id": "1045.d2.p1.i2",
+                "code": "CORPORATE_AGREEMENT",
+                "name": "Корп. договор",
+                "currency": "USD",
+                "balance": "ТрансКапитал",
+                "isPE": false,
+                "signedAt": "2024-05-15",
+                "amount": 50000000,
                 "didEntryAt": null,
                 "didExitAt": null,
                 "fiIds": [],
@@ -2163,8 +2292,10 @@ window.MOCK_DEAL_TREES = {
                     "currency": "RUB",
                     "signedAt": "2023-06-08",
                     "amount": 800000,
-                    "fiIds": [],
-                    "repaidAt": null
+                    "fiIds": [
+                      "FI-1048-1"
+                    ],
+                    "repaidAt": "2024-06-08"
                   }
                 ]
               }
@@ -2200,7 +2331,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 1500000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1049-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -2215,7 +2348,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 25000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1049-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -2255,7 +2390,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2023-07-15",
                     "amount": 60000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1049-1"
+                    ],
                     "repaidAt": null
                   },
                   {
@@ -2264,7 +2401,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2023-10-15",
                     "amount": 60000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1049-2"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -2595,7 +2734,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Договор займа (НКЛ)",
                 "currency": "USD",
                 "balance": "ТрансКапитал",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2023-12-10",
                 "amount": 64000000,
                 "didEntryAt": null,
@@ -2638,7 +2777,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Акции / Доли",
                 "currency": "EUR",
                 "balance": "ООО «СБИ»",
-                "isPE": false,
+                "isPE": true,
                 "signedAt": "2023-12-10",
                 "amount": 9800000,
                 "didEntryAt": null,
@@ -2713,7 +2852,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "EUR",
                     "signedAt": "2024-03-10",
                     "amount": 400000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1053-5"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -2750,7 +2891,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 9800000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1054-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -2765,7 +2908,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 450000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1054-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -3230,7 +3375,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 1500000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1057-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -3290,7 +3437,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "EUR",
                     "signedAt": "2024-06-12",
                     "amount": 25000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1058-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -3322,7 +3471,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 120000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1058-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -3337,7 +3488,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 3500000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1058-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -3443,7 +3596,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "JPY",
                     "signedAt": "2024-10-19",
                     "amount": 32000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1059-4"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -3490,7 +3645,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Договор займа (НКЛ)",
                 "currency": "RUB",
                 "balance": "ЮГ ИНВЕСТ",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2024-08-25",
                 "amount": 3500000,
                 "didEntryAt": null,
@@ -3504,7 +3659,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "RUB",
                     "signedAt": "2024-08-25",
                     "amount": 3500000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1060-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -3523,9 +3680,57 @@ window.MOCK_DEAL_TREES = {
                 "name": "Корп. договор",
                 "currency": "RUB",
                 "balance": "ЮГ ИНВЕСТ",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2024-08-25",
                 "amount": 64000000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [],
+                "repaidAt": null,
+                "tranches": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1060.d2",
+        "code": "EQUITY_PARTICIPATION",
+        "name": "Долевое участие в капитале",
+        "isMain": false,
+        "products": [
+          {
+            "id": "1060.d2.p1",
+            "code": "EQUITY_STAKE",
+            "name": "Долевое участие",
+            "isMandatory": true,
+            "instruments": [
+              {
+                "id": "1060.d2.p1.i1",
+                "code": "SHARES",
+                "name": "Акции / Доли",
+                "currency": "RUB",
+                "balance": "ЮГ ИНВЕСТ",
+                "isPE": true,
+                "signedAt": "2024-05-15",
+                "amount": 120000000,
+                "didEntryAt": null,
+                "didExitAt": null,
+                "fiIds": [
+                  "FI-1060-3"
+                ],
+                "repaidAt": null,
+                "tranches": []
+              },
+              {
+                "id": "1060.d2.p1.i2",
+                "code": "CORPORATE_AGREEMENT",
+                "name": "Корп. договор",
+                "currency": "RUB",
+                "balance": "ЮГ ИНВЕСТ",
+                "isPE": false,
+                "signedAt": "2024-05-15",
+                "amount": 50000000,
                 "didEntryAt": null,
                 "didExitAt": null,
                 "fiIds": [],
@@ -3579,7 +3784,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 64000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1061-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -3785,7 +3992,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "JPY",
                     "signedAt": "2024-12-14",
                     "amount": 450000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1063-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -3822,7 +4031,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 800000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1064-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -3837,7 +4048,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 1500000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1064-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -3877,7 +4090,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "RUB",
                     "signedAt": "2025-01-20",
                     "amount": 25000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1064-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -3934,7 +4149,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2025-05-26",
                     "amount": 750000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1065-3"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -4070,7 +4287,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 120000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1067-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -4125,7 +4344,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "JPY",
                     "signedAt": "2025-05-11",
                     "amount": 64000000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1067-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -4157,7 +4378,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Договор займа (НКЛ)",
                 "currency": "RUB",
                 "balance": "ЮГ ИНВЕСТ",
-                "isPE": true,
+                "isPE": false,
                 "signedAt": "2025-06-17",
                 "amount": 3500000,
                 "didEntryAt": null,
@@ -4200,7 +4421,7 @@ window.MOCK_DEAL_TREES = {
                 "name": "Акции / Доли",
                 "currency": "USD",
                 "balance": "АгроБаланс",
-                "isPE": false,
+                "isPE": true,
                 "signedAt": "2025-06-17",
                 "amount": 64000000,
                 "didEntryAt": null,
@@ -4303,7 +4524,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 64000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1069-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -4318,7 +4541,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 9800000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1069-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }
@@ -4363,7 +4588,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "EUR",
                     "signedAt": "2025-08-28",
                     "amount": 9800000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1070-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -4526,7 +4753,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 800000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1072-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -4586,7 +4815,9 @@ window.MOCK_DEAL_TREES = {
                     "currency": "USD",
                     "signedAt": "2025-12-19",
                     "amount": 1500000,
-                    "fiIds": [],
+                    "fiIds": [
+                      "FI-1073-1"
+                    ],
                     "repaidAt": null
                   }
                 ]
@@ -4618,7 +4849,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 25000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1073-3"
+                ],
                 "repaidAt": null,
                 "tranches": []
               },
@@ -4633,7 +4866,9 @@ window.MOCK_DEAL_TREES = {
                 "amount": 120000000,
                 "didEntryAt": null,
                 "didExitAt": null,
-                "fiIds": [],
+                "fiIds": [
+                  "FI-1073-4"
+                ],
                 "repaidAt": null,
                 "tranches": []
               }

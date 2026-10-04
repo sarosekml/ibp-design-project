@@ -126,6 +126,20 @@
 
   /* ── Инструменты карточки ───────────────────────────────────────── */
 
+  /* Текст о фактическом погашении — один на сабхедер карточки и строку узла. */
+  function repaidText(iso) {
+    return detailLabel('repaidAt') + (has(iso) ? ' ' + fmtDate(iso) : '');
+  }
+
+  /* Сабхедер шапки карточки: у погашенной карточки — строка о фактической
+     дате погашения, та же, что у прикреплённого узла, слотом Tile Subtitle
+     (иконка check-circle-filled, тон success). */
+  function subtitleHTML(c) {
+    if (!c.isRepaid) return '';
+    return '<p class="tile__subtitle"><span class="tile__subtitle-icon tile__subtitle-icon--success">'
+      + '<i data-icon="check-circle-filled"></i></span>' + esc(repaidText(c.repaidAt)) + '</p>';
+  }
+
   function metaItemHTML(d) {
     var date = DATE_FIELDS[d.field] === 1;
     var text;
@@ -140,7 +154,7 @@
   function nodeHTML(n, edit) {
     var status = n.repaidAt
       ? '<div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i>'
-        + '<span class="prow__status-text">' + esc(detailLabel('repaidAt') + ' ' + fmtDate(n.repaidAt)) + '</span></div>'
+        + '<span class="prow__status-text">' + esc(repaidText(n.repaidAt)) + '</span></div>'
       : '';
     var meta = (n.details || []).length
       ? '<div class="prow__meta">' + n.details.map(metaItemHTML).join('') + '</div>' : '';
@@ -172,7 +186,8 @@
     var pe = c.isPE
       ? '<span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">Private Equity</span></span></span>' : '';
     return '<header class="tile__header"><div class="tile__header-main">'
-      + '<div class="tile__title-row"><h4 class="tile__title">' + esc(c.name) + '</h4>' + pe + '</div></div>'
+      + '<div class="tile__title-row"><h4 class="tile__title">' + esc(c.name) + '</h4>' + pe + '</div>'
+      + subtitleHTML(c) + '</div>'
       + '<div class="tile__actions">'
       /* страницы финансового инструмента в прототипе нет (02.10.2026) */
       + '<button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button>'

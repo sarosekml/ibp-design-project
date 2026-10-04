@@ -42,7 +42,8 @@
    – «Плановая дата погашения» — в дереве такого поля нет, источник не решён
      (02.10.2026): пока всегда пусто;
    – карточка погашена, когда к ней прикреплены узлы и все они погашены
-     (допущение агента 02.10.2026);
+     (допущение агента 02.10.2026); дата погашения карточки — самая поздняя из
+     прикреплённых узлов, её показывает сабхедер шапки (04.10.2026);
    – «Сгенерировать автоматически» — одна карточка на каждый тип
      прикрепляемых узлов дерева, у которых ещё нет связи с ФИ; узлы сразу
      прикрепляются к своей карточке (решение человека 02.10.2026). Тип
@@ -226,6 +227,8 @@
    * @property {string[]} rwaCodes
    * @property {string|null} errorText
    * @property {{id, number, name, details, repaidAt, isIfrsOption}[]} nodes прикреплённые узлы
+   * @property {string|null} repaidAt       самая поздняя дата погашения прикреплённых
+   *           узлов; у погашенной карточки — сабхедер шапки, у непогашенной null
    * @property {boolean} isRepaid           узлы есть и все погашены
    * @property {boolean} isFilled           есть хоть одно значение кроме созданных с карточкой
    */
@@ -258,6 +261,8 @@
       };
     });
     v.isRepaid = linked.length > 0 && linked.every(function (n) { return has(n.raw.repaidAt); });
+    var repaidDates = linked.map(function (n) { return n.raw.repaidAt; }).filter(has).sort();
+    v.repaidAt = v.isRepaid ? repaidDates[repaidDates.length - 1] : null;
     v.isFilled = linked.length > 0 || Object.keys(DEFAULTS).some(function (k) {
       if (k === 'rwaCodes' || k === 'errorText') return false;
       return FLAGS[k] ? card[k] === true : has(card[k]);

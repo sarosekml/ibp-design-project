@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 302.
+Документов: 304.
 
 ## Корень (4)
 
@@ -236,7 +236,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (136)
+## Приложения (138)
 
 | Документ | Аннотация |
 |---|---|
@@ -455,6 +455,13 @@
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
+
+### apps/postrade/deals-app — снимки задач
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/deals-app/FinInstrumentsCard.handoff.md](../apps/postrade/deals-app/FinInstrumentsCard.handoff.md) | FinInstrumentsCard — handoff |
+| [apps/postrade/deals-app/PortfolioData.handoff.md](../apps/postrade/deals-app/PortfolioData.handoff.md) | PortfolioData — handoff |
 
 ### apps/postrade/payments-app
 
