@@ -129,6 +129,7 @@
   <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
   <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
   <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Popover">
@@ -155,7 +156,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.008</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.010</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>Popover</h1>
     <p class="lead">Popover — нон-модальный всплывающий контейнер, привязанный к триггеру. Показывает расширенный контекстный контент (текст с форматированием, интерактивные элементы, формы, легенды, списки). В отличие от <a class="inl" href="../../molecules/Tooltip/Tooltip.html">Tooltip</a> — требует клика для открытия и не закрывается при уходе курсора; в отличие от <b>Modal</b> — не блокирует страницу, не имеет скрима и закрывается кликом вне себя.</p>
@@ -716,6 +717,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   padding: var(--pop-body-pad-y) var(--pop-pad-x);
   display: flex;
   flex-direction: column;
@@ -727,13 +729,15 @@ window.DS_SPLIT_SWITCH_LABELS = {
    скругление полное, цвет --secondary, без дорожки, уголка и стрелок. В покое
    скрыт, при прокрутке появляется и гаснет: класс .is-scrolling ставит
    ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
-   своей видимой рамки у .pop__body не бывает. Резерв места не ставится.
+   своей видимой рамки у .pop__body не бывает. Резерв места —
+   `scrollbar-gutter: stable`: ширина не зависит от появления бегунка (RE0007).
    1.008; до этого бегунок --border-light был виден всегда (решение человека
    01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .pop__body {
   --scroll-w: 8px;
   --scroll-show: .1s;
   --scroll-fade: .3s;
+  scrollbar-gutter: stable;
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

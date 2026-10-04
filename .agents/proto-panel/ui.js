@@ -8,6 +8,9 @@
 
    Вся разметка — компоненты ДС; своё (ручка ширины, плеер, кнопка, липкий
    ряд табов, узлы схемы, карточки) — классы pp-* на токенах, panel.css.
+   Корни панели и её плавающие слои (меню, список, тултип) помечены
+   data-theme="service" — служебная тема, не зависящая от темы страницы
+   (RE0005, Э6).
    Слой, фокус, Esc и клик мимо — рантайм ДС (ds-modal.js), своей копии нет.
    Атрибуты, которые ловят обработчики страниц (data-act и т. п.), панель
    не использует: только id pp-* и атрибуты data-pp-*. Тексты — strings.js
@@ -758,6 +761,26 @@
 
   /* ---------------- монтирование ---------------- */
 
+  /* Плавающие слои панели (меню, список, тултип) DSFloat уводит в общий слой
+     в body — уже вне корней панели, и они потеряли бы её тему. Помечаем
+     служебной темой по исходному родителю ДО переезда; слои страницы не
+     трогаем (у них home вне OWN). */
+  function serviceFloats() {
+    var F = window.DSFloat;
+    if (!F || F.__ppService) return;
+    var mount = F.mount;
+    F.mount = function (node, opts) {
+      try {
+        var home = node && node.parentNode;
+        if (home && home.closest && home.closest(OWN) && !node.hasAttribute('data-theme')) {
+          node.setAttribute('data-theme', 'service');
+        }
+      } catch (e) { /* монтирование важнее пометки */ }
+      return mount.call(F, node, opts);
+    };
+    F.__ppService = true;
+  }
+
   function mount() {
     if (mounted) return;
     mounted = true;
@@ -774,6 +797,11 @@
     document.body.appendChild(el.settings);
     el.confirm = buildConfirm();
     document.body.appendChild(el.confirm);
+    /* Служебная тема: корни панели не наследуют тему страницы. */
+    [root[0], root[1], el.drawer, el.settings, el.confirm].forEach(function (node) {
+      if (node) node.setAttribute('data-theme', 'service');
+    });
+    serviceFloats();
 
     if (window.DSDrawer) window.DSDrawer.bind(el.fab, { onOpen: onOpened, onClose: onClosed });
     el.fab.setAttribute('data-tooltip', store.data() ? t('panel.hotkeyTip', { key: HK.toggle }) : t('panel.noDataTip', { tool: TOOL }));

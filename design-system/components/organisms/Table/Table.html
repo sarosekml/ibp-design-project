@@ -78,6 +78,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .st-card .dtable__body{max-height:none;}
 .st-card .dtable{width:100%;}
 </style>
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Table">
@@ -112,8 +113,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>1.020</b></span>
-    <span>Обновлено <b>27.09.2026</b></span>
+    <span>Версия <b>1.021</b></span>
+    <span>Обновлено <b>04.10.2026</b></span>
     <span>CSS <b>components/organisms/Table/Table.css</b></span>
     <span>Зависимости <b>table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu</b></span>
   </div>
@@ -598,7 +599,7 @@ onSelectionChange(count): bulkRow.hidden = (count === 0)
 /* ------------------------------------------------------------------ */
 /*  BODY — скролл-контейнер с липкой шапкой                            */
 /* ------------------------------------------------------------------ */
-.dtable__body { position: relative; overflow: auto; }
+.dtable__body { position: relative; overflow: auto; overflow: overlay; }
 .dtable__body .tbl { border: none; border-radius: 0; overflow: visible; }
 
 /* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,

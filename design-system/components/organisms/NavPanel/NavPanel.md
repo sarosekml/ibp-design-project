@@ -1,8 +1,8 @@
 ---
 component: NavPanel
 title: "Панель навигации"
-version: "1.022"
-updated: "01.10.2026"
+version: "1.024"
+updated: "04.10.2026"
 page: components/organisms/NavPanel/NavPanel.html
 page_js: components/organisms/NavPanel/NavPanel.page.js
 runtime: components/organisms/NavPanel/NavPanel.js (+ components/molecules/Tooltip/Tooltip.js — тултип усечённой подписи пункта/футера)

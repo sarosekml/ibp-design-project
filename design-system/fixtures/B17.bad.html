@@ -1,0 +1,37 @@
+<!-- @dsCard group="Fixtures" name="B17" viewport="1440x900" -->
+<!DOCTYPE html>
+<!-- ФИКСТУРА линтера: B17. Получена из `_base.ok.html` снятием класса
+     `ds-split` у `<main>` — так выглядит страница старого образца (главная ДС,
+     Colors, Icons и др.).
+     ДЕФЕКТ: страница ДС без служебного тега темы
+     `<script src="…/docs-kit/ds-theme-boot.js">`. Тогда тема на неё не
+     попадает: ни `data-theme`, ни CSS тем, ни переключатель. ds-split-страницы
+     держит правило ДС20 (docs-split check); здесь — остальные.
+     Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на эталоне — `lessons-cli verify`. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фикстура B17 — Дизайн-система</title>
+<link rel="stylesheet" href="../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../components/molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../docs-kit/ds-toc.css">
+<style>
+  .fx-note { font: var(--type-body-m); color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<main class="page">
+  <p class="meta">Версия: <b>1.000</b> · Обновлено: <b>02.10.2026</b></p>
+  <p class="fx-note">Страница старого образца без тега темы.</p>
+</main>
+<script src="../docs-kit/ds-toc.js"></script>
+<script src="../components/molecules/Splitter/Splitter.js"></script>
+<script src="../docs-kit/docs-split.js"></script>
+</body>
+</html>

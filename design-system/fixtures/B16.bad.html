@@ -1,0 +1,47 @@
+<!-- @dsCard group="Fixtures" name="B16" viewport="1440x900" -->
+<!DOCTYPE html>
+<!-- ФИКСТУРА линтера: B16. Получена из `_base.ok.html` добавлением одной
+     ссылки на имя темы ДС (`--color-*`) — так, как это сделал бы экран или
+     виджет до переезда.
+     ДЕФЕКТ: в собственном <style> стоит `var(--color-fg-secondary)`. Файлы тем
+     знают это имя, но у разработки и продукта таких имён нет — компонент или
+     экран обязан писать старое имя (`--text-secondary`). B1 такое ссылку
+     принимает (определения видны в генерате), поэтому нужен отдельный сторож.
+     Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на эталоне — `lessons-cli verify`. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фикстура B16 — Дизайн-система</title>
+<link rel="stylesheet" href="../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../components/molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../docs-kit/ds-toc.css">
+<style>
+  .fx-note { font: var(--type-body-m); color: var(--color-fg-secondary); }
+</style>
+</head>
+<body>
+<main class="page ds-split">
+  <p class="meta">Версия: <b>1.000</b> · Обновлено: <b>02.10.2026</b></p>
+  <div class="splitpane">
+    <div class="splitpane__a">
+      <div id="pg-controls">
+        <div class="ctl"><span class="lbl">Вариант</span></div>
+        <div class="inp inp--m"><div class="inp__field"><input class="inp__control"></div></div>
+      </div>
+    </div>
+    <div class="splitpane__b">
+      <p class="fx-note">Область предпросмотра.</p>
+    </div>
+  </div>
+</main>
+<script src="../docs-kit/ds-toc.js"></script>
+<script src="../components/molecules/Splitter/Splitter.js"></script>
+<script src="../docs-kit/docs-split.js"></script>
+</body>
+</html>

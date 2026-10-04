@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!root) return;
     const groups = [
       { name: 'Поверхность', rows: [
-        ['Фон модалки', '--bg-popup'], ['Скрим', '--modal-scrim'],
+        ['Фон модалки', '--bg-popup'], ['Фон карточек в окне', '--modal-surface'], ['Скрим', '--modal-scrim'],
         ['Разделитель шапка/подвал', '--border-light'], ['Тень', '--shadow-modal-form (--elevation, не color)'],
       ]},
       { name: 'Типографика', rows: [

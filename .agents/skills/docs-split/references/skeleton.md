@@ -21,9 +21,16 @@
 <link rel="stylesheet" href="../../../docs-kit/pg-kit.css">
 <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 <link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<!-- последним в <head>, после <style> страницы: тема до первой отрисовки -->
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 ```
 
 `ds-toc.css` отсутствует; `pg-kit.css` остаётся (CSS), `pg-kit.js` — нет.
+Служебный тег `docs-kit/ds-theme-boot.js` (RE0005) — обязателен, один, идёт
+последним в `<head>` (после `<style>`): ставит `data-theme` на `<html>` из
+`?theme=`/`localStorage` и подключает `Themes.css` + `Themes.pages.css`.
+Путь до ДС — тот же, что у `window.__DS_ROOT` (у компонента `../../../`,
+у основы `../../`). Ловится проверкой `ДС20`.
 
 ## body — каркас
 

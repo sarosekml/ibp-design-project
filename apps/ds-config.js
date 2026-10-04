@@ -11,7 +11,22 @@ var DS_PATH = "../design-system/";
   if (!me || !me.src) { console.error("apps/ds-config.js подключён не обычным тегом — ДС не загрузится"); return; }
   var DS = new URL(DS_PATH, me.src).href;
   window.__DS_ROOT = DS;
-  document.documentElement.style.setProperty('--boot-bg-illustration', 'url("' + DS + 'assets/illustrations/background-illustration.svg")');
+  /* Тема ДС до первой отрисовки (RE0005): ?theme= или сохранённый выбор.
+     Без выбранной темы атрибут не ставится — legacy как прежде. */
+  try {
+    var tm = /[?&]theme=([^&#]*)/.exec(window.location.search || '');
+    var th = tm ? decodeURIComponent(tm[1]) : window.localStorage.getItem('ds.theme');
+    if (th && th !== 'legacy') document.documentElement.setAttribute('data-theme', th);
+  } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }
+  /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный
+     вариант; ставится после темы и обновляется на её смену (RE0011). */
+  var applyBg = function () {
+    var thNow = document.documentElement.getAttribute('data-theme');
+    var dark = thNow === 'ibp-dark' || thNow === 'service';
+    document.documentElement.style.setProperty('--boot-bg-illustration', 'url("' + DS + 'assets/illustrations/background-illustration' + (dark ? '-dark' : '') + '.svg")');
+  };
+  applyBg();
+  if (document.addEventListener) document.addEventListener('ds:themechange', applyBg);
   document.write('<link rel="icon" type="image/svg+xml" href="' + DS + 'assets/logo.svg">');
   document.write('<link rel="stylesheet" href="' + DS + 'ds.css">');
 })();

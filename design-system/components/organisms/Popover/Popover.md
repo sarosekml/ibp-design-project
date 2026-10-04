@@ -1,8 +1,8 @@
 ---
 component: Popover
 title: "Popover"
-version: "1.008"
-updated: "01.10.2026"
+version: "1.010"
+updated: "04.10.2026"
 page: components/organisms/Popover/Popover.html
 page_js: components/organisms/Popover/Popover.page.js
 runtime: components/organisms/Popover/Popover.js

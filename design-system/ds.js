@@ -65,6 +65,8 @@
     'components/molecules/Splitter/Splitter.js',
     'foundations/Layout/Layout.js',
     'foundations/Illustrations/Illustrations.js',
+    'foundations/Themes/Themes.tokens.js',
+    'foundations/Themes/Themes.js',
     'utils/ds-include.js'
   ];
   var html = '';

@@ -1,0 +1,94 @@
+/* ============================================================
+   Themes.panel.css — хром сервисного окна тем ДС (RE0005, Э3.2).
+   Не компонент ДС: позиция круглой кнопки и панели, список тем.
+   Содержимое собрано из компонентов (IconButton, Buttons, Link),
+   значения — токены. Подключает foundations/Themes/Themes.js,
+   если CSS на странице ещё нет; в ds.css не входит (вне бандла).
+   ============================================================ */
+
+.ds-theme-launcher {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 9800;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  touch-action: none;          /* кнопку тащат указателем, жест не отдан странице */
+}
+.ds-theme-launcher[hidden] { display: none; }
+
+/* Перетаскивание кнопки левой клавишей: см. Themes.js. */
+.ds-theme-launcher .ibtn { cursor: grab; }
+.ds-theme-launcher.is-dragging,
+.ds-theme-launcher.is-dragging .ibtn { cursor: grabbing; }
+
+/* Метка активной темы: снимок экрана не должен уйти в новой теме незаметно. */
+.ds-theme-launcher__mark {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-full);
+  background: var(--primary-bg);
+  color: var(--primary);
+  font: var(--type-body-s-strong);
+  white-space: nowrap;
+}
+.ds-theme-launcher__mark[hidden] { display: none; }
+
+.ds-theme-panel {
+  position: fixed;
+  left: 24px;
+  bottom: 76px;
+  z-index: 9800;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  background: var(--bg-tile);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-l);
+  box-shadow: var(--elevation-5);
+}
+.ds-theme-panel[hidden] { display: none; }
+
+.ds-theme-panel__title {
+  margin: 0;
+  padding: var(--space-4) var(--space-8);
+  font: var(--type-body-s-strong);
+  color: var(--text-inactive);
+}
+
+.ds-theme-panel__list { display: flex; flex-direction: column; gap: 2px; }
+
+.ds-theme-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  padding: var(--space-8);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: none;
+  color: var(--text-primary);
+  font: var(--type-body-m);
+  text-align: left;
+  cursor: pointer;
+}
+.ds-theme-item:hover { background: var(--bg-table-default-hover); }
+.ds-theme-item.is-active { background: var(--primary-bg); color: var(--primary); }
+
+.ds-theme-item__label { flex: 1 1 auto; }
+.ds-theme-item__check { flex: none; visibility: hidden; color: var(--primary); }
+.ds-theme-item.is-active .ds-theme-item__check { visibility: visible; }
+
+.ds-theme-panel__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border-light);
+}

@@ -1,0 +1,98 @@
+/* ============================================================
+   Themes.pages.css — генерат theme-build.mjs (RE0005–RE0006, 04.10.2026). Руками не править.
+   Только для страниц ДС: перекрашивает инлайн-стили демо и блоки <style>
+   страниц. На страницу ставит docs-kit/ds-theme-boot.js.
+   ============================================================ */
+
+/* Блоки <style> страниц ДС: стиль страницы идёт после подключённых
+   файлов, поэтому тема добавляет :root[data-theme] к селектору. */
+:root[data-theme] .anat__legend li .n {
+  color: var(--color-fg-on-fill);
+}
+:root[data-theme] .anat__num {
+  color: var(--color-fg-on-fill);
+}
+:root[data-theme] .anat__stage {
+  background: color-mix(in srgb,var(--color-accent-fill) 5%,var(--color-bg-surface));
+}
+:root[data-theme] .anat-dia .mk {
+  color: var(--color-fg-on-fill);
+}
+:root[data-theme] .anat2__legend li .n {
+  color: var(--color-fg-on-fill);
+}
+:root[data-theme] .badge-proposal {
+  background: var(--color-bg-muted);
+}
+:root[data-theme] .card:hover {
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--color-shadow) 8%, transparent);
+}
+:root[data-theme] .demo-vscroll__footer {
+  box-shadow: 0 -6px 12px -10px color-mix(in srgb, var(--color-shadow) 25%, transparent);
+}
+:root[data-theme] .dropdown__menu {
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--color-shadow) 16%, transparent);
+}
+:root[data-theme] .entity-stage__card {
+  box-shadow: var(--elevation-1,0 1px 2px color-mix(in srgb, var(--color-shadow) 6%, transparent));
+}
+:root[data-theme] .ex-menu {
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--color-shadow) 12%, transparent);
+}
+:root[data-theme] .ex-modal {
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--color-shadow) 14%, transparent);
+}
+:root[data-theme] .mcard {
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-shadow) 6%, transparent);
+}
+:root[data-theme] .mk {
+  color: var(--color-fg-on-fill);
+}
+:root[data-theme] .navcell {
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-shadow) 6%, transparent);
+}
+:root[data-theme] .pg__stage {
+  background: linear-gradient(var(--color-bg-surface),var(--color-bg-surface)) padding-box, repeating-conic-gradient(var(--color-bg-sunken) 0% 25%, var(--color-bg-page) 0% 50%) 0 / 22px 22px;
+}
+:root[data-theme] .pg-range::-moz-range-thumb {
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+}
+:root[data-theme] .pg-range::-webkit-slider-thumb {
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+}
+:root[data-theme] .pv-colors {
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-shadow) 12%, transparent);
+}
+:root[data-theme] .stripe span {
+  border: 1px solid var(--color-border-subtle);
+}
+:root[data-theme] .surface {
+  box-shadow: 0 6px 26px -18px color-mix(in srgb, var(--color-shadow) 40%, transparent);
+}
+:root[data-theme] ol.steps li::before {
+  color: var(--color-fg-on-fill);
+}
+
+/* Инлайн-стили демо страниц ДС: по значению атрибута style, !important */
+/* перебивает инлайн; гейт :root[data-theme] — в legacy не действует. */
+:root[data-theme] [style*="border:1px solid rgba(40,50,55,.12)"] {
+  border-color: var(--color-border-subtle) !important;
+}
+:root[data-theme] [style*="background:var(--swamp-100)"] {
+  background: var(--color-bg-muted) !important;
+}
+:root[data-theme] [style*="background:var(--swamp-100,#E1EDE7)"] {
+  background: var(--color-bg-muted) !important;
+}
+:root[data-theme] [style*="background:var(--cgrey-100)"] {
+  background: var(--color-bg-muted) !important;
+}
+:root[data-theme] [style*="background:var(--mgrey-50)"] {
+  background: var(--color-bg-surface) !important;
+}
+:root[data-theme] [style*="background:var(--mgrey-50,#fff)"] {
+  background: var(--color-bg-surface) !important;
+}
+:root[data-theme] [style*="background:var(--swamp-A100,#EEF4F4)"] {
+  background: var(--color-bg-page) !important;
+}

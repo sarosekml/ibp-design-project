@@ -15,7 +15,9 @@
        2. ds-lint-cli.mjs --parity              — документация = код
        3. spec-audit.mjs                        — обещания спек против кода
        4. ds-icon.mjs --selftest                — рантайм иконок: уникальные id копий (задача 0007)
-       5. ds-lint-cli.mjs <все страницы ДС>     — одним вызовом
+       5. theme-build.mjs --check               — генерат тем = источник RE0005
+       6. illustration-dark.mjs --check|--selftest — тёмные варианты иллюстраций RE0011
+       7. ds-lint-cli.mjs <все страницы ДС>     — одним вызовом
 
    Раскатка docs-split — инструмент харнеса агента: где он лежит, говорит
    манифест проекта (kit-link.mjs). ДС без проекта — шаг печатается строкой
@@ -40,6 +42,8 @@ const DS_LINT = L.abs(L.at.lintCli);
 const SPEC_AUDIT = L.abs(L.at.specAudit);
 const DS_ICON = L.abs(L.at.iconTool);
 const DOCS_SPLIT = kitFile('skills/docs-split/tooling/docs-split.mjs');
+const THEME_BUILD = path.join(ROOT, 'tools', 'theme-build.mjs');
+const ILLU_DARK = path.join(ROOT, 'tools', 'illustration-dark.mjs');
 
 const argv = process.argv.slice(2);
 const all = argv.includes('--all');
@@ -55,6 +59,13 @@ if (all) {
   steps.push(['линтер, глобальные правила', [DS_LINT]]);
   steps.push(['линтер --parity', [DS_LINT, '--parity']]);
   steps.push(['spec-audit', [SPEC_AUDIT]]);
+  /* Генерат тем сверяется с источником (RE0005): правка компонента или
+     генерата врозь с Themes.tokens.js не пройдёт молча. */
+  steps.push(['темы = источник (theme-build --check)', [THEME_BUILD, '--check']]);
+  /* Тёмные варианты иллюстраций (RE0011) сверяются с источником и проверяются
+     откатом: правка исходного SVG врозь с генератом не пройдёт молча. */
+  steps.push(['иллюстрации = источник (illustration-dark --check)', [ILLU_DARK, '--check']]);
+  steps.push(['иллюстрации, откат (illustration-dark --selftest)', [ILLU_DARK, '--selftest']]);
   steps.push(['иконки --selftest', [DS_ICON, '--selftest']]);
   const pages = L.pages().map((p) => p.rel).sort();
   steps.push(['линтер, страницы — ' + pages.length, [DS_LINT, ...pages]]);

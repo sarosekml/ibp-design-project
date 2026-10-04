@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 275.
+Документов: 301.
 
 ## Корень (4)
 
@@ -65,7 +65,7 @@
 | [README.md](../README.md) | — |
 | [index.screen.md](../index.screen.md) | Хаб проектов |
 
-## Дизайн-система (71)
+## Дизайн-система (72)
 
 | Документ | Аннотация |
 |---|---|
@@ -141,6 +141,7 @@
 | [design-system/foundations/Layout/Layout.md](../design-system/foundations/Layout/Layout.md) | Каркас экрана |
 | [design-system/foundations/Radius/Radius.md](../design-system/foundations/Radius/Radius.md) | Скругления |
 | [design-system/foundations/Spacing/Spacing.md](../design-system/foundations/Spacing/Spacing.md) | Сетка и отступы |
+| [design-system/foundations/Themes/Themes.md](../design-system/foundations/Themes/Themes.md) | Темы (Themes) |
 | [design-system/foundations/Typography/Typography.md](../design-system/foundations/Typography/Typography.md) | Типографика |
 
 ### design-system/specs
@@ -531,12 +532,23 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (24)
+## Задачи и заметки (49)
 
 ### Архив/черновики
 
 | Документ | Аннотация |
 |---|---|
+| [docs/misc/RE0005-themes/audit.md](misc/RE0005-themes/audit.md) | RE0005 · Э1 — аудит текущей палитры ДС |
+| [docs/misc/RE0005-themes/map.md](misc/RE0005-themes/map.md) | RE0005 · Э2 — словарь ролей и карта «старое → новое» |
+| [docs/misc/RE0006-palette/lesson-170.md](misc/RE0006-palette/lesson-170.md) | — |
+| [docs/misc/RE0006-palette/lesson-171.md](misc/RE0006-palette/lesson-171.md) | — |
+| [docs/misc/RE0006-palette/lesson-172.md](misc/RE0006-palette/lesson-172.md) | — |
+| [docs/misc/RE0006-palette/lesson-173.md](misc/RE0006-palette/lesson-173.md) | — |
+| [docs/misc/RE0007-palette-polish/lesson.md](misc/RE0007-palette-polish/lesson.md) | — |
+| [docs/misc/RE0008-palette-legacy/lesson.md](misc/RE0008-palette-legacy/lesson.md) | — |
+| [docs/misc/RE0009-scroll-dark/lesson.md](misc/RE0009-scroll-dark/lesson.md) | — |
+| [docs/misc/RE0010-scroll-dark-2/lesson-2.md](misc/RE0010-scroll-dark-2/lesson-2.md) | — |
+| [docs/misc/RE0010-scroll-dark-2/lesson.md](misc/RE0010-scroll-dark-2/lesson.md) | — |
 | [docs/misc/agent-imp.md](misc/agent-imp.md) | Задача: привести обвязку агента в порядок до реструктуризации |
 | [docs/misc/clients-app-all.md](misc/clients-app-all.md) | clients-app — объединённые дизайн-спецификации |
 | [docs/misc/clients-app-tree.md](misc/clients-app-tree.md) | clients-app — структура папки |
@@ -561,6 +573,13 @@
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
+| [docs/tasks/RE0005-ds-themes.md](tasks/RE0005-ds-themes.md) | Темы ДС: новая палитра (светлая и тёмная) поверх текущей, переключатель тем, основа кастомных тем |
+| [docs/tasks/RE0006-ds-palette.md](tasks/RE0006-ds-palette.md) | Палитра ДС: новая светлая и тёмная темы по эталону Untitled UI, сервисная на пурпуре, инструкция переезда для разработки |
+| [docs/tasks/RE0007-ds-palette-polish.md](tasks/RE0007-ds-palette-polish.md) | Полировка палитры и тем: статусы как в legacy, границы, иконки, навигация, скролл, перетаскивание кнопки тем |
+| [docs/tasks/RE0008-ds-palette-legacy.md](tasks/RE0008-ds-palette-legacy.md) | Палитра: возврат legacy для графиков и статусов, синева neutral, аутлайны и мелочи |
+| [docs/tasks/RE0009-ds-scroll-dark.md](tasks/RE0009-ds-scroll-dark.md) | Оверлейные полосы прокрутки и читаемость тёмной темы |
+| [docs/tasks/RE0010-ds-scroll-dark-2.md](tasks/RE0010-ds-scroll-dark-2.md) | Скролл без системной полосы, слои тёмной темы, фокус списка, тёмная иллюстрация |
+| [docs/tasks/RE0011-ds-illustrations-dark.md](tasks/RE0011-ds-illustrations-dark.md) | Тёмные варианты иллюстраций и фон главной |
 
 ### Снимки задач
 
@@ -571,6 +590,13 @@
 | [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 | [docs/tasks/RE0003-fin-instruments-tile.handoff.md](tasks/RE0003-fin-instruments-tile.handoff.md) | RE0003 FinInstrumentsTile — handoff |
 | [docs/tasks/RE0004-local-components-template.handoff.md](tasks/RE0004-local-components-template.handoff.md) | RE0004 — handoff |
+| [docs/tasks/RE0005-ds-themes.handoff.md](tasks/RE0005-ds-themes.handoff.md) | RE0005 — handoff |
+| [docs/tasks/RE0006-ds-palette.handoff.md](tasks/RE0006-ds-palette.handoff.md) | RE0006 — handoff |
+| [docs/tasks/RE0007-ds-palette-polish.handoff.md](tasks/RE0007-ds-palette-polish.handoff.md) | RE0007 — handoff |
+| [docs/tasks/RE0008-ds-palette-legacy.handoff.md](tasks/RE0008-ds-palette-legacy.handoff.md) | RE0008 — handoff |
+| [docs/tasks/RE0009-ds-scroll-dark.handoff.md](tasks/RE0009-ds-scroll-dark.handoff.md) | RE0009 — handoff |
+| [docs/tasks/RE0010-ds-scroll-dark-2.handoff.md](tasks/RE0010-ds-scroll-dark-2.handoff.md) | RE0010 — handoff |
+| [docs/tasks/RE0011-ds-illustrations-dark.handoff.md](tasks/RE0011-ds-illustrations-dark.handoff.md) | RE0011 — handoff |
 
 ## Служебное (1)
 

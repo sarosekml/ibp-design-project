@@ -79,6 +79,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   overflow-x: hidden;
   scrollbar-gutter: stable;
   padding: 6px 4px 10px;
@@ -254,6 +255,7 @@
 /* ========================================================================== *
    RAIL — тултип по hover + бейдж-надстрочник
    ========================================================================== */
+/* в rail подпись становится тултипом (показ — по :hover ниже) */
 .nav--rail .nav__label {
   position: fixed;
   left: 0;
@@ -270,6 +272,13 @@
   visibility: hidden;
   pointer-events: none;
   transition: opacity .12s ease, transform .12s ease;
+}
+/* размер тултипа — штатный: у выбранного пункта правило с aria-current весит
+   (0,4,0) из-за :not(); перебиваем той же формой (0,5,0), только font —
+   показ (:hover) не задеваем */
+.nav--rail .nav__item--selected .nav__label,
+.nav--rail .nav__item[aria-current]:not([aria-current="false"]) .nav__label {
+  font: var(--type-body-s);
 }
 .nav--rail .nav__item:hover .nav__label,
 .nav--rail .nav__item:focus-visible .nav__label {

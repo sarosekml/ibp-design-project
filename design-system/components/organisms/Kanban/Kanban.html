@@ -86,6 +86,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .pm ul{margin:0;padding-left:20px;font:var(--type-body-m);color:var(--text-secondary);}
 .pm li{margin-bottom:8px;text-wrap:pretty;}
 </style>
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Kanban">
@@ -118,8 +119,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия: <b>1.005</b></span>
-    <span>Обновлено: <b>21.09.2026</b></span>
+    <span>Версия: <b>1.006</b></span>
+    <span>Обновлено: <b>04.10.2026</b></span>
     <span>CSS <b>components/organisms/Kanban/Kanban.css</b></span>
     <span>Рантайм <b>components/organisms/Kanban/Kanban.js</b></span>
   </div>
@@ -1252,6 +1253,8 @@ window.DS_SPLIT_SWITCH_LABELS = {
   min-width: 0;
   min-height: 0;
   overflow: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 
@@ -1314,7 +1317,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 /* Пока идёт перенос, выделение текста выключено НА ВСЁМ экране, а не
    только на доске: жест уводит указатель за пределы трека, и браузер
    начинает тянуть выделение по соседним карточкам и по документу.
-   Класс живёт на &lt;body&gt; — так же, как ds-nav.js держит .ds-nav-open. */
+   Класс живёт на <body> — так же, как ds-nav.js держит .ds-nav-open. */
 .kb-dragging,
 .kb-dragging * {
   user-select: none;
@@ -1366,7 +1369,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   outline: 2px solid var(--primary);
   outline-offset: -2px;
 }
-.kbcol--moving &gt; .kbcol__head { cursor: grabbing; }
+.kbcol--moving > .kbcol__head { cursor: grabbing; }
 /* Кнопки внутри шапки — обычные кнопки, ручкой не работают */
 .kbcol__acts .ibtn { cursor: pointer; }
 .kbcol__marker {
@@ -1446,7 +1449,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
    гасит, наступают одновременно. Отсюда .kbcol.kbcol--drop и
    .kbcol.kbcol--selected: модификатор уравнен по весу с псевдоклассом. */
 .kbcol:hover { background-color: var(--primary-bg); }
-.kbcol:hover &gt; .kbcol__head {
+.kbcol:hover > .kbcol__head {
   background-image: linear-gradient(var(--primary-bg), var(--primary-bg));
 }
 /* Во время переноса подсвечена ровно одна колонка — та, куда ляжет
@@ -1458,7 +1461,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
    принимает, и колонку под курсором в момент, когда линия вставки ещё
    не встала. */
 .kanban.is-dragging .kbcol:hover:not(.kbcol--drop) { background-color: transparent; }
-.kanban.is-dragging .kbcol:hover:not(.kbcol--drop) &gt; .kbcol__head { background-image: none; }
+.kanban.is-dragging .kbcol:hover:not(.kbcol--drop) > .kbcol__head { background-image: none; }
 
 /* Цель дропа. Заливка та же, что под указателем (--primary-bg), поэтому
    цель отличает КОЛЬЦО, а не тон: во время переноса hover-заливка гасится
@@ -1469,7 +1472,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   background-color: var(--primary-bg);
   box-shadow: inset 0 0 0 1px var(--primary);
 }
-.kbcol.kbcol--drop &gt; .kbcol__head {
+.kbcol.kbcol--drop > .kbcol__head {
   background-image: linear-gradient(var(--primary-bg), var(--primary-bg));
 }
 
@@ -1586,7 +1589,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
 }
 
 /* Контент карточки — колонка с зазором 12 */
-.kbcard &gt; .tile__body {
+.kbcard > .tile__body {
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
@@ -1597,10 +1600,10 @@ window.DS_SPLIT_SWITCH_LABELS = {
    Компактная — ответ на зафиксированную потребность: «Operations хотят
    видеть больше карточек на экране одновременно». Заголовок в одну
    строку, поля с лица уходят в Drawer. */
-.kbcard--compact &gt; .tile__header {
+.kbcard--compact > .tile__header {
   padding: var(--space-12) var(--space-12) var(--space-4);
 }
-.kbcard--compact &gt; .tile__body {
+.kbcard--compact > .tile__body {
   padding: var(--space-4) var(--space-12) var(--space-12);
   gap: var(--space-8);
 }
@@ -1621,13 +1624,12 @@ window.DS_SPLIT_SWITCH_LABELS = {
   border-color: var(--border-primary);
   box-shadow: none;
 }
-.kbcard--ghost &gt; * { opacity: 0; }
+.kbcard--ghost > * { opacity: 0; }
 .kbcard--selected {
   background: var(--primary-bg);
   border-color: var(--primary);
 }
-.kbcard--error { border-color: var(--error); }
-</script>
+.kbcard--error { border-color: var(--error); }</script>
 <script type="text/plain" id="src-code-js">/* Рантайм ds-kanban.js подключается через ds.js и оживляет
    любую разметку с data-kanban сам. Экрану писать нечего. */
 

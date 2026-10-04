@@ -1,8 +1,8 @@
 ---
 component: Splitter
 title: "Splitter"
-version: "1.004"
-updated: "05.09.2026"
+version: "1.005"
+updated: "04.10.2026"
 page: components/molecules/Splitter/Splitter.html
 page_js: components/molecules/Splitter/Splitter.page.js
 runtime: components/molecules/Splitter/Splitter.js

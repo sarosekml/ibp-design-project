@@ -43,6 +43,8 @@ body.ds-has-toc { padding-right: var(--ds-toc-w); }
   margin: 0;
   padding: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;

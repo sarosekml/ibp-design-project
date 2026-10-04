@@ -74,6 +74,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 .pm ul{margin:0;padding-left:20px;font:var(--type-body-m);color:var(--text-secondary);}
 .pm li{margin-bottom:8px;text-wrap:pretty;}
 </style>
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Drawer">
@@ -106,8 +107,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия: <b>1.001</b></span>
-    <span>Обновлено: <b>01.10.2026</b></span>
+    <span>Версия: <b>1.003</b></span>
+    <span>Обновлено: <b>04.10.2026</b></span>
     <span>CSS <b>components/organisms/Drawer/Drawer.css</b></span>
     <span>Рантайм <b>components/organisms/Drawer/Drawer.js</b></span>
   </div>
@@ -643,6 +644,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   overscroll-behavior: contain;
   padding: var(--drawer-body-pad-y) var(--drawer-pad-x);
   display: flex;
@@ -655,13 +657,15 @@ window.DS_SPLIT_SWITCH_LABELS = {
    скругление полное, цвет --secondary, без дорожки, уголка и стрелок. В покое
    скрыт, при прокрутке появляется и гаснет: класс .is-scrolling ставит
    ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
-   своей видимой рамки у .drawer__body не бывает. Резерв места не ставится.
+   своей видимой рамки у .drawer__body не бывает. Резерв места —
+   `scrollbar-gutter: stable`: ширина не зависит от появления бегунка (RE0007).
    1.001; до этого бегунок --border-light был виден всегда (решение человека
    01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .drawer__body {
   --scroll-w: 8px;
   --scroll-show: .1s;
   --scroll-fade: .3s;
+  scrollbar-gutter: stable;
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

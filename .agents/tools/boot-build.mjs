@@ -22,12 +22,16 @@
    ни процесса, ни `fetch`, — браузеру доступен только обычный `<script>`.
 
    Первый тег вычисляет ДС от собственного адреса
-   (`document.currentScript.src` + DS_PATH), ставит `window.__DS_ROOT`, пишет фавикон и
+   (`document.currentScript.src` + DS_PATH), ставит `window.__DS_ROOT`, ставит тему ДС
+   `data-theme` из `?theme=` или сохранённого выбора (`localStorage`, RE0005),
+   пишет фавикон и
    `ds.css` через `document.write` — то же место в разборе, что прежние теги,
    поэтому собственный `<style>` экрана по-прежнему идёт после ДС. Он же
    задаёт CSS-переменную `--boot-bg-illustration` — фон стартовой страницы
    (спека Illustrations: фон — через `background-image`, не через слот
-   `.illu`); экран пишет `var(--boot-bg-illustration, none)`.
+   `.illu`); экран пишет `var(--boot-bg-illustration, none)`. Под тёмной темой
+   (`ibp-dark`, `service`) берётся `background-illustration-dark.svg`, на смену
+   темы переменная переставляется (`ds:themechange`, RE0011).
    ds-body.js пишет `ds.js`, а следом — дополнительные скрипты ДС из атрибута
    `data-ds` своего тега (пути внутри ДС через пробел, например
    `patterns/HomeRoles/ibp-home.js`). Порядок тот же, что у прежних тегов: `ds.js`
@@ -108,7 +112,22 @@ export function render(P) {
     + '  if (!me || !me.src) { console.error(' + JSON.stringify(headRel + ' подключён не обычным тегом — ДС не загрузится') + '); return; }\n'
     + '  var DS = new URL(DS_PATH, me.src).href;\n'
     + '  window.__DS_ROOT = DS;\n'
-    + '  document.documentElement.style.setProperty(\'--boot-bg-illustration\', \'url("\' + DS + \'assets/illustrations/background-illustration.svg")\');\n'
+    + '  /* Тема ДС до первой отрисовки (RE0005): ?theme= или сохранённый выбор.\n'
+    + '     Без выбранной темы атрибут не ставится — legacy как прежде. */\n'
+    + '  try {\n'
+    + '    var tm = /[?&]theme=([^&#]*)/.exec(window.location.search || \'\');\n'
+    + '    var th = tm ? decodeURIComponent(tm[1]) : window.localStorage.getItem(\'ds.theme\');\n'
+    + '    if (th && th !== \'legacy\') document.documentElement.setAttribute(\'data-theme\', th);\n'
+    + '  } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }\n'
+    + '  /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный\n'
+    + '     вариант; ставится после темы и обновляется на её смену (RE0011). */\n'
+    + '  var applyBg = function () {\n'
+    + '    var thNow = document.documentElement.getAttribute(\'data-theme\');\n'
+    + '    var dark = thNow === \'ibp-dark\' || thNow === \'service\';\n'
+    + '    document.documentElement.style.setProperty(\'--boot-bg-illustration\', \'url("\' + DS + \'assets/illustrations/background-illustration\' + (dark ? \'-dark\' : \'\') + \'.svg")\');\n'
+    + '  };\n'
+    + '  applyBg();\n'
+    + '  if (document.addEventListener) document.addEventListener(\'ds:themechange\', applyBg);\n'
     + '  document.write(\'<link rel="icon" type="image/svg+xml" href="\' + DS + \'assets/logo.svg">\');\n'
     + '  document.write(\'<link rel="stylesheet" href="\' + DS + \'ds.css">\');\n'
     + '})();\n';
@@ -218,6 +237,31 @@ function editPath(r, to) {
   writeFileSync(f, readFileSync(f, 'utf8').replace(/DS_PATH = "[^"]*"/, 'DS_PATH = "' + to + '"'), 'utf8');
 }
 
+/* Первый тег загрузчика, исполненный на странице: атрибут темы на <html>. */
+function runHead(text, search, store, propsOut) {
+  const attrs = {};
+  const db = store || {};
+  const ctx = {
+    URL, console,
+    location: { search: search || '' },
+    document: {
+      currentScript: { src: 'file:///p/apps/ds-config.js' },
+      documentElement: {
+        setAttribute: (k, v) => { attrs[k] = v; },
+        removeAttribute: (k) => { delete attrs[k]; },
+        getAttribute: (k) => (k in attrs ? attrs[k] : null),
+        style: { setProperty: (k, v) => { if (propsOut) propsOut[k] = v; } },
+      },
+      addEventListener: () => {},
+      write: () => {},
+    },
+    localStorage: { getItem: (k) => (k in db ? db[k] : null) },
+  };
+  ctx.window = ctx;
+  vm.runInNewContext(text, ctx, { timeout: 1000 });
+  return attrs;
+}
+
 /* Второй тег загрузчика, исполненный на странице: что он записал в документ. */
 function runBody(text) {
   const written = [];
@@ -266,6 +310,26 @@ function selftest() {
   }
   if (parsed !== 2) failed++;
   else out.push('ok    сгенерированный загрузчик разбирается как JS (и с кавычкой в пути до ДС)');
+  /* Тема ДС (RE0005): первый тег ставит data-theme из ?theme= или localStorage;
+     «legacy», пусто и отсутствие — без атрибута. Проверяется исполнением. */
+  const HEAD = render(P)['boot/ds-head.js'];
+  const themeOk = runHead(HEAD, '?theme=ibp-dark', {})['data-theme'] === 'ibp-dark'
+    && runHead(HEAD, '', { 'ds.theme': 'service' })['data-theme'] === 'service'
+    && runHead(HEAD, '?theme=legacy', { 'ds.theme': 'service' })['data-theme'] === undefined
+    && runHead(HEAD, '', {})['data-theme'] === undefined;
+  if (!themeOk) failed++;
+  out.push((themeOk ? 'ok    ' : 'FAIL  ') + 'первый тег ставит data-theme из ?theme=/localStorage, legacy — без атрибута');
+  /* Фон стартовой страницы (RE0011): под тёмной темой — тёмный вариант,
+     под legacy — светлый. setProperty стаба записывает переменную. */
+  const bgDark = {}, bgLegacy = {};
+  runHead(HEAD, '?theme=ibp-dark', {}, bgDark);
+  runHead(HEAD, '?theme=legacy', {}, bgLegacy);
+  const bgDarkVal = bgDark['--boot-bg-illustration'] || '';
+  const bgLegacyVal = bgLegacy['--boot-bg-illustration'] || '';
+  const bgOk = /background-illustration-dark\.svg/.test(bgDarkVal)
+    && /background-illustration\.svg/.test(bgLegacyVal) && !/-dark\.svg/.test(bgLegacyVal);
+  if (!bgOk) failed++;
+  out.push((bgOk ? 'ok    ' : 'FAIL  ') + 'фон главной: тёмная тема → background-illustration-dark.svg, legacy → светлый' + (bgOk ? '' : ' — ' + bgDarkVal + ' | ' + bgLegacyVal));
   /* Панель прототипа (задача 0005): включатель подключается после тегов ДС —
      порядок доказывается исполнением второго тега в vm, а не поиском строки. */
   const PP = { ...P, boot: CONFIG.boot, panel: { boot: 'apps/proto-panel.js' } };
@@ -282,7 +346,7 @@ function selftest() {
   try { new Function(render(PP)['apps/ds-body.js']); } catch (e) { parsedPanel = false; out.push('FAIL  загрузчик со строкой панели не разбирается как JS: ' + e.message); }
   if (!parsedPanel) failed++;
   else out.push('ok    загрузчик со строкой панели разбирается как JS');
-  const total = CASES.length + 5;
+  const total = CASES.length + 7;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
