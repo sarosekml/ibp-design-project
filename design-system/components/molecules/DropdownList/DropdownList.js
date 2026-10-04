@@ -266,7 +266,6 @@
           refreshAllRow(list);
         }
         if (opts.onToggle) opts.onToggle(it);
-        setActive(it);
         return;
       }
       items(list).forEach(function (x) { if (x.hasAttribute('aria-selected')) x.setAttribute('aria-selected', 'false'); });

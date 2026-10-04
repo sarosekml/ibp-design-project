@@ -200,6 +200,21 @@ async function cmdCheck(pageArg) {
     ? `ДС19 инлайновый скрипт не компилируется — ${broken.join('; ')}`
     : 'ДС19 инлайновые скрипты компилируются');
 
+  /* ДС20 — служебный тег темы (RE0005). Страница ДС обязана нести
+     `docs-kit/ds-theme-boot.js` последним в <head>: он ставит `data-theme`
+     до первой отрисовки и подключает CSS тем. Без тега страница молча живёт
+     в legacy — переключатель на неё не попадает. Тег один, и считается по
+     РАЗМЕТКЕ, а не по сырому тексту: упоминание пути в комментарии или в
+     образце вкладки «Код» не должно засчитываться за тег (класс Л82).
+     Исключение — страница на загрузчике приложений (`apps/ds-config.js`):
+     он делает то же (ставит `data-theme` до отрисовки и грузит `ds.css`
+     с темами), поэтому для таких страниц (витрина локальных компонентов,
+     экраны) достаточно загрузчика. */
+  const noComments = t.replace(/<!--[\s\S]*?-->/g, '');
+  const themeTag = (noComments.match(/<script[^>]+src="[^"]*docs-kit\/ds-theme-boot\.js"/g) || []).length;
+  const appBoot = (noComments.match(/<script[^>]+src="[^"]*ds-config\.js"/g) || []).length;
+  ok(themeTag === 1 || appBoot >= 1, `ДС20 тег темы docs-kit/ds-theme-boot.js или загрузчик ds-config.js в <head> (тег ${themeTag}, загрузчик ${appBoot})`);
+
   let bad = 0;
   log(`== check ${name} ==`);
   for (const [cond, label] of results) {

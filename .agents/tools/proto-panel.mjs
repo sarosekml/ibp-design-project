@@ -130,18 +130,66 @@ function bootRel(P, a) {
   return path.posix.relative(path.posix.dirname(P.panel.boot), a.rel);
 }
 
-/** Текст включателя для списка приложений. */
+/** Текст включателя. Грузится на каждой странице (ds-body.js) и на страницах ДС
+ *  (тег каркаса); панель есть везде: у приложения с папкой — данные, у остальных
+ *  (хаб, концепт без папки, ДС) — заглушка. */
 export function renderBoot(P, apps, core) {
   const bootDir = path.posix.dirname(P.panel.boot);
   const list = apps.map((a) => (typeof a === 'string' ? a : bootRel(P, a))).sort();
   const runtime = (path.posix.relative(bootDir, P.panel.runtime) || '.') + '/';
+  const ds = ((P.ds || 'design-system').replace(/\/+$/, '')) + '/';
   const q = (v) => JSON.stringify(v);
+  /* Что панели нужно на странице ДС: там нет ds.css/ds.js (каркас грузит
+     поштучно) — включатель добирает недостающее, загруженное не трогает. */
+  const PANEL_CSS = [
+    'foundations/Typography/Typography.css',
+    'foundations/Colors/Colors.css',
+    'foundations/Colors/Palette.css',
+    'foundations/Spacing/Spacing.css',
+    'foundations/Radius/Radius.css',
+    'foundations/Elevation/Elevation.css',
+    'foundations/Illustrations/Illustrations.css',
+    'components/atoms/Avatar/Avatar.css',
+    'components/atoms/Buttons/Buttons.css',
+    'components/atoms/Chip/Chip.css',
+    'components/atoms/IconButton/IconButton.css',
+    'components/atoms/LabelHelper/LabelHelper.css',
+    'components/atoms/Spinner/Spinner.css',
+    'components/molecules/Alert/Alert.css',
+    'components/molecules/ContextMenu/ContextMenu.css',
+    'components/molecules/DropdownList/DropdownList.css',
+    'components/molecules/EmptyState/EmptyState.css',
+    'components/molecules/Inputs/Inputs.css',
+    'components/molecules/ReadOnlyField/ReadOnlyField.css',
+    'components/molecules/Switch/Switch.css',
+    'components/molecules/Tab/Tab.css',
+    'components/molecules/Toast/Toast.css',
+    'components/molecules/Tooltip/Tooltip.css',
+    'components/organisms/Drawer/Drawer.css',
+    'components/organisms/Modal/Modal.css'
+  ];
+  const PANEL_JS = [
+    ['dsIcons', ['foundations/Icons/icons-data.js', 'foundations/Icons/Icons.js']],
+    ['DSFloat', ['utils/ds-float.js']],
+    ['DSTabs', ['components/molecules/Tab/Tab.js']],
+    ['DSMenu', ['components/molecules/ContextMenu/ContextMenu.js']],
+    ['DSTooltip', ['components/molecules/Tooltip/Tooltip.js']],
+    ['DSDropdownList', ['components/molecules/DropdownList/DropdownList.js']],
+    ['DSModal', ['components/organisms/Modal/Modal.js']],
+    ['DSDrawer', ['components/organisms/Drawer/Drawer.js']],
+    ['DSChip', ['components/atoms/Chip/Chip.js']],
+    ['DSInput', ['components/molecules/Inputs/InputKit.js', 'components/molecules/Inputs/Inputs.js']],
+    ['DSToast', ['utils/ds-notify.js']],
+    ['DSIllustrations', ['foundations/Illustrations/Illustrations.js']],
+    ['DSCopy', ['utils/ds-copy.js']]
+  ];
   return '/* СГЕНЕРИРОВАН ' + GEN + ' — руками не править; пересобрать:\n'
     + '   node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг panel).\n'
-    + '   Включатель панели прототипа: ds-body.js подключает его на каждой странице.\n'
-    + '   Панель есть только у приложений из списка — у них есть папка ' + P.panel.dir + '/;\n'
-    + '   на остальных страницах и на хабе файл ничего не делает, во фрейме\n'
-    + '   только пересылает горячие клавиши панели наверх. */\n'
+    + '   Включатель панели прототипа: ds-body.js подключает его на каждой странице,\n'
+    + '   страницы ДС — тегом каркаса. Панель есть везде: у приложения с папкой\n'
+    + '   ' + P.panel.dir + '/ — сценарии из зеркала, у остальных (хаб, концепт без папки,\n'
+    + '   ДС) — заглушка «сценария нет». Во фрейме превью своей панели нет —\n'
+    + '   только пересылка горячих клавиш наверх. */\n'
     + '(function () {\n'
     + '  var APPS = [' + (list.length ? '\n' + list.map((x) => '    ' + q(x)).join(',\n') + '\n  ' : '') + '];\n'
     + '  var RUNTIME = ' + q(runtime) + ';\n'
@@ -149,18 +197,22 @@ export function renderBoot(P, apps, core) {
     + '  var DATA = DIR + ' + q('/' + DATA.mirror) + ', PAGES = ' + q(P.appShape.pages) + ';\n'
     + '  var FILES = [' + FILES.map(q).join(', ') + '];\n'
     + '  var KEYS = [' + core.HOTKEYS.codes.map(q).join(', ') + ']; // core.js → HOTKEYS: одна константа на панель и включатель\n'
+    + '  var DSDIR = ' + q(ds) + ';\n'
+    + '  var PCSS = [' + PANEL_CSS.map(q).join(', ') + '];\n'
+    + '  var PJS = [' + PANEL_JS.map(([g, files]) => '[' + q(g) + ', ' + files.map(q).join(', ') + ']').join(', ') + '];\n'
     + '  var me = document.currentScript;\n'
-    + '  if (!me || !me.src || !APPS.length) return;\n'
+    + '  if (!me || !me.src) return;\n'
     + '  var apps = new URL(\'./\', me.src), here, base;\n'
     + '  try { here = decodeURIComponent(location.pathname); base = decodeURIComponent(apps.pathname); } catch (e) { return; }\n'
-    + '  if (here.indexOf(base) !== 0) return; // хаб и всё вне каталога приложений\n'
-    + '  var rel = here.slice(base.length), cut = rel.lastIndexOf(\'/\' + PAGES + \'/\');\n'
-    + '  if (cut < 0) return;\n'
-    + '  var app = rel.slice(0, cut);\n'
-    + '  if (APPS.indexOf(app) < 0) return; // приложение без панели\n'
+    + '  var app = null;\n'
+    + '  if (here.indexOf(base) === 0) {\n'
+    + '    var rel = here.slice(base.length), cut = rel.lastIndexOf(\'/\' + PAGES + \'/\');\n'
+    + '    if (cut >= 0) { var cand = rel.slice(0, cut); if (APPS.indexOf(cand) >= 0) app = cand; }\n'
+    + '  }\n'
     + '  if (window.top !== window.self) {\n'
     + '    /* страница во фрейме (превью материала): своей панели нет, но её клавиши\n'
     + '       работают и отсюда — нажатие уходит странице-хозяйке сообщением */\n'
+    + '    if (!app) return;\n'
     + '    document.addEventListener(\'keydown\', function (e) {\n'
     + '      if (!e.altKey || !e.shiftKey || e.ctrlKey || e.metaKey || KEYS.indexOf(e.code) < 0) return;\n'
     + '      e.preventDefault(); e.stopPropagation();\n'
@@ -168,11 +220,27 @@ export function renderBoot(P, apps, core) {
     + '    }, true);\n'
     + '    return;\n'
     + '  }\n'
+    + '  var root = new URL(\'../\', apps), dsRoot = new URL(DSDIR, root).href, dsPath = \'\';\n'
+    + '  try { dsPath = decodeURIComponent(new URL(dsRoot).pathname); } catch (e) { dsPath = \'\'; }\n'
+    + '  var onDs = !!dsPath && here.indexOf(dsPath) === 0;\n'
     + '  var rt = new URL(RUNTIME, apps).href;\n'
-    + '  var appUrl = new URL(app.split(\'/\').map(encodeURIComponent).join(\'/\') + \'/\', apps).href;\n'
-    + '  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl + PAGES + \'/\', runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST };\n'
+    + '  var appUrl = app ? new URL(app.split(\'/\').map(encodeURIComponent).join(\'/\') + \'/\', apps).href : null;\n'
+    + '  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl ? appUrl + PAGES + \'/\' : null, runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST, ds: onDs };\n'
+    + '  /* Страница ДС: нет ds.css/ds.js (каркас грузит поштучно) — добираем\n'
+    + '     недостающие стили и рантаймы панели, уже загруженное не трогаем. */\n'
+    + '  if (onDs) {\n'
+    + '    var hasCss = function (f) { try { return !!document.querySelector(\'link[href$="/\' + f + \'"]\'); } catch (e) { return false; } };\n'
+    + '    var hasJs = function (f) { try { return !!document.querySelector(\'script[src$="/\' + f + \'"]\'); } catch (e) { return false; } };\n'
+    + '    var i, j, files, f;\n'
+    + '    for (i = 0; i < PCSS.length; i++) { f = PCSS[i].split(\'/\').pop(); if (!hasCss(f)) document.write(\'<link rel="stylesheet" href="\' + dsRoot + PCSS[i] + \'">\'); }\n'
+    + '    for (i = 0; i < PJS.length; i++) {\n'
+    + '      if (window[PJS[i][0]]) continue;\n'
+    + '      files = PJS[i].slice(1);\n'
+    + '      for (j = 0; j < files.length; j++) { f = files[j].split(\'/\').pop(); if (!hasJs(f)) document.write(\'<scr\' + \'ipt src="\' + dsRoot + files[j] + \'"><\\/scr\' + \'ipt>\'); }\n'
+    + '    }\n'
+    + '  }\n'
     + '  document.write(\'<link rel="stylesheet" href="\' + rt + \'' + CSS + '">\');\n'
-    + '  document.write(\'<scr\' + \'ipt src="\' + appUrl + DATA + \'"><\\/scr\' + \'ipt>\');\n'
+    + '  if (appUrl) document.write(\'<scr\' + \'ipt src="\' + appUrl + DATA + \'"><\\/scr\' + \'ipt>\');\n'
     + '  for (var i = 0; i < FILES.length; i++) document.write(\'<scr\' + \'ipt src="\' + rt + FILES[i] + \'"><\\/scr\' + \'ipt>\');\n'
     + '})();\n';
 }
@@ -855,7 +923,7 @@ function runBoot(text, scriptSrc, pageHref, frame) {
   const ctx = {
     URL, decodeURIComponent, encodeURIComponent,
     location: new URL(pageHref),
-    document: { currentScript: { src: scriptSrc }, write: (s) => written.push(s), addEventListener: (type, fn, capture) => listeners.push({ type, capture, fn }) },
+    document: { currentScript: { src: scriptSrc }, write: (s) => written.push(s), addEventListener: (type, fn, capture) => listeners.push({ type, capture, fn }), querySelector: () => null },
   };
   ctx.window = ctx;
   ctx.self = ctx;
@@ -1229,7 +1297,8 @@ async function selftest() {
       && page.written[2 + FILES.length - 1].includes('/.kit/proto-panel/panel.js') && page.panel && page.panel.app === 'core/drafts/lab' && !page.listeners.length,
       '12в включатель: страница приложения с панелью — стили, зеркало и рантайм по порядку', page.written.length + ' тегов');
     const other = runBoot(boot, src, base + 'apps/core/drafts/other/pages/B.html', false);
-    pass(!other.written.length && !other.listeners.length && !other.panel, '12г включатель: приложение без панели — ничего');
+    pass(other.written.length === 1 + FILES.length && other.written[0].includes('panel.css') && other.panel && other.panel.app === null && !other.listeners.length,
+      '12г включатель: приложение без папки — панель с заглушкой, без зеркала', other.written.length + ' тегов');
     const frame = runBoot(boot, src, base + 'apps/core/drafts/lab/pages/A.html', true);
     pass(!frame.written.length && frame.listeners.length === 1 && frame.listeners[0].type === 'keydown' && frame.listeners[0].capture === true && !frame.panel,
       '12д включатель: фрейм приложения с панелью — только пересылка клавиш');
@@ -1242,12 +1311,20 @@ async function selftest() {
       && frame.posted.every((m) => core.HOTKEYS.codes.includes(m.code)),
       '20.12 включатель во фрейме пересылает все клавиши панели, и KeyS (Fix State); чужую клавишу и Ctrl — нет', JSON.stringify(frame.posted));
     const hub = runBoot(boot, src, base + 'index.html', false);
-    pass(!hub.written.length && !hub.listeners.length, '12е включатель: хаб — ничего');
+    pass(hub.written.length === 1 + FILES.length && hub.written[0].includes('panel.css') && hub.panel && hub.panel.app === null && !hub.listeners.length,
+      '12е включатель: хаб — панель с заглушкой, без зеркала');
     const cyr = runBoot(boot, src, base + 'apps/core/drafts/%D0%BB%D0%B0%D0%B1%202/pages/A.html', false);
     pass(cyr.written.length === 2 + FILES.length && cyr.written[1].includes('apps/core/drafts/%D0%BB%D0%B0%D0%B1%202/proto-panel/panel-data.js') && cyr.panel && cyr.panel.app === 'core/drafts/лаб 2',
       '12ж включатель: путь с пробелом и кириллицей — теги с адресом приложения', cyr.written[1] || 'тегов нет');
     const empty = runBoot(renderBoot(P, [], core), src, base + 'apps/core/drafts/lab/pages/A.html', false);
-    pass(!empty.written.length && !empty.listeners.length, '12з включатель без приложений — ничего');
+    pass(empty.written.length === 1 + FILES.length && empty.written[0].includes('panel.css') && empty.panel && empty.panel.app === null && !empty.listeners.length,
+      '12з включатель без приложений — панель-заглушка и рантайм');
+    const dsPage = runBoot(boot, src, base + 'ds/components/atoms/X/X.html', false);
+    pass(dsPage.panel && dsPage.panel.app === null && dsPage.panel.ds === true
+      && dsPage.written.some((w) => w.includes('/ds/foundations/Colors/Palette.css'))
+      && dsPage.written.some((w) => w.includes('/ds/components/organisms/Drawer/Drawer.js'))
+      && dsPage.written.some((w) => w.includes('panel.css')) && dsPage.written.length > 1 + FILES.length,
+      '12к включатель на странице ДС — добирает стили и рантаймы панели', dsPage.written.length + ' тегов');
     let parsed = 0;
     for (const t of [boot, renderBoot(P, [], core), text]) { try { new Function(t); parsed++; } catch { /* ниже */ } }
     pass(parsed === 3, '12и генераты разбираются как JS');

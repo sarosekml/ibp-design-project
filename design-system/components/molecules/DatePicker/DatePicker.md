@@ -1,8 +1,8 @@
 ---
 component: DatePicker
 title: "DatePicker"
-version: "1.008"
-updated: "05.09.2026"
+version: "1.009"
+updated: "04.10.2026"
 page: components/molecules/DatePicker/DatePicker.html
 page_js: components/molecules/DatePicker/DatePicker.page.js
 runtime: components/molecules/DatePicker/DatePicker.js

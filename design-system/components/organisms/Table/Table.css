@@ -65,7 +65,7 @@
 /* ------------------------------------------------------------------ */
 /*  BODY — скролл-контейнер с липкой шапкой                            */
 /* ------------------------------------------------------------------ */
-.dtable__body { position: relative; overflow: auto; }
+.dtable__body { position: relative; overflow: auto; overflow: overlay; }
 .dtable__body .tbl { border: none; border-radius: 0; overflow: visible; }
 
 /* Полоса прокрутки тела — как у .ds-scroll (Layout): только бегунок 8px,

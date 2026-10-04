@@ -26,6 +26,15 @@
     'panel.closeTip': 'Close · Esc',
     'panel.tabs': 'Panel sections',
     'panel.width': 'Panel width',
+    'rail.label': 'Panel tools',
+    'rail.panel': 'Prototype panel',
+    'rail.panelTip': 'Flows and comments',
+    'rail.theme': 'Color theme',
+    'rail.themeTip': 'Switch color theme',
+    'theme.title': 'Color theme',
+    'theme.legacy': 'Текущая',
+    'theme.light': 'Новая светлая',
+    'theme.dark': 'Новая тёмная',
     'fab.labelCount': 'Prototype panel, open comments on this page: {n}',
 
     /* кнопки */
@@ -132,6 +141,7 @@
     'flows.error.fix': 'Fix {file} and rebuild: {tool}',
     'flows.none.title': 'No flows yet',
     'flows.none.text': 'Press Fix State to start one, or ask the agent: /panel {app} flows',
+    'flows.stub': 'No flow yet. Describe the flow in a chat with the agent — it will appear here.',
     'flows.empty.title': 'No states yet',
     'flows.empty.text': 'Work with the prototype and press Fix State ({key}) to save the current state here.',
     'rename.state': 'State name',

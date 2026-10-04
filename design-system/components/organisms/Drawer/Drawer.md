@@ -1,8 +1,8 @@
 ---
 component: Drawer
 title: "Панель деталей"
-version: "1.001"
-updated: "01.10.2026"
+version: "1.003"
+updated: "04.10.2026"
 page: components/organisms/Drawer/Drawer.html
 page_js: components/organisms/Drawer/Drawer.page.js
 runtime: components/organisms/Drawer/Drawer.js

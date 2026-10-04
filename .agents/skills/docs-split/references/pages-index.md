@@ -1,14 +1,14 @@
 ---
 belongs_to: docs-split
 purpose: Структурная карта doc-страниц IBP. Читай карту вместо файла целиком. Генерируется командой map, руками не править.
-generated: 2026-10-01
+generated: 2026-10-04
 ---
 
 # Карта страниц документации
 
 Статус: ✅ — раскатано на docs-split, ⬜ — старый формат. Конструктор: dynamic — контролы строит page.js в `#pg-controls` (docs-split.js сам делает две колонки); static — разметка `.ctl-col`/`.toggles` вручную; grouped — `.ctl-group` с двумя колонками в каждой.
 
-## Foundations (8)
+## Foundations (9)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
@@ -19,6 +19,7 @@ generated: 2026-10-01
 | Layout | static | — | Layout.page.js | foundations/Layout/Layout.css | 12 | ✅ |
 | Radius | static | — | — | — | 4 | ✅ |
 | Spacing | static | — | — | foundations/Spacing/Spacing.css | 7 | ✅ |
+| Themes | — | — | — | foundations/Themes/Themes.css | 12 | ✅ |
 | Typography | — | — | — | — | 4 | ⬜ |
 
 ## Atoms (14)
@@ -92,7 +93,7 @@ generated: 2026-10-01
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
 | HomeRoles | — | demo-menu | — | — | 2 | ⬜ |
-| LocalComponents | — | — | — | — | 11 | ⬜ |
+| LocalComponents | — | — | — | — | 15 | ⬜ |
 | Redpolicy | — | — | — | — | 3 | ⬜ |
 
 <!-- Примечания (дописывать руками при необходимости) -->

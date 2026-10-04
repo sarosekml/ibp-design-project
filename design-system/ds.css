@@ -71,3 +71,8 @@
 
 /* Компоненты подкачки */
 @import url("components/molecules/Alert/Alert.css");
+
+/* Темы (RE0005): генерат foundations/Themes/Themes.css. Последним — блоки тем
+   должны перебивать :root компонентов при равной специфичности. Без атрибута
+   data-theme ни одно правило файла не действует; legacy как прежде. */
+@import url("foundations/Themes/Themes.css");

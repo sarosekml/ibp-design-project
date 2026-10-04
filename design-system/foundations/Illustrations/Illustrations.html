@@ -50,12 +50,13 @@
   .toast.show { opacity:1; transform: translate(-50%, 0); }
   .toast code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:13px; color: var(--primary-light, #58DCCC); }
 </style>
+<script src="../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page" data-screen-label="Illustrations">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.004</b></span><span>Обновлено: <b>05.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.006</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Иллюстрации</h1>
     <p class="lead">Библиотека продуктовых иллюстраций: тайловые (для навигационных плиток <a class="inl" href="../../components/molecules/NavTile/NavTile.html">NavTile</a> и дашбордов), иллюстрации состояний (ошибки, пустые экраны) и фоновая декоративная иллюстрация. Как на странице <a class="inl" href="../Icons/Icons.html">Иконки</a> — клик по карточке копирует имя.</p>
@@ -79,7 +80,8 @@
         <li>слот квадратный, SVG внутри масштабируется через <code class="tok">object-fit: contain</code> — не обрезается; исходные пропорции тайловых файлов 195×140, у крупных (состояния) — почти квадратные;</li>
         <li>иллюстрации декоративны — слот всегда с <code class="tok">aria-hidden="true"</code>;</li>
         <li>имена — латиница в kebab-case, см. полный список ниже; неизвестное имя рисует штриховую заглушку с этим именем;</li>
-        <li>цвета внутри SVG — фиксированная палитра библиотеки, перекраска через currentColor не применяется (в отличие от иконок).</li>
+        <li>цвета внутри SVG — фиксированная палитра библиотеки, перекраска через currentColor не применяется (в отличие от иконок);</li>
+        <li>тёмная тема: у тайловых иллюстраций и фона есть вариант <code class="tok">&lt;имя&gt;-dark.svg</code> — под <code class="tok">ibp-dark</code>/<code class="tok">service</code> рантайм берёт его (смена темы перерисовывает слоты). Собран генератором <code class="tok">tools/illustration-dark.mjs</code>.</li>
       </ul>
     </div>
   </section>
@@ -287,11 +289,12 @@
   <!-- BACKGROUND -->
   <section class="section" data-screen-label="Background">
     <h2>Фоновая иллюстрация</h2>
-    <p class="desc">Декоративный фон 1066×777 — используется как <code class="tok">background-image</code> на весь блок (не через слот <code class="tok">.illu</code>, у него другие пропорции и назначение).</p>
+    <p class="desc">Декоративный фон 1066×777 — используется как <code class="tok">background-image</code> на весь блок (не через слот <code class="tok">.illu</code>, у него другие пропорции и назначение). Под тёмной темой — <code class="tok">background-illustration-dark.svg</code> (переставляет загрузчик проекта, <code class="tok">RE0011</code>).</p>
     <div class="panel">
       <div class="bgpreview">
         <div class="bgpreview__frame"><img src="../../assets/illustrations/background-illustration.svg" alt=""></div>
-        <p class="desc tight" style="max-width:360px;">Пример: <code class="tok">background-illustration.svg</code>, растягивается через <code class="tok">background-size: cover</code>.</p>
+        <div class="bgpreview__frame"><img src="../../assets/illustrations/background-illustration-dark.svg" alt=""></div>
+        <p class="desc tight" style="max-width:360px;">Слева — светлый, справа — тёмный вариант. Растягивается через <code class="tok">background-size: cover</code>.</p>
       </div>
     </div>
   </section>
@@ -329,5 +332,6 @@ document.querySelectorAll('.illucard').forEach(card => {
 <script src="Illustrations.js"></script>
 <script src="../../docs-kit/ds-nav.js"></script>
 <script src="../../docs-kit/ds-toc.js"></script>
+<script src="../../../apps/proto-panel.js"></script>
 </body>
 </html>

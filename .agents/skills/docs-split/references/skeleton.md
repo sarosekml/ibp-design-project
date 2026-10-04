@@ -21,9 +21,16 @@
 <link rel="stylesheet" href="../../../docs-kit/pg-kit.css">
 <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
 <link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<!-- последним в <head>, после <style> страницы: тема до первой отрисовки -->
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 ```
 
 `ds-toc.css` отсутствует; `pg-kit.css` остаётся (CSS), `pg-kit.js` — нет.
+Служебный тег `docs-kit/ds-theme-boot.js` (RE0005) — обязателен, один, идёт
+последним в `<head>` (после `<style>`): ставит `data-theme` на `<html>` из
+`?theme=`/`localStorage` и подключает `Themes.css` + `Themes.pages.css`.
+Путь до ДС — тот же, что у `window.__DS_ROOT` (у компонента `../../../`,
+у основы `../../`). Ловится проверкой `ДС20`.
 
 ## body — каркас
 
@@ -137,6 +144,13 @@
 <script>window.DS_SPLIT_SWITCH_LABELS = { '{{Лейбл}}': 'Показывать {{что}}' };</script>
 <!-- или: { 'Сетка': { label: 'Показывать сетку', on: 'y' } } — когда эвристика направления врёт -->
 <script src="../../../docs-kit/docs-split.js"></script>
+
+<!-- последним в <body>, после всех скриптов: включатель панели прототипа
+     (Alt+Shift+P). Путь — до корня проекта + apps/proto-panel.js; вне проекта
+     тег можно не ставить. Включатель сам добирает недостающие стили и рантаймы
+     панели и не задваивает уже загруженные. Ставится на страницы ДС скриптом
+     docs/misc/proto-panel-doc-tag/inject-panel-tag.mjs -->
+<script src="../../../../apps/proto-panel.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html">{{эталон из спеки}}</script>

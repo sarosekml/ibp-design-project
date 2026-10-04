@@ -201,6 +201,8 @@
 .menu--scroll {
   max-height: var(--menu-max-h, 280px);
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 /* Полоса прокрутки — в виде .ds-scroll (Layout): только бегунок 8px,

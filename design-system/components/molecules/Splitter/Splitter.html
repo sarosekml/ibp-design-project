@@ -123,6 +123,7 @@
   <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
   <link rel="stylesheet" href="../Tab/Tab.css">
   <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Splitter">
@@ -150,7 +151,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.004</b></span><span>Обновлено: <b>05.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.005</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Splitter</h1>
     <p class="lead">Функциональный разделитель контейнера: пользователь тащит сплиттер и регулирует размеры соседних панелей. При наведении курсор меняется на <code class="tok">col-resize</code> / <code class="tok">ew-resize</code>, а сам сплиттер переходит в состояние Hover. Перемещается по одной оси; в момент перетаскивания вид и курсор сохраняются.</p>
@@ -619,6 +620,7 @@ body.spl-dragging-h * { cursor: row-resize !important; }
 .splitpane__a { background: var(--tertiary-light); }
 .splitpane__b { background: var(--bg-tile); }
 .splitpane--app { border-color: var(--border-primary); box-shadow: 0 10px 30px rgba(40,50,55,.08); }
-.splitpane--app .splitpane__a, .splitpane--app .splitpane__b { background: var(--bg-tile); display:block; overflow:auto; }</script>
+.splitpane--app .splitpane__a, .splitpane--app .splitpane__b { background: var(--bg-tile); display:block; overflow:auto; overflow-y: overlay; scrollbar-gutter: stable; }</script>
+<script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>

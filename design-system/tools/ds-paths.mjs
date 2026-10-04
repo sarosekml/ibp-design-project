@@ -89,7 +89,8 @@ function kindOfLayout(rel) {
     if (base.endsWith('.md')) return { kind: 'spec', role: 'component', name: base.slice(0, -3) };
     if (base.endsWith('.css')) return { kind: 'style', role: 'component' };
     if (base.endsWith('.page.js')) return { kind: 'script', role: 'page-script' };
-    if (base === 'icons-data.js') return { kind: 'script', role: 'data' };
+    // данные ДС: иконки и темы (RE0005) — JS-модуль для Node (vm) и страницы (тег)
+    if (base === 'icons-data.js' || base.endsWith('.tokens.js')) return { kind: 'script', role: 'data' };
     if (base.endsWith('.js')) return { kind: 'script', role: 'runtime' };
     return base.endsWith('.json') ? { kind: 'state' } : null;
   }

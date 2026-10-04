@@ -116,6 +116,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   <link rel="stylesheet" href="../../components/molecules/SegmentControl/SegmentControl.css">
   <link rel="stylesheet" href="../../components/molecules/Tab/Tab.css">
   <link rel="stylesheet" href="../../docs-kit/docs-split.css">
+<script src="../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="Layout">
@@ -158,7 +159,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
             <div class="docs-main">
 
 <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.014</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Каркас экрана</h1>
     <p class="lead">Любой экран продукта складывается из одних и тех же зон: панель навигации слева, рабочая область справа, внутри рабочей области зона хлебных крошек над контентной областью. Стартовая страница с навигационными тайлами, реестр с таблицей и карточка сущности отличаются только содержимым контентной области — зоны, поля и правила скролла у них одинаковые.</p>
@@ -263,7 +264,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <h3>Полоса прокрутки страницы</h3>
     <p class="desc">Системной полосы прокрутки у экрана нет: она занимает место у окна, и рабочая область меняла бы ширину каждый раз, когда прокрутка появляется или пропадает (например, при переключении табов, если контент одного таба выше окна, а другого — ниже). Страница прокручивается как обычно — колесом, клавиатурой, тачем, — а положение показывает бегунок ДС <code class="tok">.ds-page-scroll</code>. Он лежит оверлеем поверх правого поля контентной области: 8&nbsp;px по центру поля 24&nbsp;px. Ширина рабочей области от прокрутки не зависит, поле остаётся 24&nbsp;px. Вид и поведение — как у полосы внутренней области ниже: в покое бегунок скрыт, при прокрутке появляется и гаснет; ещё он виден при наведении и пока его тянут мышью. Дорожку и бегунок вставляет рантайм <code class="tok">ds-scroll.js</code> на любой странице, где <code class="tok">.nav-layout</code> — прямой ребёнок <code class="tok">body</code>; экран для этого ничего не пишет. Если прокручивать нечего (контент ниже окна, вариант <code class="tok">.screen--app</code>), бегунка нет.</p>
     <h3>Полоса прокрутки внутренней области</h3>
-    <p class="desc">Внутренняя область, которая прокручивается сама по себе — колонка модального окна, список в панели, — получает общую полосу прокрутки ДС, класс <code class="tok">.ds-scroll</code>. Видна только полоса-бегунок: 8&nbsp;px, полное скругление, цвет Secondary. Дорожки и стрелок нет. В покое бегунок скрыт, при прокрутке появляется и через 800&nbsp;мс после остановки плавно гаснет. Место под бегунок зарезервировано, поэтому контент не сдвигается, когда у области появляется скролл. Прокручивается область только по вертикали: горизонтального скролла у неё не бывает, даже если внутри есть элемент шире неё. Своей рамки у такой области нет: рамку ставят обёртке. Прокрутите пример.</p>
+    <p class="desc">Внутренняя область, которая прокручивается сама по себе — колонка модального окна, список в панели, — получает общую полосу прокрутки ДС, класс <code class="tok">.ds-scroll</code>. Видна только полоса-бегунок: 8&nbsp;px, полное скругление, цвет Secondary. Дорожки и стрелок нет. В покое бегунок скрыт, при прокрутке появляется и через 800&nbsp;мс после остановки плавно гаснет. Место под бегунок — оверлейная полоса (<code class="tok">overflow-y: overlay</code> в Chromium), поэтому ширина контента не меняется, когда у области появляется скролл. Прокручивается область только по вертикали: горизонтального скролла у неё не бывает, даже если внутри есть элемент шире неё. Своей рамки у такой области нет: рамку ставят обёртке. Прокрутите пример.</p>
     <div class="scroll-demo">
       <div class="scroll-demo__area ds-scroll" tabindex="0" aria-label="Пример полосы прокрутки">
         <p class="scroll-demo__row">Строка 1</p>
@@ -590,8 +591,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    стрелок нет, скругление полное, цвет Secondary. В покое бегунок скрыт,
    появляется при прокрутке и плавно гаснет: класс .is-scrolling ставит и
    снимает рантайм foundations/Layout/Layout.js — делегированно, привязывать не нужно.
-   Место под бегунок зарезервировано (scrollbar-gutter: stable): контент не
-   сдвигается, когда у области появляется скролл.
+   Место под бегунок: полоса оверлейная (`overflow-y: overlay` — Chromium кладёт
+   её поверх, места не занимает, поэтому контент не сдвигается при появлении
+   скролла). Браузер без `overlay` (Firefox) падает на `auto` и держит место
+   через `scrollbar-gutter: stable`. Одного `scrollbar-gutter` мало: при
+   стилизованном `::-webkit-scrollbar` Chromium место не резервирует (RE0009).
    Как гаснет. Переход у псевдоэлемента скроллбара браузеры не поддерживают,
    поэтому бегунок берёт цвет из border-color самой области (рамки у неё нет:
    border-style не задан) и заливает себя им широкой правой рамкой, а переход
@@ -610,7 +614,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   --scroll-fade: .3s;  /* затухание после остановки */
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  overflow-y: overlay;      /* Chromium: полоса поверх — места не занимает */
+  scrollbar-gutter: stable; /* Firefox и без overlay: резерв места */
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }
@@ -702,5 +707,6 @@ html.ds-page-scroll-drag { user-select: none; }
 @media (prefers-reduced-motion: reduce) {
   .ds-page-scroll__thumb { transition: none; }
 }</script>
+<script src="../../../apps/proto-panel.js"></script>
 </body>
 </html>

@@ -248,7 +248,7 @@
   function render(pane, c) {
     c.hideFloating();
     var d = store.data();
-    if (!d) { pane.innerHTML = ''; return; }
+    if (!d) { pane.innerHTML = '<p class="ds-body-m pp-muted">' + esc(t('flows.stub')) + '</p>'; return; }
     var u = store.ui();
     var filter = u.filter === 'all' ? 'all' : 'open';
     var only = !!u.onlyPage;

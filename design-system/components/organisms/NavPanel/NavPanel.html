@@ -127,6 +127,7 @@
   <link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
   <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
   <link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="NavPanel">
@@ -153,7 +154,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.022</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.024</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Организмы</p>
     <h1>NavPanel · Панель навигации</h1>
     <p class="lead">Главная навигация приложения в левой части каждой страницы. Отображает все разделы продукта, сгруппированные по подразделениям и типам. Один компонент — три режима: свёрнутый <b>Rail</b>, развёрнутый-оверлей <b>Drawer</b> и закреплённый <b>Fixed</b>.</p>
@@ -614,6 +615,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   overflow-x: hidden;
   scrollbar-gutter: stable;
   padding: 6px 4px 10px;
@@ -789,6 +791,7 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
 /* ========================================================================== *
    RAIL — тултип по hover + бейдж-надстрочник
    ========================================================================== */
+/* в rail подпись становится тултипом (показ — по :hover ниже) */
 .nav--rail .nav__label {
   position: fixed;
   left: 0;
@@ -805,6 +808,13 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
   visibility: hidden;
   pointer-events: none;
   transition: opacity .12s ease, transform .12s ease;
+}
+/* размер тултипа — штатный: у выбранного пункта правило с aria-current весит
+   (0,4,0) из-за :not(); перебиваем той же формой (0,5,0), только font —
+   показ (:hover) не задеваем */
+.nav--rail .nav__item--selected .nav__label,
+.nav--rail .nav__item[aria-current]:not([aria-current="false"]) .nav__label {
+  font: var(--type-body-s);
 }
 .nav--rail .nav__item:hover .nav__label,
 .nav--rail .nav__item:focus-visible .nav__label {
@@ -874,5 +884,6 @@ DSNavPanel.setMode(navEl, 'drawer');   // 'rail' | 'drawer' | 'fixed'
     </div>
   </div>
 </div>
+<script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>
