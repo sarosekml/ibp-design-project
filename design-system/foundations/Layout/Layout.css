@@ -80,8 +80,11 @@
    стрелок нет, скругление полное, цвет Secondary. В покое бегунок скрыт,
    появляется при прокрутке и плавно гаснет: класс .is-scrolling ставит и
    снимает рантайм foundations/Layout/Layout.js — делегированно, привязывать не нужно.
-   Место под бегунок зарезервировано (scrollbar-gutter: stable): контент не
-   сдвигается, когда у области появляется скролл.
+   Место под бегунок: полоса оверлейная (`overflow-y: overlay` — Chromium кладёт
+   её поверх, места не занимает, поэтому контент не сдвигается при появлении
+   скролла). Браузер без `overlay` (Firefox) падает на `auto` и держит место
+   через `scrollbar-gutter: stable`. Одного `scrollbar-gutter` мало: при
+   стилизованном `::-webkit-scrollbar` Chromium место не резервирует (RE0009).
    Как гаснет. Переход у псевдоэлемента скроллбара браузеры не поддерживают,
    поэтому бегунок берёт цвет из border-color самой области (рамки у неё нет:
    border-style не задан) и заливает себя им широкой правой рамкой, а переход
@@ -100,7 +103,8 @@
   --scroll-fade: .3s;  /* затухание после остановки */
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  overflow-y: overlay;      /* Chromium: полоса поверх — места не занимает */
+  scrollbar-gutter: stable; /* Firefox и без overlay: резерв места */
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

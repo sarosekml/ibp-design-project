@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- ФИКСТУРА линтера: B16 (экран). Отличается от `_base.ok.html` одним:
+     подключает локальный CSS виджета `B16.bad.css`.
+     ДЕФЕКТ: до переезда экран и виджет пишут старые имена; имя `--color-*`
+     знают только файлы `foundations/Themes/`. Правило B16 обязано читать не
+     только `<style>` страницы, но и CSS, подключённый `<link>` (виджет
+     собирается в страницу), — иначе мимо сторожа прошёл бы ровно тот файл,
+     где имя и появляется.
+     Правило обязано ПАДАТЬ здесь и МОЛЧАТЬ на эталоне — `lessons-cli verify`. -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фикстура экрана</title>
+<link rel="stylesheet" href="../../../../design-system/ds.css">
+<link rel="stylesheet" href="B16.bad.css">
+<style>
+  .fx-note { font: var(--type-body-m); color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="screen">
+  <main class="screen__content">
+    <h1 class="h1">Фикстура экрана</h1>
+    <p class="fx-note">Область содержимого.</p>
+  </main>
+</div>
+<script src="../../../../design-system/ds.js"></script>
+</body>
+</html>

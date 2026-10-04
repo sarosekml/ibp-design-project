@@ -177,7 +177,12 @@
   function render(pane, c) {
     c.hideFloating();
     var d = store.data();
-    if (!d) { pane.innerHTML = ''; return; }
+    if (!d) {
+      /* Панель без сценария (хаб, ДС, концепт без папки): только текст-заглушка,
+         без кнопок — сценарий описывает агент в чате (решение человека 04.10.2026). */
+      pane.innerHTML = '<p class="ds-body-m pp-muted" id="pp-stub">' + esc(t('flows.stub')) + '</p>';
+      return;
+    }
     if (d.flowErrors && d.flowErrors.length) {
       pane.innerHTML = '<div class="alert alert--error alert--m" role="alert">'
         + '<span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>'

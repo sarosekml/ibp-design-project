@@ -41,7 +41,7 @@ body.ds-has-nav { padding-left: var(--ds-nav-w); }
 
 /* прокручиваемое тело */
 .ds-nav__scroll {
-  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  flex: 1; overflow-y: auto; overflow-y: overlay; scrollbar-gutter: stable; overscroll-behavior: contain;
   padding: 14px 12px 28px;
 }
 /* закреплённый низ: выход в хаб проектов, не скроллится со списком */

@@ -1177,6 +1177,7 @@ const DOCS_SPLIT = path.join(KIT, 'skills/docs-split/tooling/docs-split.mjs');
 const CTX_BUDGET = path.join(KIT, 'skills/session-plan/tooling/ctx-budget.mjs');
 const REGISTRY_CHECK = path.join(HERE, 'registry-check.mjs');
 const BOOT_BUILD = path.join(HERE, 'boot-build.mjs');
+const THEME_BUILD = path.join(DS, 'tools', 'theme-build.mjs');   // генератор тем ДС (RE0005)
 const HUB_BUILD = path.join(HERE, 'hub-build.mjs');
 const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): сгенерированные теги экрана
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
@@ -1317,6 +1318,9 @@ function gateStep(id, paths = null) {
        иконками. Гоняется, когда правили саму обёртку или kit-link.mjs — модуль,
        который ищет оснастку для всех инструментов ДС (дыра маршрутов RE0002). */
     case 'ds-check': return { title: 'ds-check --all (ДС проверяет себя сама)', args: [L.at.check, '--all'], cwd: DS };
+    /* Генерат тем = источник (RE0005): правка файлов foundations/Themes/ врозь
+       с Themes.tokens.js/Ramp.tokens.js не пройдёт молча. */
+    case 'theme-build': return { title: 'theme-build --check (темы = источник)', args: [THEME_BUILD, '--check'], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1522,6 +1526,10 @@ function gateStepsFor(rel, deleted) {
   }
   if ((dk && dk.kind === 'style') || isDsFile(rel, L.at.bundleCss)) add('lint-global', 'parity', 'etalons');
   if (dk && dk.kind === 'spec') add('parity', 'spec-audit');
+  /* Файлы тем (RE0005): генерат Themes.css/Themes.pages.css, источник
+     Themes.tokens.js/Ramp.tokens.js, хром Themes.panel.css — правка любого
+     из них сверяется генератором (шаг theme-build). */
+  if (rel.startsWith(DS_REL + '/foundations/Themes/')) add('theme-build');
   // реестры ДС, которые читают глобальные правила линтера (D1–D4, D9): витрина, правила ведения,
   // журнал правок и генератор шапки главной (версия и дата выводятся из журнала)
   if ([L.at.home, 'MAINTAINING.md', 'CHANGELOG.md', L.at.homeTool].some((f) => isDsFile(rel, f))) add('lint-global');
@@ -1572,7 +1580,7 @@ function gateStepsFor(rel, deleted) {
 
 const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

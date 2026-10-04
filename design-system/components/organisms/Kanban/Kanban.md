@@ -1,8 +1,8 @@
 ---
 component: Kanban
 title: "Канбан-доска"
-version: "1.005"
-updated: "19.09.2026"
+version: "1.006"
+updated: "04.10.2026"
 page: components/organisms/Kanban/Kanban.html
 page_js: components/organisms/Kanban/Kanban.page.js
 runtime: components/organisms/Kanban/Kanban.js

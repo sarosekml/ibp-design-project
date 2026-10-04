@@ -137,6 +137,7 @@
   <link rel="stylesheet" href="../SegmentControl/SegmentControl.css">
   <link rel="stylesheet" href="../Tab/Tab.css">
   <link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
 </head>
 <body>
 <main class="page ds-split" data-screen-label="DropdownList">
@@ -164,7 +165,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.016</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.018</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>DropdownList</h1>
     <p class="lead">Выпадающий список — всплывающая поверхность со списком опций, которая раскрывается под полем <b>Select</b> или <a class="inl" href="../Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>. Служит для выбора значения из перечня: одиночного (подсветка выбранной строки), множественного (ведущие чекбоксы) или с поиском по мере набора (подсветка совпадения). В отличие от <a class="inl" href="../ContextMenu/ContextMenu.html">Context Menu</a> — это выбор данных, а не список команд.</p>
@@ -844,6 +845,8 @@
 .ddl--scroll {
   max-height: var(--ddl-max-h, 296px);
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 /* Полоса прокрутки — в виде .ds-scroll (Layout): только бегунок 8px,
@@ -908,5 +911,6 @@
   transform: none;
   transition: none;
 }</script>
+<script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>

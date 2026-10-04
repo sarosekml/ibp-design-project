@@ -8,6 +8,9 @@
 
    Вся разметка — компоненты ДС; своё (ручка ширины, плеер, кнопка, липкий
    ряд табов, узлы схемы, карточки) — классы pp-* на токенах, panel.css.
+   Корни панели и её плавающие слои (меню, список, тултип) помечены
+   data-theme="service" — служебная тема, не зависящая от темы страницы
+   (RE0005, Э6).
    Слой, фокус, Esc и клик мимо — рантайм ДС (ds-modal.js), своей копии нет.
    Атрибуты, которые ловят обработчики страниц (data-act и т. п.), панель
    не использует: только id pp-* и атрибуты data-pp-*. Тексты — strings.js
@@ -90,7 +93,7 @@
     root.innerHTML =
       '<div class="pp-player" id="pp-player" role="group" aria-label="' + esc(t('player.label')) + '" hidden></div>'
       + '<button type="button" class="pp-fab" id="pp-fab" aria-label="' + esc(t('panel.name')) + '" data-drawer="pp-drawer" hidden>'
-      + '<i data-icon="settings"></i><span class="pp-fab__badge" hidden></span></button>';
+      + '<i data-icon="layout-rows-01"></i><span class="pp-fab__badge" hidden></span></button>';
     var live = document.createElement('div');
     live.className = 'pp-hidden';
     live.id = 'pp-live';
@@ -104,7 +107,8 @@
     s.id = 'pp-drawer';
     s.hidden = true;
     s.innerHTML =
-      '<aside class="drawer drawer--w4 pp-drawer" role="dialog" aria-modal="true" aria-labelledby="pp-drawer-title">'
+      '<div class="pp-rail" id="pp-rail" role="toolbar" aria-orientation="vertical" aria-label="' + esc(t('rail.label')) + '"></div>'
+      + '<aside class="drawer drawer--w4 pp-drawer" role="dialog" aria-modal="true" aria-labelledby="pp-drawer-title">'
       + '<div class="pp-grip" role="separator" aria-orientation="vertical" aria-label="' + esc(t('panel.width')) + '" tabindex="0"></div>'
       + '<header class="drawer__head">'
       + '<div class="drawer__headmain">'
@@ -122,6 +126,7 @@
       + '<div class="pp-tabs"><div class="tabs tabs--horiz" role="tablist" aria-label="' + esc(t('panel.tabs')) + '" id="pp-tabs" data-tabs></div></div>'
       + '<div class="drawer__alert" id="pp-alert" hidden></div>'
       + '<div class="pp-panes" id="pp-panes"></div>'
+      + '<div class="pp-pane pp-theme" id="pp-theme" hidden></div>'
       + '</div>'
       + '</aside>';
     return s;
@@ -209,7 +214,7 @@
 
   function open(tabId) {
     if (!mounted || runner.busy()) return;
-    if (tabId) selectTab(tabId);
+    if (tabId) { railShow('panel'); selectTab(tabId); }
     if (isOpen()) { renderActive(); updateAlert(); renderFix(); return; }
     var nested = !!(window.DSModal && window.DSModal.stack().length);
     el.drawer.classList.toggle('modal-scrim--nested', nested);
@@ -343,6 +348,8 @@
   function renderFix() {
     var box = document.getElementById('pp-fix');
     if (!box) return;
+    /* Без данных фиксировать нечего — кнопки Fix State нет вовсе (заглушка). */
+    if (!store.data()) { box.innerHTML = ''; box.removeAttribute('data-tooltip'); return; }
     var why = fixBlocked(), flow = targetFlow();
     var tip = why || (flow ? t('fix.tip', { flow: flow.title, key: HK.fix }) : t('fix.tipNew', { key: HK.fix }));
     box.setAttribute('data-tooltip', tip);
@@ -410,7 +417,8 @@
   function alertState() {
     var d = store.data();
     var s = store.status(), st = store.state;
-    if (!d) return { key: 'nodata', tone: 'error', title: t('alert.nodata.title'), text: t('alert.nodata.text', { file: (ctx.dir || 'proto-panel') + '/panel-data.js', tool: TOOL }) };
+    /* Без данных в табе — заглушка; отдельный Alert о пропавшем зеркале не нужен. */
+    if (!d) return null;
     var drafts = store.drafts().length, ops = store.flowOps().length;
     var local = s === 'mirror' || s === 'unsupported';
     var downloads = [{ label: t('btn.downloadComments'), cmd: 'download' }].concat(ops ? [{ label: t('btn.downloadFlows'), cmd: 'download-flows' }] : []);
@@ -517,6 +525,77 @@
 
   function paneOf(id) { return document.getElementById('pp-pane-' + id); }
   function defOf(id) { return tabs.filter(function (x) { return x.id === id; })[0] || null; }
+
+  /* ---------------- рельс инструментов и панель темы ---------------- */
+
+  /* Рельс слева от тела шторки: кнопки переключают содержимое дровера —
+     «протопанель» (табы Flows/Comments) и «тема». Новая функция — кнопка и
+     её панель. Плавающая кнопка темы (DSTheme) на страницах с панелью не
+     строится: её роль берёт вторая кнопка рельса (решение человека 04.10.2026). */
+  var rail = 'panel';
+  var RAIL = [
+    { id: 'panel', icon: 'layout-rows-01', label: 'rail.panel', tip: 'rail.panelTip' },
+    { id: 'theme', icon: 'settings', label: 'rail.theme', tip: 'rail.themeTip' }
+  ];
+
+  function buildRail() {
+    var box = document.getElementById('pp-rail');
+    if (!box) return;
+    box.innerHTML = RAIL.map(function (r) {
+      return '<button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
+        + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button>';
+    }).join('');
+    wire(box);
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-pp-rail]');
+      if (b) railShow(b.getAttribute('data-pp-rail'));
+    });
+  }
+
+  /** Переключить содержимое дровера: 'panel' — табы панели, 'theme' — темы. */
+  function railShow(id) {
+    if (id !== 'theme') id = 'panel';
+    rail = id;
+    store.setUi({ rail: id });
+    var panelMode = id !== 'theme';
+    var tabsEl = document.querySelector('#pp-body > .pp-tabs');
+    var panesEl = document.getElementById('pp-panes');
+    var themeEl = document.getElementById('pp-theme');
+    var fixEl = document.getElementById('pp-fix');
+    if (tabsEl) tabsEl.hidden = !panelMode;
+    if (panesEl) panesEl.hidden = !panelMode;
+    if (themeEl) themeEl.hidden = panelMode;
+    if (fixEl) fixEl.hidden = !panelMode || !store.data();
+    var btns = document.querySelectorAll('#pp-rail [data-pp-rail]');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-pp-rail') === id ? 'true' : 'false');
+    if (panelMode) refresh(); else renderThemePane();
+    if (!panelMode) hideFloating();
+  }
+
+  /** Темы для панели: из рантайма ДС, служебная (service) не показывается. */
+  function themeList() {
+    try { if (window.DSTheme && window.DSTheme.list) return window.DSTheme.list().filter(function (x) { return x.id !== 'service'; }); } catch (e) { /* ДС без тем */ }
+    return [{ id: 'legacy', label: t('theme.legacy') }, { id: 'ibp-light', label: t('theme.light') }, { id: 'ibp-dark', label: t('theme.dark') }];
+  }
+  function renderThemePane() {
+    var box = document.getElementById('pp-theme');
+    if (!box) return;
+    var cur = 'legacy';
+    try { cur = window.DSTheme && window.DSTheme.get ? window.DSTheme.get() : 'legacy'; } catch (e) { /* нет рантайма тем */ }
+    box.innerHTML = '<p class="ds-body-s pp-muted">' + esc(t('theme.title')) + '</p>'
+      + '<div class="pp-theme__list">' + themeList().map(function (th) {
+        var on = th.id === cur;
+        return '<button type="button" class="btn btn--transparent btn--s btn--fullwidth pp-theme__item' + (on ? ' is-active' : '') + '"'
+          + ' data-pp-theme="' + esc(th.id) + '" role="menuitemradio" aria-checked="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>';
+      }).join('') + '</div>';
+    wire(box);
+    box.onclick = function (e) {
+      var b = e.target.closest && e.target.closest('[data-pp-theme]');
+      if (!b) return;
+      try { if (window.DSTheme && window.DSTheme.set) window.DSTheme.set(b.getAttribute('data-pp-theme')); } catch (err) { /* нет рантайма тем */ }
+      renderThemePane();
+    };
+  }
 
   function buildTabs() {
     var row = document.getElementById('pp-tabs');
@@ -758,6 +837,26 @@
 
   /* ---------------- монтирование ---------------- */
 
+  /* Плавающие слои панели (меню, список, тултип) DSFloat уводит в общий слой
+     в body — уже вне корней панели, и они потеряли бы её тему. Помечаем
+     служебной темой по исходному родителю ДО переезда; слои страницы не
+     трогаем (у них home вне OWN). */
+  function serviceFloats() {
+    var F = window.DSFloat;
+    if (!F || F.__ppService) return;
+    var mount = F.mount;
+    F.mount = function (node, opts) {
+      try {
+        var home = node && node.parentNode;
+        if (home && home.closest && home.closest(OWN) && !node.hasAttribute('data-theme')) {
+          node.setAttribute('data-theme', 'service');
+        }
+      } catch (e) { /* монтирование важнее пометки */ }
+      return mount.call(F, node, opts);
+    };
+    F.__ppService = true;
+  }
+
   function mount() {
     if (mounted) return;
     mounted = true;
@@ -774,6 +873,11 @@
     document.body.appendChild(el.settings);
     el.confirm = buildConfirm();
     document.body.appendChild(el.confirm);
+    /* Служебная тема: корни панели не наследуют тему страницы. */
+    [root[0], root[1], el.drawer, el.settings, el.confirm].forEach(function (node) {
+      if (node) node.setAttribute('data-theme', 'service');
+    });
+    serviceFloats();
 
     if (window.DSDrawer) window.DSDrawer.bind(el.fab, { onOpen: onOpened, onClose: onClosed });
     el.fab.setAttribute('data-tooltip', store.data() ? t('panel.hotkeyTip', { key: HK.toggle }) : t('panel.noDataTip', { tool: TOOL }));
@@ -806,6 +910,8 @@
     });
 
     buildTabs();
+    buildRail();
+    railShow(store.ui().rail || 'panel');
     renderPlayer();
     renderFab();
     renderHeadMenu();

@@ -28,10 +28,12 @@
   var PP = window.ProtoPanel = window.ProtoPanel || {};
   var core = window.ProtoPanelCore;
   var ctx = window.__PROTO_PANEL || {};
-  if (!core || !ctx.app) return;
+  /* Панель живёт и без приложения (хаб, ДС, концепт без папки): данные тогда
+     пустые, запись недоступна, интерфейс показывает заглушку. */
+  if (!core) return;
   var t = PP._strings ? PP._strings.t : function (k) { return k; };
 
-  var APP = ctx.app;
+  var APP = ctx.app || '';
   var DIR = ctx.dir || 'proto-panel';
   var FILES = { flows: 'flows.yaml', comments: 'comments.md', mirror: 'panel-data.js' };
   var LOG = '[proto panel]';

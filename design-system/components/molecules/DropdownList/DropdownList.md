@@ -1,8 +1,8 @@
 ---
 component: DropdownList
 title: "DropdownList"
-version: "1.016"
-updated: "01.10.2026"
+version: "1.018"
+updated: "04.10.2026"
 page: components/molecules/DropdownList/DropdownList.html
 css: components/molecules/DropdownList/DropdownList.css
 deps: [checkbox, label-helper, spinner]

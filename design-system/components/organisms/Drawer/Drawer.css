@@ -159,6 +159,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   overscroll-behavior: contain;
   padding: var(--drawer-body-pad-y) var(--drawer-pad-x);
   display: flex;
@@ -171,13 +172,15 @@
    скругление полное, цвет --secondary, без дорожки, уголка и стрелок. В покое
    скрыт, при прокрутке появляется и гаснет: класс .is-scrolling ставит
    ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
-   своей видимой рамки у .drawer__body не бывает. Резерв места не ставится.
+   своей видимой рамки у .drawer__body не бывает. Резерв места —
+   `scrollbar-gutter: stable`: ширина не зависит от появления бегунка (RE0007).
    1.001; до этого бегунок --border-light был виден всегда (решение человека
    01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .drawer__body {
   --scroll-w: 8px;
   --scroll-show: .1s;
   --scroll-fade: .3s;
+  scrollbar-gutter: stable;
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

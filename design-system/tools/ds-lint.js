@@ -35,8 +35,9 @@ const CONTRACT_CATS = ['atoms', 'molecules', 'organisms'];
 const REGISTRY_CATS = ['foundations', 'atoms', 'molecules', 'organisms'];
 // у страниц-экранов и rnd свои разделы и своя роль
 const SKIP_ALL = [/^index\.html$/, /^templates\//];
-// CSS документации и экранов — намеренно вне ds.css (не компоненты ДС)
-const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css'];
+// CSS документации и экранов — намеренно вне ds.css (не компоненты ДС);
+// Themes.pages.css — правила только страниц ДС, на экраны не подключается (RE0005)
+const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css', 'Themes.pages.css', 'Themes.panel.css'];
 // hex, которые легальны: демо-тени и шахматная подложка прозрачности
 const HEX_OK = /(chess|checker|shadow-demo|elevation-demo)/i;
 // значения, легальные в разметке документации (не выдуманные цвета продукта):
@@ -141,6 +142,20 @@ const RX = {
 const strip = (s) => s.replace(/<[^>]*>/g, ' ').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim();
 const uniq = (a) => [...new Set(a)];
 const base = (p) => p.split('/').pop();
+/* Путь href относительно страницы pageRel (обе — от корня ДС; страницы apps
+   приходят как `../apps/…`). Нужен B16, чтобы прочитать локальный CSS,
+   подключённый экраном. Своего path у линтера нет — он живёт в new Function. */
+const resolveRel = (pageRel, href) => {
+  const h = String(href).split('?')[0].split('#')[0];
+  if (/^[a-z]+:/i.test(h) || h.startsWith('//') || h.startsWith('/')) return null;
+  const out = [];
+  for (const part of pageRel.split('/').slice(0, -1).concat(h.split('/'))) {
+    if (part === '' || part === '.') continue;
+    if (part === '..') { if (out.length && out[out.length - 1] !== '..') out.pop(); else out.push('..'); continue; }
+    out.push(part);
+  }
+  return out.join('/');
+};
 const all = (re, s, i = 1) => { const out = []; let m; re.lastIndex = 0; while ((m = re.exec(s))) out.push(m[i]); return out; };
 /* делит селектор по запятым верхнего уровня, не заходя внутрь ()/[] — нужно B7,
    чтобы отличить ":is(.entity--selected,[aria-selected=true])" (одна топ-ветка,
@@ -318,6 +333,32 @@ function homeApply(html, meta) {
 
 /* ---------- глобальные проверки: A3, B6, D3, D4, D9 ---------- */
 async function globalChecks(P, out) {
+  /* B16 — имена тем ДС (`--color-*`, `--ramp-*`) до переезда живут только в
+     foundations/Themes/. Компоненты, основы, паттерны и рантаймы остаются на
+     старых именах: ролей и рамп не знает ни продукт, ни разработка. B1 такие
+     ссылки примет (определения видны в генерате), поэтому нужен отдельный
+     сторож. Исключение — сами файлы тем. Экраны и страницы — в pageChecks. */
+  {
+    const forbidden = /--(?:color|ramp)-/;
+    const hits = [];
+    for (const f of P.styleFiles) {
+      if (f.startsWith('foundations/Themes/')) continue;
+      const css = ((P.src && P.src.get(f)) || (await readFile(f).catch(() => ''))).replace(/\/\*[\s\S]*?\*\//g, '');
+      if (forbidden.test(css)) hits.push(f);
+    }
+    for (const f of P.list) {
+      if (!/\.js$/.test(f) || f.startsWith('foundations/Themes/') || /ds-lint/.test(f)) continue;
+      const js = ((P.src && P.src.get(f)) || (await readFile(f).catch(() => ''))).replace(/\/\*[\s\S]*?\*\//g, '');
+      if (forbidden.test(js)) hits.push(f);
+    }
+    if (hits.length) out.push(['BLOCKER', 'B16', 'имена тем (--color-*/--ramp-*) вне foundations/Themes: ' + uniq(hits).slice(0, 5).join(', ')]);
+  }
+  /* B17 — главная ДС несёт служебный тег темы (RE0005). Она вне pageChecks
+     (SKIP_ALL), поэтому проверяется здесь. Остальные страницы — в pageChecks;
+     ds-split-страницы дополнительно держит правило ДС20. */
+  if (!/<script[^>]+src="[^"]*docs-kit\/ds-theme-boot\.js"/.test(P.index || '')) {
+    out.push(['BLOCKER', 'B17', 'главная ДС (index.html) без тега темы docs-kit/ds-theme-boot.js']);
+  }
   for (const f of P.styleFiles) {
     if (CSS_NOT_IN_BUNDLE.includes(base(f))) continue;
     const imp = 'url("' + f + '")';
@@ -1031,6 +1072,34 @@ async function pageChecks(p, P, opts, out) {
     if (dsJsCount === 0) say('BLOCKER', 'A7', 'экран без <script src="ds.js"> — рантаймы подключаются вручную и легко забываются');
     if (dsJsCount > 1) say('WARN', 'A7', 'ds.js подключён ' + dsJsCount + ' раза');
     if (direct.length) say('BLOCKER', 'A7', 'рантайм(ы) подключены мимо ds.js: ' + uniq(direct.map(base)).join(', '));
+  }
+  /* B16 — имена тем ДС (`--color-*`, `--ramp-*`) до переезда живут только в
+     foundations/Themes/. Экран, виджет или страница ДС пишут старые имена;
+     рампы и роли не знает ни продукт, ни разработка. Для экранов читаем ещё и
+     локальный CSS, подключённый `<link>` (виджет собирается в страницу) —
+     иначе мимо сторожа прошёл бы ровно тот файл, где имя и появляется. */
+  const noHtmlComments = html.replace(/<!--[\s\S]*?-->/g, '');
+  if (!p.startsWith('foundations/Themes/')) {
+    const forbidden = /--(?:color|ramp)-/;
+    const source = noHtmlComments.replace(/\/\*[\s\S]*?\*\//g, '');
+    const hits = [];
+    if (forbidden.test(source)) hits.push(base(p));
+    if (isScreen) {
+      const localCss = uniq(links.map((h) => resolveRel(p, h)).filter((r) => r && r.startsWith('../') && /\.css$/.test(r)));
+      for (const r of localCss) {
+        const css = (await readFile(r).catch(() => '')).replace(/\/\*[\s\S]*?\*\//g, '');
+        if (forbidden.test(css)) hits.push(r);
+      }
+    }
+    if (hits.length) say('BLOCKER', 'B16', 'имена тем (--color-*/--ramp-*) вне foundations/Themes: ' + uniq(hits).slice(0, 3).join(', '));
+  }
+  /* B17 — страница ДС без служебного тега темы (RE0005). ds-split-страницы
+     держит ДС20 (docs-split check); здесь — остальные: страницы старого
+     образца и главная (главная — в globalChecks, её срезает SKIP_ALL).
+     Шаблон экрана (templates/) не в счёт: он грузит загрузчик приложения. */
+  if (!isScreen && !/^templates\//.test(p) && !/class="page ds-split"/.test(noHtmlComments)
+    && !/<script[^>]+src="[^"]*docs-kit\/ds-theme-boot\.js"/.test(noHtmlComments)) {
+    say('BLOCKER', 'B17', 'страница ДС без тега темы docs-kit/ds-theme-boot.js');
   }
   /* ---------- R* — каскад раскатки docs-split ----------
      Пункты К1/К2/К6/К10 чек-листа screen-review живут здесь, а не в сенсоре

@@ -66,6 +66,10 @@
   --modal-radius: var(--radius-modal);      /* 8px — общая шкала радиусов */
   --modal-shadow: var(--shadow-modal-form); /* именованная тень под модалки */
   --modal-bg:     var(--bg-popup);
+  /* фон карточек и тайлов внутри окна: слой ВЫШЕ модалки (в тёмной светлее,
+     в светлой темнее). По умолчанию — обычная поверхность; значение задаёт
+     тема правилом в Themes.tokens.js */
+  --modal-surface: var(--bg-tile);
 
   /* скрим — тёмная подложка, гасит фон под модалкой. Конвенция как у
      --toast-scrim (color-mix поверх --st-grey), процент выше — модалка
@@ -140,6 +144,11 @@
   overflow: hidden; /* скругление реза́лось бы содержимым без этого */
 }
 
+/* Контент-поверхности внутри окна (карточки, тайлы) — слой ВЫШЕ модалки:
+   в тёмной теме светлее, в светлой темнее (решение человека 04.10.2026).
+   Значение — --modal-surface, его задаёт тема; здесь только приём. */
+.modal .tile { --bg-tile: var(--modal-surface); }
+
 /* модификаторы ширины — шаги шкалы колонок (2–12) */
 .modal--w2  { width: var(--modal-w-2); }
 .modal--w3  { width: var(--modal-w-3); }
@@ -211,6 +220,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-y: overlay;   /* Chromium: полоса поверх — ширина не скачет */
   padding: var(--modal-body-pad-top) var(--modal-pad-x) var(--modal-body-pad-bottom);
   display: flex;
   flex-direction: column;
@@ -223,14 +233,16 @@
    скрыт, при прокрутке появляется и гаснет: класс .is-scrolling ставит
    ds-scroll.js (делегированно, привязывать не нужно). Бегунок берёт цвет из
    border-color тела — переход у псевдоэлемента скроллбара браузеры не
-   поддерживают; своей видимой рамки у .modal__body не бывает. Резерв места
-   (scrollbar-gutter) не ставится: ширина тела окна не меняется. 1.010; до этого
-   бегунок --border-light был виден всегда (решение человека 01.10.2026 —
-   все полосы прокрутки ДС в одном виде). */
+   поддерживают; своей видимой рамки у .modal__body не бывает. Место — оверлей
+   (`overflow-y: overlay`) + `scrollbar-gutter: stable` для браузеров без
+   overlay: ширина тела не зависит от появления бегунка (RE0007, RE0009).
+   1.010; до этого бегунок --border-light был виден всегда (решение человека
+   01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .modal__body {
   --scroll-w: 8px;
   --scroll-show: .1s;
   --scroll-fade: .3s;
+  scrollbar-gutter: stable;
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

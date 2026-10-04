@@ -1,0 +1,822 @@
+<!-- @dsCard group="Foundations" name="Themes" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Темы (Themes) — Дизайн-система</title>
+<link rel="stylesheet" href="../Typography/Typography.css">
+<link rel="stylesheet" href="../Colors/Colors.css">
+<link rel="stylesheet" href="../Colors/Palette.css">
+<link rel="stylesheet" href="../Radius/Radius.css">
+<link rel="stylesheet" href="Themes.css">
+<link rel="stylesheet" href="../../components/atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../components/atoms/Badge/Badge.css">
+<link rel="stylesheet" href="../../components/atoms/Link/Link.css">
+<link rel="stylesheet" href="../../components/atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../components/atoms/Switch/Switch.css">
+<link rel="stylesheet" href="../../components/organisms/TableCell/TableCell.css">
+<link rel="stylesheet" href="../../docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../components/molecules/Tab/Tab.css">
+<style>
+  /* раскладка стенда — только токены ДС */
+
+  /* сцены рядом: legacy и три темы */
+  .theme-stand { display:flex; flex-wrap:wrap; gap:12px; width:100%; align-items:stretch; }
+  .stand-stage { flex:1 1 220px; min-width:220px; display:flex; flex-direction:column; gap:16px; padding:16px; border-radius:var(--radius-2xl); background:var(--bg-page); border:1px solid var(--border-light); }
+  .stand-stage__cap { font:var(--type-body-s-strong); color:var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; margin:0; }
+
+  .theme-demo { display:flex; flex-direction:column; gap:16px; padding:16px; border-radius:var(--radius-l); background:var(--bg-tile); border:1px solid var(--border-light); }
+  .theme-demo__title { font:var(--type-h6-strong); color:var(--text-primary); margin:0; }
+  .theme-demo__muted { font:var(--type-body-s); color:var(--text-secondary); margin:0; }
+  .theme-demo__row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  /* стенд-таблицы: колонки задаёт переменная --cols (её ставит скрипт) */
+  .stand-tbl { margin-top:12px; }
+  .stand-tbl .tbl__row { grid-template-columns: var(--cols, 1fr 1fr); }
+  .stand-tbl .th__label { white-space:normal; }
+  .stand-scroll { overflow:auto; }
+  .stand-scroll .stand-tbl { min-width:780px; }
+  .stand-h { font:var(--type-h6-strong); color:var(--text-primary); margin:24px 0 0; }
+  .stand-count { font:var(--type-body-s); color:var(--text-inactive); font-weight:400; }
+  .stand-note { font:var(--type-body-s); color:var(--text-secondary); margin:8px 0 0; }
+
+  /* рампы */
+  .ramp-head, .ramp-row { display:grid; grid-template-columns:116px repeat(11, minmax(52px,1fr)); gap:8px; align-items:end; }
+  .ramp-head { padding-bottom:4px; }
+  .ramp-row { padding:4px 0; border-top:1px solid var(--border-light); align-items:center; }
+  .ramp-name { font:var(--type-body-s-strong); color:var(--text-primary); }
+  .ramp-tag { display:block; font:var(--type-body-s); font-size:10px; color:var(--text-inactive); }
+  .ramp-cell { display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .ramp-cell--head { font:var(--type-body-s); color:var(--text-inactive); text-align:center; }
+  .ramp-sw { display:block; width:100%; height:34px; border-radius:var(--radius-s); border:1px solid var(--border-light); background:var(--sw); }
+  .ramp-hex { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:9.5px; color:var(--text-inactive); }
+  .role-sw { display:inline-block; width:14px; height:14px; border-radius:4px; border:1px solid var(--border-light); background:var(--sw); margin-right:8px; vertical-align:-3px; }
+
+  /* редактор семян */
+  .seed-theme { display:flex; align-items:center; gap:12px; margin-top:16px; }
+  .seed-theme label { font:var(--type-body-s-strong); color:var(--text-primary); }
+  .seed-theme select { font:var(--type-body-m); color:var(--text-primary); background:var(--bg-tile); border:1px solid var(--border-light); border-radius:var(--radius-l); padding:8px 12px; }
+  .seed-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(310px, 1fr)); gap:16px 24px; margin-top:16px; }
+  .seed { display:grid; grid-template-columns:110px 1fr 1fr; gap:10px; align-items:center; }
+  .seed__name { display:flex; align-items:center; gap:8px; font:var(--type-body-s-strong); color:var(--text-primary); min-width:0; }
+  .seed__sw { flex:none; width:22px; height:22px; border-radius:var(--radius-s); border:1px solid var(--border-light); background:var(--sw); }
+  .seed__ctl { display:flex; align-items:center; gap:8px; min-width:0; }
+  .seed__ctl label { font:var(--type-body-s); color:var(--text-inactive); }
+  .seed__ctl input[type=range] { width:100%; min-width:0; }
+  .seed__val { font:var(--type-body-s); color:var(--text-secondary); font-variant-numeric:tabular-nums; min-width:40px; text-align:right; }
+  .seed-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .seed-json { width:100%; margin-top:12px; padding:12px; border:1px solid var(--border-light); border-radius:var(--radius-l); background:var(--bg-tile); color:var(--text-primary); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.5; resize:vertical; }
+</style>
+<script src="Ramp.tokens.js"></script>
+<script src="../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="Themes">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="46">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="theme-stand">
+          <div class="stand-stage" id="stageLegacy" data-theme="legacy">
+            <p class="stand-stage__cap">legacy — ДС как есть</p>
+            <div class="theme-demo">
+              <p class="theme-demo__title">Поверхность тайла</p>
+              <p class="theme-demo__muted">Основной и второстепенный текст на поверхности.</p>
+              <div class="theme-demo__row">
+                <button type="button" class="btn btn--accent btn--m"><span class="btn__label">Применить</span></button>
+                <button type="button" class="btn btn--outline btn--m"><span class="btn__label">Отменить</span></button>
+                <button type="button" class="btn btn--transparent btn--m"><span class="btn__label">Ещё</span></button>
+              </div>
+              <div class="theme-demo__row">
+                <a class="link link--accent link--m" href="#">Открыть договор</a>
+              </div>
+              <div class="theme-demo__row">
+                <span class="badge badge--m badge--accent">Активно</span>
+                <span class="badge badge--m badge--success">Исполнено</span>
+                <span class="badge badge--m badge--warning">Внимание</span>
+                <span class="badge badge--m badge--error">Отклонено</span>
+                <span class="badge badge--m badge--neutral">Черновик</span>
+              </div>
+              <div class="theme-demo__row">
+                <span class="chip chip--m"><span class="chip__label">Договор</span></span>
+                <span class="chip chip--m chip--primary"><span class="chip__label">Акцент</span></span>
+                <span class="chip chip--m chip--outline"><span class="chip__label">Контур</span></span>
+              </div>
+              <label class="sw sw--on">
+                <input type="checkbox" class="sw__input" role="switch" aria-checked="true" checked>
+                <span class="sw__control"><span class="sw__thumb"></span></span>
+                <span class="sw__content"><span class="sw__label">Уведомления</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="stand-stage" id="stageNew" data-theme="ibp-light">
+            <p class="stand-stage__cap">ibp-light — новая светлая</p>
+            <div class="theme-demo">
+              <p class="theme-demo__title">Поверхность тайла</p>
+              <p class="theme-demo__muted">Основной и второстепенный текст на поверхности.</p>
+              <div class="theme-demo__row">
+                <button type="button" class="btn btn--accent btn--m"><span class="btn__label">Применить</span></button>
+                <button type="button" class="btn btn--outline btn--m"><span class="btn__label">Отменить</span></button>
+                <button type="button" class="btn btn--transparent btn--m"><span class="btn__label">Ещё</span></button>
+              </div>
+              <div class="theme-demo__row">
+                <a class="link link--accent link--m" href="#">Открыть договор</a>
+              </div>
+              <div class="theme-demo__row">
+                <span class="badge badge--m badge--accent">Активно</span>
+                <span class="badge badge--m badge--success">Исполнено</span>
+                <span class="badge badge--m badge--warning">Внимание</span>
+                <span class="badge badge--m badge--error">Отклонено</span>
+                <span class="badge badge--m badge--neutral">Черновик</span>
+              </div>
+              <div class="theme-demo__row">
+                <span class="chip chip--m"><span class="chip__label">Договор</span></span>
+                <span class="chip chip--m chip--primary"><span class="chip__label">Акцент</span></span>
+                <span class="chip chip--m chip--outline"><span class="chip__label">Контур</span></span>
+              </div>
+              <label class="sw sw--on">
+                <input type="checkbox" class="sw__input" role="switch" aria-checked="true" checked>
+                <span class="sw__control"><span class="sw__thumb"></span></span>
+                <span class="sw__content"><span class="sw__label">Уведомления</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="stand-stage" id="stageDark" data-theme="ibp-dark">
+            <p class="stand-stage__cap">ibp-dark — новая тёмная</p>
+            <div class="theme-demo">
+              <p class="theme-demo__title">Поверхность тайла</p>
+              <p class="theme-demo__muted">Основной и второстепенный текст на поверхности.</p>
+              <div class="theme-demo__row">
+                <button type="button" class="btn btn--accent btn--m"><span class="btn__label">Применить</span></button>
+                <button type="button" class="btn btn--outline btn--m"><span class="btn__label">Отменить</span></button>
+                <button type="button" class="btn btn--transparent btn--m"><span class="btn__label">Ещё</span></button>
+              </div>
+              <div class="theme-demo__row">
+                <a class="link link--accent link--m" href="#">Открыть договор</a>
+              </div>
+              <div class="theme-demo__row">
+                <span class="badge badge--m badge--accent">Активно</span>
+                <span class="badge badge--m badge--success">Исполнено</span>
+                <span class="badge badge--m badge--warning">Внимание</span>
+                <span class="badge badge--m badge--error">Отклонено</span>
+                <span class="badge badge--m badge--neutral">Черновик</span>
+              </div>
+              <div class="theme-demo__row">
+                <span class="chip chip--m"><span class="chip__label">Договор</span></span>
+                <span class="chip chip--m chip--primary"><span class="chip__label">Акцент</span></span>
+                <span class="chip chip--m chip--outline"><span class="chip__label">Контур</span></span>
+              </div>
+              <label class="sw sw--on">
+                <input type="checkbox" class="sw__input" role="switch" aria-checked="true" checked>
+                <span class="sw__control"><span class="sw__thumb"></span></span>
+                <span class="sw__content"><span class="sw__label">Уведомления</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="stand-stage" id="stageService" data-theme="service">
+            <p class="stand-stage__cap">service — сервисная</p>
+            <div class="theme-demo">
+              <p class="theme-demo__title">Поверхность тайла</p>
+              <p class="theme-demo__muted">Основной и второстепенный текст на поверхности.</p>
+              <div class="theme-demo__row">
+                <button type="button" class="btn btn--accent btn--m"><span class="btn__label">Применить</span></button>
+                <button type="button" class="btn btn--outline btn--m"><span class="btn__label">Отменить</span></button>
+                <button type="button" class="btn btn--transparent btn--m"><span class="btn__label">Ещё</span></button>
+              </div>
+              <div class="theme-demo__row">
+                <a class="link link--accent link--m" href="#">Открыть договор</a>
+              </div>
+              <div class="theme-demo__row">
+                <span class="badge badge--m badge--accent">Активно</span>
+                <span class="badge badge--m badge--success">Исполнено</span>
+                <span class="badge badge--m badge--warning">Внимание</span>
+                <span class="badge badge--m badge--error">Отклонено</span>
+                <span class="badge badge--m badge--neutral">Черновик</span>
+              </div>
+              <div class="theme-demo__row">
+                <span class="chip chip--m"><span class="chip__label">Договор</span></span>
+                <span class="chip chip--m chip--primary"><span class="chip__label">Акцент</span></span>
+                <span class="chip chip--m chip--outline"><span class="chip__label">Контур</span></span>
+              </div>
+              <label class="sw sw--on">
+                <input type="checkbox" class="sw__input" role="switch" aria-checked="true" checked>
+                <span class="sw__control"><span class="sw__thumb"></span></span>
+                <span class="sw__content"><span class="sw__label">Уведомления</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+    <div class="meta"><span>Версия: <b>1.007</b></span><span>Обновлено: <b>04.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Основы</p>
+    <h1>Темы (Themes)</h1>
+    <p class="lead">Темы — наложение поверх ДС: <code class="tok">legacy</code> остаётся без правок, темы <code class="tok">ibp-light</code>, <code class="tok">ibp-dark</code> и <code class="tok">service</code> действуют только под атрибутом <code class="tok">data-theme</code>. Тема задаёт рампы <code class="tok">--ramp-*</code>, роли <code class="tok">--color-*</code> и значения всех 119 старых имён через роли. <code class="tok">ibp-light</code> — новая светлая (сине-серая нейтраль <code class="tok">slate</code>, акцент <code class="tok">#00AA9B</code>), <code class="tok">ibp-dark</code> — тёмная на той же нейтрали, <code class="tok">service</code> — тёмная служебная с пурпурным акцентом Untitled UI. Ниже — стенд: четыре темы рядом на одних и тех же компонентах, рампы, роли, карта «старое → новое», точечные правила и отчёт контраста.</p>
+    <p class="desc" id="stand-error" hidden>Не загрузились данные темы (<code class="tok">DS_THEMES</code>/<code class="tok">DS_RAMP</code>): проверьте, что служебный тег <code class="tok">docs-kit/ds-theme-boot.js</code> и <code class="tok">Ramp.tokens.js</code> подключены в <code class="tok">&lt;head&gt;</code>.</p>
+  </header>
+
+  <section class="section" data-screen-label="Usage">
+    <h2>Использование</h2>
+    <p class="desc">Тему включает атрибут <code class="tok">data-theme</code> на корне страницы (или на любом контейнере — темы вкладываются). Без атрибута не действует ни одно правило файла: <code class="tok">legacy</code> — это ДС как есть. Старые имена в компонентах и экранах не меняются: перекрашивается значение, а не имя.</p>
+  </section>
+
+  <section class="section" data-screen-label="Anatomy">
+    <h2>Анатомия</h2>
+    <p class="desc">Блок темы — <code class="tok">:root[data-theme="X"], [data-theme="X"]</code>: рампы, роли, карта старых имён, тени и токены компонентов (правила с селектором <code class="tok">:root</code>). Токены компонентов идут в блоке <b>каждой</b> темы: вложенная тема берёт свои значения, а не темы страницы. Точечные правила мест, где старого имени не хватает, выходят отдельно под <code class="tok">:where([data-theme]:not([data-theme="legacy"]))</code> — гейт на каждом селекторе списка, нулевой специфичности, поэтому состояния компонента сильнее.</p>
+  </section>
+
+  <section class="section" data-screen-label="Variants">
+    <h2>Варианты</h2>
+    <p class="desc">Собраны четыре темы. <code class="tok">ibp-light</code> — новая светлая (сине-серая нейтраль <code class="tok">slate</code>, акцент <code class="tok">#00AA9B</code>), <code class="tok">ibp-dark</code> — тёмная на той же нейтрали, <code class="tok">service</code> — тёмная служебная с пурпурным акцентом Untitled UI.</p>
+    <div class="tbl stand-tbl" style="--cols:8px minmax(120px,1fr) 2fr 1.4fr 8px;">
+      <div class="tbl__row">
+        <div class="th th--separator"></div>
+        <div class="th"><span class="th__label">Тема</span></div>
+        <div class="th"><span class="th__label">Что это</span></div>
+        <div class="th"><span class="th__label">Состояние</span></div>
+        <div class="th th--separator"></div>
+      </div>
+      <div class="tbl__row">
+        <div class="tc tc--separator"></div>
+        <div class="tc"><span class="tc__row"><span class="tc__text"><code>legacy</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС как есть, страница без атрибута</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Действует всегда</span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row">
+        <div class="tc tc--separator"></div>
+        <div class="tc"><span class="tc__row"><span class="tc__text"><code>ibp-light</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Светлая тема продукта — сине-серая нейтраль <code class="tok">slate</code>, акцент <code class="tok">#00AA9B</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Собрана; семена 9 тонов, роли из общего <code class="tok">values</code>, точечные правила применяются</span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row">
+        <div class="tc tc--separator"></div>
+        <div class="tc"><span class="tc__row"><span class="tc__text"><code>ibp-dark</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тёмная тема продукта — та же сине-серая нейтраль <code class="tok">slate</code>, поверхности светлеют с подъёмом</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Собрана; все 19 тонов, графики — legacy, статусная палитра — сгенерированная</span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+      <div class="tbl__row">
+        <div class="tc tc--separator"></div>
+        <div class="tc"><span class="tc__row"><span class="tc__text"><code>service</code></span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сервисное окно, протопанель и их плавающие слои</span></span></div>
+        <div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Собрана; как тёмная тема, акцент — пурпур Untitled UI <code class="tok">#7F56D9</code></span></span></div>
+        <div class="tc tc--separator"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" data-screen-label="Sizes">
+    <h2>Размеры</h2>
+    <p class="desc">Не применимо: тема — набор значений, собственных габаритов у неё нет.</p>
+  </section>
+
+  <section class="section" data-screen-label="Content">
+    <h2>Контент</h2>
+    <p class="desc">Не применимо: текста у темы нет.</p>
+  </section>
+
+  <section class="section" data-screen-label="Behavior">
+    <h2>Поведение</h2>
+    <p class="desc">Тема хранится у потребителя (страница выбирает и ставит атрибут до первой отрисовки); рантайм <code class="tok">foundations/Themes/Themes.js</code> даёт API <code class="tok">DSTheme.get()/set()/list()</code> и событие <code class="tok">ds:themechange</code>.</p>
+  </section>
+
+  <section class="section" data-screen-label="States">
+    <h2>Состояния</h2>
+    <p class="desc">Не применимо: у темы нет интерактивных состояний; состояния компонентов тема не отменяет — точечные правила ниже их по специфичности.</p>
+  </section>
+
+  <section class="section" data-screen-label="A11y">
+    <h2>Доступность</h2>
+    <p class="desc">Генератор проверяет пары «текст/фон»: текст — AA 4,5:1, границы полей и элементы управления — 3:1. У <code class="tok">ibp-light</code> палитра повторяет legacy, поэтому пары, которые AA не держат, помечены <b>информационными</b> (<code class="tok">exempt: ["ibp-light"]</code>) и сборку не роняют: ссылка и текст на акценте, граница полей (у legacy она светлее 3:1) и статусы <code class="tok">danger/warning/success/info</code> — и текст на поверхности, и текст на заливке. Полный состав — <code class="tok">contrast</code> в источнике и отчёт ниже; у тёмной и сервисной информационны светлый текст на заливках и границы, остальные обязательные пары проходят.</p>
+    <div class="stand-scroll"><div id="stand-contrast"></div></div>
+  </section>
+
+  <section class="section" data-screen-label="Typography">
+    <h2>Типографика</h2>
+    <p class="desc">Не применимо: темы перекрашивают, но не меняют типографику.</p>
+  </section>
+
+  <section class="section" data-screen-label="Colors">
+    <h2>Цвета</h2>
+    <p class="desc">19 тонов рамп, каждый — 11 шагов (50…950). Таблица — по теме, выбранной в конструкторе. У <code class="tok">ibp-light</code> семена заданы для 9 тонов — <code class="tok">accent</code>, <code class="tok">neutral</code>, <code class="tok">grey</code> и статусные (<code class="tok">red</code>, <code class="tok">amber</code>, <code class="tok">light-green</code>, <code class="tok">light-blue</code>, <code class="tok">green</code>, <code class="tok">deep-purple</code>); остальные 10 помечены <b>legacy</b> — значения перенесены из <code class="tok">Colors.css</code> как есть. Роли графиков во всех темах — legacy-значения <code class="tok">Palette.css</code>; статусная палитра — legacy в светлой и сгенерированная в тёмной/сервисной (в тёмной legacy-текст не читался). У <code class="tok">ibp-dark</code> и <code class="tok">service</code> считаются все 19 тонов; светлота монотонна (светлая — вниз по шагам, тёмная — вверх).</p>
+    <h3 class="stand-h">Рампы</h3>
+    <div class="stand-scroll"><div id="stand-ramps"></div></div>
+    <h3 class="stand-h">Роли <span class="stand-count" id="roles-count"></span></h3>
+    <p class="stand-note">Роль → значение в каждой собранной теме и значение старого имени в текущей палитре (колонка <code class="tok">legacy</code>). Значение — выражение над рампами; у чистых ссылок показан итоговый цвет.</p>
+    <div class="stand-scroll"><div id="stand-roles"></div></div>
+    <h3 class="stand-h">Карта «старое → новое» <span class="stand-count" id="map-count"></span></h3>
+    <p class="stand-note">Каждому из 119 старых имён новая тема даёт роль; несколько имён с одной ролью получают один цвет, одно имя в разных ролях — точечные правила ниже.</p>
+    <div class="stand-scroll"><div id="stand-map"></div></div>
+  </section>
+
+  <section class="section" data-screen-label="ForDevelopers">
+    <h2>Для разработчиков</h2>
+    <p class="desc">Источник — <code class="tok">foundations/Themes/Themes.tokens.js</code>; генерат <code class="tok">Themes.css</code> и <code class="tok">Themes.pages.css</code>. Пересобрать: <code class="tok">node tools/theme-build.mjs</code>, сверить: <code class="tok">--check</code>, откат: <code class="tok">--selftest</code>. Правило места — <code class="tok">:where([data-theme]:not([data-theme="legacy"])) &lt;селектор&gt;</code>: гейт на каждом селекторе списка (иначе хвост правила сработал бы вне темы); <code class="tok">:where</code> не добавляет специфичности — состояния компонента сильнее; генератор сверяет селектор и свойство каждого правила с файлом компонента.</p>
+    <h3 class="stand-h">Точечные правила компонентов <span class="stand-count" id="rules-count"></span></h3>
+    <p class="stand-note">Место компонента → роль. Это список того, что при переезде станет CSS компонентов.</p>
+    <div class="stand-scroll"><div id="stand-rules"></div></div>
+    <h3 class="stand-h">Правила страниц ДС <span class="stand-count" id="pages-count"></span></h3>
+    <p class="stand-note">Отдельный <code class="tok">Themes.pages.css</code>: инлайн-стили демо по значению атрибута и блоки <code class="tok">&lt;style&gt;</code> страниц. Только страницы ДС, на экраны не попадает.</p>
+    <div class="stand-scroll"><div id="stand-pages"></div></div>
+    <h3 class="stand-h">Не перекрашивается <span class="stand-count" id="keep-count"></span></h3>
+    <p class="stand-note">Места, которые тема не трогает: код на тёмном, маска, иллюстрации, редкое разовое. Список с причиной.</p>
+    <div id="stand-keep"></div>
+    <h3 class="stand-h">Переезд на новую тему</h3>
+    <p class="stand-note">Пока продукт не переехал, компоненты и экраны пишут старые имена, а тема даёт им новые значения под <code class="tok">data-theme</code>. Порядок (каждый шаг обратим, пока жив <code class="tok">legacy</code>):</p>
+    <p class="desc"><b>0.</b> включить <code class="tok">data-theme="ibp-light"</code> по умолчанию — код не тронут; <b>1.</b> в CSS компонентов заменить старые имена на роли <code class="tok">--color-*</code> по карте выше; <b>2.</b> точечные правила и места мимо токена (hex, <code class="tok">rgba</code>, рампы, тени) перенести в CSS компонентов; <b>3.</b> <code class="tok">Palette.css</code> — старые имена как псевдонимы <code class="tok">var(--color-*)</code>, перевести экраны <code class="tok">apps/</code>; <b>4.</b> вывести <code class="tok">legacy</code> и старые имена. Проверки на каждом шаге: <code class="tok">theme-build --check</code>, <code class="tok">ds-check --all</code>, сверка legacy и новой темы рядом. Порядок — по нарастанию, первые три шага можно вести по компонентам параллельно; ускорение: шаг 1 — скрипт механической замены по карте, после переезда — правило линтера на старое имя. Та же инструкция — в спеке <code class="tok">Themes.md</code>, раздел «Переезд».</p>
+  </section>
+
+  <section class="section" data-screen-label="Backlog">
+    <h2>Бэклог</h2>
+    <p class="desc">Инструкция переезда (шаги 0–4) — в разделе «Для разработчиков» выше и в спеке <code class="tok">Themes.md</code>. Отложено и записано открытым вопросом: иллюстрации, фон хаба (<code class="tok">--boot-bg-illustration</code>), логотип и глифы с собственным цветом в тёмной теме остаются как есть. Дальше вне задачи: кастомный акцент в сервисном окне (Ф2), несколько акцентов (Ф3), не-цветовые настройки (Ф4), тема-пакет продукта (Ф5).</p>
+  </section>
+
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Выберите тему и правьте её семена: тон <code class="tok">h</code> (0–360°) и пиковую хрому <code class="tok">c</code>. У явных эталонных шкал (<code class="tok">accent</code>, <code class="tok">neutral</code>, <code class="tok">grey</code> в светлой; <code class="tok">neutral</code>, <code class="tok">grey</code> и акценты в тёмной) ступени закреплены — редактор показывает «эталонная шкала», и ползунки на них не действуют; остальные тона правятся ползунками. Сцены обновляются мгновенно; рампы, отчёт контраста и JSON ниже — по выбранной теме. Утверждённый набор переносится в <code class="tok">seeds["&lt;тема&gt;"].ramps</code> источника.</p>
+              <div class="seed-theme">
+                <label for="editTheme">Тема семян</label>
+                <select id="editTheme">
+                  <option value="ibp-light" selected>ibp-light — новая светлая</option>
+                  <option value="ibp-dark">ibp-dark — тёмная</option>
+                  <option value="service">service — сервисная</option>
+                </select>
+              </div>
+              <div class="seed-grid" id="seedGrid"></div>
+              <div class="seed-actions">
+                <button type="button" class="btn btn--outline btn--s" id="seedReset"><span class="btn__label">Сбросить к сохранённым</span></button>
+                <button type="button" class="btn btn--accent btn--s" id="seedSelect"><span class="btn__label">Выделить JSON</span></button>
+              </div>
+              <textarea class="seed-json" id="seedJson" rows="14" readonly spellcheck="false" aria-label="Семена выбранной темы в JSON"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка, CSS и выжимка API для интеграции.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main>
+
+<script src="../../components/molecules/Splitter/Splitter.js"></script>
+<script src="../../components/molecules/Tab/Tab.js"></script>
+
+<script>
+  (function () {
+    'use strict';
+    var T = window.DS_THEMES, R = window.DS_RAMP;
+    var EDIT = ['ibp-light', 'ibp-dark', 'service'];
+    var stages = {
+      'ibp-light': document.getElementById('stageNew'),
+      'ibp-dark': document.getElementById('stageDark'),
+      'service': document.getElementById('stageService')
+    };
+    var err = document.getElementById('stand-error');
+    if (!T || !R || !stages['ibp-light']) { if (err) err.hidden = false; return; }
+
+    var esc = function (s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    };
+    var clone = function (o) { return JSON.parse(JSON.stringify(o)); };
+    function profileOf(t) { return (T.seeds[t] && T.seeds[t].profile) || 'light'; }
+
+    /* Семена каждой темы, которые правит конструктор. */
+    var seedsByTheme = {}, savedByTheme = {};
+    EDIT.forEach(function (t) {
+      if (!T.seeds[t]) return;
+      seedsByTheme[t] = clone(T.seeds[t].ramps || {});
+      savedByTheme[t] = clone(seedsByTheme[t]);
+    });
+    var editTheme = 'ibp-light';
+    var built = T.themes.filter(function (t) { return T.seeds && T.seeds[t]; });
+
+    function rampsFor(s, profile) {
+      var out = {};
+      T.ramps.tones.forEach(function (tone) { if (s[tone]) out[tone] = R.tone(s[tone], profile); });
+      return out;
+    }
+    /* Базовые тона — из Colors.css (страница её подключает): --<тон>-<шаг>. */
+    var legacyCache = null;
+    function legacyOf() {
+      if (legacyCache) return legacyCache;
+      var cs = window.getComputedStyle(document.documentElement), m = {};
+      T.ramps.tones.forEach(function (tone) {
+        T.ramps.steps.forEach(function (st) {
+          var v = cs.getPropertyValue('--' + tone + '-' + st).trim();
+          if (!v && st === '950') v = cs.getPropertyValue('--' + tone + '-900').trim();
+          if (v) m[tone + '-' + st] = v.toUpperCase();
+        });
+      });
+      legacyCache = m;
+      return m;
+    }
+
+    /* Значение старого имени по текущей палитре (Palette.css): читаем
+       сырое выражение из легаси-сцены стенда (`data-theme="legacy"` несёт
+       все имена Palette.css) и разворачиваем цепочку var() до hex базового
+       тона Colors.css. color-mix и имена без базового тона — без hex. */
+    var legacyStageStyle = null;
+    function legacyExpr(name) {
+      var st = document.getElementById('stageLegacy');
+      if (!st) return '';
+      if (!legacyStageStyle) { try { legacyStageStyle = window.getComputedStyle(st); } catch (e) { return ''; } }
+      try { return legacyStageStyle.getPropertyValue(name).trim(); } catch (e) { return ''; }
+    }
+    function baseVar(name) {
+      try { return window.getComputedStyle(document.documentElement).getPropertyValue(name).trim(); } catch (e) { return ''; }
+    }
+    function resolveLegacy(expr, depth) {
+      var e = String(expr || '').trim();
+      if (!e) return null;
+      if (/^#[0-9a-fA-F]{3,8}$/.test(e)) return e.toUpperCase();
+      if ((depth || 0) > 6) return null;
+      var m = /^var\((--[\w-]+)\)$/.exec(e);
+      if (m) {
+        var raw = legacyExpr(m[1]) || baseVar(m[1]);
+        return raw ? resolveLegacy(raw, (depth || 0) + 1) : null;
+      }
+      return null;
+    }
+    var oldByRole = null;
+    function legacyOfRole(role) {
+      if (!oldByRole) {
+        oldByRole = {};
+        Object.keys(T.map).forEach(function (old) {
+          var r = T.map[old];
+          (oldByRole[r] = oldByRole[r] || []).push(old);
+        });
+      }
+      var olds = oldByRole[role] || [];
+      for (var i = 0; i < olds.length; i++) {
+        var h = resolveLegacy(legacyExpr(olds[i]));
+        if (h) return h;
+      }
+      return null;
+    }
+    /* Все 19 рамп темы: сгенерированные из семян + перенесённые из legacy
+       (перенос — только у тонов без семени: в светлой это база, в тёмной нет). */
+    function allRamps(theme) {
+      var out = {}, leg = legacyOf();
+      var s = seedsByTheme[theme] || {}, prof = profileOf(theme);
+      T.ramps.tones.forEach(function (tone) {
+        if (s[tone]) { out[tone] = R.tone(s[tone], prof); return; }
+        var r = {};
+        T.ramps.steps.forEach(function (st) { if (leg[tone + '-' + st]) r[st] = leg[tone + '-' + st]; });
+        out[tone] = r;
+      });
+      return out;
+    }
+    /* Токен из корня документа (Colors.css/Palette.css): темы их не переопределяют. */
+    function cssVar(name) {
+      try { return window.getComputedStyle(document.documentElement).getPropertyValue(name).trim(); } catch (e) { return ''; }
+    }
+    function hexOf(ramps, expr) {
+      var e = String(expr || '');
+      var m = /^var\(--ramp-([a-z-]+)-(\d+)\)$/.exec(e);
+      if (m) { var r = ramps[m[1]]; return r ? r[m[2]] : null; }
+      if (/^#[0-9a-fA-F]{6}$/.test(e)) return e.toUpperCase();   // темы-«палитры»: hex
+      m = /^var\((--[\w-]+)\)$/.exec(e);                          // токен Colors.css
+      if (m) { var v = cssVar(m[1]); return v ? v.toUpperCase() : null; }
+      return null;                                               // color-mix — без плашки
+    }
+    function tcCell(html, cls) {
+      return '<div class="tc tc--wrap' + (cls ? ' ' + cls : '') + '"><span class="tc__row"><span class="tc__text">' + html + '</span></span></div>';
+    }
+    function tbl(cols, head, rows) {
+      return '<div class="tbl stand-tbl" style="--cols:' + cols + '">' +
+        '<div class="tbl__row">' + head + '</div>' + rows.join('') + '</div>';
+    }
+    function th(label) { return '<div class="th"><span class="th__label">' + esc(label) + '</span></div>'; }
+
+    function applySeeds() {
+      EDIT.forEach(function (theme) {
+        var st = stages[theme]; if (!st) return;
+        var map = rampsFor(seedsByTheme[theme] || {}, profileOf(theme));
+        Object.keys(map).forEach(function (tone) {
+          T.ramps.steps.forEach(function (step) { st.style.setProperty('--ramp-' + tone + '-' + step, map[tone][step]); });
+        });
+      });
+    }
+
+    function renderRamps() {
+      var host = document.getElementById('stand-ramps'); if (!host) return;
+      var s = seedsByTheme[editTheme] || {};
+      var map = allRamps(editTheme);
+      var html = '<div class="ramp-head"><div class="ramp-name">Тон</div>' +
+        T.ramps.steps.map(function (s2) { return '<div class="ramp-cell ramp-cell--head">' + s2 + '</div>'; }).join('') + '</div>';
+      T.ramps.tones.forEach(function (tone) {
+        var tag = s[tone] ? '' : '<span class="ramp-tag">legacy</span>';
+        html += '<div class="ramp-row"><div class="ramp-name">' + esc(tone) + tag + '</div>' +
+          T.ramps.steps.map(function (st) {
+            var h = map[tone] ? map[tone][st] : '';
+            return '<div class="ramp-cell"><span class="ramp-sw" style="--sw:' + h + '"></span><span class="ramp-hex">' + esc(String(h).replace('#', '')) + '</span></div>';
+          }).join('') + '</div>';
+      });
+      host.innerHTML = html;
+    }
+
+    function renderRoles() {
+      var host = document.getElementById('stand-roles'); if (!host) return;
+      var rampsByTheme = {};
+      built.forEach(function (t) { rampsByTheme[t] = allRamps(t); });
+      var order = [], byGroup = {};
+      Object.keys(T.roles).forEach(function (name) {
+        var g = T.roles[name].group || '—';
+        if (!byGroup[g]) { byGroup[g] = []; order.push(g); }
+        byGroup[g].push(name);
+      });
+      document.getElementById('roles-count').textContent = Object.keys(T.roles).length + ' ролей';
+      var html = '';
+      order.forEach(function (g) {
+        html += '<h4 class="stand-h">' + esc(g) + '</h4>';
+        var cols = 'minmax(230px,1.3fr) 2fr minmax(150px,1fr)' + built.map(function () { return ' minmax(210px,1.3fr)'; }).join('');
+        var head = th('Роль') + th('Назначение') + th('legacy') + built.map(th).join('');
+        var rows = byGroup[g].map(function (name) {
+          var lh = legacyOfRole(name);
+          var lsw = lh ? '<span class="role-sw" style="--sw:' + lh + '"></span>' : '';
+          var cells = tcCell('<code>' + esc(name) + '</code>') + tcCell(esc(T.roles[name].desc || ''))
+            + tcCell(lh ? lsw + '<code>' + esc(lh) + '</code>' : '—');
+          built.forEach(function (t) {
+            var tv = (T.themeValues && T.themeValues[t]) || {};
+            var v = tv[name] || T.values[name] || '';
+            var h = hexOf(rampsByTheme[t], v);
+            var sw = h ? '<span class="role-sw" style="--sw:' + h + '"></span>' : '';
+            cells += tcCell(sw + '<code>' + esc(v) + '</code>');
+          });
+          return '<div class="tbl__row">' + cells + '</div>';
+        });
+        html += tbl(cols, head, rows);
+      });
+      host.innerHTML = html;
+    }
+
+    function renderMap() {
+      var host = document.getElementById('stand-map'); if (!host) return;
+      var ramps = allRamps(editTheme);
+      var tv = (T.themeValues && T.themeValues[editTheme]) || {};
+      var names = Object.keys(T.map);
+      document.getElementById('map-count').textContent = names.length + ' имён';
+      var cols = 'minmax(200px,1.1fr) minmax(140px,1fr) minmax(240px,1.4fr) minmax(210px,1.3fr)';
+      var head = th('Старое имя') + th('legacy') + th('Роль') + th('Значение (' + editTheme + ')');
+      var rows = names.map(function (old) {
+        var role = T.map[old];
+        var v = tv[role] || T.values[role] || '';
+        var h = hexOf(ramps, v);
+        var sw = h ? '<span class="role-sw" style="--sw:' + h + '"></span>' : '';
+        var lh = resolveLegacy(legacyExpr(old));
+        var lsw = lh ? '<span class="role-sw" style="--sw:' + lh + '"></span>' : '';
+        return '<div class="tbl__row">' + tcCell('<code>' + esc(old) + '</code>')
+          + tcCell(lh ? lsw + '<code>' + esc(lh) + '</code>' : '—')
+          + tcCell('<code>' + esc(role) + '</code>') + tcCell(sw + '<code>' + esc(v) + '</code>') + '</div>';
+      });
+      host.innerHTML = tbl(cols, head, rows);
+    }
+
+    function renderRules() {
+      var host = document.getElementById('stand-rules'); if (!host) return;
+      document.getElementById('rules-count').textContent = T.rules.length + ' правил';
+      var cols = 'minmax(160px,1fr) minmax(250px,1.6fr) minmax(90px,.7fr) minmax(250px,1.6fr)';
+      var head = th('Файл') + th('Селектор') + th('Свойство') + th('Значение в теме');
+      var rows = T.rules.map(function (r) {
+        var file = String(r.file || '').split('/').pop();
+        return '<div class="tbl__row">' +
+          tcCell('<span title="' + esc(r.file || '') + '">' + esc(file) + '</span>') +
+          tcCell('<code>' + esc(r.selector) + '</code>') +
+          tcCell('<code>' + esc(r.prop) + '</code>') +
+          tcCell('<code>' + esc(r.value) + '</code>') + '</div>';
+      });
+      host.innerHTML = tbl(cols, head, rows);
+    }
+
+    function renderPages() {
+      var host = document.getElementById('stand-pages'); if (!host) return;
+      var p = T.pages || { style: [], block: [] };
+      var n = (p.style ? p.style.length : 0) + (p.block ? p.block.length : 0);
+      document.getElementById('pages-count').textContent = n + ' правил';
+      var html = '';
+      if (p.style && p.style.length) {
+        var cols = 'minmax(280px,2fr) minmax(120px,.8fr) minmax(230px,1.4fr) minmax(120px,.8fr)';
+        var head = th('Значение style') + th('Свойство') + th('Роль') + th('Страниц');
+        var rows = p.style.map(function (s) {
+          return '<div class="tbl__row">' + tcCell('<code>' + esc((s.match || []).join('  ·  ')) + '</code>') +
+            tcCell('<code>' + esc(s.prop) + '</code>') + tcCell('<code>' + esc(s.value) + '</code>') +
+            tcCell(esc((s.pages != null ? s.pages : '') + (s.hits ? ' / ' + s.hits : ''))) + '</div>';
+        });
+        html += '<h4 class="stand-h">По значению атрибута style</h4>' + tbl(cols, head, rows);
+      }
+      if (p.block && p.block.length) {
+        var cols2 = 'minmax(280px,2fr) minmax(120px,.8fr) minmax(230px,1.4fr)';
+        var head2 = th('Селектор блока') + th('Свойство') + th('Роль');
+        var rows2 = p.block.map(function (b) {
+          return '<div class="tbl__row">' + tcCell('<code>' + esc(b.selector) + '</code>') +
+            tcCell('<code>' + esc(b.prop) + '</code>') + tcCell('<code>' + esc(b.value) + '</code>') + '</div>';
+        });
+        html += '<h4 class="stand-h">По селектору блока &lt;style&gt;</h4>' + tbl(cols2, head2, rows2);
+      }
+      host.innerHTML = html;
+    }
+
+    function renderContrast() {
+      var host = document.getElementById('stand-contrast'); if (!host) return;
+      var ramps = allRamps(editTheme);
+      var tv = (T.themeValues && T.themeValues[editTheme]) || {};
+      var val = function (role) { return tv[role] || T.values[role] || ''; };
+      var pairs = T.contrast || [];
+      var cols = 'minmax(230px,1.4fr) minmax(230px,1.4fr) 90px 90px 130px';
+      var head = th('Текст / элемент') + th('Фон') + th('Контраст') + th('Порог') + th('Итог');
+      var rows = pairs.map(function (p) {
+        var a = hexOf(ramps, val(p.fg)), b = hexOf(ramps, val(p.bg));
+        var ratio = (a && b) ? R.contrast(a, b) : null;
+        var ok = ratio != null && ratio >= p.min;
+        var mark;
+        if (ratio == null) mark = '<span class="stand-count">выражение</span>';
+        else if (ok) mark = '<b style="color:var(--success-dark)">PASS</b>';
+        else if (p.required === false || (p.exempt || []).indexOf(editTheme) >= 0) mark = '<b style="color:var(--warning-dark)">' + (p.required === false ? 'legacy' : 'INFO') + '</b>';
+        else mark = '<b style="color:var(--error-dark)">FAIL</b>';
+        return '<div class="tbl__row">' + tcCell('<code>' + esc(p.fg) + '</code>') + tcCell('<code>' + esc(p.bg) + '</code>') +
+          tcCell(ratio == null ? '—' : ratio.toFixed(2).replace('.', ',') + ':1') + tcCell(String(p.min).replace('.', ',')) + tcCell(mark) + '</div>';
+      });
+      host.innerHTML = tbl(cols, head, rows);
+    }
+
+    function renderKeep() {
+      var host = document.getElementById('stand-keep'); if (!host) return;
+      var keep = T.keep || [];
+      var total = keep.reduce(function (n, k) { return n + (k.where ? k.where.length : 0); }, 0);
+      document.getElementById('keep-count').textContent = keep.length + ' групп · ' + total + ' мест';
+      var html = keep.map(function (k) {
+        return '<div class="tbl stand-tbl" style="--cols:1fr"><div class="tbl__row">' +
+          tcCell('<b>' + esc(k.scope) + '</b> — ' + esc(k.why) + '<br><span class="stand-count">' + (k.where || []).map(esc).join('<br>') + '</span>') +
+          '</div></div>';
+      }).join('');
+      host.innerHTML = html;
+    }
+
+    function renderJson() {
+      var box = document.getElementById('seedJson'); if (box) box.value = JSON.stringify(seedsByTheme[editTheme] || {}, null, 2);
+    }
+
+    function renderAll() {
+      applySeeds(); renderRamps(); renderRoles(); renderMap(); renderRules(); renderPages(); renderContrast(); renderKeep(); renderJson();
+    }
+
+    /* --- редактор семян --- */
+    function buildEditor() {
+      var host = document.getElementById('seedGrid'); if (!host) return;
+      var s = seedsByTheme[editTheme] || {};
+      host.innerHTML = T.ramps.tones.filter(function (t) { return s[t]; }).map(function (tone) {
+        var v = s[tone];
+        var fixed = v && v.values;
+        var ctl = fixed
+          ? '<span class="seed__val">эталонная шкала, ступени закреплены</span>'
+          : '<span class="seed__ctl"><label>h</label><input type="range" min="0" max="360" step="1" data-key="h" value="' + v.h + '" aria-label="Тон ' + esc(tone) + '"><span class="seed__val" data-out="h"></span></span>' +
+            '<span class="seed__ctl"><label>c</label><input type="range" min="0" max="0.3" step="0.001" data-key="c" value="' + v.c + '" aria-label="Хрома ' + esc(tone) + '"><span class="seed__val" data-out="c"></span></span>';
+        return '<div class="seed" data-tone="' + esc(tone) + '"' + (fixed ? ' data-fixed="1"' : '') + '>' +
+          '<span class="seed__name"><span class="seed__sw" data-seed-sw="' + esc(tone) + '"></span>' + esc(tone) + '</span>' +
+          ctl +
+          '</div>';
+      }).join('');
+      syncEditor();
+    }
+    function syncEditor() {
+      var ramps = allRamps(editTheme);
+      var s = seedsByTheme[editTheme] || {};
+      document.querySelectorAll('.seed').forEach(function (row) {
+        var tone = row.getAttribute('data-tone');
+        var v = s[tone] || { h: 0, c: 0 };
+        var hIn = row.querySelector('[data-key=h]');
+        if (hIn) {
+          hIn.value = v.h;
+          row.querySelector('[data-key=c]').value = v.c;
+          row.querySelector('[data-out=h]').textContent = (Math.round(v.h * 10) / 10) + '°';
+          row.querySelector('[data-out=c]').textContent = Number(v.c).toFixed(3);
+        }
+        var sw = row.querySelector('[data-seed-sw]');
+        if (sw) sw.style.setProperty('--sw', (ramps[tone] && ramps[tone]['500']) || 'transparent');
+      });
+    }
+    function onSeedInput(e) {
+      var input = e.target;
+      if (!input || input.tagName !== 'INPUT' || !input.getAttribute('data-key')) return;
+      var tone = input.closest('.seed').getAttribute('data-tone');
+      var key = input.getAttribute('data-key');
+      var s = seedsByTheme[editTheme] || (seedsByTheme[editTheme] = {});
+      s[tone] = s[tone] || { h: 0, c: 0 };
+      s[tone][key] = parseFloat(input.value);
+      syncEditor(); applySeeds(); renderRamps(); renderContrast(); renderJson();
+    }
+
+    var reset = document.getElementById('seedReset');
+    if (reset) reset.addEventListener('click', function () {
+      seedsByTheme[editTheme] = clone(savedByTheme[editTheme] || {});
+      syncEditor(); applySeeds(); renderRamps(); renderRoles(); renderMap(); renderContrast(); renderJson();
+    });
+    var sel = document.getElementById('seedSelect');
+    if (sel) sel.addEventListener('click', function () { var b = document.getElementById('seedJson'); if (b) { b.focus(); b.select(); } });
+    var themeSel = document.getElementById('editTheme');
+    if (themeSel) themeSel.addEventListener('change', function () {
+      editTheme = themeSel.value;
+      buildEditor(); renderRamps(); renderMap(); renderContrast(); renderJson();
+    });
+
+    var seedHost = document.getElementById('seedGrid');
+    if (seedHost) seedHost.addEventListener('input', onSeedInput);
+    buildEditor();
+    renderAll();
+  })();
+</script>
+<script src="../../docs-kit/ds-nav.js"></script>
+<script>window.DS_SPLIT_SWITCH_LABELS = {};</script>
+<script src="../../docs-kit/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично) ===== -->
+<script type="text/plain" id="src-code-html"><!-- тема включается атрибутом на корне или контейнере -->
+<div data-theme="ibp-light">
+  <button type="button" class="btn btn--accent btn--m"><span class="btn__label">Применить</span></button>
+</div></script>
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — foundations/Themes/Themes.js)
+// DSTheme.get()  -> имя действующей темы ('legacy' без атрибута)
+// DSTheme.set(x) -> ставит data-theme на <html>; 'legacy' снимает атрибут
+// DSTheme.list() -> [{ id, label }]
+// document.addEventListener('ds:themechange', function(e){ e.detail.id });
+//
+// Рампы темы в браузере (стенд, будущий кастомный акцент):
+//   DS_RAMP.tone({ h: 183.9, c: 0.111 });          // светлая шкала → { '50': '#…', …, '950': '#…' }
+//   DS_RAMP.tone({ h: 183.9, c: 0.111 }, 'dark');  // тёмная шкала (шаг 50 — самый тёмный)
+//   DS_RAMP.contrast('#20A496', '#121212');        // → 6.08 (WCAG)</script>
+<script type="text/plain" id="src-code-css">/* Источник — foundations/Themes/Themes.tokens.js.
+   Генерат — foundations/Themes/Themes.css (пересобрать: node tools/theme-build.mjs).
+
+   Светлая (slate синён + #00AA9B): нейтраль, серая и акцент — явными ступенями;
+   роли статусов (danger/warning/success/info), статусная палитра (--color-status-*)
+   и графики (--color-chart-*) — legacy-значениями (Palette.css); их рампы
+   (--ramp-red-* и т.п.) — из семян:
+     --ramp-neutral-50: #F8F9FB (bg-page); --ramp-neutral-900: #1B2025 (fg-default);
+     --color-accent-fill: var(--ramp-accent-500) → #00AA9B;
+     --color-border-default: var(--ramp-neutral-400) → #B4BDC7;
+     --color-danger-fill: var(--red-300) → #E5625C;  --color-chart-1: #5B9CFA (--ch-blue);
+   Токены компонентов (правила :root) — в блоке каждой темы, не на :root[data-theme].
+   Тёмная (profile: dark): поверхности светлеют с подъёмом, акцент ярче:
+     --color-bg-page: #111112;  --color-bg-surface: #18191B;  --color-bg-raised: #1F2326;
+     --color-fg-default: #E8EFF6;  --color-accent-fill: var(--ramp-accent-600) → #12B3A1;
+   Сервисная — как тёмная, акцент — пурпур Untitled UI (#7F56D9 / #9E77ED).
+
+   Роли над рампами: --color-bg-page: var(--ramp-neutral-50);
+   Старые имена через роли: --bg-page: var(--color-bg-page);
+
+   Точечные правила мест — под :where, гейт на каждом селекторе списка,
+   без добавления специфичности:
+   :where([data-theme]:not([data-theme="legacy"])) .btn--outline { color: var(--color-accent-fill); } */</script>
+<script src="../../../apps/proto-panel.js"></script>
+</body>
+</html>

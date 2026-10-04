@@ -14,6 +14,7 @@
         { label: 'Каркас экрана', href: 'foundations/Layout/Layout.html' },
         { label: 'Сетка и отступы', href: 'foundations/Spacing/Spacing.html' },
         { label: 'Скругления',  href: 'foundations/Radius/Radius.html' },
+        { label: 'Темы',        href: 'foundations/Themes/Themes.html' },
         { label: 'Тени',        href: 'foundations/Elevation/Elevation.html' },
         { label: 'Типографика', href: 'foundations/Typography/Typography.html' },
         { label: 'Цвета',       href: 'foundations/Colors/Colors.html' }
