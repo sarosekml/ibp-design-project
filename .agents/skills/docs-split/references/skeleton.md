@@ -145,6 +145,13 @@
 <!-- или: { 'Сетка': { label: 'Показывать сетку', on: 'y' } } — когда эвристика направления врёт -->
 <script src="../../../docs-kit/docs-split.js"></script>
 
+<!-- последним в <body>, после всех скриптов: включатель панели прототипа
+     (Alt+Shift+P). Путь — до корня проекта + apps/proto-panel.js; вне проекта
+     тег можно не ставить. Включатель сам добирает недостающие стили и рантаймы
+     панели и не задваивает уже загруженные. Ставится на страницы ДС скриптом
+     docs/misc/proto-panel-doc-tag/inject-panel-tag.mjs -->
+<script src="../../../../apps/proto-panel.js"></script>
+
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
 <script type="text/plain" id="src-code-html">{{эталон из спеки}}</script>
 <script type="text/plain" id="src-code-js">{{выжимка API из page.js}}</script>

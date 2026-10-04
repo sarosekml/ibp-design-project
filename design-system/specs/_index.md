@@ -61,7 +61,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.023 |
 | TableFilter | components/organisms/TableFilter/TableFilter.md | components/organisms/TableFilter/TableFilter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | components/molecules/Tab/Tab.md | components/molecules/Tab/Tab.css | — | 1.012 |
-| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | — | 1.006 |
+| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.007 |
 | Tile | components/organisms/Tile/Tile.md | components/organisms/Tile/Tile.css | icon-button, button, link, chip, badge, alert, divider | 1.015 |
 | Toast | components/molecules/Toast/Toast.md | components/molecules/Toast/Toast.css | button, spinner | 1.007 |
 | Tooltip | components/molecules/Tooltip/Tooltip.md | components/molecules/Tooltip/Tooltip.css | button | 2.011 |

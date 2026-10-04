@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 301.
+Документов: 302.
 
 ## Корень (4)
 
@@ -532,7 +532,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (49)
+## Задачи и заметки (50)
 
 ### Архив/черновики
 
@@ -553,6 +553,7 @@
 | [docs/misc/clients-app-all.md](misc/clients-app-all.md) | clients-app — объединённые дизайн-спецификации |
 | [docs/misc/clients-app-tree.md](misc/clients-app-tree.md) | clients-app — структура папки |
 | [docs/misc/project-tree.md](misc/project-tree.md) | — |
+| [docs/misc/proto-panel-nested-theme/lesson.md](misc/proto-panel-nested-theme/lesson.md) | — |
 | [docs/misc/restructure-3-repos.md](misc/restructure-3-repos.md) | Реструктуризация воркспейса в три репозитория — задача к исполнению |
 
 ### Задачи

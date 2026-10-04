@@ -128,7 +128,9 @@
   function start() {
     ui.mount();
     store.init().then(function () { ui.updateAlert(); });
-    store.frames(2).then(function () { runner.resume(); });
+    /* Без приложения (хаб, ДС, концепт без папки) сценариев нет — возобновлять
+       нечего; панель показывает заглушку. */
+    if (ctx.app) store.frames(2).then(function () { runner.resume(); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();

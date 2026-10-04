@@ -341,13 +341,17 @@
 
   function mount() {
     if (!document.body || els) return;
-    build();
-    document.body.appendChild(els.launcher);
-    document.body.appendChild(els.panel);
-    var saved = readPos();
-    if (saved) applyPos(saved.x, saved.y);
-    window.addEventListener('resize', onResize);
-    if (local.get(HIDE_KEY) === '1') els.launcher.hidden = true;
+    /* Страница с панелью прототипа: переключатель темы живёт в её рельсе —
+       плавающую кнопку не строим (решение человека 04.10.2026). API остаётся. */
+    if (!window.__PROTO_PANEL) {
+      build();
+      document.body.appendChild(els.launcher);
+      document.body.appendChild(els.panel);
+      var saved = readPos();
+      if (saved) applyPos(saved.x, saved.y);
+      window.addEventListener('resize', onResize);
+      if (local.get(HIDE_KEY) === '1') els.launcher.hidden = true;
+    }
     /* Мусор в атрибуте (чужое имя темы) — к legacy, чтобы get() не врал. */
     if (knownIds().indexOf(get()) < 0) set(LEGACY);
     /* `?theme=` — применить и запомнить (атрибут до отрисовки ставит загрузчик/тег). */

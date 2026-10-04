@@ -1,7 +1,7 @@
 ---
 component: Themes
 title: "Темы (Themes)"
-version: "1.006"
+version: "1.007"
 updated: "04.10.2026"
 page: foundations/Themes/Themes.html
 css: foundations/Themes/Themes.css

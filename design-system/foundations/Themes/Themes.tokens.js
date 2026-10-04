@@ -4173,6 +4173,36 @@ window.DS_THEMES = {
       "why": "поверхность карточек и тайлов внутри окна — слой выше модалки: в тёмной светлее, в светлой темнее (решение человека 04.10.2026)"
     },
     {
+      "file": "components/organisms/Drawer/Drawer.css",
+      "line": 46,
+      "selector": ":root",
+      "prop": "--drawer-bg",
+      "from": "var(--bg-popup)",
+      "value": "var(--color-bg-raised)",
+      "kind": "токен компонента",
+      "why": "фон шторки объявлен на :root и резолвился от темы страницы — служебная тема панели не перебивала его; тема задаёт токен в своём блоке (Л174)"
+    },
+    {
+      "file": "components/organisms/Modal/Modal.css",
+      "line": 68,
+      "selector": ":root",
+      "prop": "--modal-bg",
+      "from": "var(--bg-popup)",
+      "value": "var(--color-bg-raised)",
+      "kind": "токен компонента",
+      "why": "поверхность окна объявлена на :root — та же болезнь вложенной темы, что у шторки (Л174)"
+    },
+    {
+      "file": "components/organisms/Popover/Popover.css",
+      "line": 69,
+      "selector": ":root",
+      "prop": "--pop-bg",
+      "from": "var(--bg-popup)",
+      "value": "var(--color-bg-raised)",
+      "kind": "токен компонента",
+      "why": "поверхность поповера объявлена на :root — вложенная тема не перебила бы её (Л174)"
+    },
+    {
       "file": "components/organisms/Popover/Popover.css",
       "line": 129,
       "selector": ".pop__head.is-scrolled",

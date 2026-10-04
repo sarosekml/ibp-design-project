@@ -524,6 +524,9 @@
   --modal-scrim: var(--color-bg-scrim);
   --pop-zone-bg: var(--color-bg-float);
   --modal-surface: var(--color-bg-float);
+  --drawer-bg: var(--color-bg-raised);
+  --modal-bg: var(--color-bg-raised);
+  --pop-bg: var(--color-bg-raised);
 }
 
 :root[data-theme="ibp-dark"], [data-theme="ibp-dark"] {
@@ -1045,6 +1048,9 @@
   --modal-scrim: var(--color-bg-scrim);
   --pop-zone-bg: var(--color-bg-float);
   --modal-surface: var(--color-bg-float);
+  --drawer-bg: var(--color-bg-raised);
+  --modal-bg: var(--color-bg-raised);
+  --pop-bg: var(--color-bg-raised);
 }
 
 :root[data-theme="service"], [data-theme="service"] {
@@ -1566,6 +1572,9 @@
   --modal-scrim: var(--color-bg-scrim);
   --pop-zone-bg: var(--color-bg-float);
   --modal-surface: var(--color-bg-float);
+  --drawer-bg: var(--color-bg-raised);
+  --modal-bg: var(--color-bg-raised);
+  --pop-bg: var(--color-bg-raised);
 }
 
 /* legacy: старые значения — для стенда (показать рядом с новой темой).
@@ -1703,6 +1712,9 @@
   --modal-scrim: color-mix(in srgb, var(--st-grey) 48%, transparent);
   --pop-zone-bg: var(--bg-table-pinned);
   --modal-surface: var(--bg-tile);
+  --drawer-bg: var(--bg-popup);
+  --modal-bg: var(--bg-popup);
+  --pop-bg: var(--bg-popup);
 }
 
 /* Точечные правила: место компонента или оболочки документации → роль.
