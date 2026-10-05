@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 304.
+Документов: 315.
 
 ## Корень (4)
 
@@ -539,7 +539,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (50)
+## Задачи и заметки (61)
 
 ### Архив/черновики
 
@@ -578,6 +578,17 @@
 | [docs/tasks/MS0006-docs-index.md](tasks/MS0006-docs-index.md) | Единый каталог документации: docs/index.md, генератор docs-index.mjs и шаг гейта |
 | [docs/tasks/MS0007-ds-icons-unique-ids.md](tasks/MS0007-ds-icons-unique-ids.md) | ДС: у каждой копии иконки — свои id внутри SVG (ds-icons.js) |
 | [docs/tasks/MS0008-sensor-linked-css.md](tasks/MS0008-sensor-linked-css.md) | Сенсор экрана видит CSS тайлов в отдельных файлах (&lt;link rel="stylesheet"&gt;) |
+| [docs/tasks/MS0009-ds-chip-choice.md](tasks/MS0009-ds-chip-choice.md) | Chip: чипы выбора — стиль Dashed, ведущий тег, состояние Selected, чип на &lt;button&gt; |
+| [docs/tasks/MS0010-ds-prompt-input.md](tasks/MS0010-ds-prompt-input.md) | PromptInput: новый организм ДС — поле ввода промпта с вложениями, подсветкой фрагментов и выезжающей панелью |
+| [docs/tasks/MS0010a-ds-kbd.md](tasks/MS0010a-ds-kbd.md) | Kbd: новый атом ДС — обозначение клавиши |
+| [docs/tasks/MS0010b-ds-button-toggle.md](tasks/MS0010b-ds-button-toggle.md) | Buttons: кнопка-переключатель — нажатое и раскрытое состояние, смена глифа |
+| [docs/tasks/MS0010c-ds-chip-expanded.md](tasks/MS0010c-ds-chip-expanded.md) | Chip: состояние «раскрыт» — чип, который показывает связанный блок |
+| [docs/tasks/MS0010d-ds-step-marker.md](tasks/MS0010d-ds-step-marker.md) | StepMarker: новый атом ДС — номер шага, который становится галочкой |
+| [docs/tasks/MS0010e-ds-note.md](tasks/MS0010e-ds-note.md) | Note: новый атом ДС — заметка «иконка + вторичный текст» |
+| [docs/tasks/MS0010f-ds-quote.md](tasks/MS0010f-ds-quote.md) | Quote: новая молекула ДС — цитата фрагмента с источником |
+| [docs/tasks/MS0010g-ds-tile-inset.md](tasks/MS0010g-ds-tile-inset.md) | Tile: вариант Inset — вложенная подложка с заголовком (блок «История запросов по объекту») |
+| [docs/tasks/MS0010h-ds-step-form.md](tasks/MS0010h-ds-step-form.md) | StepForm: новая молекула ДС — пошаговая форма (секции конструктора запроса) |
+| [docs/tasks/MS0011-ds-doc-card.md](tasks/MS0011-ds-doc-card.md) | Карточка документа в нити: композиция Tile Card + Entity M вместо локального .doc |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
