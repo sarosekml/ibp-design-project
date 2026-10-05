@@ -228,7 +228,7 @@ apps/
 дизайнерском дереве спек (Purpose, Route, Layout, Components, States, Data
 dependencies, Implementation mapping) плюс наши — поведение, тексты, открытые
 вопросы. Спеки, написанные раньше, приводятся к шаблону по задаче
-`../docs/tasks/0003-specs-to-common-template.md`.
+`../docs/tasks/MS0003-specs-to-common-template.md`.
 
 **Демо-данные** (`data/*.js`) устроены как ответ API, чтобы разработчик
 превратил их в TS-типы: у каждого типа JSDoc `@typedef`, имена в стиле API
@@ -238,7 +238,7 @@ dependencies, Implementation mapping) плюс наши — поведение, 
 контракта нет. Образец — `../.agents/skills/screen-spec/references/data-template.js`.
 Значения — рыба и правятся по ходу дизайна фичи, имена и типы — для
 разработки. Файлы данных, заведённые раньше, получат типы по задаче
-`../docs/tasks/0004-typed-demo-data.md`.
+`../docs/tasks/MS0004-typed-demo-data.md`.
 
 ### widgets — одна папка вместо features/ и widgets/ фронтенда
 

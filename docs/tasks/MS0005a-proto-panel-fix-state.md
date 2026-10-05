@@ -16,7 +16,7 @@ created: 2026-09-24
 
 # 0005a. Панель прототипа: Fix State, номера состояний, английский интерфейс
 
-Подзадача `docs/tasks/0005-proto-panel.md`. Исходная точка — панель в том
+Подзадача `docs/tasks/MS0005-proto-panel.md`. Исходная точка — панель в том
 виде, в каком она сделана по 0005: рантайм `.agents/proto-panel/`, оснастка
 `.agents/tools/proto-panel.mjs`, описание `.agents/proto-panel/README.md`
 (владелец форматов), скилл `.agents/skills/proto-panel/SKILL.md`, команда

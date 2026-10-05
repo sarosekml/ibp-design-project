@@ -568,16 +568,16 @@
 | Документ | Аннотация |
 |---|---|
 | [docs/tasks/0000-task-template.md](tasks/0000-task-template.md) | Implement feature X |
-| [docs/tasks/0001-fix-repo.md](tasks/0001-fix-repo.md) | — |
-| [docs/tasks/0002-simplify-m4p-chat.md](tasks/0002-simplify-m4p-chat.md) | Упростить экран чата M4P: убрать временно ненужные функции |
-| [docs/tasks/0003-specs-to-common-template.md](tasks/0003-specs-to-common-template.md) | Привести спеки прототипов к общему шаблону |
-| [docs/tasks/0004-typed-demo-data.md](tasks/0004-typed-demo-data.md) | Описать типы в демо-данных прототипов (JSDoc, имена в стиле API) |
-| [docs/tasks/0005-code-review.md](tasks/0005-code-review.md) | Код-ревью задачи 0005: панель прототипа |
-| [docs/tasks/0005-proto-panel.md](tasks/0005-proto-panel.md) | Панель прототипа: сценарии показа и комментарии рядом с прототипом |
-| [docs/tasks/0005a-proto-panel-fix-state.md](tasks/0005a-proto-panel-fix-state.md) | Панель прототипа: Fix State — схема из зафиксированных состояний, номера State NN, интерфейс на английском |
-| [docs/tasks/0006-docs-index.md](tasks/0006-docs-index.md) | Единый каталог документации: docs/index.md, генератор docs-index.mjs и шаг гейта |
-| [docs/tasks/0007-ds-icons-unique-ids.md](tasks/0007-ds-icons-unique-ids.md) | ДС: у каждой копии иконки — свои id внутри SVG (ds-icons.js) |
-| [docs/tasks/0008-sensor-linked-css.md](tasks/0008-sensor-linked-css.md) | Сенсор экрана видит CSS тайлов в отдельных файлах (&lt;link rel="stylesheet"&gt;) |
+| [docs/tasks/MS0001-fix-repo.md](tasks/MS0001-fix-repo.md) | — |
+| [docs/tasks/MS0002-simplify-m4p-chat.md](tasks/MS0002-simplify-m4p-chat.md) | Упростить экран чата M4P: убрать временно ненужные функции |
+| [docs/tasks/MS0003-specs-to-common-template.md](tasks/MS0003-specs-to-common-template.md) | Привести спеки прототипов к общему шаблону |
+| [docs/tasks/MS0004-typed-demo-data.md](tasks/MS0004-typed-demo-data.md) | Описать типы в демо-данных прототипов (JSDoc, имена в стиле API) |
+| [docs/tasks/MS0005-code-review.md](tasks/MS0005-code-review.md) | Код-ревью задачи 0005: панель прототипа |
+| [docs/tasks/MS0005-proto-panel.md](tasks/MS0005-proto-panel.md) | Панель прототипа: сценарии показа и комментарии рядом с прототипом |
+| [docs/tasks/MS0005a-proto-panel-fix-state.md](tasks/MS0005a-proto-panel-fix-state.md) | Панель прототипа: Fix State — схема из зафиксированных состояний, номера State NN, интерфейс на английском |
+| [docs/tasks/MS0006-docs-index.md](tasks/MS0006-docs-index.md) | Единый каталог документации: docs/index.md, генератор docs-index.mjs и шаг гейта |
+| [docs/tasks/MS0007-ds-icons-unique-ids.md](tasks/MS0007-ds-icons-unique-ids.md) | ДС: у каждой копии иконки — свои id внутри SVG (ds-icons.js) |
+| [docs/tasks/MS0008-sensor-linked-css.md](tasks/MS0008-sensor-linked-css.md) | Сенсор экрана видит CSS тайлов в отдельных файлах (&lt;link rel="stylesheet"&gt;) |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
@@ -593,7 +593,7 @@
 
 | Документ | Аннотация |
 |---|---|
-| [docs/tasks/0006-docs-index.handoff.md](tasks/0006-docs-index.handoff.md) | DocsIndex — handoff |
+| [docs/tasks/MS0006-docs-index.handoff.md](tasks/MS0006-docs-index.handoff.md) | DocsIndex — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
 | [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 | [docs/tasks/RE0003-fin-instruments-tile.handoff.md](tasks/RE0003-fin-instruments-tile.handoff.md) | RE0003 FinInstrumentsTile — handoff |

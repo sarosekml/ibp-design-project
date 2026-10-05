@@ -257,4 +257,4 @@ implemented: 2026-09-27
 В общем гейте остаётся прежний долг: `stats` сообщает `сенсор:K4` на
 `apps/postrade/deals-app/pages/Deal.preview.html` от 26.09.2026; сам экран
 также числится в долге. Он не относится к каталогу и этой задачей не менялся.
-Состояние передачи — [0006-docs-index.handoff.md](0006-docs-index.handoff.md).
+Состояние передачи — [MSMS0006-docs-index.handoff.md](MSMS0006-docs-index.handoff.md).

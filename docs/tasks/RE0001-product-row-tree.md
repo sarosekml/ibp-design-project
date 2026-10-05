@@ -129,7 +129,7 @@ created: 2026-09-29
   `scripts/ds-nav.js`.
 - Модуль: паспорта тайла и окон, `CHANGELOG.md` тайла, `pages/Deal.screen.md`, README модуля;
   генераторы `assemble.mjs`, `module-readme.mjs`, `kit-build.mjs`.
-- Задача `0004-typed-demo-data.md`: пункт про typedef `mock-deal-trees.js` закрывается здесь.
+- Задача `MS0004-typed-demo-data.md`: пункт про typedef `mock-deal-trees.js` закрывается здесь.
 
 ## Tasks
 

@@ -16,7 +16,7 @@
 как описывать сценарии, как брать комментарии и зафиксированные состояния в
 работу) — скилл `.agents/skills/proto-panel/SKILL.md`, команда — `/panel`
 (`.agents/commands/panel.md`). Постановка и принятые решения — задачи
-`docs/tasks/0005-proto-panel.md` и `docs/tasks/0005a-proto-panel-fix-state.md`
+`docs/tasks/MS0005-proto-panel.md` и `docs/tasks/MS0005a-proto-panel-fix-state.md`
 (Fix State, номера состояний State NN).
 
 Названия кнопок и пунктов меню ниже — как на экране панели. `flows.yaml` —

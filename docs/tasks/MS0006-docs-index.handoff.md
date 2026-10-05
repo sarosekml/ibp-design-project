@@ -14,7 +14,7 @@
 - → close — ручная прогулка по ссылкам в Obsidian и GitHub
 
 ## Смета
-`ctx-budget.mjs --stage build --tz docs/tasks/0006-docs-index.md --out-lines 400`:
+`ctx-budget.mjs --stage build --tz docs/tasks/MS0006-docs-index.md --out-lines 400`:
 `ВЕРДИКТ: OK — запас 118 733` (81 267 из 200 000).
 Это ориентир по профилю сборки, задача меняет оснастку и markdown.
 
@@ -55,6 +55,6 @@
 Пройти оставшиеся два пункта приёмки, затем поставить задаче статус done.
 
 ## Читать первыми
-- `docs/tasks/0006-docs-index.md`
+- `docs/tasks/MS0006-docs-index.md`
 - `.agents/tools/docs-index.mjs`
 - `docs/index.md` — только нужные разделы, целиком агенту не читать.
