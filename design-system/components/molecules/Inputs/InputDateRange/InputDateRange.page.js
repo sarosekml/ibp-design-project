@@ -51,7 +51,7 @@
 
   /* =========================== PLAYGROUND =========================== */
   (function () {
-    const state = { left: 'default', right: 'default', fill: 'value', label: true, helper: true };
+    const state = { left: 'default', right: 'default', fill: 'value', label: true, helper: true, radius: 'field', filled: false };
     const controls = document.getElementById('pg-controls');
     const stage = document.getElementById('pg-stage');
     const codeEl = document.getElementById('pg-code');
@@ -90,6 +90,8 @@
     controls.appendChild(ctlSelect('Наполнение', [['value', 'Заполнено'], ['empty', 'Пусто']], 'fill'));
     controls.appendChild(ctlToggle('Label', 'label'));
     controls.appendChild(ctlToggle('Helper', 'helper'));
+    controls.appendChild(ctlSelect('Скругление', [['field', 'Скругление 4 · по умолчанию'], ['m', 'Скругление 8 · M'], ['pill', 'Капсула']], 'radius'));
+    controls.appendChild(ctlToggle('Заливка', 'filled'));
 
     function render() {
       const disabled = state.left === 'disabled' && state.right === 'disabled';
@@ -100,12 +102,13 @@
         helper: state.helper ? 'Helper' : null,
         disabled,
         width: 460,
-        from: fieldSpec(state.left, val, { live: true, id: 'pg-from' }),
-        to: fieldSpec(state.right, val, { live: true, id: 'pg-to' }),
+        from: fieldSpec(state.left, val, { live: true, id: 'pg-from', radius: state.radius, filled: state.filled }),
+        to: fieldSpec(state.right, val, { live: true, id: 'pg-to', radius: state.radius, filled: state.filled }),
       }));
       const cls = ['.inp-range', 'inp-range--date'];
       if (disabled) cls.push('inp-range--disabled');
-      codeEl.innerHTML = '<code>' + cls.join('.') + '</code> · поля: <code>.inp</code> × 2 + <code>.inp-range__line</code>';
+      const mods = (state.radius === 'm' ? '.inp--radius-m' : state.radius === 'pill' ? '.inp--rounded' : '') + (state.filled ? '.inp--filled' : '');
+      codeEl.innerHTML = '<code>' + cls.join('.') + '</code> · поля: <code>.inp' + mods + '</code> × 2 + <code>.inp-range__line</code>';
     }
     render();
   })();

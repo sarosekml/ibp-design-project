@@ -55,7 +55,7 @@ const JS_CSS_PAIRS = [['ds-nav.js', 'ds-nav.css'], ['ds-toc.js', 'ds-toc.css'], 
   // Chip, Entity, Table). Потому BLOCKER, а не WARN, как у самодогружающих пар.
   ['Tooltip.js', 'Tooltip.css', 'BLOCKER']];
 // рантаймы, которые ds.js (RulesAudit W0/K0) догружает сам — экран не должен подключать их напрямую
-const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
+const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'Buttons.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
 // утилитарные классы разметки документации — владельца в CSS ДС не имеют
 const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
 // F5 — реестр «анатомия компонента взята целиком, не урезана под текущий вид». Каждый

@@ -31,6 +31,9 @@
 @import url("components/atoms/Avatar/Avatar.css");
 @import url("components/atoms/Divider/Divider.css");
 @import url("components/atoms/LabelHelper/LabelHelper.css");
+@import url("components/atoms/Keyboard/Keyboard.css");
+@import url("components/atoms/Note/Note.css");
+@import url("components/atoms/StepMarker/StepMarker.css");
 
 /* Молекулы */
 @import url("components/molecules/SegmentControl/SegmentControl.css");
@@ -50,6 +53,8 @@
 @import url("components/molecules/DatePicker/DatePicker.css");
 @import url("components/molecules/NavTile/NavTile.css");
 @import url("components/molecules/EmptyState/EmptyState.css");
+@import url("components/molecules/StepForm/StepForm.css");
+@import url("components/molecules/DocCard/DocCard.css");
 
 /* Организмы */
 @import url("components/organisms/Modal/Modal.css");

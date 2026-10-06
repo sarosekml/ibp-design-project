@@ -253,6 +253,9 @@ function extractTiles(html, opts = {}) {
   while ((m = tagRe.exec(html))) {
     const tokens = m[2].split(/\s+/).filter(Boolean);
     if (!tokens.includes('tile')) continue; // tile-group/tile-row/tile-stack не тайлы
+    /* Inset (Tile 1.016) — вложенная подложка внутри другой поверхности:
+       в сетку не встаёт, ширину даёт контейнер — не тайл сетки */
+    if (tokens.includes('tile--inset')) continue;
     const tag = m[1];
     const el = sliceTag(html, m.index, tag);
     if (!el) continue;
@@ -768,7 +771,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   /* Б23 классы документационного слоя на экране мертвы (урок Л27: их даёт
      только ds-docs.css, а экран подключает ds.css). Проверка по точным
      токенам класса, чтобы не цеплять tc--numbers и т.п. */
-  const docTokens = ['desc', 'tight', 'panel', 'masthead', 'lead', 'eyebrow', 'claim', 'note', 'bullets', 'rules', 'guide', 'subhead'];
+  /* 'note' убран 06.10.2026: с Note 1.000 это атом ДС (.note в ds.css) */
+  const docTokens = ['desc', 'tight', 'panel', 'masthead', 'lead', 'eyebrow', 'claim', 'bullets', 'rules', 'guide', 'subhead'];
   const usedDoc = [];
   for (const m of html.matchAll(/class="([^"]+)"/g)) {
     for (const tok of m[1].split(/\s+/)) {

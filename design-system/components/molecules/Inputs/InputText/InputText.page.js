@@ -9,7 +9,7 @@
 
   /* =========================== PLAYGROUND =========================== */
   (function () {
-    const state = { size: 'm', state: 'default', fill: 'value', label: true, helper: true, prefix: false, postfix: false, lead: false, informer: false, multiline: false, resizable: false };
+    const state = { size: 'm', state: 'default', fill: 'value', label: true, helper: true, prefix: false, postfix: false, lead: false, informer: false, multiline: false, resizable: false, radius: 'field', filled: false, focusAccent: false };
     const controls = document.getElementById('pg-controls');
     const stage = document.getElementById('pg-stage');
     const codeEl = document.getElementById('pg-code');
@@ -50,6 +50,7 @@
       ['disabled', 'Disabled'],
     ], 'state', true));
     controls.appendChild(ctlSelect('Наполнение', [['empty', 'Пустое поле'], ['placeholder', 'Плейсхолдер'], ['value', 'Заполненное поле']], 'fill'));
+    controls.appendChild(ctlSelect('Скругление', [['field', 'Скругление 4 · по умолчанию'], ['m', 'Скругление 8 · M'], ['pill', 'Капсула']], 'radius'));
     const labelCtl = ctlToggle('Label', 'label');
     const helperCtl = ctlToggle('Helper', 'helper');
     const resizableCtl = ctlToggle('Resize', 'resizable');
@@ -61,6 +62,8 @@
     controls.appendChild(ctlToggle('Многострочный', 'multiline'));
     controls.appendChild(helperCtl);
     controls.appendChild(resizableCtl);
+    controls.appendChild(ctlToggle('Заливка', 'filled'));
+    controls.appendChild(ctlToggle('Иконка в фокусе', 'focusAccent'));
 
     function render() {
       const table = state.size === 's';
@@ -80,6 +83,9 @@
         informer: state.informer,
         multiline: state.multiline,
         resizable: state.multiline && state.resizable,
+        radius: state.radius,
+        filled: state.filled,
+        focusAccent: state.focusAccent,
         value: state.fill === 'value' ? (state.multiline ? 'Многострочный вариант поля InputText' : 'Text') : null,
         placeholder: state.fill === 'placeholder' ? 'Плейсхолдер' : null,
         tip: state.state === 'error-focus' ? 'Текст ошибки' : (state.state === 'warning-focus' ? 'Указана информация, которая не блокирует действие, но требует внимания пользователя' : null),
@@ -96,6 +102,10 @@
       if (state.state === 'focus' || state.state.endsWith('-focus')) cls.push('is-focus');
       if (state.multiline) cls.push('inp--multiline');
       if (state.multiline && state.resizable) cls.push('inp--resizable');
+      if (state.radius === 'm') cls.push('inp--radius-m');
+      if (state.radius === 'pill') cls.push('inp--rounded');
+      if (state.filled) cls.push('inp--filled');
+      if (state.focusAccent) cls.push('inp--focus-accent');
       codeEl.innerHTML = '<code>' + cls.join('.').replace(/^inp/, '.inp') + '</code>';
     }
     render();
@@ -185,6 +195,34 @@
     if (!g) return;
     g.appendChild(cell('Пароль · скрыт', mk({ label: 'Пароль', helper: 'Не короче 8 символов', password: true, value: 'sup3rSecret', live: true }), 'Действие справа — «показать/скрыть» вместо крестика очистки.'));
     g.appendChild(cell('Пароль · пусто', mk({ label: 'Пароль', helper: 'Не короче 8 символов', password: true, placeholder: 'Введите пароль', live: true })));
+  })();
+
+  /* опции семейства (1.017): скругление, заливка, акцентная иконка в фокусе */
+  (function () {
+    const g = document.getElementById('var-radius');
+    if (!g) return;
+    const base = { lead: true, placeholder: 'Компания, группа или отрасль', live: true };
+    g.appendChild(cell('По умолчанию · 4px', mk(Object.assign({}, base))));
+    g.appendChild(cell('.inp--radius-m · 8px', mk(Object.assign({ radius: 'm' }, base))));
+    g.appendChild(cell('.inp--rounded · капсула', mk(Object.assign({ radius: 'pill' }, base))));
+  })();
+
+  (function () {
+    const g = document.getElementById('var-filled');
+    if (!g) return;
+    const base = { filled: true, radius: 'm', lead: true, placeholder: 'Компания, группа, бенефициар или отрасль' };
+    g.appendChild(cell('Заливка · покой', mk(Object.assign({ live: true }, base))));
+    g.appendChild(cell('Заливка · наведение', mk(Object.assign({ state: 'hover' }, base))));
+    g.appendChild(cell('Заливка · фокус', mk(Object.assign({ state: 'focus', focusAccent: true }, base)), 'В фокусе заливка снимается.'));
+    g.appendChild(cell('Заливка · ошибка', mk(Object.assign({ state: 'error', value: 'ООО Ромашк' }, base))));
+  })();
+
+  (function () {
+    const g = document.getElementById('var-accent');
+    if (!g) return;
+    g.appendChild(cell('Фокус · по умолчанию', mk({ lead: true, state: 'focus', placeholder: 'Поиск по чатам' }), 'Иконка остаётся --secondary.'));
+    g.appendChild(cell('Фокус · .inp--focus-accent', mk({ lead: true, state: 'focus', focusAccent: true, radius: 'm', placeholder: 'Поиск по чатам' }), 'Иконка — тон Primary.'));
+    g.appendChild(cell('Живое поле · .inp--focus-accent', mk({ lead: true, focusAccent: true, radius: 'm', placeholder: 'Поставьте курсор в поле', live: true })));
   })();
 
   (function () {
@@ -298,7 +336,9 @@
         ['Фон поля', '--bg-tile'],
         ['Рамка', '--border-primary'],
         ['Рамка · hover/focus', '--primary'],
-        ['Тень фокуса', '--primary-bg-light'],
+        ['Кольцо фокуса', '--st-primary-light'],
+        ['Кольцо фокуса · Error', '--st-red-light'],
+        ['Кольцо фокуса · Warning', '--st-orange-light'],
         ['Фон · disabled', '--st-disabled-light'],
       ]],
       ['Текст', [

@@ -1515,6 +1515,11 @@ window.DS_THEMES = {
       "name": "--shadow-modal-form",
       "from": "0 24px 64px rgba(40, 50, 55, .28)",
       "value": "0 32px 64px -12px color-mix(in srgb, var(--color-shadow) 14%, transparent), 0 5px 5px -2.5px color-mix(in srgb, var(--color-shadow) 4%, transparent)"
+    },
+    {
+      "name": "--shadow-card-hover",
+      "from": "0 4px 16px rgba(40, 50, 55, .06)",
+      "value": "0 4px 16px color-mix(in srgb, var(--color-shadow) 6%, transparent)"
     }
   ],
   "contrast": [
@@ -2363,6 +2368,226 @@ window.DS_THEMES = {
       "why": "--btn-pale в группе fg: --color-accent-fg-pressed"
     },
     {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 208,
+      "selector": ".btn--error.btn--accent[aria-pressed=\"true\"], .btn--error.btn--accent[aria-expanded=\"true\"], .btn--error.btn--accent.is-pressed, .btn--danger.btn--accent[aria-pressed=\"true\"], .btn--danger.btn--accent[aria-expanded=\"true\"], .btn--danger.btn--accent.is-pressed",
+      "prop": "background",
+      "from": "var(--error-dark)",
+      "value": "var(--color-danger-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 209,
+      "selector": ".btn--error.btn--accent[aria-pressed=\"true\"]:hover, .btn--error.btn--accent[aria-expanded=\"true\"]:hover, .btn--error.btn--accent.is-pressed:hover, .btn--error.btn--accent.is-pressed.is-hover, .btn--danger.btn--accent[aria-pressed=\"true\"]:hover, .btn--danger.btn--accent[aria-expanded=\"true\"]:hover, .btn--danger.btn--accent.is-pressed:hover, .btn--danger.btn--accent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "var(--error)",
+      "value": "var(--color-danger-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 208,
+      "selector": ".btn--error.btn--accent[aria-pressed=\"true\"], .btn--error.btn--accent[aria-expanded=\"true\"], .btn--error.btn--accent.is-pressed, .btn--danger.btn--accent[aria-pressed=\"true\"], .btn--danger.btn--accent[aria-expanded=\"true\"], .btn--danger.btn--accent.is-pressed",
+      "prop": "border-color",
+      "from": "var(--error-dark)",
+      "value": "var(--color-danger-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 209,
+      "selector": ".btn--error.btn--accent[aria-pressed=\"true\"]:hover, .btn--error.btn--accent[aria-expanded=\"true\"]:hover, .btn--error.btn--accent.is-pressed:hover, .btn--error.btn--accent.is-pressed.is-hover, .btn--danger.btn--accent[aria-pressed=\"true\"]:hover, .btn--danger.btn--accent[aria-expanded=\"true\"]:hover, .btn--danger.btn--accent.is-pressed:hover, .btn--danger.btn--accent.is-pressed.is-hover",
+      "prop": "border-color",
+      "from": "var(--error)",
+      "value": "var(--color-danger-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 233,
+      "selector": ".btn--warning.btn--accent[aria-pressed=\"true\"], .btn--warning.btn--accent[aria-expanded=\"true\"], .btn--warning.btn--accent.is-pressed",
+      "prop": "background",
+      "from": "var(--warning-dark)",
+      "value": "var(--color-warning-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 234,
+      "selector": ".btn--warning.btn--accent[aria-pressed=\"true\"]:hover, .btn--warning.btn--accent[aria-expanded=\"true\"]:hover, .btn--warning.btn--accent.is-pressed:hover, .btn--warning.btn--accent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "var(--warning)",
+      "value": "var(--color-warning-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 233,
+      "selector": ".btn--warning.btn--accent[aria-pressed=\"true\"], .btn--warning.btn--accent[aria-expanded=\"true\"], .btn--warning.btn--accent.is-pressed",
+      "prop": "border-color",
+      "from": "var(--warning-dark)",
+      "value": "var(--color-warning-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 234,
+      "selector": ".btn--warning.btn--accent[aria-pressed=\"true\"]:hover, .btn--warning.btn--accent[aria-expanded=\"true\"]:hover, .btn--warning.btn--accent.is-pressed:hover, .btn--warning.btn--accent.is-pressed.is-hover",
+      "prop": "border-color",
+      "from": "var(--warning)",
+      "value": "var(--color-warning-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 236,
+      "selector": ".btn--warning.btn--outline[aria-pressed=\"true\"]:hover, .btn--warning.btn--outline[aria-expanded=\"true\"]:hover, .btn--warning.btn--outline.is-pressed:hover, .btn--warning.btn--outline.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--warning) 18%, var(--warning-bg))",
+      "value": "color-mix(in srgb, var(--color-warning-fill) 18%, var(--color-warning-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 238,
+      "selector": ".btn--warning.btn--transparent[aria-pressed=\"true\"]:hover, .btn--warning.btn--transparent[aria-expanded=\"true\"]:hover, .btn--warning.btn--transparent.is-pressed:hover, .btn--warning.btn--transparent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--warning) 18%, var(--warning-bg))",
+      "value": "color-mix(in srgb, var(--color-warning-fill) 18%, var(--color-warning-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 258,
+      "selector": ".btn--success.btn--accent[aria-pressed=\"true\"], .btn--success.btn--accent[aria-expanded=\"true\"], .btn--success.btn--accent.is-pressed",
+      "prop": "background",
+      "from": "var(--success-dark)",
+      "value": "var(--color-success-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 259,
+      "selector": ".btn--success.btn--accent[aria-pressed=\"true\"]:hover, .btn--success.btn--accent[aria-expanded=\"true\"]:hover, .btn--success.btn--accent.is-pressed:hover, .btn--success.btn--accent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "var(--success)",
+      "value": "var(--color-success-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 258,
+      "selector": ".btn--success.btn--accent[aria-pressed=\"true\"], .btn--success.btn--accent[aria-expanded=\"true\"], .btn--success.btn--accent.is-pressed",
+      "prop": "border-color",
+      "from": "var(--success-dark)",
+      "value": "var(--color-success-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 259,
+      "selector": ".btn--success.btn--accent[aria-pressed=\"true\"]:hover, .btn--success.btn--accent[aria-expanded=\"true\"]:hover, .btn--success.btn--accent.is-pressed:hover, .btn--success.btn--accent.is-pressed.is-hover",
+      "prop": "border-color",
+      "from": "var(--success)",
+      "value": "var(--color-success-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 261,
+      "selector": ".btn--success.btn--outline[aria-pressed=\"true\"]:hover, .btn--success.btn--outline[aria-expanded=\"true\"]:hover, .btn--success.btn--outline.is-pressed:hover, .btn--success.btn--outline.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--success) 18%, var(--success-bg))",
+      "value": "color-mix(in srgb, var(--color-success-fill) 18%, var(--color-success-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 263,
+      "selector": ".btn--success.btn--transparent[aria-pressed=\"true\"]:hover, .btn--success.btn--transparent[aria-expanded=\"true\"]:hover, .btn--success.btn--transparent.is-pressed:hover, .btn--success.btn--transparent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--success) 18%, var(--success-bg))",
+      "value": "color-mix(in srgb, var(--color-success-fill) 18%, var(--color-success-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 283,
+      "selector": ".btn--info.btn--accent[aria-pressed=\"true\"], .btn--info.btn--accent[aria-expanded=\"true\"], .btn--info.btn--accent.is-pressed",
+      "prop": "background",
+      "from": "var(--info-dark)",
+      "value": "var(--color-info-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 284,
+      "selector": ".btn--info.btn--accent[aria-pressed=\"true\"]:hover, .btn--info.btn--accent[aria-expanded=\"true\"]:hover, .btn--info.btn--accent.is-pressed:hover, .btn--info.btn--accent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "var(--info)",
+      "value": "var(--color-info-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 283,
+      "selector": ".btn--info.btn--accent[aria-pressed=\"true\"], .btn--info.btn--accent[aria-expanded=\"true\"], .btn--info.btn--accent.is-pressed",
+      "prop": "border-color",
+      "from": "var(--info-dark)",
+      "value": "var(--color-info-fill-hover)",
+      "kind": "роль",
+      "why": "нажата = наведение тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 284,
+      "selector": ".btn--info.btn--accent[aria-pressed=\"true\"]:hover, .btn--info.btn--accent[aria-expanded=\"true\"]:hover, .btn--info.btn--accent.is-pressed:hover, .btn--info.btn--accent.is-pressed.is-hover",
+      "prop": "border-color",
+      "from": "var(--info)",
+      "value": "var(--color-info-fill)",
+      "kind": "роль",
+      "why": "наведение на нажатую = заливка тона по умолчанию (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 286,
+      "selector": ".btn--info.btn--outline[aria-pressed=\"true\"]:hover, .btn--info.btn--outline[aria-expanded=\"true\"]:hover, .btn--info.btn--outline.is-pressed:hover, .btn--info.btn--outline.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--info) 18%, var(--info-bg))",
+      "value": "color-mix(in srgb, var(--color-info-fill) 18%, var(--color-info-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
+      "file": "components/atoms/Buttons/Buttons.css",
+      "line": 288,
+      "selector": ".btn--info.btn--transparent[aria-pressed=\"true\"]:hover, .btn--info.btn--transparent[aria-expanded=\"true\"]:hover, .btn--info.btn--transparent.is-pressed:hover, .btn--info.btn--transparent.is-pressed.is-hover",
+      "prop": "background",
+      "from": "color-mix(in srgb, var(--info) 18%, var(--info-bg))",
+      "value": "color-mix(in srgb, var(--color-info-fill) 18%, var(--color-info-bg))",
+      "kind": "роль",
+      "why": "наведение на нажатую = фон клика тона (MS0010b)"
+    },
+    {
       "file": "components/atoms/Checkbox/Checkbox.css",
       "line": 89,
       "selector": ".cb:hover .cb__mark, .cb--hover .cb__mark",
@@ -2501,6 +2726,46 @@ window.DS_THEMES = {
       "value": "var(--color-accent-border)",
       "kind": "роль",
       "why": ""
+    },
+    {
+      "file": "components/atoms/Chip/Chip.css",
+      "line": 266,
+      "selector": ".chip:where([aria-pressed=\"true\"]), .chip:where([aria-checked=\"true\"])",
+      "prop": "border-color",
+      "from": "color-mix(in srgb, var(--primary) 56%, transparent)",
+      "value": "color-mix(in srgb, var(--color-accent-border) 56%, transparent)",
+      "kind": "роль",
+      "why": "чип выбора по ARIA (MS0009)"
+    },
+    {
+      "file": "components/atoms/Chip/Chip.css",
+      "line": 266,
+      "selector": ".chip:where([aria-pressed=\"true\"]), .chip:where([aria-checked=\"true\"])",
+      "prop": "color",
+      "from": "var(--primary-dark)",
+      "value": "var(--color-accent-fg-strong)",
+      "kind": "роль",
+      "why": "чип выбора по ARIA (MS0009)"
+    },
+    {
+      "file": "components/atoms/Chip/Chip.css",
+      "line": 267,
+      "selector": ".chip:where([aria-pressed=\"true\"]) .chip__icon, .chip:where([aria-pressed=\"true\"]) .chip__count, .chip:where([aria-checked=\"true\"]) .chip__icon, .chip:where([aria-checked=\"true\"]) .chip__count",
+      "prop": "color",
+      "from": "var(--primary)",
+      "value": "var(--color-accent-fg)",
+      "kind": "роль",
+      "why": "чип выбора по ARIA (MS0009)"
+    },
+    {
+      "file": "components/atoms/Chip/Chip.css",
+      "line": 268,
+      "selector": ".chip.chip--edit:where([aria-pressed=\"true\"]):not(:is(.chip--disabled,[aria-disabled=\"true\"])):hover, .chip.chip--edit:where([aria-checked=\"true\"]):not(:is(.chip--disabled,[aria-disabled=\"true\"])):hover",
+      "prop": "border-color",
+      "from": "var(--primary)",
+      "value": "var(--color-accent-border)",
+      "kind": "роль",
+      "why": "чип выбора по ARIA (MS0009)"
     },
     {
       "file": "components/atoms/Chip/Chip.css",
@@ -3233,6 +3498,16 @@ window.DS_THEMES = {
       "why": ""
     },
     {
+      "file": "components/molecules/DocCard/DocCard.css",
+      "line": 96,
+      "selector": ".doccard__title:focus-visible",
+      "prop": "outline",
+      "from": "2px solid var(--primary)",
+      "value": "2px solid var(--color-focus-ring)",
+      "kind": "роль",
+      "why": ""
+    },
+    {
       "file": "components/molecules/DropdownList/DropdownList.css",
       "line": 52,
       "selector": ".ddl",
@@ -3324,7 +3599,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 78,
+      "line": 81,
       "selector": ".inp__field:focus-within, .inp.is-focus .inp__field",
       "prop": "border-color",
       "from": "var(--primary)",
@@ -3334,17 +3609,17 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 79,
+      "line": 82,
       "selector": ".inp__field:focus-within, .inp.is-focus .inp__field",
       "prop": "box-shadow",
-      "from": "inset 0 0 0 1px var(--primary), 0 0 0 3px var(--primary-bg-light)",
-      "value": "inset 0 0 0 1px var(--color-focus-ring), 0 0 0 3px var(--color-accent-bg-subtle)",
+      "from": "inset 0 0 0 1px var(--primary), 0 0 0 3px var(--st-primary-light)",
+      "value": "inset 0 0 0 1px var(--color-focus-ring), 0 0 0 3px var(--color-status-accent-subtle)",
       "kind": "роль",
       "why": ""
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 93,
+      "line": 96,
       "selector": ".inp--error .inp__field",
       "prop": "border-color",
       "from": "var(--error)",
@@ -3354,7 +3629,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 96,
+      "line": 99,
       "selector": ".inp--error .inp__field:focus-within, .inp--error.is-focus .inp__field",
       "prop": "border-color",
       "from": "var(--error)",
@@ -3364,17 +3639,17 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 97,
+      "line": 100,
       "selector": ".inp--error .inp__field:focus-within, .inp--error.is-focus .inp__field",
       "prop": "box-shadow",
-      "from": "inset 0 0 0 1px var(--error), 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent)",
-      "value": "inset 0 0 0 1px var(--color-danger-border), 0 0 0 3px color-mix(in srgb, var(--color-danger-border) 8%, transparent)",
+      "from": "inset 0 0 0 1px var(--error), 0 0 0 3px var(--st-red-light)",
+      "value": "inset 0 0 0 1px var(--color-danger-border), 0 0 0 3px var(--color-status-red-subtle)",
       "kind": "роль",
       "why": ""
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 99,
+      "line": 102,
       "selector": ".inp--warning .inp__field",
       "prop": "border-color",
       "from": "var(--warning)",
@@ -3384,7 +3659,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 102,
+      "line": 105,
       "selector": ".inp--warning .inp__field:focus-within, .inp--warning.is-focus .inp__field",
       "prop": "border-color",
       "from": "var(--warning)",
@@ -3394,23 +3669,33 @@ window.DS_THEMES = {
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 103,
+      "line": 106,
       "selector": ".inp--warning .inp__field:focus-within, .inp--warning.is-focus .inp__field",
       "prop": "box-shadow",
-      "from": "inset 0 0 0 1px var(--warning), 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent)",
-      "value": "inset 0 0 0 1px var(--color-warning-border), 0 0 0 3px color-mix(in srgb, var(--color-warning-border) 10%, transparent)",
+      "from": "inset 0 0 0 1px var(--warning), 0 0 0 3px var(--st-orange-light)",
+      "value": "inset 0 0 0 1px var(--color-warning-border), 0 0 0 3px var(--color-status-orange-subtle)",
       "kind": "роль",
       "why": ""
     },
     {
       "file": "components/molecules/Inputs/Inputs.css",
-      "line": 241,
+      "line": 244,
       "selector": ".inp__act:focus-visible",
       "prop": "outline",
       "from": "2px solid var(--primary)",
       "value": "2px solid var(--color-focus-ring)",
       "kind": "роль",
       "why": ""
+    },
+    {
+      "file": "components/molecules/Inputs/Inputs.css",
+      "line": 304,
+      "selector": ".inp--focus-accent:not(.inp--error):not(.inp--warning) .inp__field:focus-within .inp__lead, .inp--focus-accent.is-focus:not(.inp--error):not(.inp--warning) .inp__lead",
+      "prop": "color",
+      "from": "var(--primary)",
+      "value": "var(--color-accent-fg)",
+      "kind": "роль",
+      "why": "акцентная иконка поля в фокусе — тон текста акцента, как у иконок кнопок и чипов"
     },
     {
       "file": "components/molecules/NavTile/NavTile.css",
@@ -4454,7 +4739,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/organisms/Tile/Tile.css",
-      "line": 368,
+      "line": 392,
       "selector": ".tile--card:is(.is-selected, [aria-checked=\"true\"], [aria-selected=\"true\"])",
       "prop": "border-color",
       "from": "var(--primary)",
@@ -4464,7 +4749,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/organisms/Tile/Tile.css",
-      "line": 374,
+      "line": 398,
       "selector": ".tile--card:focus-visible",
       "prop": "outline",
       "from": "2px solid var(--primary)",
@@ -4474,7 +4759,7 @@ window.DS_THEMES = {
     },
     {
       "file": "components/organisms/Tile/Tile.css",
-      "line": 380,
+      "line": 404,
       "selector": ".tile--card.is-move",
       "prop": "border-color",
       "from": "var(--primary)",

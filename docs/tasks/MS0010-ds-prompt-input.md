@@ -14,6 +14,7 @@ dependencies:
   - '010f'
   - '010g'
   - '010h'
+  - '010i'
 tags:
   - design-system
   - new-component
@@ -80,12 +81,12 @@ created: 2026-10-05
 
 | Чего не хватает | Где в композере | Задача | Что это для ДС |
 |---|---|---|---|
-| **Клавиша** — обозначение клавиши `Enter`, `Shift` | подсказка под карточкой (`.cmp__hint kbd`) | `MS0010a-ds-kbd.md` | **новый атом Kbd** |
+| **Клавиша** — обозначение клавиши `Enter`, `Shift` | подсказка под карточкой (`.cmp__hint kbd`) | `MS0010a-ds-kbd.md` | **новый атом Keyboard** (до 06.10.2026 — Kbd) |
 | **Кнопка-переключатель** — нажатое / раскрытое состояние и смена глифа | «Конструктор» ↔ «Закрыть конструктор» (`.cmp__tgl`, `aria-expanded`, `ai-stars` → `close`); «Добавить в контекст» (`aria-pressed`) | `MS0010b-ds-button-toggle.md` | **расширение Buttons** |
 | **Чип, раскрывающий связанный блок** — состояние «раскрыт» | чип текстового фрагмента над полем (`.cmp-ctx[aria-expanded]`) | `MS0010c-ds-chip-expanded.md` | **расширение Chip** (после MS0009) |
 | **Номер шага** — кружок с цифрой, при готовности — галочка | секции конструктора (`.bsec__num`) | `MS0010d-ds-step-marker.md` | **новый атом StepMarker** |
 | **Заметка с иконкой** — строка «иконка + вторичный текст» | низ конструктора (`.bld__foot`: часы + «Подготовка отчёта обычно занимает…») | `MS0010e-ds-note.md` | **новый атом Note** |
-| **Цитата** — фрагмент с акцентной линией слева, источником и кнопкой «Свернуть» | раскрытый фрагмент материала (`.cmp-quote`) | `MS0010f-ds-quote.md` | **новая молекула Quote** |
+| **Раскрытие фрагмента** — весь текст фрагмента материала | раскрытый фрагмент (`.cmp-quote` → текст внутри чипа, решение 06.10.2026) | `MS0010f-ds-chip-expandable.md` | **расширение Chip**: раскрывающийся чип; молекула Quote отложена — `MS0012-ds-quote.md` |
 | **Вложенная подложка** — нейтральная панель на `--bg-page` с заголовком, подсказкой и списком | «История запросов по объекту анализа» (`.bprior`) | `MS0010g-ds-tile-inset.md` | **расширение Tile**: вариант Inset |
 | **Пошаговая форма** — секции «номер + подпись слева, контролы справа», пунктир между ними, заметка внизу | конструктор (`.bld`, `.bsec`, `.bld__foot`) | `MS0010h-ds-step-form.md` | **новая молекула StepForm** |
 | **Само поле промпта** — карточка, поле с авторостом и подсветкой, ряд действий, слот панели, подсказка | `.cmp` целиком | **эта задача** | **новый организм PromptInput** |
@@ -121,12 +122,12 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 ```
 атомы       Chip (MS0009) ─┬─ Chip expanded (MS0010c)
                            │
-            Kbd (MS0010a)  │   Buttons toggle (MS0010b)   StepMarker (MS0010d)   Note (MS0010e)
+            Keyboard (MS0010a) │   Buttons toggle (MS0010b)   StepMarker (MS0010d)   Note (MS0010e)
                            │
-молекулы    Quote (MS0010f) ← IconButton
+атомы       Chip expandable (MS0010f) — заменила Chip expanded (MS0010c) и Quote
             StepForm (MS0010h) ← StepMarker + Note + Divider + InputText + Chip
 организмы   Tile Inset (MS0010g) ← Entity + Avatar + Buttons + Divider
-            PromptInput (MS0010) ← Chip + IconButton + Buttons toggle + Kbd + Quote + слот панели
+            PromptInput (MS0010) ← Chip + IconButton + Buttons + Keyboard + слот панели
                                    (в панели прототипа — StepForm + Tile Inset)
 ```
 
@@ -135,12 +136,12 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 | Шаг | Задача | Зависит от | Почему здесь |
 |---|---|---|---|
 | 1 | MS0009 Chip: чипы выбора | — | уже описана; первая по договорённости |
-| 2 | MS0010a Kbd | — | атом без зависимостей |
+| 2 | MS0010a Keyboard | — | атом без зависимостей |
 | 3 | MS0010b Buttons toggle | — | атом; нужен PromptInput и карточке документа |
 | 4 | MS0010c Chip expanded | MS0009 | правит тот же `Chip.css`, после MS0009, чтобы не конфликтовать |
 | 5 | MS0010d StepMarker | — | атом; нужен StepForm |
 | 6 | MS0010e Note | — | атом; нужен StepForm |
-| 7 | MS0010f Quote | — | молекула на IconButton |
+| 7 | MS0010f Chip expandable | MS0009 | раскрывающийся чип вместо блока цитаты (решение 06.10.2026) |
 | 8 | MS0010g Tile Inset | — | вариант организма на готовых Entity/Buttons |
 | 9 | MS0010h StepForm | MS0009, MS0010d, MS0010e | молекула из новых атомов |
 | 10 | **MS0010 PromptInput** | всё выше | организм; переводит композер прототипа целиком |
@@ -165,7 +166,6 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 │  │  ├─ .chiplist.prompt__attachments    чипы файлов (Chip edit S + file-basic + remove)    — пустой скрыт
 │  │  ├─ .chiplist.prompt__context        чипы фрагментов (Chip edit S + message-text|bar-chart + remove;
 │  │  │                                   текстовый — aria-expanded, MS0010c)                  — пустой скрыт
-│  │  ├─ .quote                           раскрытый фрагмент (MS0010f)                         — hidden
 │  │  ├─ .prompt__field.ds-scroll         грид из одной ячейки, max-height, прокрутка
 │  │  │  ├─ .prompt__mirror               зеркало текста, aria-hidden; фрагменты — mark.prompt__mark
 │  │  │  └─ textarea.prompt__control      само поле
@@ -175,7 +175,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 │  └─ .prompt__drawer                     слот выезжающей панели (grid 0fr → 1fr), inert пока закрыт
 │     └─ .prompt__drawer-in               обёртка с overflow:hidden и верхней границей
 │        └─ [контент экрана]              в прототипе — StepForm (MS0010h)
-└─ .prompt__hint                          подсказка под карточкой: Kbd (MS0010a) + текст body-xs
+└─ .prompt__hint                          подсказка под карточкой: Keyboard (MS0010a) + текст body-xs
 ```
 
 Правила анатомии:
@@ -250,7 +250,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 | Перерисовка | `DSPrompt.bindAll(scope)` | — |
 
 Чего рантайм **не** делает: не рисует чипы файлов и фрагментов (это Chip),
-не открывает цитату (это экран + MS0010c/MS0010f), не знает, что в панели.
+не раскрывает фрагменты (это Chip expandable, MS0010f), не знает, что в панели.
 
 ### 3.5. Доступность
 
@@ -291,7 +291,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 | `ds.css` | `@import` в конец группы организмов |
 | `ds.js` | `PromptInput.js` в `FILES` после `Chip.js`, `Tooltip.js` |
 | `specs/_cheatsheet.md` | блок `## PromptInput`: оси, инварианты, классы, DOM-сниппет, «Из коробки» |
-| `specs/_index.md` | строка: deps `chip, icon-button, button, kbd, quote, tooltip` |
+| `specs/_index.md` | строка: deps `chip, icon-button, button, keyboard, tooltip` |
 | `specs/_runtime-hooks.md` | `data-prompt` → `PromptInput.js` |
 | `AGENTS.md` §6 | PromptInput в «Организмы» (сверка — проход 8 `spec-audit`) |
 | `index.html`, `docs-kit/ds-nav.js` | карточка и пункт меню, алфавитная позиция |
@@ -304,7 +304,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 
 - Разметка ~650–716: `.thr__compose` остаётся раскладкой экрана (ширина,
   центрирование); внутри — `.prompt[data-prompt]` по §3.1. `.cmp-quote` уже
-  стал `.quote` в MS0010f, `.bld` — StepForm в MS0010h.
+  раскрывается в чипе (MS0010f), `.bld` — StepForm в MS0010h.
 - Стили: удалить `.cmp*`, `.cmp-ctx*`, `.cmp-quote*`, `.cmp__drawer*`,
   `@keyframes cmpFlow / cmpMarkIn / cmpPop / ctxPulse / quoteIn / bldIn /
   bldPop`, правило `.cmp__field::-webkit-scrollbar*` (строки ~238–353, 446,
@@ -316,7 +316,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
   «Очистить» — `ds-prompt:clear` (экран сбрасывает конструктор). Классы
   `.cmp*` в JS не остаются — только `id` и `data-*`.
 - Спека `RequestThread.screen.md`: раздел композера — PromptInput и его
-  слоты вместо локальных классов; «Компоненты» — PromptInput, Kbd, Quote,
+  слоты вместо локальных классов; «Компоненты» — PromptInput, Keyboard,
   StepForm, StepMarker, Note.
 
 **Вне задачи:** `ai-bankster-prototype-mvp` и `pretrade/drafts/pipelineScanner-v07`
@@ -365,6 +365,34 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 - `RequestThread.screen.md` — §4.2.
 - Урок — через скилл `lessons`, только если по ходу что-то сломается.
 
+## 6а. Решения человека (05.10.2026)
+
+Перекрывают §3 и §7, где расходятся.
+
+0. **Принцип переноса (из MS0009).** Каждый новый элемент интерфейса
+   прототипа v02 получает отражение в ДС; вид прототипа переносится в ДС, а не
+   подгоняется под шкалу; компонент сразу во всех размерах; анимации прототипа
+   переносятся (опцией там, где уместны не везде).
+1. **Ход работы.** Задачи группы — по одной. Перед каждой — подробный разбор
+   плана в диалоге (что делаю, как будет выглядеть, где используется), после
+   каждой — остановка: где смотреть и что поменялось; следующая — по команде
+   человека. Коммитов нет до отдельной команды.
+2. **Тень карточки (вопрос 7.3)** — новый токен в Elevation по прототипу
+   (`--shadow-prompt`, лёгкая двухслойная), плюс тень AI-режима; по образцу
+   `--shadow-modal-form`.
+3. **Поиск объекта (MS0010h §2.3)** — обычный InputText ДС (белый фон,
+   поведение компонента), без варианта «серое поле». Кольцо фокуса из
+   прототипа — толстое светлое primary — переносится **во все поля ДС**:
+   отдельная задача `MS0010i-ds-input-focus-ring.md`.
+4. **Фокус карточки промпта (§3.2)** — у InputText уже есть внешнее кольцо
+   3px (замер 05.10.2026: `inset 0 0 0 1px` + `0 0 0 3px --primary-bg-light`);
+   утверждение «у полей ДС фокус внутри рамки» было неверным. Фокус карточки
+   — по образцу полей после MS0010i.
+5. **Кнопки (MS0010b, итог)** — у всех кнопок ДС есть состояние «нажата»
+   (`aria-pressed` / `aria-expanded`, вид наведения), две иконки
+   `.btn__icon--toggle` меняются с анимацией, замена кнопки — `DSButton.swap()`.
+   Переключатель панели промпта — обычная Button Outline S с `aria-expanded`.
+
 ## 7. Вопросы к человеку (до начала работ)
 
 1. **Имя.** `PromptInput` (класс `.prompt`) — рекомендую: описывает, что
@@ -399,7 +427,7 @@ InputText. Состояния рамки (hover / focus / disabled) берутс
 
 - [x] Задача описана (этот документ), подзадачи MS0010a–MS0010h и MS0011 заведены
 - [ ] Вопросы §7 согласованы, план утверждён
-- [ ] Подзадачи MS0009, MS0010a–MS0010h закрыты
+- [x] Подзадачи MS0009, MS0010a–MS0010i закрыты (MS0010c заменена MS0010f; d, e, g, h и MS0011 — 06.10.2026)
 - [ ] `PromptInput.css` + `PromptInput.js`
 - [ ] Страница `PromptInput.html` + `PromptInput.page.js`
 - [ ] `PromptInput.md`, чит-шит, `_index.md`, `_runtime-hooks.md`, `AGENTS.md` §6, `index.html`, `ds-nav.js`, `ds.css`, `ds.js`, `CHANGELOG.md`, `ds-home.mjs`

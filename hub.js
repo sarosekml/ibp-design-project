@@ -68,7 +68,7 @@ window.IBPHub = [
     desc: 'Прототип модуля AI Pitcher: новый отчёт, история, журнал',
     href: 'apps/ib/drafts/ai-bankster-prototype-v01/pages/index.html',
     root: 'apps/ib/drafts/ai-bankster-prototype-v01',
-    icon: 'folder'
+    icon: 'ai-stars'
   },
   {
     id: 'ai-bankster-prototype-v02',

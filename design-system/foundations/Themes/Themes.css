@@ -509,6 +509,7 @@
   --elevation-4: 0 20px 24px -4px color-mix(in srgb, var(--color-shadow) 8%, transparent), 0 8px 8px -4px color-mix(in srgb, var(--color-shadow) 3%, transparent), 0 3px 3px -1.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --elevation-5: 0 24px 48px -12px color-mix(in srgb, var(--color-shadow) 18%, transparent), 0 4px 4px -2px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --shadow-modal-form: 0 32px 64px -12px color-mix(in srgb, var(--color-shadow) 14%, transparent), 0 5px 5px -2.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
+  --shadow-card-hover: 0 4px 16px color-mix(in srgb, var(--color-shadow) 6%, transparent);
 
   /* токены компонентов (правила :root) — свои в каждой теме */
   --btn-hover-bg: var(--color-accent-bg-hover);
@@ -1033,6 +1034,7 @@
   --elevation-4: 0 20px 24px -4px color-mix(in srgb, var(--color-shadow) 8%, transparent), 0 8px 8px -4px color-mix(in srgb, var(--color-shadow) 3%, transparent), 0 3px 3px -1.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --elevation-5: 0 24px 48px -12px color-mix(in srgb, var(--color-shadow) 18%, transparent), 0 4px 4px -2px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --shadow-modal-form: 0 32px 64px -12px color-mix(in srgb, var(--color-shadow) 14%, transparent), 0 5px 5px -2.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
+  --shadow-card-hover: 0 4px 16px color-mix(in srgb, var(--color-shadow) 6%, transparent);
 
   /* токены компонентов (правила :root) — свои в каждой теме */
   --btn-hover-bg: var(--color-accent-bg-hover);
@@ -1557,6 +1559,7 @@
   --elevation-4: 0 20px 24px -4px color-mix(in srgb, var(--color-shadow) 8%, transparent), 0 8px 8px -4px color-mix(in srgb, var(--color-shadow) 3%, transparent), 0 3px 3px -1.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --elevation-5: 0 24px 48px -12px color-mix(in srgb, var(--color-shadow) 18%, transparent), 0 4px 4px -2px color-mix(in srgb, var(--color-shadow) 4%, transparent);
   --shadow-modal-form: 0 32px 64px -12px color-mix(in srgb, var(--color-shadow) 14%, transparent), 0 5px 5px -2.5px color-mix(in srgb, var(--color-shadow) 4%, transparent);
+  --shadow-card-hover: 0 4px 16px color-mix(in srgb, var(--color-shadow) 6%, transparent);
 
   /* токены компонентов (правила :root) — свои в каждой теме */
   --btn-hover-bg: var(--color-accent-bg-hover);
@@ -1889,6 +1892,56 @@
 :where([data-theme]:not([data-theme="legacy"])) .btn--transparent.is-active svg:where(:not([data-theme="legacy"] *)) {
   color: var(--color-accent-fg-pressed);
 }
+:where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent[aria-pressed="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent[aria-expanded="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent.is-pressed:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent[aria-pressed="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent[aria-expanded="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent.is-pressed:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-danger-fill-hover);
+  border-color: var(--color-danger-fill-hover);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--error.btn--accent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--danger.btn--accent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-danger-fill);
+  border-color: var(--color-danger-fill);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent[aria-pressed="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent[aria-expanded="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent.is-pressed:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-warning-fill-hover);
+  border-color: var(--color-warning-fill-hover);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--accent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-warning-fill);
+  border-color: var(--color-warning-fill);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--outline[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--outline[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--outline.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--outline.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-warning-fill) 18%, var(--color-warning-bg));
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--transparent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--transparent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--transparent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--warning.btn--transparent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-warning-fill) 18%, var(--color-warning-bg));
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent[aria-pressed="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent[aria-expanded="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent.is-pressed:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-success-fill-hover);
+  border-color: var(--color-success-fill-hover);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--accent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-success-fill);
+  border-color: var(--color-success-fill);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--outline[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--outline[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--outline.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--outline.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-success-fill) 18%, var(--color-success-bg));
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--transparent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--transparent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--transparent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--success.btn--transparent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-success-fill) 18%, var(--color-success-bg));
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent[aria-pressed="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent[aria-expanded="true"]:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent.is-pressed:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-info-fill-hover);
+  border-color: var(--color-info-fill-hover);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--accent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: var(--color-info-fill);
+  border-color: var(--color-info-fill);
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--outline[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--outline[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--outline.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--outline.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-info-fill) 18%, var(--color-info-bg));
+}
+:where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--transparent[aria-pressed="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--transparent[aria-expanded="true"]:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--transparent.is-pressed:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .btn--info.btn--transparent.is-pressed.is-hover:where(:not([data-theme="legacy"] *)) {
+  background: color-mix(in srgb, var(--color-info-fill) 18%, var(--color-info-bg));
+}
 :where([data-theme]:not([data-theme="legacy"])) .cb:hover .cb__mark:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .cb--hover .cb__mark:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-accent-border);
 }
@@ -1923,6 +1976,16 @@
   color: var(--color-accent-fg);
 }
 :where([data-theme]:not([data-theme="legacy"])) .chip--edit.chip--selected:not(:is(.chip--disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-disabled="true"])):hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--edit.chip--selected:not(:is(.chip--disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-disabled="true"])).is-hover:where(:not([data-theme="legacy"] *)) {
+  border-color: var(--color-accent-border);
+}
+:where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-pressed="true"]):where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-checked="true"]):where(:not([data-theme="legacy"] *)) {
+  border-color: color-mix(in srgb, var(--color-accent-border) 56%, transparent);
+  color: var(--color-accent-fg-strong);
+}
+:where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-pressed="true"]) .chip__icon:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-pressed="true"]) .chip__count:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-checked="true"]) .chip__icon:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip:where([aria-checked="true"]) .chip__count:where(:not([data-theme="legacy"] *)) {
+  color: var(--color-accent-fg);
+}
+:where([data-theme]:not([data-theme="legacy"])) .chip.chip--edit:where([aria-pressed="true"]):not(:is(.chip--disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-disabled="true"])):hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip.chip--edit:where([aria-checked="true"]):not(:is(.chip--disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-disabled="true"])):hover:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-accent-border);
 }
 :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__icon:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__marker:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__remove:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__dropdown:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__info:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--accent .chip__count:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__icon:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__marker:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__remove:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__dropdown:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__info:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .chip--primary .chip__count:where(:not([data-theme="legacy"] *)) {
@@ -2126,6 +2189,9 @@
   box-shadow: inset 0 0 0 1px var(--color-accent-border);
   color: var(--color-accent-fg);
 }
+:where([data-theme]:not([data-theme="legacy"])) .doccard__title:focus-visible:where(:not([data-theme="legacy"] *)) {
+  outline: 2px solid var(--color-focus-ring);
+}
 :where([data-theme]:not([data-theme="legacy"])) .ddl:where(:not([data-theme="legacy"] *)) {
   --ddl-item-selected-hover: var(--color-bg-selected-hover);
   --ddl-bg: var(--color-bg-float);
@@ -2157,24 +2223,27 @@
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp__field:focus-within:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .inp.is-focus .inp__field:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-focus-ring);
-  box-shadow: inset 0 0 0 1px var(--color-focus-ring), 0 0 0 3px var(--color-accent-bg-subtle);
+  box-shadow: inset 0 0 0 1px var(--color-focus-ring), 0 0 0 3px var(--color-status-accent-subtle);
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp--error .inp__field:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-danger-border);
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp--error .inp__field:focus-within:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .inp--error.is-focus .inp__field:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-danger-border);
-  box-shadow: inset 0 0 0 1px var(--color-danger-border), 0 0 0 3px color-mix(in srgb, var(--color-danger-border) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-danger-border), 0 0 0 3px var(--color-status-red-subtle);
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp--warning .inp__field:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-warning-border);
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp--warning .inp__field:focus-within:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .inp--warning.is-focus .inp__field:where(:not([data-theme="legacy"] *)) {
   border-color: var(--color-warning-border);
-  box-shadow: inset 0 0 0 1px var(--color-warning-border), 0 0 0 3px color-mix(in srgb, var(--color-warning-border) 10%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-warning-border), 0 0 0 3px var(--color-status-orange-subtle);
 }
 :where([data-theme]:not([data-theme="legacy"])) .inp__act:focus-visible:where(:not([data-theme="legacy"] *)) {
   outline: 2px solid var(--color-focus-ring);
+}
+:where([data-theme]:not([data-theme="legacy"])) .inp--focus-accent:not(.inp--error):not(.inp--warning) .inp__field:focus-within .inp__lead:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .inp--focus-accent.is-focus:not(.inp--error):not(.inp--warning) .inp__lead:where(:not([data-theme="legacy"] *)) {
+  color: var(--color-accent-fg);
 }
 :where([data-theme]:not([data-theme="legacy"])) .ntile__title-link:hover .ntile__title:where(:not([data-theme="legacy"] *)) {
   color: var(--color-accent-fg);

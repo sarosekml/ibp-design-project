@@ -28,7 +28,7 @@
 
   /* =========================== PLAYGROUND =========================== */
   (function () {
-    const state = { size: 'm', state: 'default', fill: 'value', label: true, helper: true, informer: false };
+    const state = { size: 'm', state: 'default', fill: 'value', label: true, helper: true, informer: false, radius: 'field', filled: false };
     const controls = document.getElementById('pg-controls');
     const stage = document.getElementById('pg-stage');
     const codeEl = document.getElementById('pg-code');
@@ -69,11 +69,13 @@
       ['disabled', 'Disabled'],
     ], 'state', true));
     controls.appendChild(ctlSelect('Наполнение', [['empty', 'Маска'], ['value', 'Заполнено']], 'fill'));
+    controls.appendChild(ctlSelect('Скругление', [['field', 'Скругление 4 · по умолчанию'], ['m', 'Скругление 8 · M'], ['pill', 'Капсула']], 'radius'));
     const labelCtl = ctlToggle('Label', 'label');
     const helperCtl = ctlToggle('Helper', 'helper');
     controls.appendChild(labelCtl);
     controls.appendChild(ctlToggle('Информер', 'informer'));
     controls.appendChild(helperCtl);
+    controls.appendChild(ctlToggle('Заливка', 'filled'));
 
     function render() {
       const table = state.size === 's';
@@ -87,6 +89,8 @@
         label: !table && state.label ? 'Label' : null,
         helper: !table && state.helper ? 'Helper' : null,
         informer: state.informer,
+        radius: state.radius,
+        filled: state.filled,
         value: state.fill === 'value' ? '21.12.2022' : null,
         tip: state.state === 'error-focus' ? 'Текст ошибки' : (state.state === 'warning-focus' ? 'Указана информация, которая не блокирует действие, но требует внимания пользователя' : null),
         live: true,
@@ -99,6 +103,9 @@
       if (state.state === 'disabled') cls.push('inp--disabled');
       if (state.state === 'hover') cls.push('is-hover');
       if (state.state === 'focus' || state.state.endsWith('-focus')) cls.push('is-focus');
+      if (state.radius === 'm') cls.push('inp--radius-m');
+      if (state.radius === 'pill') cls.push('inp--rounded');
+      if (state.filled === true || state.filled === 'yes') cls.push('inp--filled');
       codeEl.innerHTML = '<code>' + cls.join('.') + '</code>';
     }
     render();

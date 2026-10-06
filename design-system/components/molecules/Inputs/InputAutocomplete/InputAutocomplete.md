@@ -1,8 +1,8 @@
 ---
 component: InputAutocomplete
 title: "InputAutocomplete"
-version: "1.017"
-updated: "25.09.2026"
+version: "1.019"
+updated: "06.10.2026"
 page: components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html
 page_js: components/molecules/Inputs/InputAutocomplete/InputAutocomplete.page.js
 runtime: components/molecules/DropdownList/DropdownList.js, components/molecules/Inputs/Inputs.js
@@ -90,6 +90,7 @@ status: curated
 | Класс/атрибут | Назначение |
 |---|---|
 | `.inp / --m / --s / --error / --warning / --disabled` | база поля — общая с InputText |
+| `.inp--radius-m` / `--rounded` · `--filled` · `--focus-accent` | опции семейства (с 1.019): скругление 8 / капсула, заливка фоном страницы, акцентная иконка в фокусе — см. InputText |
 | `.inp.is-open` | список раскрыт; поворачивает шеврон |
 | `.inp__summary` | сводка выбора «Value 1, +4» |
 | `.inp__chips` | стек чипов в поле; overflow → «+N» |

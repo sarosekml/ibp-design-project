@@ -211,6 +211,7 @@
       if (trigger.disabled || trigger.getAttribute('aria-disabled') === 'true') return api;
       if (current && current !== api) current.close();
       pop.classList.add('is-open');
+      pop.__dsOpener = api;
       trigger.setAttribute('aria-expanded', 'true');
       if (window.DSFloat) DSFloat.mount(pop, { anchor: trigger });
       reposition();
@@ -225,9 +226,13 @@
 
     function close(returnFocus) {
       if (!isOpen()) return api;
+      /* поповер открыл другой триггер — закрывает он: его aria-expanded и фокус */
+      var opener = pop.__dsOpener;
+      if (opener && opener !== api) return opener.close(returnFocus);
       pop.classList.remove('is-open');
       trigger.setAttribute('aria-expanded', 'false');
       if (window.DSFloat) DSFloat.unmount(pop);
+      if (pop.__dsOpener === api) pop.__dsOpener = null;
       if (current === api) current = null;
       if (returnFocus) trigger.focus();
       return api;
@@ -242,17 +247,27 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
       });
     }
-    /* ✕ и любые [data-pop-close] внутри — закрытие */
-    pop.addEventListener('click', function (e) {
-      if (e.target.closest('.pop__close, [data-pop-close]')) close(true);
-    });
-    /* Tab за последний интерактивный элемент — фокус не заперт, поповер закрывается */
-    pop.addEventListener('focusout', function (e) {
-      if (!isOpen()) return;
-      var to = e.relatedTarget;
-      if (to && (pop.contains(to) || trigger === to || trigger.contains(to))) return;
-      if (to) close();
-    });
+    /* Один поповер бывает у нескольких триггеров. Поповер помнит, какой
+       триггер его открыл (pop.__dsOpener), а ✕ и уход фокуса закрывают его
+       через этот триггер; слушатели вешаются один раз на поповер, а не на
+       каждую привязку — иначе срабатывал слушатель чужого триггера, и
+       открывший оставался с aria-expanded="true" (Popover 1.011). */
+    if (!pop.__dsPopWired) {
+      pop.__dsPopWired = true;
+      /* ✕ и любые [data-pop-close] внутри — закрытие */
+      pop.addEventListener('click', function (e) {
+        if (!e.target.closest('.pop__close, [data-pop-close]')) return;
+        if (pop.__dsOpener) pop.__dsOpener.close(true);
+      });
+      /* Tab за последний интерактивный элемент — фокус не заперт, поповер закрывается */
+      pop.addEventListener('focusout', function (e) {
+        var opener = pop.__dsOpener;
+        if (!opener || !pop.classList.contains('is-open')) return;
+        var to = e.relatedTarget;
+        if (to && (pop.contains(to) || opener.trigger === to || opener.trigger.contains(to))) return;
+        if (to) opener.close();
+      });
+    }
 
     var api = { pop: pop, trigger: trigger, open: open, close: close, toggle: toggle, place: reposition, isOpen: isOpen, config: conf };
     trigger.__dsPopover = api;

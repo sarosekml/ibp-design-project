@@ -117,7 +117,7 @@
             <div class="docs-main">
 
 <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.002</b></span><span>Обновлено: <b>05.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.003</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Тени (Elevation)</h1>
     <p class="lead">Шкала теней ровно та, что уже используется в основном продукте: <strong>Elevation_1…5</strong> и отдельно именованная <strong>Shadow4.0_modalform</strong>. Значения не изобретены здесь и не меняются этой страницей — она каталогизирует то, что уже есть, и фиксирует, какой компонент какой уровень использует.</p>
@@ -309,7 +309,8 @@
     {token:'--elevation-3',        name:'Elevation_3',        value:'0 14px 38px rgba(40,50,55,.18)', use:'—',                                                     status:'reserved'},
     {token:'--elevation-4',        name:'Elevation_4',        value:'0 18px 48px rgba(40,50,55,.20)', use:'—',                                                     status:'reserved'},
     {token:'--elevation-5',        name:'Elevation_5',        value:'0 22px 58px rgba(40,50,55,.22)', use:'—',                                                     status:'reserved'},
-    {token:'--shadow-modal-form',  name:'Shadow4.0_modalform',value:'0 24px 64px rgba(40,50,55,.28)', use:'Тень под модалкой (Modal)',                             status:'active'}
+    {token:'--shadow-modal-form',  name:'Shadow4.0_modalform',value:'0 24px 64px rgba(40,50,55,.28)', use:'Тень под модалкой (Modal)',                             status:'active'},
+    {token:'--shadow-card-hover',  name:'Card hover',         value:'0 4px 16px rgba(40,50,55,.06)',  use:'Подъём карточки при наведении (DocCard)',               status:'active'}
   ];
 
   var MAP = [
@@ -318,7 +319,8 @@
     ['Button / ButtonGroup — дропдаун','Buttons.html / ButtonGroup.html', '--elevation-2', '0 10px 30px rgba(40,50,55,.16)', 'ok', 'ок',       'Значение в коде совпадает с токеном.'],
     ['Tooltip',                       'components/molecules/Tooltip/Tooltip.css',  '--elevation-2', '0 4px 14px rgba(40,50,55,.18)', 'warn', 'расхождение', 'Текущий CSS отличается от Elevation_2 — синхронизировать.'],
     ['Select · DropdownList — выпадашка', 'components/molecules/DropdownList/DropdownList.css', '--elevation-2', '0 10px 30px rgba(40,50,55,.16)', 'ok', 'ок', 'Тень списка задана токеном --elevation-2.'],
-    ['Модальное окно',                'components/organisms/Modal/Modal.css',    '--shadow-modal-form', '0 24px 64px rgba(40,50,55,.28)', 'ok', 'реализовано', 'Компонент Modal (components/organisms/Modal/Modal.css) — токен подключён как есть, без переопределений.']
+    ['Модальное окно',                'components/organisms/Modal/Modal.css',    '--shadow-modal-form', '0 24px 64px rgba(40,50,55,.28)', 'ok', 'реализовано', 'Компонент Modal (components/organisms/Modal/Modal.css) — токен подключён как есть, без переопределений.'],
+    ['Карточка документа — наведение', 'components/molecules/DocCard/DocCard.css', '--shadow-card-hover', '0 4px 16px rgba(40,50,55,.06)', 'ok', 'реализовано', 'DocCard: рамка --border-primary и тень при наведении (задача MS0011).']
   ];
 
   function statusPill(kind, label){
@@ -427,6 +429,10 @@
 
   /* именован отдельно от лестницы Elevation_* — под модальные окна/шиты */
   --shadow-modal-form: 0 24px 64px rgba(40, 50, 55, .28); /* тень под модалкой (Shadow4.0_modalform) */
+
+  /* лёгкий подъём карточки при наведении — DocCard (задача MS0011, из
+     прототипа AI Pitcher v02: 0 4px 16px, 6 %; база цвета — как у лестницы) */
+  --shadow-card-hover: 0 4px 16px rgba(40, 50, 55, .06);
 }
 
 /* ============================================================

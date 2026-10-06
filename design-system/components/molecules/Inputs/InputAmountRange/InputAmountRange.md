@@ -2,7 +2,7 @@
 component: InputAmountRange
 title: "InputAmountRange"
 version: "1.007"
-updated: "06.09.2026"
+updated: "06.10.2026"
 page: components/molecules/Inputs/InputAmountRange/InputAmountRange.html
 page_js: components/molecules/Inputs/InputAmountRange/InputAmountRange.page.js
 css: components/molecules/Inputs/InputRanges.css
@@ -26,6 +26,7 @@ status: curated
 - «Фокус одного поля окрашивает оба» → состояния должны быть заданы на каждом `.inp` отдельно, не на общем `.inp-range`
 
 ## Ключевые правила (из разделов страницы)
+- **Опции полей (с 06.10.2026)** — каждое поле диапазона — обычный `.inp`: скругление (`.inp--radius-m` / `.inp--rounded`), заливка (`.inp--filled`) и акцентная иконка (`.inp--focus-accent`) ставятся на оба поля одинаково; в конструкторе — «Скругление» и «Заливка».
 - **Использование** — числовой диапазон «от … до …» в фильтрах/формах (сумма, лимит, объём); одно поле может быть пустым (открытая граница). Одиночное число → InputAmount; диапазон дат → InputDateRange; выбор из списка → InputAutocomplete.
 - **Анатомия** — Label (общая) · два InputAmount с префиксом «От»/«До» · Range_Line между ними · Helper (опц.). В полях всегда есть префикс. Толщина/цвет Range_Line = бордер инпута (1px, `--border-primary`).
 - **Варианты** — С хелпером/без · Наполнение (пусто / одно поле / оба).

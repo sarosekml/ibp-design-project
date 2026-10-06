@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 315.
+Документов: 324.
 
 ## Корень (4)
 
@@ -65,7 +65,7 @@
 | [README.md](../README.md) | — |
 | [index.screen.md](../index.screen.md) | Хаб проектов |
 
-## Дизайн-система (72)
+## Дизайн-система (77)
 
 | Документ | Аннотация |
 |---|---|
@@ -85,18 +85,22 @@
 | [design-system/components/atoms/Chip/Chip.md](../design-system/components/atoms/Chip/Chip.md) | Chip |
 | [design-system/components/atoms/Divider/Divider.md](../design-system/components/atoms/Divider/Divider.md) | Divider |
 | [design-system/components/atoms/IconButton/IconButton.md](../design-system/components/atoms/IconButton/IconButton.md) | IconButton |
+| [design-system/components/atoms/Keyboard/Keyboard.md](../design-system/components/atoms/Keyboard/Keyboard.md) | Клавиша |
 | [design-system/components/atoms/LabelHelper/LabelHelper.md](../design-system/components/atoms/LabelHelper/LabelHelper.md) | Label / Helper |
 | [design-system/components/atoms/Link/Link.md](../design-system/components/atoms/Link/Link.md) | Link |
+| [design-system/components/atoms/Note/Note.md](../design-system/components/atoms/Note/Note.md) | Заметка |
 | [design-system/components/atoms/ProgressBar/ProgressBar.md](../design-system/components/atoms/ProgressBar/ProgressBar.md) | ProgressBar |
 | [design-system/components/atoms/Radiobutton/Radiobutton.md](../design-system/components/atoms/Radiobutton/Radiobutton.md) | Radiobutton |
 | [design-system/components/atoms/Skeleton/Skeleton.md](../design-system/components/atoms/Skeleton/Skeleton.md) | Skeleton |
 | [design-system/components/atoms/Spinner/Spinner.md](../design-system/components/atoms/Spinner/Spinner.md) | Spinner |
+| [design-system/components/atoms/StepMarker/StepMarker.md](../design-system/components/atoms/StepMarker/StepMarker.md) | Номер шага |
 | [design-system/components/atoms/Switch/Switch.md](../design-system/components/atoms/Switch/Switch.md) | Switch |
 | [design-system/components/molecules/Alert/Alert.md](../design-system/components/molecules/Alert/Alert.md) | Alert |
 | [design-system/components/molecules/Breadcrumbs/Breadcrumbs.md](../design-system/components/molecules/Breadcrumbs/Breadcrumbs.md) | Breadcrumbs |
 | [design-system/components/molecules/ButtonGroup/ButtonGroup.md](../design-system/components/molecules/ButtonGroup/ButtonGroup.md) | ButtonGroup |
 | [design-system/components/molecules/ContextMenu/ContextMenu.md](../design-system/components/molecules/ContextMenu/ContextMenu.md) | Context Menu |
 | [design-system/components/molecules/DatePicker/DatePicker.md](../design-system/components/molecules/DatePicker/DatePicker.md) | DatePicker |
+| [design-system/components/molecules/DocCard/DocCard.md](../design-system/components/molecules/DocCard/DocCard.md) | Карточка документа |
 | [design-system/components/molecules/DropdownList/DropdownList.md](../design-system/components/molecules/DropdownList/DropdownList.md) | DropdownList |
 | [design-system/components/molecules/EmptyState/EmptyState.md](../design-system/components/molecules/EmptyState/EmptyState.md) | EmptyState |
 | [design-system/components/molecules/Inputs/InputAmountRange/InputAmountRange.md](../design-system/components/molecules/Inputs/InputAmountRange/InputAmountRange.md) | InputAmountRange |
@@ -109,6 +113,7 @@
 | [design-system/components/molecules/ReadOnlyField/ReadOnlyField.md](../design-system/components/molecules/ReadOnlyField/ReadOnlyField.md) | ReadOnlyField |
 | [design-system/components/molecules/SegmentControl/SegmentControl.md](../design-system/components/molecules/SegmentControl/SegmentControl.md) | SegmentControl |
 | [design-system/components/molecules/Splitter/Splitter.md](../design-system/components/molecules/Splitter/Splitter.md) | Splitter |
+| [design-system/components/molecules/StepForm/StepForm.md](../design-system/components/molecules/StepForm/StepForm.md) | Пошаговая форма |
 | [design-system/components/molecules/SubTab/SubTab.md](../design-system/components/molecules/SubTab/SubTab.md) | SubTab — табы второго уровня |
 | [design-system/components/molecules/Tab/Tab.md](../design-system/components/molecules/Tab/Tab.md) | Tab |
 | [design-system/components/molecules/Toast/Toast.md](../design-system/components/molecules/Toast/Toast.md) | Toast |
@@ -236,7 +241,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (138)
+## Приложения (139)
 
 | Документ | Аннотация |
 |---|---|
@@ -328,6 +333,12 @@
 | [apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestBuilderCompact.screen.md](../apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestBuilderCompact.screen.md) | Новый отчёт — режим конструктора, компактный вариант |
 | [apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestHistory.screen.md](../apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestHistory.screen.md) | История и материалы |
 | [apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestThread.screen.md](../apps/ib/drafts/ai-bankster-prototype-v01/pages/RequestThread.screen.md) | Новый отчёт (нить запроса) |
+
+### apps/ib/drafts/ai-bankster-prototype-v01 — снимки задач
+
+| Документ | Аннотация |
+|---|---|
+| [apps/ib/drafts/ai-bankster-prototype-v01/HubPanelSpacing.handoff.md](../apps/ib/drafts/ai-bankster-prototype-v01/HubPanelSpacing.handoff.md) | HubPanelSpacing — handoff |
 
 ### apps/ib/drafts/ai-bankster-prototype-v02
 
@@ -539,7 +550,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (61)
+## Задачи и заметки (64)
 
 ### Архив/черновики
 
@@ -581,14 +592,17 @@
 | [docs/tasks/MS0009-ds-chip-choice.md](tasks/MS0009-ds-chip-choice.md) | Chip: чипы выбора — стиль Dashed, ведущий тег, состояние Selected, чип на &lt;button&gt; |
 | [docs/tasks/MS0010-ds-prompt-input.md](tasks/MS0010-ds-prompt-input.md) | PromptInput: новый организм ДС — поле ввода промпта с вложениями, подсветкой фрагментов и выезжающей панелью |
 | [docs/tasks/MS0010a-ds-kbd.md](tasks/MS0010a-ds-kbd.md) | Kbd: новый атом ДС — обозначение клавиши |
-| [docs/tasks/MS0010b-ds-button-toggle.md](tasks/MS0010b-ds-button-toggle.md) | Buttons: кнопка-переключатель — нажатое и раскрытое состояние, смена глифа |
+| [docs/tasks/MS0010b-ds-button-toggle.md](tasks/MS0010b-ds-button-toggle.md) | Buttons: состояние «нажата» у всех кнопок, две иконки переключателя и смена кнопки с анимацией |
 | [docs/tasks/MS0010c-ds-chip-expanded.md](tasks/MS0010c-ds-chip-expanded.md) | Chip: состояние «раскрыт» — чип, который показывает связанный блок |
 | [docs/tasks/MS0010d-ds-step-marker.md](tasks/MS0010d-ds-step-marker.md) | StepMarker: новый атом ДС — номер шага, который становится галочкой |
 | [docs/tasks/MS0010e-ds-note.md](tasks/MS0010e-ds-note.md) | Note: новый атом ДС — заметка «иконка + вторичный текст» |
-| [docs/tasks/MS0010f-ds-quote.md](tasks/MS0010f-ds-quote.md) | Quote: новая молекула ДС — цитата фрагмента с источником |
+| [docs/tasks/MS0010f-ds-chip-expandable.md](tasks/MS0010f-ds-chip-expandable.md) | Chip: раскрывающийся чип — весь текст фрагмента внутри чипа (вместо блока цитаты) |
 | [docs/tasks/MS0010g-ds-tile-inset.md](tasks/MS0010g-ds-tile-inset.md) | Tile: вариант Inset — вложенная подложка с заголовком (блок «История запросов по объекту») |
 | [docs/tasks/MS0010h-ds-step-form.md](tasks/MS0010h-ds-step-form.md) | StepForm: новая молекула ДС — пошаговая форма (секции конструктора запроса) |
-| [docs/tasks/MS0011-ds-doc-card.md](tasks/MS0011-ds-doc-card.md) | Карточка документа в нити: композиция Tile Card + Entity M вместо локального .doc |
+| [docs/tasks/MS0010i-ds-input-focus-ring.md](tasks/MS0010i-ds-input-focus-ring.md) | Inputs: светлое кольцо фокуса как в прототипе — во всех полях ДС |
+| [docs/tasks/MS0011-ds-doc-card.md](tasks/MS0011-ds-doc-card.md) | Карточка документа в нити: молекула DocCard вместо локального .doc (план — композиция Tile Card + Entity M) |
+| [docs/tasks/MS0012-ds-quote.md](tasks/MS0012-ds-quote.md) | Quote: новая молекула ДС — цитата фрагмента с источником (на будущее) |
+| [docs/tasks/MS0013-ds-theme-generator.md](tasks/MS0013-ds-theme-generator.md) | Темы ДС из файлов (ibp-legacy, ibp-neo, custom), генератор палитры из brand 500 и neutral 500, страница «Темы» — выбор темы и конструктор по образцу coolors |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |

@@ -39,6 +39,7 @@
     'components/organisms/RiskMetric/RiskMetric.js',
     'components/molecules/Alert/Alert.js',
     'components/atoms/Chip/Chip.js',
+    'components/atoms/Buttons/Buttons.js',
     'components/organisms/AllocationBar/AllocationBar.js',
     'components/organisms/Chart/Chart.js',
     'components/molecules/ButtonGroup/ButtonGroup.js',

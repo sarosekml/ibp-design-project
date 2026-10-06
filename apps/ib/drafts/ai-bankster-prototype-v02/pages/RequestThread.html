@@ -169,21 +169,6 @@
   @keyframes thinkSpin { to { transform: rotate(360deg); } }
   @keyframes thinkShimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
-  /* ── Карточка материала в нити ───────────────────────────────────────────
-     Файл как вложение на всю ширину колонки: глиф, название (открывает
-     просмотр), параметры, кнопка «Просмотр» и «Скачать» с меню форматов. */
-  .doc           { display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-xl); transition: border-color .15s ease, box-shadow .2s ease; }
-  .doc:hover     { border-color: var(--border-primary); box-shadow: 0 4px 16px color-mix(in srgb, var(--text-primary) 6%, transparent); }
-  .doc__ico      { flex: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-m); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--bg-tile)); }
-  .doc__ico > [data-icon] { width: 22px; height: 22px; }
-  .doc__main     { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .doc__title    { display: block; max-width: 100%; padding: 0; overflow: hidden; font: var(--type-body-m-strong); color: var(--text-primary); text-align: left; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; background: none; border: 0; }
-  .doc__title:hover { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 3px; }
-  .doc__title:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-2xs); }
-  .doc__meta     { overflow: hidden; font: var(--type-body-xs); color: var(--text-secondary); white-space: nowrap; text-overflow: ellipsis; }
-  .doc__acts     { flex: none; display: flex; align-items: center; gap: var(--space-8); }
-  .doc__ctx      { display: flex; }
-
   /* ── Ошибка подготовки в нити ────────────────────────────────────────────
      Не только сообщает о сбое: говорит, что случилось, что поможет его
      исправить, и даёт выход — вернуть текст запроса в поле для правки.
@@ -209,7 +194,7 @@
   .thr__row      { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
   /* Картинка в ответе (пасхалка прототипа, send()): в собственном размере
      файла, не шире колонки; без рамки и подложки, скругление — как у
-     карточки материала .doc */
+     карточки документа DocCard */
   .thr__pic      { display: block; align-self: flex-start; max-width: 100%; height: auto; border-radius: var(--radius-xl); }
   /* Содержимое тайла в ответе агента. У .tile__body своего ритма нет
      (display: block), и прогресс, разделитель, шаги, карточка файла и кнопки
@@ -312,31 +297,15 @@
   .cmp__clear[hidden] { display: none; }
   .cmp__clear    { animation: cmpPop .3s var(--cmp-ease) both; }
   @keyframes cmpPop { from { opacity: 0; transform: scale(.6) rotate(-90deg); } }
-  .cmp__tgl      { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
-  .cmp__tgl[aria-expanded="true"] { background: color-mix(in srgb, var(--primary) 10%, transparent); border-color: var(--primary); color: var(--primary-dark); }
-  .cmp__tgl-ico  { position: relative; display: inline-block; flex: none; width: 18px; height: 18px; }
-  .cmp__tgl-ico > [data-icon] { position: absolute; inset: 0; transition: transform .4s var(--cmp-ease), opacity .2s ease; }
-  .cmp__tgl-ico > [data-icon="close"] { opacity: 0; transform: rotate(-90deg) scale(.5); }
-  .cmp__tgl[aria-expanded="true"] .cmp__tgl-ico > [data-icon="ai-stars"] { opacity: 0; transform: rotate(90deg) scale(.5); }
-  .cmp__tgl[aria-expanded="true"] .cmp__tgl-ico > [data-icon="close"] { opacity: 1; transform: none; }
 
   .cmp__hint     { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-16); font: var(--type-body-xs); color: var(--text-secondary); }
-  .cmp__hint kbd { display: inline-block; min-width: 18px; padding: 0 var(--space-4); font: inherit; text-align: center; color: var(--text-secondary); background: var(--bg-tile); border: 1px solid var(--border-light); border-bottom-width: 2px; border-radius: var(--radius-s); }
 
   /* ── Контекст из материала ────────────────────────────────────────────────
      Фрагменты, отправленные из панели просмотра кнопкой «Доработать в чате»:
-     чипы над полем, как приложенные файлы. Текстовый фрагмент раскрывается
-     целиком по клику на чип; график приходит тегом — агенту указание, что
-     смотреть в материале. */
+     чипы над полем, как приложенные файлы. Текстовый фрагмент — раскрывающийся
+     чип ДС (Chip 1.020): по клику растягивается и показывает весь текст внутри
+     себя; график приходит тегом — агенту указание, что смотреть в материале. */
   .cmp__ctx:empty { display: none; }
-  .cmp-ctx[data-kind="text"] { cursor: pointer; }
-  .cmp-ctx[aria-expanded="true"] { border-color: var(--primary); }
-  .cmp-quote     { display: flex; flex-direction: column; gap: var(--space-4); max-height: 180px; overflow-y: auto; padding: var(--space-8) var(--space-8) var(--space-8) var(--space-12); background: color-mix(in srgb, var(--primary) 6%, var(--bg-tile)); border-left: 3px solid var(--primary); border-radius: 0 var(--radius-m) var(--radius-m) 0; animation: quoteIn .25s ease both; }
-  .cmp-quote[hidden] { display: none; }
-  @keyframes quoteIn { from { opacity: 0; transform: translateY(-4px); } }
-  .cmp-quote__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
-  .cmp-quote__src { font: var(--type-body-xs); color: var(--text-secondary); }
-  .cmp-quote__text { margin: 0; font: var(--type-body-s); color: var(--text-primary); }
   .cmp.is-ctx-new { animation: ctxPulse .9s ease; }
   @keyframes ctxPulse { 30% { box-shadow: 0 0 0 4px var(--cmp-ring), var(--cmp-shadow); } }
 
@@ -351,97 +320,15 @@
   .cmp__drawer   { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s var(--cmp-ease); }
   .cmp__drawer.is-open { grid-template-rows: 1fr; }
   .cmp__drawer-in { min-height: 0; overflow: hidden; }
-  .bld {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-12);
-    padding: var(--space-16);
-    border-top: 1px solid var(--border-light);
-    opacity: 0;
-    transform: translateY(-16px);
-    transition: opacity .25s ease, transform .55s var(--cmp-ease);
-  }
-  .cmp__drawer.is-open .bld { opacity: 1; transform: none; transition-delay: .06s; }
-  .cmp__drawer.is-open .bld > * { animation: bldIn .6s var(--cmp-ease) both; animation-delay: calc(var(--i, 0) * 55ms + 90ms); }
-  @keyframes bldIn { from { opacity: 0; transform: translateY(-10px); } }
-
-  /* Секция конструктора: номер шага и подпись слева, контролы справа.
-     Первая секция открывает панель сразу под её границей — своя пунктирная
-     линия ей не нужна, иначе сверху стоят две линии подряд. */
-  .bsec          { display: grid; grid-template-columns: 184px minmax(0, 1fr); gap: var(--space-8) var(--space-16); align-items: start; padding-top: var(--space-12); border-top: 1px dashed var(--border-light); }
-  .bsec:first-child { padding-top: 0; border-top: 0; }
-  .bsec__label   { display: flex; align-items: center; gap: var(--space-8); min-height: var(--space-40); font: var(--type-body-s-strong); color: var(--text-primary); }
-  .bsec__num     { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: var(--radius-full); font: var(--type-body-xs); font-weight: 600; color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 10%, transparent); transition: background-color .25s ease, color .25s ease; }
-  .bsec__num > [data-icon] { display: none; width: 14px; height: 14px; }
-  .bsec.is-done .bsec__num { background: var(--primary); color: var(--text-on-dark); }
-  .bsec.is-done .bsec__n { display: none; }
-  .bsec.is-done .bsec__num > [data-icon] { display: block; animation: bldPop .4s var(--cmp-ease) both; }
-  @keyframes bldPop { from { opacity: 0; transform: scale(.3) rotate(-30deg); } }
-  .bsec__ctl     { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
-
-  /* Поиск объекта */
-  .bfind         { display: flex; align-items: center; gap: var(--space-8); height: var(--space-40); padding: 0 var(--space-12); border: 1px solid var(--border-light); border-radius: var(--radius-m); background: var(--bg-page); transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }
-  .bfind:hover   { border-color: var(--border-primary); }
-  .bfind:focus-within { background: var(--bg-tile); border-color: var(--primary); box-shadow: 0 0 0 3px var(--cmp-ring); }
-  .bfind__ico    { flex: none; display: flex; width: 18px; height: 18px; color: var(--text-secondary); transition: color .15s ease; }
-  .bfind__ico > [data-icon] { width: 100%; height: 100%; }
-  .bfind:focus-within .bfind__ico { color: var(--primary); }
-  .bfind__control { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; font: var(--type-body-m); color: var(--text-primary); }
-  .bfind__control::placeholder { color: var(--text-inactive); opacity: 1; }
-  .bfind__control::-webkit-search-cancel-button { display: none; }
-
-  /* Варианты объекта — пилюли с типом */
-  .bopts         { display: flex; flex-wrap: wrap; gap: var(--space-8); }
-  .bopts:empty   { display: none; }
-  .bopt          { display: inline-flex; align-items: center; gap: var(--space-8); max-width: 100%; min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-4); font: var(--type-body-s); color: var(--text-primary); cursor: pointer; background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
-  .bopt:hover    { border-color: var(--primary-light); background: color-mix(in srgb, var(--primary) 4%, var(--bg-tile)); }
-  .bopt:active   { transform: scale(.97); }
-  .bopt:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .bopt__tag     { flex: none; padding: var(--space-2) var(--space-8); border-radius: var(--radius-full); font: var(--type-body-xs); color: var(--text-secondary); background: var(--bg-page); transition: background-color .2s ease, color .2s ease; }
-  .bopt__label   { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bopt__check   { display: inline-flex; flex: none; width: 0; height: 16px; opacity: 0; overflow: hidden; transition: width .25s var(--cmp-ease), opacity .2s ease; }
-  .bopt__check > [data-icon] { flex: none; width: 16px; height: 16px; }
-  .bopt[aria-checked="true"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--bg-tile)); color: var(--primary-dark); }
-  .bopt[aria-checked="true"] .bopt__tag { background: var(--primary); color: var(--text-on-dark); }
-  .bopt[aria-checked="true"] .bopt__check { width: 16px; opacity: 1; }
-  .bopt--custom  { padding-left: var(--space-8); border-style: dashed; color: var(--primary-dark); }
-  .bopt--custom > [data-icon] { flex: none; width: 16px; height: 16px; }
-
-  /* Отчёты коллег по выбранному объекту — под вариантами объекта, на всю
-     ширину секции. Поверхность та же, что у поиска объекта; строки — Entity S */
-  .bprior        { grid-column: 1 / -1; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-12); background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-m); animation: bldIn .4s var(--cmp-ease) both; }
-  .bprior[hidden] { display: none; }
-  .bprior__head  { display: flex; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-s-strong); color: var(--text-primary); }
-  .bprior__ico   { flex: none; display: flex; width: 18px; height: 18px; color: var(--primary); }
-  .bprior__ico > [data-icon] { width: 100%; height: 100%; }
-  .bprior__hint  { margin: 0; font: var(--type-body-xs); color: var(--text-secondary); }
-  .bprior__list  { padding-top: var(--space-12); }
-
-  /* Дополнительный фокус — переключаемые чипы: «+» превращается в галочку */
-  .bchip         { display: inline-flex; align-items: center; gap: var(--space-6); min-height: 32px; padding: var(--space-4) var(--space-12) var(--space-4) var(--space-8); font: var(--type-body-s); color: var(--text-primary); cursor: pointer; background: transparent; border: 1px dashed var(--border-primary); border-radius: var(--radius-full); transition: border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease; }
-  .bchip:hover   { border-style: solid; border-color: var(--primary); background: color-mix(in srgb, var(--primary) 4%, transparent); }
-  .bchip:active  { transform: scale(.97); }
-  .bchip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .bchip__ico    { position: relative; flex: none; width: 16px; height: 16px; color: var(--primary); }
-  .bchip__ico > [data-icon] { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform .4s var(--cmp-ease), opacity .2s ease; }
-  .bchip__ico > [data-icon="check"] { opacity: 0; transform: rotate(-45deg) scale(.4); }
-  .bchip[aria-pressed="true"] { border-style: solid; border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); color: var(--primary-dark); }
-  .bchip[aria-pressed="true"] .bchip__ico > [data-icon="add"] { opacity: 0; transform: rotate(90deg) scale(.4); }
-  .bchip[aria-pressed="true"] .bchip__ico > [data-icon="check"] { opacity: 1; transform: none; }
-
-  /* Низ конструктора: срок подготовки */
-  .bld__foot     { display: flex; align-items: center; gap: var(--space-8); padding-top: var(--space-12); border-top: 1px dashed var(--border-light); font: var(--type-body-s); color: var(--text-secondary); }
-  .bld__foot-ico { flex: none; display: flex; width: 18px; height: 18px; color: var(--primary); }
-  .bld__foot-ico > [data-icon] { width: 100%; height: 100%; }
+  /* Обёртка конструктора внутри панели: поля и верхняя граница панели —
+     у StepForm (ДС) своих полей и рамки нет. Появление формы и шагов —
+     опция StepForm .stepform--appear, срабатывает по снятию inert с панели. */
+  .cmp__builder  { padding: var(--space-16); border-top: 1px solid var(--border-light); }
 
   /* Приветствие пустой нити: три строки с переносами из макета — у тела
      пустого состояния ДС ширина 420px, строки в неё не помещались */
   .thr__start .es--l .es__body { max-width: 760px; }
 
-
-  @container screen (max-width: 960px) {
-    .bsec  { grid-template-columns: minmax(0, 1fr); }
-  }
   @media (prefers-reduced-motion: reduce) {
     .cmp, .cmp *, .cmp::before, .cmp *::after { animation: none !important; transition: none !important; }
   }
@@ -652,21 +539,14 @@
                 <div class="cmp__main">
                   <div class="chiplist cmp__files" id="cmpFiles" role="group" aria-label="Файлы, приложенные к сообщению"></div>
                   <div class="chiplist cmp__ctx" id="cmpCtx" role="group" aria-label="Фрагменты материала в запросе"></div>
-                  <div class="cmp-quote" id="cmpQuote" hidden>
-                    <div class="cmp-quote__head">
-                      <span class="cmp-quote__src" id="cmpQuoteSrc"></span>
-                      <button type="button" class="ibtn ibtn--neutral ibtn--s" data-act="ctx-collapse" aria-label="Свернуть фрагмент" data-tooltip="Свернуть"><i data-icon="chevron-up"></i></button>
-                    </div>
-                    <p class="cmp-quote__text" id="cmpQuoteText"></p>
-                  </div>
                   <div class="cmp__field">
                     <div class="cmp__mirror" id="cmpMirror" aria-hidden="true"></div>
                     <textarea class="cmp__control" id="cmpInput" rows="2" placeholder="Задайте вопрос или опишите задачу…" aria-label="Текст запроса" aria-describedby="cmpHint"></textarea>
                   </div>
                   <div class="cmp__row">
                     <button type="button" class="ibtn ibtn--neutral ibtn--m" id="btnAttach" aria-label="Приложить файлы. До 10 файлов на запрос, не более 30 МБ каждый: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX. Сканы распознаются автоматически." data-tooltip="До 10 файлов на запрос, не более 30 МБ каждый. PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX. Сканы распознаются автоматически." data-tooltip-multiline="yes"><i data-icon="attach"></i></button>
-                    <button type="button" class="btn btn--outline btn--s cmp__tgl" id="btnBuilder" aria-expanded="false" aria-controls="cmpDrawer">
-                      <span class="cmp__tgl-ico" aria-hidden="true"><i data-icon="ai-stars"></i><i data-icon="close"></i></span>
+                    <button type="button" class="btn btn--outline btn--s" id="btnBuilder" aria-expanded="false" aria-controls="cmpDrawer">
+                      <span class="btn__icon btn__icon--toggle" aria-hidden="true"><i data-icon="ai-stars"></i><i data-icon="close"></i></span>
                       <span class="btn__label">Конструктор</span>
                     </button>
                     <span class="cmp__spacer"></span>
@@ -679,40 +559,56 @@
                      inert, чтобы Tab не заходил в невидимые контролы. -->
                 <div class="cmp__drawer" id="cmpDrawer" inert>
                   <div class="cmp__drawer-in">
-                    <div class="bld" role="group" aria-label="Конструктор запроса">
+                    <!-- Конструктор запроса — StepForm (ДС): шаги с номером и подписью,
+                         контролы справа, пунктир между шагами, заметка внизу. Поля и
+                         верхняя граница — у обёртки панели: у StepForm их нет. -->
+                    <div class="cmp__builder">
+                      <div class="stepform stepform--appear" id="bld" role="group" aria-label="Конструктор запроса">
 
-                      <section class="bsec" data-sec="object" style="--i:1" aria-labelledby="bsecObject">
-                        <div class="bsec__label" id="bsecObject"><span class="bsec__num"><span class="bsec__n">1</span><i data-icon="check"></i></span>Объект анализа</div>
-                        <div class="bsec__ctl">
-                          <div class="bfind">
-                            <span class="bfind__ico" aria-hidden="true"><i data-icon="client-search"></i></span>
-                            <input class="bfind__control" id="bldFind" type="search" placeholder="Компания, группа, бенефициар или отрасль" aria-label="Найти объект анализа" autocomplete="off">
+                        <section class="stepform__step" id="bldStepObject" data-state="pending" aria-labelledby="bldLabelObject">
+                          <div class="stepform__label" id="bldLabelObject">
+                            <span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+                            <span class="stepform__title" id="bldTitleObject">Объект анализа</span>
+                            <span class="stepform__status stepform__status--done">выполнено</span>
                           </div>
-                          <div class="bopts" id="bldObjects" role="radiogroup" aria-labelledby="bsecObject"></div>
-                        </div>
-                        <!-- Отчёты коллег по выбранному объекту: блок виден, когда они есть.
-                             Кнопка ставит документ в чат, конструктор остаётся открытым.
-                             Переписку чужого запроса не показываем — только документ. -->
-                        <div class="bprior" id="bldPrior" role="group" aria-label="Отчёты коллег по объекту" hidden></div>
-                      </section>
+                          <div class="stepform__control">
+                            <div class="inp inp--m inp--fullwidth inp--filled inp--radius-m inp--focus-accent" id="bldFindBox">
+                              <div class="inp__field">
+                                <span class="inp__lead" aria-hidden="true"><i data-icon="client-search"></i></span>
+                                <input class="inp__control" id="bldFind" type="text" role="searchbox" placeholder="Компания, группа, бенефициар или отрасль" aria-labelledby="bldTitleObject" autocomplete="off">
+                              </div>
+                            </div>
+                            <div class="chiplist" id="bldObjects" role="radiogroup" aria-labelledby="bldTitleObject" hidden></div>
+                          </div>
+                          <!-- Отчёты коллег по выбранному объекту — Tile Inset на всю ширину
+                               шага: блок виден, когда они есть. Кнопка ставит документ в чат,
+                               конструктор остаётся открытым. Переписку чужого запроса не
+                               показываем — только документ. -->
+                          <section class="tile tile--inset stepform__wide" id="bldPrior" aria-labelledby="bldPriorTitle" hidden></section>
+                        </section>
 
-                      <section class="bsec" data-sec="focus" style="--i:2" aria-labelledby="bsecFocus">
-                        <div class="bsec__label" id="bsecFocus"><span class="bsec__num"><span class="bsec__n">2</span><i data-icon="check"></i></span>Дополнительный фокус</div>
-                        <div class="bsec__ctl">
-                          <div class="bopts" id="bldFocus" role="group" aria-labelledby="bsecFocus"></div>
-                        </div>
-                      </section>
+                        <section class="stepform__step" id="bldStepFocus" data-state="pending" aria-labelledby="bldLabelFocus">
+                          <div class="stepform__label" id="bldLabelFocus">
+                            <span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+                            <span class="stepform__title" id="bldTitleFocus">Дополнительный фокус</span>
+                            <span class="stepform__status stepform__status--done">выполнено</span>
+                          </div>
+                          <div class="stepform__control">
+                            <div class="chiplist" id="bldFocus" role="group" aria-labelledby="bldTitleFocus"></div>
+                          </div>
+                        </section>
 
-                      <div class="bld__foot" style="--i:3">
-                        <span class="bld__foot-ico" aria-hidden="true"><i data-icon="clock-timer"></i></span>
-                        <span>Подготовка отчета обычно занимает до 30 минут. Работа продолжится, даже если закрыть инструмент.</span>
+                        <p class="note note--s note--accent stepform__foot">
+                          <span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+                          <span class="note__text">Подготовка отчета обычно занимает до 30 минут. Работа продолжится, даже если закрыть инструмент.</span>
+                        </p>
+
                       </div>
-
                     </div>
                   </div>
                 </div>
               </div>
-              <p class="cmp__hint" id="cmpHint"><span><kbd>Enter</kbd> — отправить</span><span><kbd>Shift</kbd> + <kbd>Enter</kbd> — новая строка</span><span>К запросу можно приложить PDF, Word, PowerPoint и Excel</span></p>
+              <p class="cmp__hint" id="cmpHint"><span><kbd class="kbd kbd--s">Enter</kbd> — отправить</span><span><span class="kbd-combo"><kbd class="kbd kbd--s">Shift</kbd> + <kbd class="kbd kbd--s">Enter</kbd></span> — новая строка</span><span>К запросу можно приложить PDF, Word, PowerPoint и Excel</span></p>
             </div>
 
           </div>
@@ -1111,16 +1007,19 @@
       '</div>';
   }
 
-  /* ── Карточка готового материала (БТ-1, БТ-4.6) ───────────────────────── */
+  /* ── Карточка готового материала (БТ-1, БТ-4.6) ─────────────────────────
+     DocCard (ДС): название — кнопка просмотра, усечённое — с тултипом;
+     «Скачать» открывает меню форматов doc-menu (ContextMenu). */
   function docCard() {
     var v = S.versions[S.versions.length - 1];
-    return '<div class="doc">' +
-      '<span class="doc__ico" aria-hidden="true"><i data-icon="document-check"></i></span>' +
-      '<div class="doc__main">' +
-        '<button type="button" class="doc__title" data-act="open">' + esc(OBJECT) + ' — материал с идеями</button>' +
-        '<span class="doc__meta">' + esc(S.params.volume) + ' · версия ' + v.n + ' · ' + esc(v.date) + '</span>' +
+    var title = OBJECT + ' — материал с идеями';
+    return '<div class="doccard">' +
+      '<span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span>' +
+      '<div class="doccard__main">' +
+        '<button type="button" class="doccard__title" data-act="open" data-tooltip="' + esc(title) + '" data-tooltip-truncated="only">' + esc(title) + '</button>' +
+        '<span class="doccard__meta">' + esc(S.params.volume) + ' · версия ' + v.n + ' · ' + esc(v.date) + '</span>' +
       '</div>' +
-      '<div class="doc__acts">' +
+      '<div class="doccard__actions">' +
         '<button type="button" class="btn btn--outline btn--s" data-act="open"><i data-icon="visibility-on"></i><span class="btn__label">Просмотр</span></button>' +
         '<button type="button" class="btn btn--outline btn--s" aria-haspopup="menu" aria-expanded="false" data-menu="doc-menu"><i data-icon="download"></i><span class="btn__label">Скачать</span><i data-icon="chevron-down"></i></button>' +
       '</div></div>';
@@ -1246,7 +1145,7 @@
     if (S.pristine && S.openId === null) createRequest(q);
     field.value = '';
     B.frag = {}; B.fresh = null; B.custom = null;
-    el('bldFind').value = '';
+    setFind('');
     paint(); syncControls();
     setBuilder(false);
 
@@ -1331,24 +1230,27 @@
     return '«' + cut + '»';
   }
 
-  /* editable — чип в поле ввода (раскрыть, убрать); иначе — в сообщении */
+  /* editable — чип в поле ввода (раскрыть, убрать); иначе — в сообщении.
+     Текстовый фрагмент в поле — раскрывающийся чип ДС (Chip 1.020): шапка —
+     кнопка .chip__toggle, весь текст — .chip__body рядом с ней; раскрытием
+     управляет Chip.js, экран только помнит, какой фрагмент раскрыт. */
   function ctxChip(c, editable) {
     var icon = c.kind === 'chart' ? 'bar-chart' : 'message-text';
     var lead = '<span class="chip__icon"><i data-icon="' + icon + '"></i></span><span class="chip__label">' + esc(ctxLabel(c)) + '</span>';
+    var remove = '<span class="chip__remove" role="button" aria-label="Убрать из запроса" data-act="rmctx" data-id="' + c.id + '"><i data-icon="close"></i></span>';
     if (!editable) return '<span class="chip chip--s">' + lead + '</span>';
-    return '<span class="chip chip--edit chip--s cmp-ctx" tabindex="0" data-ctx="' + c.id + '" data-kind="' + c.kind + '"' +
-      (c.kind === 'text' ? ' aria-expanded="' + (S.ctxOpen === c.id) + '" aria-controls="cmpQuote" aria-label="Фрагмент ' + esc(ctxLabel(c)) + ', показать целиком"' : '') + '>' +
-      lead + '<span class="chip__remove" role="button" aria-label="Убрать из запроса" data-act="rmctx" data-id="' + c.id + '"><i data-icon="close"></i></span></span>';
+    if (c.kind !== 'text') return '<span class="chip chip--edit chip--s" tabindex="0" data-ctx="' + c.id + '" data-kind="' + c.kind + '">' + lead + remove + '</span>';
+    var body = 'ctxBody-' + c.id;
+    return '<span class="chip chip--edit chip--s chip--expandable" data-ctx="' + c.id + '" data-kind="text">' +
+      '<button type="button" class="chip__toggle" aria-expanded="' + (S.ctxOpen === c.id) + '" aria-controls="' + body + '">' + lead +
+        '<span class="chip__source">Фрагмент материала' + (c.section ? ' · ' + esc(c.section) : '') + '</span>' +
+        '<span class="chip__expand" aria-hidden="true"><i data-icon="chevron-down"></i></span></button>' +
+      remove +
+      '<span class="chip__body" id="' + body + '"><span class="chip__text ds-scroll">' + esc(c.text) + '</span></span></span>';
   }
 
   function drawCtx() {
     el('cmpCtx').innerHTML = S.ctx.map(function (c) { return ctxChip(c, true); }).join('');
-    var open = S.ctx.filter(function (c) { return c.id === S.ctxOpen; })[0];
-    el('cmpQuote').hidden = !open;
-    if (open) {
-      el('cmpQuoteSrc').textContent = 'Фрагмент материала' + (open.section ? ' · ' + open.section : '');
-      el('cmpQuoteText').textContent = open.text;
-    }
     rebind(el('cmpCtx'));
   }
 
@@ -1371,12 +1273,15 @@
     if (window.DSToast) window.DSToast.show({ message: added > 1 ? 'Фрагменты добавлены в запрос' : 'Фрагмент добавлен в запрос', kind: 'bar', duration: 2500 });
   }
 
-  function toggleCtx(id) {
-    var c = S.ctx.filter(function (x) { return x.id === id; })[0];
-    if (!c || c.kind !== 'text') return;
-    S.ctxOpen = S.ctxOpen === id ? null : id;
-    drawCtx();
-  }
+  /* раскрытие чипа фрагмента ведёт Chip.js; экран помнит раскрытый — чтобы
+     перерисовка ряда (новый фрагмент, удаление) не свернула его */
+  el('cmpCtx').addEventListener('ds-chip:toggle', function (e) {
+    var chip = e.target.closest && e.target.closest('[data-ctx]');
+    if (!chip) return;
+    var id = chip.getAttribute('data-ctx');
+    if (e.detail && e.detail.expanded) S.ctxOpen = id;
+    else if (S.ctxOpen === id) S.ctxOpen = null;
+  });
 
   function removeCtx(id) {
     S.ctx = S.ctx.filter(function (c) { return c.id !== id; });
@@ -1393,14 +1298,14 @@
     addCtx(d.items.slice(0, 10));
   });
 
-  /* чип фрагмента с клавиатуры: Enter и пробел раскрывают, Backspace и Delete
-     убирают. Перехват на погружении — раньше штатного удаления чипа ДС,
-     которое сняло бы узел, не трогая состояние. */
+  /* чип фрагмента с клавиатуры: Enter и пробел раскрывают — это сама кнопка
+     шапки (Chip.js); Backspace и Delete убирают. Перехват на погружении —
+     раньше штатного удаления чипа ДС, которое сняло бы узел, не трогая
+     состояние. */
   document.addEventListener('keydown', function (e) {
     var chip = e.target.closest && e.target.closest('[data-ctx]');
     if (!chip) return;
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCtx(chip.getAttribute('data-ctx')); }
-    else if (e.key === 'Backspace' || e.key === 'Delete') { e.preventDefault(); e.stopPropagation(); removeCtx(chip.getAttribute('data-ctx')); }
+    if (e.key === 'Backspace' || e.key === 'Delete') { e.preventDefault(); e.stopPropagation(); removeCtx(chip.getAttribute('data-ctx')); }
   }, true);
 
   /* ── Делегирование действий ───────────────────────────────────────────── */
@@ -1414,8 +1319,6 @@
     }
 
     /* чип фрагмента материала: клик мимо крестика раскрывает текст целиком */
-    var ctxEl = e.target.closest('[data-ctx]');
-    if (ctxEl && !e.target.closest('.chip__remove')) { toggleCtx(ctxEl.getAttribute('data-ctx')); return; }
 
     var t = e.target.closest('[data-act]');
     if (!t) return;
@@ -1439,7 +1342,6 @@
     else if (act === 'pv-wide') { toggleWide(); }
     else if (act === 'finish') { finishRun(); }
     else if (act === 'rmctx') { removeCtx(t.getAttribute('data-id')); }
-    else if (act === 'ctx-collapse') { S.ctxOpen = null; drawCtx(); field.focus(); }
     else if (act === 'fix-request') {
       /* текст запроса — обратно в поле; фрагменты снова связаны с конструктором */
       field.value = S.errorRequest || '';
@@ -1649,27 +1551,36 @@
     each('[data-focus]', function (n) { var f = byId(FOCUS, n.getAttribute('data-focus')); n.setAttribute('aria-pressed', String(B.frag['focus:' + f.id] === f.text)); });
 
     var keys = Object.keys(B.frag);
-    document.querySelector('[data-sec="object"]').classList.toggle('is-done', !!B.frag.object);
-    document.querySelector('[data-sec="focus"]').classList.toggle('is-done', keys.some(function (k) { return k.indexOf('focus:') === 0; }));
+    /* Готовность шага — атрибут data-state шага StepForm: маркер внутри
+       красится сам (StepMarker), скрытый статус «выполнено» — тоже */
+    el('bldStepObject').setAttribute('data-state', B.frag.object ? 'done' : 'pending');
+    el('bldStepFocus').setAttribute('data-state', keys.some(function (k) { return k.indexOf('focus:') === 0; }) ? 'done' : 'pending');
     drawPrior();
   }
 
   /* Блок «коллеги уже готовили отчёты» под вариантами объекта. Перерисовка —
-     только когда сменился объект или какой-то документ встал в нить: syncControls
-     зовётся на каждый ввод, а перерисовка сбрасывала бы фокус с кнопок блока. */
+     только когда сменился объект: syncControls зовётся на каждый ввод, а
+     перерисовка сбрасывала бы фокус с кнопок блока. Документ, вставший в нить,
+     меняет кнопку своей строки на месте — DSButton.swap с анимацией иконки
+     (правило ДС, Buttons 1.012), а не перерисовкой. */
   function drawPrior() {
     var box = el('bldPrior'), obj = picked(allObjects(), 'object');
     var list = obj ? (PRIOR[obj.id] || []) : [];
-    var key = obj ? obj.id + ':' + list.map(function (d) { return S.priorShown[d.id] ? 1 : 0; }).join('') : '';
+    var key = obj ? obj.id + ':' + list.map(function (d) { return d.id; }).join(',') : '';
     if (key === B.priorKey) return;
     B.priorKey = key;
     box.hidden = !list.length;
     if (!list.length) { box.innerHTML = ''; return; }
+    /* Tile Inset (ДС): заголовок с иконкой истории, пояснение, строки Entity S */
     box.innerHTML =
-      '<p class="bprior__head"><span class="bprior__ico" aria-hidden="true"><i data-icon="history"></i></span>' +
-        '<span>История запросов по объекту анализа — ' + list.length + '</span></p>' +
-      '<p class="bprior__hint">Документ откроется в чате, конструктор останется на месте. Содержание запросов доступно только их авторам.</p>' +
-      '<div class="entity-list bprior__list">' + list.map(priorRow).join('<hr class="dvd dvd--h">') + '</div>';
+      '<header class="tile__header"><div class="tile__header-main">' +
+        '<div class="tile__title-row">' +
+          '<span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="history"></i></span>' +
+          '<h3 class="tile__title" id="bldPriorTitle">История запросов по объекту анализа — ' + list.length + '</h3>' +
+        '</div>' +
+        '<p class="tile__subtitle">Документ откроется в чате, конструктор останется на месте. Содержание запросов доступно только их авторам.</p>' +
+      '</div></header>' +
+      '<div class="tile__body"><div class="entity-list">' + list.map(priorRow).join('<hr class="dvd dvd--h">') + '</div></div>';
     rebind(box);
   }
 
@@ -1689,37 +1600,36 @@
       '</div></div>';
   }
 
-  /* Карточка документа коллеги в нити: та же, что у своего материала, но в
-     подписи — автор и дата создания. Ссылки на чужой чат нет. */
+  /* Карточка документа коллеги в нити: та же DocCard, что у своего материала,
+     но в параметрах — автор и дата создания. Ссылки на чужой чат нет.
+     «Добавить в контекст» — ряд экрана под карточкой, не часть DocCard. */
   function priorCard(d) {
-    return '<div class="doc" data-prior-doc="' + d.id + '">' +
-      '<span class="doc__ico" aria-hidden="true"><i data-icon="document-check"></i></span>' +
-      '<div class="doc__main">' +
-        '<button type="button" class="doc__title" data-act="open-prior" data-id="' + d.id + '">' + esc(d.title) + '</button>' +
-        '<span class="doc__meta">' + esc(priorMeta(d)) + '</span>' +
+    return '<div class="doccard" data-prior-doc="' + d.id + '">' +
+      '<span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span>' +
+      '<div class="doccard__main">' +
+        '<button type="button" class="doccard__title" data-act="open-prior" data-id="' + d.id + '" data-tooltip="' + esc(d.title) + '" data-tooltip-truncated="only">' + esc(d.title) + '</button>' +
+        '<span class="doccard__meta">' + esc(priorMeta(d)) + '</span>' +
       '</div>' +
-      '<div class="doc__acts">' +
+      '<div class="doccard__actions">' +
         '<button type="button" class="btn btn--outline btn--s" data-act="open-prior" data-id="' + d.id + '"><i data-icon="visibility-on"></i><span class="btn__label">Просмотр</span></button>' +
         '<button type="button" class="btn btn--outline btn--s" aria-haspopup="menu" aria-expanded="false" data-menu="doc-menu"><i data-icon="download"></i><span class="btn__label">Скачать</span><i data-icon="chevron-down"></i></button>' +
       '</div></div>' +
-      '<div class="doc__ctx"><button type="button" class="btn btn--transparent btn--s" data-act="prior-ctx" data-id="' + d.id + '" aria-pressed="false"><i data-icon="add"></i><span class="btn__label">Добавить в контекст</span></button></div>';
+      '<div class="thr__row"><button type="button" class="btn btn--transparent btn--s" data-act="prior-ctx" data-id="' + d.id + '" aria-pressed="false"><span class="btn__icon btn__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span><span class="btn__label">Добавить в контекст</span></button></div>';
   }
 
   /* Документ коллеги в контексте запроса живёт как приложенный файл
      (S.files), поэтому и состояние кнопки, и чип в композере читают его
      оттуда: чип можно убрать крестиком — кнопка под документом вернётся
-     к исходному виду. Стиль и размер — как у действий ответа («Копировать»):
-     прозрачная S в обоих состояниях, различие несут глиф и подпись. */
+     к исходному виду. Прозрачная S; во включённом — состояние «нажата» ДС
+     (aria-pressed, вид наведения), глиф + → ✓ меняет слот .btn__icon--toggle
+     с анимацией. Экран меняет только атрибут и подпись. */
   function syncPriorCtx(id) {
     var d = priorById(id);
     var btn = el('thrMsgs').querySelector('[data-act="prior-ctx"][data-id="' + id + '"]');
     if (!d || !btn) return;
     var inCtx = S.files.indexOf(d.title) !== -1;
     btn.setAttribute('aria-pressed', String(inCtx));
-    btn.className = 'btn btn--transparent btn--s';
-    btn.innerHTML = '<i data-icon="' + (inCtx ? 'check' : 'add') + '"></i><span class="btn__label">' +
-      (inCtx ? 'В контексте' : 'Добавить в контекст') + '</span>';
-    window.dsIcons.apply(btn);
+    btn.querySelector('.btn__label').textContent = inCtx ? 'В контексте' : 'Добавить в контекст';
   }
   function syncPriorCtxAll() {
     each('[data-act="prior-ctx"]', function (n) { syncPriorCtx(n.getAttribute('data-id')); });
@@ -1736,6 +1646,8 @@
     if (!S.priorShown[id]) {
       S.priorShown[id] = true;
       push('agent', text('Отчёт коллеги из другого запроса.') + priorCard(d));
+      var rowBtn = el('bldPrior').querySelector('[data-prior="' + id + '"]');
+      if (rowBtn && window.DSButton) window.DSButton.swap(rowBtn, { icon: 'check', label: 'В чате', type: 'transparent', ariaLabel: 'Уже в чате — перейти к документу' });
     }
     var card = el('thrMsgs').querySelector('[data-prior-doc="' + id + '"]');
     if (card) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -1743,6 +1655,13 @@
     drawPrior();
     var again = el('bldPrior').querySelector('[data-prior="' + id + '"]');
     if (again) again.focus({ preventScroll: true });
+  }
+
+  /* Поиск объекта — InputText ДС: значение, поставленное кодом, событий не
+     шлёт, поэтому крестик очистки пересчитывается явно (DSInput.sync). */
+  function setFind(v) {
+    el('bldFind').value = v;
+    if (window.DSInput) window.DSInput.sync(el('bldFindBox'));
   }
 
   /* Варианты объекта появляются по вводу: совпадения по реестру объектов.
@@ -1754,25 +1673,27 @@
     var list = q ? OBJECTS.filter(function (o) { return (o.name + ' ' + o.kind).toLowerCase().indexOf(q) !== -1; }) : [];
     if (sel && list.indexOf(sel) === -1) list.unshift(sel);
     var html = list.map(function (o) {
-      return '<button type="button" class="bopt" role="radio" aria-checked="false" data-obj="' + o.id + '">' +
-        '<span class="bopt__tag">' + esc(o.kind) + '</span>' +
-        '<span class="bopt__label">' + esc(o.name) + '</span>' +
-        '<span class="bopt__check" aria-hidden="true"><i data-icon="check"></i></span></button>';
+      return '<button type="button" class="chip chip--edit chip--outline chip--m chip--compact chip--rounded" role="radio" aria-checked="false" data-obj="' + o.id + '">' +
+        '<span class="chip__tag">' + esc(o.kind) + '</span>' +
+        '<span class="chip__label">' + esc(o.name) + '</span>' +
+        '<span class="chip__check" aria-hidden="true"><i data-icon="check"></i></span></button>';
     }).join('');
     if (q && !OBJECTS.some(function (o) { return o.name.toLowerCase() === q; })) {
-      html += '<button type="button" class="bopt bopt--custom" data-custom><i data-icon="add"></i>' +
-        '<span class="bopt__label">Использовать «' + esc(raw) + '»</span></button>';
+      html += '<button type="button" class="chip chip--edit chip--dashed chip--primary chip--m chip--compact chip--rounded" data-custom>' +
+        '<span class="chip__icon" aria-hidden="true"><i data-icon="add"></i></span>' +
+        '<span class="chip__label">Использовать «' + esc(raw) + '»</span></button>';
     }
     el('bldObjects').innerHTML = html;
+    el('bldObjects').hidden = !html;
     rebind(el('bldObjects'));
     syncControls();
   }
 
   function buildControls() {
     el('bldFocus').innerHTML = FOCUS.map(function (f) {
-      return '<button type="button" class="bchip" aria-pressed="false" data-focus="' + f.id + '" title="' + esc(f.text) + '">' +
-        '<span class="bchip__ico" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>' +
-        '<span>' + esc(f.label) + '</span></button>';
+      return '<button type="button" class="chip chip--edit chip--dashed chip--m chip--compact chip--rounded" aria-pressed="false" data-focus="' + f.id + '">' +
+        '<span class="chip__icon chip__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>' +
+        '<span class="chip__label">' + esc(f.label) + '</span></button>';
     }).join('');
     rebind(el('cmpDrawer'));
   }
@@ -1825,7 +1746,7 @@
       setFrag('object', B.frag.object === of ? null : of);
     } else if ((n = e.target.closest('[data-custom]'))) {
       B.custom = { id: 'custom', kind: 'Объект', name: el('bldFind').value.trim() };
-      el('bldFind').value = '';
+      setFind('');
       setFrag('object', objFrag(B.custom));
       drawObjects();
     } else if ((n = e.target.closest('[data-prior]'))) {
@@ -1840,11 +1761,11 @@
   el('bldFind').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      var first = el('bldObjects').querySelector('.bopt');
+      var first = el('bldObjects').querySelector('[data-obj], [data-custom]');
       if (first) first.click();
     } else if (e.key === 'Escape' && el('bldFind').value) {
       e.preventDefault(); e.stopPropagation();
-      el('bldFind').value = ''; drawObjects();
+      setFind(''); drawObjects();
     }
   });
 
@@ -1879,7 +1800,7 @@
   el('btnClear').addEventListener('click', function () {
     field.value = '';
     B.frag = {}; B.fresh = null; B.custom = null;
-    el('bldFind').value = '';
+    setFind('');
     drawObjects();
     paint(); syncControls();
     if (window.DSTooltip) window.DSTooltip.hideAll();

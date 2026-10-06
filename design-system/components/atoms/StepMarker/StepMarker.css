@@ -1,0 +1,129 @@
+/* =========================================================================
+   Design System — StepMarker (Номер шага)
+   Кружок с номером шага в пошаговой форме: шаг выполнен — номер сменяется
+   галочкой, ошибка — глифом ошибки. Перенесён из конструктора запроса
+   AI Pitcher (прототип ai-bankster v02, задача MS0010d).
+
+   Элемент: <span aria-hidden="true"> — декоративный: номер и статус шага
+            озвучивает его контейнер (подпись шага StepForm).
+   Sizes:   s — 20, цифра Body XS полужирным, глиф 12
+            m (по умолчанию) — 24, цифра Body XS полужирным, глиф 14
+            l — 32, цифра Body S полужирным, глиф 18
+   States:  ожидает (по умолчанию) · текущий --current · готов --done ·
+            ошибка --error · недоступен --disabled. Задаётся модификатором
+            на маркере или атрибутом data-state шага StepForm
+            (.stepform__step[data-state]) — экран меняет только атрибут.
+   Motion:  цифра гаснет, глиф появляется с поворотом и масштабом в пределах
+            кружка — габарит не меняется; prefers-reduced-motion — без
+            анимации.
+   Requires: Typography.css, Palette.css, Radius.css, Spacing.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.stepmark[hidden] { display: none; }
+
+.stepmark {
+  --stepmark-icon: var(--space-14);
+
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: var(--radius-full);
+  font: var(--type-body-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  color: var(--primary-dark);
+  background: var(--st-primary-light);
+  vertical-align: middle;
+  transition: background-color .25s ease, color .25s ease, box-shadow .25s ease;
+}
+
+/* ---------- sizes ---------------------------------------------------------
+   Цифра — на ступень полужирного (вес токеном поверх Body XS / Body S:
+   отдельного начертания в шкале нет, тот же приём у Avatar и Chip). */
+.stepmark--s { width: var(--space-20); height: var(--space-20); --stepmark-icon: var(--space-12); }
+.stepmark--m { width: var(--space-24); height: var(--space-24); --stepmark-icon: var(--space-14); }
+.stepmark--l {
+  width: var(--space-32);
+  height: var(--space-32);
+  font: var(--type-body-s);
+  font-weight: var(--weight-semibold);
+  --stepmark-icon: 18px;
+}
+
+/* ---------- parts ---------------------------------------------------------
+   Номер и глифы лежат друг на друге: глиф — абсолютно по центру кружка,
+   поэтому смена номера на глиф не меняет габарит. Глиф ошибки
+   (.stepmark__icon--error) — в разметке, только если шаг бывает с ошибкой. */
+.stepmark__num {
+  transition: opacity .2s ease, transform .2s ease;
+}
+.stepmark__icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: var(--stepmark-icon);
+  height: var(--stepmark-icon);
+  opacity: 0;
+  pointer-events: none;
+}
+.stepmark__icon > svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- states --------------------------------------------------------
+   Текущий — рамка 1px внутрь (inset-тень: габарит не меняется). */
+:is(.stepmark--current, .stepform__step[data-state="current"] .stepmark) {
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* Готов — заливка Primary, номер гаснет, проявляется галочка. */
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) {
+  color: var(--text-on-dark);
+  background: var(--primary);
+}
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) .stepmark__num {
+  opacity: 0;
+  transform: scale(.3);
+}
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) .stepmark__icon:not(.stepmark__icon--error) {
+  opacity: 1;
+  animation: stepmark-pop .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* Ошибка — тон Error; номер сменяется глифом ошибки, если глиф есть в
+   разметке, иначе остаётся номер красным (цвет — не единственный носитель
+   смысла: статус ошибки озвучивает контейнер). */
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark) {
+  color: var(--error-dark);
+  background: var(--st-red-light);
+}
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark):has(> .stepmark__icon--error) .stepmark__num {
+  opacity: 0;
+  transform: scale(.3);
+}
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark) .stepmark__icon--error {
+  opacity: 1;
+  animation: stepmark-pop .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* Недоступен — шаг пока нельзя заполнить. */
+:is(.stepmark--disabled, .stepform__step[data-state="disabled"] .stepmark) {
+  color: var(--st-disabled-dark);
+  background: var(--st-disabled-light);
+}
+
+/* Появление глифа — из прототипа: масштаб .3 и поворот −30° → на место. */
+@keyframes stepmark-pop {
+  from { opacity: 0; transform: scale(.3) rotate(-30deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepmark,
+  .stepmark__num,
+  .stepmark__icon { transition: none; animation: none; }
+}

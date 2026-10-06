@@ -1,0 +1,166 @@
+/* =========================================================================
+   Design System — StepForm (Пошаговая форма)
+   Форма из шагов: слева номер шага (StepMarker) и подпись, справа контролы
+   (любые поля ДС — InputText M, чипы Chip), шаги разделены пунктиром, внизу
+   опц. заметка (Note). Шаг заполнен — номер сменяется галочкой. Перенесена
+   из конструктора запроса AI Pitcher (прототип ai-bankster v02, задача
+   MS0010h).
+
+   Раскладка: форма — грид из двух колонок, шаг — подсетка (subgrid):
+            колонка подписи общая у всех шагов и равна самой длинной
+            подписи, но не шире трети формы (fit-content(33%)); длиннее —
+            подпись переносится.
+   Narrow:  форма уже 840px (container query по ширине самой формы;
+            840 — нижняя граница класса Expanded Material 3) — подпись
+            встаёт над контролами.
+   States:  data-state шага — pending · current · done · error · disabled;
+            маркер внутри красится сам (StepMarker), скрытый статус
+            шага озвучивается скринридером. Экран меняет только атрибут.
+   Option:  .stepform--appear — анимация появления из прототипа: форма
+            проявляется со сдвигом, шаги — лесенкой; срабатывает, когда с
+            панели снимают inert (закрытая панель), и при показе блока на
+            всю ширину шага.
+   Своего фона, рамки и полей нет — их даёт контейнер.
+   Requires: Typography.css, Palette.css, Spacing.css, StepMarker.css,
+             Note.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.stepform[hidden] { display: none; }
+
+.stepform {
+  container: stepform / inline-size;
+  display: grid;
+  grid-template-columns: fit-content(33%) minmax(0, 1fr);
+  column-gap: var(--space-16);
+  row-gap: var(--space-12);
+  min-width: 0;
+}
+
+/* ---------- шаг ------------------------------------------------------------
+   Подсетка формы: подпись в первой колонке, контролы во второй, блок на
+   всю ширину — под ними. Шаги разделяет пунктир (как Divider dashed) с
+   отступом 12 сверху; у первого шага линии и отступа нет — над ним уже
+   граница контейнера. */
+.stepform__step {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--space-8);
+  align-items: start;
+  min-width: 0;
+  padding-top: var(--space-12);
+  border-top: 1px dashed var(--border-light);
+}
+.stepform__step:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Подпись: маркер + название. Высота строки — как у поля M (40): название
+   стоит на уровне поля справа. */
+.stepform__label {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: var(--space-40);
+  font: var(--type-body-s-strong);
+  color: var(--text-primary);
+}
+.stepform__title {
+  min-width: 0;
+  text-wrap: pretty;
+}
+
+/* Скрытый статус шага — для скринридера: виден только в своём состоянии,
+   в остальных выключен из дерева доступности (display: none). */
+.stepform__status { display: none; }
+.stepform__step[data-state="done"] .stepform__status--done,
+.stepform__step[data-state="error"] .stepform__status--error {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Контролы шага — колонка: поле, ряд чипов, подсказки. */
+.stepform__control {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+/* Блок на всю ширину шага (Tile Inset — история, сводка выбора). Класс
+   ставится на сам блок: скрытый блок (hidden) не оставляет пустой строки. */
+.stepform__wide {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+/* Недоступный шаг — название тоном неактивного текста; контролы шага
+   выключает экран (disabled у полей). */
+.stepform__step[data-state="disabled"] .stepform__label {
+  color: var(--text-inactive);
+}
+
+/* Подвал — заметка Note под пунктиром. */
+.stepform__foot {
+  grid-column: 1 / -1;
+  padding-top: var(--space-12);
+  border-top: 1px dashed var(--border-light);
+}
+
+/* ---------- узкая форма -------------------------------------------------- */
+@container stepform (width < 840px) {
+  .stepform__step { grid-template-columns: minmax(0, 1fr); }
+  .stepform__label,
+  .stepform__control { grid-column: 1; }
+}
+
+/* ---------- опция: появление (.stepform--appear) --------------------------
+   Значения из прототипа. Закрытая панель (inert): форма прозрачна и
+   сдвинута вверх на 16; панель открыли — форма проявляется (0,25 с) и
+   встаёт на место (0,55 с), шаги и подвал появляются лесенкой через 55 мс.
+   Блок на всю ширину шага появляется так же, когда его показывают. */
+.stepform--appear {
+  transition: opacity .25s ease .06s, transform .55s cubic-bezier(.22, 1, .36, 1) .06s;
+}
+[inert] .stepform--appear {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity .25s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+.stepform--appear > * {
+  animation: stepform-in .6s cubic-bezier(.22, 1, .36, 1) both;
+}
+.stepform--appear > :nth-child(1) { animation-delay: 145ms; }
+.stepform--appear > :nth-child(2) { animation-delay: 200ms; }
+.stepform--appear > :nth-child(3) { animation-delay: 255ms; }
+.stepform--appear > :nth-child(4) { animation-delay: 310ms; }
+.stepform--appear > :nth-child(n+5) { animation-delay: 365ms; }
+.stepform--appear .stepform__wide {
+  animation: stepform-in .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+[inert] .stepform--appear > *,
+[inert] .stepform--appear .stepform__wide {
+  animation: none;
+}
+@keyframes stepform-in {
+  from { opacity: 0; transform: translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stepform--appear,
+  .stepform--appear > *,
+  .stepform--appear .stepform__wide { transition: none; animation: none; }
+}

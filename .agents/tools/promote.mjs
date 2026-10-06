@@ -52,7 +52,7 @@ import { project, need } from './project.mjs';
 import { check as hubCheck } from './hub-build.mjs';
 import { run as assembleRun, sourcesUnder } from './assemble.mjs';
 import { check as readmeCheck, withTree, treeBlock } from './module-readme.mjs';
-import { build as panelBuild, check as panelCheck, enable as panelEnable } from './proto-panel.mjs';
+import { build as panelBuild, check as panelCheck, enable as panelEnable, PANEL_DS_FILES } from './proto-panel.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
@@ -317,6 +317,7 @@ function panelTree(r) {
   put(r, 'project.json', JSON.stringify({ ...MANIFEST, boot: { dir: 'apps', head: 'apps/ds-config.js', body: 'apps/ds-body.js' },
     protoPanel: { runtime: '.kit/proto-panel', boot: 'apps/proto-panel.js', dir: 'proto-panel' } }));
   cpSync(runtime, path.join(r, '.kit/proto-panel'), { recursive: true });
+  for (const f of PANEL_DS_FILES) put(r, 'ds/' + f, '');   // что включатель добирает на страницах ДС (ПН8)
   put(r, 'apps/postrade/drafts/lab/pages/Lab.preview.html', '<section class="tile">Лаб</section>\n');
   const res = panelEnable(project(r), 'apps/postrade/drafts/lab');
   if (res.refused) throw new Error(res.refused.join('; '));

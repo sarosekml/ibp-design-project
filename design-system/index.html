@@ -22,6 +22,11 @@
 <link rel="stylesheet" href="components/atoms/Avatar/Avatar.css">
 <link rel="stylesheet" href="components/molecules/Tooltip/Tooltip.css">
 <link rel="stylesheet" href="components/atoms/Divider/Divider.css">
+<link rel="stylesheet" href="components/atoms/Keyboard/Keyboard.css">
+<link rel="stylesheet" href="components/atoms/Note/Note.css">
+<link rel="stylesheet" href="components/atoms/StepMarker/StepMarker.css">
+<link rel="stylesheet" href="components/molecules/StepForm/StepForm.css">
+<link rel="stylesheet" href="components/molecules/DocCard/DocCard.css">
 <link rel="stylesheet" href="components/molecules/Splitter/Splitter.css">
 <link rel="stylesheet" href="components/molecules/Tab/Tab.css">
 <link rel="stylesheet" href="components/molecules/SubTab/SubTab.css">
@@ -143,13 +148,13 @@
 <main class="page" data-screen-label="DS Home">
 
   <header class="hero">
-    <p class="ver">Версия 1.025 · обновлено 04.10.2026</p>
+    <p class="ver">Версия 1.027 · обновлено 06.10.2026</p>
     <p class="eyebrow">Дизайн-система · Investment Banking Platform</p>
     <h1>ДС IBP</h1>
     <p class="lead">Единый источник правды: токены типографики и цвета, на которых собраны все компоненты. Гарнитуры SB Sans, семантическая палитра, библиотека UI.</p>
     <div class="meta">
       <div class="m"><p class="k">Основы</p><p class="v">Типографика · Цвета</p></div>
-      <div class="m"><p class="k">Компоненты</p><p class="v">51 компонент · 14 атомов · 21 молекула · 16 организмов</p></div>
+      <div class="m"><p class="k">Компоненты</p><p class="v">56 компонентов · 17 атомов · 23 молекулы · 16 организмов</p></div>
       <div class="m"><p class="k">Шрифты</p><p class="v">SB Sans Display · Text · Screen</p></div>
     </div>
     <div class="stripe" id="stripe"></div>
@@ -306,7 +311,7 @@
 
   <!-- ATOMS -->
   <section class="sec" data-screen-label="Atoms">
-    <div class="sec-head"><h2>Атомы</h2><span class="n">14 компонентов</span></div>
+    <div class="sec-head"><h2>Атомы</h2><span class="n">17 компонентов</span></div>
     <div class="grid">
       <a class="card" href="components/atoms/Avatar/Avatar.html">
         <div class="card__preview">
@@ -396,6 +401,18 @@
         </div>
       </a>
 
+      <a class="card" href="components/atoms/Keyboard/Keyboard.html">
+        <div class="card__preview">
+          <div class="pv-btn"><span class="kbd-combo"><kbd class="kbd kbd--m">Shift</kbd> + <kbd class="kbd kbd--m">Enter</kbd></span></div>
+        </div>
+        <div class="card__body">
+          <h3 class="card__title">Keyboard</h3>
+          <p class="card__desc">Клавиша и сочетание клавиш в тексте подсказок: «Enter — отправить». Нативный &lt;kbd&gt;, размеры S / M / L по кеглю текста. Конструктор внутри.</p>
+          <div class="card__meta"><span class="tag">Атомы</span><span class="tag file">Keyboard.html</span></div>
+          <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
       <a class="card" href="components/atoms/LabelHelper/LabelHelper.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvLH" style="align-items:flex-start;"></div>
@@ -416,6 +433,18 @@
           <h3 class="card__title">Link</h3>
           <p class="card__desc">Текстовая ссылка для навигации в лайауте, модалках и Хлебных крошках. Тоны Accent / Muted / Neutral, размеры M / S, инлайн, иконки, внешние ссылки, бредкрамбы. Конструктор внутри.</p>
           <div class="card__meta"><span class="tag">Атомы</span><span class="tag file">Link.html</span></div>
+          <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="components/atoms/Note/Note.html">
+        <div class="card__preview">
+          <div id="pvNote" style="width:100%; max-width:240px;"></div>
+        </div>
+        <div class="card__body">
+          <h3 class="card__title">Note</h3>
+          <p class="card__desc">Заметка — нейтральное пояснение «иконка + вторичный текст» под формой, в модальном окне, в подвале StepForm. Размеры XS / S / M, тон иконки. Конструктор внутри.</p>
+          <div class="card__meta"><span class="tag">Атомы</span><span class="tag file">Note.html</span></div>
           <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
@@ -468,6 +497,18 @@
         </div>
       </a>
 
+      <a class="card" href="components/atoms/StepMarker/StepMarker.html">
+        <div class="card__preview">
+          <div class="pv-btn" id="pvStepMark" style="display:flex; align-items:center; gap:8px;"></div>
+        </div>
+        <div class="card__body">
+          <h3 class="card__title">StepMarker</h3>
+          <p class="card__desc">Номер шага пошаговой формы: готов — номер сменяется галочкой, ошибка — глифом. Размеры S / M / L, пять состояний. Конструктор внутри.</p>
+          <div class="card__meta"><span class="tag">Атомы</span><span class="tag file">StepMarker.html</span></div>
+          <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
       <a class="card" href="components/atoms/Switch/Switch.html">
         <div class="card__preview">
           <div class="pv-cb" id="pvSw"></div>
@@ -485,7 +526,7 @@
 
   <!-- MOLECULES -->
   <section class="sec" data-screen-label="Molecules">
-    <div class="sec-head"><h2>Молекулы</h2><span class="n">21 компонент</span></div>
+    <div class="sec-head"><h2>Молекулы</h2><span class="n">23 компонента</span></div>
     <div class="grid">
       <a class="card" href="components/molecules/Alert/Alert.html">
         <div class="card__preview">
@@ -578,6 +619,18 @@
           <h3 class="card__title">DatePicker</h3>
           <p class="card__desc">Календарь для InputDate / InputDateRange: выбор даты, диапазона или месяца. Представления день / месяц / год, футер с подтверждением, границы min-max. Конструктор внутри.</p>
           <div class="card__meta"><span class="tag">Молекулы</span><span class="tag file">DatePicker.html</span></div>
+          <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="components/molecules/DocCard/DocCard.html">
+        <div class="card__preview">
+          <div id="pvDocCard" style="width:100%; max-width:280px;"></div>
+        </div>
+        <div class="card__body">
+          <h3 class="card__title">DocCard</h3>
+          <p class="card__desc">Карточка документа в потоке: иконка, название (открывает просмотр), параметры, «Просмотр» и «Скачать». Наведение — рамка и тень. Конструктор внутри.</p>
+          <div class="card__meta"><span class="tag">Молекулы</span><span class="tag file">DocCard.html</span></div>
           <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
@@ -778,6 +831,18 @@
           <h3 class="card__title">Splitter</h3>
           <p class="card__desc">Функциональный разделитель контейнера: перетаскиванием регулирует размеры панелей. Состояния Default / Hover / Move / Focus / Disabled, ориентация и доступность. Конструктор внутри.</p>
           <div class="card__meta"><span class="tag">Молекулы</span><span class="tag file">Splitter.html</span></div>
+          <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="components/molecules/StepForm/StepForm.html">
+        <div class="card__preview">
+          <div id="pvStepForm" style="width:100%; max-width:260px;"></div>
+        </div>
+        <div class="card__body">
+          <h3 class="card__title">StepForm</h3>
+          <p class="card__desc">Пошаговая форма: номер и подпись слева, контролы справа, пунктир между шагами, заметка внизу; заполненный шаг — галочка. Конструктор внутри.</p>
+          <div class="card__meta"><span class="tag">Молекулы</span><span class="tag file">StepForm.html</span></div>
           <span class="card__go">Открыть компонент <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
@@ -1435,6 +1500,22 @@
     const t2=document.createElement('div'); t2.className='toast toast--success'; t2.style.boxShadow='none';
     t2.innerHTML='<span class="toast__lead"><span class="toast__icon" aria-hidden="true">'+(L['check-circle']||'')+'</span></span><span class="toast__msg">Процесс запущен</span>';
     host.appendChild(t1); host.appendChild(t2);
+  })();
+
+  // step marker · note · step form · doc card previews
+  (function(){
+    const L=window.DS_ICONS||{};
+    const mk=(n,st)=>'<span class="stepmark stepmark--m'+(st?' stepmark--'+st:'')+'" aria-hidden="true"><span class="stepmark__num">'+n+'</span><i class="stepmark__icon">'+(L['check']||'')+'</i></span>';
+    const sm=document.getElementById('pvStepMark');
+    if(sm) sm.innerHTML=mk(1,'done')+mk(2,'current')+mk(3,'');
+    const nt=document.getElementById('pvNote');
+    if(nt) nt.innerHTML='<p class="note note--s note--accent"><span class="note__icon" aria-hidden="true"><i>'+(L['clock-timer']||'')+'</i></span><span class="note__text">Подготовка отчёта обычно занимает до 30 минут.</span></p>';
+    const sf=document.getElementById('pvStepForm');
+    if(sf) sf.innerHTML='<div class="stepform">'+
+      '<div class="stepform__step" data-state="done"><div class="stepform__label">'+mk(1,'')+'<span class="stepform__title">Объект анализа</span></div></div>'+
+      '<div class="stepform__step"><div class="stepform__label">'+mk(2,'')+'<span class="stepform__title">Дополнительный фокус</span></div></div></div>';
+    const dc=document.getElementById('pvDocCard');
+    if(dc) dc.innerHTML='<div class="doccard"><span class="doccard__icon" aria-hidden="true"><i>'+(L['document-check']||'')+'</i></span><div class="doccard__main"><span class="doccard__title">Материал с идеями</span><span class="doccard__meta">Детальный · версия 2</span></div></div>';
   })();
 
   document.getElementById('pvAvatar').innerHTML =

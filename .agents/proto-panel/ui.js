@@ -115,11 +115,11 @@
       + '<p class="drawer__path">' + esc(t('panel.name')) + '<i data-icon="chevron-right"></i>' + esc(appTitle() || appId()) + '</p>'
       + '<h2 class="drawer__title" id="pp-drawer-title">' + esc(appId()) + '</h2>'
       + '</div>'
-      + '<div class="drawer__acts">'
+      + '<div class="drawer__acts pp-head-acts">'
       + '<span class="pp-fix" id="pp-fix"></span>'
-      + '<span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.actions')) + '" data-menu="pp-head-menu" data-menu-align="end" data-tooltip="' + esc(t('panel.actions')) + '"><i data-icon="more-dots"></i></button>'
+      + '<span class="menu-anchor pp-head-control"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.actions')) + '" data-menu="pp-head-menu" data-menu-align="end" data-tooltip="' + esc(t('panel.actions')) + '"><i data-icon="more-dots"></i></button>'
       + '<div id="pp-head-menu" class="menu" role="menu" hidden></div></span>'
-      + '<span class="drawer__close"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.close')) + '" data-modal-close data-tooltip="' + esc(t('panel.closeTip')) + '"><i data-icon="close"></i></button></span>'
+      + '<span class="drawer__close pp-head-control"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.close')) + '" data-modal-close data-tooltip="' + esc(t('panel.closeTip')) + '"><i data-icon="close"></i></button></span>'
       + '</div>'
       + '</header>'
       + '<div class="drawer__body drawer__body--flush pp-body" id="pp-body">'
@@ -542,8 +542,8 @@
     var box = document.getElementById('pp-rail');
     if (!box) return;
     box.innerHTML = RAIL.map(function (r) {
-      return '<button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
-        + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button>';
+      return '<span class="pp-rail-control"><button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
+        + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button></span>';
     }).join('');
     wire(box);
     box.addEventListener('click', function (e) {

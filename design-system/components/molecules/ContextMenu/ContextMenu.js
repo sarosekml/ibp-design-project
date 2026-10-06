@@ -266,7 +266,14 @@
     trigger.setAttribute('aria-expanded', 'false');
     if (menu.id) trigger.setAttribute('aria-controls', menu.id);
     var wasHidden = menu.hasAttribute('hidden');
-    wireKeys(menu, { onClose: function () { close(true); } });
+    /* Одно меню бывает у нескольких триггеров (кнопка «Скачать» у каждой
+       карточки документа). Меню помнит, какой триггер его открыл
+       (menu.__dsOpener), и Esc и выбор пункта закрывают его через этот
+       триггер: он получает aria-expanded="false" и фокус. Слушатели меню
+       вешаются один раз на меню, а не на каждую привязку — иначе первым
+       срабатывал слушатель чужого (часто уже удалённого перерисовкой)
+       триггера, а открывший оставался «нажатым» (ContextMenu 1.012). */
+    wireKeys(menu, { onClose: function () { if (menu.__dsOpener) menu.__dsOpener.close(true); } });
     wireSubs(menu);
 
     function isOpen() { return menu.classList.contains('is-open'); }
@@ -283,6 +290,7 @@
       if (conf.dismiss && current && current !== api) current.close();
       if (wasHidden) menu.removeAttribute('hidden');
       menu.classList.add('is-open');
+      menu.__dsOpener = api;
       trigger.setAttribute('aria-expanded', 'true');
       if (window.DSFloat) DSFloat.mount(menu, { anchor: trigger });
       reposition();
@@ -293,11 +301,15 @@
 
     function close(returnFocus) {
       if (!isOpen()) return api;
+      /* меню открыл другой триггер — закрывает он: его aria-expanded и фокус */
+      var opener = menu.__dsOpener;
+      if (opener && opener !== api) return opener.close(returnFocus);
       menu.classList.remove('is-open');
       menu.querySelectorAll('.menu__sub.is-open').forEach(function (s) { s.classList.remove('is-open'); });
       trigger.setAttribute('aria-expanded', 'false');
       if (window.DSFloat) DSFloat.unmount(menu);
       if (wasHidden) menu.setAttribute('hidden', '');
+      if (menu.__dsOpener === api) menu.__dsOpener = null;
       if (current === api) current = null;
       if (returnFocus) trigger.focus();
       return api;
@@ -316,12 +328,17 @@
         if (e.key === 'ArrowDown' && !isOpen()) { e.preventDefault(); open(); }
       });
     }
-    /* клик на пункт — закрытие (кроме пункта с подменю и меню-выбора) */
-    menu.addEventListener('click', function (e) {
-      var it = e.target.closest(ITEM);
-      if (!it || it.classList.contains('menu__item--sub')) return;
-      if (!conf.keepOpen) close(true);
-    });
+    /* клик на пункт — закрытие через открывший триггер (кроме пункта с
+       подменю и меню-выбора); слушатель один на меню */
+    if (!menu.__dsMenuPick) {
+      menu.__dsMenuPick = true;
+      menu.addEventListener('click', function (e) {
+        var it = e.target.closest(ITEM);
+        if (!it || it.classList.contains('menu__item--sub')) return;
+        var opener = menu.__dsOpener;
+        if (opener && !opener.config.keepOpen) opener.close(true);
+      });
+    }
 
     var api = {
       menu: menu, trigger: trigger, open: open, close: close, toggle: toggle,

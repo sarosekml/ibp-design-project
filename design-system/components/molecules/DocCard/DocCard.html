@@ -1,0 +1,685 @@
+<!-- @dsCard group="Components" name="DocCard" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocCard — Дизайн-система</title>
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../../foundations/Elevation/Elevation.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../Tooltip/Tooltip.css">
+<link rel="stylesheet" href="../ContextMenu/ContextMenu.css">
+<link rel="stylesheet" href="DocCard.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<style>
+  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+
+  /* ---------- playground ---------- */
+  .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center; background: var(--bg-page); }
+  .ctl { display:flex; flex-direction:column; gap:10px; }
+  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+
+  /* ---------- demo layout ---------- */
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:680px){ .cols2{ grid-template-columns:1fr; } }
+  .cols3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols3{ grid-template-columns:1fr; } }
+  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin:0 0 7px; }
+  .demo-stack { display:flex; flex-direction:column; gap:12px; }
+
+  /* ---------- do / don't ---------- */
+  .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
+  .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+
+  /* ---------- DocCard demo ---------- */
+  #var-actions .demo-rowlabel, #states-demo .demo-rowlabel { margin-top:8px; }
+</style>
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="DocCard">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="pg__stage" id="pg-stage"></div>
+        <p class="pg__code" id="pg-code"></p>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+    <div class="meta"><span>Версия: <b>1.000</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Компоненты</p>
+    <h1>DocCard</h1>
+    <p class="lead">Карточка документа — документ как вложение в потоке: плашка с иконкой, название (открывает просмотр), параметры и до двух действий — «Просмотр» и «Скачать ▾». Кликабельны только название и кнопки; сама карточка при наведении подсвечивает рамку и поднимается тенью.</p>
+  </header>
+
+  <!-- USAGE -->
+  <section class="section" data-screen-label="Usage">
+    <h2>Использование</h2>
+    <p class="desc">Готовый документ в нити чата: материал, собранный агентом, или документ коллеги. Под карточкой экран может поставить своё действие — например, переключатель «Добавить в контекст».</p>
+    <div class="panel">
+      <p class="demo-rowlabel">Нить чата — материал агента и документ коллеги</p>
+      <div class="demo-stack" id="use-thread" style="gap:var(--space-24);"></div>
+    </div>
+
+<div class="subsec" data-screen-label="WhenToUse">
+    <h3>Когда использовать</h3>
+    <ul class="bullets" style="margin-bottom:26px;">
+      <li>документ появился в потоке — его можно открыть и скачать, не уходя со страницы;</li>
+      <li>у документа есть параметры, по которым его узнают: тип, версия, дата или автор.</li>
+    </ul>
+    <p class="desc">Не используйте для списка документов — строки списка собираются из <a class="inl" href="../../organisms/Entity/Entity.html">Entity</a> в <code class="tok">.entity-list</code>. Файл, который прикладывают к сообщению, — <a class="inl" href="../../atoms/Chip/Chip.html">Chip</a> с крестиком. Карточка целиком не кликается: если документ открывается по клику на любое место — это <a class="inl" href="../../organisms/Tile/Tile.html">Tile Card</a> без кнопок внутри.</p>
+  </div>
+
+<div class="subsec" data-screen-label="Guidelines">
+    <h3>Правила</h3>
+    <div class="guide">
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good1"></span>Так</div>
+        <div class="guide-card__body" id="guide-good1"></div>
+        <p class="guide-card__cap">Не больше двух действий кнопками; форматы выгрузки — в меню «Скачать».</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad1"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad1"></div>
+        <p class="guide-card__cap">Третья кнопка теснит название — уберите действие в меню.</p>
+      </div>
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good2"></span>Так</div>
+        <div class="guide-card__body" id="guide-good2"></div>
+        <p class="guide-card__cap">Просмотр открывает название-кнопка: она в порядке Tab и видна на наведении.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad2"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad2"></div>
+        <p class="guide-card__cap">Вся карточка-ссылка с кнопками внутри — вложенный интерактив: клик по кнопке открывает и документ.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section class="section" data-screen-label="Anatomy">
+    <h2>Анатомия</h2>
+    <p class="desc">Карточка в один ряд: плашка, текст, действия. Текст сжимается, плашка и действия — нет.</p>
+    <div class="panel">
+      <ol class="bullets">
+        <li><b>Карточка</b> (<code class="tok">.doccard</code>) — фон <code class="tok">--bg-tile</code>, рамка 1px <code class="tok">--border-light</code>, радиус <code class="tok">--radius-xl</code>, поля 12; наведение — рамка <code class="tok">--border-primary</code> и тень <code class="tok">--shadow-card-hover</code>.</li>
+        <li><b>Плашка иконки</b> (<code class="tok">.doccard__icon</code>) — 40, радиус <code class="tok">--radius-m</code>, фон <code class="tok">--primary-bg</code>, глиф 22 <code class="tok">--primary</code>; декоративная.</li>
+        <li><b>Название</b> (<code class="tok">button.doccard__title</code>) — Body M Strong, одна строка с многоточием и тултипом; открывает просмотр.</li>
+        <li><b>Параметры</b> (<code class="tok">.doccard__meta</code>) — Body XS <code class="tok">--text-secondary</code>, одна строка.</li>
+        <li><b>Действия</b> (<code class="tok">.doccard__actions</code>) — до двух кнопок <a class="inl" href="../../atoms/Buttons/Buttons.html">Buttons</a> Outline S; меню форматов — <a class="inl" href="../ContextMenu/ContextMenu.html">ContextMenu</a>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- VARIANTS -->
+  <section class="section" data-screen-label="Variants">
+    <h2>Варианты</h2>
+    <p class="desc">Оси конфигурации компонента — каждая описана отдельным подразделом.</p>
+
+<div class="subsec" data-screen-label="Actions">
+    <h3>Действия</h3>
+    <p class="desc">Два действия — «Просмотр» и «Скачать ▾» с меню форматов; одно — только «Просмотр»; без действий — документ открывается названием.</p>
+    <div class="panel"><div class="demo-stack" id="var-actions"></div></div>
+  </div>
+  </section>
+
+  <!-- SIZES -->
+  <section class="section" data-screen-label="Sizes">
+    <h2>Размеры</h2>
+    <p class="desc">Один размер — других не будет (решение 06.10.2026). Ширина — по контейнеру (колонка нити, лента); высота — по содержимому, 66px с кнопками S.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1.4fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">Значение</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Поля · радиус</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 · 12</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-12</code> · <code class="tok">--radius-xl</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Плашка иконки · глиф</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">40 · 22</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-40</code> · радиус <code class="tok">--radius-m</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазоры: ряд · название ↔ параметры · действия</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 · 2 · 8</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-12</code> · <code class="tok">--space-2</code> · <code class="tok">--space-8</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="section" data-screen-label="Content">
+    <h2>Контент</h2>
+    <ul class="bullets">
+      <li>название — как документ назвал автор или агент: объект и тип материала («ПАО «Волга-Агро» — материал с идеями»);</li>
+      <li>параметры — то, по чему документ узнают: тип · версия · дата у своего материала, автор · дата · объём у документа коллеги; разделитель « · »;</li>
+      <li>иконка — по типу документа: <code class="tok">document-check</code> — готовый материал.</li>
+    </ul>
+
+<div class="subsec" data-screen-label="Truncate">
+    <h3>Длинное название</h3>
+    <p class="desc">Название и параметры — в одну строку с многоточием; полное название — в тултипе при наведении и фокусе (Tooltip, <code class="tok">data-tooltip-truncated="only"</code> — тултип только у усечённого).</p>
+    <div class="panel" id="content-trunc"></div>
+  </div>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section class="section" data-screen-label="Behavior">
+    <h2>Поведение</h2>
+    <ul class="bullets">
+      <li>Наведение на карточку — рамка <code class="tok">--border-primary</code> (0,15 с) и тень <code class="tok">--shadow-card-hover</code> (0,2 с): подсказка, что внутри есть действия. Фон не меняется, «нажатия» нет — карточка не кнопка.</li>
+      <li>Название — кнопка: клик открывает просмотр документа (обработчик экрана); наведение — тон Primary Dark и подчёркивание.</li>
+      <li>«Скачать ▾» открывает меню форматов — <a class="inl" href="../ContextMenu/ContextMenu.html">ContextMenu</a> (<code class="tok">data-menu</code>, рантайм сам ставит <code class="tok">aria-expanded</code>).</li>
+      <li>При <code class="tok">prefers-reduced-motion</code> — без переходов.</li>
+    </ul>
+  </section>
+
+  <!-- STATES -->
+  <section class="section" data-screen-label="States">
+    <h2>Состояния</h2>
+    <p class="desc">У карточки — Default и Hover; у названия — Hover и Focus. Кнопки действий — по правилам Buttons. Витрина состояний — классы <code class="tok">.is-hover</code> (карточка, название) и <code class="tok">.is-focus</code> (название).</p>
+    <div class="panel"><div class="demo-stack" id="states-demo"></div></div>
+  </section>
+
+  <!-- ACCESSIBILITY -->
+  <section class="section" data-screen-label="A11y">
+    <h2>Доступность</h2>
+    <ul class="bullets">
+      <li>Название — <code class="tok">&lt;button&gt;</code>: доступно с клавиатуры, имя — полный текст названия (усечение только визуальное).</li>
+      <li>Порядок Tab: название → «Просмотр» → «Скачать»; карточка сама в порядок Tab не попадает.</li>
+      <li>Плашка иконки — <code class="tok">aria-hidden</code>.</li>
+      <li>Кнопка меню — <code class="tok">aria-haspopup="menu"</code> и <code class="tok">aria-expanded</code> (ставит рантайм ContextMenu).</li>
+      <li>Фокус названия — обводка 2px <code class="tok">--primary</code> со смещением 2px.</li>
+    </ul>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="section" data-screen-label="Typography">
+    <h2>Типографика</h2>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Часть</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Кегль / строка</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название</span></span></div>
+          <div class="tc"><code class="tok">--type-body-m-strong</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">16 / 20 px, 600</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Параметры</span></span></div>
+          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16 px</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="section" data-screen-label="Colors">
+    <h2>Цвета</h2>
+    <p class="desc">Только семантические токены. Тень наведения — токен основы Elevation.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Роль</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Образец</span></div>
+          <div class="th"><span class="th__label">Hex</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Фон карточки</span></span></div>
+          <div class="tc"><code class="tok">--bg-tile</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--bg-tile)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--bg-tile">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Рамка</span></span></div>
+          <div class="tc"><code class="tok">--border-light</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--border-light)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--border-light">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Рамка при наведении</span></span></div>
+          <div class="tc"><code class="tok">--border-primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--border-primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--border-primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Плашка иконки</span></span></div>
+          <div class="tc"><code class="tok">--primary-bg</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary-bg)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary-bg">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Глиф иконки, фокус названия</span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название</span></span></div>
+          <div class="tc"><code class="tok">--text-primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название при наведении</span></span></div>
+          <div class="tc"><code class="tok">--primary-dark</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary-dark)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary-dark">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Параметры</span></span></div>
+          <div class="tc"><code class="tok">--text-secondary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-secondary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-secondary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+    <p class="desc" style="margin-top:20px;">Тень наведения — <code class="tok">--shadow-card-hover</code> (<code class="tok">0 4px 16px</code>, 6 %), основа <a class="inl" href="../../../foundations/Elevation/Elevation.html">Elevation</a>.</p>
+  </section>
+
+  <!-- DEVELOPER HANDOFF -->
+  <section class="section" data-screen-label="Dev">
+    <h2>Для разработчиков</h2>
+    <p class="desc">Хендофф-пакет: точные размеры и поведение. Не привязан к стеку.</p>
+
+    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/molecules/DocCard/DocCard.css</code>.</p>
+    <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">Значение</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Поля</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-pad-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Радиус · рамка</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-radius-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор в ряду</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gap-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Плашка иконки</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор название ↔ параметры</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-main-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-title-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Параметры</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-meta-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор действий</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-acts-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev-intro">
+      <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Palette.css</code>
+      <code class="tok">foundations/Elevation/Elevation.css</code>
+      <code class="tok">components/atoms/Buttons/Buttons.css</code>
+      <code class="tok">components/molecules/DocCard/DocCard.css</code>
+    </div>
+
+    <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
+<div class="code-panel">
+      <div class="code-panel__head">
+        <span class="code-panel__name">Поведение · псевдокод (framework-agnostic)</span>
+        <button type="button" class="code-panel__copy" data-copy-target="code-js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg><span class="copy-label">Копировать</span></button>
+      </div>
+      <pre><code id="code-js"><span class="tk-cm">// 1. Карточка не интерактивна: обработчики только у названия и кнопок</span>
+<span class="tk-cm">//    title.onclick → открыть просмотр документа</span>
+
+<span class="tk-cm">// 2. Название и параметры — одна строка с многоточием;</span>
+<span class="tk-cm">//    полное название — тултип, только когда текст усечён</span>
+
+<span class="tk-cm">// 3. «Скачать ▾» — триггер ContextMenu (data-menu="&lt;id меню&gt;"),</span>
+<span class="tk-cm">//    пункт меню → выгрузка в выбранном формате</span>
+
+<span class="tk-cm">// 4. Действие под карточкой (например, «Добавить в контекст») — раскладка экрана,</span>
+<span class="tk-cm">//    не часть карточки: Button Transparent S с aria-pressed</span></code></pre>
+    </div>
+    <p class="dev-note">Это не готовый сниппет — алгоритм поверх вашего стека (рабочий референс — функция <code class="tok">makeCard</code> в <code class="tok">DocCard.page.js</code>).</p>
+  </section>
+
+  <!-- BACKLOG -->
+  <section class="section" data-screen-label="Backlog">
+    <h2>Бэклог</h2>
+    <p class="desc">Кейсы, которых недостаёт компоненту.</p>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>Состояние «готовится»</b> — карточка документа, который ещё собирается: скелетон названия и прогресс вместо действий.</li>
+        <li><b>Тип документа</b> — иконка и тон плашки по типу файла (PDF, Word, Excel).</li>
+      </ul>
+    </div>
+  </section>
+
+<footer class="page-foot">
+    <span>Дизайн-система · DocCard</span>
+    <span>Карточка документа — название · параметры · до двух действий</span>
+  </footer>
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Соберите карточку документа: название, параметры, действия, состояние и ширину колонки — превью обновляется мгновенно.</p>
+              <div class="pg__controls" id="pg-controls"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка, полный CSS компонента и выжимка API для интеграции.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main>
+
+<!-- меню «Скачать»: форматы выгрузки (ContextMenu) -->
+<div id="doc-menu" class="menu menu--floating" role="menu" hidden>
+  <div class="menu__label">Скачать</div>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-icon"><i data-icon="download"></i></span><span class="menu__item-label">Детальный — PDF</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-icon"><i data-icon="download"></i></span><span class="menu__item-label">Детальный — Word</span></button>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-icon"><i data-icon="download"></i></span><span class="menu__item-label">Краткий — PDF</span></button>
+</div>
+
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../../atoms/Buttons/Buttons.js"></script>
+<script src="../Tooltip/Tooltip.js"></script>
+<script src="../ContextMenu/ContextMenu.js"></script>
+<script src="DocCard.page.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично) ===== -->
+<script type="text/plain" id="src-code-html"><!-- карточка документа: кликабельны только название (кнопка) и кнопки действий -->
+<div class="doccard">
+  <span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span>
+  <div class="doccard__main">
+    <button type="button" class="doccard__title" data-tooltip="ПАО «Волга-Агро» — материал с идеями" data-tooltip-truncated="only">ПАО «Волга-Агро» — материал с идеями</button>
+    <span class="doccard__meta">Детальный · версия 2 · 05.10.2026</span>
+  </div>
+  <div class="doccard__actions">
+    <button type="button" class="btn btn--outline btn--s"><i data-icon="visibility-on"></i><span class="btn__label">Просмотр</span></button>
+    <button type="button" class="btn btn--outline btn--s" aria-haspopup="menu" aria-expanded="false" data-menu="doc-menu"><i data-icon="download"></i><span class="btn__label">Скачать</span><i data-icon="chevron-down"></i></button>
+  </div>
+</div>
+
+<!-- меню форматов — ContextMenu -->
+<div id="doc-menu" class="menu menu--floating" role="menu" hidden>
+  <div class="menu__label">Скачать</div>
+  <button type="button" class="menu__item" role="menuitem"><span class="menu__item-icon"><i data-icon="download"></i></span><span class="menu__item-label">Детальный — PDF</span></button>
+</div>
+
+<!-- действие под карточкой — раскладка экрана (свой ряд экрана), не часть карточки -->
+<button type="button" class="btn btn--transparent btn--s" aria-pressed="false">
+  <span class="btn__icon btn__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>
+  <span class="btn__label">Добавить в контекст</span>
+</button></script>
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/DocCard/DocCard.page.js)
+// Своего рантайма нет: обработчики — у экрана, меню — ContextMenu, тултип — Tooltip.
+function makeCard(o) {
+  // o.title, o.meta — текст; o.actions: 2 | 1 | 0; o.glyph — иконка документа
+  // → div.doccard > span.doccard__icon + div.doccard__main(button.doccard__title + span.doccard__meta)
+  //                + div.doccard__actions (Buttons Outline S; «Скачать» — data-menu)
+}
+card.querySelector('.doccard__title').addEventListener('click', openPreview);
+DSMenu.bindAll(card);   // карточка вставлена скриптом — связать меню заново</script>
+<script type="text/plain" id="src-code-css">/* =========================================================================
+   Design System — DocCard (Карточка документа)
+   Документ как вложение: плашка с иконкой, название (открывает просмотр),
+   параметры документа и до двух действий — «Просмотр», «Скачать ▾».
+   Перенесена из нити AI Pitcher (прототип ai-bankster v02, задача MS0011):
+   карточка готового материала и документа коллеги.
+
+   Интерактив: кликабельны только название (кнопка) и кнопки действий —
+            вложенного интерактива нет, сама карточка не кнопка. Наведение
+            на карточку подсвечивает рамку и поднимает её тенью — подсказка,
+            что внутри есть действия; фона и «нажатия» у карточки нет.
+   Parts:   __icon — плашка 40 с иконкой документа (тон Primary)
+            __title — кнопка-название: одна строка, усечение + тултип
+            __meta — параметры: тип · версия · дата, одна строка
+            __actions — Buttons Outline S (до двух), меню — ContextMenu
+   Visual:  фон --bg-tile, рамка --border-light, радиус --radius-xl, поля 12;
+            наведение — рамка --border-primary + --shadow-card-hover
+   Requires: Typography.css, Palette.css, Radius.css, Spacing.css,
+             Elevation.css, Buttons.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.doccard[hidden] { display: none; }
+
+.doccard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-width: 0;
+  padding: var(--space-12);
+  background: var(--bg-tile);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  transition: border-color .15s ease, box-shadow .2s ease;
+}
+.doccard:hover,
+.doccard.is-hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ---------- плашка иконки ------------------------------------------------- */
+.doccard__icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-40);
+  height: var(--space-40);
+  border-radius: var(--radius-m);
+  color: var(--primary);
+  background: var(--primary-bg);
+}
+.doccard__icon > :is(svg,[data-icon]) { width: 22px; height: 22px; display: block; }
+.doccard__icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- текст ---------------------------------------------------------- */
+.doccard__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Название — кнопка: открывает просмотр. Сброс браузерной кнопки, одна
+   строка с многоточием; наведение — тон Primary Dark и подчёркивание,
+   фокус с клавиатуры — обводка 2px. */
+.doccard__title {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font: var(--type-body-m-strong);
+  letter-spacing: 0;
+  color: var(--text-primary);
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-2xs);
+  transition: color .15s ease;
+}
+.doccard__title:hover,
+.doccard__title.is-hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.doccard__title:focus-visible,
+.doccard__title.is-focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.doccard__meta {
+  overflow: hidden;
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- действия ------------------------------------------------------- */
+.doccard__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doccard,
+  .doccard__title { transition: none; }
+}</script>
+<script src="../../../../apps/proto-panel.js"></script>
+</body>
+</html>
