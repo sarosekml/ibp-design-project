@@ -16,10 +16,10 @@
    темы (`:where([data-theme]…)`) и правила страниц бьют по порядку, а
    переменные ролей сильнее и по специфичности (`:root[data-theme]`).
 
-   Следом тег подключает рантайм тем: данные `Themes.tokens.js`
-   (`window.DS_THEMES`) и `foundations/Themes/Themes.js` (сервисное окно,
-   `DSTheme`). На экранах те же два файла грузит `ds.js`.
-   Тег на 65 страницах ставится разовым скриптом задачи; новый компонент
+   Следом ThemeBoot подключает профили, зеркало JSON и общий компилятор,
+   затем Themes.js применяет выбор до первой отрисовки (`DSTheme`).
+   На экранах тот же ThemeBoot грузит apps/ds-config.js.
+   Новый компонент
    получает его из эталона
    `.agents/skills/docs-split/references/skeleton.md`.
    ============================================================ */
@@ -44,11 +44,17 @@
 
   var theme = fromUrl() || fromStore() || '';
   var root = document.documentElement;
-  if (theme && theme !== LEGACY) root.setAttribute('data-theme', theme);
+  if (theme === 'ibp-light') theme = 'ibp-neo-light';
+  if (theme === 'ibp-dark') theme = 'ibp-neo-dark';
+  if (theme && theme !== LEGACY && theme !== 'ibp-legacy') root.setAttribute('data-theme', theme);
   else root.removeAttribute('data-theme');
 
+  /* Эти зависимости раньше добирало окно Themes.js. Их используют и
+     сами doc-страницы, поэтому удаление окна не должно удалять их CSS. */
+  ['components/atoms/IconButton/IconButton.css','components/atoms/Buttons/Buttons.css','components/atoms/Link/Link.css'].forEach(function(file){
+    if(!document.querySelector('link[rel="stylesheet"][href$="/'+file.split('/').pop()+'"]'))document.write('<link rel="stylesheet" href="'+ROOT+file+'">');
+  });
   document.write('<link rel="stylesheet" href="' + ROOT + 'foundations/Themes/Themes.css">');
   document.write('<link rel="stylesheet" href="' + ROOT + 'foundations/Themes/Themes.pages.css">');
-  document.write('<scr' + 'ipt src="' + ROOT + 'foundations/Themes/Themes.tokens.js"><\/scr' + 'ipt>');
-  document.write('<scr' + 'ipt src="' + ROOT + 'foundations/Themes/Themes.js"><\/scr' + 'ipt>');
+  document.write('<scr' + 'ipt src="' + ROOT + 'foundations/Themes/ThemeBoot.js"><\/scr' + 'ipt>');
 })();

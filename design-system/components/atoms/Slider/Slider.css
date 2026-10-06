@@ -1,0 +1,15 @@
+/* Slider — нативный range с единым треком, клавиатурой и выводом значения. */
+:root { --slr-track-height: 4px; --slr-thumb-size: 16px; --slr-hit-height: 32px; }
+.slr { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.slr[hidden] { display: none; }
+.slr__head { display: flex; justify-content: space-between; gap: var(--space-8); font: var(--type-body-xs); color: var(--text-secondary); }
+.slr__head[hidden] { display: none; }
+.slr__value { font-variant-numeric: tabular-nums; }
+.slr__input { appearance: none; width: 100%; height: var(--slr-hit-height); margin: 0; padding: 0; background: transparent; cursor: pointer; }
+.slr__input::-webkit-slider-runnable-track { height: var(--slr-track-height); border-radius: var(--radius-pill); background: var(--slr-track, linear-gradient(to right, var(--primary) 0 var(--slr-progress, 0%), var(--border-light) var(--slr-progress, 0%) 100%)); }
+.slr__input::-moz-range-track { height: var(--slr-track-height); border-radius: var(--radius-pill); background: var(--slr-track, var(--border-light)); }
+.slr__input::-webkit-slider-thumb { appearance: none; width: var(--slr-thumb-size); height: var(--slr-thumb-size); margin-top: calc((var(--slr-track-height) - var(--slr-thumb-size))/2); background: var(--primary); border: var(--space-2) solid var(--bg-tile); border-radius: var(--radius-circle); box-shadow: var(--elevation-1); }
+.slr__input::-moz-range-thumb { width: var(--slr-thumb-size); height: var(--slr-thumb-size); box-sizing: border-box; background: var(--primary); border: var(--space-2) solid var(--bg-tile); border-radius: var(--radius-circle); }
+.slr__input:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); border-radius: var(--radius-field); }
+.slr__input:disabled { cursor: default; opacity: .4; }
+.slr:has(.slr__input:disabled) .slr__head { color: var(--text-inactive); }

@@ -37,7 +37,7 @@ const REGISTRY_CATS = ['foundations', 'atoms', 'molecules', 'organisms'];
 const SKIP_ALL = [/^index\.html$/, /^templates\//];
 // CSS документации и экранов — намеренно вне ds.css (не компоненты ДС);
 // Themes.pages.css — правила только страниц ДС, на экраны не подключается (RE0005)
-const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css', 'Themes.pages.css', 'Themes.panel.css'];
+const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css', 'Themes.pages.css', 'Themes.panel.css', 'Themes.page.css'];
 // hex, которые легальны: демо-тени и шахматная подложка прозрачности
 const HEX_OK = /(chess|checker|shadow-demo|elevation-demo)/i;
 // значения, легальные в разметке документации (не выдуманные цвета продукта):

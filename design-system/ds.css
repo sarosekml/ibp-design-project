@@ -23,6 +23,8 @@
 @import url("components/atoms/Checkbox/Checkbox.css");
 @import url("components/atoms/Radiobutton/Radiobutton.css");
 @import url("components/atoms/Switch/Switch.css");
+@import url("components/atoms/Slider/Slider.css");
+@import url("components/molecules/ColorPicker/ColorPicker.css");
 @import url("components/atoms/Chip/Chip.css");
 @import url("components/atoms/Badge/Badge.css");
 @import url("components/atoms/ProgressBar/ProgressBar.css");

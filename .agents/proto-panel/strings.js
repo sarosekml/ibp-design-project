@@ -32,9 +32,10 @@
     'rail.theme': 'Color theme',
     'rail.themeTip': 'Switch color theme',
     'theme.title': 'Color theme',
-    'theme.legacy': 'Текущая',
-    'theme.light': 'Новая светлая',
-    'theme.dark': 'Новая тёмная',
+    'theme.legacy': 'IBP Legacy',
+    'theme.light': 'Светлая',
+    'theme.dark': 'Тёмная',
+    'theme.darkLabel': 'Тёмная тема',
     'fab.labelCount': 'Prototype panel, open comments on this page: {n}',
 
     /* кнопки */

@@ -9,12 +9,12 @@
     {
       cat: 'Основы',
       items: [
+        { label: 'Темы', href: 'foundations/Themes/Themes.html' },
         { label: 'Иконки',      href: 'foundations/Icons/Icons.html' },
         { label: 'Иллюстрации', href: 'foundations/Illustrations/Illustrations.html' },
         { label: 'Каркас экрана', href: 'foundations/Layout/Layout.html' },
         { label: 'Сетка и отступы', href: 'foundations/Spacing/Spacing.html' },
         { label: 'Скругления',  href: 'foundations/Radius/Radius.html' },
-        { label: 'Темы',        href: 'foundations/Themes/Themes.html' },
         { label: 'Тени',        href: 'foundations/Elevation/Elevation.html' },
         { label: 'Типографика', href: 'foundations/Typography/Typography.html' },
         { label: 'Цвета',       href: 'foundations/Colors/Colors.html' }
@@ -40,6 +40,7 @@
             { label: 'ProgressBar',  href: 'components/atoms/ProgressBar/ProgressBar.html' },
             { label: 'Radiobutton',  href: 'components/atoms/Radiobutton/Radiobutton.html' },
             { label: 'Skeleton',     href: 'components/atoms/Skeleton/Skeleton.html' },
+            { label: 'Slider', href: 'components/atoms/Slider/Slider.html' },
             { label: 'Spinner',      href: 'components/atoms/Spinner/Spinner.html' },
             { label: 'StepMarker',   href: 'components/atoms/StepMarker/StepMarker.html' },
             { label: 'Switch',       href: 'components/atoms/Switch/Switch.html' }
@@ -51,6 +52,7 @@
             { label: 'Alert',            href: 'components/molecules/Alert/Alert.html' },
             { label: 'Breadcrumbs',       href: 'components/molecules/Breadcrumbs/Breadcrumbs.html' },
             { label: 'ButtonGroup',      href: 'components/molecules/ButtonGroup/ButtonGroup.html' },
+            { label: 'ColorPicker', href: 'components/molecules/ColorPicker/ColorPicker.html' },
             { label: 'Context Menu',     href: 'components/molecules/ContextMenu/ContextMenu.html' },
             { label: 'DatePicker',       href: 'components/molecules/DatePicker/DatePicker.html' },
             { label: 'DocCard',          href: 'components/molecules/DocCard/DocCard.html' },

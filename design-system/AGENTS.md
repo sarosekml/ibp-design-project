@@ -167,9 +167,9 @@ JavaScript вместо рантайма ДС не пишется.** Табли�
 
 **Основы:** Colors · Typography · Spacing (сетка 12 колонок) · Radius · Elevation · Icons · Illustrations · Layout (каркас экрана) · Themes (темы)
 
-**Атомы:** Avatar · Badge · Buttons · Checkbox · Chip · Divider · IconButton · Keyboard · LabelHelper · Link · Note · ProgressBar · Radiobutton · Skeleton · Spinner · StepMarker · Switch
+**Атомы:** Avatar · Badge · Buttons · Checkbox · Chip · Divider · IconButton · Keyboard · LabelHelper · Link · Note · ProgressBar · Radiobutton · Skeleton · Slider · Spinner · StepMarker · Switch
 
-**Молекулы:** Alert · Breadcrumbs · ButtonGroup · ContextMenu · DatePicker · DocCard · DropdownList · EmptyState · InputAmountRange · InputAutocomplete · InputDate · InputDateRange · InputText · NavTile · Pagination · ReadOnlyField · SegmentControl · Splitter · StepForm · SubTab · Tab · Toast · Tooltip
+**Молекулы:** Alert · Breadcrumbs · ButtonGroup · ColorPicker · ContextMenu · DatePicker · DocCard · DropdownList · EmptyState · InputAmountRange · InputAutocomplete · InputDate · InputDateRange · InputText · NavTile · Pagination · ReadOnlyField · SegmentControl · Splitter · StepForm · SubTab · Tab · Toast · Tooltip
 
 **Организмы:** AllocationBar · Chart · Drawer · Entity · Kanban · Modal · NavPanel · PageHeader · Popover · ProductRow · RiskMetric · SnackBar · Table · TableCell · TableFilter · Tile
 

@@ -1493,6 +1493,7 @@ css: `components/molecules/SubTab/SubTab.css` · js: `components/molecules/Tab/T
 Полная анатомия: components/molecules/SubTab/SubTab.md.
 
 ## Switch
+Новый вариант: `.sw--dual`, подписи `.sw__side--off` / `.sw__side--on`, gap 8px. Нативный input непосредственно перед control; доступная метка описывает положение on.
 css: `components/atoms/Switch/Switch.css` · deps: [label-helper, spinner]
 **Оси:** состояние (off/on) · интерактивное состояние (default/hover/focus/pressed/disabled/loading) · состав (label/helper) · группа+обязательность (независимы).
 **Инварианты:** мгновенное действие без подтверждения; Loading сохраняет текущий цвет on/off.
@@ -1986,3 +1987,38 @@ css: `foundations/Themes/Themes.css` · js: `foundations/Themes/Themes.js` · de
 **Диагностика:** «тема не действует» → нет атрибута на `<html>` или контейнере · «legacy изменилась» → правило вне `[data-theme]` · «состояние компонента пропало» → точечное правило добавлено без `:where` · «в экране/компоненте `--color-*`» → правило B16 · «на странице ДС нет тега темы» → B17/ДС20.
 
 Полная анатомия: foundations/Themes/Themes.md.
+
+## Slider
+css: `components/atoms/Slider/Slider.css` · deps: [label-helper]
+
+Непрерывное числовое значение: трек, бегунок, метка и текущая величина. Нативный range обеспечивает клавиатуру и поддержку вспомогательных технологий.
+
+**Инварианты:** Задавать min, max, step и доступную метку нативному range. Не заменять range перетаскиваемым div: клавиатура принадлежит нативному контролу.
+
+```html
+<div class="slr" data-unit="%"><div class="slr__head"><label for="demo-slider">Насыщенность</label><output class="slr__value" for="demo-slider"></output></div><input type="range" class="slr__input" id="demo-slider" min="0" max="100" step="1" value="50"></div>
+```
+
+```js
+DSSlider.bindAll();
+DSSlider.bind(document.querySelector('.slr')).set(75);
+```
+
+Полная анатомия: components/atoms/Slider/Slider.md.
+
+## ColorPicker
+css: `components/molecules/ColorPicker/ColorPicker.css` · deps: [slider, input-text, button, popover]
+
+Выбор одного цвета в sRGB: поле насыщенности и яркости, тон, Hex, пипетка и копирование. Открывается в Popover или размещается в форме.
+
+**Инварианты:** Подключать Slider, InputText/Inputs, Popover и DSCopy перед ColorPicker. Внешний обработчик сохраняет цвет; пикер не пишет файлы и не хранит черновики.
+
+```html
+<button id="color" type="button">Выбрать цвет</button>
+```
+
+```js
+DSColorPicker.bind(document.getElementById('color'), { value: '#7F56D9', onChange: function(hex) { console.log(hex); } });
+```
+
+Полная анатомия: components/molecules/ColorPicker/ColorPicker.md.

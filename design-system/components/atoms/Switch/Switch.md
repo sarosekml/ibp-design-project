@@ -1,8 +1,8 @@
 ---
 component: Switch
 title: "Switch"
-version: "1.008"
-updated: "05.09.2026"
+version: "1.009"
+updated: "07.10.2026"
 page: components/atoms/Switch/Switch.html
 css: components/atoms/Switch/Switch.css
 deps: [label-helper, spinner]
@@ -144,3 +144,10 @@ interface SwitchGroupProps {
 | .sw-group | div | Контейнер списка свитчей (колонка) |
 | .sw-group__title | p | Заголовок группы (H6 Strong) |
 | role="switch" / aria-checked | input | Доступность: сообщает ассистивным технологиям текущее состояние как switch, не checkbox |
+
+## Две подписи (1.009)
+`.sw--dual` · `.sw__side--off` / `.sw__side--on`; gap 8px. Input непосредственно перед control сохраняет focus-visible. Обязательна доступная метка input, описывающая включённое положение. Старый вариант без класса не меняется.
+
+```html
+<label class="sw sw--dual"><input type="checkbox" class="sw__input" aria-label="Тёмная тема"><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">Светлая</span><span class="sw__side sw__side--on">Тёмная</span></label>
+```

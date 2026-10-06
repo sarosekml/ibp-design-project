@@ -66,7 +66,12 @@
     'components/molecules/Splitter/Splitter.js',
     'foundations/Layout/Layout.js',
     'foundations/Illustrations/Illustrations.js',
+    'components/atoms/Slider/Slider.js',
+    'components/molecules/ColorPicker/ColorPicker.js',
+    'foundations/Themes/Ramp.tokens.js',
     'foundations/Themes/Themes.tokens.js',
+    'foundations/Themes/tokens/tokens.data.js',
+    'foundations/Themes/ThemeEngine.js',
     'foundations/Themes/Themes.js',
     'utils/ds-include.js'
   ];

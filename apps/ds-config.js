@@ -16,17 +16,20 @@ var DS_PATH = "../design-system/";
   try {
     var tm = /[?&]theme=([^&#]*)/.exec(window.location.search || '');
     var th = tm ? decodeURIComponent(tm[1]) : window.localStorage.getItem('ds.theme');
-    if (th && th !== 'legacy') document.documentElement.setAttribute('data-theme', th);
+    if (th === 'ibp-light') th = 'ibp-neo-light';
+    if (th === 'ibp-dark') th = 'ibp-neo-dark';
+    if (th && th !== 'legacy' && th !== 'ibp-legacy') document.documentElement.setAttribute('data-theme', th);
   } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }
   /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный
      вариант; ставится после темы и обновляется на её смену (RE0011). */
   var applyBg = function () {
     var thNow = document.documentElement.getAttribute('data-theme');
-    var dark = thNow === 'ibp-dark' || thNow === 'service';
+    var dark = /-dark$/.test(thNow || '') || thNow === 'service';
     document.documentElement.style.setProperty('--boot-bg-illustration', 'url("' + DS + 'assets/illustrations/background-illustration' + (dark ? '-dark' : '') + '.svg")');
   };
   applyBg();
   if (document.addEventListener) document.addEventListener('ds:themechange', applyBg);
   document.write('<link rel="icon" type="image/svg+xml" href="' + DS + 'assets/logo.svg">');
   document.write('<link rel="stylesheet" href="' + DS + 'ds.css">');
+  document.write('<scr' + 'ipt src="' + DS + 'foundations/Themes/ThemeBoot.js"><\/scr' + 'ipt>');
 })();

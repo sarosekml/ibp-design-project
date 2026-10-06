@@ -106,3 +106,9 @@ checked: "26.08.2026 — селекторы автоинициализации �
 
 Поэтому после сборки пройди по своему экрану списком: каждый интерактивный
 компонент → его строка в таблицах выше → атрибут на месте?
+
+### Slider
+`components/atoms/Slider/Slider.js` · DSSlider.bindAll();
+
+### ColorPicker
+`components/molecules/ColorPicker/ColorPicker.js` · DSColorPicker.bind(document.getElementById('color'), { value: '#7F56D9', onChange: function(hex) { console.log(hex); } });

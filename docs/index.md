@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 324.
+Документов: 328.
 
 ## Корень (4)
 
@@ -65,7 +65,7 @@
 | [README.md](../README.md) | — |
 | [index.screen.md](../index.screen.md) | Хаб проектов |
 
-## Дизайн-система (77)
+## Дизайн-система (79)
 
 | Документ | Аннотация |
 |---|---|
@@ -92,12 +92,14 @@
 | [design-system/components/atoms/ProgressBar/ProgressBar.md](../design-system/components/atoms/ProgressBar/ProgressBar.md) | ProgressBar |
 | [design-system/components/atoms/Radiobutton/Radiobutton.md](../design-system/components/atoms/Radiobutton/Radiobutton.md) | Radiobutton |
 | [design-system/components/atoms/Skeleton/Skeleton.md](../design-system/components/atoms/Skeleton/Skeleton.md) | Skeleton |
+| [design-system/components/atoms/Slider/Slider.md](../design-system/components/atoms/Slider/Slider.md) | Ползунок |
 | [design-system/components/atoms/Spinner/Spinner.md](../design-system/components/atoms/Spinner/Spinner.md) | Spinner |
 | [design-system/components/atoms/StepMarker/StepMarker.md](../design-system/components/atoms/StepMarker/StepMarker.md) | Номер шага |
 | [design-system/components/atoms/Switch/Switch.md](../design-system/components/atoms/Switch/Switch.md) | Switch |
 | [design-system/components/molecules/Alert/Alert.md](../design-system/components/molecules/Alert/Alert.md) | Alert |
 | [design-system/components/molecules/Breadcrumbs/Breadcrumbs.md](../design-system/components/molecules/Breadcrumbs/Breadcrumbs.md) | Breadcrumbs |
 | [design-system/components/molecules/ButtonGroup/ButtonGroup.md](../design-system/components/molecules/ButtonGroup/ButtonGroup.md) | ButtonGroup |
+| [design-system/components/molecules/ColorPicker/ColorPicker.md](../design-system/components/molecules/ColorPicker/ColorPicker.md) | Выбор цвета |
 | [design-system/components/molecules/ContextMenu/ContextMenu.md](../design-system/components/molecules/ContextMenu/ContextMenu.md) | Context Menu |
 | [design-system/components/molecules/DatePicker/DatePicker.md](../design-system/components/molecules/DatePicker/DatePicker.md) | DatePicker |
 | [design-system/components/molecules/DocCard/DocCard.md](../design-system/components/molecules/DocCard/DocCard.md) | Карточка документа |
@@ -550,7 +552,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (64)
+## Задачи и заметки (66)
 
 ### Архив/черновики
 
@@ -603,6 +605,7 @@
 | [docs/tasks/MS0011-ds-doc-card.md](tasks/MS0011-ds-doc-card.md) | Карточка документа в нити: молекула DocCard вместо локального .doc (план — композиция Tile Card + Entity M) |
 | [docs/tasks/MS0012-ds-quote.md](tasks/MS0012-ds-quote.md) | Quote: новая молекула ДС — цитата фрагмента с источником (на будущее) |
 | [docs/tasks/MS0013-ds-theme-generator.md](tasks/MS0013-ds-theme-generator.md) | Темы ДС из файлов (ibp-legacy, ibp-neo, custom), генератор палитры из brand 500 и neutral 500, страница «Темы» — выбор темы и конструктор по образцу coolors |
+| [docs/tasks/MS0013-ds-theme-generator.review.md](tasks/MS0013-ds-theme-generator.review.md) | MS0013 — приёмка и сохранность |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
@@ -619,6 +622,7 @@
 | Документ | Аннотация |
 |---|---|
 | [docs/tasks/MS0006-docs-index.handoff.md](tasks/MS0006-docs-index.handoff.md) | DocsIndex — handoff |
+| [docs/tasks/MS0013-ds-theme-generator.handoff.md](tasks/MS0013-ds-theme-generator.handoff.md) | MS0013 — handoff |
 | [docs/tasks/RE0001-product-row-tree.handoff.md](tasks/RE0001-product-row-tree.handoff.md) | ProductRowTree — handoff |
 | [docs/tasks/RE0002-ds-component-folders.handoff.md](tasks/RE0002-ds-component-folders.handoff.md) | RE0002 · ДС: компонент в своей папке — handoff |
 | [docs/tasks/RE0003-fin-instruments-tile.handoff.md](tasks/RE0003-fin-instruments-tile.handoff.md) | RE0003 FinInstrumentsTile — handoff |

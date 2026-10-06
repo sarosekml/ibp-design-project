@@ -122,7 +122,9 @@
 .pp-rail-control { display: flex; padding: var(--space-8); }
 
 /* панель цвета темы: заголовок и список тем */
-.pp-theme__list { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-theme__list { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-theme__row { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+.pp-theme__row .pp-theme__item { flex: 1; }
 .pp-theme__item { justify-content: flex-start; }
 .pp-theme__item.is-active { background: var(--primary-bg); }
 

@@ -1,8 +1,8 @@
 ---
 component: Colors
 title: "Цвета"
-version: "1.004"
-updated: "30.09.2026"
+version: "1.005"
+updated: "07.10.2026"
 page: foundations/Colors/Colors.html
 css: foundations/Colors/Colors.css, foundations/Colors/Palette.css
 status: curated

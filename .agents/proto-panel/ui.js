@@ -574,8 +574,8 @@
 
   /** Темы для панели: из рантайма ДС, служебная (service) не показывается. */
   function themeList() {
-    try { if (window.DSTheme && window.DSTheme.list) return window.DSTheme.list().filter(function (x) { return x.id !== 'service'; }); } catch (e) { /* ДС без тем */ }
-    return [{ id: 'legacy', label: t('theme.legacy') }, { id: 'ibp-light', label: t('theme.light') }, { id: 'ibp-dark', label: t('theme.dark') }];
+    try { if (window.DSTheme && window.DSTheme.files) return window.DSTheme.files(); } catch (e) { /* ДС без тем */ }
+    return [{ name: 'ibp-legacy', label: 'IBP Legacy', modes: ['light'] }];
   }
   function renderThemePane() {
     var box = document.getElementById('pp-theme');
@@ -584,16 +584,22 @@
     try { cur = window.DSTheme && window.DSTheme.get ? window.DSTheme.get() : 'legacy'; } catch (e) { /* нет рантайма тем */ }
     box.innerHTML = '<p class="ds-body-s pp-muted">' + esc(t('theme.title')) + '</p>'
       + '<div class="pp-theme__list">' + themeList().map(function (th) {
-        var on = th.id === cur;
-        return '<button type="button" class="btn btn--transparent btn--s btn--fullwidth pp-theme__item' + (on ? ' is-active' : '') + '"'
-          + ' data-pp-theme="' + esc(th.id) + '" role="menuitemradio" aria-checked="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>';
+        var on = th.name === 'ibp-legacy' ? cur === 'legacy' : cur.indexOf(th.name + '-') === 0;
+        var dark = on && cur.slice(-5) === '-dark';
+        return '<div class="pp-theme__row"><button type="button" class="btn btn--transparent btn--s pp-theme__item' + (on ? ' is-active' : '') + '"'
+          + ' data-pp-theme="' + esc(th.name) + '" aria-pressed="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>'
+          + (th.modes.length < 2 ? '' : '<label class="sw sw--dual"><input class="sw__input" type="checkbox" data-pp-mode="' + esc(th.name) + '" aria-label="' + esc(t('theme.darkLabel')) + ' ' + esc(th.label) + '"' + (dark ? ' checked' : '') + '><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">' + esc(t('theme.light')) + '</span><span class="sw__side sw__side--on">' + esc(t('theme.dark')) + '</span></label>') + '</div>';
       }).join('') + '</div>';
     wire(box);
     box.onclick = function (e) {
       var b = e.target.closest && e.target.closest('[data-pp-theme]');
       if (!b) return;
-      try { if (window.DSTheme && window.DSTheme.set) window.DSTheme.set(b.getAttribute('data-pp-theme')); } catch (err) { /* нет рантайма тем */ }
+      try { if (window.DSTheme && window.DSTheme.set) { var name=b.getAttribute('data-pp-theme'),mode=box.querySelector('[data-pp-mode="'+name+'"]'); window.DSTheme.set(name,mode&&mode.checked?'dark':'light'); } } catch (err) { /* нет рантайма тем */ }
       renderThemePane();
+    };
+    box.onchange = function(e) {
+      var name = e.target.getAttribute('data-pp-mode');
+      if(name && window.DSTheme) { window.DSTheme.set(name,e.target.checked?'dark':'light'); renderThemePane(); }
     };
   }
 
@@ -888,6 +894,10 @@
     wireGrip();
     wireSettings();
     wireKeys();
+    /* Новая тема и внешний выбор обновляют открытую вкладку без перезагрузки. */
+    ['ds:themelistchange', 'ds:themechange'].forEach(function (event) {
+      document.addEventListener(event, function () { if (rail === 'theme') renderThemePane(); });
+    });
 
     /* команды шапки, Alert и меню — с задержкой: меню ДС сначала закрывается и возвращает фокус */
     document.addEventListener('click', function (e) {

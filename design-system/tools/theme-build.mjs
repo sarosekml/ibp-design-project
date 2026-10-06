@@ -47,7 +47,7 @@
      node tools/theme-build.mjs --selftest  — откат на встроенной фикстуре
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
@@ -112,6 +112,31 @@ function loadData(rel) {
   const ctx = { window: {} };
   vm.runInNewContext(readFileSync(abs, 'utf8'), ctx, { timeout: 2000, filename: rel });
   return ctx.window;
+}
+
+/* JSON — источник, зеркало — только транспорт по file://. Один компилятор
+   используется здесь, загрузчиком и конструктором. */
+export function loadSources() {
+  const dir = path.join(ROOT, 'foundations/Themes/tokens');
+  const ctx = { window: {} };
+  for (const name of ['Ramp.tokens.js', 'Themes.tokens.js', 'ThemeEngine.js']) {
+    vm.runInNewContext(readFileSync(path.join(ROOT, 'foundations/Themes', name), 'utf8'), ctx);
+  }
+  const raw = ctx.window.DS_THEMES;
+  const data = { version: 1, bases: {}, legacy: raw.legacySnapshot, themes: [] };
+  for (const name of readdirSync(dir).filter(n => n.endsWith('.json')).sort()) {
+    const file = JSON.parse(readFileSync(path.join(dir, name), 'utf8'));
+    if (name === 'base-light.json' || name === 'base-dark.json') data.bases[name.slice(5, -5)] = file;
+    else {
+      if (name !== file.name + '.json') throw new Error('Имя темы расходится с файлом: ' + name);
+      const errors = ctx.window.DS_THEME_ENGINE.validate(file);
+      if (errors.length) throw new Error(name + ': ' + errors.join('; '));
+      data.themes.push(file);
+    }
+  }
+  const order = name => { const i = ['ibp-legacy','ibp-neo','custom'].indexOf(name); return i < 0 ? 99 : i; };
+  data.themes.sort((a,b) => order(a.name) - order(b.name) || a.name.localeCompare(b.name));
+  return { data, raw, engine: ctx.window.DS_THEME_ENGINE, ramp: ctx.window.DS_RAMP, tokens: ctx.window.DS_THEME_ENGINE.sources(data) };
 }
 
 /* ---------- разбор :root { --x: value } ---------- */
@@ -407,6 +432,7 @@ function checkMonotone(tokens, ramp, theme) {
   const bad = [];
   for (const tone of tokens.ramps.tones) {
     if (!seed.ramps[tone]) continue;
+    if (seed.fixedBase && tone !== 'accent' && tone !== 'neutral') continue;
     const r = ramp.tone(seed.ramps[tone], seed.profile);
     let prev = null;
     for (const s of tokens.ramps.steps) {
@@ -570,6 +596,40 @@ function selftest() {
   const rulesBad = { ...tokens, rules: [{ file: AT.palette, selector: '.нет-такого', prop: 'color', from: '#000', value: 'var(--color-bg-surface)' }] };
   t('пропавший селектор ловится', checkRules(rulesBad, ROOT).length > 0);
 
+  /* MS0013: проверяем результат, а не повторяем реализацию генератора. */
+  const {data, engine, raw} = loadSources();
+  const neo = data.themes.find(f => f.name === 'ibp-neo');
+  const neoLight = engine.compile(neo, 'light', data);
+  const delta = Math.max(...['accent','neutral'].flatMap(tone => ramp.STEPS.map((step,i) => ramp.deltaE(neoLight.ramps[tone][step], ramp.CORE[tone][i]))));
+  t('Colors / Core: max ΔE ≤ 0.010', delta <= 0.010, String(delta));
+  t('Brand/Neutral 500 — ровно вход', neoLight.ramps.accent['500'] === neo.light.brand && neoLight.ramps.neutral['500'] === neo.light.neutral);
+  for (const color of ['#2563EB','#E5484D','#FFD60A','#18A59E','#111112','#FFFFFF']) {
+    const file = JSON.parse(JSON.stringify(neo));
+    file.light.brand = file.dark.brand = color;
+    for (const mode of ['light','dark']) {
+      const m = engine.compile(file, mode, data);
+      const bad = m.contrast.filter(p => p.ratio !== null && p.ratio < p.min && !((p.exempt || []).includes('ibp-light') && (/--color-(danger|warning|success|info)-/.test(p.fg) || p.fg === '--color-fg-on-fill' && p.bg !== '--color-accent-fill')));
+      t('контраст генерируемого '+color+' / '+mode, bad.length === 0, bad.map(p => p.fg).join(','));
+    }
+  }
+  const custom = engine.compile(data.themes.find(f => f.name === 'custom'), 'dark', data);
+  t('custom-dark: все 209 ступеней service сохранены', raw.ramps.tones.every(tone => ramp.STEPS.every(step => custom.ramps[tone][step] === ramp.tone(raw.seeds.service.ramps[tone],'dark')[step])));
+  t('custom-dark: все 160 ролей service сохранены', Object.keys(raw.roles).every(k => custom.roles[k] === (raw.themeValues.service[k] || raw.values[k])));
+  let missing = false; const broken = JSON.parse(JSON.stringify(data)); delete broken.bases.light.ramps.grey['50'];
+  try { engine.compile(neo, 'light', broken); } catch (e) { missing = true; }
+  t('мутация: пустая ступень базы отвергается', missing);
+  let missingTone=false;delete broken.bases.light.ramps.grey;
+  try { engine.compile(neo, 'light', broken); } catch (e) { missingTone=true; }
+  t('мутация: пропавший тон базы отвергается', missingTone);
+  const injection = JSON.parse(JSON.stringify(neo));injection.light.overrides['--color-link']='#FFFFFF; color:red';
+  t('мутация: CSS-инъекция в JSON отвергается', engine.validate(injection).length > 0);
+  for (const method of ramp.METHODS) {
+    const seed = ramp.generate(method, () => .5);
+    t('метод '+method+' выдаёт два цвета sRGB', /^#[\da-f]{6}$/i.test(seed.brand) && /^#[\da-f]{6}$/i.test(seed.neutral));
+  }
+  const clipped = ramp.hexToOklch(ramp.fromOklch(.6,.6,30));
+  t('gamut: хрома уменьшена, тон сохранён', clipped.c < .6 && Math.abs(clipped.h-30) < 1, JSON.stringify(clipped));
+
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ')' : 'OK'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
@@ -580,15 +640,34 @@ function main() {
   const args = process.argv.slice(2);
   if (args.includes('--selftest')) return selftest();
   const checkOnly = args.includes('--check');
-  const tokens = loadData(AT.tokens).DS_THEMES;
-  const ramp = loadData(AT.ramp).DS_RAMP;
+  const {tokens, ramp, data, raw, engine} = loadSources();
   const colorsCss = readFileSync(path.join(ROOT, AT.colors), 'utf8');
   const paletteCss = readFileSync(path.join(ROOT, AT.palette), 'utf8');
 
   const { defects, infos, generated } = check(tokens, ramp, colorsCss, paletteCss, checkOnly);
+  const vars = Object.fromEntries([...rootVars(colorsCss), ...rootVars(paletteCss)]);
+  for (const [tone, steps] of Object.entries(data.bases.light.ramps)) {
+    for (const step of ramp.STEPS) {
+      if (steps[step] !== vars['--' + (tone === 'grey' ? 'mgrey' : tone) + '-' + (step === '950' ? '900' : step)]) defects.push('base-light: изменён ' + tone + '-' + step);
+    }
+  }
+  const legacy = data.themes.find(t => t.name === 'ibp-legacy');
+  if (!legacy || !legacy.locked || legacy.dark) defects.push('ibp-legacy: нужен закрытый светлый профиль');
+  if (legacy) {
+    const model = engine.compile(legacy, 'light', data);
+    for (const name of Object.keys(raw.map)) {
+      const actual = engine.resolve(model.roles[raw.map[name]], {...vars, ...model.roles});
+      const expected = engine.resolve(vars[name], vars);
+      if (actual !== expected) defects.push('legacy: изменено ' + name + ' (' + actual + ' ≠ ' + expected + ')');
+    }
+  }
+  const mirrorPath = path.join(ROOT, 'foundations/Themes/tokens/tokens.data.js');
+  const mirror = engine.mirror(data);
+  if (checkOnly && (!existsSync(mirrorPath) || readFileSync(mirrorPath, 'utf8') !== mirror)) defects.push('tokens.data.js разошёлся с JSON — пересобрать');
   if (!checkOnly && generated) {
     writeFileSync(path.join(ROOT, AT.css), generated.css, 'utf8');
     writeFileSync(path.join(ROOT, AT.pages), generated.pages, 'utf8');
+    writeFileSync(mirrorPath, mirror, 'utf8');
   }
   const notBuilt = tokens.themes.filter((t) => !(tokens.seeds && tokens.seeds[t]));
   const head = checkOnly ? 'theme-build --check' : 'theme-build';

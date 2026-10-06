@@ -142,7 +142,7 @@
             <div class="docs-main">
 
 <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.008</b></span><span>Обновлено: <b>30.08.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.009</b></span><span>Обновлено: <b>30.08.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Switch</h1>
     <p class="lead">Свитч мгновенно переключает состояние — например, включает или отключает определённую опцию. Действие применяется сразу, без подтверждения. Два состояния — Off / On — и интерактивные состояния Default / Hover / Focus / Pressed / Disabled / Loading.</p>
@@ -205,7 +205,7 @@
       <div class="compo" id="compo"></div>
     </div>
   </div>
-  </section>
+  <div class="subsec"><h3>Две подписи</h3><p class="desc">sw--dual: подписи по обе стороны, активная — основным цветом. Input остаётся перед control, левая подпись перемещается через order.</p><label class="sw sw--dual"><input type="checkbox" class="sw__input" aria-label="Тёмная тема"><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">Светлая</span><span class="sw__side sw__side--on">Тёмная</span></label></div></section>
 
   <!-- SIZES -->
   <section class="section" data-screen-label="Sizes">
@@ -555,7 +555,7 @@ function wireToggle(root, onChange){
 
 /* ---------- PLAYGROUND ---------- */
 (function(){
-  const state = { sel:'on', istate:'default', label:true, helper:false, group:false, required:false };
+  const state = { sel:'on', istate:'default', label:true, helper:false, group:false, required:false, dual:false };
   const controls = document.getElementById('pg-controls');
   const preview  = document.getElementById('pg-preview');
   const codeEl   = document.getElementById('pg-code');
@@ -587,6 +587,7 @@ function wireToggle(root, onChange){
     [['default','Default'],['hover','Hover'],['focus','Focus'],['pressed','Pressed'],['disabled','Disabled'],['loading','Loading']],
     ()=>state.istate, v=>state.istate=v));
 
+  controls.appendChild(ctlToggle('Две подписи','dual'));
   controls.appendChild(ctlToggle('Название','label'));
   controls.appendChild(ctlToggle('Хелпер','helper'));
   controls.appendChild(ctlToggle('Группа','group'));
@@ -603,6 +604,13 @@ function wireToggle(root, onChange){
     // одиночный свитч: звёздочка на названии, если обязательный и НЕ в группе
     if (state.required && !state.group) o.required = true;
     const swEl = makeSw(o);
+    if (state.dual) {
+      swEl.classList.add('sw--dual');
+      const content=swEl.querySelector('.sw__content');if(content)content.remove();
+      const before=document.createElement('span');before.className='sw__side sw__side--off';before.textContent='Светлая';
+      const after=document.createElement('span');after.className='sw__side sw__side--on';after.textContent='Тёмная';
+      swEl.append(before,after);swEl.querySelector('.sw__input').setAttribute('aria-label','Тёмная тема');
+    }
     preview.innerHTML='';
     if (state.group){
       const group=document.createElement('div'); group.className='sw-group';
@@ -1237,7 +1245,16 @@ function makeSw(o) {
   margin: 0 0 4px;
 }
 .sw-group__items { display: flex; flex-direction: column; }
-.sw-group .sw { padding: 6px 0; }</script>
+.sw-group .sw { padding: 6px 0; }
+
+/* Два названия положений. Input остаётся непосредственно перед control:
+   прежнее кольцо focus-visible действует без изменения старого варианта. */
+.sw--dual { align-items: center; gap: var(--space-8); }
+.sw--dual .sw__side { font: var(--type-body-s); color: var(--text-secondary); }
+.sw--dual .sw__side--off { order: -1; color: var(--text-primary); }
+.sw--dual:has(.sw__input:checked) .sw__side--off { color: var(--text-secondary); }
+.sw--dual:has(.sw__input:checked) .sw__side--on { color: var(--text-primary); }
+.sw--dual:has(.sw__input:disabled) .sw__side { color: var(--text-inactive); }</script>
 <script src="../../../../apps/proto-panel.js"></script>
 </body>
 </html>
