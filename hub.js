@@ -105,5 +105,14 @@ window.IBPHub = [
     href: 'apps/pretrade/drafts/pipelineScanner-v07/pages/index.html',
     root: 'apps/pretrade/drafts/pipelineScanner-v07',
     icon: 'ai-stars'
+  },
+  {
+    id: 'tranche-page',
+    group: 'concepts',
+    title: 'Post — Страница транша',
+    desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи',
+    href: 'apps/postrade/drafts/tranche-page/pages/Tranche.html',
+    root: 'apps/postrade/drafts/tranche-page',
+    icon: 'folder'
   }
 ];

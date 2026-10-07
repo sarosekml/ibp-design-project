@@ -1,8 +1,8 @@
 ---
 component: Table
 title: "Table"
-version: "1.021"
-updated: "04.10.2026"
+version: "1.022"
+updated: "07.10.2026"
 page: components/organisms/Table/Table.html
 runtime: components/organisms/Table/Table.js, components/organisms/Table/TableResize.js, components/organisms/Table/TableReorder.js, components/organisms/Table/TablePin.js, components/organisms/Table/TableSettings.js (+ components/molecules/Tooltip/Tooltip.js — тултип усечённой ячейки/шапки)
 css: components/organisms/Table/Table.css

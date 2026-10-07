@@ -23,7 +23,7 @@
   display: inline-flex;
   flex-direction: column;
   min-width: 0;
-  width: 280px; /* дефолт для доков; в лайауте задаётся контейнером */
+  width: 100%; /* ширину задаёт контейнер; своего ограничения у поля нет */
 }
 /* Размер M — модификатор, а не молчаливый дефолт базового класса.
    Было наоборот: `--inp-*` жили в `.inp`, селектора `.inp--m` не существовало,
@@ -46,6 +46,12 @@
 .inp--s .inp__lead { width: 18px; height: 18px; }
 .inp--s .inp__act  { width: 18px; height: 18px; }
 .inp--fullwidth { width: 100%; }
+/* Выравнивание текста в поле: всегда по левому краю. Поле не наследует выравнивание
+   контейнера (.tc--numbers, .tc--right, шапка th--right) — вправо только явным
+   модификатором .inp--right. */
+.inp__control { text-align: left; }
+.inp--right .inp__control { text-align: right; }
+
 
 /* метка и хелпер — компоненты подкачки LabelHelper */
 .inp > .ds-label { margin-bottom: 4px; }
