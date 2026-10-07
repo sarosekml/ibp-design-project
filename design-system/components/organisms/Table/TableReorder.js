@@ -13,6 +13,12 @@
    ([data-grab]/[data-drag-idx] — демо страниц) скрипт не трогает.
    ============================================================ */
 (function () {
+  /* трек колонки по факту: px; хвостовой разделитель — гибкий (линии строк до правого края) */
+  function trackOf(row, cell) {
+    if (cell === row.lastElementChild && /(^|\s)(tc|th)--separator(\s|$)/.test(cell.className)) return 'minmax(8px,1fr)';
+    return Math.round(cell.getBoundingClientRect().width) + 'px';
+  }
+
   'use strict';
   var THRESHOLD = 4; /* px горизонтального хода до начала переноса */
 
@@ -91,13 +97,13 @@
       /* фиксируем текущие ширины в px, чтобы перенос не переставил fr-треки */
       rows.forEach(function (row) {
         row.style.gridTemplateColumns = Array.prototype.map.call(row.children, function (c) {
-          return Math.round(c.getBoundingClientRect().width) + 'px';
+          return trackOf(row, c);
         }).join(' ');
       });
       rows.forEach(function (row) {
         var kids = Array.prototype.slice.call(row.children);
         var tracks = Array.prototype.map.call(kids, function (c) {
-          return Math.round(c.getBoundingClientRect().width) + 'px';
+          return trackOf(row, c);
         });
         var cells = movable.map(function (i) { return kids[i]; });
         var widths = movable.map(function (i) { return tracks[i]; });

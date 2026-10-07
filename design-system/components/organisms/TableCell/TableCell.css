@@ -59,6 +59,17 @@
 .tbl__row--focus > .tc--pinned,
 .tc--pinned.tc--focus         { background: var(--bg-table-pinned-focus); }
 
+/* --- строка акцентного цвета (.tbl__row--accent) ---------------------------
+   Красит ВСЕ ячейки строки, включая разделители .tc--separator: их собственная
+   заливка (--bg-table-default) перебила бы .tc--accent и оставила края строки
+   белыми. Состояния — на токенах акцента: hover и focus-within. Место — после
+   общих правил состояний строки: равная специфичность, побеждает порядок. */
+.tbl__row--accent > .tc               { background: var(--bg-table-accent); }
+.tbl__row--accent:hover > .tc,
+.tbl__row--accent.tbl__row--hover > .tc { background: var(--bg-table-accent-hover); }
+.tbl__row--accent:focus-within > .tc,
+.tbl__row--accent.tbl__row--focus > .tc { background: var(--bg-table-accent-focus); }
+
 /* фокус клавиатурой на самой ячейке — обводка-инсет */
 .tc:focus-visible {
   outline: none;
@@ -500,8 +511,11 @@
    самый длинный текст, усечение (.tc__text--truncate) не срабатывает вовсе,
    а строка вылезает за контейнер (инцидент 04.09.2026 — правило стояло на всех
    .tbl__row без разбора, усечение в fr-колонках не работало нигде). */
+/* max(100%, max-content): строка не уже контейнера — при суженных колонках
+   хвостовой трек (minmax(8px,1fr)) забирает остаток, и линия строки (border
+   ячеек) доходит до правого края. */
 .tbl--scroll .tbl__row,
-.dtable__body .tbl__row { min-width: max-content; }
+.dtable__body .tbl__row { min-width: max(100%, max-content); }
 .tbl__row:last-child .tc { border-bottom: none; }
 
 /* закреплённая колонка не уезжает при горизонтальном скролле таблицы —

@@ -1,0 +1,83 @@
+# Сценарии показа прототипа Post — Страница транша — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 11
+flows:
+  - id: main
+    title: Основной путь
+    steps:
+      - state: 1
+        id: start
+        title: Стартовая страница
+        page: Tranche.html
+
+  - id: rsbu-tile
+    title: Тайл «Харды в РСБУ» на странице транша
+    desc: Три вида тайла по критериям приёмки — не заполнена, заполнена, недоступна
+    steps:
+      - state: 2
+        id: rsbu-tile-empty
+        title: Не заполнена
+        page: Tranche.html?hardsState=empty
+        note: Кнопка «Заполнить» и стрелка ведут на страницу «Харды в РСБУ».
+      - state: 3
+        id: rsbu-tile-filled
+        title: Заполнена
+        page: Tranche.html?hardsState=filled
+        note: Показан статус «Заполнена»; кнопки заполнения нет, стрелка ведёт на страницу.
+      - state: 4
+        id: rsbu-tile-locked
+        title: Недоступна
+        page: Tranche.html?hardsState=locked
+        note: Сначала нужно рассчитать «Плановые платежи»; стрелка отключена.
+
+  - id: rsbu-page
+    title: Страница «Харды в РСБУ»
+    desc: Расчёт, два таба и добавление нового периода
+    steps:
+      - state: 5
+        id: rsbu-page-current
+        title: Текущий расчёт
+        page: RsbuHards.html
+        note: Таблица только для чтения, сортировка по любой колонке.
+      - state: 6
+        id: rsbu-page-calculated
+        title: После расчёта
+        note: В подзаголовке появляются дата и время последнего расчёта.
+        do:
+          - click: '#rh-calc'
+      - state: 7
+        id: rsbu-page-hard
+        title: Хардовый расчёт
+        note: Строка правится двойным кликом или карандашом в строке; изменённые ячейки залиты, тултип показывает расчётное значение.
+        do:
+          - click: '[data-pane="rh-pane-hard"]'
+      - state: 8
+        id: rsbu-page-new-period
+        title: Новый период
+        note: Форма не закрывается кликом по затемнению; периоды не должны пересекаться.
+        do:
+          - click: '#rh-new-period'
+          - waitFor: '#rh-period-scrim:not([hidden])'
+      - state: 9
+        id: rsbu-page-edits
+        title: Хардовый расчёт с правками
+        page: RsbuHards.html?demo=edits
+        note: Изменённые ячейки залиты, у них тултип с расчётным значением; новый период залит целиком.
+        do:
+          - click: '[data-pane="rh-pane-hard"]'
+      - state: 10
+        id: rsbu-page-subtext
+        title: Исходное значение в ячейке
+        page: RsbuHards.html?demo=edits&variant=subtext
+        note: Вариант страницы — расчётное значение второй строкой в ячейке, меньшим шрифтом и цветом неактивного текста; тултип остаётся.
+        do:
+          - click: '[data-pane="rh-pane-hard"]'
+      - state: 11
+        id: rsbu-page-delete
+        title: Подтверждение удаления
+        page: RsbuHards.html?demo=edits,delete
+        note: Удаление периода — кнопка-корзина в скрытых действиях строки и модалка подтверждения.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'

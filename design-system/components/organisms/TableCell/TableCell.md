@@ -1,8 +1,8 @@
 ---
 component: TableCell
 title: "TableCell"
-version: "2.023"
-updated: "25.09.2026"
+version: "2.025"
+updated: "07.10.2026"
 page: components/organisms/TableCell/TableCell.html
 runtime: components/organisms/Table/Table.js, components/organisms/Table/TableResize.js, components/organisms/Table/TableReorder.js, components/organisms/Table/TablePin.js
 css: components/organisms/TableCell/TableCell.css
@@ -151,6 +151,7 @@ API: `DSTable.wire(tblEl, opts) → { el, selected(), sort(column, dir), refresh
 | `.tc` | ячейка: flex-строка, align-items center, нижний бордер, без фона |
 | `.tc--right` / `--center` | горизонтальное выравнивание контента (center — служебное: чекбокс/кнопки) |
 | `.tc--numbers` | числовая колонка: справа + tabular-nums (`.tc--right` не нужен); значение в одну строку, не помещается — многоточие + тултип |
+| `.tbl__row--accent` | акцентная строка целиком (`--bg-table-accent`), включая разделители; hover — `--bg-table-accent-hover`, focus — `--bg-table-accent-focus`. Для заливки отдельных ячеек — `.tc--accent` |
 | `.tc--accent` / `--pinned` | фон колонки (акцент / закреплённая); pinned удерживается у края нативным `position: sticky`; инсеты `left`/`right` пишет `TablePin.js` |
 | `.tbl__row--hover` / `--focus` / `--selected` | состояние СТРОКИ — красит все её ячейки, включая разделители |
 | `.tc--hover` / `--focus` / `--selected` | те же тона на одиночной ячейке (для примеров в документации) |

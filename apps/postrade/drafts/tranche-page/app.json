@@ -1,0 +1,8 @@
+{
+  "id": "tranche-page",
+  "track": "rnd",
+  "title": "Post — Страница транша",
+  "desc": "Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи",
+  "home": "pages/Tranche.html",
+  "icon": "folder"
+}
