@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 328.
+Документов: 329.
 
 ## Корень (4)
 
@@ -552,7 +552,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (66)
+## Задачи и заметки (67)
 
 ### Архив/черновики
 
@@ -605,6 +605,7 @@
 | [docs/tasks/MS0011-ds-doc-card.md](tasks/MS0011-ds-doc-card.md) | Карточка документа в нити: молекула DocCard вместо локального .doc (план — композиция Tile Card + Entity M) |
 | [docs/tasks/MS0012-ds-quote.md](tasks/MS0012-ds-quote.md) | Quote: новая молекула ДС — цитата фрагмента с источником (на будущее) |
 | [docs/tasks/MS0013-ds-theme-generator.md](tasks/MS0013-ds-theme-generator.md) | Темы ДС из файлов (ibp-legacy, ibp-neo, custom), генератор палитры из brand 500 и neutral 500, страница «Темы» — выбор темы и конструктор по образцу coolors |
+| [docs/tasks/MS0013-ds-theme-generator.review-2.md](tasks/MS0013-ds-theme-generator.review-2.md) | MS0013 — ревью реализации и задание на доработку |
 | [docs/tasks/MS0013-ds-theme-generator.review.md](tasks/MS0013-ds-theme-generator.review.md) | MS0013 — приёмка и сохранность |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
