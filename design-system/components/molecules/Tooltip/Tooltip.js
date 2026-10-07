@@ -204,6 +204,13 @@
   /* цель без готовой разметки — оборачиваем в .tip-anchor и строим тултип */
   function createTip(target, conf) {
     var anchor = target.closest('.tip-anchor');
+    /* Ячейка таблицы (.tc/.th) — grid-элемент строки: обёртка .tip-anchor сделала бы
+       её ребёнком inline-flex-контейнера (ячейка сжимается до содержимого, заливка и
+       селекторы `.tbl__row > .tc` перестают работать). Тултип плавающий (DSFloat),
+       поэтому живёт внутри самой ячейки, без обёртки. */
+    if (!anchor && target.classList && (target.classList.contains('tc') || target.classList.contains('th'))) {
+      anchor = target;
+    }
     if (!anchor) {
       anchor = document.createElement('span');
       anchor.className = 'tip-anchor';

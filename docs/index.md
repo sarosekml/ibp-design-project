@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 329.
+Документов: 333.
 
 ## Корень (4)
 
@@ -243,7 +243,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (139)
+## Приложения (143)
 
 | Документ | Аннотация |
 |---|---|
@@ -475,6 +475,15 @@
 |---|---|
 | [apps/postrade/deals-app/FinInstrumentsCard.handoff.md](../apps/postrade/deals-app/FinInstrumentsCard.handoff.md) | FinInstrumentsCard — handoff |
 | [apps/postrade/deals-app/PortfolioData.handoff.md](../apps/postrade/deals-app/PortfolioData.handoff.md) | PortfolioData — handoff |
+
+### apps/postrade/drafts/tranche-page
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/tranche-page/pages/RsbuHards.screen.md](../apps/postrade/drafts/tranche-page/pages/RsbuHards.screen.md) | Харды в РСБУ |
+| [apps/postrade/drafts/tranche-page/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/drafts/tranche-page/pages/index.screen.md](../apps/postrade/drafts/tranche-page/pages/index.screen.md) | Главная концепта «Страница транша» |
+| [apps/postrade/drafts/tranche-page/proto-panel/comments.md](../apps/postrade/drafts/tranche-page/proto-panel/comments.md) | Комментарии к прототипу |
 
 ### apps/postrade/payments-app
 

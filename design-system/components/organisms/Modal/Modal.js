@@ -23,10 +23,10 @@
      <div class="modal-scrim" id="m1" hidden>
        <div class="modal modal--w6" role="dialog" aria-modal="true">…</div>
      </div>
-   Настройки на триггере: data-modal-guarded (клик по скриму не закрывает —
-   форма с несохранённым вводом), data-modal-nested (открыть поверх текущего слоя).
+   Настройки на триггере: data-modal-guarded (клик по скриму не закрывает;
+   у модалки с полями ввода включено само, отключить — "false"), data-modal-nested (открыть поверх текущего слоя).
    Закрытие: крестик .modal__close button, любой [data-modal-close], Esc,
-   клик по скриму. Всё по спеке Modal: портал в body, блокировка прокрутки
+   клик по скриму (кроме модалок с формой). Всё по спеке Modal: портал в body, блокировка прокрутки
    страницы, inert фона, focus trap, возврат фокуса на инициатора.
    Начальный фокус: [autofocus] → первое поле ввода тела → первый
    интерактивный элемент тела → крестик.
@@ -81,7 +81,20 @@
   var BODY_SEL = '.modal__body, .drawer__body';
   var HEAD_SEL = '.modal__head, .drawer__head';
   var FOOT_SEL = '.modal__foot, .drawer__foot';
-  var CLOSE_SEL = '[data-modal-close], .modal__close button, .drawer__close button';
+  var CLOSE_SEL = '[data-modal-close], .modal__close button, .drawer__close button, .modal__head > .ibtn[aria-label="Закрыть"], .drawer__head > .ibtn[aria-label="Закрыть"]';
+  /* Модалка с формой не закрывается кликом по скриму — введённое не должно
+     слетать от случайного клика. Правило системы, без атрибута на экране:
+     есть поле ввода внутри — слой guarded. Отключить можно только явно:
+     data-modal-guarded="false". Явное "" / "true" включает защиту и без полей. */
+  var FORM_SEL = 'input:not([type="hidden"]):not([type="button"]):not([type="submit"]), textarea, select, [contenteditable="true"]';
+  function guardedFor(scrim, explicit) {
+    if (explicit === 'false') return false;
+    if (explicit != null) return true;
+    var own = scrim && scrim.dataset ? scrim.dataset.modalGuarded : null;
+    if (own === 'false') return false;
+    if (own != null) return true;
+    return !!(scrim && scrim.querySelector(FORM_SEL));
+  }
 
   /* wireScroll — тень у шапки и подвала по прокрутке тела (спека, п.4) */
   function wireScroll(modal) {
@@ -134,7 +147,7 @@
 
     var d = scrim.dataset || {};
     var conf = {
-      guarded: opts.guarded != null ? opts.guarded : d.modalGuarded != null,
+      guarded: opts.guarded != null ? opts.guarded : guardedFor(scrim, null),
       nested: opts.nested != null ? opts.nested : (d.modalNested != null || scrim.classList.contains('modal-scrim--nested')),
       keep: opts.keep != null ? opts.keep : scrim.hasAttribute('hidden'),
       returnFocus: opts.returnFocus !== undefined ? opts.returnFocus : document.activeElement,
@@ -206,7 +219,7 @@
       trigger: trigger, scrim: scrim,
       open: function () {
         return open(scrim, {
-          guarded: opts.guarded != null ? opts.guarded : d.modalGuarded != null,
+          guarded: opts.guarded != null ? opts.guarded : guardedFor(scrim, d.modalGuarded != null ? d.modalGuarded : null),
           nested: opts.nested != null ? opts.nested : d.modalNested != null,
           returnFocus: trigger,
           onOpen: opts.onOpen, onClose: opts.onClose,

@@ -25,7 +25,11 @@
   /* фиксирует текущую отрендеренную ширину каждой колонки строки в px —
      остальные колонки при резайзе не пересчитываются, только сдвигаются */
   function freezeTracks(row) {
-    return Array.prototype.map.call(row.children, function (cell) {
+    var kids = row.children;
+    return Array.prototype.map.call(kids, function (cell, i) {
+      /* хвостовой разделитель — гибкий трек: остаток ширины контейнера уходит
+         ему, линии строк (border ячеек) доходят до правого края */
+      if (i === kids.length - 1 && /(^|\s)(tc|th)--separator(\s|$)/.test(cell.className)) return 'minmax(8px,1fr)';
       return Math.round(cell.getBoundingClientRect().width) + 'px';
     });
   }

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Харды в РСБУ — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .screen__content { gap: var(--space-16); }
+  /* табы и панели: 16px сверху и снизу от табов */
+  .rh-body { display: flex; flex-direction: column; gap: var(--space-16); flex: 1; min-height: 0; }
+  .rh-pane[hidden] { display: none; }
+  .rh-pane { display: flex; flex-direction: column; gap: var(--space-12); flex: 1; min-height: 0; }
+  /* вариант ?variant=subtext: исходное значение второй строкой, на токене */
+  .rh-orig { color: var(--text-inactive); }
+  .rh-bar { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-8); }
+  /* форма модалки: ряды по две колонки, поля в ряду — по нижней границе (лейблы бывают в 1 и 2 строки) */
+  .rh-form { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: var(--space-8) var(--space-16); }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Tranche.html" id="rh-crumb-tranche">Транш</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Харды в РСБУ</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Харды в РСБУ</h1></div>
+          </div>
+          <div class="phead__subtitle" id="rh-calc-info">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span><span id="rh-calc-text"></span></span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="rh-calc"><i data-icon="calc"></i><span class="btn__label">Рассчитать</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Табы и таблицы -->
+      <div class="rh-body">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs id="rh-tabs">
+          <button type="button" class="tab tab--m tab--selected" role="tab" aria-selected="true" tabindex="0" data-pane="rh-pane-current"><span class="tab__label">Текущий расчёт</span></button>
+          <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-pane="rh-pane-hard"><span class="tab__label">Хардовый расчёт</span></button>
+        </div>
+
+        <div class="rh-pane" id="rh-pane-current" role="tabpanel">
+          <div class="dtable dtable--fill">
+            <div class="dtable__body">
+              <div class="tbl" data-table data-sort-rows id="rh-tbl-current">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 80px 240px 240px 240px 240px 240px 240px 240px 240px 240px minmax(8px,1fr);">
+                <div class="th th--separator"></div>
+                <div class="th" data-col="periodNumber"><span class="th__label">№</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodNumber" aria-label="Сортировать: №"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="periodStartDate"><span class="th__label">Дата начала периода</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodStartDate" aria-label="Сортировать: Дата начала периода"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="periodEndDate"><span class="th__label">Дата окончания периода</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodEndDate" aria-label="Сортировать: Дата окончания периода"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterestOnLoan"><span class="th__label">Текущие проценты, начисленные на Объём кредита</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="currentInterestOnLoan" aria-label="Сортировать: Текущие проценты, начисленные на Объём кредита"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterestOnPik"><span class="th__label">Текущие проценты, начисленные на PIK проценты</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="currentInterestOnPik" aria-label="Сортировать: Текущие проценты, начисленные на PIK проценты"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterestOnLoan"><span class="th__label">Капитализируемые проценты, начисленные на Объём кредита</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="capitalizedInterestOnLoan" aria-label="Сортировать: Капитализируемые проценты, начисленные на Объём кредита"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterestOnPik"><span class="th__label">Капитализируемые проценты, начисленные на PIK проценты</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="capitalizedInterestOnPik" aria-label="Сортировать: Капитализируемые проценты, начисленные на PIK проценты"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="deferredInterestAccrued"><span class="th__label">Отложенные проценты начисленные</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="deferredInterestAccrued" aria-label="Сортировать: Отложенные проценты начисленные"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="repoPaymentsAmount"><span class="th__label">Платежи по сделкам РЕПО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="repoPaymentsAmount" aria-label="Сортировать: Платежи по сделкам РЕПО"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="articleName"><span class="th__label">Статья</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="articleName" aria-label="Сортировать: Статья"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--separator"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rh-pane" id="rh-pane-hard" role="tabpanel" hidden>
+          <div class="rh-bar">
+            <button type="button" class="btn btn--outline btn--s" id="rh-new-period"><i data-icon="add"></i><span class="btn__label">Новый период</span></button>
+          </div>
+          <div class="dtable dtable--fill">
+            <div class="dtable__body">
+              <div class="tbl" data-table data-sort-rows id="rh-tbl-hard">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 80px 240px 240px 240px 240px 240px 240px 240px 240px 240px minmax(8px,1fr);">
+                <div class="th th--separator"></div>
+                <div class="th" data-col="periodNumber"><span class="th__label">№</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodNumber" aria-label="Сортировать: №"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="periodStartDate"><span class="th__label">Дата начала периода</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodStartDate" aria-label="Сортировать: Дата начала периода"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="periodEndDate"><span class="th__label">Дата окончания периода</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodEndDate" aria-label="Сортировать: Дата окончания периода"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterestOnLoan"><span class="th__label">Текущие проценты, начисленные на Объём кредита</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="currentInterestOnLoan" aria-label="Сортировать: Текущие проценты, начисленные на Объём кредита"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="currentInterestOnPik"><span class="th__label">Текущие проценты, начисленные на PIK проценты</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="currentInterestOnPik" aria-label="Сортировать: Текущие проценты, начисленные на PIK проценты"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterestOnLoan"><span class="th__label">Капитализируемые проценты, начисленные на Объём кредита</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="capitalizedInterestOnLoan" aria-label="Сортировать: Капитализируемые проценты, начисленные на Объём кредита"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="capitalizedInterestOnPik"><span class="th__label">Капитализируемые проценты, начисленные на PIK проценты</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="capitalizedInterestOnPik" aria-label="Сортировать: Капитализируемые проценты, начисленные на PIK проценты"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="deferredInterestAccrued"><span class="th__label">Отложенные проценты начисленные</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="deferredInterestAccrued" aria-label="Сортировать: Отложенные проценты начисленные"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="repoPaymentsAmount"><span class="th__label">Платежи по сделкам РЕПО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="repoPaymentsAmount" aria-label="Сортировать: Платежи по сделкам РЕПО"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="articleName"><span class="th__label">Статья</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="articleName" aria-label="Сортировать: Статья"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--separator"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── «Новый период» / «Редактирование периода»: одна форма -->
+<div class="modal-scrim" id="rh-period-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="rh-period-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rh-period-title">Новый период</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" id="rh-period-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rh-period-alert-text"></p></div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <form class="rh-form" id="rh-period-form" onsubmit="return false" novalidate>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-start"><span class="ds-label__text">Дата начала периода</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-start" name="periodStartDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          <span class="ds-helper ds-helper--left" data-helper="periodStartDate">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-end"><span class="ds-label__text">Дата окончания периода</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-end" name="periodEndDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          <span class="ds-helper ds-helper--left" data-helper="periodEndDate">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-cur-loan"><span class="ds-label__text">Текущие проценты, начисленные на Объём кредита</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-cur-loan" name="currentInterestOnLoan" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="currentInterestOnLoan">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-cur-pik"><span class="ds-label__text">Текущие проценты, начисленные на PIK проценты</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-cur-pik" name="currentInterestOnPik" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="currentInterestOnPik">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-cap-loan"><span class="ds-label__text">Капитализируемые проценты, начисленные на Объём кредита</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-cap-loan" name="capitalizedInterestOnLoan" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="capitalizedInterestOnLoan">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-cap-pik"><span class="ds-label__text">Капитализируемые проценты, начисленные на PIK проценты</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-cap-pik" name="capitalizedInterestOnPik" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="capitalizedInterestOnPik">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-deferred"><span class="ds-label__text">Отложенные проценты начисленные</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-deferred" name="deferredInterestAccrued" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="deferredInterestAccrued">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="np-repo"><span class="ds-label__text">Платежи по сделкам РЕПО</span></label>
+          <div class="inp__field"><input class="inp__control" id="np-repo" name="repoPaymentsAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="repoPaymentsAmount">&nbsp;</span>
+        </div>
+      </form>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="rh-period-submit"><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Подтверждение удаления периода -->
+<div class="modal-scrim" id="rh-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="rh-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rh-delete-title">Удалить период</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body"><p id="rh-delete-text" style="margin:0;"></p></div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m btn--danger" id="rh-delete-confirm"><span class="btn__label">Удалить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/tranche-data.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, таблицы «Текущий расчёт» и «Хардовый расчёт»
+   из MOCK_RSBU_HARDS. Форматирование — только при выводе: суммы «1 000 000,00», даты ДД.ММ.ГГГГ.
+   «Хардовый расчёт» правится только через модалку (двойной клик по строке или карандаш). */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var NBSP = ' ';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="index.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+
+  var NBSP = ' ';
+
+
+  var NBSP = ' ';
+
+  /* ---------- формат ---------- */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  /* «1 250 000,5» → число; пусто или мусор → NaN */
+  function parseMoney(str) {
+    var s = String(str).replace(/[\s ]/g, '').replace(',', '.');
+    return s === '' || isNaN(Number(s)) ? NaN : Number(s);
+  }
+  /* «ДД.ММ.ГГГГ» → ISO; мусор → '' */
+  function parseDate(str) {
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(str).trim());
+    if (!m) return '';
+    var d = new Date(Date.UTC(+m[3], +m[2] - 1, +m[1]));
+    return (d.getUTCFullYear() === +m[3] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[1]) ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+
+  /* ---------- колонки ---------- */
+  var COLS = [
+    { key: 'periodNumber',              type: 'int' },
+    { key: 'periodStartDate',           type: 'date' },
+    { key: 'periodEndDate',             type: 'date' },
+    { key: 'currentInterestOnLoan',     type: 'amount' },
+    { key: 'currentInterestOnPik',      type: 'amount' },
+    { key: 'capitalizedInterestOnLoan', type: 'amount' },
+    { key: 'capitalizedInterestOnPik',  type: 'amount' },
+    { key: 'deferredInterestAccrued',   type: 'amount' },
+    { key: 'repoPaymentsAmount',        type: 'amount' },
+    { key: 'articleName',               type: 'text' }
+  ];
+  var FIELD_COLS = COLS.filter(function (c) { return c.type === 'date' || c.type === 'amount'; });
+  var GRID_CURRENT = '8px 80px ' + COLS.slice(1).map(function () { return '240px'; }).join(' ') + ' minmax(8px,1fr)';   // № — минимальная колонка
+  var GRID_HARD = GRID_CURRENT;
+  var DEFAULT_ARTICLE = 'Проценты по кредитам';
+
+  function shown(c, v) {
+    if (c.type === 'date') return date(v);
+    if (c.type === 'amount') return money(v);
+    return String(v);
+  }
+  function colByKey(k) { return COLS.filter(function (c) { return c.key === k; })[0]; }
+  function attr(s) { return String(s).replace(/"/g, '&quot;'); }
+
+  /* ---------- данные ---------- */
+  var data = window.MOCK_RSBU_HARDS;
+  var current = data.currentPeriods;
+  var hard = current.map(function (r) { return Object.assign({}, r); });   // isNew: true — период добавлен вручную
+  /* Демо для сценариев панели прототипа: ?demo=edits — в хардовом расчёте уже есть правки и новый период;
+     ?demo=hard — открыт таб «Хардовый расчёт»; ?demo=delete — открыта модалка удаления. Значения выдуманы 07.10.2026. */
+  function demoHas(name) { var m = /[?&]demo=([a-z,]+)/.exec(location.search); return !!m && m[1].split(',').indexOf(name) >= 0; }
+  if (demoHas('edits')) {
+    hard[1].currentInterestOnLoan = 1300000.00;
+    hard[1].periodEndDate = '2024-06-29';
+    hard[3].repoPaymentsAmount = 98000.00;
+    hard.push({ periodNumber: 7, periodStartDate: '2025-07-01', periodEndDate: '2025-09-30', currentInterestOnLoan: 1325000.00, currentInterestOnPik: 115468.75,
+      capitalizedInterestOnLoan: 331250.00, capitalizedInterestOnPik: 28867.19, deferredInterestAccrued: 132500.00, repoPaymentsAmount: 120000.00,
+      articleName: 'Проценты по кредитам', isNew: true });
+  }
+
+  function baseFor(r) {
+    if (!r || r.isNew) return null;
+    for (var i = 0; i < current.length; i++) if (current[i].periodNumber === r.periodNumber) return current[i];
+    return null;
+  }
+
+  var tblCurrent = document.getElementById('rh-tbl-current');
+  var tblHard = document.getElementById('rh-tbl-hard');
+
+  function cellHTML(c, v, extraCls, extraAttr) {
+    return '<div class="tc' + (c.type === 'amount' ? ' tc--numbers' : '') + (extraCls || '') + '" data-col="' + c.key + '"' + (extraAttr || '') + '>'
+      + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + shown(c, v) + '</span></span></div>';
+  }
+
+  function currentRowHTML(r) {
+    var s = '<div class="tbl__row" style="grid-template-columns:' + GRID_CURRENT + ';"><div class="tc tc--separator"></div>';
+    COLS.forEach(function (c) { s += cellHTML(c, r[c.key]); });
+    return s + '<div class="tc tc--separator"></div></div>';
+  }
+
+  /* Вариант страницы: ?variant=subtext — исходное значение показано второй строкой в ячейке
+     (тултип «Расчётное значение» при этом остаётся). Переключается панелью прототипа. */
+  var SUBTEXT = /[?&]variant=subtext/.test(location.search);
+
+  /* изменённая ячейка: маркер правки + заливка; тултип с расчётным значением — только у
+     периодов, которые есть в текущем расчёте (у нового периода сравнивать не с чем).
+     Новый период красится строкой целиком (tbl__row--accent), включая разделители. */
+  function hardCellHTML(c, r, base) {
+    var changed = r.isNew || (base && String(base[c.key]) !== String(r[c.key]));
+    var tip = (changed && base) ? ' data-tooltip="' + attr('Расчётное значение: ' + shown(c, base[c.key])) + '"' : '';
+    var cls = changed ? (r.isNew ? ' tc--edited' : ' tc--accent tc--edited') : '';
+    var cell;
+    if (SUBTEXT && changed && base) {
+      cell = '<div class="tc' + (c.type === 'amount' ? ' tc--numbers' : '') + cls + '" data-col="' + c.key + '"' + tip + '>'
+        + '<div class="tc__body"><span class="tc__row"><span class="tc__text tc__text--truncate">' + shown(c, r[c.key]) + '</span></span>'
+        + '<span class="tc__subtext rh-orig">' + shown(c, base[c.key]) + '</span></div></div>';
+    } else {
+      cell = cellHTML(c, r[c.key], cls, tip);
+    }
+    /* скрытые действия строки — в последней колонке: карандаш (правка) и корзина (удаление) */
+    if (c.key === 'articleName') {
+      cell = cell.replace(/<\/div>$/, '<div class="tc__hidden">'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-edit aria-label="Редактировать период"><i data-icon="edit"></i></button>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить период"><i data-icon="trash"></i></button>'
+        + '</div></div>');
+    }
+    return cell;
+  }
+
+  function hardRowHTML(r) {
+    var base = baseFor(r);
+    var s = '<div class="tbl__row' + (r.isNew ? ' tbl__row--accent' : '') + '" data-period="' + r.periodNumber + '" style="grid-template-columns:' + GRID_HARD + ';"><div class="tc tc--separator"></div>';
+    COLS.forEach(function (c) { s += hardCellHTML(c, r, base); });
+    return s + '<div class="tc tc--separator"></div></div>';
+  }
+
+  /* шапка — в разметке; перерисовываются только строки данных */
+  function setRows(tbl, html) {
+    tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
+    tbl.insertAdjacentHTML('beforeend', html);
+  }
+  function refresh(tbl) {
+    if (window.dsIcons) window.dsIcons.apply(tbl);
+    if (window.DSTable) {
+      window.DSTable.wireAll(tbl.parentNode);
+      var api = window.DSTable.wire(tbl);
+      if (api && api.rowsChanged) api.rowsChanged();
+    }
+    if (window.DSTooltip) window.DSTooltip.bindAll(tbl);
+  }
+  function renderCurrent() { setRows(tblCurrent, current.map(currentRowHTML).join('')); refresh(tblCurrent); }
+  function renderHard() { setRows(tblHard, hard.map(hardRowHTML).join('')); refresh(tblHard); }
+
+  /* ---------- уведомления: фоновый тост ДС, зелёный, уходит сам ---------- */
+  function toast(message) {
+    if (window.DSToast) window.DSToast.show({ message: message, kind: 'bar', tone: 'success' });
+  }
+
+  /* ---------- «Рассчитать»: дата и время последнего расчёта стоят сразу, расчёт обновляет их ---------- */
+  function showCalcAt(d) {
+    document.getElementById('rh-calc-text').textContent = 'Последний расчёт: ' + pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear()
+      + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  showCalcAt(new Date(data.lastCalculatedAt));
+  document.getElementById('rh-calc').addEventListener('click', function () {
+    showCalcAt(new Date());
+    renderCurrent();
+    toast('Расчёт выполнен');
+  });
+
+  /* ---------- табы ---------- */
+  var panes = ['rh-pane-current', 'rh-pane-hard'];
+  document.getElementById('rh-tabs').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-pane]');
+    if (!t) return;
+    panes.forEach(function (p) { document.getElementById(p).hidden = (p !== t.getAttribute('data-pane')); });
+  });
+
+  /* ---------- модалка периода: создание и правка ---------- */
+  var scrim = document.getElementById('rh-period-scrim');
+  var form = document.getElementById('rh-period-form');
+  var alertBox = document.getElementById('rh-period-alert');
+  var editIdx = -1;   // индекс строки в hard; -1 — новый период
+
+  function fieldEl(k) { return form.elements[k]; }
+  function helperEl(k) { return form.querySelector('[data-helper="' + k + '"]'); }
+  function boxOf(k) { return fieldEl(k).closest('.inp'); }
+
+  function clearErrors() {
+    alertBox.hidden = true;
+    FIELD_COLS.forEach(function (c) { boxOf(c.key).classList.remove('inp--error'); });
+  }
+  function showError(text, keys) {
+    document.getElementById('rh-period-alert-text').textContent = text;
+    alertBox.hidden = false;
+    (keys || []).forEach(function (k) { boxOf(k).classList.add('inp--error'); });
+  }
+
+  /* под полем — расчётное значение, если правка отличается от текущего расчёта (у нового периода — нет) */
+  function refreshHelpers() {
+    var base = editIdx >= 0 ? baseFor(hard[editIdx]) : null;
+    FIELD_COLS.forEach(function (c) {
+      var h = helperEl(c.key), text = NBSP;
+      if (base) {
+        var raw = fieldEl(c.key).value;
+        var v = c.type === 'date' ? parseDate(raw) : parseMoney(raw);
+        if (v !== base[c.key]) text = 'Расчётное значение: ' + shown(c, base[c.key]);
+      }
+      h.textContent = text;
+    });
+  }
+
+  /* сумма в поле: разряды неразрывным пробелом, запятая, не более двух знаков; курсор остаётся у своей цифры */
+  function formatAmount(inp) {
+    var raw = inp.value, pos = inp.selectionStart == null ? raw.length : inp.selectionStart;
+    var left = raw.slice(0, pos).replace(/[^\d,.]/g, '').length;
+    var clean = raw.replace(/\./g, ',').replace(/[^\d,]/g, '');
+    var parts = clean.split(',');
+    var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+    var out = intPart + (parts.length > 1 ? ',' + parts.slice(1).join('').slice(0, 2) : '');
+    inp.value = out;
+    var n = 0, caret = 0;
+    while (caret < out.length && n < left) { if (/[\d,]/.test(out.charAt(caret))) n++; caret++; }
+    try { inp.setSelectionRange(caret, caret); } catch (e) { /* поле без выделения */ }
+  }
+
+  form.addEventListener('input', function (e) {
+    var inp = e.target;
+    if (inp.hasAttribute('data-amount')) formatAmount(inp);
+    inp.closest('.inp').classList.remove('inp--error');
+    refreshHelpers();
+  });
+  form.addEventListener('focusout', function (e) {
+    var inp = e.target;
+    if (inp.hasAttribute && inp.hasAttribute('data-amount')) {
+      var n = parseMoney(inp.value);
+      if (!isNaN(n)) inp.value = money(n);
+    }
+  });
+
+  function openPeriod(idx) {
+    editIdx = idx;
+    document.getElementById('rh-period-title').textContent = idx >= 0 ? 'Редактирование периода' : 'Новый период';
+    document.querySelector('#rh-period-submit .btn__label').textContent = idx >= 0 ? 'Сохранить' : 'Добавить';
+    FIELD_COLS.forEach(function (c) {
+      var v = idx >= 0 ? hard[idx][c.key] : null;
+      fieldEl(c.key).value = v == null ? '' : shown(c, v);
+      fieldEl(c.key).dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    clearErrors();
+    refreshHelpers();
+    if (window.DSModal) window.DSModal.open(scrim);
+  }
+
+  function collect() {
+    var vals = {}, bad = [];
+    FIELD_COLS.forEach(function (c) {
+      var raw = fieldEl(c.key).value;
+      var v = c.type === 'date' ? parseDate(raw) : parseMoney(raw);
+      if (v === '' || (typeof v === 'number' && isNaN(v))) bad.push(c.key); else vals[c.key] = v;
+    });
+    return { vals: vals, bad: bad };
+  }
+
+  document.getElementById('rh-period-submit').addEventListener('click', function () {
+    clearErrors();
+    var r = collect();
+    if (r.bad.length) { showError('Заполните все поля: даты — в формате ДД.ММ.ГГГГ, суммы — числом.', r.bad); return; }
+    var start = r.vals.periodStartDate, end = r.vals.periodEndDate;
+    if (end < start) { showError('Дата окончания периода не может быть раньше даты начала.', ['periodStartDate', 'periodEndDate']); return; }
+    for (var i = 0; i < hard.length; i++) {
+      if (i === editIdx) continue;
+      var o = hard[i];
+      if (start <= o.periodEndDate && end >= o.periodStartDate) {
+        showError('Период пересекается с периодом ' + o.periodNumber + ' (' + date(o.periodStartDate) + ' — ' + date(o.periodEndDate) + ').', ['periodStartDate', 'periodEndDate']);
+        return;
+      }
+    }
+    var wasEdit = editIdx >= 0, num;
+    if (wasEdit) {
+      Object.assign(hard[editIdx], r.vals);
+      num = hard[editIdx].periodNumber;
+    } else {
+      var max = hard.reduce(function (m, p) { return Math.max(m, p.periodNumber); }, 0);
+      num = max + 1;
+      hard.push(Object.assign({ periodNumber: num, articleName: DEFAULT_ARTICLE, isNew: true }, r.vals));
+    }
+    renderHard();
+    if (window.DSModal) window.DSModal.closeTop();
+    toast(wasEdit ? 'Период ' + num + ' изменён' : 'Период ' + num + ' добавлен');
+  });
+
+  document.getElementById('rh-new-period').addEventListener('click', function () { openPeriod(-1); });
+
+  /* ---------- удаление периода с подтверждением ---------- */
+  var deleteIdx = -1;
+  function openDelete(idx) {
+    if (idx < 0) return;
+    deleteIdx = idx;
+    var p = hard[idx];
+    document.getElementById('rh-delete-text').textContent = 'Удалить период ' + p.periodNumber + ' (' + date(p.periodStartDate) + ' — ' + date(p.periodEndDate) + ')? Действие нельзя отменить.';
+    if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
+  }
+  document.getElementById('rh-delete-confirm').addEventListener('click', function () {
+    var delNum = deleteIdx >= 0 ? hard[deleteIdx].periodNumber : null;
+    if (deleteIdx >= 0) hard.splice(deleteIdx, 1);
+    deleteIdx = -1;
+    renderHard();
+    if (window.DSModal) window.DSModal.closeTop();
+    if (delNum != null) toast('Период ' + delNum + ' удалён');
+  });
+
+  function idxOfRow(row) {
+    var n = parseInt(row.getAttribute('data-period'), 10);
+    for (var i = 0; i < hard.length; i++) if (hard[i].periodNumber === n) return i;
+    return -1;
+  }
+  tblHard.addEventListener('dblclick', function (e) {
+    var row = e.target.closest('.tbl__row:not(.tbl__row--head)');
+    if (row) openPeriod(idxOfRow(row));
+  });
+  tblHard.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-edit]');
+    if (b) { openPeriod(idxOfRow(b.closest('.tbl__row'))); return; }
+    var d = e.target.closest('[data-delete]');
+    if (d) openDelete(idxOfRow(d.closest('.tbl__row')));
+  });
+
+  /* ---------- поля с data-f из данных транша ---------- */
+  function fill() {
+    var t = window.MOCK_TRANCHE;
+    var values = { dealName: t.dealName, parentContractName: t.parentContractName, currencyCode: data.currencyCode };
+    document.querySelectorAll('[data-f]').forEach(function (el) {
+      var k = el.getAttribute('data-f');
+      if (k in values) el.textContent = values[k];
+    });
+    document.getElementById('rh-crumb-tranche').textContent = t.trancheNumber + ' Транш';
+  }
+
+  buildNav(); fill(); renderCurrent(); renderHard();
+  if (demoHas('hard') || demoHas('delete')) {
+    panes.forEach(function (p) { document.getElementById(p).hidden = (p !== 'rh-pane-hard'); });
+    document.querySelectorAll('#rh-tabs .tab').forEach(function (t) {
+      var on = t.getAttribute('data-pane') === 'rh-pane-hard';
+      t.classList.toggle('tab--selected', on); t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+  if (demoHas('delete')) openDelete(hard.length - 1);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

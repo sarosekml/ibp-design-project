@@ -35,7 +35,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | InputAutocomplete | components/molecules/Inputs/InputAutocomplete/InputAutocomplete.md | components/molecules/Inputs/Inputs.css | label-helper, checkbox, chip, tooltip, dropdown-list | 1.019 |
 | InputDate | components/molecules/Inputs/InputDate/InputDate.md | components/molecules/Inputs/Inputs.css | label-helper, tooltip | 1.017 |
 | InputDateRange | components/molecules/Inputs/InputDateRange/InputDateRange.md | components/molecules/Inputs/InputRanges.css | input, label-helper, tooltip | 1.010 |
-| InputText | components/molecules/Inputs/InputText/InputText.md | components/molecules/Inputs/Inputs.css | label-helper, tooltip, chip | 1.017 |
+| InputText | components/molecules/Inputs/InputText/InputText.md | components/molecules/Inputs/Inputs.css | label-helper, tooltip, chip | 1.018 |
 | Kanban | components/organisms/Kanban/Kanban.md | components/organisms/Kanban/Kanban.css | tile, chip, badge, avatar, icon-button, button, context-menu, modal, drawer, tooltip, snackbar, empty-state, skeleton, illustration | 1.006 |
 | Keyboard | components/atoms/Keyboard/Keyboard.md | components/atoms/Keyboard/Keyboard.css | — | 1.000 |
 | LabelHelper | components/atoms/LabelHelper/LabelHelper.md | components/atoms/LabelHelper/LabelHelper.css | checkbox, radio, switch | 1.007 |

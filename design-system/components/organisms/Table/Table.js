@@ -417,9 +417,43 @@
     }
   }
 
+  /* ---------- согласование колонок шапки и строк ----------
+     Строки .dtable__body — отдельные grid-контейнеры с min-width: max-content,
+     и доля-трек (fr) каждая считает по содержимому СВОЕЙ строки: шапка с длинными
+     подписями и строки данных получают разные колонки, пока ресайз не запишет
+     всем одинаковые px. Тот же результат — один раз на подключении: фактические
+     px-ширины шапки пишутся всем строкам, хвостовой разделитель остаётся
+     гибким (minmax(8px,1fr)) и забирает остаток ширины. Таблица, скрытая на
+     момент подключения (неактивный таб), выравнивается при первом показе. */
+  function alignColumns(tbl) {
+    var head = tbl.querySelector(':scope > .tbl__row');
+    if (!head || head.__dsAligned) return;
+    var gtc = head.style.gridTemplateColumns || '';
+    if (!gtc) return;
+    var flexy = /fr\b/.test(gtc.replace(/minmax\(8px,\s*1fr\)\s*$/, ''));
+    if (!flexy) { head.__dsAligned = true; return; }
+    if (!head.offsetWidth) {
+      if (window.ResizeObserver && !tbl.__dsAlignWatch) {
+        tbl.__dsAlignWatch = new ResizeObserver(function () {
+          if (head.offsetWidth) { tbl.__dsAlignWatch.disconnect(); tbl.__dsAlignWatch = null; alignColumns(tbl); }
+        });
+        tbl.__dsAlignWatch.observe(tbl);
+      }
+      return;
+    }
+    var kids = head.children, last = kids.length - 1;
+    var tracks = Array.prototype.map.call(kids, function (c, i) {
+      if (i === last && /(^|\s)th--separator(\s|$)/.test(c.className)) return 'minmax(8px,1fr)';
+      return Math.round(c.getBoundingClientRect().width) + 'px';
+    }).join(' ');
+    tbl.querySelectorAll(':scope > .tbl__row').forEach(function (row) { row.style.gridTemplateColumns = tracks; });
+    head.__dsAligned = true;
+  }
+
   function wire(tbl, opts) {
     if (!tbl || tbl.__dsTableWired) return tbl && tbl.__dsTableWired;
     opts = opts || {};
+    alignColumns(tbl);
 
     /* стартовое направление берём из разметки: без этого первый клик по
        колонке, уже отсортированной на экране, начинал цикл с asc и терял её

@@ -7,7 +7,8 @@
    только пересылка горячих клавиш наверх. */
 (function () {
   var APPS = [
-    "ib/drafts/ai-bankster-prototype-v02"
+    "ib/drafts/ai-bankster-prototype-v02",
+    "postrade/drafts/tranche-page"
   ];
   var RUNTIME = "../.agents/proto-panel/";
   var DIR = "proto-panel", BASE = "apps", MANIFEST = "app.json"; // для записи: путь от корня проекта
