@@ -1039,6 +1039,8 @@ window.DS_THEMES = {
       "--color-row-pinned-selected": "var(--ramp-neutral-200)",
       "--color-bg-nav": "var(--ramp-neutral-100)",
       "--color-control-thumb": "var(--ramp-neutral-700)",
+      "--color-control-track": "var(--ramp-neutral-400)",
+      "--color-control-track-hover": "var(--ramp-neutral-500)",
       "--color-fg-icon": "var(--ramp-neutral-600)",
       "--color-fg-icon-strong": "var(--ramp-accent-900)",
       "--color-accent-muted": "var(--ramp-accent-700)",
@@ -1255,12 +1257,29 @@ window.DS_THEMES = {
       "fg": "--color-fg-on-fill",
       "bg": "--color-accent-fill",
       "min": 4.5,
-      "required": true,
-      "exempt": [
-        "ibp-light",
-        "ibp-dark",
-        "service"
-      ]
+      "required": false,
+      "note": "Заливка — ровно brand 500 (MS0013, Р2): провал показывается, заливка не затемняется; текст — переключатель «белый / тёмный»"
+    },
+    {
+      "fg": "--color-fg-on-fill",
+      "bg": "--color-accent-fill-hover",
+      "min": 4.5,
+      "required": false,
+      "note": "Наведение основной кнопки (MS0013, Р2)"
+    },
+    {
+      "fg": "--color-fg-on-fill",
+      "bg": "--color-accent-fill-pressed",
+      "min": 4.5,
+      "required": false,
+      "note": "Нажатие основной кнопки (MS0013, Р2)"
+    },
+    {
+      "fg": "--color-accent-fill",
+      "bg": "--color-bg-surface",
+      "min": 4.5,
+      "required": false,
+      "note": "--primary как цвет текста и иконок (MS0013, Р3); в тёмных базовых темах стережёт theme-build --selftest"
     },
     {
       "fg": "--color-border-default",
@@ -5556,6 +5575,9 @@ window.DS_THEMES = {
       "--color-status-accent-subtle": "color-mix(in srgb, var(--emerald-500) 16%, transparent)"
     },
     "dark": {
+      "--color-accent-fill": "var(--ramp-accent-500)",
+      "--color-accent-fill-hover": "var(--ramp-accent-600)",
+      "--color-accent-fill-pressed": "var(--ramp-accent-700)",
       "--color-bg-sunken": "var(--ramp-neutral-100)",
       "--color-bg-float": "var(--ramp-neutral-300)",
       "--color-bg-float-hover": "color-mix(in srgb, var(--ramp-neutral-950) 7%, transparent)",
@@ -5578,6 +5600,8 @@ window.DS_THEMES = {
       "--color-row-pinned-selected": "var(--ramp-neutral-200)",
       "--color-bg-nav": "var(--ramp-neutral-100)",
       "--color-control-thumb": "var(--ramp-neutral-700)",
+      "--color-control-track": "var(--ramp-neutral-400)",
+      "--color-control-track-hover": "var(--ramp-neutral-500)",
       "--color-fg-icon": "var(--ramp-neutral-600)",
       "--color-fg-icon-strong": "var(--ramp-accent-900)",
       "--color-accent-muted": "var(--ramp-accent-700)",

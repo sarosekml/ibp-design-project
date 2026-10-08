@@ -69,13 +69,20 @@
     'components/atoms/Slider/Slider.js',
     'components/molecules/ColorPicker/ColorPicker.js',
     'foundations/Themes/Ramp.tokens.js',
-    'foundations/Themes/Themes.tokens.js',
+    'foundations/Themes/Themes.runtime.js',
     'foundations/Themes/tokens/tokens.data.js',
     'foundations/Themes/ThemeEngine.js',
     'foundations/Themes/Themes.js',
     'utils/ds-include.js'
   ];
+  /* Скрипты тем уже подключил ThemeBoot.js в <head> (загрузчик приложений и
+     служебный тег страниц ДС), чтобы тема встала до первой отрисовки. Второй
+     раз их не грузим (MS0013, review-2 Р8). */
+  var themesReady = !!window.DS_THEME_ENGINE;
   var html = '';
-  FILES.forEach(function (f) { html += '<script src="' + base + f + '"></script>'; });
+  FILES.forEach(function (f) {
+    if (themesReady && f.indexOf('foundations/Themes/') === 0) return;
+    html += '<script src="' + base + f + '"></script>';
+  });
   document.write(html);
 })();

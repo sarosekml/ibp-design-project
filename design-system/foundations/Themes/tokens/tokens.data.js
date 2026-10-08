@@ -850,7 +850,7 @@ window.DS_THEME_DATA = {
       "locked": true,
       "light": {
         "brand": "#00AA9B",
-        "neutral": "#858F9A",
+        "neutral": "#617C7C",
         "adjust": {
           "hue": 0,
           "saturation": 0,
@@ -1312,8 +1312,8 @@ window.DS_THEME_DATA = {
           "--color-link-muted": "var(--ramp-accent-300)",
           "--color-secondary-bg": "color-mix(in srgb, var(--ramp-accent-300) 32%, transparent)",
           "--color-secondary-bg-subtle": "color-mix(in srgb, var(--ramp-accent-300) 16%, transparent)",
-          "--color-control-track": "var(--ramp-neutral-200)",
-          "--color-control-track-hover": "var(--ramp-neutral-300)",
+          "--color-control-track": "var(--ramp-neutral-400)",
+          "--color-control-track-hover": "var(--ramp-neutral-500)",
           "--color-control-track-on": "var(--ramp-accent-200)",
           "--color-control-track-on-hover": "var(--ramp-accent-300)",
           "--color-control-thumb": "var(--ramp-neutral-700)",

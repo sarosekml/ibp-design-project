@@ -62,6 +62,9 @@ if (all) {
   /* Генерат тем сверяется с источником (RE0005): правка компонента или
      генерата врозь с Themes.tokens.js не пройдёт молча. */
   steps.push(['темы = источник (theme-build --check)', [THEME_BUILD, '--check']]);
+  /* Алгоритм тем и запись файлов тем проверяются откатом (MS0013, review-2 Р10). */
+  steps.push(['темы, алгоритм (theme-build --selftest)', [THEME_BUILD, '--selftest']]);
+  steps.push(['темы, запись файлов (theme-files-selftest)', [path.join(ROOT, 'tools', 'theme-files-selftest.mjs')]]);
   /* Тёмные варианты иллюстраций (RE0011) сверяются с источником и проверяются
      откатом: правка исходного SVG врозь с генератом не пройдёт молча. */
   steps.push(['иллюстрации = источник (illustration-dark --check)', [ILLU_DARK, '--check']]);

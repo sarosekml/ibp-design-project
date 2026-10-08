@@ -11,6 +11,13 @@
                                             и блоки <style>), подключается
                                             только на страницах ДС.
    Оба — генераты, руками не правятся; источник правится руками.
+   Ещё два генерата — для браузера:
+     foundations/Themes/Themes.runtime.js — рантайм-данные (MS0013, Р8):
+                                            источник без сборочных полей —
+                                            точечных правил (кроме :root),
+                                            правил страниц и «не перекрашивается»;
+                                            его грузят ThemeBoot.js и ds.js;
+     foundations/Themes/tokens/tokens.data.js — зеркало JSON тем для file://.
 
    Механика наложения (задача RE0005, §2):
    - блок темы `:root[data-theme="X"], [data-theme="X"]` — рампы --ramp-*,
@@ -56,6 +63,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
 const AT = {
   tokens: 'foundations/Themes/Themes.tokens.js',
+  runtime: 'foundations/Themes/Themes.runtime.js',
   ramp: 'foundations/Themes/Ramp.tokens.js',
   css: 'foundations/Themes/Themes.css',
   pages: 'foundations/Themes/Themes.pages.css',
@@ -128,7 +136,7 @@ export function loadSources() {
     const file = JSON.parse(readFileSync(path.join(dir, name), 'utf8'));
     if (name === 'base-light.json' || name === 'base-dark.json') data.bases[name.slice(5, -5)] = file;
     else {
-      if (name !== file.name + '.json') throw new Error('Имя темы расходится с файлом: ' + name);
+      if (name !== file.name + '.json') throw new Error(name + ': name внутри «' + file.name + '» не совпадает с именем файла');
       const errors = ctx.window.DS_THEME_ENGINE.validate(file);
       if (errors.length) throw new Error(name + ': ' + errors.join('; '));
       data.themes.push(file);
@@ -137,6 +145,28 @@ export function loadSources() {
   const order = name => { const i = ['ibp-legacy','ibp-neo','custom'].indexOf(name); return i < 0 ? 99 : i; };
   data.themes.sort((a,b) => order(a.name) - order(b.name) || a.name.localeCompare(b.name));
   return { data, raw, engine: ctx.window.DS_THEME_ENGINE, ramp: ctx.window.DS_RAMP, tokens: ctx.window.DS_THEME_ENGINE.sources(data) };
+}
+
+/* ---------- рантайм-данные для браузера (MS0013, Р8) ----------
+   Браузеру нужны роли, значения, профили, карта имён, пары контраста,
+   семена service, тени и снимок legacy. Точечные правила нужны ему только
+   с селектором :root (токены компонентов в CSS темы на лету), и без
+   сборочных пометок file/line/from/kind/why. Правила страниц и
+   «не перекрашивается» — только сборщику. */
+const BUILD_ONLY = ['rules', 'pages', 'keep'];
+export function runtimeTokens(raw) {
+  const out = {};
+  for (const key of Object.keys(raw)) if (!BUILD_ONLY.includes(key)) out[key] = raw[key];
+  out.rules = (raw.rules || []).filter((r) => r.selector === ':root').map((r) => ({ selector: r.selector, prop: r.prop, value: r.value }));
+  return out;
+}
+export function runtimeFile(raw) {
+  const data = runtimeTokens(raw);
+  const body = Object.keys(data).map((k) => '  ' + JSON.stringify(k) + ': ' + JSON.stringify(data[k])).join(',\n');
+  return '/* Themes.runtime.js — генерат ' + GEN + ' (MS0013, Р8). Руками не править:\n' +
+    '   источник — Themes.tokens.js без сборочных полей; пересобрать —\n' +
+    '   node tools/theme-build.mjs (гейт сверяет, --check). Грузят ThemeBoot.js и ds.js. */\n' +
+    'window.DS_THEMES = {\n' + body + '\n};\n';
 }
 
 /* ---------- разбор :root { --x: value } ---------- */
@@ -608,8 +638,42 @@ function selftest() {
     file.light.brand = file.dark.brand = color;
     for (const mode of ['light','dark']) {
       const m = engine.compile(file, mode, data);
-      const bad = m.contrast.filter(p => p.ratio !== null && p.ratio < p.min && !((p.exempt || []).includes('ibp-light') && (/--color-(danger|warning|success|info)-/.test(p.fg) || p.fg === '--color-fg-on-fill' && p.bg !== '--color-accent-fill')));
+      const bad = m.contrast.filter(p => p.required !== false && p.ratio !== null && p.ratio < p.min && !((p.exempt || []).includes('ibp-light') && (/--color-(danger|warning|success|info)-/.test(p.fg) || p.fg === '--color-fg-on-fill' && p.bg !== '--color-accent-fill')));
       t('контраст генерируемого '+color+' / '+mode, bad.length === 0, bad.map(p => p.fg).join(','));
+    }
+  }
+  /* Р2: основная кнопка — ровно brand 500, лестница 500 → 600 → 700 без hex вне рампы. */
+  for (const mode of ['light', 'dark']) {
+    const m = engine.compile(neo, mode, data);
+    t('кнопка ' + mode + ': заливка = brand 500', m.roles['--color-accent-fill'] === 'var(--ramp-accent-500)' && m.colors['--color-accent-fill'] === neo[mode].brand.toUpperCase(), m.colors['--color-accent-fill']);
+    t('кнопка ' + mode + ': наведение 600, нажатие 700', m.roles['--color-accent-fill-hover'] === 'var(--ramp-accent-600)' && m.roles['--color-accent-fill-pressed'] === 'var(--ramp-accent-700)');
+    const lum = ['500', '600', '700'].map(s => ramp.luminance(m.ramps.accent[s])), dir = mode === 'dark' ? 1 : -1;
+    t('кнопка ' + mode + ': лестница состояний монотонна', dir * (lum[1] - lum[0]) > 0 && dir * (lum[2] - lum[1]) > 0, lum.map(x => x.toFixed(3)).join(' → '));
+  }
+  for (const color of ['#2563EB', '#E5484D', '#FFD60A', '#7F56D9', '#18A59E']) {
+    const file = JSON.parse(JSON.stringify(neo)); file.light.brand = file.dark.brand = color;
+    const fill = engine.compile(file, 'light', data).colors['--color-accent-fill'];
+    t('заливка не затемняется ради контраста: ' + color, fill === color);
+  }
+  /* Р3: --primary как текст на тёмной поверхности не ниже AA в базовых тёмных темах. */
+  for (const id of ['ibp-neo', 'custom']) {
+    const m = engine.compile(data.themes.find(f => f.name === id), 'dark', data);
+    const ratio = ramp.contrast(m.colors['--color-accent-fill'], m.colors['--color-bg-surface']);
+    t(id + '-dark: --primary на поверхности ≥ 4,5', ratio >= 4.5, ratio.toFixed(2));
+  }
+  /* Р28: тёмная 500 = вход; генерация — светлота и насыщенность ступени 500 IBP Legacy. */
+  const neoDark = engine.compile(neo, 'dark', data);
+  t('тёмная: Brand/Neutral 500 — ровно вход', neoDark.ramps.accent['500'] === neo.dark.brand && neoDark.ramps.neutral['500'] === neo.dark.neutral);
+  let seedN = 7; const rnd = () => (seedN = (seedN * 9301 + 49297) % 233280) / 233280;
+  const gen = Array.from({ length: 20 }, () => ramp.generate('auto', rnd)).map(g => ramp.hexToOklch(g.brand));
+  t('генерация: brand 500 — L 0,663 ± 0,01', gen.every(o => Math.abs(o.l - 0.663) <= 0.01), gen.map(o => o.l.toFixed(3)).join(' '));
+  t('генерация: brand 500 — C ≤ 0,118 + 0,01 (гамма может уменьшить)', gen.every(o => o.c <= 0.128) && gen.filter(o => Math.abs(o.c - 0.118) <= 0.01).length >= 15, gen.map(o => o.c.toFixed(3)).join(' '));
+  /* Р27: опорная ступень — любая; ровно цвет на ней, рампа монотонна в обоих режимах. */
+  for (const mode of ['light', 'dark']) {
+    for (const step of ['300', '500', '700']) {
+      const r = ramp.fromStep('#2968F0', step, 'accent', mode), dir = mode === 'dark' ? 1 : -1;
+      const mono = ramp.STEPS.every((s, i) => i === 0 || dir * (ramp.luminance(r[s]) - ramp.luminance(r[ramp.STEPS[i - 1]])) > 0);
+      t('опорная ' + step + ' / ' + mode + ': ступень = цвет, рампа монотонна', r[step] === '#2968F0' && mono);
     }
   }
   const custom = engine.compile(data.themes.find(f => f.name === 'custom'), 'dark', data);
@@ -630,6 +694,25 @@ function selftest() {
   const clipped = ramp.hexToOklch(ramp.fromOklch(.6,.6,30));
   t('gamut: хрома уменьшена, тон сохранён', clipped.c < .6 && Math.abs(clipped.h-30) < 1, JSON.stringify(clipped));
 
+  /* Р8: браузер грузит Themes.runtime.js вместо источника — CSS тем тот же. */
+  const lite = { window: {} };
+  for (const code of [readFileSync(path.join(ROOT, AT.ramp), 'utf8'), runtimeFile(raw), readFileSync(path.join(ROOT, 'foundations/Themes/ThemeEngine.js'), 'utf8')]) {
+    vm.runInNewContext(code, lite);
+  }
+  const liteEngine = lite.window.DS_THEME_ENGINE;
+  let differs = '';
+  for (const file of data.themes) {
+    for (const mode of ['light', 'dark']) {
+      if (!file[mode]) continue;
+      if (engine.css(engine.compile(file, mode, data)) !== liteEngine.css(liteEngine.compile(file, mode, data))) differs += file.name + '-' + mode + ' ';
+    }
+  }
+  t('рантайм-данные: CSS всех тем как из полного источника', !differs, differs);
+  const liteTokens = runtimeTokens(raw);
+  t('рантайм-данные: без сборочных полей и пометок', !('pages' in liteTokens) && !('keep' in liteTokens) && liteTokens.rules.every((r) => r.selector === ':root' && !('why' in r)));
+  t('рантайм-данные: вдвое легче источника', runtimeFile(raw).length * 2 < readFileSync(path.join(ROOT, AT.tokens), 'utf8').length,
+    runtimeFile(raw).length + ' из ' + readFileSync(path.join(ROOT, AT.tokens), 'utf8').length);
+
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ')' : 'OK'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
@@ -640,7 +723,17 @@ function main() {
   const args = process.argv.slice(2);
   if (args.includes('--selftest')) return selftest();
   const checkOnly = args.includes('--check');
-  const {tokens, ramp, data, raw, engine} = loadSources();
+  let sources;
+  try { sources = loadSources(); }
+  catch (e) {
+    /* Негодный файл в tokens/ (имя файла ≠ name, ошибка JSON, неверное значение)
+       — дефект с подсказкой, а не стек: конструктор и сборка читают одну папку. */
+    console.log('== theme-build' + (checkOnly ? ' --check' : '') + ' ==');
+    console.log('FAIL  tokens/: ' + e.message + ' — исправьте файл (name внутри = имени файла без .json) или уберите его из папки');
+    console.log('ВЕРДИКТ: FAIL (дефектов: 1)');
+    process.exit(1);
+  }
+  const {tokens, ramp, data, raw, engine} = sources;
   const colorsCss = readFileSync(path.join(ROOT, AT.colors), 'utf8');
   const paletteCss = readFileSync(path.join(ROOT, AT.palette), 'utf8');
 
@@ -664,16 +757,20 @@ function main() {
   const mirrorPath = path.join(ROOT, 'foundations/Themes/tokens/tokens.data.js');
   const mirror = engine.mirror(data);
   if (checkOnly && (!existsSync(mirrorPath) || readFileSync(mirrorPath, 'utf8') !== mirror)) defects.push('tokens.data.js разошёлся с JSON — пересобрать');
+  const runtimePath = path.join(ROOT, AT.runtime);
+  const runtime = runtimeFile(raw);
+  if (checkOnly && (!existsSync(runtimePath) || readFileSync(runtimePath, 'utf8') !== runtime)) defects.push('Themes.runtime.js разошёлся с Themes.tokens.js — пересобрать');
   if (!checkOnly && generated) {
     writeFileSync(path.join(ROOT, AT.css), generated.css, 'utf8');
     writeFileSync(path.join(ROOT, AT.pages), generated.pages, 'utf8');
     writeFileSync(mirrorPath, mirror, 'utf8');
+    writeFileSync(runtimePath, runtime, 'utf8');
   }
   const notBuilt = tokens.themes.filter((t) => !(tokens.seeds && tokens.seeds[t]));
   const head = checkOnly ? 'theme-build --check' : 'theme-build';
   console.log('== ' + head + ' ==');
   console.log('собраны темы: ' + (generated ? generated.built.join(', ') : '—') + (notBuilt.length ? '; ждут семян: ' + notBuilt.join(', ') : ''));
-  if (!checkOnly) console.log('записаны ' + AT.css + ', ' + AT.pages);
+  if (!checkOnly) console.log('записаны ' + AT.css + ', ' + AT.pages + ', ' + AT.runtime + ', tokens/tokens.data.js');
   for (const d of defects) console.log('FAIL  ' + d);
   for (const i of infos) console.log('INFO  ' + i);
   console.log('ВЕРДИКТ: ' + (defects.length ? 'FAIL (дефектов: ' + defects.length + ')' : 'OK'));

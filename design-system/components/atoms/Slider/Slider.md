@@ -1,8 +1,8 @@
 ---
 component: Slider
 title: "Ползунок"
-version: "1.000"
-updated: "07.10.2026"
+version: "1.001"
+updated: "08.10.2026"
 page: components/atoms/Slider/Slider.html
 page_js: components/atoms/Slider/Slider.page.js
 runtime: components/atoms/Slider/Slider.js
@@ -25,10 +25,10 @@ status: curated
 - **Размеры** — Трек 4px, бегунок 16px, область ввода 32px; ширина по контейнеру.
 - **Контент** — Метка называет величину. Единица — data-unit, границы — min/max.
 - **Поведение** — Стрелки меняют на step; Home/End — край диапазона; PageUp/PageDown — крупный шаг.
-- **Состояния** — Default, hover, focus-visible, disabled. Выключенный input сохраняет значение.
+- **Состояния** — Default; Hover — ореол бегунка 6px `--primary-bg`; Focus — обводка 2px `--primary`; Disabled — трек и бегунок `--text-inactive`, подпись бледнеет, значение сохраняется. Витрина: `.is-hover`, `.is-focus` на `.slr`.
 - **Доступность** — Обязателен label[for] или aria-label. output связан атрибутом for.
 - **Типографика** — Body XS — подпись и значение, табличные цифры.
-- **Цвета** — Трек --primary/--border-light, бегунок --primary, контур --bg-tile. Градиент — смысловая шкала, хром от темы.
+- **Цвета** — Трек --primary/--border-light, бегунок --primary, контур --bg-tile, ореол --primary-bg, выключенный — --text-inactive. Градиент — смысловая шкала, хром от темы; в Firefox заполненная часть — ::-moz-range-progress.
 
 ## Для разработчиков (выжимка)
 

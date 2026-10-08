@@ -588,7 +588,7 @@
         var dark = on && cur.slice(-5) === '-dark';
         return '<div class="pp-theme__row"><button type="button" class="btn btn--transparent btn--s pp-theme__item' + (on ? ' is-active' : '') + '"'
           + ' data-pp-theme="' + esc(th.name) + '" aria-pressed="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>'
-          + (th.modes.length < 2 ? '' : '<label class="sw sw--dual"><input class="sw__input" type="checkbox" data-pp-mode="' + esc(th.name) + '" aria-label="' + esc(t('theme.darkLabel')) + ' ' + esc(th.label) + '"' + (dark ? ' checked' : '') + '><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">' + esc(t('theme.light')) + '</span><span class="sw__side sw__side--on">' + esc(t('theme.dark')) + '</span></label>') + '</div>';
+          + (th.modes.length < 2 ? '' : '<label class="sw sw--dual"><input class="sw__input" type="checkbox" role="switch" data-pp-mode="' + esc(th.name) + '" aria-label="' + esc(t('theme.darkLabel')) + ' ' + esc(th.label) + '"' + (dark ? ' checked' : '') + '><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">' + esc(t('theme.light')) + '</span><span class="sw__side sw__side--on">' + esc(t('theme.dark')) + '</span></label>') + '</div>';
       }).join('') + '</div>';
     wire(box);
     box.onclick = function (e) {

@@ -1,44 +1,163 @@
-/* Геометрия конструктора; все образцы ниже — готовые компоненты ДС. */
-.theme-preview { display: flex; flex-direction: column; gap: var(--space-16); width: 100%; }
-.theme-preview[hidden] { display: none; }
-.theme-preview__row, .theme-editor__head, .theme-toolbar__row { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
-.theme-preview__row[hidden], .theme-editor__head[hidden], .theme-toolbar__row[hidden] { display: none; }
-.theme-preview__grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: var(--space-16); }
-.theme-preview__grid[hidden] { display: none; }
-.theme-editor { display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-24); min-width: 0; }
-#pane-constructor > .docs-layout { display: block; padding: 0; max-width: none; }
-#pane-constructor > .docs-layout > .docs-main { padding: 0; max-width: none; }
-.theme-editor[hidden] { display: none; }
-.theme-editor__head { justify-content: space-between; }
-.theme-editor__choose { min-width: 160px; max-width: var(--pop-w-s); }
-.theme-editor__status { font: var(--type-body-xs); color: var(--text-secondary); }
-.theme-palettes { overflow-x: auto; }
-.theme-ramp { display: grid; grid-template-columns: 96px repeat(11,minmax(64px,1fr)); gap: var(--space-8); min-width: 888px; align-items: center; margin-bottom: var(--space-16); }
-.theme-ramp[hidden] { display: none; }
-.theme-ramp__name { font: var(--type-body-s-strong); color: var(--text-primary); }
-.theme-swatch { appearance: none; border: 1px solid var(--border-light); border-radius: var(--radius-control); padding: var(--space-12) var(--space-4); color: var(--sw-fg); background: var(--sw); display: flex; flex-direction: column; align-items: center; gap: var(--space-4); min-width: 0; cursor: pointer; font: var(--type-body-xs); font-variant-numeric: tabular-nums; }
-.theme-swatch[hidden] { display: none; }
+/* ============================================================
+   Themes.page.css — раскладка страницы «Темы» (MS0013, Р29).
+   Образец — coolors.co/tailwind: шапка → палитра → примеры, всё
+   управление — в закреплённой нижней панели. Только раскладка на
+   токенах; компоненты рисуют себя сами.
+   Исключение спеки страницы: плашки рамп и цветные полосы панели
+   показывают произвольный цвет темы (inline-переменные --sw, --sw-fg).
+   ============================================================ */
+
+/* Страница шире справочных: у конструктора две широкие зоны. Снизу —
+   место под закреплённую панель, чтобы она не закрывала последний ряд. */
+.theme-page { max-width: 1440px; padding-bottom: calc(var(--space-96) + var(--space-48)); }
+
+.theme-bar {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: var(--space-12); margin: var(--space-24) 0 var(--space-16);
+}
+.theme-bar__group { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+.theme-bar__group[hidden] { display: none; }
+
+.theme-tabs { margin-bottom: var(--space-32); }
+#pane-builder[hidden], #pane-docs[hidden] { display: none; }
+
+/* ---------- разделы ---------- */
+.theme-section { display: flex; flex-direction: column; gap: var(--space-16); margin-bottom: var(--space-48); }
+.theme-section__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap; }
+.theme-section__title { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+.theme-section__meta { font: var(--type-body-s); color: var(--text-secondary); }
+.theme-muted { color: var(--text-secondary); }
+
+/* ---------- палитра ---------- */
+.theme-ramps { display: flex; flex-direction: column; gap: var(--space-16); }
+.theme-ramp { display: grid; grid-template-columns: 120px repeat(11, minmax(0, 1fr)); gap: var(--space-8); align-items: stretch; }
+.theme-ramp__name { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); min-width: 0; }
+.theme-ramp__title { font: var(--type-body-m-strong); color: var(--text-primary); }
+.theme-ramp__sub { font: var(--type-body-xs); color: var(--text-secondary); }
+
+.theme-swatch {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between;
+  min-width: 0; height: 88px; padding: var(--space-8) var(--space-10);
+  border: 0; border-radius: var(--radius-control); cursor: pointer; text-align: left;
+  background: var(--sw); color: var(--sw-fg);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.theme-swatch--edge { box-shadow: inset 0 0 0 1px var(--border-light); }
+.theme-swatch:hover, .theme-swatch.is-hover { transform: translateY(-2px); box-shadow: var(--elevation-2); }
 .theme-swatch:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); }
-.theme-swatch__hex { font-size: inherit; }
-.theme-swatch__contrast { font: var(--type-body-xs); }
-.theme-swatch__manual { font: var(--type-body-xs); text-decoration: underline; }
-.theme-swatch--small { min-height: var(--space-40); padding: var(--space-8); }
-.theme-toolbar { position: sticky; bottom: 0; z-index: 1; display: flex; flex-direction: column; gap: var(--space-12); background: var(--bg-tile); border: 1px solid var(--border-light); border-radius: var(--radius-card); padding: var(--space-16); }
-.theme-toolbar[hidden] { display: none; }
-.theme-toolbar .inp { flex: 1 1 160px; }
-.theme-toolbar .slr { flex: 1 1 140px; }
-.theme-table { width: 100%; border-collapse: collapse; font: var(--type-body-s); }
-.theme-table th, .theme-table td { border-bottom: 1px solid var(--border-light); padding: var(--space-8); text-align: left; overflow-wrap: anywhere; }
-.theme-table th { color: var(--text-secondary); font: var(--type-body-xs); font-weight: var(--weight-semibold); }
-.theme-table code { font-size: inherit; }
-.theme-table tr.theme-contrast-fail td:last-child { color: var(--error); font: var(--type-body-s-strong); }
-.theme-table__actions { display: flex; gap: var(--space-8); flex-wrap: wrap; }
-.theme-table__actions[hidden] { display: none; }
-.theme-role-group { border-top: 1px solid var(--border-light); padding: var(--space-12) 0; }
-.theme-role-group summary { font: var(--type-body-m-strong); cursor: pointer; }
+.theme-swatch__step { align-self: flex-end; font: var(--type-body-s-strong); }
+.theme-swatch__hex { align-self: center; font: var(--type-body-xs); letter-spacing: .02em; }
+.theme-swatch__mark { position: absolute; top: var(--space-10); left: var(--space-10); display: flex; }
+.theme-swatch__dot { width: var(--space-8); height: var(--space-8); border-radius: var(--radius-circle); background: currentColor; }
+.theme-swatch__mark [data-icon] { width: 14px; height: 14px; display: block; }
+@media (prefers-reduced-motion: reduce) { .theme-swatch { transition: none; } .theme-swatch:hover { transform: none; } }
+
+.theme-hint { margin: 0; }
+
+/* ---------- примеры ---------- */
+.theme-examples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); align-items: stretch; }
+.theme-examples__wide { grid-column: span 2; }
+.theme-examples__full { grid-column: 1 / -1; }
+.theme-ex { display: flex; flex-direction: column; gap: var(--space-12); }
+.theme-ex > * { margin: 0; }
+.theme-ex p { margin: 0; }
+.theme-ex--center { align-items: center; text-align: center; justify-content: center; height: 100%; }
+.theme-ex--center-text { display: flex; flex-direction: column; gap: var(--space-4); }
+.theme-ex--center-text > * { margin: 0; }
+.theme-ex__illu { width: 195px; height: 140px; align-self: center; }
+.theme-ex-row { display: flex; align-items: center; gap: var(--space-12); }
+.theme-ex-grow { flex: 1 1 auto; min-width: 0; }
+.theme-ex-actions { display: flex; align-items: center; justify-content: center; gap: var(--space-8); flex-wrap: wrap; }
+.theme-ex-kpi { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+.theme-ex-metric { display: flex; flex-direction: column; gap: var(--space-4); }
+.theme-ex-metric > * { margin: 0; }
+
+.theme-ex-apps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-16) var(--space-8); }
+.theme-ex-app { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); text-decoration: none; color: var(--text-primary); text-align: center; }
+.theme-ex-app:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); border-radius: var(--radius-control); }
+
+.theme-ex-event { display: flex; align-items: center; gap: var(--space-16); }
+.theme-ex-event__time { min-width: 56px; }
+
+.theme-ex-table .tbl__row { grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1fr); }
+
+.theme-ex-calendar { display: flex; justify-content: center; }
+
+.theme-ex-buttons { display: grid; grid-template-columns: 96px repeat(6, minmax(0, 1fr)); gap: var(--space-8) var(--space-12); align-items: center; }
+.theme-ex-buttons__type { font: var(--type-body-s-strong); color: var(--text-secondary); }
+.theme-ex-buttons__head { font: var(--type-body-xs); color: var(--text-secondary); }
+
+.theme-ex-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-12); }
+
+.theme-ex-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-8); margin: 0; padding: 0; list-style: none; }
+.theme-ex-steps li { display: flex; align-items: center; gap: var(--space-8); }
+
+/* ---------- документация ---------- */
+.theme-docs { max-width: 820px; display: flex; flex-direction: column; gap: var(--space-32); }
+.theme-docs section > h2 { margin: 0 0 var(--space-12); font: var(--type-h5-strong); }
+.theme-docs p { margin: 0 0 var(--space-12); font: var(--type-body-m); color: var(--text-primary); }
+
+/* ---------- нижняя панель ---------- */
+.theme-dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap;
+  padding: var(--space-12) var(--space-24);
+  background: var(--bg-tile); border-top: 1px solid var(--border-light); box-shadow: var(--elevation-3);
+}
+body.ds-has-nav .theme-dock { left: var(--ds-nav-w); }
+.theme-dock[hidden] { display: none; }
+.theme-dock__group { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+
+.theme-pill {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-12);
+  width: 200px; height: 40px; padding: 0 var(--space-16);
+  border: 0; border-radius: var(--radius-control); cursor: pointer;
+  background: var(--sw); color: var(--sw-fg); box-shadow: inset 0 0 0 1px var(--border-light);
+}
+.theme-pill:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); }
+.theme-pill__name { font: var(--type-body-s-strong); }
+.theme-pill__hex { font: var(--type-body-s); }
+
+.theme-adjust { display: flex; flex-direction: column; gap: var(--space-16); }
+.theme-adjust__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); }
+.theme-adjust__label { display: flex; align-items: center; gap: var(--space-8); color: var(--text-secondary); }
+.theme-adjust__label [data-icon] { width: 18px; height: 18px; display: block; }
+
+/* ---------- все цвета и экспорт ---------- */
+.theme-all { display: flex; flex-direction: column; gap: var(--space-16); }
+.theme-all [hidden] { display: none; }
+.theme-group { display: flex; flex-direction: column; gap: var(--space-8); }
+.theme-group__title { margin: var(--space-8) 0 0; font: var(--type-body-s-strong); color: var(--text-secondary); }
+.theme-token { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: var(--space-12); padding: var(--space-8) 0; border-bottom: 1px solid var(--border-light); }
+.theme-token__chip { width: 40px; height: 40px; border-radius: var(--radius-control); background: var(--sw); box-shadow: inset 0 0 0 1px var(--border-light); border: 0; cursor: pointer; padding: 0; }
+.theme-token__chip:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); }
+.theme-token__main { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.theme-token__name { font: var(--type-body-s-strong); color: var(--text-primary); overflow-wrap: anywhere; }
+.theme-token__desc { font: var(--type-body-xs); color: var(--text-secondary); }
+.theme-token__acts { display: flex; align-items: center; gap: var(--space-4); }
+.theme-mini { display: grid; grid-template-columns: 96px repeat(11, minmax(0, 1fr)); gap: var(--space-4); align-items: center; }
+.theme-mini .theme-swatch { height: 40px; padding: var(--space-4); }
+.theme-mini .theme-swatch__hex { display: none; }
+.theme-mini__name { font: var(--type-body-xs); color: var(--text-secondary); }
+
 .theme-export__controls { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; margin-bottom: var(--space-16); }
-.theme-export__controls[hidden] { display: none; }
-.theme-export .code-panel { max-height: none; }
-.theme-editor__error { color: var(--error); font: var(--type-body-s); }
-.theme-editor__error:empty { display: none; }
-@media(max-width:720px){.theme-editor { padding: var(--space-16); }.theme-table th:nth-child(2),.theme-table td:nth-child(2){display:none;}.theme-toolbar { position: static; }}
+.theme-code { max-height: 52vh; overflow: auto; }
+
+/* ---------- адаптив ---------- */
+@media (max-width: 1279px) {
+  .theme-examples { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .theme-ex-plans { grid-template-columns: 1fr; }
+}
+@media (max-width: 1100px) {
+  .theme-ramp { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .theme-ramp__name { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; gap: var(--space-8); }
+  .theme-dock .btn__label { display: none; }
+}
+@media (max-width: 1024px) { body.ds-has-nav .theme-dock { left: 0; } }
+@media (max-width: 839px) {
+  .theme-examples { grid-template-columns: 1fr; }
+  .theme-examples__wide, .theme-examples__full { grid-column: auto; }
+  .theme-pill { width: 120px; }
+  .theme-pill__name { display: none; }
+  .theme-ex-buttons { overflow-x: auto; }
+}

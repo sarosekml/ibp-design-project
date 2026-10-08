@@ -17,7 +17,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Checkbox | components/atoms/Checkbox/Checkbox.md | components/atoms/Checkbox/Checkbox.css | label-helper | 1.007 |
 | Chip | components/atoms/Chip/Chip.md | components/atoms/Chip/Chip.css | label-helper, spinner | 1.020 |
 | Colors | foundations/Colors/Colors.md | — | — | 1.005 |
-| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, button, popover | 1.000 |
+| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, icon-button, button, popover | 1.001 |
 | ContextMenu | components/molecules/ContextMenu/ContextMenu.md | components/molecules/ContextMenu/ContextMenu.css | button | 1.012 |
 | DatePicker | components/molecules/DatePicker/DatePicker.md | components/molecules/DatePicker/DatePicker.css | icon-button, button | 1.009 |
 | Divider | components/atoms/Divider/Divider.md | components/atoms/Divider/Divider.css | button | 2.001 |
@@ -28,7 +28,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Drawer | components/organisms/Drawer/Drawer.md | components/organisms/Drawer/Drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.003 |
 | Entity | components/organisms/Entity/Entity.md | components/organisms/Entity/Entity.css | avatar, chip, icon-button, button, badge | 1.008 |
 | IconButton | components/atoms/IconButton/IconButton.md | components/atoms/IconButton/IconButton.css | badge, spinner | 1.011 |
-| Icons | foundations/Icons/Icons.md | — | — | 1.002 |
+| Icons | foundations/Icons/Icons.md | — | — | 1.003 |
 | Illustrations | foundations/Illustrations/Illustrations.md | foundations/Illustrations/Illustrations.css | — | 1.006 |
 | Layout | foundations/Layout/Layout.md | foundations/Layout/Layout.css | nav-panel, breadcrumbs, spacing | 1.015 |
 | InputAmountRange | components/molecules/Inputs/InputAmountRange/InputAmountRange.md | components/molecules/Inputs/InputRanges.css | input, label-helper, tooltip | 1.007 |
@@ -57,7 +57,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Skeleton | components/atoms/Skeleton/Skeleton.md | components/atoms/Skeleton/Skeleton.css | — | 1.002 |
 | SnackBar | components/organisms/SnackBar/SnackBar.md | components/organisms/SnackBar/SnackBar.css | button, link | 1.005 |
 | Spacing | foundations/Spacing/Spacing.md | foundations/Spacing/Spacing.css | — | 1.005 |
-| Slider | components/atoms/Slider/Slider.md | components/atoms/Slider/Slider.css | label-helper | 1.000 |
+| Slider | components/atoms/Slider/Slider.md | components/atoms/Slider/Slider.css | label-helper | 1.001 |
 | Spinner | components/atoms/Spinner/Spinner.md | components/atoms/Spinner/Spinner.css | — | 1.001 |
 | Splitter | components/molecules/Splitter/Splitter.md | components/molecules/Splitter/Splitter.css | button | 1.005 |
 | StepForm | components/molecules/StepForm/StepForm.md | components/molecules/StepForm/StepForm.css | step-marker, note, input, chip, tile | 1.000 |
@@ -68,7 +68,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.023 |
 | TableFilter | components/organisms/TableFilter/TableFilter.md | components/organisms/TableFilter/TableFilter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | components/molecules/Tab/Tab.md | components/molecules/Tab/Tab.css | — | 1.012 |
-| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.013 |
+| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.014 |
 | Tile | components/organisms/Tile/Tile.md | components/organisms/Tile/Tile.css | icon-button, button, link, chip, badge, alert, divider | 1.016 |
 | Toast | components/molecules/Toast/Toast.md | components/molecules/Toast/Toast.css | button, spinner | 1.007 |
 | Tooltip | components/molecules/Tooltip/Tooltip.md | components/molecules/Tooltip/Tooltip.css | button | 2.011 |

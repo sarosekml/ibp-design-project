@@ -1,10 +1,35 @@
-/* ColorPicker — функциональные цвета HSV задаёт рантайм; хром — токены ДС. */
-:root { --cpk-sv-height: 160px; --cpk-marker-size: 12px; }
+/* ============================================================
+   ColorPicker 1.001 — поле SV, тон, строка Hex + пипетка + копирование.
+   Хром — токены ДС. Функциональные цвета (градиенты SV и тона, кольцо
+   маркера) — исключение спеки: они показывают сам цвет и не зависят от темы.
+   ============================================================ */
+:root { --cpk-sv-height: 160px; --cpk-marker-size: 14px; }
+
 .cpk { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
 .cpk[hidden] { display: none; }
-.cpk__sv { position: relative; height: var(--cpk-sv-height); border-radius: var(--radius-field); touch-action: none; cursor: crosshair; background: linear-gradient(to top, #000000, transparent), linear-gradient(to right, #FFFFFF, transparent), var(--cpk-hue, #FF0000); }
+
+.cpk__sv {
+  position: relative; height: var(--cpk-sv-height); border-radius: var(--radius-control);
+  touch-action: none; cursor: crosshair;
+  background: linear-gradient(to top, #000000, transparent), linear-gradient(to right, #FFFFFF, transparent), var(--cpk-hue, #FF0000);
+}
 .cpk__sv:focus-visible { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); }
-.cpk__marker { position: absolute; width: var(--cpk-marker-size); height: var(--cpk-marker-size); border: var(--space-2) solid #FFFFFF; box-shadow: 0 0 0 1px #000000; border-radius: var(--radius-circle); transform: translate(-50%, -50%); pointer-events: none; }
-.cpk__actions { display: flex; gap: var(--space-8); flex-wrap: wrap; }
-.cpk__actions[hidden] { display: none; }
+.cpk__marker {
+  position: absolute; width: var(--cpk-marker-size); height: var(--cpk-marker-size);
+  border: var(--space-2) solid #FFFFFF; box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
+  border-radius: var(--radius-circle); transform: translate(-50%, -50%); pointer-events: none;
+}
+
+.cpk__row { display: flex; align-items: center; gap: var(--space-4); }
+.cpk__hex { flex: 1 1 auto; min-width: 0; }
+.cpk__swatch {
+  display: block; width: 100%; height: 100%; border-radius: var(--radius-s);
+  background: var(--cpk-value); box-shadow: inset 0 0 0 1px var(--border-light);
+}
+.cpk__row [hidden] { display: none; }
+
+.cpk__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.cpk__foot[hidden] { display: none; }
+.cpk__slot:empty { display: none; }
+
 .cpk--disabled { pointer-events: none; opacity: .4; }

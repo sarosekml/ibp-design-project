@@ -1188,6 +1188,7 @@ const MODULE_README = path.join(HERE, 'module-readme.mjs');
 const README_STATS = path.join(HERE, 'readme-stats.mjs');
 const DOCS_INDEX = path.join(HERE, 'docs-index.mjs');
 const PROMOTE = path.join(HERE, 'promote.mjs');
+const PAGE_SNAPSHOT = path.join(HERE, 'page-snapshot.mjs');
 const PROTO_PANEL = path.join(HERE, 'proto-panel.mjs');
 const KIT_BUILD = path.join(HERE, 'kit-build.mjs');
 /* Витрина локальных компонентов (25.09.2026): каталог из манифеста
@@ -1321,6 +1322,9 @@ function gateStep(id, paths = null) {
     /* Генерат тем = источник (RE0005): правка файлов foundations/Themes/ врозь
        с Themes.tokens.js/Ramp.tokens.js не пройдёт молча. */
     case 'theme-build': return { title: 'theme-build --check (темы = источник)', args: [THEME_BUILD, '--check'], cwd: DS };
+    /* MS0013: алгоритм тем и запись файлов тем проверяются откатом (review-2, Р10). */
+    case 'theme-selftest': return { title: 'theme-build --selftest (алгоритм тем)', args: [THEME_BUILD, '--selftest'], cwd: DS };
+    case 'theme-files-selftest': return { title: 'theme-files-selftest (запись файлов тем)', args: [path.join(DS, 'tools', 'theme-files-selftest.mjs')], cwd: DS };
     case 'etalons': return { title: 'сенсор --etalons', args: [SENSOR, '--etalons'], cwd: ROOT };
     case 'verify-sensor': return { title: 'verify --corpus sensor', args: [SELF, 'verify', '--corpus', 'sensor'], cwd: ROOT };
     case 'verify-lint': return { title: 'verify --corpus lint', args: [SELF, 'verify', '--corpus', 'lint'], cwd: ROOT };
@@ -1397,6 +1401,7 @@ function gateStep(id, paths = null) {
        страницы и селекторы сценариев, зеркала и включатель = генератор,
        рантайм на токенах ДС (коды ПН, шапка proto-panel.mjs). */
     case 'panel': return { title: 'proto-panel --check (панель прототипа: сценарии, комментарии, зеркала, включатель)', args: [PROTO_PANEL, '--check'], cwd: ROOT };
+    case 'snapshot-selftest': return { title: 'page-snapshot --selftest (сверка сохранности страниц)', args: [PAGE_SNAPSHOT, '--selftest'], cwd: ROOT };
     case 'panel-selftest': return { title: 'proto-panel --selftest', args: [PROTO_PANEL, '--selftest'], cwd: ROOT };
     default: throw new Error('неизвестный шаг гейта: ' + id);
   }
@@ -1442,6 +1447,8 @@ function gateStepsFor(rel, deleted) {
     if (rel.startsWith(PRJ.panel.runtime + '/')) add('panel-selftest', 'panel');
   }
   if (rel === TOOL_REL + '/proto-panel.mjs') add('panel-selftest', 'panel', 'promote-selftest');
+  // сверка сохранности страниц (MS0013, Р12): сравнение снимков — самопроверкой без браузера
+  if (rel === TOOL_REL + '/page-snapshot.mjs') add('snapshot-selftest');
 
   /* Счётчики корневого README — тоже до раннего выхода: удалённая страница ДС,
      иллюстрация или модуль сдвигают число так же, как новые. Сам README,
@@ -1526,10 +1533,12 @@ function gateStepsFor(rel, deleted) {
   }
   if ((dk && dk.kind === 'style') || isDsFile(rel, L.at.bundleCss)) add('lint-global', 'parity', 'etalons');
   if (dk && dk.kind === 'spec') add('parity', 'spec-audit');
-  /* Файлы тем (RE0005): генерат Themes.css/Themes.pages.css, источник
-     Themes.tokens.js/Ramp.tokens.js, хром Themes.panel.css — правка любого
-     из них сверяется генератором (шаг theme-build). */
-  if (rel.startsWith(DS_REL + '/foundations/Themes/')) add('theme-build');
+  /* Файлы тем (RE0005, MS0013): генераты Themes.css/Themes.pages.css/Themes.runtime.js
+     и зеркало tokens.data.js, источники Themes.tokens.js/Ramp.tokens.js/ThemeEngine.js
+     и tokens/*.json — правка любого из них сверяется генератором, алгоритм и
+     запись файлов — самопроверками (шаги theme-build, theme-selftest,
+     theme-files-selftest). */
+  if (rel.startsWith(DS_REL + '/foundations/Themes/')) add('theme-build', 'theme-selftest', 'theme-files-selftest');
   // реестры ДС, которые читают глобальные правила линтера (D1–D4, D9): витрина, правила ведения,
   // журнал правок и генератор шапки главной (версия и дата выводятся из журнала)
   if ([L.at.home, 'MAINTAINING.md', 'CHANGELOG.md', L.at.homeTool].some((f) => isDsFile(rel, f))) add('lint-global');
@@ -1565,7 +1574,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/promote.mjs') add('promote-selftest');
   // корень и каталоги из манифеста читают все: правка общего модуля — прогон всех его потребителей
   if (rel === TOOL_REL + '/project.mjs') add('manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'registry-selftest', 'registry', 'runlog-selftest',
-    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel',
+    'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'snapshot-selftest', 'panel-selftest', 'panel',
     'agent-config-selftest', 'agent-config', 'vendor-selftest', 'vendor', 'etalons', 'ctx-budget', 'check', 'stats');
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
@@ -1580,7 +1589,7 @@ function gateStepsFor(rel, deleted) {
 
 const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром

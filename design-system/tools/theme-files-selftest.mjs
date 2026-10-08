@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const root=new URL('../foundations/Themes/',import.meta.url);
 const context=vm.createContext({window:{},localStorage:{setItem(){}},console});
-for(const name of ['Ramp.tokens.js','Themes.tokens.js','tokens/tokens.data.js','ThemeEngine.js','ThemeFiles.js'])vm.runInContext(fs.readFileSync(new URL(name,root),'utf8'),context);
+for(const name of ['Ramp.tokens.js','Themes.runtime.js','tokens/tokens.data.js','ThemeEngine.js','ThemeFiles.js'])vm.runInContext(fs.readFileSync(new URL(name,root),'utf8'),context);
 const win=context.window,copy=x=>JSON.parse(JSON.stringify(x));let reloads=0;
 win.DSTheme={reload(data){reloads++;win.DS_THEME_DATA=data;}};
 class Directory{

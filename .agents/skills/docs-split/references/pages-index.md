@@ -1,7 +1,7 @@
 ---
 belongs_to: docs-split
 purpose: Структурная карта doc-страниц IBP. Читай карту вместо файла целиком. Генерируется командой map, руками не править.
-generated: 2026-10-04
+generated: 2026-10-07
 ---
 
 # Карта страниц документации
@@ -19,10 +19,10 @@ generated: 2026-10-04
 | Layout | static | — | Layout.page.js | foundations/Layout/Layout.css | 12 | ✅ |
 | Radius | static | — | — | — | 4 | ✅ |
 | Spacing | static | — | — | foundations/Spacing/Spacing.css | 7 | ✅ |
-| Themes | — | — | — | foundations/Themes/Themes.css | 12 | ✅ |
+| Themes | — | — | Themes.page.js | foundations/Themes/Themes.css | 0 | ⬜ |
 | Typography | — | — | — | — | 4 | ⬜ |
 
-## Atoms (14)
+## Atoms (18)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
@@ -33,23 +33,29 @@ generated: 2026-10-04
 | Chip | dynamic | — | Chip.page.js | components/atoms/Chip/Chip.css | 12 | ✅ |
 | Divider | dynamic | pg-stage | Divider.page.js | components/atoms/Divider/Divider.css | 12 | ✅ |
 | IconButton | dynamic | — | — | components/atoms/IconButton/IconButton.css | 12 | ✅ |
+| Keyboard | dynamic | pg-stage | Keyboard.page.js | components/atoms/Keyboard/Keyboard.css | 12 | ✅ |
 | LabelHelper | dynamic | — | LabelHelper.page.js | components/atoms/LabelHelper/LabelHelper.css | 12 | ✅ |
 | Link | dynamic | — | — | components/atoms/Link/Link.css | 12 | ✅ |
+| Note | dynamic | pg-stage | Note.page.js | components/atoms/Note/Note.css | 12 | ✅ |
 | ProgressBar | dynamic | — | — | components/atoms/ProgressBar/ProgressBar.css | 12 | ✅ |
 | Radiobutton | dynamic | — | — | components/atoms/Radiobutton/Radiobutton.css | 12 | ✅ |
 | Skeleton | dynamic | — | — | components/atoms/Skeleton/Skeleton.css | 12 | ✅ |
+| Slider | static | pg-stage | Slider.page.js | components/atoms/Slider/Slider.css | 12 | ✅ |
 | Spinner | dynamic | pg-stage | — | components/atoms/Spinner/Spinner.css | 12 | ✅ |
+| StepMarker | dynamic | pg-stage | StepMarker.page.js | components/atoms/StepMarker/StepMarker.css | 12 | ✅ |
 | Switch | dynamic | — | — | components/atoms/Switch/Switch.css | 12 | ✅ |
 
-## Molecules (21)
+## Molecules (24)
 
 | Страница | Конструктор | Демо | page.js | CSS | Секций | Статус |
 |---|---|---|---|---|---|---|
 | Alert | dynamic | — | Alert.page.js | components/molecules/Alert/Alert.css | 12 | ✅ |
 | Breadcrumbs | dynamic | — | Breadcrumbs.page.js | components/molecules/Breadcrumbs/Breadcrumbs.css | 12 | ✅ |
 | ButtonGroup | dynamic | — | — | components/molecules/ButtonGroup/ButtonGroup.css | 12 | ✅ |
+| ColorPicker | static | pg-stage | ColorPicker.page.js | components/molecules/ColorPicker/ColorPicker.css | 12 | ✅ |
 | ContextMenu | dynamic | pg-stage | ContextMenu.page.js | components/molecules/ContextMenu/ContextMenu.css | 12 | ✅ |
 | DatePicker | dynamic | pg-stage | DatePicker.page.js | components/molecules/DatePicker/DatePicker.css | 11 | ✅ |
+| DocCard | dynamic | pg-stage | DocCard.page.js | components/molecules/DocCard/DocCard.css | 12 | ✅ |
 | DropdownList | dynamic | pg-stage | DropdownList.page.js | components/molecules/DropdownList/DropdownList.css | 12 | ✅ |
 | EmptyState | dynamic | — | — | components/molecules/EmptyState/EmptyState.css | 12 | ✅ |
 | InputAmountRange | dynamic | pg-stage | InputAmountRange.page.js | components/molecules/Inputs/InputRanges.css | 11 | ✅ |
@@ -62,6 +68,7 @@ generated: 2026-10-04
 | ReadOnlyField | dynamic | — | ReadOnlyField.page.js | components/molecules/ReadOnlyField/ReadOnlyField.css | 12 | ✅ |
 | SegmentControl | dynamic | — | SegmentControl.page.js | components/molecules/SegmentControl/SegmentControl.css | 12 | ✅ |
 | Splitter | dynamic | pg-stage | Splitter.page.js | components/molecules/Splitter/Splitter.css | 12 | ✅ |
+| StepForm | dynamic | pg-stage | StepForm.page.js | components/molecules/StepForm/StepForm.css | 12 | ✅ |
 | SubTab | dynamic | — | SubTab.page.js | components/molecules/SubTab/SubTab.css | 12 | ✅ |
 | Tab | dynamic | — | Tab.page.js | components/molecules/Tab/Tab.css | 12 | ✅ |
 | Toast | dynamic | — | Toast.page.js | components/molecules/Toast/Toast.css | 12 | ✅ |

@@ -162,34 +162,84 @@ window.DS_RAMP = (function () {
     if(!adj.hue&&!adj.saturation&&!adj.temperature)return color.toUpperCase();
     return fromOklch(v.l,v.c,v.h);
   }
-  function from500(color,kind,profile,adj) {
-    color=adjustHex(color,adj); var input=hexToOklch(color);
-    kind=kind==='neutral'?'neutral':'accent';
-    var ref=CORE[kind].map(hexToOklch),anchor=ref[5],out={},last=null;
-    for(var i=0;i<STEPS.length;i++) {
-      var step=STEPS[i],v=ref[i],weight=1-Math.abs(i-5)/6;
-      var L=profile==='dark'?SCALES.dark.L[step]:v.l+(input.l-anchor.l)*weight;
-      if(profile!=='dark') {
-        /* Держим 500 входом даже при очень светлом/тёмном цвете. */
-        L=i<5?input.l+(1-input.l)*(v.l-anchor.l)/(1-anchor.l):input.l*v.l/anchor.l;
-      }
-      var C=Math.min(kind==='neutral'?0.04:0.4,input.c)*(profile==='dark'?SCALES.dark.chroma[step]:v.c/anchor.c);
-      var H=input.h+(profile==='dark'?0:hueDiff(v.h,anchor.h));
-      var value=profile!=='dark'&&step==='500'?color:fromOklch(L,C,H);
-      /* Квантование hex не должно склеивать соседние ступени. */
-      var lum=luminance(value),sign=profile==='dark'?1:-1;
-      if(last!==null&&sign*(lum-last)<=0) {
-        for(var n=1;n<=100&&sign*(lum-last)<=0;n++){L=clamp01(L+sign*0.002);value=fromOklch(L,C,H);lum=luminance(value);}
-      }
-      out[step]=value;last=lum;
+  /* ---------- Рампа от опорной ступени (MS0013, Р27, Р28) ----------
+     Человек задаёт цвет любой ступени — по умолчанию 500. Эта ступень
+     становится ровно этим цветом в обеих темах, остальные строятся
+     по кривой эталона относительно неё:
+     - светлая — кривая «Colors / Core»: светлота пропорционально сдвигается
+       к белому (ступени светлее опорной) и к чёрному (темнее), доля хромы
+       и сдвиг тона — как у эталона;
+     - тёмная — общая тёмная шкала SCALES.dark: края (50 и 950) остаются на
+       месте, опорная ступень — ровно вход, промежуточные — по шкале между
+       ними; тон — входа.
+     Квантование в hex не должно склеивать соседние ступени: от опорной
+     ступени к краям светлота подталкивается, пока ступени не разойдутся. */
+  var CAP = { accent: 0.4, neutral: 0.04 };
+
+  function stepL(profile, ref, i, a, inputL) {
+    if (i === a) return inputL;
+    if (profile === 'dark') {
+      var d = SCALES.dark.L, first = d[STEPS[0]], last = d[STEPS[STEPS.length - 1]], anchor = d[STEPS[a]];
+      if (i < a) return first + (inputL - first) * (d[STEPS[i]] - first) / ((anchor - first) || 1);
+      return inputL + (last - inputL) * (d[STEPS[i]] - anchor) / ((last - anchor) || 1);
     }
+    var refA = ref[a].l;
+    if (i < a) return inputL + (1 - inputL) * (ref[i].l - refA) / ((1 - refA) || 1);
+    return inputL * ref[i].l / (refA || 1);
+  }
+
+  function stepC(profile, ref, i, a, inputC, cap) {
+    var share = profile === 'dark'
+      ? SCALES.dark.chroma[STEPS[i]] / SCALES.dark.chroma[STEPS[a]]
+      : ref[i].c / Math.max(ref[a].c, 0.001);
+    return Math.min(cap, Math.min(cap, inputC) * share);
+  }
+
+  function fromStep(color, step, kind, profile, adj) {
+    color = adjustHex(color, adj);
+    kind = kind === 'neutral' ? 'neutral' : 'accent';
+    profile = profile === 'dark' ? 'dark' : 'light';
+    var a = STEPS.indexOf(String(step || '500'));
+    if (a < 0) a = STEPS.indexOf('500');
+    var input = hexToOklch(color), ref = CORE[kind].map(hexToOklch), out = {};
+    var sign = profile === 'dark' ? 1 : -1;   /* куда растёт светлота по ступеням */
+
+    function value(i) {
+      var H = input.h + (profile === 'dark' ? 0 : hueDiff(ref[i].h, ref[a].h));
+      return { L: stepL(profile, ref, i, a, input.l), C: stepC(profile, ref, i, a, input.c, CAP[kind]), H: H };
+    }
+    function place(i, neighbour) {
+      var v = value(i), hex = fromOklch(v.L, v.C, v.H);
+      var dir = i > a ? sign : -sign, lum = luminance(hex), prev = luminance(out[STEPS[neighbour]]);
+      for (var n = 1; n <= 100 && dir * (lum - prev) <= 0; n++) {
+        v.L = clamp01(v.L + dir * 0.002); hex = fromOklch(v.L, v.C, v.H); lum = luminance(hex);
+      }
+      out[STEPS[i]] = hex;
+    }
+
+    out[STEPS[a]] = color.toUpperCase();
+    for (var up = a + 1; up < STEPS.length; up++) place(up, up - 1);
+    for (var down = a - 1; down >= 0; down--) place(down, down + 1);
     return out;
   }
-  var METHODS=['auto','monochromatic','analogous','complementary','split-complementary','triadic','tetradic','square'];
-  function generate(method,random) {
-    var rnd=random||Math.random,h=rnd()*360,c=0.08+rnd()*0.13,L=0.48+rnd()*0.22;
-    var shift={auto:0,monochromatic:0,analogous:30,complementary:180,'split-complementary':150,triadic:120,tetradic:60,square:90}[method]||0;
-    return {brand:fromOklch(L,c,h),neutral:fromOklch(0.52,method==='auto'?0.014:0.025,h+shift)};
+  function from500(color, kind, profile, adj) { return fromStep(color, '500', kind, profile, adj); }
+
+  /* ---------- Генерация палитры (Р28) ----------
+     Случайный только тон. Светлота и насыщенность — как у ступени 500 в
+     IBP Legacy: brand #00AA9B (OKLCH L 0,663 · C 0,118), neutral #617C7C
+     (L 0,565 · C 0,031). Метод задаёт тон neutral относительно brand.
+     Цвет вне sRGB fromOklch приводит уменьшением хромы. */
+  var LEGACY_500 = { brand: { l: 0.663, c: 0.118 }, neutral: { l: 0.565, c: 0.031 } };
+  var METHODS = ['auto', 'monochromatic', 'analogous', 'complementary', 'split-complementary', 'triadic', 'tetradic', 'square'];
+  var METHOD_SHIFT = { auto: 0, monochromatic: 0, analogous: 30, complementary: 180, 'split-complementary': 150, triadic: 120, tetradic: 60, square: 90 };
+
+  function generate(method, random) {
+    var rnd = random || Math.random, h = rnd() * 360;
+    var shift = METHOD_SHIFT[method] || 0;
+    return {
+      brand: fromOklch(LEGACY_500.brand.l, LEGACY_500.brand.c, h),
+      neutral: fromOklch(LEGACY_500.neutral.l, LEGACY_500.neutral.c, h + shift)
+    };
   }
   function fitContrast(fg,bg,min) {
     if(contrast(fg,bg)>=min)return fg;
@@ -207,7 +257,7 @@ window.DS_RAMP = (function () {
     LIGHT_L: SCALES.light.L, CHROMA: SCALES.light.chroma,
     lch: lch, tone: tone, build: build,
     hexToRgb: hexToRgb, luminance: luminance, contrast: contrast
-    ,hexToOklch:hexToOklch, fromOklch:fromOklch, from500:from500, adjustHex:adjustHex,
-    generate:generate, METHODS:METHODS, CORE:CORE, fitContrast:fitContrast, deltaE:deltaE
+    ,hexToOklch:hexToOklch, fromOklch:fromOklch, from500:from500, fromStep:fromStep, adjustHex:adjustHex,
+    generate:generate, METHODS:METHODS, LEGACY_500:LEGACY_500, CORE:CORE, fitContrast:fitContrast, deltaE:deltaE
   };
 })();
