@@ -1981,10 +1981,10 @@ css: `foundations/Spacing/Spacing.css` · deps: — · 1.004
 Полная анатомия: foundations/Spacing/Spacing.md.
 
 ## Themes (Темы)
-css: `foundations/Themes/Themes.css` · js: `foundations/Themes/Themes.js` (+ `ThemeBoot.js`, `ThemeEngine.js`, `ThemeFiles.js`) · deps: — · 1.014
+css: `foundations/Themes/Themes.css` · js: `foundations/Themes/Themes.js` (+ `ThemeBoot.js`, `ThemeEngine.js`, `ThemeFiles.js`) · deps: — · 1.015
 **Инварианты:** тема — JSON в `foundations/Themes/tokens/` (IBP Legacy, IBP Neo, Custom, свои); без выбранной темы атрибута `data-theme` нет — текущая ДС как есть; Legacy и Neo не перезаписываются. Основная кнопка — ровно brand 500, наведение и нажатие — 600 и 700; заливку ради контраста не затемняем. Опорная ступень (`brandStep` / `neutralStep`) — ровно заданный цвет, растяжка строится от неё. Роли `--color-*` и рампы `--ramp-*` — только в файлах тем (B16).
 **Классы:** правил на классы у темы нет — только селекторы `[data-theme]`. Рантайм — `window.DSTheme = { get(), set(name, mode), list(), files(), selection(), preview(file, mode), reload(data) }`, событие `ds:themechange`. Выбор темы — страница «Темы» (конструктор) и панель прототипа; плавающего окна нет. Сборка — `node tools/theme-build.mjs` (`--check`, `--selftest`).
-**Диагностика:** «тема не действует» → нет атрибута на `<html>` или контейнере · «legacy изменилась» → правило вне `[data-theme]` · «состояние компонента пропало» → точечное правило добавлено без `:where` · «в экране/компоненте `--color-*`» → правило B16 · «на странице ДС нет тега темы» → B17/ДС20 · «тема из папки не видна» → зеркало `tokens.data.js` не пересобрано.
+**Диагностика:** «тема не действует» → нет атрибута на `<html>` или контейнере · «legacy изменилась» → правило вне `[data-theme]` · «состояние компонента пропало» → точечное правило добавлено без `:where` · «в экране/компоненте `--color-*`» → правило B16 · «на странице ДС нет тега темы» → B17/ДС20 · «тема из папки не видна» → папка не подключена или нет разрешения: меню темы → «Обновить список из папки»; без браузерного доступа — `node tools/theme-build.mjs`.
 
 Полная анатомия: foundations/Themes/Themes.md.
 
@@ -2007,11 +2007,11 @@ DSSlider.bind(document.querySelector('.slr')).set(75);
 Полная анатомия: components/atoms/Slider/Slider.md.
 
 ## ColorPicker
-css: `components/molecules/ColorPicker/ColorPicker.css` · js: `components/molecules/ColorPicker/ColorPicker.js` · deps: [slider, input-text, icon-button, button, popover] · 1.001
+css: `components/molecules/ColorPicker/ColorPicker.css` · js: `components/molecules/ColorPicker/ColorPicker.js` · deps: [slider, input-text, icon-button, button, popover] · 1.002
 
 Выбор одного цвета sRGB, как у coolors: поле насыщенности и яркости, ползунок тона, строка Hex (InputText S, слева плашка цвета) + IconButton «Пипетка» (`dropper`, есть только в Chromium) и «Копировать» (`copy`); необязательный подвал — слот потребителя и «Сбросить».
 
-**Инварианты:** Hex принимает «18a59e», «#18A59E», «#abc»; ошибка формата — только по Enter или уходу из поля. `onChange` — каждое движение (живой предпросмотр), `onCommit` — законченная правка (история). Альфа-канала нет. Пикер не пишет файлы и не хранит черновики. Повторный `bind` того же триггера перенастраивает живой пикер (`configure`).
+**Инварианты:** у триггера — Popover M (320), поле SV — квадрат. После `bind` триггер сам открывает и закрывает пикер по клику: `open()` — только программно (первый клик, в котором вызван `bind`), иначе второй клик откроет и тут же закроет. Hex принимает «18a59e», «#18A59E», «#abc»; ошибка формата — только по Enter или уходу из поля. `onChange` — каждое движение (живой предпросмотр), `onCommit` — законченная правка (история). Альфа-канала нет. Пикер не пишет файлы и не хранит черновики. Повторный `bind` того же триггера перенастраивает живой пикер (`configure`).
 
 ```js
 DSColorPicker.bind(trigger, {
@@ -2019,8 +2019,9 @@ DSColorPicker.bind(trigger, {
   onChange: function (hex) { /* предпросмотр */ },
   onCommit: function (hex) { /* шаг истории */ },
   onReset: function () { /* показать «Сбросить» */ },
-  footer: node                 /* узел подвала: переключатель потребителя */
-}).open();
+  footer: node,                /* узел подвала: переключатель потребителя */
+  popover: { placement: 'top', align: 'center', boundary: area } /* как у DSPopover */
+}).open();                     // только в первый раз — дальше триггер переключает сам
 DSColorPicker.create(container, { value: '#18A59E', onChange: fn }); // в форме
 ```
 

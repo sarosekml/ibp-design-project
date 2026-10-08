@@ -1,5 +1,5 @@
 /* ============================================================
-   ColorPicker.js — выбор одного цвета sRGB (1.001, MS0013 Р29).
+   ColorPicker.js — выбор одного цвета sRGB (1.002, MS0013 Р29).
 
    Состав, как у coolors: поле насыщенности и яркости (SV), ползунок
    тона (Slider), строка с полем Hex (InputText S, слева плашка цвета),
@@ -9,7 +9,11 @@
 
    API window.DSColorPicker:
      create(root, opts) — пикер в контейнере; вернёт { get, set, disabled, destroy }.
-     bind(trigger, opts) — пикер в Popover у триггера; вернёт { picker, open, close, destroy, configure }.
+     bind(trigger, opts) — пикер в Popover M у триггера; вернёт { picker, open, close, destroy, configure }.
+                           После bind триггер сам открывает и закрывает пикер по клику:
+                           open() — только для программного открытия (например, первый
+                           клик, в котором bind и вызван). Позиция — opts.popover
+                           { placement, align }, как у DSPopover.
      hsv(hex) / hex({ h, s, v }) — преобразования.
 
    opts:
@@ -69,8 +73,10 @@
           '<span class="inp__lead" aria-hidden="true"><span class="cpk__swatch"></span></span>' +
           '<input class="inp__control" id="' + id + '-hex" spellcheck="false" maxlength="7" aria-label="Hex" aria-describedby="' + id + '-error">' +
         '</div><span class="ds-helper" id="' + id + '-error" hidden>Цвет в формате #RRGGBB</span></div>' +
-        '<button type="button" class="ibtn ibtn--neutral ibtn--m" data-pick aria-label="Пипетка" data-tooltip="Пипетка"><i data-icon="dropper"></i></button>' +
-        '<button type="button" class="ibtn ibtn--neutral ibtn--m" data-copy aria-label="Копировать цвет" data-tooltip="Копировать"><i data-icon="copy"></i></button>' +
+        '<span class="cpk__tools">' +
+          '<button type="button" class="ibtn ibtn--neutral ibtn--m" data-pick aria-label="Пипетка" data-tooltip="Пипетка"><i data-icon="dropper"></i></button>' +
+          '<button type="button" class="ibtn ibtn--neutral ibtn--m" data-copy aria-label="Копировать цвет" data-tooltip="Копировать"><i data-icon="copy"></i></button>' +
+        '</span>' +
       '</div>' +
       '<div class="cpk__foot" hidden><span class="cpk__slot"></span>' +
         '<button type="button" class="btn btn--transparent btn--xs" data-reset hidden><span class="btn__label">Сбросить</span></button></div>';
@@ -226,7 +232,7 @@
     if (trigger.__dsColorPicker) { trigger.__dsColorPicker.configure(opts); return trigger.__dsColorPicker; }
 
     var pop = document.createElement('div');
-    pop.className = 'pop pop--w-s pop--floating';
+    pop.className = 'pop pop--w-m pop--floating cpk-pop';
     pop.id = 'cpk-pop-' + (++next);
     pop.setAttribute('role', 'dialog');
     pop.setAttribute('aria-modal', 'false');
@@ -239,7 +245,11 @@
     var result = {
       picker: picker,
       pop: pop,
-      open: function () { if (!pop.isConnected) document.body.appendChild(pop); return api.open(); },
+      open: function () {
+        if (!pop.isConnected) document.body.appendChild(pop);
+        if (pop.classList.contains('is-open')) return api;   // уже открыт — повторный вызов ничего не меняет
+        return api.open();
+      },
       close: function () { return api.close(); },
       configure: function (next) { picker.configure(next); },
       destroy: function () {

@@ -17,6 +17,16 @@
 }
 .theme-bar__group { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
 .theme-bar__group[hidden] { display: none; }
+/* Выбор темы — ширина Popover S: шапка не прыгает от длины названия
+   (решение человека 08.10.2026). Внутри — как у поля выбора: иконка и
+   название слева, стрелка справа; длинное название — многоточием. */
+.theme-pick { width: var(--pop-w-s); }
+#theme-pick { justify-content: flex-start; }
+#theme-pick .btn__label { flex: 1 1 auto; text-align: left; }
+/* Меню открывается в общем плавающем слое (ds-float-layer) — ширина задаётся
+   по id: не уже кнопки, дальше по содержимому («Подключить папку tokens…»
+   целиком) до предела меню ДС; длинные названия тем — многоточием. */
+#theme-menu { --menu-min: var(--pop-w-s); }
 
 .theme-tabs { margin-bottom: var(--space-32); }
 #pane-builder[hidden], #pane-docs[hidden] { display: none; }
@@ -107,6 +117,10 @@
 body.ds-has-nav .theme-dock { left: var(--ds-nav-w); }
 .theme-dock[hidden] { display: none; }
 .theme-dock__group { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+/* Иконки-кнопки панели (Настроить, Отменить, Повторить): подложка IconButton L
+   (40px) выступает за глиф (24px) на 8px с каждой стороны — выступ
+   резервируется отступом обёртки, между подложками 8px (урок Л186). */
+.theme-dock__icons { display: flex; align-items: center; gap: var(--space-24); padding: 0 var(--space-8); }
 
 .theme-pill {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-12);

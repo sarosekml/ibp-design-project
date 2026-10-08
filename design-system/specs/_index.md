@@ -17,7 +17,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Checkbox | components/atoms/Checkbox/Checkbox.md | components/atoms/Checkbox/Checkbox.css | label-helper | 1.007 |
 | Chip | components/atoms/Chip/Chip.md | components/atoms/Chip/Chip.css | label-helper, spinner | 1.020 |
 | Colors | foundations/Colors/Colors.md | — | — | 1.005 |
-| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, icon-button, button, popover | 1.001 |
+| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, icon-button, button, popover | 1.002 |
 | ContextMenu | components/molecules/ContextMenu/ContextMenu.md | components/molecules/ContextMenu/ContextMenu.css | button | 1.012 |
 | DatePicker | components/molecules/DatePicker/DatePicker.md | components/molecules/DatePicker/DatePicker.css | icon-button, button | 1.009 |
 | Divider | components/atoms/Divider/Divider.md | components/atoms/Divider/Divider.css | button | 2.001 |
@@ -68,7 +68,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.023 |
 | TableFilter | components/organisms/TableFilter/TableFilter.md | components/organisms/TableFilter/TableFilter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | components/molecules/Tab/Tab.md | components/molecules/Tab/Tab.css | — | 1.012 |
-| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.014 |
+| Themes | foundations/Themes/Themes.md | foundations/Themes/Themes.css | - | 1.015 |
 | Tile | components/organisms/Tile/Tile.md | components/organisms/Tile/Tile.css | icon-button, button, link, chip, badge, alert, divider | 1.016 |
 | Toast | components/molecules/Toast/Toast.md | components/molecules/Toast/Toast.css | button, spinner | 1.007 |
 | Tooltip | components/molecules/Tooltip/Tooltip.md | components/molecules/Tooltip/Tooltip.css | button | 2.011 |

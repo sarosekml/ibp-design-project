@@ -132,19 +132,23 @@ export function loadSources() {
   }
   const raw = ctx.window.DS_THEMES;
   const data = { version: 1, bases: {}, legacy: raw.legacySnapshot, themes: [] };
+  const notes = [];
   for (const name of readdirSync(dir).filter(n => n.endsWith('.json')).sort()) {
     const file = JSON.parse(readFileSync(path.join(dir, name), 'utf8'));
     if (name === 'base-light.json' || name === 'base-dark.json') data.bases[name.slice(5, -5)] = file;
     else {
-      if (name !== file.name + '.json') throw new Error(name + ': name внутри «' + file.name + '» не совпадает с именем файла');
-      const errors = ctx.window.DS_THEME_ENGINE.validate(file);
+      /* Имя темы — имя файла, как в конструкторе (ThemeFiles.read): файл,
+         переименованный в Finder, собирается под своим именем, расхождение — INFO. */
+      const got = ctx.window.DS_THEME_ENGINE.fromFile(name, file);
+      if (got.renamedFrom !== null) notes.push(name + ': name внутри «' + got.renamedFrom + '» — тема собрана под именем файла «' + got.theme.name + '»; сохранение в конструкторе исправит name');
+      const errors = ctx.window.DS_THEME_ENGINE.validate(got.theme);
       if (errors.length) throw new Error(name + ': ' + errors.join('; '));
-      data.themes.push(file);
+      data.themes.push(got.theme);
     }
   }
   const order = name => { const i = ['ibp-legacy','ibp-neo','custom'].indexOf(name); return i < 0 ? 99 : i; };
   data.themes.sort((a,b) => order(a.name) - order(b.name) || a.name.localeCompare(b.name));
-  return { data, raw, engine: ctx.window.DS_THEME_ENGINE, ramp: ctx.window.DS_RAMP, tokens: ctx.window.DS_THEME_ENGINE.sources(data) };
+  return { data, raw, notes, engine: ctx.window.DS_THEME_ENGINE, ramp: ctx.window.DS_RAMP, tokens: ctx.window.DS_THEME_ENGINE.sources(data) };
 }
 
 /* ---------- рантайм-данные для браузера (MS0013, Р8) ----------
@@ -694,6 +698,12 @@ function selftest() {
   const clipped = ramp.hexToOklch(ramp.fromOklch(.6,.6,30));
   t('gamut: хрома уменьшена, тон сохранён', clipped.c < .6 && Math.abs(clipped.h-30) < 1, JSON.stringify(clipped));
 
+  /* 08.10.2026: имя темы — имя файла (копия custom.json → custom2.json). */
+  const renamed = engine.fromFile('custom2.json', neo);
+  t('fromFile: имя темы по имени файла, прежнее name — в renamedFrom', renamed.theme.name === 'custom2' && renamed.renamedFrom === neo.name && neo.name === 'ibp-neo' && engine.validate(renamed.theme).length === 0);
+  t('fromFile: совпавшее имя — без пометки', engine.fromFile('ibp-neo.json', neo).renamedFrom === null);
+  t('fromFile: недопустимое имя файла отвергается проверкой', engine.validate(engine.fromFile('custom 2.json', neo).theme).length > 0);
+
   /* Р8: браузер грузит Themes.runtime.js вместо источника — CSS тем тот же. */
   const lite = { window: {} };
   for (const code of [readFileSync(path.join(ROOT, AT.ramp), 'utf8'), runtimeFile(raw), readFileSync(path.join(ROOT, 'foundations/Themes/ThemeEngine.js'), 'utf8')]) {
@@ -729,11 +739,11 @@ function main() {
     /* Негодный файл в tokens/ (имя файла ≠ name, ошибка JSON, неверное значение)
        — дефект с подсказкой, а не стек: конструктор и сборка читают одну папку. */
     console.log('== theme-build' + (checkOnly ? ' --check' : '') + ' ==');
-    console.log('FAIL  tokens/: ' + e.message + ' — исправьте файл (name внутри = имени файла без .json) или уберите его из папки');
+    console.log('FAIL  tokens/: ' + e.message + ' — исправьте файл или уберите его из папки');
     console.log('ВЕРДИКТ: FAIL (дефектов: 1)');
     process.exit(1);
   }
-  const {tokens, ramp, data, raw, engine} = sources;
+  const {tokens, ramp, data, raw, engine, notes} = sources;
   const colorsCss = readFileSync(path.join(ROOT, AT.colors), 'utf8');
   const paletteCss = readFileSync(path.join(ROOT, AT.palette), 'utf8');
 
@@ -773,6 +783,7 @@ function main() {
   if (!checkOnly) console.log('записаны ' + AT.css + ', ' + AT.pages + ', ' + AT.runtime + ', tokens/tokens.data.js');
   for (const d of defects) console.log('FAIL  ' + d);
   for (const i of infos) console.log('INFO  ' + i);
+  for (const n of notes) console.log('INFO  ' + n);
   console.log('ВЕРДИКТ: ' + (defects.length ? 'FAIL (дефектов: ' + defects.length + ')' : 'OK'));
   process.exit(defects.length ? 1 : 0);
 }

@@ -18,7 +18,7 @@
 <main class="page theme-page" data-screen-label="Themes">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.014</b></span><span>Обновлено: <b>08.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>08.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Темы</h1>
     <p class="lead">Соберите тему ДС из двух цветов — brand и neutral, проверьте её на живых компонентах и сохраните в файл. Выбранная тема действует на всех страницах ДС.</p>
@@ -27,11 +27,11 @@
   <!-- Тема и файл: выбор, состояние, сохранение -->
   <div class="theme-bar" aria-label="Тема и файл">
     <div class="theme-bar__group">
-      <span class="menu-anchor">
-        <button type="button" class="btn btn--outline btn--m" id="theme-pick" data-menu="theme-menu" aria-haspopup="menu"><i data-icon="palette"></i><span class="btn__label" id="theme-pick-label">Тема</span><i data-icon="chevron-down"></i></button>
+      <span class="menu-anchor theme-pick">
+        <button type="button" class="btn btn--outline btn--m btn--fullwidth" id="theme-pick" data-menu="theme-menu" aria-haspopup="menu"><i data-icon="palette"></i><span class="btn__label" id="theme-pick-label">Тема</span><i data-icon="chevron-down"></i></button>
         <div class="menu" id="theme-menu" role="menu" aria-label="Темы"></div>
       </span>
-      <span class="badge badge--m badge--neutral" id="theme-status" role="status"></span>
+      <span class="badge badge--s badge--neutral" id="theme-status" role="status"></span>
     </div>
     <div class="theme-bar__group">
       <button type="button" class="btn btn--accent btn--m" id="theme-save" data-tooltip=""><span class="btn__label">Сохранить</span></button>
@@ -367,8 +367,13 @@
         <p>Основная кнопка — ровно brand 500 в обеих темах; наведение и нажатие — ступени 600 и 700. Заливку ради контраста не затемняем: текст на ней — «белый» или «тёмный» в «Настроить», провал виден на вкладке «Контраст» в «Все цвета».</p>
         <p>«Сгенерировать» (пробел) даёт случайный тон; светлота и насыщенность — как у ступени 500 IBP Legacy (brand #00AA9B, neutral #617C7C). Метод задаёт тон neutral относительно brand.</p>
       </section>
-      <section id="roles"><h2>Роли и старые имена</h2>
-        <p>160 ролей <code>--color-*</code> ссылаются на рампы; 119 старых имён (<code>--primary</code>, <code>--text-primary</code>…) — на роли. Компоненты пишут старые имена, поэтому тема перекрашивает их без правок. Старое имя правится через свою роль. Статусы и графики фиксированы; акцентные статусы следуют за brand.</p>
+      <section id="roles"><h2>Слои токенов</h2>
+        <p>Цвет доходит до компонента по цепочке: <code>--ramp-neutral-50</code> → <code>--color-bg-inverse</code> → <code>--bg-hint</code> → <code>--tip-bg</code>. Тема меняет только первые два слоя.</p>
+        <p><b>Палитра</b> — рампы <code>--ramp-*</code>: 19 тонов по 11 ступеней. Генерируются только brand и neutral, остальные 17 — базовые растяжки.</p>
+        <p><b>Токены темы</b> — 160 ролей <code>--color-*</code>. Роль называет назначение цвета, а не сам цвет: <code>--color-bg-raised</code> — «поднятая поверхность» для модалки, Drawer и поповера. Роль ссылается на ступень рампы, поэтому смена brand или neutral перекрашивает все её места разом. В конструкторе правится роль.</p>
+        <p><b>Токены UI-kit</b> — 119 имён из UI-kit разработки (<code>--primary</code>, <code>--text-primary</code>, <code>--bg-tile</code>…). Компоненты пишут их. В IBP Legacy у них исходные значения, в остальных темах каждое ссылается на свою роль (<code>--bg-tile: var(--color-bg-surface)</code>), поэтому компоненты перекрашиваются без правок. Несколько имён могут вести в одну роль; имя правится через свою роль.</p>
+        <p><b>Токены компонентов</b> — переменные в CSS компонента (<code>--tip-bg</code>, <code>--ddl-bg</code>): настройка одной детали одного компонента. Своего цвета у них нет, тема ими не управляет — они берут значение слоем выше.</p>
+        <p>Статусы и графики фиксированы; акцентные статусы следуют за brand.</p>
       </section>
       <section id="saving"><h2>Сохранение</h2>
         <p>Chromium пишет JSON и зеркало в подключённую папку <code>tokens</code> (File System Access API); разрешение браузер может спросить в новом сеансе. Firefox и Safari: «Скачать JSON», положить файл в <code>tokens</code> и пересобрать зеркало: <code>node design-system/tools/theme-build.mjs</code>. Несохранённое живёт до перезагрузки; перед уходом страница предупреждает.</p>
@@ -390,6 +395,7 @@
     <button type="button" class="theme-pill" id="pill-neutral" data-kind="neutral"><span class="theme-pill__name">Neutral</span><span class="theme-pill__hex" id="pill-neutral-hex"></span></button>
   </div>
   <div class="theme-dock__group">
+    <div class="theme-dock__icons">
     <span class="pop-anchor">
       <button type="button" class="ibtn ibtn--neutral ibtn--l" id="dock-adjust" data-popover="adjust-pop" data-popover-placement="top" data-popover-align="end" aria-label="Настроить палитру" data-tooltip="Настроить"><i data-icon="settings"></i></button>
       <div class="pop pop--w-m pop--top pop--end pop--floating" id="adjust-pop" role="dialog" aria-modal="false" aria-labelledby="adjust-title">
@@ -406,8 +412,9 @@
     </span>
     <button type="button" class="ibtn ibtn--neutral ibtn--l" id="theme-undo" aria-label="Отменить" data-tooltip="Отменить · ⌘Z"><i data-icon="flip-backward"></i></button>
     <button type="button" class="ibtn ibtn--neutral ibtn--l" id="theme-redo" aria-label="Повторить" data-tooltip="Повторить · ⇧⌘Z"><i data-icon="flip-forward"></i></button>
-    <div class="btn-group btn-group--outline btn-group--split" role="group" aria-label="Сгенерировать палитру">
-      <button type="button" class="btn btn--outline btn--m" id="theme-generate" data-tooltip="Пробел"><i data-icon="magic-wand-01"></i><span class="btn__label">Сгенерировать</span></button>
+    </div>
+    <div class="btn-group btn-group--outline btn-group--split" role="group" aria-label="Сгенерировать палитру" data-tooltip="Сгенерировать — пробел">
+      <button type="button" class="btn btn--outline btn--m" id="theme-generate"><i data-icon="magic-wand-01"></i><span class="btn__label">Сгенерировать</span></button>
       <button type="button" class="btn btn--outline btn--m btn--icon-only" id="theme-method-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Метод генерации"><i data-icon="chevron-down"></i></button>
       <div class="menu" id="method-menu" role="menu" aria-label="Метод генерации"></div>
     </div>
@@ -425,11 +432,11 @@
     </header>
     <div class="drawer__body">
       <div class="theme-all">
-        <div class="inp inp--m"><div class="inp__field"><span class="inp__lead" aria-hidden="true"><i data-icon="search"></i></span><input class="inp__control" id="all-search" placeholder="Найти роль или старое имя" aria-label="Поиск по ролям и именам"></div></div>
+        <div class="inp inp--m"><div class="inp__field"><span class="inp__lead" aria-hidden="true"><i data-icon="search"></i></span><input class="inp__control" id="all-search" placeholder="Найти токен темы или UI-kit" aria-label="Поиск по токенам темы и UI-kit"></div></div>
         <div class="tabs tabs--horiz" role="tablist" id="all-tabs" aria-label="Цвета темы">
-          <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-all="roles"><span class="tab__label">Роли</span></button>
-          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="map"><span class="tab__label">Старые имена</span></button>
-          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="base"><span class="tab__label">Базовые растяжки</span></button>
+          <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-all="roles"><span class="tab__label">Токены темы</span></button>
+          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="map"><span class="tab__label">Токены UI-kit</span></button>
+          <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="base"><span class="tab__label">Палитра</span></button>
           <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-all="contrast"><span class="tab__label">Контраст</span></button>
         </div>
         <div id="all-roles"></div>
@@ -474,11 +481,12 @@
     <div class="modal__body">
       <div class="inp inp--m"><label class="ds-label" for="save-name">Имя файла</label><div class="inp__field"><input class="inp__control" id="save-name" placeholder="Например, orbit" maxlength="48"></div><span class="ds-helper">Латинские буквы, цифры и дефис</span></div>
       <div class="inp inp--m"><label class="ds-label" for="save-label">Название темы</label><div class="inp__field"><input class="inp__control" id="save-label" maxlength="80"></div></div>
+      <div class="alert alert--info alert--m" id="save-note" role="note" hidden><span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Папка tokens не подключена — файл скачается под этим именем. Положите его в папку tokens и выберите «Обновить список из папки» в меню темы.</p></div></div>
       <div class="alert alert--error alert--m" id="save-error" role="alert" hidden><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text" id="save-error-text"></p></div></div>
     </div>
     <footer class="modal__foot"><div class="modal__foot-right">
       <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
-      <button type="button" class="btn btn--accent btn--m" id="save-confirm"><span class="btn__label">Сохранить тему</span></button>
+      <button type="button" class="btn btn--accent btn--m" id="save-confirm"><span class="btn__label" id="save-confirm-label">Сохранить тему</span></button>
     </div></footer>
   </div>
 </div>

@@ -1,7 +1,7 @@
 ---
 component: ColorPicker
 title: "Выбор цвета"
-version: "1.001"
+version: "1.002"
 updated: "08.10.2026"
 page: components/molecules/ColorPicker/ColorPicker.html
 page_js: components/molecules/ColorPicker/ColorPicker.page.js
@@ -24,8 +24,8 @@ status: curated
 ## Ключевые правила (из разделов страницы)
 - **Использование** — Для правки цвета. Имя роли и её назначение задаёт окружающая форма.
 - **Анатомия** — SV-поле с маркером, Slider тона без подписи, строка: InputText S (`.inp__lead` — плашка цвета `.cpk__swatch`) + IconButton `dropper` + IconButton `copy`; подвал `.cpk__foot` — слот потребителя (`footer`) и «Сбросить» (`onReset`).
-- **Варианты** — в форме `create(root, opts)`; у триггера `bind(trigger, opts)` открывает Popover S (240).
-- **Размеры** — SV 160px по высоте, маркер 14px; Popover S 240px; поле InputText S, IconButton M.
+- **Варианты** — в форме `create(root, opts)`; у триггера `bind(trigger, opts)` открывает Popover M (320). После `bind` триггер сам открывает и закрывает пикер по клику; `open()` — только программно (первый клик, в котором вызван `bind`). Позиция — `opts.popover { placement, align }`.
+- **Размеры** — SV — квадрат во всю ширину пикера (в Popover M — 288 × 288), маркер 14px; Popover M 320px, тело без прокрутки; поле InputText S, IconButton M; между подложками кнопок и до поля Hex — 8px.
 - **Контент** — Hex принимает «18a59e», «#18A59E» и «#abc»; ошибка формата — текстом, только по Enter или уходу из поля.
 - **Поведение** — SV — pointer drag; стрелки меняют S/V на 1%, Shift на 10%. Тон — Slider; Hex применяется сразу после полного корректного ввода.
 - **Состояния** — Default, focus, disabled, некорректный Hex; отмена пипетки сохраняет цвет.

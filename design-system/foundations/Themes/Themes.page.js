@@ -154,6 +154,7 @@
     p[kind + 'Step'] = step;
     dropPointEdits(p, tone);
     releaseService(p, mode);
+    followRamp(p, mode, [tone]);
     var other = mode === 'dark' ? 'light' : 'dark';
     if (draft[other]) {
       var q = draft[other];
@@ -162,6 +163,7 @@
       q[kind + 'Step'] = '500';
       dropPointEdits(q, tone);
       releaseService(q, other);
+      followRamp(q, other, [tone]);
     }
   }
 
@@ -175,6 +177,32 @@
       p[kind + 'Step'] = '500';
       dropPointEdits(p, tone);
       releaseService(p, m);
+      followRamp(p, m, [tone]);
+    });
+  }
+
+  /* ---------------- роли за растяжкой ---------------- */
+
+  /* Роль строится от растяжки tone, если её значение по умолчанию (профиль
+     режима) ссылается на --ramp-<tone>- прямо или через другую роль. */
+  function roleFollows(mode, role, tone, seen) {
+    var expr = Object.assign({}, T.values, T.profiles[mode])[role];
+    if (!expr || (seen = seen || {})[role]) return false;
+    seen[role] = true;
+    if (expr.indexOf('--ramp-' + tone + '-') >= 0) return true;
+    return (expr.match(/--color-[\w-]+/g) || []).some(function (r) { return roleFollows(mode, r, tone, seen); });
+  }
+
+  /* Смена входа применяется к теме сразу, во всех темах одинаково
+     (решение человека 08.10.2026): ручные значения ролей, которые строятся
+     от растяжки тона, снимаются — в IBP Legacy роли записаны готовыми
+     цветами, в тёмной Custom — значениями service, и без этого растяжка
+     менялась бы, а тема нет. Роли статусов и графиков не трогаются. */
+  function followRamp(p, m, tones) {
+    tones.forEach(function (tone) {
+      Object.keys(p.overrides || {}).forEach(function (k) {
+        if (k.indexOf('--color-') === 0 && roleFollows(m, k, tone)) delete p.overrides[k];
+      });
     });
   }
 
@@ -209,7 +237,8 @@
     var binding = window.DSColorPicker.bind(trigger, {
       value: value,
       label: handlers.label || 'Цвет',
-      popover: { placement: handlers.placement || 'bottom' },
+      /* Граница — область страницы: у края меню ДС поповер сдвигается, а не уходит под меню. */
+      popover: { placement: handlers.placement || 'bottom', align: handlers.align || 'start', boundary: document.querySelector('main.page') },
       onChange: function (v) { handlers.apply(v, true); },
       onCommit: function (v) { handlers.apply(v, false); },
       onReset: handlers.reset || null,
@@ -217,7 +246,10 @@
     });
     if (fresh && trigger.closest('#all-colors')) drawerBindings.push(binding);
     picker = { binding: binding, key: key };
-    binding.open();
+    /* После bind триггер сам переключает пикер по клику (ColorPicker 1.002);
+       открываем вручную только в первый раз — bind случился в этом же клике.
+       Иначе второй клик открывал и тут же закрывал пикер. */
+    if (fresh) binding.open();
   }
 
   function editRampStep(trigger, tone, kind, step) {
@@ -242,6 +274,7 @@
     openPicker(trigger, '--pill-' + kind, value, {
       label: (kind === 'brand' ? 'Brand' : 'Neutral') + ' 500',
       placement: 'top',
+      align: 'center',
       apply: function (v, live) { change(function () { setBase(tone, kind, v); }, live); }
     });
   }
@@ -349,7 +382,7 @@
   function renderBar() {
     $('theme-pick-label').textContent = draft.label;
     var status = $('theme-status');
-    status.className = 'badge badge--m ' + (dirty ? 'badge--warning' : draft.locked ? 'badge--neutral' : 'badge--success');
+    status.className = 'badge badge--s ' + (dirty ? 'badge--warning' : draft.locked ? 'badge--neutral' : 'badge--success');
     status.textContent = dirty ? 'Не сохранено' : draft.locked ? 'Базовая · только чтение' : 'Сохранено';
     var save = $('theme-save');
     save.disabled = !!draft.locked || !dirty;
@@ -362,14 +395,34 @@
     $('theme-redo').disabled = cursor >= history.length - 1;
   }
 
+  /* Меню тем: все файлы папки (или зеркала), у одинаковых названий — имя файла;
+     файлы, которые не читаются, — неактивными пунктами; внизу — обновить список
+     из папки или подключить её (08.10.2026). */
   function buildThemeMenu() {
-    $('theme-menu').innerHTML = A.files().map(function (f) {
+    var files = A.files(), count = {};
+    files.forEach(function (f) { count[f.label] = (count[f.label] || 0) + 1; });
+    var html = files.map(function (f) {
+      var hint = count[f.label] > 1 ? f.name + '.json' : f.modes.length < 2 ? 'только светлая' : '';
       return '<button type="button" class="menu__item" role="menuitemradio" data-theme-file="' + esc(f.name) + '" aria-checked="' + (f.name === draft.name) + '">' +
         '<span class="menu__item-icon"><i data-icon="' + (f.locked ? 'lock' : 'palette') + '"></i></span>' +
         '<span class="menu__item-label">' + esc(f.label) + '</span>' +
-        (f.modes.length < 2 ? '<span class="menu__item-hint">только светлая</span>' : '') +
+        (hint ? '<span class="menu__item-hint">' + esc(hint) + '</span>' : '') +
         '</button>';
     }).join('');
+    var problems = F.problems();
+    if (problems.length) {
+      html += '<hr class="menu__divider">' + problems.map(function (p) {
+        return '<span class="menu__item" role="menuitem" aria-disabled="true">' +
+          '<span class="menu__item-icon"><i data-icon="alert-triangle"></i></span>' +
+          '<span class="menu__item-label">' + esc(p.file) + '</span><span class="menu__item-hint">не читается</span></span>';
+      }).join('');
+    }
+    var folder = F.connected() || F.pending()
+      ? ['refresh', 'refresh', 'Обновить список из папки']
+      : ['connect', 'folder', 'Подключить папку tokens…'];
+    html += '<hr class="menu__divider"><button type="button" class="menu__item" role="menuitem" data-folder-action="' + folder[0] + '">' +
+      '<span class="menu__item-icon"><i data-icon="' + folder[1] + '"></i></span><span class="menu__item-label">' + folder[2] + '</span></button>';
+    $('theme-menu').innerHTML = html;
     icons($('theme-menu'));
   }
 
@@ -413,6 +466,7 @@
         dropPointEdits(p, 'accent');
         dropPointEdits(p, 'neutral');
         releaseService(p, m);
+        followRamp(p, m, ['accent', 'neutral']);
       });
     });
   }
@@ -470,7 +524,7 @@
       return '<div class="theme-token"><span class="theme-token__chip" style="--sw:' + esc(m.colors[p.bg] || '') + '"></span>' +
         '<div class="theme-token__main"><span class="theme-token__name">' + esc(p.fg) + ' / ' + esc(p.bg) + '</span>' +
         '<span class="theme-token__desc">' + (p.ratio === null ? 'составной цвет' : p.ratio.toFixed(2) + ' : 1') + ' · минимум ' + p.min + ' : 1' + (p.note ? ' · ' + esc(p.note) : '') + '</span></div>' +
-        '<div class="theme-token__acts"><span class="badge badge--m badge--' + tone + '">' + label + '</span></div></div>';
+        '<div class="theme-token__acts"><span class="badge badge--s badge--' + tone + '">' + label + '</span></div></div>';
     }).join('') + '</div>';
   }
 
@@ -605,6 +659,36 @@
     $('save-error').hidden = !text;
   }
 
+  /* ---------------- папка tokens: список тем ---------------- */
+
+  /* Список из папки: зеркало tokens.data.js переписывается, если разошлось с
+     ней, — новая тема видна и на других страницах ДС. Открытая тема без правок
+     перечитывается, если её файл поменяли или убрали снаружи. */
+  async function applyFolder(next, title) {
+    var mirrored = await F.syncMirror(next);
+    data = next;
+    A.reload(next);
+    $('act-connect-label').textContent = 'Папка tokens подключена';
+    var current = fileByName(draft.name);
+    if (!dirty && !current) load(data.themes[0].name, mode);
+    else if (!dirty && JSON.stringify(current) !== JSON.stringify(original)) load(draft.name, mode);
+    else buildThemeMenu();
+    var problems = F.problems();
+    if (problems.length) {
+      notify('warning', 'Не все файлы папки прочитаны', problems.map(function (p) { return p.file + ' — ' + p.reason; }).join('; '));
+    } else if (title || mirrored) {
+      notify('success', title || 'Список тем обновлён', mirrored ? 'Зеркало tokens.data.js обновлено — темы видны на всех страницах ДС' : 'Список совпадает с папкой');
+    }
+  }
+
+  async function syncFolder(byUser) {
+    try {
+      await applyFolder(byUser ? await F.refresh() : await F.read(), byUser ? 'Список тем обновлён' : '');
+    } catch (e) {
+      if (e.name !== 'AbortError') notify('error', 'Папка tokens не прочитана', e.message);
+    }
+  }
+
   /* ---------------- примеры ---------------- */
 
   function buildButtons() {
@@ -682,7 +766,9 @@
     /* Тема: меню, режим, сохранение. */
     $('theme-menu').addEventListener('click', function (e) {
       var item = e.target.closest('[data-theme-file]');
-      if (item) requestLoad(item.getAttribute('data-theme-file'), mode);
+      if (item) { requestLoad(item.getAttribute('data-theme-file'), mode); return; }
+      var action = e.target.closest('[data-folder-action]');
+      if (action) { if (action.getAttribute('data-folder-action') === 'connect') connect(); else syncFolder(true); }
     });
     $('discard-confirm').addEventListener('click', function () {
       window.DSModal.closeTop();
@@ -697,8 +783,12 @@
       if (!F.connected()) { needFolder(); return; }
       save(draft, false);
     });
+    /* «Сохранить как…» спрашивает имя всегда: без папки файл скачивается
+       под введённым именем, и name внутри совпадает с именем файла. */
     $('theme-save-as').addEventListener('click', function () {
-      if (!F.connected()) { needFolder(); return; }
+      var toFolder = F.connected();
+      $('save-note').hidden = toFolder;
+      $('save-confirm-label').textContent = toFolder ? 'Сохранить тему' : 'Скачать JSON';
       $('save-name').value = '';
       $('save-label').value = draft.label + ' — копия';
       showSaveError('');
@@ -712,17 +802,20 @@
       file.locked = false;
       if (!file.dark) file.dark = { brand: file.light.brand, neutral: file.light.neutral, adjust: clone(file.light.adjust), overrides: {}, onFill: 'white' };
       var errors = E.validate(file);
+      if (!errors.length && !F.connected() && fileByName(file.name)) errors.push('Тема с этим именем уже есть. Выберите другое имя');
       if (errors.length) { showSaveError(errors.join('; ')); return; }
+      if (!F.connected()) {
+        F.download(file);
+        window.DSModal.closeTop();
+        notify('info', 'Скачан ' + file.name + '.json', 'Положите файл в папку tokens и выберите «Обновить список из папки» в меню темы');
+        return;
+      }
       if (await save(file, true)) window.DSModal.closeTop();
     });
 
     async function connect() {
       try {
-        data = await F.connect();
-        A.reload(data);
-        buildThemeMenu();
-        $('act-connect-label').textContent = 'Папка tokens подключена';
-        notify('success', 'Папка подключена', 'Темы читаются и пишутся в tokens');
+        await applyFolder(await F.connect(), 'Папка tokens подключена');
         return true;
       } catch (e) {
         if (e.name !== 'AbortError') notify('error', 'Папка не подключена', e.message);
@@ -758,6 +851,7 @@
             p.adjust = Object.assign({ hue: 0, saturation: 0, temperature: 0 }, p.adjust);
             p.adjust[pair[1]] = value;
             releaseService(p, m);
+            followRamp(p, m, ['accent', 'neutral']);
           });
         }, live);
       }
@@ -851,7 +945,9 @@
     var s = A.selection();
     load(fileByName(s.name) ? s.name : data.themes[0].name, s.mode);
     icons(document);
-    F.restore().then(function (handle) { if (handle) $('act-connect-label').textContent = 'Папка tokens подключена'; });
+    /* Папка, подключённая раньше: при живом разрешении список читается сразу;
+       иначе меню предложит «Обновить список из папки» (нужен клик). */
+    F.restore().then(function (handle) { if (handle) syncFolder(false); else buildThemeMenu(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

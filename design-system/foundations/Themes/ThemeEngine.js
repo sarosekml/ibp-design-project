@@ -15,6 +15,8 @@
 
    API window.DS_THEME_ENGINE:
      validate(file)            — список ошибок (пустой — файл годен);
+     fromFile(fileName, value) — тема из файла папки: имя — по имени файла,
+                                 { theme, renamedFrom } (08.10.2026);
      compile(file, mode, data) — модель режима: ramps, roles, colors, old, contrast;
      css(model)                — блок CSS темы для [data-theme="<имя>-<режим>"];
      sources(data)             — данные в форме DS_THEMES для theme-build;
@@ -240,9 +242,22 @@ window.DS_THEME_ENGINE = (function () {
     return out;
   }
 
+  /* Тема из файла папки tokens. Имя темы — имя файла без .json: файл,
+     переименованный или скопированный в Finder, хранит внутри прежнее name,
+     а открываться должен под своим именем. При сохранении name внутри
+     совпадёт с именем файла (решение человека 08.10.2026). */
+  function fromFile(fileName, value) {
+    var name = String(fileName).replace(/\.json$/i, '');
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return { theme: value, renamedFrom: null };
+    var theme = clone(value);
+    var renamedFrom = theme.name === name ? null : (theme.name == null ? '' : String(theme.name));
+    theme.name = name;
+    return { theme: theme, renamedFrom: renamedFrom };
+  }
+
   function mirror(data) {
     return '/* Генерат theme-build.mjs / сохранения конструктора. */\nwindow.DS_THEME_DATA = ' + JSON.stringify(data, null, 2) + ';\n';
   }
 
-  return { validate: validate, compile: compile, css: css, sources: sources, resolve: resolve, mirror: mirror };
+  return { validate: validate, fromFile: fromFile, compile: compile, css: css, sources: sources, resolve: resolve, mirror: mirror };
 })();

@@ -34,4 +34,27 @@ const engine=win.DS_THEME_ENGINE;
 for(const name of ['service','ibp-dark','base-foo','orbit-light']){fresh.name=name;assert(engine.validate(fresh).length>0);}
 fresh.name='orbit';fresh.light.overrides={'--color-bg-page':'var(--bg-page)'};assert.throws(()=>engine.compile(fresh,'light',win.DS_THEME_DATA),/Цикл цвета/);
 fresh.light.overrides={'--color-bg-page':'var(--unknown-color)'};assert.throws(()=>engine.compile(fresh,'light',win.DS_THEME_DATA),/Неизвестная переменная/);
-console.log('ВЕРДИКТ: OK — запись, защита базы, дубликат, конфликт, два отката, сортировка зеркала, неверная папка, имена, циклы и ссылки');
+/* 08.10.2026: список — всё, что лежит в папке. */
+const repoMirror=fs.readFileSync(new URL('tokens/tokens.data.js',root),'utf8');
+const clean=new Directory();await api.attach(clean);
+assert.equal(engine.mirror(await api.read()),repoMirror,'зеркало из папки побайтно как у theme-build');
+assert.equal(await api.syncMirror(await api.read()),true,'в папке нет зеркала — пишется');
+assert.equal(await api.syncMirror(await api.read()),false,'зеркало совпало — не переписывается');
+const folder=new Directory();
+folder.files.set('custom2.json',folder.files.get('custom.json'));
+folder.files.set('broken.json','{');
+folder.files.set('bad name.json',folder.files.get('custom.json'));
+const listed=await api.attach(folder);
+const dup=listed.themes.find(f=>f.name==='custom2');
+assert(dup,'копия custom.json под именем custom2.json видна в списке');
+assert.deepEqual(copy(dup.light),JSON.parse(folder.files.get('custom.json')).light);
+assert.deepEqual(copy(api.renamed()),[{file:'custom2.json',from:'custom'}]);
+assert.deepEqual(copy(api.problems().map(p=>p.file)),['bad name.json','broken.json'],'битые файлы — в problems(), остальное читается');
+assert.equal(listed.themes.length,4);
+assert.equal(await api.syncMirror(listed),true);
+const mirrored={window:{}};vm.runInNewContext(folder.files.get('tokens.data.js'),mirrored);
+assert(mirrored.window.DS_THEME_DATA.themes.some(f=>f.name==='custom2'),'новая тема попала в зеркало');
+await api.save(copy(dup),{original:dup});
+assert.equal(JSON.parse(folder.files.get('custom2.json')).name,'custom2','при сохранении имя внутри = имя файла');
+assert.deepEqual(copy(api.renamed()),[],'после сохранения расхождения нет');
+console.log('ВЕРДИКТ: OK — запись, защита базы, дубликат, конфликт, два отката, сортировка зеркала, неверная папка, имена, циклы и ссылки; список из папки: копия под именем файла, битые файлы, зеркало из папки = theme-build, синхронизация, имя при сохранении');

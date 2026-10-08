@@ -12,11 +12,21 @@
    не перезаписываются, имя «Сохранить как…» не занимает существующее,
    правка в другом окне не затирается, при сбое зеркала JSON откатывается.
 
+   Список тем — всё, что лежит в папке (08.10.2026): имя темы — имя файла
+   (DS_THEME_ENGINE.fromFile), файл с ошибкой не роняет чтение остальных и
+   попадает в problems(). Зеркало сверяется с папкой и переписывается, если
+   разошлось (syncMirror) — тогда новую тему видят и другие страницы ДС.
+
    API window.DSThemeFiles:
      connect()            — выбрать папку (showDirectoryPicker) и прочитать темы;
      restore()            — вернуть папку из IndexedDB, если разрешение живо;
+     pending()            — папка запомнена, но браузер ждёт разрешения;
+     refresh()            — по жесту пользователя: разрешение и чтение папки;
      attach(handle)       — подключить папку-handle и прочитать темы;
      read()               — прочитать и проверить все темы подключённой папки;
+     problems()           — файлы, пропущенные при последнем чтении: [{ file, reason }];
+     renamed()            — файлы, чьё имя внутри разошлось с именем файла: [{ file, from }];
+     syncMirror(data)     — переписать tokens.data.js, если он разошёлся с папкой; true — переписан;
      save(file, opts)     — записать тему и зеркало; opts { create, original };
      download(file)       — скачать JSON темы без записи в папку;
      connected()          — подключена ли папка.
@@ -26,6 +36,9 @@
 
   var engine = window.DS_THEME_ENGINE;
   var dir = null;
+  var stored = null;       // папка из IndexedDB, разрешение ещё не подтверждено
+  var lastProblems = [];
+  var lastRenamed = [];
 
   var DB_NAME = 'ds-theme-files';
   var DB_STORE = 'handles';
@@ -64,7 +77,9 @@
         req.onerror = function () { reject(req.error); };
       });
       db.close();
-      if (handle && await handle.queryPermission({ mode: 'readwrite' }) === 'granted') {
+      if (!handle) return null;
+      stored = handle;
+      if (await handle.queryPermission({ mode: 'readwrite' }) === 'granted') {
         dir = handle;
         return handle;
       }
@@ -98,31 +113,39 @@
 
   async function read() {
     if (!dir) throw new Error('Подключите папку tokens');
-    var data = { version: 1, bases: {}, legacy: window.DS_THEMES.legacySnapshot, themes: [] };
+    var bases = {}, themes = [], problems = [], renamed = [];
 
     for await (var entry of dir.values()) {
       if (entry.kind !== 'file' || !entry.name.endsWith('.json')) continue;
-      var value = JSON.parse(await (await entry.getFile()).text());
+      var text = await (await entry.getFile()).text();
       if (entry.name === 'base-light.json' || entry.name === 'base-dark.json') {
-        data.bases[entry.name.slice(5, -5)] = value;
+        bases[entry.name.slice(5, -5)] = JSON.parse(text);
         continue;
       }
-      var errors = engine.validate(value);
-      if (errors.length || entry.name !== value.name + '.json') {
-        throw new Error(entry.name + ': ' + (errors.join('; ') || 'имя файла расходится с темой'));
-      }
-      data.themes.push(value);
+      /* Один плохой файл не прячет остальные: он уходит в problems(). */
+      var value;
+      try { value = JSON.parse(text); } catch (e) { problems.push({ file: entry.name, reason: 'не JSON: ' + e.message }); continue; }
+      var got = engine.fromFile(entry.name, value);
+      var errors = engine.validate(got.theme);
+      if (errors.length) { problems.push({ file: entry.name, reason: errors.join('; ') }); continue; }
+      if (got.renamedFrom !== null) renamed.push({ file: entry.name, from: got.renamedFrom });
+      themes.push(got.theme);
     }
 
-    var bases = window.DS_THEME_DATA.bases;
-    if (!sameJson(data.bases.light, bases.light) || !sameJson(data.bases.dark, bases.dark)) {
+    var known = window.DS_THEME_DATA.bases;
+    if (!sameJson(bases.light, known.light) || !sameJson(bases.dark, known.dark)) {
       throw new Error('Выберите папку tokens этой ДС: базовые растяжки не совпадают');
     }
     REQUIRED.forEach(function (name) {
-      if (!data.themes.some(function (f) { return f.name === name; })) throw new Error('В папке отсутствует ' + name + '.json');
+      if (!themes.some(function (f) { return f.name === name; })) throw new Error('В папке отсутствует ' + name + '.json');
     });
-    sortThemes(data.themes);
-    return data;
+    sortThemes(themes);
+    problems.sort(function (a, b) { return a.file.localeCompare(b.file); });
+    lastProblems = problems;
+    lastRenamed = renamed;
+    /* Порядок ключей — как у theme-build (файлы по алфавиту): зеркало из
+       папки и из сборщика побайтно одно и то же. */
+    return { version: 1, bases: { dark: bases.dark, light: bases.light }, legacy: window.DS_THEMES.legacySnapshot, themes: themes };
   }
 
   /* Неподходящая папка не сбивает прежнее подключение. */
@@ -141,12 +164,25 @@
     if (!window.showDirectoryPicker) {
       throw new Error('Этот браузер не пишет в папку. Скачайте JSON и пересоберите зеркало командой theme-build');
     }
-    if (dir && dir.requestPermission && await dir.requestPermission({ mode: 'readwrite' }) === 'granted') return read();
+    var known = dir || stored;
+    if (known && known.requestPermission && await known.requestPermission({ mode: 'readwrite' }) === 'granted') {
+      dir = known;
+      return read();
+    }
 
     var handle = await window.showDirectoryPicker({ id: 'ds-theme-tokens', mode: 'readwrite' });
     var data = await attach(handle);
     try { await remember(handle); } catch (e) { /* недоступный IndexedDB не мешает записи в этом сеансе */ }
     return data;
+  }
+
+  /* По жесту пользователя: запомненная папка получает разрешение и читается. */
+  async function refresh() {
+    if (!dir && stored) {
+      if (await stored.requestPermission({ mode: 'readwrite' }) !== 'granted') throw new Error('Браузер не дал доступ к папке tokens');
+      dir = stored;
+    }
+    return read();
   }
 
   /* ---------- запись ---------- */
@@ -200,9 +236,21 @@
       throw new Error('Не удалось записать зеркало: ' + e.message);
     }
 
+    /* Записанный файл больше не расходится с именем: папку читали до записи. */
+    lastRenamed = lastRenamed.filter(function (r) { return r.file !== name; });
     window.DSTheme.reload(data);
     try { localStorage.setItem('ds.theme.saved', Date.now().toString()); } catch (e) { /* другие вкладки узнают при перезагрузке */ }
     return data;
+  }
+
+  /* Зеркало tokens.data.js — из прочитанной папки, только если разошлось:
+     файл, положенный в папку руками, появляется и на других страницах ДС. */
+  async function syncMirror(data) {
+    var text = engine.mirror(data);
+    if (await readText(MIRROR) === text) return false;
+    await write(MIRROR, text);
+    try { localStorage.setItem('ds.theme.saved', Date.now().toString()); } catch (e) { /* другие вкладки узнают при перезагрузке */ }
+    return true;
   }
 
   function download(file) {
@@ -220,6 +268,11 @@
   window.DSThemeFiles = {
     connect: connect,
     restore: restore,
+    pending: function () { return !dir && !!stored; },
+    refresh: refresh,
+    problems: function () { return lastProblems.slice(); },
+    renamed: function () { return lastRenamed.slice(); },
+    syncMirror: syncMirror,
     attach: attach,
     read: read,
     save: save,
