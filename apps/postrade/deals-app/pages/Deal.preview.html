@@ -145,6 +145,11 @@
                  сделка · Operations · ЦУП. Мониторинг на странице сделки не показывается. -->
             <div class="phead__chips" id="deal-chips"></div>
           </div>
+          <!-- Подзаголовок — только у погашенной сделки; заполняет экранный скрипт. -->
+          <div class="phead__subtitle" id="deal-subtitle" hidden>
+            <span class="phead__subtitle-ico" aria-hidden="true"><i data-icon="check-circle-filled"></i></span>
+            <span id="deal-subtitle-text"></span>
+          </div>
         </div>
         <div class="phead__actions" data-actions-overflow>
           <button type="button" class="btn btn--outline btn--m">
@@ -3464,6 +3469,19 @@
     }).join('');
   }
 
+  /* Подзаголовок шапки у погашенной сделки: тот же текст, что у строки узла
+     дерева и сабхедера карточки ФИ (PRODUCT_DETAIL_LABELS.repaidAt), дата —
+     repayDate записи сделки (ДД.ММ.ГГГГ). */
+  function fillSubtitle(deal) {
+    var box = document.getElementById('deal-subtitle');
+    if (!box) return;
+    var repaid = deal.status === 'Погашена';
+    box.hidden = !repaid;
+    if (!repaid) return;
+    var label = (window.PRODUCT_DETAIL_LABELS || {}).repaidAt || 'Фактическая дата погашения';
+    document.getElementById('deal-subtitle-text').textContent = label + (deal.repayDate ? ' ' + deal.repayDate : '');
+  }
+
   /* Номер, под которым сделку открыли. Сторы КНР и дерева продуктов
      открыты по нему и держат его, даже если номер сменили в окне
      «Редактирование сделки»: DealsStore помнит прежний номер псевдонимом. */
@@ -3475,6 +3493,7 @@
     openedId = String(deal.id);
     fillTitle(deal);
     fillChips(deal);
+    fillSubtitle(deal);
     applyMode(deal);
     fillKnr(deal);
     fillTerms(deal);
