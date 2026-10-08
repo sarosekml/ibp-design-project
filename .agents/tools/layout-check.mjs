@@ -873,13 +873,24 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      (урок Л22 — «бардак в таблицах» на JS-рендере). Считаем только строки,
      объявившие треки: остальные наследуют сетку от контейнера. */
   const gridRows = [...html.matchAll(/<div class="(tbl__row[^"]*)"[^>]*style="[^"]*grid-template-columns:([^;"]+)/g)]
-    .map((m) => ({ cls: m[1], tracks: m[2].trim().split(/\s+(?![^(]*\))/), line: lineOf(html, m.index) }));
+    .map((m) => ({ cls: m[1], tracks: m[2].trim().split(/\s+(?![^(]*\))/), line: lineOf(html, m.index), at: m.index }));
+  /* шапка у каждой таблицы своя (`.tbl`): на странице бывает несколько таблиц с разной
+     сеткой (реестр с колонкой действий и без) — строка сверяется с шапкой СВОЕЙ таблицы */
+  const tblStarts = [...html.matchAll(/<div class="tbl[ "]/g)].map((m) => m.index);
+  const tblOf = (at) => tblStarts.filter((i) => i < at).length;
+  const tblGroups = new Map();
+  for (const r of gridRows) { const k = tblOf(r.at); (tblGroups.get(k) || tblGroups.set(k, []).get(k)).push(r); }
   if (gridRows.length > 1) {
-    const head = gridRows.find((r) => /--head/.test(r.cls)) || gridRows[0];
-    const off = gridRows.filter((r) => r.tracks.length !== head.tracks.length);
-    ok(off.length === 0, off.length
-      ? `Б8 число колонок расходится с шапкой (${head.tracks.length}) на строках: ${off.map((r) => `${r.line}→${r.tracks.length}`).join(', ')} — данные сдвинутся на колонку`
-      : `Б8 сетка строк совпадает с шапкой (${head.tracks.length} треков, строк ${gridRows.length})`);
+    const offAll = [];
+    let headTracks = 0;
+    for (const rows of tblGroups.values()) {
+      const head = rows.find((r) => /--head/.test(r.cls)) || rows[0];
+      headTracks = headTracks || head.tracks.length;
+      offAll.push(...rows.filter((r) => r.tracks.length !== head.tracks.length).map((r) => ({ ...r, head: head.tracks.length })));
+    }
+    ok(offAll.length === 0, offAll.length
+      ? `Б8 число колонок расходится с шапкой на строках: ${offAll.map((r) => `${r.line}→${r.tracks.length} (шапка ${r.head})`).join(', ')} — данные сдвинутся на колонку`
+      : `Б8 сетка строк совпадает с шапкой (${headTracks} треков, строк ${gridRows.length}, таблиц ${tblGroups.size})`);
   }
   /* Строка берётся ПАРНЫМ разбором (`tagRange`), а не лоокэхедом до
      `</div></div>`. Канонический вид колонки действий из чит-шита —

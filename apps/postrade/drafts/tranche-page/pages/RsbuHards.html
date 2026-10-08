@@ -65,6 +65,9 @@
         </div>
 
         <div class="rh-pane" id="rh-pane-current" role="tabpanel">
+          <div class="rh-bar">
+            <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Настроить колонки" data-table-settings="#rh-tbl-current"><i data-icon="settings"></i></button>
+          </div>
           <div class="dtable dtable--fill">
             <div class="dtable__body">
               <div class="tbl" data-table data-sort-rows id="rh-tbl-current">
@@ -90,11 +93,12 @@
         <div class="rh-pane" id="rh-pane-hard" role="tabpanel" hidden>
           <div class="rh-bar">
             <button type="button" class="btn btn--outline btn--s" id="rh-new-period"><i data-icon="add"></i><span class="btn__label">Новый период</span></button>
+            <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Настроить колонки" data-table-settings="#rh-tbl-hard"><i data-icon="settings"></i></button>
           </div>
           <div class="dtable dtable--fill">
             <div class="dtable__body">
               <div class="tbl" data-table data-sort-rows id="rh-tbl-hard">
-              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 80px 240px 240px 240px 240px 240px 240px 240px 240px 240px minmax(8px,1fr);">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 80px 240px 240px 240px 240px 240px 240px 240px 240px 240px 96px minmax(8px,1fr);">
                 <div class="th th--separator"></div>
                 <div class="th" data-col="periodNumber"><span class="th__label">№</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodNumber" aria-label="Сортировать: №"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="periodStartDate"><span class="th__label">Дата начала периода</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="periodStartDate" aria-label="Сортировать: Дата начала периода"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -106,6 +110,7 @@
                 <div class="th th--right" data-col="deferredInterestAccrued"><span class="th__label">Отложенные проценты начисленные</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="deferredInterestAccrued" aria-label="Сортировать: Отложенные проценты начисленные"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--right" data-col="repoPaymentsAmount"><span class="th__label">Платежи по сделкам РЕПО</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="repoPaymentsAmount" aria-label="Сортировать: Платежи по сделкам РЕПО"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="articleName"><span class="th__label">Статья</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="articleName" aria-label="Сортировать: Статья"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--separator"></div>
               </div>
               </div>
@@ -288,7 +293,7 @@
   ];
   var FIELD_COLS = COLS.filter(function (c) { return c.type === 'date' || c.type === 'amount'; });
   var GRID_CURRENT = '8px 80px ' + COLS.slice(1).map(function () { return '240px'; }).join(' ') + ' minmax(8px,1fr)';   // № — минимальная колонка
-  var GRID_HARD = GRID_CURRENT;
+  var GRID_HARD = GRID_CURRENT.replace(' minmax(8px,1fr)', ' 96px minmax(8px,1fr)');   // + колонка «Действия»
   var DEFAULT_ARTICLE = 'Проценты по кредитам';
 
   function shown(c, v) {
@@ -354,21 +359,20 @@
     } else {
       cell = cellHTML(c, r[c.key], cls, tip);
     }
-    /* скрытые действия строки — в последней колонке: карандаш (правка) и корзина (удаление) */
-    if (c.key === 'articleName') {
-      cell = cell.replace(/<\/div>$/, '<div class="tc__hidden">'
-        + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-edit aria-label="Редактировать период"><i data-icon="edit"></i></button>'
-        + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить период"><i data-icon="trash"></i></button>'
-        + '</div></div>');
-    }
     return cell;
   }
+
+  /* колонка «Действия»: кнопки видны всегда — правка (карандаш) и удаление (корзина) */
+  var ROW_ACTIONS = '<div class="tc" data-col="actions"><span class="tc__controls">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-edit aria-label="Редактировать период"><i data-icon="edit"></i></button>'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить период"><i data-icon="trash"></i></button>'
+    + '</span></div>';
 
   function hardRowHTML(r) {
     var base = baseFor(r);
     var s = '<div class="tbl__row' + (r.isNew ? ' tbl__row--accent' : '') + '" data-period="' + r.periodNumber + '" style="grid-template-columns:' + GRID_HARD + ';"><div class="tc tc--separator"></div>';
     COLS.forEach(function (c) { s += hardCellHTML(c, r, base); });
-    return s + '<div class="tc tc--separator"></div></div>';
+    return s + ROW_ACTIONS + '<div class="tc tc--separator"></div></div>';
   }
 
   /* шапка — в разметке; перерисовываются только строки данных */
