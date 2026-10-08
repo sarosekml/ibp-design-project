@@ -233,7 +233,7 @@
 .tc__hidden {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
   margin-left: auto;
   opacity: 0;
   visibility: hidden;

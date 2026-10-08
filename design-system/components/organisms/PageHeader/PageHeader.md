@@ -83,7 +83,7 @@ PageHeader — заголовок страницы рабочей области
 | `.phead__edit` | слот IconButton neutral S (edit) |
 | `.phead__chips` | ряд Chip ReadOnly S rounded, gap 8 |
 | `.phead__return` | слот кнопки возврата (Outline XS) |
-| `.phead__subtitle` | Body S `--text-secondary`, gap 8/12, wrap |
+| `.phead__subtitle` | Body S `--text-secondary`, gap 8/12, wrap; в стандартном подзаголовке зазор иконка ↔ текст 4px (`--space-4`) |
 | `.phead__subtitle-ico` | иконка 16, `--success` |
 | `.phead__meta` / `.phead__meta-ico(--ok)` | мета-элемент кастомного сабтайтла, Body XS |
 | `.phead__actions` | кнопки справа, gap 8, margin-left:auto |
