@@ -9,7 +9,9 @@
   var APPS = [
     "core/drafts/new-dashboard-mvp",
     "ib/drafts/ai-bankster-prototype-v02",
-    "postrade/drafts/tranche-page"
+    "postrade/drafts/tranche-page",
+    "postrade/drafts/tranche-page-v02",
+    "postrade/post-reports-app"
   ];
   var RUNTIME = "../.agents/proto-panel/";
   var DIR = "proto-panel", BASE = "apps", MANIFEST = "app.json"; // для записи: путь от корня проекта

@@ -236,7 +236,17 @@ export function check(from = HERE) {
   }
 
   /* П4 полнота */
-  const roots = valid.filter((e) => e.rootAbs).map((e) => e.rootAbs);
+  /* приложение с `"hub": false` строки в реестре не имеет, но остаётся приложением:
+     его страницы входят в П4 и П5 (hub-build.mjs пропускает только запись) */
+  const hiddenApps = appDirs.filter((abs) => {
+    try { return JSON.parse(readFileSync(path.join(abs, P.appsManifest), 'utf8')).hub === false; } catch { return false; }
+  }).map((abs) => {
+    let track = null;
+    try { track = JSON.parse(readFileSync(path.join(abs, P.appsManifest), 'utf8')).track; } catch { /* нечитаемый app.json ловит П3 */ }
+    const t = trackById.get(track);
+    return { rootAbs: abs, group: t ? t.hubGroup : null };
+  });
+  const roots = valid.filter((e) => e.rootAbs).concat(hiddenApps).map((e) => e.rootAbs);
   for (const area of AREAS) {
     for (const f of walk(path.join(repo, area))) {
       if (!f.endsWith('.html')) continue;
@@ -314,7 +324,7 @@ export function check(from = HERE) {
 
   /* П5 возврат в хаб */
   const hub = path.join(repo, HUB);
-  for (const e of valid) {
+  for (const e of valid.concat(hiddenApps)) {
     if (!e.rootAbs || !GROUP_DIRS[e.group]) continue;
     for (const f of walk(e.rootAbs)) {
       const rel = slash(path.relative(repo, f));
@@ -407,6 +417,12 @@ function cleanTree(root) {
 
 const CASES = [
   { name: 'чистое дерево', expect: null },
+  { name: 'приложение без строки на хабе (hub: false) — не дефект', expect: null,
+    mutate: (r) => { put(r, 'apps/delta/app.json', appJson('delta', 'product', 'pages/Start.html', { hub: false }));
+      put(r, 'apps/delta/pages/Start.html', '<div class="nav__footer"><a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">Д</a></div>'); } },
+  { name: 'скрытое приложение: строка пользователя на «#»', expect: 'П5 apps/delta/pages/Start.html',
+    mutate: (r) => { put(r, 'apps/delta/app.json', appJson('delta', 'product', 'pages/Start.html', { hub: false }));
+      put(r, 'apps/delta/pages/Start.html', '<div class="nav__footer"><a class="nav__user" href="#">Д</a></div>'); } },
   { name: 'страница приложения вне реестра', expect: 'П4 apps/beta/pages/Beta.html',
     mutate: (r) => put(r, 'apps/beta/pages/Beta.html', '<p>новый концепт</p>') },
   { name: 'в записи приложения нет полей', expect: 'П1 запись 3 «gamma» — в apps/gamma/app.json нет полей записи: title, desc',

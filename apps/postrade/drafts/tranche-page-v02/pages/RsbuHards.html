@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Харды в РСБУ — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .screen__content { gap: var(--space-16); }
+  /* форма модалки: одна колонка */
+  .rh-form { display: flex; flex-direction: column; gap: var(--space-8); }
+  .rh-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Tranche.html" id="rh-crumb-tranche">Транш</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Харды в РСБУ</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Харды в РСБУ</h1></div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="rh-add"><i data-icon="add"></i><span class="btn__label">Внести корректировку</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Таблица корректировок -->
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-sort-rows id="rh-tbl">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 200px 200px 200px 400px 128px minmax(8px,1fr);">
+                <div class="th th--separator"></div>
+                <div class="th" data-col="sourceDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="sourceDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="targetDate"><span class="th__label">Целевая дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="targetDate" aria-label="Сортировать: Целевая дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма добивки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="adjustmentAmount" aria-label="Сортировать: Сумма добивки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="comment"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--separator"></div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── «Новая корректировка» / «Редактирование корректировки»: одна форма -->
+<div class="modal-scrim" id="rh-modal-scrim" hidden>
+  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="rh-modal-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rh-modal-title">Новая корректировка</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__alert" id="rh-modal-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rh-modal-alert-text"></p></div>
+      </div>
+    </div>
+    <div class="modal__body">
+      <form class="rh-form" id="rh-form" onsubmit="return false" novalidate>
+        <div class="rh-form__row">
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="ad-src"><span class="ds-label__text">Исходная дата — откуда переносим</span></label>
+          <div class="inp__field"><input class="inp__control" id="ad-src" name="sourceDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          <span class="ds-helper ds-helper--left" data-helper="sourceDate">&nbsp;</span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="ad-tgt"><span class="ds-label__text">Целевая дата — куда переносим</span></label>
+          <div class="inp__field"><input class="inp__control" id="ad-tgt" name="targetDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          <span class="ds-helper ds-helper--left" data-helper="targetDate">&nbsp;</span>
+        </div>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="ad-amt"><span class="ds-label__text">Сумма добивки</span></label>
+          <div class="inp__field"><input class="inp__control" id="ad-amt" name="adjustmentAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="adjustmentAmount">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="ad-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="ad-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left" data-helper="comment">&nbsp;</span>
+        </div>
+      </form>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="rh-modal-submit"><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Подтверждение удаления периода -->
+<div class="modal-scrim" id="rh-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="rh-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rh-delete-title">Удалить корректировку</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body"><p id="rh-delete-text" style="margin:0;"></p></div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m btn--danger" id="rh-delete-confirm"><span class="btn__label">Удалить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/tranche-data.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, таблица корректировок РСБУ и модалка добавления/правки.
+   Форматирование — только при выводе: суммы «1 000 000,00» (можно со знаком «-»), даты ДД.ММ.ГГГГ.
+   Данные живут в памяти страницы: после перезагрузки таблица возвращается к состоянию из адреса. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var NBSP = ' ';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="index.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+  /* ---------- формат ---------- */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  /* «-1 250 000,5» → число; пусто или мусор → NaN */
+  function parseMoney(str) {
+    var s = String(str).replace(/[\s ]/g, '').replace(',', '.');
+    return s === '' || s === '-' || isNaN(Number(s)) ? NaN : Number(s);
+  }
+  /* «ДД.ММ.ГГГГ» → ISO; мусор → '' */
+  function parseDate(str) {
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(str).trim());
+    if (!m) return '';
+    var d = new Date(Date.UTC(+m[3], +m[2] - 1, +m[1]));
+    return (d.getUTCFullYear() === +m[3] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[1]) ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* ---------- данные ---------- */
+  var data = window.MOCK_RSBU_ADJUSTMENTS;
+  /* Состояния для панели прототипа: ?demo=filled — корректировки уже внесены (как в тайле «Внесено корректировок»);
+     ?demo=edit — открыта правка первой строки; ?demo=delete — открыто подтверждение удаления.
+     Без demo таблица пуста. */
+  function demoHas(name) { var m = /[?&]demo=([a-z,]+)/.exec(location.search); return !!m && m[1].split(',').indexOf(name) >= 0; }
+  var rows = (demoHas('filled') || demoHas('delete') || demoHas('edit')) ? data.adjustments.map(function (r) { return Object.assign({}, r); }) : [];
+
+  var GRID = '8px 200px 200px 200px 400px 128px minmax(8px,1fr)';
+  var tbl = document.getElementById('rh-tbl');
+
+  function cell(key, text, num, sortValue) {
+    return '<div class="tc' + (num ? ' tc--numbers' : '') + '" data-col="' + key + '"' + (sortValue != null ? ' data-sort-value="' + sortValue + '"' : '') + '>'
+      + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(text) + '</span></span></div>';
+  }
+  var ROW_ACTIONS = '<div class="tc" data-col="actions"><span class="tc__controls">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-edit aria-label="Редактировать корректировку"><i data-icon="edit"></i></button>'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить корректировку"><i data-icon="trash"></i></button>'
+    + '</span></div>';
+
+  function rowHTML(r, i) {
+    return '<div class="tbl__row" data-idx="' + i + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
+      + cell('sourceDate', date(r.sourceDate), false, r.sourceDate)
+      + cell('targetDate', date(r.targetDate), false, r.targetDate)
+      + cell('adjustmentAmount', money(r.adjustmentAmount), true, r.adjustmentAmount)
+      + cell('comment', r.comment || '—', false)
+      + ROW_ACTIONS + '<div class="tc tc--separator"></div></div>';
+  }
+
+  /* шапка — в разметке; перерисовываются только строки данных */
+  function render() {
+    tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
+    tbl.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
+    if (window.dsIcons) window.dsIcons.apply(tbl);
+    if (window.DSTable) {
+      window.DSTable.wireAll(tbl.parentNode);
+      var api = window.DSTable.wire(tbl);
+      if (api && api.rowsChanged) api.rowsChanged();
+    }
+  }
+
+  /* ---------- уведомления: фоновый тост ДС, зелёный, уходит сам ---------- */
+  function toast(message) {
+    if (window.DSToast) window.DSToast.show({ message: message, kind: 'bar', tone: 'success' });
+  }
+
+  /* ---------- модалка корректировки: создание и правка ---------- */
+  var scrim = document.getElementById('rh-modal-scrim');
+  var form = document.getElementById('rh-form');
+  var alertBox = document.getElementById('rh-modal-alert');
+  var editIdx = -1;   // индекс строки в rows; -1 — новая корректировка
+  var KEYS = ['sourceDate', 'targetDate', 'adjustmentAmount'];
+
+  function fieldEl(k) { return form.elements[k]; }
+  function boxOf(k) { return fieldEl(k).closest('.inp'); }
+
+  function clearErrors() {
+    alertBox.hidden = true;
+    KEYS.forEach(function (k) { boxOf(k).classList.remove('inp--error'); });
+  }
+  function showError(text, keys) {
+    document.getElementById('rh-modal-alert-text').textContent = text;
+    alertBox.hidden = false;
+    (keys || []).forEach(function (k) { boxOf(k).classList.add('inp--error'); });
+  }
+
+  /* сумма в поле: знак «-» только первым, разряды неразрывным пробелом, запятая, не более двух знаков */
+  function formatAmount(inp) {
+    var raw = inp.value, pos = inp.selectionStart == null ? raw.length : inp.selectionStart;
+    var left = raw.slice(0, pos).replace(/[^\d,.]/g, '').length;
+    var neg = /^\s*[-−–]/.test(raw);
+    var clean = raw.replace(/\./g, ',').replace(/[^\d,]/g, '');
+    var parts = clean.split(',');
+    var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+    var out = (neg ? '-' : '') + intPart + (parts.length > 1 ? ',' + parts.slice(1).join('').slice(0, 2) : '');
+    inp.value = out;
+    var n = 0, caret = neg ? 1 : 0;
+    while (caret < out.length && n < left) { if (/[\d,]/.test(out.charAt(caret))) n++; caret++; }
+    try { inp.setSelectionRange(caret, caret); } catch (e) { /* поле без выделения */ }
+  }
+
+  form.addEventListener('input', function (e) {
+    var inp = e.target;
+    if (inp.hasAttribute('data-amount')) formatAmount(inp);
+    inp.closest('.inp').classList.remove('inp--error');
+  });
+  form.addEventListener('focusout', function (e) {
+    var inp = e.target;
+    if (inp.hasAttribute && inp.hasAttribute('data-amount')) {
+      var n = parseMoney(inp.value);
+      if (!isNaN(n)) inp.value = money(n);
+    }
+  });
+
+  function openModal(idx) {
+    editIdx = idx;
+    var r = idx >= 0 ? rows[idx] : null;
+    document.getElementById('rh-modal-title').textContent = r ? 'Редактирование корректировки' : 'Новая корректировка';
+    document.querySelector('#rh-modal-submit .btn__label').textContent = r ? 'Сохранить' : 'Добавить';
+    fieldEl('sourceDate').value = r ? date(r.sourceDate) : '';
+    fieldEl('targetDate').value = r ? date(r.targetDate) : '';
+    fieldEl('adjustmentAmount').value = r ? money(r.adjustmentAmount) : '';
+    fieldEl('comment').value = r ? r.comment : '';
+    clearErrors();
+    if (window.DSModal) window.DSModal.open(scrim);
+  }
+
+  document.getElementById('rh-modal-submit').addEventListener('click', function () {
+    clearErrors();
+    var src = parseDate(fieldEl('sourceDate').value), tgt = parseDate(fieldEl('targetDate').value), amt = parseMoney(fieldEl('adjustmentAmount').value);
+    var bad = [];
+    if (!src) bad.push('sourceDate');
+    if (!tgt) bad.push('targetDate');
+    if (isNaN(amt)) bad.push('adjustmentAmount');
+    if (bad.length) { showError('Заполните даты в формате ДД.ММ.ГГГГ и сумму добивки числом.', bad); return; }
+    if (src === tgt) { showError('Даты должны различаться: переносить на ту же дату нечего.', ['sourceDate', 'targetDate']); return; }
+    if (amt === 0) { showError('Сумма добивки не может быть равна нулю.', ['adjustmentAmount']); return; }
+    var rec = { sourceDate: src, targetDate: tgt, adjustmentAmount: amt, comment: fieldEl('comment').value.trim() };
+    var wasEdit = editIdx >= 0;
+    if (wasEdit) rows[editIdx] = rec; else rows.push(rec);
+    render();
+    if (window.DSModal) window.DSModal.closeTop();
+    toast(wasEdit ? 'Корректировка изменена' : 'Корректировка добавлена');
+  });
+
+  document.getElementById('rh-add').addEventListener('click', function () { openModal(-1); });
+
+  /* ---------- удаление с подтверждением ---------- */
+  var deleteIdx = -1;
+  function openDelete(idx) {
+    if (idx < 0) return;
+    deleteIdx = idx;
+    var r = rows[idx];
+    document.getElementById('rh-delete-text').textContent = 'Удалить корректировку с ' + date(r.sourceDate) + ' на ' + date(r.targetDate) + '? Действие нельзя отменить.';
+    if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
+  }
+  document.getElementById('rh-delete-confirm').addEventListener('click', function () {
+    var had = deleteIdx >= 0;
+    if (had) rows.splice(deleteIdx, 1);
+    deleteIdx = -1;
+    render();
+    if (window.DSModal) window.DSModal.closeTop();
+    if (had) toast('Корректировка удалена');
+  });
+
+  /* индекс строки в rows — по data-idx (после сортировки порядок в DOM другой) */
+  function idxOfRow(row) { return row ? parseInt(row.getAttribute('data-idx'), 10) : -1; }
+  tbl.addEventListener('dblclick', function (e) {
+    var row = e.target.closest('.tbl__row:not(.tbl__row--head)');
+    if (row) openModal(idxOfRow(row));
+  });
+  tbl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-edit]');
+    if (b) { openModal(idxOfRow(b.closest('.tbl__row'))); return; }
+    var d = e.target.closest('[data-delete]');
+    if (d) openDelete(idxOfRow(d.closest('.tbl__row')));
+  });
+
+  /* ---------- поля с data-f из данных транша ---------- */
+  function fill() {
+    var t = window.MOCK_TRANCHE;
+    var values = { dealName: t.dealName, parentContractName: t.parentContractName, currencyCode: data.currencyCode };
+    document.querySelectorAll('[data-f]').forEach(function (el) {
+      var k = el.getAttribute('data-f');
+      if (k in values) el.textContent = values[k];
+    });
+    document.getElementById('rh-crumb-tranche').textContent = t.trancheNumber + ' Транш';
+  }
+
+  buildNav(); fill(); render();
+  /* ?open=add — страница открыта кнопкой «Внести корректировку» с тайла: модалка поднята сразу */
+  if (/[?&]open=add/.test(location.search)) openModal(-1);
+  if (demoHas('edit')) openModal(0);
+  if (demoHas('delete')) openDelete(rows.length - 1);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

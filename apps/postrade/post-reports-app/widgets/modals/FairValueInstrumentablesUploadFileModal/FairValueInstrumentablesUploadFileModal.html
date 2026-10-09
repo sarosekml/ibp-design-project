@@ -1,0 +1,41 @@
+<!-- Окно «Данные по инструменту» — загрузка XML-файла инструмента ФИ.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body. Открывается поверх окна ФИ (вложенный слой).
+
+     Два состояния (data-state на .modal):
+       choose  — имитация системного выбора файла: кнопка «Выбрать файл»;
+       preview — текст XML и Alert «Файл проверен»; «Сохранить» включена.
+     Поведение — FairValueInstrumentablesUploadFileModal.js
+     (PostFairValueInstrumentablesUploadFileModal.bind). -->
+
+<div class="modal-scrim modal-scrim--nested" id="fv-upload-scrim" hidden>
+  <div class="modal modal--w6 lc-fv-upload" data-state="choose" role="dialog" aria-modal="true" aria-labelledby="fv-upload-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-upload-title">Данные по инструменту</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert lc-fv-upload__checked">
+      <div class="alert alert--success alert--m alert--flush" data-alert-tone="success" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="check-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Файл проверен</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="lc-fv-upload__choose">
+        <p class="lc-fv-upload__hint" data-fv-upload-hint>Выберите xml файл инструмента.</p>
+        <button type="button" class="btn btn--outline btn--m" data-fv-upload-pick><i data-icon="upload"></i><span class="btn__label">Выбрать файл</span></button>
+      </div>
+      <pre class="lc-fv-upload__xml" data-fv-upload-xml></pre>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-upload-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

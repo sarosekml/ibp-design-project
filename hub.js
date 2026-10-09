@@ -123,5 +123,14 @@ window.IBPHub = [
     href: 'apps/postrade/drafts/tranche-page/pages/Tranche.html',
     root: 'apps/postrade/drafts/tranche-page',
     icon: 'folder'
+  },
+  {
+    id: 'tranche-page-v02',
+    group: 'concepts',
+    title: 'Post — Страница транша v02',
+    desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи. Версия 2: харды РСБУ — корректировки платежей',
+    href: 'apps/postrade/drafts/tranche-page-v02/pages/Tranche.html',
+    root: 'apps/postrade/drafts/tranche-page-v02',
+    icon: 'folder'
   }
 ];

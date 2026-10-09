@@ -23,7 +23,7 @@
 
 .cpk__row { display: flex; align-items: center; gap: var(--space-14); }
 /* Пипетка и «Копировать» — IconButton M: подложка 32px выступает за глиф 20px
-   на 6px с каждой стороны. Между подложками и до поля Hex — 8px (урок Л186):
+   на 6px с каждой стороны. Между подложками и до поля Hex — 8px (урок Л200):
    отступ ряда 14 = 6 + 8, зазор кнопок 20 = 6 + 8 + 6. */
 .cpk__tools { display: flex; align-items: center; gap: var(--space-20); padding-right: var(--space-6); }
 .cpk__tools [hidden] { display: none; }

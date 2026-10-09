@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реестр расчетов FV — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* Экран-реестр: ритм 12px — заголовок → тулбар → таблица (правило каркаса) */
+  .screen__content { gap: var(--space-12); }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- Боковое меню строится экранным скриптом из ibp-home.js по роли -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../deals-app/pages/MainPage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Реестр расчетов FV</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы ─────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Реестр расчетов FV</h1>
+            </div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button class="btn btn--accent btn--m" data-modal="create-fv-scrim"><i data-icon="add"></i><span class="btn__label">Новый расчет</span></button>
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="fv-register-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="fv-register-menu" class="menu menu--floating" role="menu" hidden>
+              <button type="button" class="menu__item" role="menuitem" data-fv-upload="fv"><span class="menu__item-label">Загрузить FV</span></button>
+              <button type="button" class="menu__item" role="menuitem" data-fv-upload="components"><span class="menu__item-label">Загрузить компоненты FV</span></button>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Фильтр и таблица ──────────────────────────────── -->
+      <div class="dtable-toolbar">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы">
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" data-modal="filter-scrim">
+            <i data-icon="filter"></i><span class="btn__label">Фильтр</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-sort-rows>
+
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 96px 200px 200px 220px 220px minmax(8px,1fr);">
+              <div class="th th--separator"></div>
+              <div class="th" data-col="calculationId" aria-sort="none" data-sort-type="number">
+                <span class="th__label">№</span>
+                <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="calculationId" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+                <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+              </div>
+              <div class="th" data-col="formedDate" aria-sort="none" data-sort-type="date">
+                <span class="th__label">Дата формирования</span>
+                <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="formedDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+                <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+              </div>
+              <div class="th" data-col="calculationDate" aria-sort="none" data-sort-type="date">
+                <span class="th__label">Дата расчета</span>
+                <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="calculationDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+                <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+              </div>
+              <div class="th th--right" data-col="totalFvAmount" aria-sort="none" data-sort-type="number">
+                <span class="th__label">Сумма FV, RUB</span>
+                <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="totalFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+                <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+              </div>
+              <div class="th" data-col="status">
+                <span class="th__label">Статус</span>
+                <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+              </div>
+              <div class="th th--separator"></div>
+            </div>
+
+            <!-- Строки рендерит скрипт из window.MOCK_FV_CALCULATIONS -->
+
+          </div>
+
+          <div class="es es--m" id="fv-empty" role="status" aria-live="polite" hidden>
+            <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__title">Расчеты не найдены</p>
+              <p class="es__text">По заданным условиям фильтра ничего не найдено. Измените параметры и попробуйте снова.</p>
+            </div>
+            <div class="es__actions">
+              <button type="button" class="btn btn--accent btn--m" id="fv-empty-clear"><span class="btn__label">Очистить фильтр</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dtable__footer">
+          <!-- Колонтитул строит скрипт (DSPagination.footer) -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Модальные окна ──────────────────────────────────────────── -->
+<!-- Окно «Формирование нового расчета» реестра расчетов FV. Фрагмент вшивается
+     ассемблером меткой ds-include — скрим должен лежать в конце body.
+
+     Одно поле — дата расчета (InputDate, маска и календарь — из ДС). Кнопка
+     «Сформировать» выключена, пока дата не введена целиком. Если расчет на эту
+     дату уже есть, окно остаётся открытым и показывает Alert уровня окна.
+     Поведение — CreateFairValueCalculationModal.js (PostCreateFairValueCalculationModal.bind). -->
+
+<div class="modal-scrim" id="create-fv-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="create-fv-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="create-fv-title">Формирование нового расчета</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-fv-create-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось сформировать расчет</p>
+          <p class="alert__text">Расчет на эту дату уже сформирован, его можно пересчитать или сформировать новый на новую дату.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="create-fv-date"><span class="ds-label__text">Дата расчета</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="create-fv-date" data-fv-create-date placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+            <button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-create-submit disabled><span class="btn__label">Сформировать</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно «Данные FV» — предпросмотр загруженного файла FV. Фрагмент вшивается
+     ассемблером меткой ds-include — скрим должен лежать в конце body.
+
+     Тело окна — таблица предпросмотра (до 100 первых строк). Строки в
+     разметке нет: страница рисует их из window.MOCK_FV_UPLOAD_PREVIEW в
+     контейнер [data-fv-preview-rows] при открытии. «Сохранить» закрывает окно. -->
+
+<div class="modal-scrim" id="reserves-fv-scrim" hidden>
+  <div class="modal modal--w6" role="dialog" aria-modal="true" aria-labelledby="reserves-fv-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="reserves-fv-title">Данные FV</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Для предпросмотра загруженных данных доступно не более 100 первых строк</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-preview-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 140px minmax(240px,1fr) 200px 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span></div>
+              <div class="th"><span class="th__label">Дата</span></div>
+              <div class="th"><span class="th__label">Финансовый инструмент</span></div>
+              <div class="th th--right"><span class="th__label">FV, вал. ед.</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Окно «Данные FV» с компонентами — предпросмотр файла компонентов FV.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body.
+
+     Отличие от ReservesFvModal — пять колонок компонентов изменения FV вместо
+     одной суммы. Строки рисует страница из window.MOCK_FV_COMPONENTS_UPLOAD_PREVIEW
+     в таблицу [data-fv-components-rows] после строки шапки при открытии. -->
+
+<div class="modal-scrim" id="reserves-fv-components-scrim" hidden>
+  <div class="modal modal--w12" role="dialog" aria-modal="true" aria-labelledby="reserves-fv-components-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="reserves-fv-components-title">Данные FV</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Для предпросмотра загруженных данных доступно не более 100 первых строк</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-components-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 120px 220px repeat(5,minmax(200px,1fr)) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span></div>
+              <div class="th"><span class="th__label">Дата</span></div>
+              <div class="th"><span class="th__label">Инструмент</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное сдвигом % кривых, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное сдвигом кредитных кривых, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное изм. рейтингов/LGD/ставки резерва, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное изм. валюты, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, необъясненная составляющая, вал. ед.</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Имитация системного окна выбора файла (только прототип) -->
+<div class="modal-scrim" id="upload-stub-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="upload-stub-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="upload-stub-title">Выбор файла</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div class="alert alert--info alert--m" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Так в прототипе изображено системное окно выбора файла. В продукте здесь откроется диалог операционной системы; нажмите «Выбрать файл», чтобы перейти к предпросмотру.</p>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="upload-stub-pick"><span class="btn__label">Выбрать файл</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Окно «Фильтр»: одна секция «Основная информация» -->
+<div class="modal-scrim" id="filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="filter-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="filter-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="tfm-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="tfm-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel" id="tfm-panel">
+          <section class="tfm__sec" id="tfm-sec-main" aria-labelledby="tfm-sec-main-t">
+            <p class="tfm__sec-title" id="tfm-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата формирования</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="f-formed-from" inputmode="numeric" placeholder="ДД.ММ.ГГГГ">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="f-formed-to" inputmode="numeric" placeholder="ДД.ММ.ГГГГ">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp-range inp-range--date tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Дата расчета</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="f-calc-from" inputmode="numeric" placeholder="ДД.ММ.ГГГГ">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="f-calc-to" inputmode="numeric" placeholder="ДД.ММ.ГГГГ">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="f-status"><span class="ds-label__text">Статус</span></label>
+                <div class="inp__field" data-ddl="f-status-list">
+                  <input class="inp__control" id="f-status">
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="f-status-list" class="ddl ddl--floating ddl--scroll" role="listbox" aria-multiselectable="true"></div>
+              </div>
+              <div class="inp-range tfm__span-2">
+                <label class="ds-label"><span class="ds-label__text">Сумма FV, RUB</span></label>
+                <div class="inp-range__row">
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">От</span>
+                      <input class="inp__control" id="f-amount-from" inputmode="decimal">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                    </div>
+                  </div>
+                  <span class="inp-range__line" aria-hidden="true"></span>
+                  <div class="inp inp--m inp-range__field">
+                    <div class="inp__field">
+                      <span class="inp__prefix">До</span>
+                      <input class="inp__control" id="f-amount-to" inputmode="decimal">
+                      <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" id="tf-clear"><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="tf-apply"><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../data/fv-dictionaries.js"></script>
+<script src="../data/fv-calculations.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/modals/CreateFairValueCalculationModal/CreateFairValueCalculationModal.js"></script>
+<script>
+/* Экранный скрипт: меню панели навигации из ibp-home.js (пункт «Расчет FV»
+   selected). Роль не переключается — реестр одинаков для обеих ролей. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'fv-calculation';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon=\'' + name + '\'></i>'; }
+
+  function itemHTML(it) {
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">'
+        + it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('')
+        + '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">'
+        + '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>'
+        + '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge
+      ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>'
+      : '';
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  var nav = document.getElementById('nav');
+  var s = '<div class="nav__top">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+    + '</div><div class="nav__list">';
+  s += '<a class="nav__item" href="../../deals-app/pages/MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+  IBPHome.itemsFor(role).forEach(function (g, i) {
+    s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+    g.items.forEach(function (it) { s += itemHTML(it); });
+    s += '</div>';
+  });
+  s += '</div>';
+  s += (window.IBPHome && window.IBPHome.footerHTML)
+    ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+    : '<div class="nav__footer">'
+      + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+      + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+      + '<span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span>'
+      + '<span class="nav__user-role">' + role + '</span></span></a>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>'
+      + '</div>';
+  nav.innerHTML = s;
+  if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+<script>
+/* Реестр расчетов FV: рендер строк, пагинация, окно нового расчета, загрузка
+   файлов FV, фильтр. Модель данных потребителя — рантаймы ДС таблицу не
+   наполняют. Правила — FairValueRegister.screen.md. */
+(function () {
+  'use strict';
+
+  var GRID = '8px 96px 200px 200px 220px 220px minmax(8px,1fr)';
+  var LABELS = window.FV_CALCULATION_STATUS_LABELS;
+  var TONES = window.FV_STATUS_TONES;
+  var calcs = window.MOCK_FV_CALCULATIONS.slice();
+
+  function esc(v) {
+    var d = document.createElement('div');
+    d.textContent = v == null ? '' : String(v);
+    return d.innerHTML;
+  }
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : '';
+  }
+  /* 3900500000 → «3 900 500 000,00» (неразрывные пробелы) */
+  function fmtAmount(n) {
+    if (n == null) return '';
+    var parts = Math.abs(n).toFixed(2).split('.');
+    return (n < 0 ? '−' : '') + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + parts[1];
+  }
+  function parseRuDate(s) {
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})/.exec(s || '');
+    return m ? m[3] + '-' + m[2] + '-' + m[1] : null;
+  }
+  function parseAmount(s) {
+    var t = String(s || '').replace(/[\s ]/g, '').replace(',', '.');
+    if (t === '' || isNaN(+t)) return null;
+    return +t;
+  }
+
+  function cell(key, extra, attrs, inner) {
+    return '<div class="tc' + (extra ? ' ' + extra : '') + '" data-col="' + key + '"' + (attrs || '') + '>' + inner + '</div>';
+  }
+  function textCell(key, v, extra, attrs) {
+    var val = (v == null || v === '') ? '—' : v;
+    return cell(key, extra, attrs, '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(val) + '</span></span>');
+  }
+  function statusCell(c) {
+    return cell('status', '', '', '<span class="tc__row"><span class="chip chip--s chip--rounded ' + TONES[c.statusCode] + '"><span class="chip__label">' + esc(LABELS[c.statusCode]) + '</span></span></span>');
+  }
+  function renderRow(c) {
+    var cells = [
+      '<div class="tc tc--separator"></div>',
+      textCell('calculationId', c.calculationId, '', ' data-sort-value="' + c.calculationId + '"'),
+      textCell('formedDate', fmtDate(c.formedDate), '', ' data-sort-value="' + c.formedDate + '"'),
+      textCell('calculationDate', fmtDate(c.calculationDate), '', ' data-sort-value="' + c.calculationDate + '"'),
+      textCell('totalFvAmount', c.totalFvAmount == null ? '' : fmtAmount(c.totalFvAmount), 'tc--numbers', ' data-sort-value="' + (c.totalFvAmount == null ? '' : c.totalFvAmount) + '"'),
+      statusCell(c),
+      '<div class="tc tc--separator"></div>'
+    ];
+    return '<div class="tbl__row" data-row="' + c.calculationId + '" style="grid-template-columns:' + GRID + ';">' + cells.join('') + '</div>';
+  }
+
+  var tbl = document.querySelector('.tbl[data-table]');
+  var headRow = tbl.querySelector('.tbl__row');
+  var footerHost = document.querySelector('.dtable__footer');
+  var emptyState = document.getElementById('fv-empty');
+
+  var wrap = document.createElement('div');
+  wrap.innerHTML = calcs.map(renderRow).join('');
+  var frag = document.createDocumentFragment();
+  Array.prototype.slice.call(wrap.children).forEach(function (r) { frag.appendChild(r); });
+  headRow.parentNode.insertBefore(frag, headRow.nextSibling);
+
+  /* ---------- пагинация и фильтр ---------- */
+  var state = { page: 1, pageSize: 50 };
+  var activeFilter = null; /* null — не применён, иначе Set номеров расчетов */
+
+  function dataRows() {
+    return Array.prototype.filter.call(tbl.children, function (r) { return r.hasAttribute('data-row'); });
+  }
+  function drawFooter(total) {
+    footerHost.innerHTML = '';
+    footerHost.appendChild(window.DSPagination.footer({
+      info: { items: [['Расчетов', String(total)]], warn: null },
+      pager: {
+        total: total, page: state.page, pageSize: state.pageSize,
+        onChange: function (p) { state.page = p; applyView(); },
+        onPageSizeChange: function (v) { state.pageSize = v; state.page = 1; applyView(); }
+      }
+    }));
+  }
+  function applyView() {
+    var all = dataRows();
+    var matched = activeFilter ? all.filter(function (r) { return activeFilter.has(r.dataset.row); }) : all;
+    var total = matched.length;
+    if (total === 0) {
+      all.forEach(function (r) { r.hidden = true; });
+      tbl.hidden = true; footerHost.hidden = true; emptyState.hidden = false;
+      return;
+    }
+    tbl.hidden = false; footerHost.hidden = false; emptyState.hidden = true;
+    var totalPages = window.DSPagination.totalPages(total, state.pageSize);
+    if (state.page > totalPages) state.page = totalPages;
+    var size = state.pageSize === 'all' ? total : state.pageSize;
+    var start = (state.page - 1) * size, end = start + size;
+    all.forEach(function (r) {
+      var idx = matched.indexOf(r);
+      r.hidden = idx < start || idx >= end;
+    });
+    drawFooter(total);
+  }
+  applyView();
+  tbl.addEventListener('sort', function () { state.page = 1; applyView(); });
+
+  /* ---------- новый расчет ---------- */
+  function wireTable() {
+    var api = window.DSTable.wire(tbl);
+    if (api && api.rowsChanged) api.rowsChanged();
+  }
+  function setStatus(id, code) {
+    var c = calcs.filter(function (x) { return x.calculationId === id; })[0];
+    var row = tbl.querySelector('.tbl__row[data-row="' + id + '"]');
+    if (!c || !row) return;
+    c.statusCode = code;
+    var target = window.DSTable.cell(row, 'status');
+    if (!target) return;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = statusCell(c);
+    target.innerHTML = tmp.firstElementChild.innerHTML;
+  }
+
+  var createScrim = document.getElementById('create-fv-scrim');
+  var createApi = window.PostCreateFairValueCalculationModal.bind(createScrim, {
+    exists: function (iso) {
+      return calcs.some(function (c) { return c.calculationDate === iso; });
+    },
+    create: function (iso) {
+      var id = calcs.reduce(function (m, c) { return Math.max(m, c.calculationId); }, 0) + 1;
+      var today = new Date().toISOString().slice(0, 10);
+      var c = { calculationId: id, formedDate: today, calculationDate: iso, totalFvAmount: null, currencyCode: 'RUB', statusCode: 'FORMING' };
+      calcs.unshift(c);
+      var host = document.createElement('div');
+      host.innerHTML = renderRow(c);
+      headRow.parentNode.insertBefore(host.firstElementChild, headRow.nextSibling);
+      wireTable();
+      state.page = 1;
+      applyView();
+      /* «Формируется» → «Сформирован»: в прототипе — через 2 с */
+      setTimeout(function () { setStatus(id, 'FORMED'); }, 2000);
+    }
+  });
+  /* окно открывается пустым при каждом открытии */
+  document.querySelector('[data-modal="create-fv-scrim"]').addEventListener('click', function () { if (createApi) createApi.reset(); });
+
+  /* ---------- «Загрузить FV» / «Загрузить компоненты FV» ---------- */
+  var uploadKind = 'fv';
+
+  function previewRow(r) {
+    return '<div class="tbl__row" style="grid-template-columns:8px 64px 140px minmax(240px,1fr) 200px 8px;">'
+      + '<div class="tc tc--separator"></div>'
+      + textCell('n', r.rowNumber) + textCell('d', fmtDate(r.date)) + textCell('i', r.instrumentName)
+      + textCell('fv', fmtAmount(r.fvAmount), 'tc--numbers')
+      + '<div class="tc tc--separator"></div></div>';
+  }
+  function componentsRow(r) {
+    return '<div class="tbl__row" style="grid-template-columns:8px 64px 120px 220px repeat(5,minmax(200px,1fr)) 8px;">'
+      + '<div class="tc tc--separator"></div>'
+      + textCell('n', r.rowNumber) + textCell('d', fmtDate(r.date)) + textCell('i', r.instrumentName)
+      + [r.curveShiftFvAmount, r.creditCurveShiftFvAmount, r.ratingLgdShiftFvAmount, r.currencyFvAmount, r.unexplainedFvAmount]
+          .map(function (v, k) { return textCell('c' + k, fmtAmount(v), 'tc--numbers'); }).join('')
+      + '<div class="tc tc--separator"></div></div>';
+  }
+  function fillPreview(selector, rows, render) {
+    var t = document.querySelector(selector);
+    if (!t) return;
+    Array.prototype.slice.call(t.querySelectorAll('.tbl__row:not(.tbl__row--head)')).forEach(function (r) { r.remove(); });
+    var tmp = document.createElement('div');
+    tmp.innerHTML = rows.map(render).join('');
+    while (tmp.firstElementChild) t.appendChild(tmp.firstElementChild);
+  }
+
+  /* Выбор файла — имитация системного диалога (тестовых файлов нет): меню «⋮»
+     открывает окно upload-stub-scrim, «Выбрать файл» изображает выбор и ведёт
+     в предпросмотр. Содержимое файла прототип не читает — окно показывает
+     демо-строки. «Отмена» предпросмотр не открывает. */
+  var stubScrim = document.getElementById('upload-stub-scrim');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-fv-upload]'), function (btn) {
+    btn.addEventListener('click', function () {
+      uploadKind = btn.getAttribute('data-fv-upload');
+      window.DSModal.open(stubScrim);
+    });
+  });
+  /* Ошибки файла (демо): параметр ?file=format|empty|structure|size — «Выбрать файл» показывает снекбар вместо предпросмотра */
+  var FILE_ERRORS = {
+    format: ['Неверный формат файла', 'Загрузите файл в поддерживаемом формате.'],
+    empty: ['Файл пуст', 'В файле нет данных для загрузки.'],
+    structure: ['Не удалось прочитать файл', 'В файле нет обязательных колонок или они названы иначе.'],
+    size: ['Файл слишком большой', 'Загрузите файл меньшего размера.']
+  };
+  var fileError = FILE_ERRORS[new URLSearchParams(location.search).get('file')] || null;
+  document.getElementById('upload-stub-pick').addEventListener('click', function () {
+    window.DSModal.closeTop(true);
+    if (fileError) {
+      if (window.DSSnack) window.DSSnack.show({ tone: 'error', title: fileError[0], text: fileError[1], dedup: true });
+      return;
+    }
+    var id = uploadKind === 'components' ? 'reserves-fv-components-scrim' : 'reserves-fv-scrim';
+    if (uploadKind === 'components') fillPreview('[data-fv-components-rows]', window.MOCK_FV_COMPONENTS_UPLOAD_PREVIEW, componentsRow);
+    else fillPreview('[data-fv-preview-rows]', window.MOCK_FV_UPLOAD_PREVIEW, previewRow);
+    window.DSModal.open(document.getElementById(id));
+  });
+
+  /* ---------- фильтр ---------- */
+  var statusSet = new Set();
+  var statusField = document.querySelector('[data-ddl="f-status-list"]');
+  var statusList = document.getElementById('f-status-list');
+  var statusNames = Object.keys(LABELS).map(function (k) { return LABELS[k]; });
+  var CHECK = '<span class="ddl__item-check"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></span>';
+  statusList.innerHTML = '<button class="ddl__item ddl__item--checkbox ddl__item--all" role="option" aria-checked="false">' + CHECK + '<span class="ddl__item-body"><span class="ddl__item-label">Выбрать всё</span></span></button><hr class="ddl__divider">'
+    + statusNames.map(function (n) {
+      return '<button class="ddl__item ddl__item--checkbox" role="option" aria-checked="false">' + CHECK + '<span class="ddl__item-body"><span class="ddl__item-label">' + esc(n) + '</span></span></button>';
+    }).join('');
+  if (window.dsIcons) window.dsIcons.apply(statusList);
+
+  var chipsHost = document.createElement('span');
+  chipsHost.className = 'inp__chips';
+  statusField.insertBefore(chipsHost, statusField.firstChild);
+
+  var badge = document.getElementById('tfm-badge');
+  var bar = document.querySelector('.tfilter');
+  var ids = ['f-formed-from', 'f-formed-to', 'f-calc-from', 'f-calc-to', 'f-amount-from', 'f-amount-to'];
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  /* счётчик раздела и чип «Применено» считают заполненные поля: пара «От/До»
+     — одно поле диапазона */
+  function filledCount() {
+    var n = 0;
+    [['f-formed-from', 'f-formed-to'], ['f-calc-from', 'f-calc-to'], ['f-amount-from', 'f-amount-to']].forEach(function (p) {
+      if (val(p[0]) || val(p[1])) n++;
+    });
+    if (statusSet.size) n++;
+    return n;
+  }
+  function syncBadge() {
+    var n = filledCount();
+    badge.textContent = String(n);
+    badge.hidden = n === 0;
+  }
+  function drawApplied(n) {
+    var chip = bar.querySelector('.tfilter__applied');
+    if (n === 0) { if (chip) chip.remove(); return; }
+    if (!chip) {
+      chip = document.createElement('span');
+      chip.className = 'chip chip--edit chip--m tfilter__applied';
+      chip.tabIndex = 0;
+      chip.innerHTML = '<span class="chip__label"></span><span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span>';
+      bar.appendChild(chip);
+      if (window.dsIcons) window.dsIcons.apply(chip);
+    }
+    chip.querySelector('.chip__label').textContent = 'Применено: ' + n;
+  }
+
+  function syncChips() {
+    chipsHost.innerHTML = '';
+    statusSet.forEach(function (label) {
+      var chip = window.DSInputKit.makeChip(label, {
+        size: 's',
+        onRemove: function (lbl) {
+          statusSet.delete(lbl);
+          Array.prototype.forEach.call(statusList.querySelectorAll('.ddl__item--checkbox:not(.ddl__item--all)'), function (it) {
+            if (it.querySelector('.ddl__item-label').textContent === lbl) it.setAttribute('aria-checked', 'false');
+          });
+          syncChips(); syncBadge();
+        }
+      });
+      chipsHost.appendChild(chip);
+    });
+    if (window.dsIcons) window.dsIcons.apply(chipsHost);
+    if (window.DSInput) window.DSInput.sync(statusField.closest('.inp'));
+  }
+  window.DSDropdownList.bind(statusField, {
+    multiple: true,
+    onToggle: function (item) {
+      var lab = item.querySelector('.ddl__item-label');
+      if (item.classList.contains('ddl__item--all')) {
+        var on = item.getAttribute('aria-checked') === 'true';
+        statusSet.clear();
+        if (on) statusNames.forEach(function (n) { statusSet.add(n); });
+      } else if (lab) {
+        if (item.getAttribute('aria-checked') === 'true') statusSet.add(lab.textContent); else statusSet.delete(lab.textContent);
+      }
+      syncChips(); syncBadge();
+    }
+  });
+  statusField.closest('.inp').addEventListener('ds-input:clear', function () {
+    statusSet.clear();
+    Array.prototype.forEach.call(statusList.querySelectorAll('.ddl__item--checkbox'), function (it) { it.setAttribute('aria-checked', 'false'); });
+    syncChips(); syncBadge();
+  });
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', syncBadge); });
+
+  function inRange(v, from, to) {
+    if (from == null && to == null) return true;
+    if (v == null) return false;
+    return (from == null || v >= from) && (to == null || v <= to);
+  }
+  function matches(c) {
+    if (!inRange(c.formedDate, parseRuDate(val('f-formed-from')), parseRuDate(val('f-formed-to')))) return false;
+    if (!inRange(c.calculationDate, parseRuDate(val('f-calc-from')), parseRuDate(val('f-calc-to')))) return false;
+    if (!inRange(c.totalFvAmount, parseAmount(val('f-amount-from')), parseAmount(val('f-amount-to')))) return false;
+    if (statusSet.size && !statusSet.has(LABELS[c.statusCode])) return false;
+    return true;
+  }
+  function applyFilters() {
+    var n = filledCount();
+    activeFilter = n === 0 ? null : new Set(calcs.filter(matches).map(function (c) { return String(c.calculationId); }));
+    drawApplied(n);
+    state.page = 1;
+    applyView();
+  }
+  function resetFields() {
+    ids.forEach(function (id) { document.getElementById(id).value = ''; });
+    statusSet.clear();
+    Array.prototype.forEach.call(statusList.querySelectorAll('.ddl__item--checkbox'), function (it) { it.setAttribute('aria-checked', 'false'); });
+    syncChips(); syncBadge();
+    if (window.DSInput) window.DSInput.syncAll(document.getElementById('filter-scrim') || document);
+  }
+
+  document.getElementById('tf-apply').addEventListener('click', function () {
+    applyFilters();
+    window.DSModal.closeTop(true);
+  });
+  document.getElementById('tf-clear').addEventListener('click', function () { resetFields(); applyFilters(); });
+  document.getElementById('fv-empty-clear').addEventListener('click', function () { resetFields(); applyFilters(); });
+  bar.addEventListener('tfilter:reset', function () {
+    resetFields(); activeFilter = null; state.page = 1; applyView();
+  });
+  syncBadge();
+
+  /* ---------- переход на страницу расчета: двойной клик по строке ---------- */
+  tbl.addEventListener('dblclick', function (e) {
+    var row = e.target.closest('.tbl__row[data-row]');
+    if (!row) return;
+    /* расчет «Формируется» открыть нельзя: он ещё не готов */
+    var c = calcs.filter(function (x) { return String(x.calculationId) === row.dataset.row; })[0];
+    if (c && c.statusCode === 'FORMING') return;
+    window.location.href = 'FairValueCalculation.preview.html?id=' + row.dataset.row;
+  });
+})();
+</script>
+
+</body>
+</html>

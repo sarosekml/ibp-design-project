@@ -30,6 +30,7 @@
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
         { "action": "edit", "resource": "apps/postrade/deals-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/post-reports-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "subagent", "resource": "*", "effect": "allow" },
@@ -45,6 +46,7 @@
         { "action": "edit", "resource": "*", "effect": "ask" },
         { "action": "edit", "resource": "apps/**", "effect": "allow" },
         { "action": "edit", "resource": "apps/postrade/deals-app/**", "effect": "ask" },
+        { "action": "edit", "resource": "apps/postrade/post-reports-app/**", "effect": "ask" },
         { "action": "webfetch", "resource": "*", "effect": "deny" },
         { "action": "websearch", "resource": "*", "effect": "deny" },
         { "action": "skill", "resource": "*", "effect": "allow" }
