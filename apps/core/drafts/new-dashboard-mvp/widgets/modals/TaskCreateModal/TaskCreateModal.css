@@ -1,0 +1,15 @@
+/* Локальный компонент «Новая задача» (TaskCreateModal).
+   Только раскладка полей внутри тела окна; окно держит Modal ДС. */
+
+.lc-task-create .lc-task-create__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* Подпись приоритета — LabelHelper над SegmentControl, зазор как у поля */
+.lc-task-create .lc-task-create__priority {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-label-field);
+}

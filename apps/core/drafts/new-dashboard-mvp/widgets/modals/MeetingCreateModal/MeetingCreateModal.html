@@ -1,0 +1,89 @@
+<!-- Локальный компонент «Новая встреча» (MeetingCreateModal) — окно главной.
+     Артефакт тайлов «Встречи» (подвал «Добавить», меню шапки, «Новая встреча»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая встреча»).
+     Вшивается отдельной меткой ds-include в конце страницы: скрим не может
+     лежать внутри тайла.
+
+     Поля — одна колонка (режим ввода); исключение — «Дата · Начало ·
+     Окончание» в один ряд: короткие связанные поля, одно понятие «когда».
+     Обязательны все четыре: пустое — ошибка поля (InputText: текст ошибки в
+     тултипе при фокусе, не в хелпере). Списки и проверку ведёт
+     MeetingCreateModal.js; «Создать встречу» без data-modal-close — окно
+     закрывает скрипт после проверки. -->
+<div class="modal-scrim" id="meeting-create-scrim" hidden>
+  <div class="modal modal--w4 lc-meeting-create" role="dialog" aria-modal="true" aria-labelledby="meeting-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="meeting-create-title">Новая встреча</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-meeting-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-client"><span class="ds-label__text">Клиент</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="meeting-create-client-list">
+              <input class="inp__control" id="meeting-create-client" autocomplete="off" placeholder="Выберите клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="meeting-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-topic"><span class="ds-label__text">Тема встречи</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="meeting-create-topic" autocomplete="off" maxlength="120" placeholder="Например, условия рефинансирования">
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-meeting-create__when">
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-date"><span class="ds-label__text">Дата</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="meeting-create-date" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-start"><span class="ds-label__text">Начало</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-start-list">
+                <input class="inp__control" id="meeting-create-start" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-end"><span class="ds-label__text">Окончание</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-end-list">
+                <input class="inp__control" id="meeting-create-end" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-end-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <p class="note note--s">
+          <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+          <span class="note__text">Встреча появится в «Моих встречах», а если она сегодня — и в «Моём дне».</span>
+        </p>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-meeting-create-save><span class="btn__label">Создать встречу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

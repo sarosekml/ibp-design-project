@@ -1,0 +1,45 @@
+/* Локальный компонент «Мой день» (MyDayTile).
+   Только внутренняя раскладка и показ своих блоков по data-state.
+   События — интерактивные строки Entity M со своими состояниями; цвета,
+   шрифты, отступы — токены ДС. */
+
+.lc-day { container-type: inline-size; }
+
+.lc-day__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Лента — строки Entity сеткой. Число колонок — по своей ширине: пять на
+   8 колонках страницы (≈ 220px на строку), дальше три, две, одна; событий
+   больше колонок — переносятся следующим рядом. Список остаётся
+   .entity-list: интерактивная строка выносит подложку наведения на 8px по
+   вертикали и 10px по бокам (Entity 1.008), поэтому зазор рядов — 16px
+   (контракт списка), колонок — 20px (две боковые выноски без наложения). */
+.entity-list.lc-day__slots,
+.lc-day__slots.lc-day__loading {
+  --lc-day-cols: 5;
+  display: grid;
+  grid-template-columns: repeat(var(--lc-day-cols), minmax(0, 1fr));
+  gap: var(--space-16) var(--space-20);
+}
+@container (max-width: 960px) { .lc-day__slots { --lc-day-cols: 3; } }
+@container (max-width: 600px) { .lc-day__slots { --lc-day-cols: 2; } }
+@container (max-width: 380px) { .lc-day__slots { --lc-day-cols: 1; } }
+
+.lc-day__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-day__slots.lc-day__loading,
+.lc-day__empty,
+.lc-day__error { display: none; }
+
+.lc-day[data-state="loading"] .lc-day__slots.lc-day__loading { display: grid; }
+.lc-day[data-state="empty"] .lc-day__empty,
+.lc-day[data-state="error"] .lc-day__error { display: block; }
+.lc-day:is([data-state="loading"], [data-state="empty"], [data-state="error"]) .lc-day__slots:not(.lc-day__loading) { display: none; }

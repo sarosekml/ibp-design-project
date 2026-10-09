@@ -1,0 +1,67 @@
+<!-- Локальный компонент «Новости по клиентам» (NewsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error | updating
+     data-mode  — только view: править нечего
+
+     Поверхность тайла тонирована (--primary-bg) — по макету: лента новостей
+     отделена от рабочих тайлов. В ДС у Tile тона поверхности нет; это
+     осознанное отклонение и кандидат в ДС (модификатор поверхности Tile).
+     Ленту рисует NewsTile.js из HomeStore; запись ниже — пример. -->
+<section class="tile lc-news" data-state="data" data-mode="view" aria-labelledby="lc-news-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" id="lc-news-title">Новости</h3></div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-news__busy" role="status" aria-label="Обновление новостей"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="news" aria-label="Все новости" data-tooltip="Все новости"><i data-icon="arrow-right"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-news-act="refresh" aria-label="Обновить новости" data-tooltip="Обновить"><i data-icon="refresh"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body lc-news__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-news__scope" role="radiogroup" aria-label="Чьи клиенты" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои клиенты</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Клиенты моего деска</span></button>
+    </div>
+
+    <div class="lc-news__list" aria-live="polite">
+      <article class="lc-news__item" data-news-id="N-301">
+        <div class="lc-news__meta">
+          <span>08.10.2026</span>
+          <span class="lc-news__source">Деловой вестник</span>
+          <a class="ibtn ibtn--neutral ibtn--s lc-news__open" href="#" aria-label="Открыть в источнике: Деловой вестник" data-tooltip="Открыть в источнике"><i data-icon="arrow-up-right"></i></a>
+        </div>
+        <h4 class="lc-news__title">ГК «Волга Тех» запускает вторую очередь логистического комплекса</h4>
+        <p class="lc-news__text">Группа рассчитывает завершить строительство до конца 2027 года и увеличить складские мощности на 40%.</p>
+      </article>
+    </div>
+
+    <div class="lc-news__loading" aria-busy="true" aria-label="Загрузка новостей">
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:90%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div>
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:60%" aria-hidden="true"></span></div>
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:85%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:65%" aria-hidden="true"></span></div>
+    </div>
+
+    <p class="lc-news__empty">О ваших клиентах новостей пока нет</p>
+
+    <div class="lc-news__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить новости</p>
+          <p class="alert__text">Лента СМИ не ответила. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-news-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-news__foot">
+      <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="news">Смотреть все<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+    </footer>
+  </div>
+</section>

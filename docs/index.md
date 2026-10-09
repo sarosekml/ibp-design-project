@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 333.
+Документов: 355.
 
 ## Корень (4)
 
@@ -243,7 +243,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (143)
+## Приложения (165)
 
 | Документ | Аннотация |
 |---|---|
@@ -260,6 +260,38 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/core/documents-app/README.md](../apps/core/documents-app/README.md) | documents-app — модуль раздела core |
+
+### apps/core/drafts/new-dashboard-mvp
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/new-dashboard-mvp/README.md](../apps/core/drafts/new-dashboard-mvp/README.md) | Главная — дашборд (MVP) |
+| [apps/core/drafts/new-dashboard-mvp/pages/HomePage.screen.md](../apps/core/drafts/new-dashboard-mvp/pages/HomePage.screen.md) | Главная — дашборд |
+| [apps/core/drafts/new-dashboard-mvp/proto-panel/comments.md](../apps/core/drafts/new-dashboard-mvp/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/CHANGELOG.md) | MeetingCreateModal — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.md](../apps/core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.md) | MeetingCreateModal |
+| [apps/core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/CHANGELOG.md) | TaskCreateModal — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.md](../apps/core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.md) | TaskCreateModal |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/CHANGELOG.md) | DateBadge — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.md) | DateBadge |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/CHANGELOG.md) | HomeProfileTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md) | HomeProfileTile |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/CHANGELOG.md) | MeetingsTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.md) | MeetingsTile |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/CHANGELOG.md) | MyDayTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.md) | MyDayTile |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/CHANGELOG.md) | NewsTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.md) | NewsTile |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/CHANGELOG.md) | StatCard — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md) | StatCard |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/CHANGELOG.md) | TasksTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.md) | TasksTile |
+
+### apps/core/drafts/new-dashboard-mvp — снимки задач
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/new-dashboard-mvp/new-dashboard-mvp.handoff.md](../apps/core/drafts/new-dashboard-mvp/new-dashboard-mvp.handoff.md) | new-dashboard-mvp — handoff |
 
 ### apps/core/employees-app
 

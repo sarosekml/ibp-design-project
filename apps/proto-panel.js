@@ -7,6 +7,7 @@
    только пересылка горячих клавиш наверх. */
 (function () {
   var APPS = [
+    "core/drafts/new-dashboard-mvp",
     "ib/drafts/ai-bankster-prototype-v02",
     "postrade/drafts/tranche-page"
   ];

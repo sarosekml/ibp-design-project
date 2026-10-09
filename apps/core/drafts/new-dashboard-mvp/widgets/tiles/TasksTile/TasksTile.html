@@ -1,0 +1,133 @@
+<!-- Локальный компонент «Задачи» (TasksTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error | updating
+     data-mode  — edit: можно брать в работу, менять статус, создавать задачу |
+                  view: только просмотр
+
+     Разметка держит все состояния сразу, нужное показывает TasksTile.css.
+     Строки и счётчики рисует TasksTile.js из HomeStore; строка ниже — пример.
+     Меню строки одно на все строки (ContextMenu: одно меню — несколько
+     триггеров); задачу, чьё меню открыто, скрипт запоминает по триггеру —
+     меню живёт в общем слое, не в строке (Л88). -->
+<section class="tile lc-tasks" data-state="data" data-mode="edit" aria-labelledby="lc-tasks-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="tasks"></i></span>
+        <h3 class="tile__title" id="lc-tasks-title">Задачи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-tasks__busy" role="status" aria-label="Обновление задач"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="tasks" aria-label="Все задачи" data-tooltip="Все задачи"><i data-icon="arrow-right"></i></button>
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия виджета «Задачи»" aria-haspopup="menu" data-menu="lc-tasks-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-tasks-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-tasks-act="refresh">
+            <span class="menu__item-icon"><i data-icon="refresh"></i></span>
+            <span class="menu__item-label">Обновить</span>
+          </button>
+          <button type="button" class="menu__item" role="menuitem" data-tasks-act="add">
+            <span class="menu__item-icon"><i data-icon="add-circle"></i></span>
+            <span class="menu__item-label">Новая задача</span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-tasks__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-tasks__scope" role="radiogroup" aria-label="Чьи задачи показать" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои задачи</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Задачи моего деска</span></button>
+    </div>
+
+    <div class="lc-tasks__stats" role="group" aria-label="Фильтр задач">
+      <button type="button" class="lc-stat lc-stat--accent" aria-pressed="false" data-stat="new"><span class="lc-stat__label">Новые</span><span class="lc-stat__value">6</span><span class="lc-stat__caption">2 пришли сегодня</span></button>
+      <button type="button" class="lc-stat lc-stat--warning" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">8</span><span class="lc-stat__caption">срок истекает сегодня</span></button>
+      <button type="button" class="lc-stat lc-stat--error" aria-pressed="false" data-stat="overdue"><span class="lc-stat__label">Просрочено</span><span class="lc-stat__value">3</span><span class="lc-stat__caption">самая старая — 4 дня</span></button>
+    </div>
+    <div class="entity-list lc-tasks__list" aria-live="polite">
+      <div class="entity lc-tasks__row" data-task-id="T-1001">
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header"><span class="badge badge--dot badge--error" aria-hidden="true"></span>Высокий приоритет</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">Обновить forecast P&amp;L по АО «Платформа»</span></div>
+          </div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Сделка D-126618 · АО «Платформа»</span></div>
+          <div class="entity__chips">
+            <span class="chip chip--xs chip--rounded chip--error"><span class="chip__label">Просрочено на 4 дня</span></span>
+            <span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">В работе</span></span>
+          </div>
+        </div>
+        <div class="entity__actions">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Действия с задачей" aria-haspopup="menu" data-menu="lc-tasks-row-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        </div>
+      </div>
+    </div>
+    <p class="lc-tasks__none" hidden>Просроченных задач нет</p>
+
+    <!-- Меню строки: одно на все строки, пункты включает скрипт по статусу задачи -->
+    <div id="lc-tasks-row-menu" class="menu menu--floating" role="menu" hidden>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="take">
+        <span class="menu__item-icon"><i data-icon="check"></i></span>
+        <span class="menu__item-label">Взять в работу</span>
+      </button>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="return">
+        <span class="menu__item-icon"><i data-icon="flip-backward"></i></span>
+        <span class="menu__item-label">Вернуть в новые</span>
+      </button>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="done">
+        <span class="menu__item-icon"><i data-icon="check-circle"></i></span>
+        <span class="menu__item-label">Отметить выполненной</span>
+      </button>
+      <hr class="menu__divider">
+      <button type="button" class="menu__item" role="menuitem" data-task-act="open">
+        <span class="menu__item-icon"><i data-icon="arrow-right"></i></span>
+        <span class="menu__item-label">Открыть в разделе «Задачи»</span>
+      </button>
+    </div>
+
+    <div class="lc-tasks__loading" aria-busy="true" aria-label="Загрузка задач">
+      <div class="lc-tasks__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-tasks__sk-rows">
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:55%" aria-hidden="true"></span></div>
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span></div>
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:75%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:45%" aria-hidden="true"></span></div>
+      </div>
+    </div>
+
+    <div class="lc-tasks__empty">
+      <p class="lc-tasks__empty-text">Открытых задач нет</p>
+      <button type="button" class="btn btn--outline btn--s lc-tasks__edit" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="lc-tasks__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить задачи</p>
+          <p class="alert__text">Сервис задач не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-tasks-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-tasks__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-tasks__foot-row">
+        <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="tasks">Все задачи<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+        <span class="lc-tasks__count"></span>
+        <button type="button" class="btn btn--transparent btn--s lc-tasks__edit" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</section>

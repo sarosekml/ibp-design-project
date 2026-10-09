@@ -1,0 +1,16 @@
+/* Локальный компонент «Новая встреча» (MeetingCreateModal).
+   Только раскладка полей внутри тела окна; высоту, скролл и отступы окна
+   держит Modal ДС. Отступы — токены ДС. */
+
+.lc-meeting-create .lc-meeting-create__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* «Когда»: дата шире времени — в ней десять знаков и кнопка календаря */
+.lc-meeting-create .lc-meeting-create__when {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-12);
+}

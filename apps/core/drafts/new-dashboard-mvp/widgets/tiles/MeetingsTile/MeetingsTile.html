@@ -1,0 +1,121 @@
+<!-- Локальный компонент «Встречи» (MeetingsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+     Внешние отступы и место в колонках задаёт страница.
+
+     data-state — loading | data | empty | error | updating (partial не бывает:
+                  у встречи все поля обязательны)
+     data-mode  — edit: можно добавить встречу | view: только просмотр
+
+     Разметка держит все состояния сразу, нужное показывает MeetingsTile.css.
+     Строки, счётчики и выборку рисует MeetingsTile.js из HomeStore; две строки
+     ниже — пример для витрины без данных. Счётчики — StatCard, дата в строке —
+     DateBadge (оба — подчасти-кандидаты в ДС). Окно «Новая встреча» —
+     MeetingCreateModal, скрим лежит в конце страницы. -->
+<section class="tile lc-meetings" data-state="data" data-mode="edit" aria-labelledby="lc-meetings-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span>
+        <h3 class="tile__title" id="lc-meetings-title">Встречи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-meetings__busy" role="status" aria-label="Обновление встреч"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="meetings" aria-label="Все встречи" data-tooltip="Все встречи"><i data-icon="arrow-right"></i></button>
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия виджета «Встречи»" aria-haspopup="menu" data-menu="lc-meetings-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-meetings-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-meetings-act="refresh">
+            <span class="menu__item-icon"><i data-icon="refresh"></i></span>
+            <span class="menu__item-label">Обновить</span>
+          </button>
+          <button type="button" class="menu__item lc-meetings__edit" role="menuitem" data-meetings-act="add">
+            <span class="menu__item-icon"><i data-icon="calendar-plus"></i></span>
+            <span class="menu__item-label">Новая встреча</span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-meetings__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-meetings__scope" role="radiogroup" aria-label="Чьи встречи показать" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои встречи</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Встречи моего деска</span></button>
+    </div>
+
+    <!-- Данные: счётчики-фильтры и список. Клик по счётчику показывает
+         только его выборку, повторный клик снимает фильтр. -->
+    <div class="lc-meetings__stats" role="group" aria-label="Фильтр встреч">
+      <button type="button" class="lc-stat lc-stat--s lc-stat--info" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">3</span></button>
+      <button type="button" class="lc-stat lc-stat--s" aria-pressed="false" data-stat="week"><span class="lc-stat__label">На неделе</span><span class="lc-stat__value">7</span></button>
+      <button type="button" class="lc-stat lc-stat--s lc-stat--warning" aria-pressed="false" data-stat="attention"><span class="lc-stat__label">Требует внимания</span><span class="lc-stat__value">1</span></button>
+    </div>
+    <div class="entity-list lc-meetings__list" aria-live="polite">
+      <div class="entity" data-meeting-id="M-0101">
+        <div class="entity__lead"><span class="lc-date lc-date--today" role="img" aria-label="09.10.2026"><span class="lc-date__day" aria-hidden="true">09</span><span class="lc-date__month" aria-hidden="true">окт</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">09:30–10:30 · Ким А. С.</span></div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity" data-meeting-id="M-0102">
+        <div class="entity__lead"><span class="lc-date lc-date--today" role="img" aria-label="09.10.2026"><span class="lc-date__day" aria-hidden="true">09</span><span class="lc-date__month" aria-hidden="true">окт</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">14:00–15:00 · Ким А. С.</span></div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--warning"><span class="chip__label">Требует внимания</span></span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Выборка фильтра пуста — строка причины на месте списка -->
+    <p class="lc-meetings__none" hidden>Встреч, требующих внимания, нет</p>
+
+    <!-- Загрузка: каркас в габаритах итогового содержимого -->
+    <div class="lc-meetings__loading" aria-busy="true" aria-label="Загрузка встреч">
+      <div class="lc-meetings__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-meetings__sk-rows">
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:45%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:30%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+      </div>
+    </div>
+
+    <!-- Данных нет: тайл на 4 колонках — строка причины и действие, без
+         иллюстрации (правила локальных компонентов, «Данных нет») -->
+    <div class="lc-meetings__empty">
+      <p class="lc-meetings__empty-text">Встреч пока нет</p>
+      <button type="button" class="btn btn--outline btn--s lc-meetings__edit" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+    </div>
+
+    <!-- Ошибка: причина и повтор; остальные тайлы работают -->
+    <div class="lc-meetings__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить встречи</p>
+          <p class="alert__text">Сервис календаря не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-meetings-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-meetings__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-meetings__foot-row">
+        <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="meetings">Все встречи<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+        <span class="lc-meetings__count"></span>
+        <button type="button" class="btn btn--transparent btn--s lc-meetings__edit" data-modal="meeting-create-scrim"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</section>

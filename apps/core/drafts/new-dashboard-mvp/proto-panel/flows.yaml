@@ -1,0 +1,49 @@
+# Сценарии показа прототипа Главная — дашборд (MVP) — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 4
+flows:
+  - id: main
+    title: Утро аналитика
+    desc: Главная → просрочки из «Моего дня» → задача в работу → новая встреча в плане дня
+    steps:
+      - state: 1
+        id: start
+        title: Главная
+        page: HomePage.preview.html
+        note: Тайлы загружаются каскадом, каждый по ответу своего сервиса. Профиль, план дня, встречи, задачи и новости — на одном экране.
+        do:
+          - waitFor: '#tile-news[data-state="data"]'
+      - state: 2
+        id: overdue
+        title: Просрочки из «Моего дня»
+        note: Клик по строке «Просрочено» в «Моём дне» включает выборку в «Задачах» и прокручивает к ним.
+        do:
+          - click: '#tile-day [data-day-filter="overdue"]'
+          - waitFor: '#tile-tasks [data-stat="overdue"][aria-pressed="true"]'
+      - state: 3
+        id: take
+        title: Задача взята в работу
+        note: Счётчик «Новые» — выборка новых задач. «Взять в работу» меняет статус на месте, уведомление даёт отменить.
+        do:
+          - click: '#tile-tasks [data-stat="new"]'
+          - waitFor: '#tile-tasks [data-stat="new"][aria-pressed="true"]'
+          - click: '#tile-tasks [data-task-act="take"]'
+          - waitFor: '#tile-tasks [data-stat="new"][aria-pressed="true"]'
+      - state: 4
+        id: meeting
+        title: Новая встреча в плане дня
+        note: Быстрое действие из профиля. Встреча на сегодня сразу встаёт в «Мой день» и в «Мои встречи».
+        do:
+          - click: '#tile-profile [data-modal="meeting-create-scrim"]'
+          - waitFor: '#meeting-create-scrim'
+          - click: '[data-ddl="meeting-create-client-list"]'
+          - click: '[data-code="ГК «Волга Тех»"]'
+          - fill:
+              target: '#meeting-create-topic'
+              value: Повестка по ковенантам
+          - click: '[data-meeting-create-save]'
+          - waitFor:
+              target: '#meeting-create-scrim'
+              state: hidden

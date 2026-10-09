@@ -1,0 +1,88 @@
+/* Локальный компонент «Задачи» (TasksTile).
+   Только внутренняя раскладка и показ своих блоков по data-state / data-mode.
+   Цвета, шрифты, отступы — токены ДС; состояния компонентов ДС не
+   переопределяются. Счётчики — StatCard (свой CSS). */
+
+.lc-tasks { container-type: inline-size; }
+
+.lc-tasks__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.lc-tasks__scope { align-self: stretch; }
+
+.lc-tasks__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+.lc-tasks__sk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  margin-top: var(--space-16);
+}
+
+/* Точка приоритета — Badge dot перед текстом Header строки */
+.lc-tasks__row .entity__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+/* Действие строки не сжимается: подпись «Взять в работу» целиком */
+.lc-tasks__row .entity__actions { flex: none; }
+
+.lc-tasks__none,
+.lc-tasks__empty-text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+.lc-tasks__empty {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+}
+
+.lc-tasks__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-top: auto;
+}
+.lc-tasks__foot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+.lc-tasks__count {
+  flex: 1;
+  font: var(--type-body-xs);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-tasks__loading,
+.lc-tasks__empty,
+.lc-tasks__error,
+.lc-tasks__busy { display: none; }
+
+.lc-tasks[data-state="loading"] .lc-tasks__loading { display: block; }
+.lc-tasks[data-state="empty"] .lc-tasks__empty { display: flex; }
+.lc-tasks[data-state="error"] .lc-tasks__error { display: block; }
+.lc-tasks[data-state="updating"] .lc-tasks__busy { display: inline-block; }
+
+.lc-tasks:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-tasks__body > .lc-tasks__stats, .lc-tasks__list, .lc-tasks__none, .lc-tasks__foot) { display: none; }
+.lc-tasks:is([data-state="loading"], [data-state="error"]) .lc-tasks__scope { display: none; }
+.lc-tasks:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-tasks__busy) { display: none; }
+
+/* Режим просмотра: точки входа в правку не рисуются (кнопку «Взять в
+   работу» в строке скрипт в этом режиме не рисует вовсе) */
+.lc-tasks[data-mode="view"] .lc-tasks__edit { display: none; }
+
+/* Узкий тайл: счётчики в колонку, пояснения не помещаются в треть ширины */
+@container (max-width: 420px) {
+  .lc-tasks__stats { grid-template-columns: minmax(0, 1fr); }
+}

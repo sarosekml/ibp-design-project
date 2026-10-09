@@ -1,0 +1,32 @@
+/* Локальный компонент «Блок даты» (DateBadge) — кандидат в ДС.
+   Габарит — ведущий элемент Entity M (40 × 40, радиус --radius-xl как у
+   .entity__icon M), поэтому строка с датой стоит в одну линию с соседними
+   строками-сущностями. Цвета, шрифты, радиусы — токены ДС. */
+
+.lc-date {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--space-40);
+  height: var(--space-40);
+  border-radius: var(--radius-xl);
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+.lc-date__day {
+  font: var(--type-body-m-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.lc-date__month {
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+/* Сегодня — тон accent: та же пара подложка / текст, что у выбора Entity */
+.lc-date--today { background: var(--primary-bg); }
+.lc-date--today .lc-date__day,
+.lc-date--today .lc-date__month { color: var(--primary-dark); }

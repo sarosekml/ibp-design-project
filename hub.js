@@ -80,6 +80,15 @@ window.IBPHub = [
     icon: 'ai-stars'
   },
   {
+    id: 'new-dashboard-mvp',
+    group: 'concepts',
+    title: 'Главная — дашборд (MVP)',
+    desc: 'Редизайн главной: профиль, мой день, встречи, задачи и новости по клиентам',
+    href: 'apps/core/drafts/new-dashboard-mvp/pages/HomePage.preview.html',
+    root: 'apps/core/drafts/new-dashboard-mvp',
+    icon: 'layout-grid-01'
+  },
+  {
     id: 'pipelineManager-v01',
     group: 'concepts',
     title: 'Pipeline Management ver. 01',

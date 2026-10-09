@@ -1,0 +1,65 @@
+<!-- Локальный компонент «Профиль на главной» (HomeProfileTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | error (данных нет не бывает: профиль есть
+                  у любого, кто вошёл)
+     data-mode  — edit: быстрые действия «Новая встреча» и «Новая задача» видны |
+                  view: роль не создаёт встречи и задачи, действий нет
+
+     Профиль — Entity L (аватар XL 96 с фото, точка «в сети» — Badge dot).
+     Фото не загрузилось — инициалы (цепочка Avatar фото → инициалы → иконка;
+     рантайма у Avatar нет, подмену делает HomeProfileTile.js). Адрес фото
+     ставит скрипт из данных профиля: относительный путь во фрагменте читался
+     бы от папки виджета, а не от страницы, которая его вшивает. Приветствие
+     зависит от времени суток. Окна — MeetingCreateModal и TaskCreateModal,
+     их скримы лежат в конце страницы. -->
+<section class="tile tile--headless lc-profile" data-state="data" data-mode="edit" aria-label="Профиль сотрудника">
+  <div class="tile__body lc-profile__body">
+    <div class="entity entity--l lc-profile__entity">
+      <div class="entity__lead">
+        <span class="av-stack" data-profile="avatar" aria-label="В сети">
+          <span class="av av--circular av--xl"><img class="av__img" alt=""></span>
+          <span class="badge badge--dot badge--success badge--bordered" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="entity__main">
+        <div class="entity__titles">
+          <p class="entity__header" data-profile="greeting">Добрый день,</p>
+          <div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-profile="name" data-tooltip="Анна Сергеевна Ким" data-tooltip-truncated="only">Анна Сергеевна Ким</span></div>
+        </div>
+        <div class="entity__subs entity__subs--single"><span class="entity__subs-list" data-profile="position">Аналитик ДИД · Металлургия и машиностроение</span></div>
+        <div class="entity__icons">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-profile-act="phone" aria-label="Скопировать телефон" data-tooltip="Скопировать телефон"><i data-icon="phone"></i></button>
+          <a class="ibtn ibtn--neutral ibtn--s" data-profile="mail" href="mailto:a.kim@example.ru" aria-label="Написать письмо" data-tooltip="Написать письмо"><i data-icon="mail"></i></a>
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-home-goto="profile" aria-label="Открыть профиль" data-tooltip="Открыть профиль"><i data-icon="user-circle"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-profile__actions">
+      <button type="button" class="btn btn--outline btn--s" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="sk-row lc-profile__loading" aria-busy="true" aria-label="Загрузка профиля">
+      <span class="sk-block sk-block--circle" style="--sk-w:var(--space-96);--sk-h:var(--space-96)" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span>
+        <span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lc-profile__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить профиль</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-profile-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

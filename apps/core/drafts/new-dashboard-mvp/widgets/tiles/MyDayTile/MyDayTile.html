@@ -1,0 +1,71 @@
+<!-- Локальный компонент «Мой день» (MyDayTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error
+     data-mode  — только view: тайл ничего не правит, а ведёт к выборкам
+
+     Лента дня: свои встречи сегодня по времени (прошла / идёт / ближайшая /
+     позже) и две строки задач — со сроком сегодня и просроченные. Каждое
+     событие — интерактивная строка Entity M (объект в списке — Entity, не
+     Card: правило Tile); строки стоят сеткой внутри .entity-list, зазор
+     16px — контракт списка Entity. Клик или Enter/Space по строке просит
+     тайл «Встречи» или «Задачи» показать свою выборку (HomeStore.focus).
+     Ленту рисует MyDayTile.js; строки ниже — пример. -->
+<section class="tile lc-day" data-state="data" data-mode="view" aria-labelledby="lc-day-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+        <h3 class="tile__title" id="lc-day-title">Мой день</h3>
+      </div>
+      <p class="tile__subtitle" data-day="subtitle">Пятница, 9 октября · сейчас 12:40</p>
+    </div>
+  </header>
+
+  <div class="tile__body lc-day__body">
+    <div class="entity-list lc-day__slots" role="group" aria-label="События и сроки сегодня" data-day="slots">
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="09:30–10:30, ГК «Волга Тех». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--neutral" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">09:30–10:30</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="14:00–15:00, АО «Урал-Инвест». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">14:00–15:00</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--accent"><span class="chip__label">Через 1 ч 20 мин</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-day__slots lc-day__loading" aria-busy="true" aria-label="Загрузка дня">
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:90%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:85%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:75%" aria-hidden="true"></span></div></div>
+    </div>
+
+    <p class="lc-day__empty">На сегодня встреч нет и сроки задач не горят</p>
+
+    <div class="lc-day__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось собрать план на день</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-day-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой день — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Мой день">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Мой день» (MyDayTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error
+     data-mode  — только view: тайл ничего не правит, а ведёт к выборкам
+
+     Лента дня: свои встречи сегодня по времени (прошла / идёт / ближайшая /
+     позже) и две строки задач — со сроком сегодня и просроченные. Каждое
+     событие — интерактивная строка Entity M (объект в списке — Entity, не
+     Card: правило Tile); строки стоят сеткой внутри .entity-list, зазор
+     16px — контракт списка Entity. Клик или Enter/Space по строке просит
+     тайл «Встречи» или «Задачи» показать свою выборку (HomeStore.focus).
+     Ленту рисует MyDayTile.js; строки ниже — пример. -->
+<section class="tile lc-day" data-state="data" data-mode="view" aria-labelledby="lc-day-title" id="tile-day">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+        <h3 class="tile__title" id="lc-day-title">Мой день</h3>
+      </div>
+      <p class="tile__subtitle" data-day="subtitle">Пятница, 9 октября · сейчас 12:40</p>
+    </div>
+  </header>
+
+  <div class="tile__body lc-day__body">
+    <div class="entity-list lc-day__slots" role="group" aria-label="События и сроки сегодня" data-day="slots">
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="09:30–10:30, ГК «Волга Тех». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--neutral" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">09:30–10:30</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="14:00–15:00, АО «Урал-Инвест». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">14:00–15:00</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--accent"><span class="chip__label">Через 1 ч 20 мин</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-day__slots lc-day__loading" aria-busy="true" aria-label="Загрузка дня">
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:90%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:85%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:75%" aria-hidden="true"></span></div></div>
+    </div>
+
+    <p class="lc-day__empty">На сегодня встреч нет и сроки задач не горят</p>
+
+    <div class="lc-day__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось собрать план на день</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-day-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>09.10.2026</b></span><span>Категория: <b>Другое</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../../index.html">Локальные компоненты</a> · core/drafts/new-dashboard-mvp</p>
+  <h1>Мой день</h1>
+  <p class="lead">Сегодняшние встречи по времени и горящие сроки задач — с переходом к нужной выборке в один клик</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/drafts/new-dashboard-mvp</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile">apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Главная — дашборд, первый ряд, 8 колонок из 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/pages/HomePage.preview.html">apps/core/drafts/new-dashboard-mvp/pages/HomePage.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="MeetingsTile.doc.html">MeetingsTile — клик ведёт к выборке «Сегодня»; TasksTile — к выборкам «Сегодня» и «Просрочено»; HomeStore — встречи и задачи считаются теми же функциями</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 09.10.2026 — блок «Мой день» сверх макета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">План дня сотрудника на одной строке: свои встречи сегодня в порядке времени и две строки сроков — «Срок сегодня» и «Просрочено». Фаза встречи считается от текущего времени: прошла (статус встречи), идёт сейчас, ближайшая («Через 1 ч 20 мин»), позже. Подзаголовок — день недели, дата и «сейчас».</p>
+<p class="desc">Тайл ничего не правит: он ведёт к выборкам. Клик по встрече включает в тайле «Встречи» выборку «Сегодня», по строке задач — «Сегодня» или «Просрочено» в тайле «Задачи», и прокручивает к нему. Блока нет на макете — добавлен по решению человека 09.10.2026.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (иконка clock-timer accent, «Мой день», подзаголовок «Пятница, 9 октября · сейчас 12:40»)
+└── .entity-list сеткой (5 колонок на 8 колонках страницы, по своей ширине 3 · 2 · 1)
+    ├── встреча ×N — Entity M interactive: иконка calendar (ближайшая — accent) · время · клиент · Chip фазы и статуса
+    ├── «Срок сегодня» — Entity M: иконка tasks · число задач · Chip «Высокий: N»
+    └── «Просрочено» — Entity M: иконка alert-triangle · число задач · Chip «До N дней»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный, иконка заголовка accent, подзаголовок</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Entity</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M, <code class="tok">--interactive</code>, <code class="tok">role=&quot;button&quot;</code>; ведущий — <code class="tok">.entity__icon</code> accent / neutral</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">XS rounded: фаза (accent «Через …», info «Идёт сейчас», grey «Прошла») и статус встречи</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton, Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка, ошибка</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../../design-system/components/organisms/Entity/Entity.html">Entity</a> · <a class="inl" href="../../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../../design-system/components/molecules/Alert/Alert.html">Alert</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.css">MyDayTile.css</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.html">MyDayTile.html</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.js">MyDayTile.js</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.md">MyDayTile.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">startDateTime</code>, <code class="tok">endDateTime</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">время встречи — Header</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЧЧ:ММ–ЧЧ:ММ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">clientName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент — Label</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">statusCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус прошедшей и будущей встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingStatusCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фаза</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прошла · идёт · ближайшая · позже</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вычисляется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.day()</code> от <code class="tok">HomeStore.now</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">задачи со сроком сегодня</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число и число с высоким приоритетом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целые</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.day()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.9fr) minmax(0,1.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">просроченные задачи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число и возраст самой старой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целые, дни</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.day()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Строка задач без задач не показывается.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Все роли главной</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">свои встречи и задачи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — тайл ведёт к выборкам (<code class="tok">mode=&quot;view&quot;</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пять скелетонов строк: квадрат 40 и две строки текста</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки дня, подзаголовок с датой и «сейчас»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет встреч или нет задач — показываются только существующие строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«На сегодня встреч нет и сроки задач не горят»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert error «Не удалось собрать план на день» + «Повторить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл перерисовывается по событиям хранилища без индикации</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайла нет на странице — решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.1fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ближайшая встреча</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первая встреча, которая ещё не началась</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">иконка accent, Chip «Через N ч M мин»; требует внимания — второй Chip warning</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Идёт сейчас</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">начало ≤ сейчас &lt; окончание</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">иконка accent, Chip info «Идёт сейчас»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.1fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Прошла</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окончание ≤ сейчас</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">иконка neutral, Chip статуса встречи (назначенная — grey «Прошла»)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет.</li><li>Обязательные поля внутри: см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу: <code class="tok">HomeStore.focus(widget, filter)</code> — просьбу показать выборку.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент — одна строка с многоточием</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строк больше колонок — следующий ряд сетки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонок 5 → 3 (≤ 960px своей ширины) → 2 (≤ 600) → 1 (≤ 380)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">5 колонок</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик, Enter, Space по встрече</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.focus('meetings', 'today')</code> — тайл «Встречи» показывает встречи сегодня</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">… по «Срок сегодня»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.focus('tasks', 'today')</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">… по «Просрочено»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.focus('tasks', 'overdue')</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Создана встреча, изменён статус задачи (события <code class="tok">meetings</code>, <code class="tok">tasks</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки дня пересчитываются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Повторить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> 0,7 с → данные</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по строке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выборка в соседнем тайле (<code class="tok">MeetingsTile</code>, <code class="tok">TasksTile</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фильтр счётчика</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл прокручивается в зону видимости, фокус — на счётчик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Те же встречи и задачи, что у тайлов «Встречи» и «Задачи»; текущее время — клиента или сервера, решает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,0.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,0.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/home-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.HomeStore.day()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«сегодня» 09.10.2026, «сейчас» 12:40</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.4fr) minmax(0,0.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">демо витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-8 colw-12</code> на главной</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">empty</code> · <code class="tok">error</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только просмотр</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Скрипт: <code class="tok">MyDayTile.js</code> (<code class="tok">window.LcMyDayTile</code>: <code class="tok">render</code>, <code class="tok">setState</code>).</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MyDayTile.html</code>, <code class="tok">.css</code>, <code class="tok">.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/MyDayTile/MyDayTile.tsx</code> (host-app)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фаза встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.day()</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">селектор стора главной</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.9fr) minmax(0,2.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,1.9fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.entity-list</code> — колонка строк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тот же список сеткой: ряды 16px (контракт списка), колонки 20px</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">лента дня горизонтальна; 20px — две боковые выноски подложки наведения (10 + 10) без наложения</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.5fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.5fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нужны ли в «Моём дне» внутренние встречи и звонки, кроме встреч с клиентами</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос владельцу продукта</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.5fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">У задачи нет времени срока — строки сроков без времени — <b>допущение</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нужно подтверждение</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/drafts/new-dashboard-mvp/pages/HomePage.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-profile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-meetings.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-tasks.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-news.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/home-store.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"MyDayTile","type":"tile","base":"../../..","hub":"../../../../../index.html","states":["data","loading","empty","error"],"modes":["view"],"state":"data","mode":"view","width":1070,"scenario":false,"fixtures":{"_":"Демо-данные витрины. Тайл считает день из HomeStore.day() страницы-хозяина: объекты ниже описывают состояния.","data":{"meetings":3,"tasksToday":8,"tasksOverdue":3,"now":"12:40"},"partial":{"meetings":0,"tasksToday":2,"tasksOverdue":0},"empty":{"text":"На сегодня встреч нет и сроки задач не горят"},"error":{"message":"Не удалось собрать план на день"},"long":{"clientName":"Общество с ограниченной ответственностью «Северо-Западная строительная компания»"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Мой день» (MyDayTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error
+     data-mode  — только view: тайл ничего не правит, а ведёт к выборкам
+
+     Лента дня: свои встречи сегодня по времени (прошла / идёт / ближайшая /
+     позже) и две строки задач — со сроком сегодня и просроченные. Каждое
+     событие — интерактивная строка Entity M (объект в списке — Entity, не
+     Card: правило Tile); строки стоят сеткой внутри .entity-list, зазор
+     16px — контракт списка Entity. Клик или Enter/Space по строке просит
+     тайл «Встречи» или «Задачи» показать свою выборку (HomeStore.focus).
+     Ленту рисует MyDayTile.js; строки ниже — пример. -->
+<section class="tile lc-day" data-state="data" data-mode="view" aria-labelledby="lc-day-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+        <h3 class="tile__title" id="lc-day-title">Мой день</h3>
+      </div>
+      <p class="tile__subtitle" data-day="subtitle">Пятница, 9 октября · сейчас 12:40</p>
+    </div>
+  </header>
+
+  <div class="tile__body lc-day__body">
+    <div class="entity-list lc-day__slots" role="group" aria-label="События и сроки сегодня" data-day="slots">
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="09:30–10:30, ГК «Волга Тех». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--neutral" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">09:30–10:30</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="14:00–15:00, АО «Урал-Инвест». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">14:00–15:00</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--accent"><span class="chip__label">Через 1 ч 20 мин</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-day__slots lc-day__loading" aria-busy="true" aria-label="Загрузка дня">
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:90%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:85%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:75%" aria-hidden="true"></span></div></div>
+    </div>
+
+    <p class="lc-day__empty">На сегодня встреч нет и сроки задач не горят</p>
+
+    <div class="lc-day__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось собрать план на день</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-day-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Мой день» (MyDayTile).
+   Только внутренняя раскладка и показ своих блоков по data-state.
+   События — интерактивные строки Entity M со своими состояниями; цвета,
+   шрифты, отступы — токены ДС. */
+
+.lc-day { container-type: inline-size; }
+
+.lc-day__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Лента — строки Entity сеткой. Число колонок — по своей ширине: пять на
+   8 колонках страницы (≈ 220px на строку), дальше три, две, одна; событий
+   больше колонок — переносятся следующим рядом. Список остаётся
+   .entity-list: интерактивная строка выносит подложку наведения на 8px по
+   вертикали и 10px по бокам (Entity 1.008), поэтому зазор рядов — 16px
+   (контракт списка), колонок — 20px (две боковые выноски без наложения). */
+.entity-list.lc-day__slots,
+.lc-day__slots.lc-day__loading {
+  --lc-day-cols: 5;
+  display: grid;
+  grid-template-columns: repeat(var(--lc-day-cols), minmax(0, 1fr));
+  gap: var(--space-16) var(--space-20);
+}
+@container (max-width: 960px) { .lc-day__slots { --lc-day-cols: 3; } }
+@container (max-width: 600px) { .lc-day__slots { --lc-day-cols: 2; } }
+@container (max-width: 380px) { .lc-day__slots { --lc-day-cols: 1; } }
+
+.lc-day__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-day__slots.lc-day__loading,
+.lc-day__empty,
+.lc-day__error { display: none; }
+
+.lc-day[data-state="loading"] .lc-day__slots.lc-day__loading { display: grid; }
+.lc-day[data-state="empty"] .lc-day__empty,
+.lc-day[data-state="error"] .lc-day__error { display: block; }
+.lc-day:is([data-state="loading"], [data-state="empty"], [data-state="error"]) .lc-day__slots:not(.lc-day__loading) { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   MyDayTile.js — тайл «Мой день» из HomeStore.day().
+
+   Лента: свои встречи сегодня по времени и две карточки задач (срок
+   сегодня, просрочено). Фаза встречи считается от «сейчас» прототипа
+   (HomeStore.now): прошла · идёт · ближайшая (через N) · позже.
+
+   API (window.LcMyDayTile):
+     render(root)          — подзаголовок и карточки
+     setState(root, state) — data-state; data|empty считает сам по данным
+   Клик или Enter/Space по строке → HomeStore.focus(виджет, выборка):
+   тайл «Встречи» или «Задачи» включает фильтр и прокручивается в зону
+   видимости. Перерисовка — на события HomeStore 'meetings' и 'tasks'.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var STATUS_TONE = { SCHEDULED: 'dpurple', NEEDS_ATTENTION: 'warning', PROTOCOL_DONE: 'success', CANCELLED: 'grey' };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function chip(tone, text) {
+    return '<span class="chip chip--xs chip--rounded' + (tone ? ' chip--' + tone : '') + '"><span class="chip__label">' + esc(text) + '</span></span>';
+  }
+
+  /* Событие — интерактивная строка Entity M: ведущая иконка, Header — время
+     или вид срока, Label — клиент или число задач, Chips — фаза и статус. */
+  function slot(o) {
+    return '<div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="' + o.widget + '" data-day-filter="' + o.filter + '" aria-label="' + esc(o.aria) + '">' +
+      '<div class="entity__lead"><span class="entity__icon entity__icon--' + (o.accent ? 'accent' : 'neutral') + '" aria-hidden="true"><i data-icon="' + o.icon + '"></i></span></div>' +
+      '<div class="entity__main">' +
+        '<div class="entity__titles">' +
+          '<p class="entity__header">' + esc(o.header) + '</p>' +
+          '<div class="entity__labelrow"><span class="entity__label entity__label--truncate">' + esc(o.label) + '</span></div>' +
+        '</div>' +
+        '<div class="entity__chips">' + o.chips + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function meetingSlot(item, S) {
+    var m = item.meeting, labels = window.MEETING_STATUS_LABELS || {};
+    var time = S.fmt.time(m.startDateTime) + '–' + S.fmt.time(m.endDateTime);
+    var chips, accent = false;
+    if (item.phase === 'past') {
+      chips = m.statusCode === 'SCHEDULED' ? chip('grey', 'Прошла') : chip(STATUS_TONE[m.statusCode], labels[m.statusCode]);
+    } else if (item.phase === 'now') {
+      accent = true; chips = chip('info', 'Идёт сейчас');
+    } else if (item.phase === 'next') {
+      accent = true; chips = chip('accent', cap(S.fmt.until(item.minutesLeft)));
+      if (m.statusCode === 'NEEDS_ATTENTION') chips += ' ' + chip('warning', labels.NEEDS_ATTENTION);
+    } else {
+      chips = chip(STATUS_TONE[m.statusCode], labels[m.statusCode]);
+    }
+    return slot({ widget: 'meetings', filter: 'today', icon: 'calendar', accent: accent, header: time, label: m.clientName, chips: chips,
+      aria: time + ', ' + m.clientName + '. Показать встречи сегодня' });
+  }
+
+  function render(root) {
+    var S = window.HomeStore;
+    if (!S) return;
+    var d = S.day();
+    root.querySelector('[data-day="subtitle"]').textContent =
+      cap(S.fmt.weekday(S.today)) + ', ' + S.fmt.longDate(S.today) + ' · сейчас ' + S.now;
+
+    var html = d.meetings.map(function (it) { return meetingSlot(it, S); });
+    if (d.tasksToday.length) {
+      var high = d.tasksToday.filter(function (t) { return t.priorityCode === 'HIGH'; }).length;
+      var n = d.tasksToday.length;
+      html.push(slot({ widget: 'tasks', filter: 'today', icon: 'tasks', header: 'Срок сегодня',
+        label: n + ' ' + S.plural(n, ['задача', 'задачи', 'задач']),
+        chips: high ? chip('warning', 'Высокий: ' + high) : chip('', 'Без срочных'),
+        aria: 'Срок сегодня у ' + n + ' ' + S.plural(n, ['задачи', 'задач', 'задач']) + '. Показать задачи' }));
+    }
+    if (d.tasksOverdue.length) {
+      var o = d.tasksOverdue.length;
+      var oldest = d.tasksOverdue.reduce(function (x, t) { return Math.max(x, S.daysOverdue(t)); }, 0);
+      html.push(slot({ widget: 'tasks', filter: 'overdue', icon: 'alert-triangle', header: 'Просрочено',
+        label: o + ' ' + S.plural(o, ['задача', 'задачи', 'задач']),
+        chips: chip('error', 'До ' + oldest + ' ' + S.plural(oldest, ['дня', 'дней', 'дней'])),
+        aria: 'Просрочено ' + o + ' ' + S.plural(o, ['задача', 'задачи', 'задач']) + '. Показать просроченные задачи' }));
+    }
+    root.querySelector('[data-day="slots"]').innerHTML = html.join('');
+    if (window.dsIcons) window.dsIcons.apply(root);
+    return html.length;
+  }
+
+  /* «данные» и «пусто» считаются по числу строк дня; render() сам состояние не
+     меняет — заданное снаружи (страницей, витриной) не перебивается. */
+  function setState(root, state) {
+    var n = render(root);
+    if (state === 'data' || state === 'empty') state = n ? 'data' : 'empty';
+    root.setAttribute('data-state', state);
+  }
+
+  function go(card) {
+    if (window.HomeStore) window.HomeStore.focus(card.getAttribute('data-day-widget'), card.getAttribute('data-day-filter'));
+  }
+
+  function init(root) {
+    if (root.__lcDayInit) return;
+    root.__lcDayInit = true;
+    root.addEventListener('click', function (e) {
+      var card = e.target.closest('[data-day-widget]');
+      if (card) { go(card); return; }
+      if (e.target.closest('[data-day-act="retry"]')) {
+        root.setAttribute('data-state', 'loading');
+        setTimeout(function () { setState(root, 'data'); }, 700);
+      }
+    });
+    root.addEventListener('keydown', function (e) {
+      var card = e.target.closest('[data-day-widget]');
+      if (card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(card); }
+    });
+    if (window.HomeStore) window.HomeStore.on(function (ev) {
+      if (ev.kind === 'meetings' || ev.kind === 'tasks') {
+        var cur = root.getAttribute('data-state');
+        if (cur === 'data' || cur === 'empty') setState(root, 'data'); else render(root);
+      }
+    });
+    render(root);
+  }
+
+  function initAll() { document.querySelectorAll('.lc-day').forEach(init); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
+
+  window.LcMyDayTile = { render: render, setState: setState, init: init };
+})();
+</script>
+</body>
+</html>

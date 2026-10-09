@@ -1,0 +1,16 @@
+<!-- Локальный компонент «Блок даты» (DateBadge) — подчасть, которую рисуют скрипты
+     тайлов главной в ведущем слоте Entity M (строка встречи). Кандидат в ДС: в ДС
+     нет компактного «листка календаря» день + месяц (решение человека 09.10.2026 —
+     пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     DateBadge.css, а LcDateBadge.render() (DateBadge.js) клонирует шаблон.
+
+     Модификатор .lc-date--today — дата совпадает с сегодняшней (тон accent).
+     Блок декоративен для чтения с экрана: дату полностью называет aria-label. -->
+<template id="lc-date-badge-tpl">
+  <span class="lc-date" role="img" aria-label="09.10.2026">
+    <span class="lc-date__day" aria-hidden="true">09</span>
+    <span class="lc-date__month" aria-hidden="true">окт</span>
+  </span>
+</template>
