@@ -1,0 +1,139 @@
+<!-- Окно ФИ расчета FV: данные ФИ, правка рейтинга, LGD, ставки ПАО и
+     комментария, инструменты в составе ФИ с действиями над XML-файлами.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body.
+
+     Разметка статичная: значения, подсказки «Расчетное: …» и строки таблицы
+     инструментов рисует FairValueUserMetricsModal.js при открытии. Окна
+     подтверждения и загрузки файла — отдельные виджеты, открываются поверх. -->
+
+<div class="modal-scrim" id="fv-metrics-scrim" hidden>
+  <div class="modal modal--w9 lc-fv-metrics" role="dialog" aria-modal="true" aria-labelledby="fv-metrics-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-metrics-title" data-fv-title>ФИ</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-fv-error hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text" data-fv-error-text>Не удалось загрузить файл</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="alert alert--info alert--m" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Введенные пользователем значения фиксируются и не пересчитываются автоматически</p>
+        </div>
+      </div>
+
+      <div class="tile__grid lc-fv-metrics__summary">
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">№</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="rowNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Тип ФИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="itemTypeName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Валюта</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="currencyCode">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Итоговое FV</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="fvAmount">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Контрагент</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ИНН Контрагента</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyInn">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">CRM ID</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="crmId">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ВБС, в валюте</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="vbsAmount">—</span></div>
+        </div>
+      </div>
+
+      <label class="cb">
+        <input type="checkbox" class="cb__input" data-fv-send>
+        <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+        <span class="cb__content"><span class="cb__label">Передавать в LP</span></span>
+      </label>
+
+      <div class="tile__grid lc-fv-metrics__inputs">
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-rating"><span class="ds-label__text">Рейтинг при расчете</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-rating" data-fv-input="rating" inputmode="decimal" autocomplete="off">
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="rating" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-lgd"><span class="ds-label__text">LGD</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-lgd" data-fv-input="lgd" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="lgd" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-individualReserveRate"><span class="ds-label__text">Индивидуальная ставка резерва ПАО</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-individualReserveRate" data-fv-input="individualReserveRate" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="individualReserveRate" hidden></span>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--multiline inp--fullwidth">
+        <label class="ds-label" for="fv-m-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <textarea class="inp__control" id="fv-m-comment" data-fv-comment rows="2"></textarea>
+          <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+        </div>
+      </div>
+
+      <h3 class="lc-fv-metrics__heading">Инструменты в составе ФИ</h3>
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 56px 200px minmax(160px,1fr) 176px 144px 168px 168px 128px 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label">Рассчитанное FV, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Дата первой выдачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действующая дата погашения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Файл xml</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действия</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

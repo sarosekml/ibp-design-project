@@ -1,0 +1,52 @@
+<!-- Окно «Данные FV» с компонентами — предпросмотр файла компонентов FV.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body.
+
+     Отличие от ReservesFvModal — пять колонок компонентов изменения FV вместо
+     одной суммы. Строки рисует страница из window.MOCK_FV_COMPONENTS_UPLOAD_PREVIEW
+     в таблицу [data-fv-components-rows] после строки шапки при открытии. -->
+
+<div class="modal-scrim" id="reserves-fv-components-scrim" hidden>
+  <div class="modal modal--w12" role="dialog" aria-modal="true" aria-labelledby="reserves-fv-components-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="reserves-fv-components-title">Данные FV</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--info alert--m alert--flush" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Для предпросмотра загруженных данных доступно не более 100 первых строк</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body modal__body--flush">
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-components-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 120px 220px repeat(5,minmax(200px,1fr)) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span></div>
+              <div class="th"><span class="th__label">Дата</span></div>
+              <div class="th"><span class="th__label">Инструмент</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное сдвигом % кривых, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное сдвигом кредитных кривых, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное изм. рейтингов/LGD/ставки резерва, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, объясненное изм. валюты, вал. ед.</span></div>
+              <div class="th th--right"><span class="th__label">Изм. FV, необъясненная составляющая, вал. ед.</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-modal-close><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

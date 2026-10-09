@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно ФИ расчета FV — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно ФИ расчета FV">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Окно ФИ расчета FV: данные ФИ, правка рейтинга, LGD, ставки ПАО и
+     комментария, инструменты в составе ФИ с действиями над XML-файлами.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body.
+
+     Разметка статичная: значения, подсказки «Расчетное: …» и строки таблицы
+     инструментов рисует FairValueUserMetricsModal.js при открытии. Окна
+     подтверждения и загрузки файла — отдельные виджеты, открываются поверх. -->
+
+<div id="fv-metrics-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w9 lc-fv-metrics" role="dialog" aria-modal="true" aria-labelledby="fv-metrics-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-metrics-title" data-fv-title>ФИ</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-fv-error hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text" data-fv-error-text>Не удалось загрузить файл</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="alert alert--info alert--m" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Введенные пользователем значения фиксируются и не пересчитываются автоматически</p>
+        </div>
+      </div>
+
+      <div class="tile__grid lc-fv-metrics__summary">
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">№</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="rowNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Тип ФИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="itemTypeName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Валюта</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="currencyCode">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Итоговое FV</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="fvAmount">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Контрагент</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ИНН Контрагента</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyInn">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">CRM ID</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="crmId">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ВБС, в валюте</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="vbsAmount">—</span></div>
+        </div>
+      </div>
+
+      <label class="cb">
+        <input type="checkbox" class="cb__input" data-fv-send>
+        <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+        <span class="cb__content"><span class="cb__label">Передавать в LP</span></span>
+      </label>
+
+      <div class="tile__grid lc-fv-metrics__inputs">
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-rating"><span class="ds-label__text">Рейтинг при расчете</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-rating" data-fv-input="rating" inputmode="decimal" autocomplete="off">
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="rating" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-lgd"><span class="ds-label__text">LGD</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-lgd" data-fv-input="lgd" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="lgd" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-individualReserveRate"><span class="ds-label__text">Индивидуальная ставка резерва ПАО</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-individualReserveRate" data-fv-input="individualReserveRate" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="individualReserveRate" hidden></span>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--multiline inp--fullwidth">
+        <label class="ds-label" for="fv-m-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <textarea class="inp__control" id="fv-m-comment" data-fv-comment rows="2"></textarea>
+          <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+        </div>
+      </div>
+
+      <h3 class="lc-fv-metrics__heading">Инструменты в составе ФИ</h3>
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 56px 200px minmax(160px,1fr) 176px 144px 168px 168px 128px 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label">Рассчитанное FV, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Дата первой выдачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действующая дата погашения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Файл xml</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действия</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>08.10.2026</b></span><span>Категория: <b>Отчёты</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/post-reports-app</p>
+  <h1>Окно ФИ расчета FV</h1>
+  <p class="lead">Показать ФИ, поправить рейтинг, LGD, ставку ПАО и комментарий, управлять файлами инструментов</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/post-reports-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal">apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/post-reports-app/features/modals/FairValueUserMetricsModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">apps/postrade/post-reports-app/pages/FairValueCalculation.html — конец body, открывается по ФИ в таблице расчета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/post-reports-app/pages/FairValueCalculation.preview.html">apps/postrade/post-reports-app/pages/FairValueCalculation.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница расчета FV — наименование ФИ и кнопка «Редактировать ФИ» в строке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="FairValueInstrumentablesUploadFileModal.doc.html">FairValueInstrumentablesUploadFileModal</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (08.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">задача docs/tasks/RE0012-fv-calculation.md<br>макеты «Редактирование строки расчета» и «Загрузка xml файла»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 08.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно открывается со страницы расчета кликом по наименованию ФИ или кнопкой «Редактировать ФИ». Показывает данные ФИ, позволяет вручную задать рейтинг, LGD и индивидуальную ставку резерва ПАО (рядом — расчетное значение), отметку «Передавать в LP» и комментарий, а в таблице «Инструменты в составе ФИ» — выгрузить, загрузить, удалить файл инструмента или вернуть его с ошибкой. Правка доступна в любом статусе расчета.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w9
+├── шапка: наименование ФИ + IconButton L «Закрыть»
+├── Alert error flush (modal__alert) — «Не удалось загрузить файл», только при ошибке
+├── тело
+│   ├── Alert info — «Введенные пользователем значения фиксируются и не пересчитываются автоматически»
+│   ├── сводка ФИ, 4 колонки: № · Тип ФИ · Валюта · Итоговое FV / Контрагент · ИНН · CRM ID · ВБС (ReadOnlyField)
+│   ├── Checkbox «Передавать в LP»
+│   ├── 3 поля: Рейтинг при расчете · LGD (%) · Индивидуальная ставка резерва ПАО (%), под каждым «Расчетное: …»
+│   ├── Комментарий (многострочное поле, крестик)
+│   └── «Инструменты в составе ФИ» — Table: № · Статус · Инструмент · Рассчитанное FV · Дата первой выдачи ·
+│       Действующая дата погашения · Файл xml · Действия
+└── подвал справа: Button accent M «Сохранить»</code></pre>
+<p class="desc">Собственный CSS виджета — только раскладка сетки сводки и полей на токенах ДС.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w9</code>, <code class="tok">.modal__alert</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/ReadOnlyField/ReadOnlyField.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.rof</code> в сетке <code class="tok">.tile__grid</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Checkbox</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Checkbox/Checkbox.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.cb</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--m</code>, <code class="tok">inp--multiline</code>, постфикс <code class="tok">%</code>, крестик очистки, хелпер</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Alert/Alert.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">info в теле, error <code class="tok">--flush</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table, TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Table/Table.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tbl--scroll</code>, чип статуса, иконка и подпись файла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Chip/Chip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">chip--s chip--rounded</code>, тона <code class="tok">FV_STATUS_TONES</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">neutral S в колонке «Действия», neutral L «Закрыть»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Tooltip/Tooltip.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-tooltip</code> на кнопках действий и чипах с текстом ошибки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">accent M</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/atoms/Checkbox/Checkbox.html">Checkbox</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.css">FairValueUserMetricsModal.css</a> · <a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.html">FairValueUserMetricsModal.html</a> · <a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.js">FairValueUserMetricsModal.js</a> · <a class="inl" href="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.md">FairValueUserMetricsModal.md</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">rowNumber</code>, <code class="tok">itemTypeName</code>, <code class="tok">currencyCode</code>, <code class="tok">fvAmount</code>, <code class="tok">counterpartyName</code>, <code class="tok">counterpartyInn</code>, <code class="tok">crmId</code>, <code class="tok">vbsAmount</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сводка ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст, суммы <code class="tok">900 800 900,00</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ расчета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">sendToLp</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">передавать ФИ в LP</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">флажок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка пользователя</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">rating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рейтинг при расчете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целое</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка; расчетное — <code class="tok">editedFields</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">lgd</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">LGD</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целое, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка; расчетное — <code class="tok">editedFields</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">individualReserveRate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">индивидуальная ставка резерва ПАО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целое, %</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка; расчетное — <code class="tok">editedFields</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">comment</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">instruments[]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">инструменты ФИ: статус, код, FV, файл xml</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ФИ расчета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист и другие</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — не решено (08.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Риск-менеджер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да — не решено (08.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (08.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сводка, поля, таблица инструментов</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле не правилось</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле пустое, под ним «Расчетное: N»; в таблице расчета — расчетное значение</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поле исправлено</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в поле значение пользователя, под ним расчетное; в таблице расчета маркер правки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у ФИ нет инструментов — в таблице строка «Нет данных»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert «Не удалось загрузить файл» над телом, окно открыто</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (08.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе действия мгновенные</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в любом статусе расчета</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (08.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает экран</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Окно обязательно к заполнению целиком: нет.</li><li>Обязательных полей нет: пустое поле означает «расчетное значение».</li><li>Что отдаёт наружу: изменённый ФИ (<code class="tok">onChange</code>).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название ФИ в шапке переносится; значения сводки и подписи таблицы усекаются с тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Таблица инструментов скроллится внутри окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Таблица скроллится по горизонтали</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Правила</h3>
+<ol class="kit-md__ol"><li>Окно открывается на ФИ из страницы; правки попадают в данные ФИ только после подтверждения.</li><li>Поле ввода: только цифры и разделитель. Пустое поле (крестик очистки) — откат к расчетному значению. Значение, равное расчетному, правкой не считается.</li><li>«Сохранить» без изменений закрывает окно. С изменениями — окно «Подтвердите действие» (тексты — в спеке страницы расчета, §9); после «Подтвердить» ФИ и все его инструменты — «Сформирован», XML-файлы — «Сформирован», значения правок записаны, окно закрыто, строка расчета перерисована. В «Утвержден» пересчитывается только этот ФИ.</li><li>Действия над файлом инструмента — по <code class="tok">FV_INSTRUMENT_FILE_ACTIONS</code> (<code class="tok">data/fv-dictionaries.js</code>): «Сформирован» — выгрузить шаблон, загрузить, удалить; «Отправлен в LP» и «Рассчитывается LP» — выгрузить, вернуть с ошибкой; «Рассчитан» — только выгрузить. «Удалить» включена только у загруженного файла.</li><li>«Загрузить» → общее окно подтверждения страницы → <code class="tok">FairValueInstrumentablesUploadFileModal</code>; «Сохранить» там ставит файлу состояние «Загружен». Загрузка не удалась — окно файла закрывается, здесь Alert «Не удалось загрузить файл».</li><li>«Удалить» → подтверждение → файл «Удалён», инструмент и ФИ — «Нет данных». «Вернуть с ошибкой» → подтверждение → инструмент «Ошибка», ФИ «Ошибка».</li><li>«Выгрузить» — хук страницы <code class="tok">exportFile</code> (подключает Э5); ошибка выгрузки одного файла — Alert здесь (<code class="tok">api.showError</code>).</li></ol>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование ФИ или «Редактировать ФИ» в таблице расчета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">это окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">данные ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка таблицы после сохранения и действий над файлами</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Загрузить xml файл»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">общее окно подтверждения страницы, затем <code class="tok">FairValueInstrumentablesUploadFileModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">инструмент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние файла «Загружен»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,3fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранение, удаление файла, возврат с ошибкой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно «Подтвердите действие» страницы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">данные ФИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">страница расчета</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Сохранение правок ФИ (значения, отметка, комментарий) с повторным формированием XML; загрузка, удаление и возврат с ошибкой файла инструмента. Имена методов выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fv-calculation-items.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_FV_CALCULATION_ITEMS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">FvCalculationItemRsDto[]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (08.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.6fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/fv-dictionaries.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.FV_INSTRUMENT_FILE_ACTIONS</code>, <code class="tok">FV_STATUS_TONES</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">словари</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (08.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Соответствие файлов</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">…/FairValueUserMetricsModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">стили компонента</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">…/FairValueUserMetricsModal.js</code> (<code class="tok">PostFairValueUserMetricsModal.bind(scrim, opts)</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">там же</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li><b>Права ролей</b> на правку ФИ и файлов — не решено (08.10.2026).</li><li><b>Ссылка в названии инструмента</b> — куда ведёт, в макетах не сказано — не решено (08.10.2026). <b>Решение 08.10.2026:</b> ведёт на страницу этого инструмента (транш, акция и др.); связать можно после появления страницы транша, нужны в БД списки траншей, инструментов и ФИ.</li><li><b>Сортировка таблицы инструментов</b> — в макете у колонок значки сортировки; в прототипе сортировки нет — не решено (08.10.2026). <b>Решено 08.10.2026:</b> сортировка не нужна, нужно изменение ширины колонок — добавлено (ручки <code class="tok">.th__resize</code> в шапке).</li><li><b>Правка в «Рассчитан» и «Утвержден»</b> — меняется ли статус расчета; допущение: не меняется (задача RE0012, вопрос 2).</li><li><b>Удаление файла</b> переводит ФИ в «Нет данных» — допущение по тексту макета (08.10.2026). <b>Подтверждено 08.10.2026.</b> <b>Подтверждено 08.10.2026.</b></li><li><b>Любое изменение</b> (в том числе «Передавать в LP») заново формирует XML — допущение (08.10.2026). <b>Подтверждено 08.10.2026.</b> <b>Подтверждено 08.10.2026.</b></li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/post-reports-app/pages/FairValueCalculation.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/post-reports-app/data/fv-dictionaries.js"></script>
+<script src="../../../postrade/post-reports-app/data/fv-calculations.js"></script>
+<script src="../../../postrade/post-reports-app/data/fv-calculation-items.js"></script>
+<script src="../../../postrade/post-reports-app/data/fv-employees.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.js"></script>
+<script src="../../../postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.js"></script>
+<script src="../../../postrade/post-reports-app/widgets/modals/DownloadReportModal/DownloadReportModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"FairValueUserMetricsModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":false,"fixtures":null};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Окно ФИ расчета FV: данные ФИ, правка рейтинга, LGD, ставки ПАО и
+     комментария, инструменты в составе ФИ с действиями над XML-файлами.
+     Фрагмент вшивается ассемблером меткой ds-include — скрим должен лежать в
+     конце body.
+
+     Разметка статичная: значения, подсказки «Расчетное: …» и строки таблицы
+     инструментов рисует FairValueUserMetricsModal.js при открытии. Окна
+     подтверждения и загрузки файла — отдельные виджеты, открываются поверх. -->
+
+<div class="modal-scrim" id="fv-metrics-scrim" hidden>
+  <div class="modal modal--w9 lc-fv-metrics" role="dialog" aria-modal="true" aria-labelledby="fv-metrics-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-metrics-title" data-fv-title>ФИ</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-fv-error hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text" data-fv-error-text>Не удалось загрузить файл</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="alert alert--info alert--m" data-alert-tone="info" role="status" aria-live="polite">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="Info-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Введенные пользователем значения фиксируются и не пересчитываются автоматически</p>
+        </div>
+      </div>
+
+      <div class="tile__grid lc-fv-metrics__summary">
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">№</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="rowNumber">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Тип ФИ</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="itemTypeName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Валюта</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="currencyCode">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Итоговое FV</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="fvAmount">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">Контрагент</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyName">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ИНН Контрагента</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="counterpartyInn">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">CRM ID</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="crmId">—</span></div>
+        </div>
+        <div class="rof">
+          <span class="ds-label"><span class="ds-label__text">ВБС, в валюте</span></span>
+          <div class="rof__row"><span class="rof__value" data-fv-field="vbsAmount">—</span></div>
+        </div>
+      </div>
+
+      <label class="cb">
+        <input type="checkbox" class="cb__input" data-fv-send>
+        <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+        <span class="cb__content"><span class="cb__label">Передавать в LP</span></span>
+      </label>
+
+      <div class="tile__grid lc-fv-metrics__inputs">
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-rating"><span class="ds-label__text">Рейтинг при расчете</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-rating" data-fv-input="rating" inputmode="decimal" autocomplete="off">
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="rating" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-lgd"><span class="ds-label__text">LGD</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-lgd" data-fv-input="lgd" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="lgd" hidden></span>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label" for="fv-m-individualReserveRate"><span class="ds-label__text">Индивидуальная ставка резерва ПАО</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fv-m-individualReserveRate" data-fv-input="individualReserveRate" inputmode="decimal" autocomplete="off">
+            <span class="inp__postfix">%</span>
+            <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+          </div>
+          <span class="ds-helper ds-helper--left" data-fv-helper="individualReserveRate" hidden></span>
+        </div>
+      </div>
+
+      <div class="inp inp--m inp--multiline inp--fullwidth">
+        <label class="ds-label" for="fv-m-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <textarea class="inp__control" id="fv-m-comment" data-fv-comment rows="2"></textarea>
+          <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+        </div>
+      </div>
+
+      <h3 class="lc-fv-metrics__heading">Инструменты в составе ФИ</h3>
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 56px 200px minmax(160px,1fr) 176px 144px 168px 168px 128px 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--right"><span class="th__label">Рассчитанное FV, в валюте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Дата первой выдачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действующая дата погашения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Файл xml</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Действия</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно ФИ расчета FV: сетки полей и заголовок таблицы инструментов.
+   Окно, Alert, поля, чекбокс и таблица — компоненты ДС; здесь только
+   раскладка тела (зазор между блоками — как у модалок ДС). */
+
+.lc-fv-metrics .modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* Сводка ФИ — четыре поля в ряд; поля ввода — три в ряд, подсказки под ними.
+   Зазоры задаём сами: переменные зазора тайла вне тайла не определены. */
+.lc-fv-metrics__summary,
+.lc-fv-metrics__inputs { gap: var(--space-16) var(--space-16); }
+.lc-fv-metrics__summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lc-fv-metrics__inputs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Заголовок таблицы инструментов — H6 Strong. */
+.lc-fv-metrics__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   FairValueUserMetricsModal.js — поведение окна ФИ расчета FV.
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) при открытии рисует данные ФИ, значения полей, подсказки «Расчетное: …»
+      и строки таблицы «Инструменты в составе ФИ»;
+   2) поле правится — значение пользователя; пусто (крестик) — откат к
+      расчетному. «Сохранить» без изменений просто закрывает окно, с
+      изменениями — спрашивает подтверждение у страницы и после него
+      пересобирает ФИ в «Сформирован», XML-файлы инструментов — в «Сформирован»;
+   3) действия над файлом инструмента — по матрице FV_INSTRUMENT_FILE_ACTIONS
+      (data/fv-dictionaries.js): выгрузка (хук страницы), загрузка
+      (подтверждение → окно «Данные по инструменту»), удаление и «Вернуть с
+      ошибкой» (подтверждение страницы). Правки данных идут прямо в ФИ,
+      который передала страница, и сообщаются ей через onChange.
+
+   Окно ничего не знает о таблице расчета: подтверждения, статус расчета и
+   выгрузки — функции страницы (opts). Подтверждения открываются поверх окна
+   ФИ (вложенный слой).
+
+   API:
+     PostFairValueUserMetricsModal.bind(scrim, opts) → api
+       opts.confirm(text, onOk)           — окно «Подтвердите действие»
+       opts.upload                        — api окна «Данные по инструменту»
+       opts.onChange(item)                — данные ФИ изменены
+       opts.exportFile(item, inst, action) — выгрузка файла инструмента (Э5)
+     api.open(item, { calcStatus, userRole })
+     api.showError(text) / api.hideError() — Alert уровня окна
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var ITEM_LABELS = window.FV_ITEM_STATUS_LABELS;
+  var TONES = window.FV_STATUS_TONES;
+  var FILE_LABELS = window.FV_XML_FILE_STATE_LABELS;
+  var FILE_ACTIONS = window.FV_INSTRUMENT_FILE_ACTIONS;
+
+  /* поля ввода: расчетное значение берётся из editedFields или из самого ФИ */
+  var FIELDS = [
+    { key: 'rating', post: '' },
+    { key: 'lgd', post: '%' },
+    { key: 'individualReserveRate', post: '%' }
+  ];
+  var ACTION_META = {
+    exportTemplate: { icon: 'download', tip: 'Выгрузить шаблон xml файла' },
+    export: { icon: 'download', tip: 'Выгрузить xml файл' },
+    upload: { icon: 'upload', tip: 'Загрузить xml файл' },
+    delete: { icon: 'trash', tip: 'Удалить xml файл' },
+    returnWithError: { icon: 'flip-backward', tip: 'Вернуть с ошибкой' }
+  };
+  var FILE_ICONS = { GENERATED: 'file-basic', UPLOADED: 'file-attachment', DELETED: 'file-off-close' };
+  var SAVE_TEXT = 'Внесенные изменения заново сформируют XML для расчета FV по всем инструментам ФИ и потребуют повторной отправки в LP.';
+
+  function esc(v) {
+    var d = document.createElement('div');
+    d.textContent = v == null ? '' : String(v);
+    return d.innerHTML;
+  }
+  function fmtNum(n, digits) {
+    if (n == null) return '';
+    var parts = Math.abs(n).toFixed(digits).split('.');
+    return (n < 0 ? '−' : '') + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + (parts[1] ? ',' + parts[1] : '');
+  }
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : '';
+  }
+  function parseNum(s) {
+    var t = String(s).replace(/\s/g, '').replace(',', '.');
+    if (t === '') return null;
+    var n = Number(t);
+    return isNaN(n) ? null : n;
+  }
+  function label(inst) { return inst.instrumentCode + '. ' + inst.instrumentName; }
+
+  function bind(scrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__fvMetrics) return scrim.__fvMetrics;
+    opts = opts || {};
+
+    var titleEl = scrim.querySelector('[data-fv-title]');
+    var errBox = scrim.querySelector('[data-fv-error]');
+    var errText = scrim.querySelector('[data-fv-error-text]');
+    var sendEl = scrim.querySelector('[data-fv-send]');
+    var commentEl = scrim.querySelector('[data-fv-comment]');
+    var saveBtn = scrim.querySelector('[data-fv-save]');
+    var rowsHost = scrim.querySelector('[data-fv-rows]');
+    var headRow = rowsHost.querySelector('.tbl__row--head');
+    var inputs = {};
+    var helpers = {};
+    FIELDS.forEach(function (f) {
+      inputs[f.key] = scrim.querySelector('[data-fv-input="' + f.key + '"]');
+      helpers[f.key] = scrim.querySelector('[data-fv-helper="' + f.key + '"]');
+    });
+
+    var cur = null;  /* { item, ctx, init } */
+
+    function field(key) { return scrim.querySelector('[data-fv-field="' + key + '"]'); }
+    function editedOf(it, key) {
+      return it.editedFields.filter(function (f) { return f.fieldCode === key; })[0];
+    }
+    function calcOf(it, key) {
+      var e = editedOf(it, key);
+      return e ? e.calculatedValue : it[key];
+    }
+
+    /* ---------- рисование ---------- */
+    function fillSummary(it) {
+      titleEl.textContent = it.itemName;
+      field('rowNumber').textContent = it.rowNumber;
+      field('itemTypeName').textContent = it.itemTypeName || '—';
+      field('currencyCode').textContent = it.currencyCode || '—';
+      field('fvAmount').textContent = it.fvAmount == null ? '—' : fmtNum(it.fvAmount, 2);
+      field('counterpartyName').textContent = it.counterpartyName || '—';
+      field('counterpartyInn').textContent = it.counterpartyInn || '—';
+      field('crmId').textContent = it.crmId || '—';
+      field('vbsAmount').textContent = it.vbsAmount == null ? '—' : fmtNum(it.vbsAmount, 2);
+    }
+    function fillForm(it) {
+      sendEl.checked = !!it.sendToLp;
+      FIELDS.forEach(function (f) {
+        var edited = editedOf(it, f.key);
+        inputs[f.key].value = edited ? String(it[f.key]) : '';
+        var calc = calcOf(it, f.key);
+        helpers[f.key].hidden = calc == null;
+        helpers[f.key].textContent = calc == null ? '' : 'Расчетное: ' + fmtNum(calc, 0) + f.post;
+      });
+      commentEl.value = it.comment || '';
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+    function snapshot() {
+      var s = { send: sendEl.checked, comment: commentEl.value.trim() };
+      FIELDS.forEach(function (f) { s[f.key] = parseNum(inputs[f.key].value); });
+      return s;
+    }
+    function isDirty() {
+      var a = cur.init, b = snapshot();
+      return Object.keys(a).some(function (k) { return a[k] !== b[k]; });
+    }
+
+    function actionBtn(act, idx, inst) {
+      var m = ACTION_META[act];
+      var off = act === 'delete' && inst.xmlFileStateCode !== 'UPLOADED';
+      return '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-fv-act="' + act + '" data-inst="' + idx + '"'
+        + ' aria-label="' + m.tip + '" data-tooltip="' + m.tip + '"' + (off ? ' disabled' : '') + '><i data-icon="' + m.icon + '"></i></button>';
+    }
+    function rowHTML(it, inst, idx) {
+      var grid = headRow.style.gridTemplateColumns;
+      var acts = (FILE_ACTIONS[inst.statusCode] || []).map(function (a) { return actionBtn(a, idx, inst); }).join('');
+      var cells = [
+        '<div class="tc tc--separator"></div>',
+        '<div class="tc"><span class="tc__row"><span class="tc__text">' + esc(it.rowNumber) + '</span></span></div>',
+        '<div class="tc"><span class="tc__row"><span class="chip chip--s chip--rounded ' + TONES[inst.statusCode] + '"'
+          + (inst.errorText ? ' data-tooltip="' + esc(inst.errorText) + '"' : '') + '><span class="chip__label">' + esc(ITEM_LABELS[inst.statusCode]) + '</span></span></span></div>',
+        '<div class="tc"><span class="tc__row"><a class="link link--accent tc__text tc__text--truncate" href="#">' + esc(label(inst)) + '</a></span></div>',
+        '<div class="tc tc--numbers"><span class="tc__row"><span class="tc__text tc__text--truncate">' + (inst.fvAmount == null ? '' : fmtNum(inst.fvAmount, 2)) + '</span></span></div>',
+        '<div class="tc"><span class="tc__row"><span class="tc__text">' + fmtDate(it.firstIssueDate) + '</span></span></div>',
+        '<div class="tc"><span class="tc__row"><span class="tc__text">' + fmtDate(it.maturityDate) + '</span></span></div>',
+        '<div class="tc"><span class="tc__row"><span class="tc__icon tc__icon--lead"><i data-icon="' + FILE_ICONS[inst.xmlFileStateCode] + '"></i></span>'
+          + '<span class="tc__text tc__text--truncate">' + esc(FILE_LABELS[inst.xmlFileStateCode]) + '</span></span></div>',
+        '<div class="tc"><span class="tc__row">' + acts + '</span></div>',
+        '<div class="tc tc--separator"></div>'
+      ];
+      return '<div class="tbl__row" data-row="' + idx + '" style="grid-template-columns:' + grid + ';">' + cells.join('') + '</div>';
+    }
+    function renderRows() {
+      var it = cur.item;
+      Array.prototype.forEach.call(rowsHost.querySelectorAll('[data-row], [data-fv-empty]'), function (r) { r.remove(); });
+      var html = it.instruments.length
+        ? it.instruments.map(function (inst, i) { return rowHTML(it, inst, i); }).join('')
+        : '<div class="tbl__row" data-fv-empty style="grid-template-columns:' + headRow.style.gridTemplateColumns + ';">'
+          + '<div class="tc tc--separator"></div><div class="tc" style="grid-column:2 / -2"><span class="tc__row"><span class="tc__text">Нет данных</span></span></div><div class="tc tc--separator"></div></div>';
+      rowsHost.insertAdjacentHTML('beforeend', html);
+      if (window.dsIcons) window.dsIcons.apply(rowsHost);
+    }
+
+    function showError(text) {
+      errText.textContent = text;
+      errBox.hidden = false;
+      if (window.dsIcons) window.dsIcons.apply(errBox);
+    }
+    function hideError() { errBox.hidden = true; }
+
+    /* ---------- правка данных ---------- */
+    function setFormed(it) {
+      it.statusCode = 'FORMED';
+      it.instruments.forEach(function (i) {
+        i.statusCode = 'FORMED'; i.xmlFileStateCode = 'GENERATED'; i.errorText = null;
+      });
+    }
+    /* файл инструмента удалён — у ФИ «Нет данных»; все файлы на месте — снова «Сформирован» */
+    function syncItemStatus(it) {
+      var gone = it.instruments.some(function (i) { return i.statusCode === 'NO_DATA'; });
+      if (gone) it.statusCode = 'NO_DATA';
+      else if (it.statusCode === 'NO_DATA') it.statusCode = 'FORMED';
+    }
+    function applySave() {
+      var it = cur.item;
+      it.sendToLp = sendEl.checked;
+      FIELDS.forEach(function (f) {
+        var raw = parseNum(inputs[f.key].value);
+        var calc = calcOf(it, f.key);
+        var e = editedOf(it, f.key);
+        if (raw == null || raw === calc) {
+          if (e) { it[f.key] = calc; it.editedFields.splice(it.editedFields.indexOf(e), 1); }
+        } else {
+          it[f.key] = raw;
+          if (!e) it.editedFields.push({ fieldCode: f.key, calculatedValue: calc });
+        }
+      });
+      it.comment = commentEl.value.trim();
+      setFormed(it);
+    }
+    function changed() {
+      renderRows();
+      if (opts.onChange) opts.onChange(cur.item);
+    }
+
+    saveBtn.addEventListener('click', function () {
+      if (!cur) return;
+      if (!isDirty()) { window.DSModal.closeTop(true); return; }
+      var text = SAVE_TEXT + (cur.ctx.calcStatus === 'APPROVED' ? '<br>Расчет утвержден: пересчитан будет только этот ФИ.' : '');
+      opts.confirm(text, function () {
+        applySave();
+        window.DSModal.closeTop(true);
+        if (opts.onChange) opts.onChange(cur.item);
+      });
+    });
+
+    /* числовые поля: только цифры и разделитель */
+    FIELDS.forEach(function (f) {
+      inputs[f.key].addEventListener('input', function () {
+        var v = inputs[f.key].value.replace(/[^\d.,]/g, '');
+        if (v !== inputs[f.key].value) inputs[f.key].value = v;
+      });
+    });
+
+    /* ---------- файлы инструментов ---------- */
+    /* подтверждение загрузки — общее окно подтверждения страницы */
+    function askUpload(inst, onOk) {
+      opts.confirm('Загрузка данных по инструменту «' + esc(label(inst)) + '» из файла. Сформированный xml файл инструмента будет заменен.', onOk);
+    }
+
+    rowsHost.addEventListener('click', function (e) {
+      var link = e.target.closest('a.link');
+      if (link) { e.preventDefault(); return; }
+      var b = e.target.closest('[data-fv-act]');
+      if (!b || b.disabled || !cur) return;
+      var inst = cur.item.instruments[b.dataset.inst];
+      var act = b.dataset.fvAct;
+      hideError();
+      if (act === 'export' || act === 'exportTemplate') {
+        if (opts.exportFile) opts.exportFile(cur.item, inst, act, api);
+      } else if (act === 'upload') {
+        askUpload(inst, function () {
+          opts.upload.open(label(inst), {
+            onSaved: function () {
+              inst.xmlFileStateCode = 'UPLOADED';
+              if (inst.statusCode === 'NO_DATA' || inst.statusCode === 'ERROR' || inst.statusCode === 'RETURNED_FROM_LP') inst.statusCode = 'FORMED';
+              inst.errorText = null;
+              syncItemStatus(cur.item);
+              changed();
+            },
+            onFail: function () { showError('Не удалось загрузить файл'); }
+          });
+        });
+      } else if (act === 'delete') {
+        opts.confirm('Удаление xml файла инструмента ' + esc(label(inst)) + '.', function () {
+          inst.xmlFileStateCode = 'DELETED';
+          inst.statusCode = 'NO_DATA';
+          inst.errorText = null;
+          syncItemStatus(cur.item);
+          changed();
+        });
+      } else if (act === 'returnWithError') {
+        opts.confirm('Возврат инструмента ' + esc(label(inst)) + ' с ошибкой.', function () {
+          inst.statusCode = 'ERROR';
+          inst.errorText = 'Файл возвращён пользователем на доработку';
+          changed();
+        });
+      }
+    });
+
+    var api = {
+      open: function (item, ctx) {
+        cur = { item: item, ctx: ctx || {}, init: null };
+        hideError();
+        fillSummary(item);
+        fillForm(item);
+        cur.init = snapshot();
+        renderRows();
+        if (window.dsIcons) window.dsIcons.apply(scrim);
+        return window.DSModal.open(scrim);
+      },
+      showError: showError,
+      hideError: hideError
+    };
+    scrim.__fvMetrics = api;
+    return api;
+  }
+
+  window.PostFairValueUserMetricsModal = { bind: bind };
+})();
+</script>
+</body>
+</html>

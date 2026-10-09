@@ -1,0 +1,33 @@
+/* Окно выгрузки расчета FV: раскладка тела и строк добавления.
+   Окно, Alert, поля, кнопки, чекбокс и таблица — компоненты ДС; здесь только
+   зазоры и сетка на токенах ДС. */
+
+.lc-fv-download .modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lc-fv-download__lead {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+.lc-fv-download__list {
+  margin: 0;
+  padding-left: var(--space-20);
+}
+
+/* Два добавления рядом: поле растягивается, кнопка — по низу поля. */
+.lc-fv-download__adders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16) var(--space-16);
+}
+.lc-fv-download__adder {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-8);
+}
+.lc-fv-download__field { flex: 1 1 auto; min-width: 0; }

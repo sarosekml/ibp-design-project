@@ -7,7 +7,10 @@
    отдельный валидатор. Теперь запись принадлежит приложению: `apps/…/<id>/app.json`
    (каталог приложения — модуль `<раздел>/<имя>-app/` или концепт
    `<раздел>/drafts/<имя>/`, с 23.09.2026; места сторожит registry-check, П8)
-   (id, track, title, desc, home, icon), а `hub.js` собирается отсюда. Запись
+   (id, track, title, desc, home, icon), а `hub.js` собирается отсюда. Модуль, до
+   которого доходят с главной другого модуля (плитка), не получает строки на
+   хабе: в его app.json стоит `"hub": false` (с 08.10.2026) — запись проверяется
+   как обычно, в hub.js не попадает. Запись
    дизайн-системы — `project.json → hub.ds`, её href — `<ДС>/index.html`.
    Витрина локальных компонентов (с 25.09.2026) — `project.json → localKit`,
    вторая запись колонки ДС, href — `<localKit.dir>/index.html`: это второй
@@ -90,6 +93,7 @@ export function collect(P) {
     if (miss.length) { defects.push('ХБ4 ' + rel + ' — нет полей записи: ' + miss.join(', ')); continue; }
     if (app.id !== path.posix.basename(dir)) { defects.push('ХБ4 ' + rel + ' — id «' + app.id + '» не совпадает с каталогом «' + path.posix.basename(dir) + '»'); continue; }
     if (!byTrack.has(app.track)) { defects.push('ХБ4 ' + rel + ' — track «' + app.track + '» не из треков манифеста: ' + [...byTrack.keys()].join(', ')); continue; }
+    if (app.hub === false) continue;        // приложение без строки на хабе
     byTrack.get(app.track).push({ ...app, dir });
   }
   for (const t of tracks) {
@@ -197,6 +201,9 @@ const CASES = [
   { name: 'модуль раздела и концепт в drafts', expect: null, build: true,
     mutate: (r) => { put(r, 'apps/core/clients-app/app.json', app('clients-app', 'product')); put(r, 'apps/core/drafts/lab/app.json', app('lab', 'rnd')); check(project(r), true);
       const h = readFileSync(path.join(r, 'hub.js'), 'utf8'); if (!h.includes("root: 'apps/core/clients-app'") || !h.includes("root: 'apps/core/drafts/lab'")) put(r, 'hub.js', 'сломан'); } },
+  { name: 'приложение со скрытой записью (hub: false)', expect: null, build: true,
+    mutate: (r) => { put(r, 'apps/postrade/zeta-app/app.json', app('zeta-app', 'product', { hub: false })); check(project(r), true);
+      if (readFileSync(path.join(r, 'hub.js'), 'utf8').includes('zeta-app')) put(r, 'hub.js', 'сломан'); } },
   { name: 'манифест без каталога приложений', expect: 'ХБ1',
     mutate: (r) => { const { apps, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
 ];
