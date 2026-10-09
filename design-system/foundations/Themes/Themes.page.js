@@ -478,7 +478,7 @@
       '<button type="button" class="theme-token__chip" ' + attr + '="' + esc(key) + '"></button>' +
       '<div class="theme-token__main"><span class="theme-token__name">' + esc(title) + '</span><span class="theme-token__desc">' + esc(desc) + '</span></div>' +
       '<div class="theme-token__acts">' +
-        '<span class="theme-token__manual" hidden data-tooltip="Ручная правка"><i data-icon="brush-01"></i></span>' +
+        '<span class="theme-token__manual" hidden data-tooltip="Задано в файле темы вручную — «Сбросить» вернёт значение по алгоритму"><i data-icon="brush-01"></i></span>' +
         '<button type="button" class="btn btn--transparent btn--xs" data-reset-role="' + esc(key) + '" hidden><span class="btn__label">Сбросить</span></button>' +
         '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-copy-role="' + esc(key) + '" aria-label="Копировать значение" data-tooltip="Копировать"><i data-icon="copy"></i></button>' +
       '</div></div>';

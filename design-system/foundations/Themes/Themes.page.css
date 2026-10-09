@@ -149,6 +149,10 @@ body.ds-has-nav .theme-dock { left: var(--ds-nav-w); }
 .theme-token__name { font: var(--type-body-s-strong); color: var(--text-primary); overflow-wrap: anywhere; }
 .theme-token__desc { font: var(--type-body-xs); color: var(--text-secondary); }
 .theme-token__acts { display: flex; align-items: center; gap: var(--space-4); }
+/* Отметка ручной правки — как на плашках растяжки: 14px, вторичный текст темы. */
+.theme-token__manual { display: inline-flex; color: var(--text-secondary); }
+.theme-token__manual[hidden] { display: none; }
+.theme-token__manual [data-icon] { width: 14px; height: 14px; display: block; }
 .theme-mini { display: grid; grid-template-columns: 96px repeat(11, minmax(0, 1fr)); gap: var(--space-4); align-items: center; }
 .theme-mini .theme-swatch { height: 40px; padding: var(--space-4); }
 .theme-mini .theme-swatch__hex { display: none; }
