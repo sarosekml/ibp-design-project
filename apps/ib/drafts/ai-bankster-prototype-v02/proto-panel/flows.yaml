@@ -51,14 +51,14 @@ flows:
         note: В нити — карточка материала, справа вверху — уведомление «Материал готов».
         do:
           - click: '[data-act="finish"]'
-          - waitFor: '.doc [data-act="open"]'
+          - waitFor: '[data-act="open"]'
       - state: 7
         id: split-view
         title: Просмотр в split view
         note: Материал открывается панелью справа от нити; её ширину можно тянуть и развернуть.
         do:
           - click:
-              target: '.doc .btn[data-act="open"]'
+              target: '[data-act="open"]'
               index: -1
           - waitFor: '#pv:not([hidden])'
       - state: 8
@@ -83,7 +83,7 @@ flows:
         title: Просмотр материала
         do:
           - click:
-              target: '.doc .btn[data-act="open"]'
+              target: '[data-act="open"]'
               index: -1
           - waitFor: '#pv:not([hidden])'
       - state: 11

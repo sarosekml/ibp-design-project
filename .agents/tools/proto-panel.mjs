@@ -27,7 +27,8 @@
      ПН4  страница шага: нет файла в pages/, путь с «/» или «..», источник
           модульной страницы вместо собранной <Имя>.preview.html;
      ПН5  селектор действия не разбирается или его имена не найдены в тексте
-          страницы точки входа и её локальных скриптах (классы — ещё и в ДС);
+          страницы точки входа и её локальных скриптах (классы — в разметке,
+          стилях и строках, не в именах переменных; ещё и в ДС);
      ПН6  открытый комментарий ссылается на несуществующую страницу, шаг или
           номер состояния;
      ПН7  зеркала panel-data.js нет или оно разошлось с исходниками;
@@ -318,6 +319,18 @@ function hasToken(text, name) {
   return new RegExp('(^|[^A-Za-z0-9_\\-\\u0400-\\u04FF])' + esc + '($|[^A-Za-z0-9_\\-\\u0400-\\u04FF])').test(text);
 }
 
+/* Где в тексте может жить имя класса: строковые литералы (' и " — в пределах
+   строки, ` — и через строки) и содержимое <style>. Так класс находится в
+   class="…" разметки и шаблонов, в classList.add('…') и в стилях, а имя
+   переменной скрипта не в счёт: устаревший селектор '.doc …' проходил ПН5,
+   потому что «doc» нашлось в функции openPreview(doc) (урок Л195). */
+function classText(text) {
+  const parts = [];
+  for (const m of text.matchAll(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\[\s\S]|[^`\\])*`/g)) parts.push(m[0]);
+  for (const m of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) parts.push(m[1]);
+  return parts.join('\n');
+}
+
 function pageFile(page) {
   let file = String(page).split(/[?#]/)[0];
   try { file = decodeURIComponent(file); } catch { /* имя с «%» — как есть */ }
@@ -351,16 +364,18 @@ function pageCorpus(pageAbs, appAbs) {
   return text;
 }
 
-/* Текст ДС для классов состояния (.is-open ставит рантайм ДС). Словарь глифов не читается. */
+/* Текст ДС для классов состояния (.is-open ставит рантайм ДС): стили целиком,
+   из скриптов — то, где живут классы (classText). Словарь глифов не читается. */
 function dsCorpus(P) {
   if (!P.dsAbs) return '';
   const L = DSP.layout(P.dsAbs);
   /* стили, затем скрипты ДС; линтер — в корпусе, как до RE0002 (у стенда его нет) */
   const scripts = [...L.scripts(), ...(existsSync(L.abs(L.at.linter)) ? [L.at.linter] : [])];
   let text = '';
-  for (const f of [...L.styles().sort(), ...scripts.sort()]) {
+  for (const f of L.styles().sort()) text += '\n' + readFileSync(L.abs(f), 'utf8');
+  for (const f of scripts.sort()) {
     if (f === L.at.iconsData) continue;
-    text += '\n' + readFileSync(L.abs(f), 'utf8');
+    text += '\n' + classText(readFileSync(L.abs(f), 'utf8'));
   }
   return text;
 }
@@ -595,8 +610,8 @@ function appDefects(P, a, core, defects, lazyDs, notes = []) {
         if (prob) { defects.push('ПН4 ' + dirRel + '/' + DATA.flows + ':' + sm.page + ' — сценарий ' + flow.id + ', шаг ' + step.id + ': ' + prob); entry = null; }
         else {
           const file = pageFile(step.page);
-          if (!corpus.has(file)) corpus.set(file, pageCorpus(path.join(pagesAbs, file), a.abs));
-          entry = { file, text: corpus.get(file) };
+          if (!corpus.has(file)) { const text = pageCorpus(path.join(pagesAbs, file), a.abs); corpus.set(file, { text, classes: classText(text) }); }
+          entry = { file, ...corpus.get(file) };
         }
       }
       step.do.forEach((act, ai) => {
@@ -612,8 +627,8 @@ function appDefects(P, a, core, defects, lazyDs, notes = []) {
           else if (x.value && !hasToken(entry.text, x.value)) miss.push(x.value);
         }
         if (miss.length) defects.push('ПН5 ' + at + ': ' + miss.map((m) => '«' + m + '»').join(', ') + (miss.length > 1 ? ' не встречаются' : ' не встречается') + ' в ' + entry.file + ' и её скриптах');
-        const noClass = t.classes.filter((c) => !hasToken(entry.text, c) && !hasToken(lazyDs(), c));
-        if (noClass.length) defects.push('ПН5 ' + at + ': ' + noClass.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + entry.file + ' и её скриптах, ни в ДС');
+        const noClass = t.classes.filter((c) => !hasToken(entry.classes, c) && !hasToken(lazyDs(), c));
+        if (noClass.length) defects.push('ПН5 ' + at + ': ' + noClass.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + entry.file + ' и её скриптах (разметка, стили, строки — не имена переменных), ни в ДС');
       });
     });
   });
@@ -1107,6 +1122,9 @@ const CASES = [
   { name: '6в селектор: класс состояния из ДС — не дефект, чужой класс — дефект', expect: 'ПН5 ' + PANEL + '/flows.yaml:22 — сценарий main, шаг next, действие 2 (waitFor \'#go.is-gone\'): класс «is-gone»',
     setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go.is-open'\n          - waitFor: '#go.is-gone'\n")); },
     extra: (r) => (check(P_(r)).defects.some((d) => d.includes('is-open')) ? ['класс из ДС принят за дефект'] : []) },
+  { name: '6д селектор: класс только именем переменной скрипта — дефект, классом в шаблоне — нет', expect: 'ПН5 ' + PANEL + '/flows.yaml:21 — сценарий main, шаг next, действие 1 (click \'#go.doc\'): класс «doc»',
+    setup: (r) => { enableLab(r); put(r, LAB + '/pages/a.js', "var late = document.getElementById('late');\nfunction openPreview(doc) { return '<div class=\"card\">' + doc.title + '</div>'; }\n"); setFlows(r, flowsWith("          - click: '#go.doc'\n          - waitFor: '#go.card'\n")); },
+    extra: (r) => (check(P_(r)).defects.some((d) => d.includes('«card»')) ? ['класс из шаблона скрипта принят за дефект'] : []) },
   { name: '6г селектор не разбирается', expect: 'ПН5 ' + PANEL + '/flows.yaml:21 — сценарий main, шаг next, действие 1 (click \'#go:hovr\'): селектор не разбирается', setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go:hovr'\n")); } },
   { name: '7а открытый комментарий на удалённый шаг', expect: 'ПН6 ' + PANEL + '/comments.md:9 — К-1 (открыт): шага «main/next» нет', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON); } },
   { name: '7б тот же комментарий сделан — не дефект', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON.replace('## К-1 · открыт', '## К-1 · сделан')); } },
