@@ -1,0 +1,69 @@
+# Сценарии показа прототипа Post — Страница транша v02 — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 9
+flows:
+  - id: main
+    title: Основной путь
+    steps:
+      - state: 1
+        id: start
+        title: Стартовая страница
+        page: Tranche.html
+
+  - id: rsbu-tile
+    title: Тайл «Харды в РСБУ» на странице транша
+    desc: Три вида тайла — нужен расчёт процентных схем, корректировок нет, корректировки внесены
+    steps:
+      - state: 2
+        id: rsbu-tile-locked
+        title: Требуется расчёт
+        page: Tranche.html?hardsState=locked
+        note: «Требуется расчёт процентных схем»; кнопки и стрелки перехода нет.
+      - state: 3
+        id: rsbu-tile-none
+        title: Корректировок нет
+        page: Tranche.html?hardsState=none
+        note: «Корректировки отсутствуют» и кнопка «Внести корректировку» — ведёт на страницу с поднятой модалкой.
+      - state: 4
+        id: rsbu-tile-filled
+        title: Корректировки внесены
+        page: Tranche.html?hardsState=filled
+        note: '«Внесено корректировок: N»; кнопка остаётся.'
+
+  - id: rsbu-page
+    title: Страница «Харды в РСБУ»
+    desc: Таблица корректировок, добавление, правка, удаление
+    steps:
+      - state: 5
+        id: rsbu-page-empty
+        title: Корректировок нет
+        page: RsbuHards.html
+        note: Пустая таблица — только колонки; «Внести корректировку» в шапке страницы.
+      - state: 6
+        id: rsbu-page-modal
+        title: Новая корректировка
+        page: RsbuHards.html?open=add
+        note: Так страница открывается с кнопки на тайле. Форма в одну колонку; сумма может быть отрицательной.
+        do:
+          - waitFor: '#rh-modal-scrim:not([hidden])'
+      - state: 7
+        id: rsbu-page-filled
+        title: Корректировки внесены
+        page: RsbuHards.html?demo=filled
+        note: После сохранения в модалке строка появляется в таблице. Отрицательная сумма — со знаком минус.
+      - state: 8
+        id: rsbu-page-edit
+        title: Правка корректировки
+        page: RsbuHards.html?demo=edit
+        note: Правка — карандашом в колонке «Действия» или двойным кликом по строке.
+        do:
+          - waitFor: '#rh-modal-scrim:not([hidden])'
+      - state: 9
+        id: rsbu-page-delete
+        title: Подтверждение удаления
+        page: RsbuHards.html?demo=delete
+        note: Удаление — корзина в колонке «Действия» и модалка подтверждения.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'

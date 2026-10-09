@@ -1,0 +1,30 @@
+/* Окно «Данные по инструменту»: два состояния (data-state на .modal) и блок
+   текста XML. Окно, Alert и кнопки — компоненты ДС. */
+
+/* Что видно в каком состоянии. */
+.lc-fv-upload[data-state="choose"] .lc-fv-upload__checked,
+.lc-fv-upload[data-state="choose"] .lc-fv-upload__xml,
+.lc-fv-upload[data-state="preview"] .lc-fv-upload__choose { display: none; }
+
+/* Заглушка выбора файла — подсказка и кнопка столбиком. */
+.lc-fv-upload__choose {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-16);
+}
+.lc-fv-upload__hint {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+/* Текст XML — длинные строки переносятся, высота окна не растёт
+   бесконечно: тело окна скроллится само. */
+.lc-fv-upload__xml {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

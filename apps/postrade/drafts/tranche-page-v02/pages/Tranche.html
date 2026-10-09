@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Транш — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  /* Секции страницы: заголовок на фоне страницы, не в тайле. Сворачиваемого
+     заголовка раздела в ДС нет — см. Tranche.screen.md, «Открытые вопросы». */
+  .tr-sec { display: flex; flex-direction: column; gap: var(--space-8); }
+  .tr-sec__title { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+
+  /* Тайл без состава: строка «Заполнено» (состав на макете не показан) */
+  .tr-status { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+
+  /* Минимальная высота тайла — как на странице сделки (deals-app/Deal.html) */
+  .screen__content .tile { min-height: 200px; }
+  .screen__content .tile--headless { min-height: 0; }
+  .tr-sec .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
+  .tr-sec .tile__body .tile__grid,
+  .tr-sec .tile__body .prow-tree { width: 100%; }
+
+  /* Сводка НКЛ: тайлы вне сетки, равные, по 360px (data-off-grid, решение дизайнера 07.10.2026) */
+  .tr-sum { display: flex; flex-wrap: wrap; gap: var(--space-16); }
+  .tr-sum > .tile { flex: 0 0 360px; min-height: 0; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" id="tr-crumb">Транш</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="tr-title">Транш</h1></div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--outline btn--m"><i data-icon="calc"></i><span class="btn__label">Расчет ОС3</span></button>
+          <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false"><i data-icon="more-dots"></i></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Сводка по траншу -->
+      <section class="tr-sec">
+        <h2 class="tr-sec__title" data-f="productCode">НКЛ</h2>
+        <div class="tr-sum" data-off-grid="Сводка НКЛ: три равных тайла по 360px по макету, вне 12 колонок">
+        <section class="tile tile--headless">
+          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
+            <div class="rof"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row"><span class="rof__value" data-f="counterpartyName"></span></div></div>
+          </div></div>
+        </section>
+        <section class="tile tile--headless">
+          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+            <div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value" data-f="balanceCode"></span></div></div>
+            <div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value" data-f="currencyCode"></span></div></div>
+          </div></div>
+        </section>
+        <section class="tile tile--headless">
+          <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
+            <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма лимита</span></span><div class="rof__row"><span class="rof__value" data-f="totalLimitAmount"></span><span class="rof__affix" data-f="currencyCode"></span></div></div>
+          </div></div>
+        </section>
+      </div>
+      </section>
+
+      <section class="tr-sec">
+        <h2 class="tr-sec__title">Общая информация</h2>
+        <div class="grid12">
+            <section class="tile col-6 colw-12">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Договор и дополнительные соглашения</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Договор"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:repeat(3,1fr);">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер договора</span></span><div class="rof__row"><span class="rof__value" data-f="contractNumber"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value" data-f="contractSignDate"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value" data-f="plannedRepaymentDate"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер последнего ДС</span></span><div class="rof__row"><span class="rof__value" data-f="lastAmendmentNumber"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата подписания ДС</span></span><div class="rof__row"><span class="rof__value" data-f="lastAmendmentSignDate"></span></div></div>
+                </div>
+                <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по сделке</span></button></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Валюта транша</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать: Валюта транша"><i data-icon="edit"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value" data-f="currencyCode"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма лимита</span></span><div class="rof__row"><span class="rof__value" data-f="totalLimitAmount"></span><span class="rof__affix" data-f="currencyCode"></span></div></div>
+                </div></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Связь с фондированием</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать: Связь с фондированием"><i data-icon="edit"></i></button></div>
+              </header>
+              <div class="tile__body"><ul class="prow-tree"><li class="prow-tree__node">
+                <div class="prow prow--tinted">
+                  <div class="prow__main">
+                    <div class="prow__head"><span class="prow__title" data-f="fundingTrancheName"></span></div>
+                    <div class="prow__meta">
+                      <span class="prow__meta-item"><i data-icon="calendar"></i><span class="prow__meta-text" data-f="fundingDate"></span></span>
+                      <span class="prow__meta-item"><i data-icon="bar-chart-square"></i><span class="prow__meta-text"><span data-f="fundingAmount"></span> <span class="prow__meta-affix" data-f="fundingCurrencyCode"></span></span></span>
+                    </div>
+                  </div>
+                </div>
+              </li></ul></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">ETC</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: ETC"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Фиксированная ставка</span></span><div class="rof__row"><span class="rof__value" data-f="fixedRatePercent"></span><span class="rof__affix" data-f="percent"></span></div></div>
+                </div></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Техническая информация</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать: Техническая информация"><i data-icon="edit"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr;">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">ГФО ID</span></span><div class="rof__row"><span class="rof__value" data-f="gfoId"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">ГФО ID фондирующего кредита</span></span><div class="rof__row"><span class="rof__value" data-f="gfoFundingCreditId"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID продукта</span></span><div class="rof__row"><span class="rof__value" data-f="crmProductId"></span></div></div>
+                </div></div>
+            </section>
+        </div>
+      </section>
+
+      <section class="tr-sec">
+        <h2 class="tr-sec__title">Процентная задолженность</h2>
+        <div class="grid12">
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Процентные схемы</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Процентные схемы"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Выдачи и погашения</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Выдачи и погашения"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Процентные периоды</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Процентные периоды"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Процентные платежи</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Развернуть: Процентные платежи"><i data-icon="maximize"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p>
+                <button type="button" class="btn btn--outline btn--s"><span class="btn__label">Пересчитать</span></button></div>
+            </section>
+            <section class="tile col-3 colw-6" id="tile-rsbu-hards" data-state="none">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Харды в РСБУ</h3></div></div>
+                <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m" id="rsbu-open" href="RsbuHards.html" aria-label="Открыть: Харды в РСБУ"><i data-icon="arrow-right"></i></a></div>
+              </header>
+              <div class="tile__body">
+                <p class="tr-status" data-rsbu-state="locked" hidden>Требуется расчёт процентных схем</p>
+                <p class="tr-status" data-rsbu-state="none">Корректировки отсутствуют</p>
+                <p class="tr-status" data-rsbu-state="filled" hidden>Внесено корректировок: <span id="rsbu-count"></span></p>
+                <a class="btn btn--outline btn--s" id="rsbu-add" href="RsbuHards.html?open=add" data-rsbu-state="none filled"><span class="btn__label">Внести корректировку</span></a>
+              </div>
+            </section>
+        </div>
+      </section>
+
+      <section class="tr-sec">
+        <h2 class="tr-sec__title">Комиссионные начисления</h2>
+        <div class="grid12">
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Комиссионные схемы</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Комиссионные схемы"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Комиссионные периоды</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Комиссионные периоды"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">График доступности лимита</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: График доступности лимита"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Комиссионные платежи</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Комиссионные платежи"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p>
+                <button type="button" class="btn btn--outline btn--s"><span class="btn__label">Пересчитать</span></button></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Условия по досрочному возврату</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Условия по досрочному возврату"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><p class="tr-status">Заполнено</p></div>
+            </section>
+        </div>
+      </section>
+
+      <section class="tr-sec">
+        <h2 class="tr-sec__title">Платежи</h2>
+        <div class="grid12">
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Плановые платежи</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Плановые платежи"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Ближайший платёж</span></span><div class="rof__row"><span class="rof__value" data-f="nextPaymentAmount"></span><span class="rof__affix" data-f="nextPaymentCurrencyCode"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата платежа</span></span><div class="rof__row"><span class="rof__value" data-f="nextPaymentDate"></span><span class="rof__icon" data-f-show="nextPaymentOverdue"><i data-icon="alert-triangle-filled"></i></span></div></div>
+                </div></div>
+            </section>
+            <section class="tile col-3 colw-6">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Платежи от контрагента</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: Платежи от контрагента"><i data-icon="arrow-right"></i></button></div>
+              </header>
+              <div class="tile__body"><div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Последний платёж</span></span><div class="rof__row"><span class="rof__value" data-f="lastCounterpartyPaymentAmount"></span><span class="rof__affix" data-f="lastCounterpartyPaymentCurrencyCode"></span></div></div>
+                  <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата платежа</span></span><div class="rof__row"><span class="rof__value" data-f="lastCounterpartyPaymentDate"></span></div></div>
+                </div></div>
+            </section>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── модальных окон на странице пока нет -->
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/tranche-data.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей и демо-данные транша в поля с data-f.
+   Форматирование — только при выводе: суммы «1 000 000,00», даты ДД.ММ.ГГГГ. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var NBSP = ' ';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="index.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+
+  function fill() {
+    var t = window.MOCK_TRANCHE;
+    var values = {
+      contractNumber: t.contract.contractNumber,
+      contractSignDate: date(t.contract.contractSignDate),
+      plannedRepaymentDate: date(t.contract.plannedRepaymentDate),
+      lastAmendmentNumber: t.contract.lastAmendmentNumber,
+      lastAmendmentSignDate: date(t.contract.lastAmendmentSignDate),
+      counterpartyName: t.counterpartyName,
+      balanceCode: t.balanceCode,
+      currencyCode: t.currencyCode,
+      totalLimitAmount: money(t.totalLimitAmount),
+      fundingTrancheName: t.fundingLink.fundingTrancheName,
+      fundingDate: date(t.fundingLink.fundingDate),
+      fundingAmount: money(t.fundingLink.fundingAmount),
+      fundingCurrencyCode: t.fundingLink.currencyCode,
+      dealName: t.dealName,
+      parentContractName: t.parentContractName,
+      productCode: t.productCode,
+      fixedRatePercent: String(t.fixedRatePercent),
+      percent: '%',
+      gfoId: t.gfoId,
+      gfoFundingCreditId: t.gfoFundingCreditId,
+      crmProductId: t.crmProductId,
+      nextPaymentAmount: money(t.nextPaymentAmount),
+      nextPaymentCurrencyCode: t.nextPaymentCurrencyCode,
+      nextPaymentDate: date(t.nextPaymentDate),
+      lastCounterpartyPaymentAmount: money(t.lastCounterpartyPaymentAmount),
+      lastCounterpartyPaymentCurrencyCode: t.lastCounterpartyPaymentCurrencyCode,
+      lastCounterpartyPaymentDate: date(t.lastCounterpartyPaymentDate)
+    };
+    document.querySelectorAll('[data-f]').forEach(function (el) {
+      var k = el.getAttribute('data-f');
+      if (k in values) el.textContent = values[k];
+    });
+    document.querySelectorAll('[data-f-show]').forEach(function (el) {
+      el.hidden = !t[el.getAttribute('data-f-show')];
+    });
+    var title = t.trancheNumber + ' Транш';
+    document.getElementById('tr-title').textContent = title;
+    document.getElementById('tr-crumb').textContent = title;
+    document.title = title + ' — IBP';
+  }
+
+  /* Карточка «Харды в РСБУ»: locked | none | filled.
+     Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа). */
+  function rsbuState() {
+    var m = /[?&]hardsState=(locked|none|filled)/.exec(location.search);
+    var st = m ? m[1] : window.MOCK_TRANCHE.rsbuHardsState;
+    document.getElementById('rsbu-count').textContent = window.MOCK_RSBU_ADJUSTMENTS.adjustments.length;
+    var tile = document.getElementById('tile-rsbu-hards');
+    tile.setAttribute('data-state', st);
+    tile.querySelectorAll('[data-rsbu-state]').forEach(function (el) {
+      el.hidden = el.getAttribute('data-rsbu-state').split(' ').indexOf(st) < 0;
+    });
+    /* «Требуется расчёт»: стрелки перехода на страницу нет вовсе */
+    document.getElementById('rsbu-open').hidden = (st === 'locked');
+  }
+
+  buildNav(); fill(); rsbuState();
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script src="../../../ds-config.js"></script>
+<script src="../../../../ds-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Главная — IBP</title>
@@ -85,7 +85,7 @@
   </div>
 </div>
 
-<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
 <script>
 /* экранный скрипт: меню панели и тайлы главной строятся из единого каталога
    ibp-home.js (window.IBPHome) по выбранной роли; переключение роли — модалкой */
@@ -95,12 +95,12 @@
   /* ссылки на собранные экраны направления (по id пунктов каталога ibp-home.js).
      Каталог не трогаем: он общий для ДС, а пути к экранам знает только этот экран.
      Пункты без реальной страницы остаются href="#". */
-  var PAGE_HREFS = { 'current-portfolio': 'Portfolio.html', 'fv-calculation': '../../post-reports-app/pages/FairValueRegister.preview.html' };
+  var PAGE_HREFS = { 'current-portfolio': 'Tranche.html' };
   /* строка пользователя в футере меню ведёт на хаб проектов (корневой index.html).
      Футер отдаёт IBPHome.footerHTML с зашитым href="#" — подменяем ссылку
      здесь, каталог ДС не трогаем. Проверяет сторож registry-check.mjs. */
   var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
-  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
 
   function ic(name) { return '<i data-icon="' + name + '"></i>'; }
   function pageHref(id) { return PAGE_HREFS[id] || '#'; }
@@ -141,7 +141,7 @@
     s += (window.IBPHome && window.IBPHome.footerHTML)
       ? window.IBPHome.footerHTML(role, { logoutModal: 'role-modal', logoutLabel: 'Сменить роль / выйти' }).replace(USER_LINK_FROM, USER_LINK_TO)
       : '<div class="nav__footer">'
-        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
         + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
         + '<span class="nav__user-text">'
         + '<span class="nav__user-name">Александров Петр Константинович</span>'

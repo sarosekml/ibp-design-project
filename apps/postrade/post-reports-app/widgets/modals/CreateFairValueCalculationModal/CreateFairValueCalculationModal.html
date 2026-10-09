@@ -1,0 +1,45 @@
+<!-- Окно «Формирование нового расчета» реестра расчетов FV. Фрагмент вшивается
+     ассемблером меткой ds-include — скрим должен лежать в конце body.
+
+     Одно поле — дата расчета (InputDate, маска и календарь — из ДС). Кнопка
+     «Сформировать» выключена, пока дата не введена целиком. Если расчет на эту
+     дату уже есть, окно остаётся открытым и показывает Alert уровня окна.
+     Поведение — CreateFairValueCalculationModal.js (PostCreateFairValueCalculationModal.bind). -->
+
+<div class="modal-scrim" id="create-fv-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="create-fv-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="create-fv-title">Формирование нового расчета</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" data-fv-create-alert hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось сформировать расчет</p>
+          <p class="alert__text">Расчет на эту дату уже сформирован, его можно пересчитать или сформировать новый на новую дату.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="create-fv-date"><span class="ds-label__text">Дата расчета</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="create-fv-date" data-fv-create-date placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button>
+            <button class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-create-submit disabled><span class="btn__label">Сформировать</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

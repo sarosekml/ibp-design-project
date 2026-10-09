@@ -1,0 +1,9 @@
+{
+  "id": "post-reports-app",
+  "track": "product",
+  "title": "Post — Отчёты",
+  "desc": "Расчет FV: реестр расчетов, страница расчета, окна ФИ и выгрузки",
+  "home": "pages/FairValueRegister.preview.html",
+  "icon": "folder",
+  "hub": false
+}

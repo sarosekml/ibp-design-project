@@ -1,0 +1,113 @@
+<!-- Окно выгрузки расчета FV. Фрагмент вшивается ассемблером меткой ds-include —
+     скрим должен лежать в конце body. Два слоя на одно поведение:
+       fv-download-scrim  — с шифрованием (сеть Сигма): выбор сотрудников;
+       fv-download-plain-scrim — без шифрования (сеть Альфа): подтверждение.
+     Какой слой открыть, решает страница (параметр сети); поведение —
+     DownloadReportModal.js (PostDownloadReportModal.bind). -->
+
+<div class="modal-scrim" id="fv-download-scrim" hidden>
+  <div class="modal modal--w8 lc-fv-download" role="dialog" aria-modal="true" aria-labelledby="fv-download-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-download-title" data-fv-dl-title>Выгрузка расчета</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--warning alert--m alert--flush" data-alert-tone="warning" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Вы выгружаете документ, содержащий данные K2</p>
+          <p class="alert__text">Нажимая кнопку «Выгрузить», вы подтверждаете, что осведомлены о следующих ограничениях:</p>
+          <ul class="alert__text lc-fv-download__list">
+            <li>данные только для внутреннего использования;</li>
+            <li>данные необходимо использовать строго в соответствии с бизнес-процессом;</li>
+            <li>данные нельзя передавать лицам, не задействованным в бизнес-процессе.</li>
+          </ul>
+          <p class="alert__text">Информация о выгрузке документа будет зафиксирована и направлена в службу безопасности.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <p class="lc-fv-download__lead">Выберите сотрудников, которым будет доступен файл после его создания. Данный файл будет доступен для работы в доменах Сигма и Альфа/ Омега только у указанных ниже сотрудников. Если вы добавили сотрудника по e-mail, то файл будет доступен только в том домене, которому соответствует e-mail.</p>
+
+      <div class="lc-fv-download__adders">
+        <div class="lc-fv-download__adder">
+          <div class="inp inp--m lc-fv-download__field">
+            <label class="ds-label" for="fv-dl-employee"><span class="ds-label__text">Сотрудник</span></label>
+            <div class="inp__field" data-ddl="fv-dl-employee-list">
+              <input class="inp__control" id="fv-dl-employee" autocomplete="off" data-fv-dl-employee>
+              <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="fv-dl-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fv-dl-add-employee disabled><span class="btn__label">Добавить</span></button>
+        </div>
+        <div class="lc-fv-download__adder">
+          <div class="inp inp--m lc-fv-download__field">
+            <label class="ds-label" for="fv-dl-email"><span class="ds-label__text">Сотрудник вне штата (по e-mail)</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="fv-dl-email" autocomplete="off" inputmode="email" data-fv-dl-email>
+              <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+            </div>
+          </div>
+          <button type="button" class="btn btn--outline btn--m" data-fv-dl-add-email disabled><span class="btn__label">Добавить</span></button>
+        </div>
+      </div>
+
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-fv-dl-rows>
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 48px minmax(200px,1.4fr) minmax(140px,1fr) minmax(200px,1.2fr) minmax(220px,1.2fr) 8px;">
+              <div class="th th--separator"></div>
+              <div class="th"><label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать всех" data-fv-dl-all><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label></div>
+              <div class="th"><span class="th__label">ФИО</span></div>
+              <div class="th"><span class="th__label">Должность</span></div>
+              <div class="th"><span class="th__label">Почта во внешнем домене</span></div>
+              <div class="th"><span class="th__label">Почта во внутреннем домене</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fv-dl-submit><span class="btn__label">Выгрузить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-scrim" id="fv-download-plain-scrim" hidden>
+  <div class="modal modal--w6" role="dialog" aria-modal="true" aria-labelledby="fv-download-plain-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fv-download-plain-title">Подтверждение действия</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert">
+      <div class="alert alert--warning alert--m alert--flush" data-alert-tone="warning" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Вы выгружаете документ, содержащий данные K2</p>
+          <p class="alert__text">Нажимая кнопку «Выгрузить», вы подтверждаете, что осведомлены о следующих ограничениях:</p>
+          <ul class="alert__text lc-fv-download__list">
+            <li>данные только для внутреннего использования;</li>
+            <li>данные необходимо использовать строго в соответствии с бизнес-процессом;</li>
+            <li>данные нельзя передавать лицам, не задействованным в бизнес-процессе.</li>
+          </ul>
+          <p class="alert__text">Информация о выгрузке документа будет зафиксирована и направлена в службу безопасности.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-fv-dl-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

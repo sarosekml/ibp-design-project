@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Расчет FV — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* Экран с таблицей: ритм 12px — заголовок → тулбар → таблица (правило каркаса) */
+  .screen__content { gap: var(--space-12); }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- Боковое меню строится экранным скриптом из ibp-home.js по роли -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../deals-app/pages/MainPage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="FairValueRegister.preview.html">Реестр расчетов FV</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Расчет FV</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы: заголовок, статус, возврат в реестр; кнопки строит скрипт по матрице -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title" id="calc-title">Расчет FV</h1>
+            </div>
+            <div class="phead__chips" id="calc-chips"></div>
+            <span class="phead__return"><a class="btn btn--outline btn--xs" href="FairValueRegister.preview.html"><i data-icon="flip-backward"></i><span class="btn__label">В реестр расчетов</span></a></span>
+          </div>
+        </div>
+        <div class="phead__actions" id="calc-actions">
+          <button type="button" class="btn btn--accent btn--m" id="act-send" hidden><span class="btn__label">Отправить в LP</span></button>
+          <button type="button" class="btn btn--accent btn--m" id="act-approve" hidden><span class="btn__label">Утвердить</span></button>
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" id="act-menu-btn" aria-label="Ещё действия" aria-haspopup="menu" aria-expanded="false" data-menu="calc-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="calc-menu" class="menu menu--floating" role="menu" hidden></div>
+          </span>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Фильтр и таблица ──────────────────────────────── -->
+      <div class="dtable-toolbar">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы">
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false" data-modal="filter-scrim">
+            <i data-icon="filter"></i><span class="btn__label">Фильтр</span>
+          </button>
+        </div>
+        <div class="dtable__toolbar-right">
+          <button class="ibtn ibtn--neutral ibtn--m" aria-label="Настроить колонки" data-table-settings><i data-icon="settings"></i></button>
+        </div>
+      </div>
+
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl tbl--scroll" data-table data-sort-rows>
+
+            <div class="tbl__row tbl__row--head" id="head-row" style="grid-template-columns:8px 48px 72px 170px 200px 140px 190px 130px 230px 160px 100px 140px 210px 150px 110px 150px 170px 180px 200px 150px 190px 140px 100px 150px 230px 170px 120px 270px 240px 250px 260px 240px 250px 280px 88px minmax(8px,1fr);">
+            <div class="th th--separator"></div>
+            <div class="th th--select"><label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать все"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label></div>
+            <div class="th th--right" data-col="rowNumber" aria-sort="none" data-sort-type="number">
+              <span class="th__label">№</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="rowNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="itemStatus" aria-sort="none">
+              <span class="th__label">Статус ФИ</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="instrumentsStatus" aria-sort="none">
+              <span class="th__label">Статус инструментов (xml)</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="dealNumber" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Номер сделки</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="dealNumber" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="dealName" aria-sort="none" data-sort-type="text">
+              <span class="th__label">Наименование сделки</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="dealName" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="itemTypeName" aria-sort="none">
+              <span class="th__label">Тип ФИ</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="itemName" aria-sort="none" data-sort-type="text">
+              <span class="th__label">Наименование ФИ</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="itemName" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="balanceName" aria-sort="none">
+              <span class="th__label">Баланс ФИ</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="currencyCode" aria-sort="none">
+              <span class="th__label">Валюта ФИ</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="sendToLp" aria-sort="none">
+              <span class="th__label">Передавать в LP</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="counterpartyName" aria-sort="none">
+              <span class="th__label">Контрагент</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="counterpartyInn" aria-sort="none">
+              <span class="th__label">ИНН контрагента</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="crmId" aria-sort="none">
+              <span class="th__label">CRM ID</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="firstIssueDate" aria-sort="none" data-sort-type="date">
+              <span class="th__label">Дата первой выдачи</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="firstIssueDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="maturityDate" aria-sort="none" data-sort-type="date">
+              <span class="th__label">Действующая дата погашения</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="maturityDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="fvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Итоговое FV, в валюте</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="fvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="prevFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">FV за прошлый период, в валюте</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="prevFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="deltaFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Δ FV, в валюте</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="deltaFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="uploadedFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Загруженная FV, в валюте</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="uploadedFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="rating" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Рейтинг при расчете</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="rating" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="lgd" aria-sort="none" data-sort-type="number">
+              <span class="th__label">LGD, %</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="lgd" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="reserveRate" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Ставка резерва, %</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="reserveRate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="individualReserveRate" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Индивидуальная ставка резерва ПАО, %</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="individualReserveRate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="vbsAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">ВБС, в валюте</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="vbsAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="vbsDate" aria-sort="none" data-sort-type="date">
+              <span class="th__label">Дата ВБС</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="vbsDate" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="instruments" aria-sort="none">
+              <span class="th__label">Инструменты ФИ</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="curveShiftFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Изм. FV, объясненное сдвигом % кривых, вал. ед.</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="curveShiftFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="creditCurveShiftFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Изм. FV, объясненное сдвигом кредитных кривых, вал. ед.</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="creditCurveShiftFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="ratingLgdShiftFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Изм. FV, объясненное изм. рейтингов/LGD/ставки резерва, вал. ед.</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="ratingLgdShiftFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="currencyFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Изм. FV, объясненное изм. валюты, вал. ед.</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="currencyFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th th--right" data-col="unexplainedFvAmount" aria-sort="none" data-sort-type="number">
+              <span class="th__label">Изм. FV, необъясненная составляющая, вал. ед.</span>
+              <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="unexplainedFvAmount" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button></span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="comment" aria-sort="none">
+              <span class="th__label">Комментарий</span>
+              <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
+            </div>
+            <div class="th" data-col="actions"><span class="th__label">Действия</span></div>
+            <div class="th th--separator"></div>
+            </div>
+
+            <!-- Строки рендерит скрипт из window.MOCK_FV_CALCULATION_ITEMS -->
+
+          </div>
+
+          <div class="es es--m" id="fi-empty" role="status" aria-live="polite" hidden>
+            <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <div class="es__body">
+              <p class="es__title">ФИ не найдены</p>
+              <p class="es__text">По заданным условиям фильтра ничего не найдено. Измените параметры и попробуйте снова.</p>
+            </div>
+            <div class="es__actions">
+              <button type="button" class="btn btn--accent btn--m" id="fi-empty-clear"><span class="btn__label">Очистить фильтр</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dtable__footer">
+          <!-- Колонтитул строит скрипт (DSPagination.footer) -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Модальные окна ──────────────────────────────────────────── -->
+
+<!-- Подтверждение действия: текст и действие подставляет скрипт -->
+<div class="modal-scrim" id="confirm-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="confirm-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <div id="confirm-text"></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="confirm-ok"><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Окно «Фильтр»: одна секция «Основная информация» -->
+<div class="modal-scrim" id="filter-scrim" hidden>
+  <div class="modal modal--w6 tfm" role="dialog" aria-modal="true" aria-labelledby="filter-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="filter-title">Фильтр</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body modal__body--flush">
+      <div class="tfm__body">
+        <nav class="tabs tabs--vert tfm__nav" aria-label="Разделы фильтра">
+          <button type="button" class="tab tab--m tab--vert tab--selected" aria-current="true" data-target="tfm-sec-main"><span class="tab__label">Основная информация</span><span class="tab__badge" id="tfm-badge" hidden>0</span></button>
+        </nav>
+        <div class="tfm__panel" id="tfm-panel">
+          <section class="tfm__sec" id="tfm-sec-main" aria-labelledby="tfm-sec-main-t">
+            <p class="tfm__sec-title" id="tfm-sec-main-t">Основная информация</p>
+            <div class="tfm__grid">
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-item-name"><span class="ds-label__text">Наименование ФИ</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="f-item-name" autocomplete="off">
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                </div>
+              </div>
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-item-type"><span class="ds-label__text">Тип финансового инструмента</span></label>
+                <div class="inp__field" data-ddl="f-item-type-list">
+                  <input class="inp__control" id="f-item-type" readonly>
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="f-item-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+              <div class="inp inp--m tfm__span-2">
+                <label class="ds-label" for="f-counterparty"><span class="ds-label__text">Контрагент</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="f-counterparty" autocomplete="off">
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                </div>
+              </div>
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-status"><span class="ds-label__text">Статус ФИ</span></label>
+                <div class="inp__field" data-ddl="f-status-list">
+                  <input class="inp__control" id="f-status" readonly>
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="f-status-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-send"><span class="ds-label__text">Передача в LP</span></label>
+                <div class="inp__field" data-ddl="f-send-list">
+                  <input class="inp__control" id="f-send" readonly>
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+                </div>
+                <div id="f-send-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+              </div>
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-deal-number"><span class="ds-label__text">Номер сделки</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="f-deal-number" inputmode="numeric" autocomplete="off">
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                </div>
+              </div>
+              <div class="inp inp--m">
+                <label class="ds-label" for="f-deal-name"><span class="ds-label__text">Наименование сделки</span></label>
+                <div class="inp__field">
+                  <input class="inp__control" id="f-deal-name" autocomplete="off">
+                  <span class="inp__acts"><button class="inp__act" aria-label="Очистить поле"><i data-icon="close"></i></button></span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" id="tf-clear"><span class="btn__label">Очистить фильтр</span></button>
+        <button type="button" class="btn btn--accent btn--m" id="tf-apply"><span class="btn__label">Применить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Окна ФИ: правка ФИ, файлы инструментов; открываются поверх страницы -->
+<ds-include src="../widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.html"></ds-include>
+<ds-include src="../widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.html"></ds-include>
+<ds-include src="../widgets/modals/DownloadReportModal/DownloadReportModal.html"></ds-include>
+
+<script src="../data/fv-dictionaries.js"></script>
+<script src="../data/fv-calculations.js"></script>
+<script src="../data/fv-calculation-items.js"></script>
+<script src="../data/fv-employees.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script>
+/* Экранный скрипт, часть 1: меню панели навигации из ibp-home.js (пункт
+   «Расчет FV» selected). Роль меню — по умолчанию; роль расчета (финансист или
+   риск-менеджер) — отдельный параметр демо, см. часть 2. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'fv-calculation';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+
+  function ic(name) { return '<i data-icon=\'' + name + '\'></i>'; }
+
+  function itemHTML(it) {
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">'
+        + it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('')
+        + '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">'
+        + '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>'
+        + '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge
+      ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>'
+      : '';
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="#"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  var nav = document.getElementById('nav');
+  var s = '<div class="nav__top">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+    + '</div><div class="nav__list">';
+  s += '<a class="nav__item" href="../../deals-app/pages/MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+  IBPHome.itemsFor(role).forEach(function (g, i) {
+    s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+    g.items.forEach(function (it) { s += itemHTML(it); });
+    s += '</div>';
+  });
+  s += '</div>';
+  s += (window.IBPHome && window.IBPHome.footerHTML)
+    ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+    : '<div class="nav__footer">'
+      + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+      + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+      + '<span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span>'
+      + '<span class="nav__user-role">' + role + '</span></span></a>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>'
+      + '</div>';
+  nav.innerHTML = s;
+  if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+<script src="../widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.js"></script>
+<script src="../widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.js"></script>
+<script src="../widgets/modals/DownloadReportModal/DownloadReportModal.js"></script>
+<script>
+/* Экранный скрипт, часть 2: страница расчета FV. Кнопки шапки, меню «⋮» и
+   массовые действия берутся из матрицы window.FV_CALCULATION_ACTIONS
+   (data/fv-dictionaries.js) — копий матрицы здесь нет. Статус расчета и роль —
+   параметры демо: ?status=<код>&role=<FINANCIER|RISK_MANAGER>; без них статус
+   берётся из расчета ?id=, роль — финансист. Правила — FairValueCalculation.screen.md. */
+(function () {
+  'use strict';
+
+  var ACTIONS = window.FV_CALCULATION_ACTIONS;
+  var CALC_LABELS = window.FV_CALCULATION_STATUS_LABELS;
+  var ITEM_LABELS = window.FV_ITEM_STATUS_LABELS;
+  var TONES = window.FV_STATUS_TONES;
+  var FILE_LABELS = window.FV_XML_FILE_STATE_LABELS;
+
+  /* Демо: ответ LP приходит не сам, а кликом по чипу статуса в шапке.
+     Статусы, которых в продукте приходится ждать, двигаются руками. */
+  var LP_STEPS = {
+    SENT_TO_LP: { next: 'CALCULATING_LP', hint: 'Демо: имитация ответа LP — перейти в «Рассчитывается LP»' },
+    CALCULATING_LP: { next: 'CALCULATED', hint: 'Демо: имитация ответа LP — перейти в «Рассчитан»' }
+  };
+
+  /* ---------- параметры демо ---------- */
+  var q = new URLSearchParams(window.location.search);
+  var calcId = parseInt(q.get('id'), 10) || 16;
+  var calcRec = window.MOCK_FV_CALCULATIONS.filter(function (c) { return c.calculationId === calcId; })[0]
+    || window.MOCK_FV_CALCULATIONS[1];
+  var calcStatus = ACTIONS[q.get('status')] ? q.get('status') : calcRec.statusCode;
+  var userRole = window.FV_USER_ROLE_LABELS[q.get('role')] ? q.get('role') : 'FINANCIER';
+
+  var items = window.MOCK_FV_CALCULATION_ITEMS.map(function (it) {
+    return JSON.parse(JSON.stringify(it));
+  });
+
+  /* ---------- форматирование ---------- */
+  function esc(v) {
+    var d = document.createElement('div');
+    d.textContent = v == null ? '' : String(v);
+    return d.innerHTML;
+  }
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : '';
+  }
+  function fmtNum(n, digits) {
+    if (n == null) return '';
+    var parts = Math.abs(n).toFixed(digits).split('.');
+    return (n < 0 ? '−' : '') + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + (parts[1] ? ',' + parts[1] : '');
+  }
+  function fmtAmount(n) { return fmtNum(n, 2); }
+
+  /* ---------- статусы ФИ ---------- */
+  function instrumentStatuses(it) { return it.instruments.map(function (i) { return i.statusCode; }); }
+  function itemStatus(it) { return window.fvResolveItemStatus(it.statusCode, instrumentStatuses(it)); }
+  function instrumentsStatus(it) { return window.fvSummarizeInstruments(instrumentStatuses(it)); }
+
+  /* ---------- ячейки ---------- */
+  function cell(key, extra, attrs, inner) {
+    return '<div class="tc' + (extra ? ' ' + extra : '') + '" data-col="' + key + '"' + (attrs || '') + '>' + inner + '</div>';
+  }
+  function textCell(key, v, extra, attrs) {
+    var val = (v == null || v === '') ? '—' : v;
+    return cell(key, extra, attrs, '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(val) + '</span></span>');
+  }
+  function chipCell(key, code) {
+    return cell(key, '', '', '<span class="tc__row"><span class="chip chip--s chip--rounded ' + TONES[code] + '"><span class="chip__label">' + esc(ITEM_LABELS[code]) + '</span></span></span>');
+  }
+  /* число правленого поля: маркер .tc--edited + тултип с расчетным значением */
+  function metricCell(it, key, digits) {
+    var edited = it.editedFields.filter(function (f) { return f.fieldCode === key; })[0];
+    var v = it[key];
+    var text = v == null ? '—' : fmtNum(v, digits);
+    var attrs = ' data-sort-value="' + (v == null ? '' : v) + '"';
+    if (edited) {
+      attrs += ' data-tooltip="Исправлено. Расчетное значение: ' + esc(fmtNum(edited.calculatedValue, digits)) + '"';
+    }
+    return cell(key, 'tc--numbers' + (edited ? ' tc--edited' : ''), attrs, '<span class="tc__row"><span class="tc__text tc__text--truncate">' + text + '</span></span>');
+  }
+  function amountCell(it, key) {
+    var v = it[key];
+    return textCell(key, v == null ? '' : fmtAmount(v), 'tc--numbers', ' data-sort-value="' + (v == null ? '' : v) + '"');
+  }
+  function instrumentsCell(it) {
+    var chips = it.instruments.map(function (i) {
+      var tip = i.xmlFileStateCode === 'UPLOADED' ? 'Загружен пользовательский файл' : (i.xmlFileStateCode === 'DELETED' ? 'Файл удалён' : 'Файл сформирован системой');
+      return '<span class="chip chip--s" data-tooltip="' + esc(tip) + '"><span class="chip__label">' + esc(i.instrumentCode + '. ' + i.instrumentName) + '</span></span>';
+    }).join('');
+    return cell('instruments', '', '', '<span class="tc__row">' + chips + '</span>');
+  }
+  function actionsCell(it) {
+    return cell('actions', '', '', '<span class="tc__row">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-row-edit="' + it.rowNumber + '" aria-label="Редактировать ФИ"><i data-icon="edit"></i></button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-row-recalc="' + it.rowNumber + '" aria-label="Пересчитать ФИ"><i data-icon="refresh"></i></button>'
+      + '</span>');
+  }
+  function selectCell(it) {
+    return '<div class="tc tc--select"><label class="cb cb--no-content"><input type="checkbox" class="cb__input" aria-label="Выбрать строку"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span></label></div>';
+  }
+
+  var tbl = document.querySelector('.tbl[data-table]');
+  var headRow = document.getElementById('head-row');
+  var footerHost = document.querySelector('.dtable__footer');
+  var emptyState = document.getElementById('fi-empty');
+
+  function renderRow(it) {
+    var cells = [
+      '<div class="tc tc--separator"></div>',
+      selectCell(it),
+      textCell('rowNumber', it.rowNumber, '', ' data-sort-value="' + it.rowNumber + '"'),
+      chipCell('itemStatus', itemStatus(it)),
+      chipCell('instrumentsStatus', instrumentsStatus(it)),
+      textCell('dealNumber', it.dealNumber, '', ' data-sort-value="' + it.dealNumber + '"'),
+      textCell('dealName', it.dealName),
+      textCell('itemTypeName', it.itemTypeName),
+      cell('itemName', '', ' data-sort-value="' + esc(it.itemName) + '"', '<span class="tc__row"><a class="link link--accent tc__text tc__text--truncate" href="#" data-row-open="' + it.rowNumber + '">' + esc(it.itemName) + '</a></span>'),
+      textCell('balanceName', it.balanceName),
+      textCell('currencyCode', it.currencyCode),
+      textCell('sendToLp', it.sendToLp ? 'Да' : 'Нет'),
+      textCell('counterpartyName', it.counterpartyName),
+      textCell('counterpartyInn', it.counterpartyInn),
+      textCell('crmId', it.crmId),
+      textCell('firstIssueDate', fmtDate(it.firstIssueDate), '', ' data-sort-value="' + it.firstIssueDate + '"'),
+      textCell('maturityDate', fmtDate(it.maturityDate), '', ' data-sort-value="' + it.maturityDate + '"'),
+      amountCell(it, 'fvAmount'), amountCell(it, 'prevFvAmount'), amountCell(it, 'deltaFvAmount'), amountCell(it, 'uploadedFvAmount'),
+      metricCell(it, 'rating', 0), metricCell(it, 'lgd', 0), metricCell(it, 'reserveRate', 0), metricCell(it, 'individualReserveRate', 0),
+      amountCell(it, 'vbsAmount'),
+      textCell('vbsDate', fmtDate(it.vbsDate), '', ' data-sort-value="' + (it.vbsDate || '') + '"'),
+      instrumentsCell(it),
+      amountCell(it, 'curveShiftFvAmount'), amountCell(it, 'creditCurveShiftFvAmount'), amountCell(it, 'ratingLgdShiftFvAmount'),
+      amountCell(it, 'currencyFvAmount'), amountCell(it, 'unexplainedFvAmount'),
+      textCell('comment', it.comment),
+      actionsCell(it),
+      '<div class="tc tc--separator"></div>'
+    ];
+    return '<div class="tbl__row" data-row="' + it.rowNumber + '" style="grid-template-columns:' + headRow.style.gridTemplateColumns + ';">' + cells.join('') + '</div>';
+  }
+
+  function dataRows() {
+    return Array.prototype.filter.call(tbl.children, function (r) { return r.hasAttribute('data-row'); });
+  }
+  function itemById(id) {
+    return items.filter(function (x) { return String(x.rowNumber) === String(id); })[0];
+  }
+
+  var state = { page: 1, pageSize: 50 };
+  var activeFilter = null; /* null — не применён, иначе Set номеров строк */
+  var tableApi = null;
+
+  /* «Настроить колонки» скрывает и переставляет колонки: перерисованная строка
+     повторяет текущую шапку — видимые колонки, их порядок и ширины */
+  function fitToHead(row) {
+    var order = Array.prototype.map.call(headRow.children, function (h) { return h.getAttribute('data-col'); });
+    var kids = Array.prototype.slice.call(row.children);
+    var byCol = {};
+    kids.forEach(function (c) { var k = c.getAttribute('data-col'); if (k) byCol[k] = c; });
+    var plain = kids.filter(function (c) { return !c.getAttribute('data-col'); });
+    row.innerHTML = '';
+    order.forEach(function (k, i) {
+      if (k) { if (byCol[k]) row.appendChild(byCol[k]); }
+      else { var p = plain.shift(); if (p) row.appendChild(p); }
+    });
+    return row;
+  }
+  function mountRows() {
+    dataRows().forEach(function (r) { r.remove(); });
+    var wrap = document.createElement('div');
+    wrap.innerHTML = items.map(renderRow).join('');
+    var frag = document.createDocumentFragment();
+    Array.prototype.slice.call(wrap.children).forEach(function (r) { frag.appendChild(fitToHead(r)); });
+    headRow.parentNode.insertBefore(frag, headRow.nextSibling);
+    if (window.dsIcons) window.dsIcons.apply(tbl);
+    if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll();
+    tableApi = window.DSTable.wire(tbl);
+    if (tableApi && tableApi.rowsChanged) tableApi.rowsChanged();
+    applyLock();
+  }
+
+  /* ---------- пагинация, выбор, массовые действия ---------- */
+  function selectedIds() {
+    return Array.prototype.map.call(tbl.querySelectorAll('.tbl__row--selected'), function (r) { return r.dataset.row; });
+  }
+  function drawFooter(total) {
+    footerHost.innerHTML = '';
+    var sel = selectedIds();
+    var bulkKeys = ACTIONS[calcStatus].bulk;
+    var labels = { recalculate: 'Пересчитать' };
+    var actionList = bulkKeys.map(function (k) { return labels[k]; });
+    if (!ACTIONS[calcStatus].lockedUi && calcStatus !== 'APPROVED') actionList.push('Передавать в LP', 'Не передавать в LP');
+    var footer = window.DSPagination.footer({
+      selectionCount: sel.length,
+      bulk: { count: sel.length, actions: actionList },
+      info: { items: [['ФИ', String(total)]], warn: null },
+      pager: {
+        total: total, page: state.page, pageSize: state.pageSize,
+        onChange: function (p) { state.page = p; applyView(); },
+        onPageSizeChange: function (v) { state.pageSize = v; state.page = 1; applyView(); }
+      }
+    });
+    footerHost.appendChild(footer);
+    Array.prototype.forEach.call(footer.querySelectorAll('.pgn-bulk__actions .btn'), function (b) {
+      var label = b.textContent.trim();
+      if (ACTIONS[calcStatus].lockedUi) b.disabled = true;
+      b.addEventListener('click', function () { onBulk(label); });
+    });
+  }
+  function applyView() {
+    var all = dataRows();
+    var matched = activeFilter ? all.filter(function (r) { return activeFilter.has(r.dataset.row); }) : all;
+    var total = matched.length;
+    if (total === 0) {
+      all.forEach(function (r) { r.hidden = true; });
+      tbl.hidden = true; footerHost.hidden = true; emptyState.hidden = false;
+      return;
+    }
+    tbl.hidden = false; footerHost.hidden = false; emptyState.hidden = true;
+    var totalPages = window.DSPagination.totalPages(total, state.pageSize);
+    if (state.page > totalPages) state.page = totalPages;
+    var size = state.pageSize === 'all' ? total : state.pageSize;
+    var start = (state.page - 1) * size, end = start + size;
+    all.forEach(function (r) {
+      var idx = matched.indexOf(r);
+      r.hidden = idx < start || idx >= end;
+    });
+    drawFooter(total);
+  }
+  tbl.addEventListener('sort', function () { state.page = 1; applyView(); });
+  tbl.addEventListener('rowselect', function () { applyView(); });
+
+  /* ---------- шапка: статус, кнопки, меню по матрице ---------- */
+  var btnSend = document.getElementById('act-send');
+  var btnApprove = document.getElementById('act-approve');
+  var btnMenu = document.getElementById('act-menu-btn');
+  var menuEl = document.getElementById('calc-menu');
+
+  function readyToSend() {
+    return items.some(function (it) { return it.statusCode === 'FORMED' && it.sendToLp; });
+  }
+  function drawHeader() {
+    var a = ACTIONS[calcStatus];
+    var date = fmtDate(calcRec.calculationDate);
+    document.getElementById('calc-title').textContent = 'Расчет FV на ' + date;
+    /* крошки пересобирает рантайм ДС и теряет id — ищем по классу */
+    var crumb = document.querySelector('.crumbs__current');
+    if (crumb) crumb.textContent = 'Расчет FV на ' + date;
+    var step = LP_STEPS[calcStatus];
+    document.getElementById('calc-chips').innerHTML = '<span class="chip chip--s chip--rounded ' + TONES[calcStatus] + '"'
+      + (step ? ' id="calc-status-chip" role="button" tabindex="0" style="cursor:pointer" data-tooltip="' + esc(step.hint) + '"' : '')
+      + '><span class="chip__label">' + esc(CALC_LABELS[calcStatus]) + '</span></span>';
+
+    btnSend.hidden = a.send === 'none';
+    /* главная кнопка шапки одна: при «Утвердить» отправка — второстепенная */
+    var canApprove = a.approve && window.FV_APPROVE_ROLES.indexOf(userRole) >= 0;
+    btnSend.className = 'btn btn--m ' + (canApprove ? 'btn--outline' : 'btn--accent');
+    btnSend.disabled = a.lockedUi || (a.send === 'ifReady' && !readyToSend());
+    btnApprove.hidden = !canApprove;
+
+    menuEl.innerHTML = a.menu.map(function (k) {
+      return '<button type="button" class="menu__item" role="menuitem" data-menu-action="' + k + '"><span class="menu__item-label">' + esc(window.FV_MENU_ITEM_LABELS[k]) + '</span></button>';
+    }).join('');
+    btnMenu.disabled = a.menu.length === 0;
+    if (window.DSMenu && window.DSMenu.bindAll) window.DSMenu.bindAll();
+  }
+  function applyLock() {
+    var locked = ACTIONS[calcStatus].lockedUi;
+    Array.prototype.forEach.call(tbl.querySelectorAll('[data-row-recalc]'), function (b) { b.disabled = locked; });
+  }
+
+  /* ---------- подтверждения ---------- */
+  var pending = null;
+  function confirmAction(text, onOk) {
+    document.getElementById('confirm-text').innerHTML = text;
+    pending = onOk;
+    /* подтверждения открываются и поверх окна ФИ */
+    window.DSModal.open(document.getElementById('confirm-scrim'), { nested: true });
+  }
+  document.getElementById('confirm-ok').addEventListener('click', function () {
+    var fn = pending; pending = null;
+    window.DSModal.closeTop(true);
+    if (fn) fn();
+  });
+
+  function snack(tone, title, text) {
+    if (window.DSSnack) window.DSSnack.show({ tone: tone, title: title, text: text, dedup: true });
+  }
+
+  /* ---------- действия ---------- */
+  function refreshAll() {
+    drawHeader();
+    mountRows();
+    state.page = 1;
+    applyView();
+  }
+  function setItemFormed(it) {
+    it.statusCode = 'FORMED';
+    it.instruments.forEach(function (i) {
+      i.statusCode = 'FORMED'; i.xmlFileStateCode = 'GENERATED'; i.errorText = null;
+    });
+  }
+  /* «Формируется» → «Сформирован»: в прототипе через 2 с */
+  function startForming() {
+    calcStatus = 'FORMING';
+    refreshAll();
+    setTimeout(function () { calcStatus = 'FORMED'; refreshAll(); }, 2000);
+  }
+  function doSend() {
+    var ready = items.filter(function (it) { return it.statusCode === 'FORMED' && it.sendToLp; });
+    if (!ready.length) { snack('error', 'Ошибка', 'Нет данных для отправки в LP'); return; }
+    ready.forEach(function (it) {
+      it.statusCode = 'SENT_TO_LP';
+      it.instruments.forEach(function (i) { i.statusCode = 'SENT_TO_LP'; });
+    });
+    calcStatus = 'SENT_TO_LP';
+    refreshAll();
+  }
+  /* LP ответил: ФИ и инструменты из отправки двигаются на следующий статус */
+  function advanceLp() {
+    var step = LP_STEPS[calcStatus];
+    if (!step) return;
+    var from = calcStatus;
+    items.forEach(function (it) {
+      if (it.statusCode !== from) return;
+      it.statusCode = step.next;
+      it.instruments.forEach(function (i) {
+        if (i.statusCode !== from) return;
+        i.statusCode = step.next;
+        if (step.next === 'CALCULATED') i.fvAmount = 900800900.00;
+      });
+      if (step.next === 'CALCULATED') { it.fvAmount = 900800900.00; it.uploadedFvAmount = 900800900.00; it.deltaFvAmount = 0.00; }
+    });
+    calcStatus = step.next;
+    refreshAll();
+  }
+  document.getElementById('calc-chips').addEventListener('click', function (e) {
+    if (e.target.closest('#calc-status-chip')) advanceLp();
+  });
+  document.getElementById('calc-chips').addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('#calc-status-chip')) { e.preventDefault(); advanceLp(); }
+  });
+  function doApprove() { calcStatus = 'APPROVED'; refreshAll(); }
+
+  var DATE = function () { return fmtDate(calcRec.calculationDate); };
+  var FORMING_NOTE = 'Расчет перейдет в статус «Формируется».';
+
+  btnSend.addEventListener('click', function () {
+    confirmAction('Отправка данных в Loan Pricing', doSend);
+  });
+  btnApprove.addEventListener('click', function () {
+    confirmAction('Утверждение расчета FV на ' + DATE() + '.', doApprove);
+  });
+  menuEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-menu-action]');
+    if (!b) return;
+    var k = b.dataset.menuAction;
+    if (k === 'refresh') {
+      confirmAction('Обновление данных расчета FV на ' + DATE() + '.<br>Новые ФИ, при их наличии, будут добавлены в статусе «Сформирован». Данные и статусы в текущих ФИ не изменятся.',
+        function () { snack('info', 'Расчет обновлен', 'Новых ФИ нет'); });
+    } else if (k === 'recalculate') {
+      confirmAction('Пересчет расчета на ' + DATE() + '.<br>' + FORMING_NOTE, function () {
+        items.forEach(setItemFormed);
+        startForming();
+      });
+    } else if (k === 'exportXml' || k === 'exportXlsx') {
+      var fmt = k === 'exportXml' ? 'xml' : 'xlsx';
+      downloadModal.open({
+        encrypted: ENCRYPTED, title: 'Выгрузка расчета на ' + DATE(),
+        /* ошибка выгрузки всего расчета — снекбар; успех — тост */
+        fail: function () { snack('error', 'Не удалось выгрузить файл', 'При выгрузке файла произошла ошибка. Попробуйте еще раз.'); },
+        ok: function () { snack('success', 'Файл выгружен', 'Расчет на ' + DATE() + ' выгружен в ' + fmt.toUpperCase() + '.'); },
+        file: 'fv-' + fmt
+      });
+    }
+  });
+
+  function recalcItems(list, text) {
+    confirmAction(text + '<br>' + FORMING_NOTE, function () {
+      list.forEach(setItemFormed);
+      startForming();
+    });
+  }
+  function onBulk(label) {
+    var list = selectedIds().map(itemById).filter(Boolean);
+    if (label === 'Пересчитать') {
+      recalcItems(list, 'Пересчет выбранных ФИ.');
+    } else {
+      var on = label === 'Передавать в LP';
+      confirmAction((on ? 'Включение' : 'Отключение') + ' передачи в LP для выбранных ФИ.', function () {
+        list.forEach(function (it) { it.sendToLp = on; });
+        redrawKeepSelection();
+      });
+    }
+  }
+  /* перерисовать строки и шапку, сохранив выбор строк */
+  function redrawKeepSelection() {
+    var keep = selectedIds();
+    mountRows();
+    Array.prototype.forEach.call(tbl.querySelectorAll('.tbl__row[data-row]'), function (r) {
+      if (keep.indexOf(r.dataset.row) >= 0) {
+        var cb = r.querySelector('.cb__input');
+        if (cb) { cb.checked = true; r.classList.add('tbl__row--selected'); r.setAttribute('aria-selected', 'true'); }
+      }
+    });
+    drawHeader();
+    applyView();
+  }
+
+  /* ---------- окно выгрузки ----------
+     Сеть Сигма (внешний интернет) — с шифрованием, Альфа (внутренняя сеть) —
+     без; по умолчанию Альфа, переключает ?net=sigma (позже панель прототипа).
+     ?download=fail — демо ошибки выгрузки. Сама выгрузка в прототипе имитируется. */
+  var ENCRYPTED = q.get('net') === 'sigma';
+  var downloadModal = window.PostDownloadReportModal.bind(
+    document.getElementById('fv-download-scrim'),
+    document.getElementById('fv-download-plain-scrim'), {
+      employees: window.MOCK_FV_EMPLOYEES,
+      run: function (ctx) {
+        if (q.get('download') === 'fail') { if (ctx.fail) ctx.fail(); } else if (ctx.ok) ctx.ok();
+      }
+    });
+
+  /* ---------- окно ФИ ---------- */
+  var itemModal = window.PostFairValueUserMetricsModal.bind(document.getElementById('fv-metrics-scrim'), {
+    confirm: confirmAction,
+    upload: window.PostFairValueInstrumentablesUploadFileModal.bind(document.getElementById('fv-upload-scrim'), {
+      /* демо: ?upload=fail — файл не загружается, в окне ФИ Alert */
+      fails: function () { return q.get('upload') === 'fail'; }
+    }),
+    onChange: redrawKeepSelection,
+    /* выгрузка шаблона файла инструмента — всегда просто подтверждение действия, без выбора
+       сотрудников; ошибка — алерт в окне ФИ, успех — тост */
+    exportFile: function (item, inst) {
+      downloadModal.open({
+        encrypted: false,
+        fail: function () { itemModal.showError('Не удалось выгрузить файл'); },
+        ok: function () { snack('success', 'Файл выгружен', 'Шаблон файла инструмента ' + inst.instrumentCode + '. ' + inst.instrumentName + ' выгружен.'); },
+        file: 'instrument-' + inst.instrumentCode
+      });
+    }
+  });
+
+  /* действия строки: пересчет и открытие окна ФИ */
+  tbl.addEventListener('click', function (e) {
+    var rc = e.target.closest('[data-row-recalc]');
+    if (rc) {
+      var it = itemById(rc.dataset.rowRecalc);
+      if (it) recalcItems([it], 'Пересчет ФИ «' + esc(it.itemName) + '».');
+      return;
+    }
+    var op = e.target.closest('[data-row-edit], [data-row-open]');
+    if (op) {
+      e.preventDefault();
+      var id = op.dataset.rowEdit || op.dataset.rowOpen;
+      itemModal.open(itemById(id), { calcStatus: calcStatus, userRole: userRole });
+    }
+  });
+
+  /* двойной клик по строке открывает окно ФИ (кнопки, ссылки и чекбокс — своё) */
+  tbl.addEventListener('dblclick', function (e) {
+    var row = e.target.closest('.tbl__row[data-row]');
+    if (!row || e.target.closest('button, a, .cb, .tc--select')) return;
+    var it = itemById(row.dataset.row);
+    if (it) itemModal.open(it, { calcStatus: calcStatus, userRole: userRole });
+  });
+
+  /* ---------- фильтр ---------- */
+  var FIELD = {
+    name: 'f-item-name', type: 'f-item-type', cp: 'f-counterparty',
+    status: 'f-status', send: 'f-send', dealNo: 'f-deal-number', dealName: 'f-deal-name'
+  };
+  function el(k) { return document.getElementById(FIELD[k]); }
+  function val(k) { return el(k).value.trim(); }
+
+  function fillList(listId, labels) {
+    var list = document.getElementById(listId);
+    list.innerHTML = labels.map(function (n) {
+      return '<button class="ddl__item" role="option" aria-selected="false"><span class="ddl__item-body"><span class="ddl__item-label">' + esc(n) + '</span></span></button>';
+    }).join('');
+  }
+  var typeNames = [];
+  items.forEach(function (it) { if (typeNames.indexOf(it.itemTypeName) < 0) typeNames.push(it.itemTypeName); });
+  fillList('f-item-type-list', typeNames);
+  fillList('f-status-list', Object.keys(ITEM_LABELS).map(function (k) { return ITEM_LABELS[k]; }));
+  fillList('f-send-list', ['Передается', 'Не передается']);
+  [['f-item-type', 'f-item-type-list'], ['f-status', 'f-status-list'], ['f-send', 'f-send-list']].forEach(function (p) {
+    var field = document.querySelector('[data-ddl="' + p[1] + '"]');
+    window.DSDropdownList.bind(field, {
+      onSelect: function (item) {
+        document.getElementById(p[0]).value = item.querySelector('.ddl__item-label').textContent;
+        syncBadge();
+      }
+    });
+    field.closest('.inp').addEventListener('ds-input:clear', function () { document.getElementById(p[0]).value = ''; syncBadge(); });
+  });
+
+  var badge = document.getElementById('tfm-badge');
+  var bar = document.querySelector('.tfilter');
+  function filledCount() {
+    return Object.keys(FIELD).filter(function (k) { return val(k) !== ''; }).length;
+  }
+  function syncBadge() {
+    var n = filledCount();
+    badge.textContent = String(n);
+    badge.hidden = n === 0;
+  }
+  function drawApplied(n) {
+    var chip = bar.querySelector('.tfilter__applied');
+    if (n === 0) { if (chip) chip.remove(); return; }
+    if (!chip) {
+      chip = document.createElement('span');
+      chip.className = 'chip chip--edit chip--m tfilter__applied';
+      chip.tabIndex = 0;
+      chip.innerHTML = '<span class="chip__label"></span><span class="chip__remove" role="button" aria-label="Сбросить все фильтры"><i data-icon="close"></i></span>';
+      bar.appendChild(chip);
+      if (window.dsIcons) window.dsIcons.apply(chip);
+    }
+    chip.querySelector('.chip__label').textContent = 'Применено: ' + n;
+  }
+  Object.keys(FIELD).forEach(function (k) { el(k).addEventListener('input', syncBadge); });
+
+  function has(hay, needle) { return String(hay).toLowerCase().indexOf(needle.toLowerCase()) >= 0; }
+  function matches(it) {
+    if (val('name') && !has(it.itemName, val('name'))) return false;
+    if (val('type') && it.itemTypeName !== val('type')) return false;
+    if (val('cp') && !has(it.counterpartyName, val('cp'))) return false;
+    if (val('status') && ITEM_LABELS[itemStatus(it)] !== val('status')) return false;
+    if (val('send') && (val('send') === 'Передается') !== it.sendToLp) return false;
+    if (val('dealNo') && !has(it.dealNumber, val('dealNo'))) return false;
+    if (val('dealName') && !has(it.dealName, val('dealName'))) return false;
+    return true;
+  }
+  function applyFilters() {
+    var n = filledCount();
+    activeFilter = n === 0 ? null : new Set(items.filter(matches).map(function (it) { return String(it.rowNumber); }));
+    drawApplied(n);
+    state.page = 1;
+    applyView();
+  }
+  function resetFields() {
+    Object.keys(FIELD).forEach(function (k) { el(k).value = ''; });
+    syncBadge();
+    if (window.DSInput) window.DSInput.syncAll(document.getElementById('filter-scrim') || document);
+  }
+  document.getElementById('tf-apply').addEventListener('click', function () { applyFilters(); window.DSModal.closeTop(true); });
+  document.getElementById('tf-clear').addEventListener('click', function () { resetFields(); applyFilters(); });
+  document.getElementById('fi-empty-clear').addEventListener('click', function () { resetFields(); applyFilters(); });
+  bar.addEventListener('tfilter:reset', function () { resetFields(); activeFilter = null; state.page = 1; applyView(); });
+  syncBadge();
+
+  /* ---------- старт ---------- */
+  drawHeader();
+  mountRows();
+  applyView();
+})();
+</script>
+
+</body>
+</html>

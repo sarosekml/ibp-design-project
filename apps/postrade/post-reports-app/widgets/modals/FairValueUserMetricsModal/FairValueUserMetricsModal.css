@@ -1,0 +1,23 @@
+/* Окно ФИ расчета FV: сетки полей и заголовок таблицы инструментов.
+   Окно, Alert, поля, чекбокс и таблица — компоненты ДС; здесь только
+   раскладка тела (зазор между блоками — как у модалок ДС). */
+
+.lc-fv-metrics .modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* Сводка ФИ — четыре поля в ряд; поля ввода — три в ряд, подсказки под ними.
+   Зазоры задаём сами: переменные зазора тайла вне тайла не определены. */
+.lc-fv-metrics__summary,
+.lc-fv-metrics__inputs { gap: var(--space-16) var(--space-16); }
+.lc-fv-metrics__summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lc-fv-metrics__inputs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Заголовок таблицы инструментов — H6 Strong. */
+.lc-fv-metrics__heading {
+  margin: 0;
+  font: var(--type-h6-strong);
+  color: var(--text-primary);
+}

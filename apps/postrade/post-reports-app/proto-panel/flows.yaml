@@ -1,0 +1,222 @@
+# Сценарии показа прототипа Post — Отчёты — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 26
+flows:
+  - id: register
+    title: Реестр расчетов FV
+    desc: Таблица расчетов, фильтр и формирование нового расчета
+    steps:
+      - state: 1
+        id: register-open
+        title: Реестр расчетов
+        page: FairValueRegister.preview.html
+        note: Переход на страницу расчета — двойным кликом по строке.
+      - state: 2
+        id: register-new
+        title: Новый расчет
+        note: Расчет на уже существующую дату не формируется — Alert в окне.
+        do:
+          - click: '[data-modal="create-fv-scrim"]'
+          - waitFor: '#create-fv-date'
+      - state: 26
+        id: register-file-error
+        title: Ошибка файла при загрузке FV
+        page: FairValueRegister.preview.html?file=format
+        note: Снекбар с ошибкой файла; другие варианты — ?file=empty, ?file=structure, ?file=size.
+        do:
+          - click: '[data-menu="fv-register-menu"]'
+          - click: '[data-fv-upload="fv"]'
+          - click: '#upload-stub-pick'
+          - waitFor: '.snack--error'
+
+  - id: statuses-financier
+    title: Статусы расчета, финансист
+    desc: Кнопки и меню «⋮» по статусу расчета, роль «Финансист и другие»
+    steps:
+      - state: 3
+        id: st-forming
+        title: Формируется
+        page: FairValueCalculation.preview.html?id=17&role=FINANCIER
+        note: Кнопки и меню выключены, пока расчет формируется.
+      - state: 4
+        id: st-formed
+        title: Сформирован
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER
+        note: Доступна «Отправить в LP»; строки можно править до отправки и после.
+      - state: 5
+        id: st-sent
+        title: Отправлен в LP
+        page: FairValueCalculation.preview.html?id=15&role=FINANCIER
+        note: В меню «Обновить», «Выгрузить в XML», «Выгрузить в xlsx».
+      - state: 6
+        id: st-calculating
+        title: Рассчитывается LP
+        page: FairValueCalculation.preview.html?id=14&role=FINANCIER
+      - state: 7
+        id: st-calculated
+        title: Рассчитан
+        page: FairValueCalculation.preview.html?id=13&role=FINANCIER
+        note: У финансиста нет кнопки «Утвердить»; повторная отправка в LP разрешена.
+      - state: 8
+        id: st-error
+        title: Ошибка
+        page: FairValueCalculation.preview.html?id=11&role=FINANCIER
+        note: Кнопки «Отправить в LP» нет — сначала «Пересчитать».
+      - state: 9
+        id: st-approved
+        title: Утвержден
+        page: FairValueCalculation.preview.html?id=12&role=FINANCIER
+
+  - id: statuses-risk
+    title: Роль «Риск-менеджер»
+    desc: Утверждение расчета
+    steps:
+      - state: 10
+        id: risk-calculated
+        title: Рассчитан — есть «Утвердить»
+        page: FairValueCalculation.preview.html?id=13&role=RISK_MANAGER
+        note: «Утвердить» видна только риск-менеджеру и только в статусе «Рассчитан».
+      - state: 11
+        id: risk-approve-confirm
+        title: Подтверждение утверждения
+        do:
+          - click: '#act-approve'
+          - waitFor: '#confirm-ok'
+      - state: 12
+        id: risk-approved
+        title: Расчет утвержден
+        do:
+          - click: '#confirm-ok'
+          - waitFor: '#calc-chips'
+
+  - id: item-window
+    title: Окно ФИ
+    desc: Правка рейтинга, LGD, ставки ПАО и файлы инструментов
+    steps:
+      - state: 13
+        id: item-open
+        title: Окно ФИ
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER
+        note: Открывается двойным кликом по строке, по наименованию ФИ или карандашом.
+        do:
+          - click: '[data-row-edit="168"]'
+          - waitFor: '[data-fv-save]'
+      - state: 14
+        id: item-save-confirm
+        title: Подтверждение сохранения
+        note: Правки попадают в данные только после подтверждения; ФИ становится «Сформирован».
+        do:
+          - fill:
+              target: '#fv-m-rating'
+              value: '30'
+          - click: '[data-fv-save]'
+          - waitFor: '#confirm-ok'
+      - state: 15
+        id: item-upload-error
+        title: Загрузка файла не удалась
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER&upload=fail
+        note: Alert «Не удалось загрузить файл» в окне ФИ.
+        do:
+          - click: '[data-row-edit="168"]'
+          - waitFor: '[data-fv-save]'
+          - click: '[data-fv-act="upload"]'
+          - waitFor: '#confirm-ok'
+
+  - id: download-alfa
+    title: Выгрузка без шифрования (сеть Альфа)
+    desc: Подтверждение действия; ошибка выгрузки расчета — снекбар
+    steps:
+      - state: 16
+        id: dl-alfa-confirm
+        title: Подтверждение действия
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER
+        do:
+          - click: '#act-menu-btn'
+          - click: '[data-menu-action="exportXml"]'
+          - waitFor: '[data-fv-dl-confirm]'
+      - state: 25
+        id: dl-alfa-success
+        title: Файл выгружен — тост
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER
+        note: После подтверждения выгрузка завершается тостом «Файл выгружен».
+        do:
+          - click: '#act-menu-btn'
+          - click: '[data-menu-action="exportXml"]'
+          - click: '[data-fv-dl-confirm]'
+          - waitFor: '.snack--success'
+      - state: 17
+        id: dl-alfa-error
+        title: Ошибка выгрузки — снекбар
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER&download=fail
+        note: Ошибка всего расчета показывается снекбаром.
+        do:
+          - click: '#act-menu-btn'
+          - click: '[data-menu-action="exportXml"]'
+          - click: '[data-fv-dl-confirm]'
+          - waitFor: '.snack--error'
+
+  - id: download-sigma
+    title: Выгрузка с шифрованием (сеть Сигма)
+    desc: Выбор сотрудников, которым будет доступен файл
+    steps:
+      - state: 18
+        id: dl-sigma-open
+        title: Выгрузка расчета
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER&net=sigma
+        do:
+          - click: '#act-menu-btn'
+          - click: '[data-menu-action="exportXlsx"]'
+          - waitFor: '[data-fv-dl-submit]'
+      - state: 19
+        id: dl-sigma-email
+        title: Добавлен сотрудник по e-mail
+        note: Адрес вне справочника попадает в колонку своего домена.
+        do:
+          - fill:
+              target: '#fv-dl-email'
+              value: PetrovAA@sberbank.ru
+          - click: '[data-fv-dl-add-email]'
+      - state: 20
+        id: dl-sigma-error
+        title: Ошибка выгрузки файла инструмента
+        page: FairValueCalculation.preview.html?id=16&role=FINANCIER&net=sigma&download=fail
+        note: Для файла инструмента ошибка — Alert в окне ФИ, для расчета — снекбар.
+        do:
+          - click: '[data-row-edit="168"]'
+          - waitFor: '[data-fv-save]'
+          - click: '[data-fv-act="exportTemplate"]'
+          - waitFor: '[data-fv-dl-confirm]'
+          - click: '[data-fv-dl-confirm]'
+          - waitFor: '[data-fv-error]'
+
+  - id: lp-movement
+    title: Движение статусов после отправки в LP
+    desc: Ответ LP имитируется кликом по чипу статуса в шапке
+    steps:
+      - state: 21
+        id: lp-formed
+        title: Сформирован
+        page: FairValueCalculation.preview.html?id=16&role=RISK_MANAGER
+        note: Нажмите «Отправить в LP» и подтвердите.
+      - state: 22
+        id: lp-sent
+        title: Отправлен в LP
+        note: Чип статуса в шапке — демо-триггер ответа LP.
+        do:
+          - click: '#act-send'
+          - click: '#confirm-ok'
+          - waitFor: '#calc-status-chip'
+      - state: 23
+        id: lp-calculating
+        title: Рассчитывается LP
+        do:
+          - click: '#calc-status-chip'
+      - state: 24
+        id: lp-calculated
+        title: Рассчитан
+        note: Появились суммы FV; риск-менеджеру доступна «Утвердить».
+        do:
+          - click: '#calc-status-chip'
+          - waitFor: '#act-approve'
