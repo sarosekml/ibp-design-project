@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 308.
+Документов: 328.
 
 ## Корень (4)
 
@@ -236,7 +236,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (142)
+## Приложения (161)
 
 | Документ | Аннотация |
 |---|---|
@@ -472,6 +472,15 @@
 | [apps/postrade/drafts/tranche-page/pages/index.screen.md](../apps/postrade/drafts/tranche-page/pages/index.screen.md) | Главная концепта «Страница транша» |
 | [apps/postrade/drafts/tranche-page/proto-panel/comments.md](../apps/postrade/drafts/tranche-page/proto-panel/comments.md) | Комментарии к прототипу |
 
+### apps/postrade/drafts/tranche-page-v02
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/tranche-page-v02/pages/RsbuHards.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/RsbuHards.screen.md) | Харды в РСБУ |
+| [apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/drafts/tranche-page-v02/pages/index.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/index.screen.md) | Главная концепта «Страница транша v02» |
+| [apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md) | Комментарии к прототипу |
+
 ### apps/postrade/payments-app
 
 | Документ | Аннотация |
@@ -483,6 +492,21 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/postrade/post-reports-app/README.md](../apps/postrade/post-reports-app/README.md) | post-reports-app — модуль раздела postrade |
+| [apps/postrade/post-reports-app/pages/FairValueCalculation.screen.md](../apps/postrade/post-reports-app/pages/FairValueCalculation.screen.md) | Расчет FV |
+| [apps/postrade/post-reports-app/pages/FairValueRegister.screen.md](../apps/postrade/post-reports-app/pages/FairValueRegister.screen.md) | Реестр расчетов FV |
+| [apps/postrade/post-reports-app/proto-panel/comments.md](../apps/postrade/post-reports-app/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/post-reports-app/widgets/modals/CreateFairValueCalculationModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/CreateFairValueCalculationModal/CHANGELOG.md) | Окно формирования нового расчета FV (CreateFairValueCalculationModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/CreateFairValueCalculationModal/CreateFairValueCalculationModal.md](../apps/postrade/post-reports-app/widgets/modals/CreateFairValueCalculationModal/CreateFairValueCalculationModal.md) | Widget: CreateFairValueCalculationModal — Окно формирования нового расчета |
+| [apps/postrade/post-reports-app/widgets/modals/DownloadReportModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/DownloadReportModal/CHANGELOG.md) | Выгрузка расчета FV (DownloadReportModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/DownloadReportModal/DownloadReportModal.md](../apps/postrade/post-reports-app/widgets/modals/DownloadReportModal/DownloadReportModal.md) | Widget: DownloadReportModal — Выгрузка расчета FV |
+| [apps/postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/CHANGELOG.md) | Окно «Данные по инструменту» (FairValueInstrumentablesUploadFileModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.md](../apps/postrade/post-reports-app/widgets/modals/FairValueInstrumentablesUploadFileModal/FairValueInstrumentablesUploadFileModal.md) | Widget: FairValueInstrumentablesUploadFileModal — Окно «Данные по инструменту» |
+| [apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/CHANGELOG.md) | Окно ФИ расчета FV (FairValueUserMetricsModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.md](../apps/postrade/post-reports-app/widgets/modals/FairValueUserMetricsModal/FairValueUserMetricsModal.md) | Widget: FairValueUserMetricsModal — Окно ФИ расчета FV |
+| [apps/postrade/post-reports-app/widgets/modals/ReservesFvComponentsModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/ReservesFvComponentsModal/CHANGELOG.md) | Окно «Данные FV» с компонентами (ReservesFvComponentsModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/ReservesFvComponentsModal/ReservesFvComponentsModal.md](../apps/postrade/post-reports-app/widgets/modals/ReservesFvComponentsModal/ReservesFvComponentsModal.md) | Widget: ReservesFvComponentsModal — Окно «Данные FV» с компонентами |
+| [apps/postrade/post-reports-app/widgets/modals/ReservesFvModal/CHANGELOG.md](../apps/postrade/post-reports-app/widgets/modals/ReservesFvModal/CHANGELOG.md) | Окно «Данные FV» (ReservesFvModal) — журнал изменений |
+| [apps/postrade/post-reports-app/widgets/modals/ReservesFvModal/ReservesFvModal.md](../apps/postrade/post-reports-app/widgets/modals/ReservesFvModal/ReservesFvModal.md) | Widget: ReservesFvModal — Окно «Данные FV» |
 
 ### apps/pretrade/b3-opportunities-app
 
@@ -548,7 +572,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (50)
+## Задачи и заметки (51)
 
 ### Архив/черновики
 
@@ -597,6 +621,7 @@
 | [docs/tasks/RE0009-ds-scroll-dark.md](tasks/RE0009-ds-scroll-dark.md) | Оверлейные полосы прокрутки и читаемость тёмной темы |
 | [docs/tasks/RE0010-ds-scroll-dark-2.md](tasks/RE0010-ds-scroll-dark-2.md) | Скролл без системной полосы, слои тёмной темы, фокус списка, тёмная иллюстрация |
 | [docs/tasks/RE0011-ds-illustrations-dark.md](tasks/RE0011-ds-illustrations-dark.md) | Тёмные варианты иллюстраций и фон главной |
+| [docs/tasks/RE0012-fv-calculation.md](tasks/RE0012-fv-calculation.md) | Расчет FV: реестр расчетов, страница расчета, окна ФИ и выгрузки |
 
 ### Снимки задач
 
