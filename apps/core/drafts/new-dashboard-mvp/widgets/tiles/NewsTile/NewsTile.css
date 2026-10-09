@@ -1,0 +1,87 @@
+/* Локальный компонент «Новости по клиентам» (NewsTile).
+   Только внутренняя раскладка, показ своих блоков по data-state и тон
+   поверхности. Цвета, шрифты, отступы — токены ДС. */
+
+.lc-news { container-type: inline-size; }
+
+/* Тон поверхности — осознанное отклонение (паспорт, «Осознанные
+   отклонения»): у Tile ДС тона нет. Подложка — --primary-bg, та же, что у
+   выбранной Card и Entity, поверх фона страницы. Селектор двойной: правило
+   ДС .tile задаёт фон той же специфичностью. */
+.tile.lc-news { background: var(--primary-bg); }
+
+.lc-news__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+.lc-news__scope { align-self: stretch; }
+
+.lc-news__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+.lc-news__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.lc-news__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+}
+.lc-news__source {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-dark);
+}
+.lc-news__open { margin-left: auto; }
+.lc-news__title {
+  margin: 0;
+  font: var(--type-body-m-strong);
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.lc-news__text {
+  margin: 0;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.lc-news__loading { flex-direction: column; gap: var(--space-24); }
+.lc-news__empty {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+.lc-news__foot { margin-top: auto; }
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-news__loading,
+.lc-news__empty,
+.lc-news__error,
+.lc-news__busy { display: none; }
+
+.lc-news[data-state="loading"] .lc-news__loading { display: flex; }
+.lc-news[data-state="empty"] .lc-news__empty,
+.lc-news[data-state="error"] .lc-news__error { display: block; }
+.lc-news[data-state="updating"] .lc-news__busy { display: inline-block; }
+
+.lc-news:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-news__list, .lc-news__foot) { display: none; }
+.lc-news:is([data-state="loading"], [data-state="error"]) .lc-news__scope { display: none; }
+.lc-news:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-news__busy) { display: none; }

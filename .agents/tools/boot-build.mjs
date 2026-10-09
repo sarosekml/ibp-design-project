@@ -117,19 +117,22 @@ export function render(P) {
     + '  try {\n'
     + '    var tm = /[?&]theme=([^&#]*)/.exec(window.location.search || \'\');\n'
     + '    var th = tm ? decodeURIComponent(tm[1]) : window.localStorage.getItem(\'ds.theme\');\n'
-    + '    if (th && th !== \'legacy\') document.documentElement.setAttribute(\'data-theme\', th);\n'
+    + '    if (th === \'ibp-light\') th = \'ibp-neo-light\';\n'
+    + '    if (th === \'ibp-dark\') th = \'ibp-neo-dark\';\n'
+    + '    if (th && th !== \'legacy\' && th !== \'ibp-legacy\') document.documentElement.setAttribute(\'data-theme\', th);\n'
     + '  } catch (e) { /* хранилище недоступно, ?theme= нет — legacy */ }\n'
     + '  /* Фон стартовой страницы (Illustrations): под тёмной темой — тёмный\n'
     + '     вариант; ставится после темы и обновляется на её смену (RE0011). */\n'
     + '  var applyBg = function () {\n'
     + '    var thNow = document.documentElement.getAttribute(\'data-theme\');\n'
-    + '    var dark = thNow === \'ibp-dark\' || thNow === \'service\';\n'
+    + '    var dark = /-dark$/.test(thNow || \'\') || thNow === \'service\';\n'
     + '    document.documentElement.style.setProperty(\'--boot-bg-illustration\', \'url("\' + DS + \'assets/illustrations/background-illustration\' + (dark ? \'-dark\' : \'\') + \'.svg")\');\n'
     + '  };\n'
     + '  applyBg();\n'
     + '  if (document.addEventListener) document.addEventListener(\'ds:themechange\', applyBg);\n'
     + '  document.write(\'<link rel="icon" type="image/svg+xml" href="\' + DS + \'assets/logo.svg">\');\n'
     + '  document.write(\'<link rel="stylesheet" href="\' + DS + \'ds.css">\');\n'
+    + '  document.write(\'<scr\' + \'ipt src="\' + DS + \'foundations/Themes/ThemeBoot.js"><\\/scr\' + \'ipt>\');\n'
     + '})();\n';
   const body = bodyNote
     + '/* Тег вместо ds.js, перед экранным скриптом. Дополнительные скрипты ДС —\n'
@@ -313,7 +316,9 @@ function selftest() {
   /* Тема ДС (RE0005): первый тег ставит data-theme из ?theme= или localStorage;
      «legacy», пусто и отсутствие — без атрибута. Проверяется исполнением. */
   const HEAD = render(P)['boot/ds-head.js'];
-  const themeOk = runHead(HEAD, '?theme=ibp-dark', {})['data-theme'] === 'ibp-dark'
+  const themeOk = runHead(HEAD, '?theme=ibp-dark', {})['data-theme'] === 'ibp-neo-dark'
+    && runHead(HEAD, '', { 'ds.theme': 'ibp-light' })['data-theme'] === 'ibp-neo-light'
+    && runHead(HEAD, '?theme=ibp-legacy', {})['data-theme'] === undefined
     && runHead(HEAD, '', { 'ds.theme': 'service' })['data-theme'] === 'service'
     && runHead(HEAD, '?theme=legacy', { 'ds.theme': 'service' })['data-theme'] === undefined
     && runHead(HEAD, '', {})['data-theme'] === undefined;
@@ -346,7 +351,14 @@ function selftest() {
   try { new Function(render(PP)['apps/ds-body.js']); } catch (e) { parsedPanel = false; out.push('FAIL  загрузчик со строкой панели не разбирается как JS: ' + e.message); }
   if (!parsedPanel) failed++;
   else out.push('ok    загрузчик со строкой панели разбирается как JS');
-  const total = CASES.length + 7;
+  /* MS0013: окно тем раньше добирало CSS, нужный самой doc-странице.
+     Исполняем настоящий загрузчик; откат его блока обязан провалить кейс. */
+  const real=need('boot-build',HERE),docBoot=readFileSync(path.join(real.root,real.ds,'docs-kit/ds-theme-boot.js'),'utf8');
+  function docWrites(source,existing){const written=[];vm.runInNewContext(source,{URL,window:{__DS_ROOT:'https://fixture/ds/',location:{search:''},localStorage:{getItem:()=>null}},document:{currentScript:{src:'https://fixture/ds/docs-kit/ds-theme-boot.js'},documentElement:{setAttribute(){},removeAttribute(){}},querySelector:s=>existing&&s.includes(existing)?{}:null,write:s=>written.push(s)}},{timeout:1000});return written;}
+  const deps=['IconButton.css','Buttons.css','Link.css'],hasDeps=w=>deps.every(file=>w.some(tag=>tag.includes('/'+file+'"')));
+  const begin=docBoot.indexOf("  ['components/atoms/IconButton"),end=docBoot.indexOf("  document.write('<link rel=\"stylesheet\" href=\"' + ROOT + 'foundations/Themes/Themes.css");
+  for(const [name,ok] of [['doc-загрузчик сохраняет CSS зависимостей окна',hasDeps(docWrites(docBoot))],['doc-загрузчик не дублирует подключённый Buttons.css',!docWrites(docBoot,'Buttons.css').some(x=>x.includes('/Buttons.css"'))],['откат CSS зависимостей отвергается',begin>=0&&end>begin&&!hasDeps(docWrites(docBoot.slice(0,begin)+docBoot.slice(end)))]]){if(!ok)failed++;out.push((ok?'ok    ':'FAIL  ')+name);}
+  const total = CASES.length + 10;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);

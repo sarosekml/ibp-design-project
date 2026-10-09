@@ -1,0 +1,576 @@
+<!-- @dsCard group="Components" name="Note" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note — Дизайн-система</title>
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="Note.css">
+<link rel="stylesheet" href="../Link/Link.css">
+<link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../../molecules/Inputs/Inputs.css">
+<link rel="stylesheet" href="../Buttons/Buttons.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<style>
+  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+
+  /* ---------- playground ---------- */
+  .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center; background: var(--bg-page); }
+  .ctl { display:flex; flex-direction:column; gap:10px; }
+  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+
+  /* ---------- demo layout ---------- */
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:680px){ .cols2{ grid-template-columns:1fr; } }
+  .cols3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols3{ grid-template-columns:1fr; } }
+  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin:0 0 7px; }
+  .demo-stack { display:flex; flex-direction:column; gap:12px; }
+
+  /* ---------- do / don't ---------- */
+  .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
+  .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+
+  /* ---------- Note demo ---------- */
+  #use-form .note, #use-modal .note { margin-top:4px; }
+</style>
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="Note">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="pg__stage" id="pg-stage"></div>
+        <p class="pg__code" id="pg-code"></p>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+    <div class="meta"><span>Версия: <b>1.000</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Компоненты</p>
+    <h1>Note</h1>
+    <p class="lead">Заметка — нейтральное пояснение «иконка + вторичный текст» в потоке: под формой, в модальном окне, в тайле. Без заливки, рамки и полей — встаёт между блоками как строка текста. Это не статус (статус — <a class="inl" href="../../molecules/Alert/Alert.html">Alert</a>) и не подпись поля (подпись — <a class="inl" href="../LabelHelper/LabelHelper.html">LabelHelper</a>).</p>
+  </header>
+
+  <!-- USAGE -->
+  <section class="section" data-screen-label="Usage">
+    <h2>Использование</h2>
+    <p class="desc">Заметка поясняет блок целиком: срок, условие, что произойдёт дальше. Стоит под формой или группой полей, в теле модального окна, в подвале пошаговой формы.</p>
+    <div class="cols2">
+      <div class="panel">
+        <p class="demo-rowlabel">Под формой — S, акцент</p>
+        <div class="demo-stack" id="use-form"></div>
+      </div>
+      <div class="panel">
+        <p class="demo-rowlabel">В модальном окне — XS, нейтральная</p>
+        <div class="demo-stack" id="use-modal"></div>
+      </div>
+    </div>
+
+<div class="subsec" data-screen-label="WhenToUse">
+    <h3>Когда использовать</h3>
+    <ul class="bullets" style="margin-bottom:26px;">
+      <li>пояснить срок или условие для всего блока: «Подготовка отчёта обычно занимает до 30 минут»;</li>
+      <li>сказать, что будет после действия, не отвлекая от формы.</li>
+    </ul>
+    <p class="desc">Не используйте заметку для статуса — ошибка, предупреждение, успех показываются <a class="inl" href="../../molecules/Alert/Alert.html">Alert</a>. Пояснение к одному полю — хелпер поля (<a class="inl" href="../LabelHelper/LabelHelper.html">LabelHelper</a>). Кнопок в заметке нет — действие выносится в кнопку рядом с блоком.</p>
+  </div>
+
+<div class="subsec" data-screen-label="Guidelines">
+    <h3>Правила</h3>
+    <div class="guide">
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good1"></span>Так</div>
+        <div class="guide-card__body" id="guide-good1"></div>
+        <p class="guide-card__cap">Заметка поясняет: срок, условие, что будет дальше.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad1"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad1"></div>
+        <p class="guide-card__cap">Ошибка в нейтральной заметке теряется — статус показывает Alert.</p>
+      </div>
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good2"></span>Так</div>
+        <div class="guide-card__body" id="guide-good2"></div>
+        <p class="guide-card__cap">Одна мысль, одна-две строки, без кнопок.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad2"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad2"></div>
+        <p class="guide-card__cap">Кнопка в заметке — не её работа: действие — отдельной кнопкой у блока.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section class="section" data-screen-label="Anatomy">
+    <h2>Анатомия</h2>
+    <p class="desc">Иконка и текст в одну строку. Фона, рамки и полей нет — линию над заметкой, если она нужна, рисует контейнер.</p>
+    <div class="panel">
+      <ol class="bullets">
+        <li><b>Иконка</b> (<code class="tok">.note__icon</code>) — декоративная, <code class="tok">aria-hidden</code>. Коробка иконки высотой в строку текста: глиф стоит по центру первой строки.</li>
+        <li><b>Текст</b> (<code class="tok">.note__text</code>) — <code class="tok">--text-secondary</code>, переносится по словам; внутри допустима ссылка <a class="inl" href="../Link/Link.html">Link</a> (<code class="tok">.link--inline</code>).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- VARIANTS -->
+  <section class="section" data-screen-label="Variants">
+    <h2>Варианты</h2>
+    <p class="desc">Оси конфигурации компонента — каждая описана отдельным подразделом.</p>
+
+<div class="subsec" data-screen-label="Tone">
+    <h3>Тон иконки</h3>
+    <p class="desc">По умолчанию иконка красится <code class="tok">--secondary</code> — штатным цветом иконки ДС. Модификатор <code class="tok">.note--accent</code> красит её <code class="tok">--primary</code>: заметка в подвале формы, на которую стоит обратить внимание. Текст в обоих тонах — <code class="tok">--text-secondary</code>.</p>
+    <div class="panel">
+      <div class="cols2" id="var-tone"></div>
+    </div>
+  </div>
+
+<div class="subsec" data-screen-label="Link">
+    <h3>Текст со ссылкой</h3>
+    <p class="desc">Ссылка внутри текста — <code class="tok">.link--inline</code> тона Accent: ведёт к подробностям. Других интерактивных элементов в заметке нет.</p>
+    <div class="panel" id="var-link"></div>
+  </div>
+  </section>
+
+  <!-- SIZES -->
+  <section class="section" data-screen-label="Sizes">
+    <h2>Размеры</h2>
+    <p class="desc">Три размера — по кеглю текста. S — по умолчанию: подвал формы рядом с полями M; XS — плотные блоки и модальные окна; M — пояснение в тексте Body M.</p>
+    <div class="panel">
+      <div class="cols3" id="sizes-demo"></div>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Размер</span></div>
+          <div class="th"><span class="th__label">Текст</span></div>
+          <div class="th"><span class="th__label">Иконка</span></div>
+          <div class="th"><span class="th__label">Зазор</span></div>
+          <div class="th"><span class="th__label">Где</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">16</span></span></div>
+          <div class="tc"><code class="tok">--space-4</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">плотные блоки, модальные окна</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b> · по умолчанию</span></span></div>
+          <div class="tc"><code class="tok">--type-body-s</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">18</span></span></div>
+          <div class="tc"><code class="tok">--space-8</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">подвал формы, StepForm</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1fr .6fr .6fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-m</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">20</span></span></div>
+          <div class="tc"><code class="tok">--space-8</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">пояснение в тексте Body M</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="section" data-screen-label="Content">
+    <h2>Контент</h2>
+    <ul class="bullets">
+      <li>законченное предложение с точкой, одна мысль, одна-две строки;</li>
+      <li>без восклицаний и без призыва к действию — действие у блока делает кнопка;</li>
+      <li>иконка поясняет тему: срок — <code class="tok">clock-timer</code>, справка — <code class="tok">info-circle</code>, прошлые запросы — <code class="tok">history</code>; иконки статуса (ошибка, предупреждение) в заметку не ставятся.</li>
+    </ul>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section class="section" data-screen-label="Behavior">
+    <h2>Поведение</h2>
+    <p class="desc">Статична. Длинный текст переносится по словам, иконка остаётся у первой строки.</p>
+
+<div class="subsec" data-screen-label="Wrap">
+    <h3>Перенос длинного текста</h3>
+    <p class="desc">Ширина — по контейнеру. Коробка иконки высотой в строку (<code class="tok">1lh</code>) держит глиф по центру первой строки при любом числе строк.</p>
+    <div class="panel" id="beh-wrap"></div>
+  </div>
+  </section>
+
+  <!-- STATES -->
+  <section class="section" data-screen-label="States">
+    <h2>Состояния</h2>
+    <p class="desc">Не применимо: заметка не интерактивна — не фокусируется и не реагирует на наведение. Состояния есть только у ссылки внутри текста — по правилам <a class="inl" href="../Link/Link.html">Link</a>.</p>
+  </section>
+
+  <!-- ACCESSIBILITY -->
+  <section class="section" data-screen-label="A11y">
+    <h2>Доступность</h2>
+    <p class="desc">Заметка — обычный абзац <code class="tok">&lt;p&gt;</code>: скринридер читает текст по порядку на странице. Иконка декоративная (<code class="tok">aria-hidden="true"</code>) — смысл несёт текст. Ссылка внутри — в порядке Tab, по правилам Link. Ролей <code class="tok">status</code> и <code class="tok">alert</code> у заметки нет: она не сообщает об изменениях.</p>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="section" data-screen-label="Typography">
+    <h2>Типографика</h2>
+    <p class="desc">Текст набирается гарнитурой <b>SB Sans Text</b>, кегль — по размеру заметки.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Размер</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Кегль / строка</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>XS</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-xs</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16 px</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-s</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16 px</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.2fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-m</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">16 / 20 px</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="section" data-screen-label="Colors">
+    <h2>Цвета</h2>
+    <p class="desc">Только семантические токены текста и иконки. Своих цветов нет.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Роль</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Образец</span></div>
+          <div class="th"><span class="th__label">Hex</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Текст</span></span></div>
+          <div class="tc"><code class="tok">--text-secondary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-secondary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-secondary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Иконка — нейтральная</span></span></div>
+          <div class="tc"><code class="tok">--secondary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--secondary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--secondary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Иконка — акцент</span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVELOPER HANDOFF -->
+  <section class="section" data-screen-label="Dev">
+    <h2>Для разработчиков</h2>
+    <p class="desc">Хендофф-пакет: точные размеры и поведение. Не привязан к стеку.</p>
+
+    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/atoms/Note/Note.css</code>.</p>
+    <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">XS</span></div>
+          <div class="th"><span class="th__label">S</span></div>
+          <div class="th"><span class="th__label">M</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Кегль / строка</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-xs">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-m">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Иконка</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-xs">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-m">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Коробка иконки (строка)</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-box-xs">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-box-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-box-m">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор иконка ↔ текст</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gap-xs">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gap-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gap-m">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev-intro">
+      <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Palette.css</code>
+      <code class="tok">foundations/Spacing/Spacing.css</code>
+      <code class="tok">components/atoms/Note/Note.css</code>
+    </div>
+
+    <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
+<div class="code-panel">
+      <div class="code-panel__head">
+        <span class="code-panel__name">Поведение · псевдокод (framework-agnostic)</span>
+        <button type="button" class="code-panel__copy" data-copy-target="code-js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg><span class="copy-label">Копировать</span></button>
+      </div>
+      <pre><code id="code-js"><span class="tk-cm">// 1. Компонент декларативен: нет состояний, фокуса и обработчиков</span>
+
+<span class="tk-cm">// 2. p.note.note--{xs|s|m}[.note--accent]</span>
+<span class="tk-cm">//    &gt; span.note__icon[aria-hidden] &gt; i[data-icon]  +  span.note__text</span>
+
+<span class="tk-cm">// 3. Иконка — по центру первой строки: высота коробки иконки = высоте строки текста (1lh),</span>
+<span class="tk-cm">//    ряд выровнен по верху (align-items: flex-start), текст переносится</span>
+
+<span class="tk-cm">// 4. Линия над заметкой — у контейнера (StepForm: пунктир подвала), не у заметки</span></code></pre>
+    </div>
+    <p class="dev-note">Это не готовый сниппет — алгоритм поверх вашего стека (рабочий референс — функция <code class="tok">makeNote</code> в <code class="tok">Note.page.js</code>).</p>
+  </section>
+
+  <!-- BACKLOG -->
+  <section class="section" data-screen-label="Backlog">
+    <h2>Бэклог</h2>
+    <p class="desc">Кейсы, которых недостаёт компоненту.</p>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>Заметка без иконки</b> — сейчас иконка обязательна; строка вторичного текста без иконки собирается обычным абзацем Typography. Вариант без иконки — если появится потребитель.</li>
+        <li><b>Сворачиваемая заметка</b> («Подробнее» с раскрытием) — для длинных пояснений; сейчас длинный текст выносится в справку по ссылке.</li>
+      </ul>
+    </div>
+  </section>
+
+<footer class="page-foot">
+    <span>Дизайн-система · Note</span>
+    <span>Заметка — XS / S / M · нейтральная · акцент</span>
+  </footer>
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Соберите заметку: размер, иконка, текст, ширина контейнера и тон иконки — превью обновляется мгновенно.</p>
+              <div class="pg__controls" id="pg-controls"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка, полный CSS компонента и выжимка API для интеграции.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main>
+
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="Note.page.js"></script>
+<script src="../../../docs-kit/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично) ===== -->
+<script type="text/plain" id="src-code-html"><!-- заметка: иконка + вторичный текст; размер xs (Body XS) · s (Body S) · m (Body M) -->
+<p class="note note--s">
+  <span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+  <span class="note__text">Подготовка отчета обычно занимает до 30 минут. Работа продолжится, даже если закрыть инструмент.</span>
+</p>
+
+<!-- акцент: иконка тоном Primary -->
+<p class="note note--s note--accent">
+  <span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+  <span class="note__text">Подготовка отчета обычно занимает до 30 минут.</span>
+</p>
+
+<!-- со ссылкой: только Link inline, кнопок нет -->
+<p class="note note--xs">
+  <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+  <span class="note__text">Доступ к отчёту получат участники сделки. <a class="link link--accent link--inline" href="…">Кто это</a></span>
+</p></script>
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/Note/Note.page.js)
+function makeNote(content, size, accent, glyph) {
+  // content: строка или узел (текст со ссылкой Link inline)
+  // size: 'xs' | 's' | 'm'; accent: иконка --primary; glyph: имя иконки
+  // → p.note.note--<size>[.note--accent]
+  //     > span.note__icon[aria-hidden] > i[data-icon]  +  span.note__text
+}</script>
+<script type="text/plain" id="src-code-css">/* =========================================================================
+   Design System — Note (Заметка)
+   Нейтральное пояснение «иконка + вторичный текст» в потоке: под формой,
+   в модальном окне, в тайле. Без заливки, рамки и полей. Перенесена из
+   подвала конструктора запроса AI Pitcher (прототип ai-bankster v02,
+   задача MS0010e).
+
+   Элемент: <p class="note"> — обычный текст; иконка декоративная
+            (aria-hidden). Не интерактивна: внутри допустима только
+            ссылка Link (.link--inline), кнопок нет.
+   Sizes:   xs — Body XS, иконка 16, зазор 4
+            s (по умолчанию) — Body S, иконка 18, зазор 8
+            m — Body M, иконка 20, зазор 8
+   Tone:    иконка по умолчанию --secondary (правило ДС);
+            .note--accent — иконка --primary
+   Layout:  иконка — по центру первой строки: её коробка высотой в строку
+            текста (1lh); длинный текст переносится, иконка остаётся у
+            первой строки.
+   Requires: Typography.css, Palette.css, Spacing.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.note[hidden] { display: none; }
+
+.note {
+  --note-icon: 18px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  margin: 0;
+  font: var(--type-body-s);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* ---------- sizes --------------------------------------------------------- */
+.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs); }
+.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s); }
+.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m); }
+
+/* ---------- parts ---------------------------------------------------------
+   Коробка иконки — высотой в строку текста (1lh от шрифта заметки): глиф
+   встаёт по центру первой строки; глиф выше строки (S: 18 при строке 16)
+   выступает на равные доли сверху и снизу и ничего не сдвигает. */
+.note__icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1lh;
+  color: var(--secondary);
+}
+.note__icon > :is(svg,[data-icon]) {
+  width: var(--note-icon);
+  height: var(--note-icon);
+  display: block;
+  flex: none;
+}
+.note__icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+.note__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-wrap: pretty;
+}
+
+/* ---------- tone ---------------------------------------------------------- */
+.note--accent .note__icon { color: var(--primary); }</script>
+<script src="../../../../apps/proto-panel.js"></script>
+</body>
+</html>

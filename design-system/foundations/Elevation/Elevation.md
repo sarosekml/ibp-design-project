@@ -1,8 +1,8 @@
 ---
 component: Elevation
 title: "Тени (Elevation)"
-version: "1.002"
-updated: "05.09.2026"
+version: "1.003"
+updated: "06.10.2026"
 page: foundations/Elevation/Elevation.html
 runtime: utils/ds-float.js
 css: foundations/Elevation/Elevation.css
@@ -65,4 +65,4 @@ status: auto
 тултипах чипов в той же модалке. С 1.002 правило одно и живёт в слое.
 
 ## Токены
-`--elevation-1` `--elevation-2` `--elevation-3` `--elevation-4` `--elevation-5` `--shadow-modal-form` 
+`--elevation-1` `--elevation-2` `--elevation-3` `--elevation-4` `--elevation-5` `--shadow-modal-form` `--shadow-card-hover` 

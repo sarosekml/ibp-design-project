@@ -1,0 +1,20 @@
+<!-- Локальный компонент «Карточка-счётчик» (StatCard) — подчасть, которую рисуют
+     скрипты тайлов главной (MeetingsTile, TasksTile). Кандидат в ДС: в ДС нет
+     компонента «показатель-фильтр» с тоном и выбранным состоянием (решение
+     человека 09.10.2026 — пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     StatCard.css, а LcStatCard.render() (StatCard.js) клонирует шаблон.
+
+     Классы корня:
+       размер — без класса M (подпись, число, пояснение) · .lc-stat--s (число над подписью);
+       тон    — без класса нейтральный · --accent · --info · --warning · --error · --success;
+       выбор  — aria-pressed="true" на кнопке (фильтр списка включён);
+       .lc-stat--static — показатель без действия: корень span, без наведения и выбора. -->
+<template id="lc-stat-card-tpl">
+  <button type="button" class="lc-stat" aria-pressed="false">
+    <span class="lc-stat__label">Подпись</span>
+    <span class="lc-stat__value">0</span>
+    <span class="lc-stat__caption">Пояснение</span>
+  </button>
+</template>

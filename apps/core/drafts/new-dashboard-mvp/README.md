@@ -1,0 +1,28 @@
+# Главная — дашборд (MVP)
+
+Концепт редизайна главной страницы (трек `rnd`): вместо навигационных тайлов
+разделов — рабочий дашборд сотрудника. Профиль с быстрыми действиями, «Мой
+день», встречи, задачи и новости по клиентам; навигация по разделам — только в
+меню. Макет дизайнера — `refs/home-mockup-09102026.jpg`, решения человека
+09.10.2026 — в спеке страницы.
+
+Открывать: `pages/HomePage.preview.html` (собирает
+`node .agents/tools/assemble.mjs`; источник — `pages/HomePage.html` с метками
+`<ds-include>`). Демо-состояния — `?state=loading | empty | error`.
+
+Панель прототипа: Alt+Shift+P на любой странице; сценарии —
+`proto-panel/flows.yaml` («Утро аналитика», State 01–04).
+
+## Что где
+
+| Путь | Что |
+|---|---|
+| `pages/HomePage.*` | страница, собранное превью, спека `HomePage.screen.md` |
+| `widgets/tiles/` | тайлы `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `TasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge` |
+| `widgets/modals/` | окна `MeetingCreateModal`, `TaskCreateModal` |
+| `data/` | демо-данные с typedef и хранилище `home-store.js` |
+| `refs/` | макет и фото профиля |
+| `proto-panel/` | сценарии показа и комментарии |
+
+Кандидаты в ДС (карточка-счётчик, блок даты, тон поверхности Tile) — спека
+страницы, раздел 15.

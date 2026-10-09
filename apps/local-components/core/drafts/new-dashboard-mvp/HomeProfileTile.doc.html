@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль на главной — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.css">
+<link rel="stylesheet" href="../../../../core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.css">
+<link rel="stylesheet" href="../../../../core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Профиль на главной">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Профиль на главной» (HomeProfileTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | error (данных нет не бывает: профиль есть
+                  у любого, кто вошёл)
+     data-mode  — edit: быстрые действия «Новая встреча» и «Новая задача» видны |
+                  view: роль не создаёт встречи и задачи, действий нет
+
+     Профиль — Entity L (аватар XL 96 с фото, точка «в сети» — Badge dot).
+     Фото не загрузилось — инициалы (цепочка Avatar фото → инициалы → иконка;
+     рантайма у Avatar нет, подмену делает HomeProfileTile.js). Адрес фото
+     ставит скрипт из данных профиля: относительный путь во фрагменте читался
+     бы от папки виджета, а не от страницы, которая его вшивает. Приветствие
+     зависит от времени суток. Окна — MeetingCreateModal и TaskCreateModal,
+     их скримы лежат в конце страницы. -->
+<section class="tile tile--headless lc-profile" data-state="data" data-mode="edit" aria-label="Профиль сотрудника" id="tile-profile">
+  <div class="tile__body lc-profile__body">
+    <div class="entity entity--l lc-profile__entity">
+      <div class="entity__lead">
+        <span class="av-stack" data-profile="avatar" aria-label="В сети">
+          <span class="av av--circular av--xl"><img class="av__img" alt=""></span>
+          <span class="badge badge--dot badge--success badge--bordered" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="entity__main">
+        <div class="entity__titles">
+          <p class="entity__header" data-profile="greeting">Добрый день,</p>
+          <div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-profile="name" data-tooltip="Анна Сергеевна Ким" data-tooltip-truncated="only">Анна Сергеевна Ким</span></div>
+        </div>
+        <div class="entity__subs entity__subs--single"><span class="entity__subs-list" data-profile="position">Аналитик ДИД · Металлургия и машиностроение</span></div>
+        <div class="entity__icons">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-profile-act="phone" aria-label="Скопировать телефон" data-tooltip="Скопировать телефон"><i data-icon="phone"></i></button>
+          <a class="ibtn ibtn--neutral ibtn--s" data-profile="mail" href="mailto:a.kim@example.ru" aria-label="Написать письмо" data-tooltip="Написать письмо"><i data-icon="mail"></i></a>
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-home-goto="profile" aria-label="Открыть профиль" data-tooltip="Открыть профиль"><i data-icon="user-circle"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-profile__actions">
+      <button type="button" class="btn btn--outline btn--s" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="sk-row lc-profile__loading" aria-busy="true" aria-label="Загрузка профиля">
+      <span class="sk-block sk-block--circle" style="--sk-w:var(--space-96);--sk-h:var(--space-96)" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span>
+        <span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lc-profile__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить профиль</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-profile-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>09.10.2026</b></span><span>Категория: <b>Другое</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../../index.html">Локальные компоненты</a> · core/drafts/new-dashboard-mvp</p>
+  <h1>Профиль на главной</h1>
+  <p class="lead">Кто вошёл — фото, имя, должность и деск, связь — и быстрый вход в создание встречи и задачи</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/drafts/new-dashboard-mvp</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile">apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Главная — дашборд, первый ряд, 4 колонки из 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/pages/HomePage.preview.html">apps/core/drafts/new-dashboard-mvp/pages/HomePage.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="MeetingCreateModal.doc.html">Новая встреча (MeetingCreateModal)</a><br><a class="inl" href="TaskCreateModal.doc.html">Новая задача (TaskCreateModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет дизайнера «Главная» 09.10.2026<br>решения человека 09.10.2026 — аватар с фото<br>быстрые действия</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Первый тайл главной: сотрудник, который вошёл. Entity L — фото с точкой «в сети», приветствие по времени суток, имя, должность и деск, кнопки связи: скопировать телефон, написать письмо, открыть профиль. Под профилем (в широком тайле — справа) — быстрые действия «Новая встреча» и «Новая задача».</p>
+<p class="desc">Фото нет или не загрузилось — инициалы (цепочка Avatar: фото → инициалы → иконка). Пара во фронтенде — <code class="tok">new</code>; ближайшая — <code class="tok">employees-app/widgets/tiles/ProfileInfoTile</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile headless
+└── тело (колонка; от 640px своей ширины — строка)
+    ├── Entity L
+    │   ├── ведущий: Avatar XL circular с фото + Badge dot success (в сети)
+    │   ├── Header: приветствие · Label: имя отчество фамилия · Subs: должность · деск
+    │   └── Icons: IconButton S — телефон, почта, профиль
+    └── действия: Button outline S «Новая встреча» · Button accent S «Новая задача»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">--headless</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Entity</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">L (96), Label с усечением и тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Avatar</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">XL circular, фото <code class="tok">.av__img</code>; запасной — инициалы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Badge</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">dot success bordered на <code class="tok">.av-stack</code> — «в сети»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">S neutral — связь (размер — слот Icons Entity)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">outline S, accent S — единственный Accent тайла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton, Alert, Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка, ошибка, подсказки</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../../design-system/components/organisms/Entity/Entity.html">Entity</a> · <a class="inl" href="../../../../../design-system/components/atoms/Avatar/Avatar.html">Avatar</a> · <a class="inl" href="../../../../../design-system/components/atoms/Badge/Badge.html">Badge</a> · <a class="inl" href="../../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.css">HomeProfileTile.css</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.html">HomeProfileTile.html</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.js">HomeProfileTile.js</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md">HomeProfileTile.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">photoUrl</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фото</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">URL</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет — инициалы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">isOnline</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">точка «в сети»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">логическое</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">приветствие</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по времени суток</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вычисляется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.now</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">firstName</code>, <code class="tok">middleName</code>, <code class="tok">lastName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">positionName</code>, <code class="tok">deskName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">должность и деск</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">phone</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">телефон — копируется</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">email</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">почта — ссылка mailto</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сотрудник с правом создавать встречи и задачи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">быстрые действия видны (<code class="tok">mode=&quot;edit&quot;</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роль без этого права</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">быстрых действий нет (<code class="tok">mode=&quot;view&quot;</code>)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетон: круг 96 и три строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">профиль и действия</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет фото — инициалы; нет признака «в сети» — без точки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">профиль есть у любого, кто вошёл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert error «Не удалось загрузить профиль» + «Повторить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">быстрые действия</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">без быстрых действий</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл есть у всех</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Телефон скопирован</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клик по кнопке телефона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">всплывающая подсказка DSCopy «Телефон … скопирован»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не применимо — только чтение.</li><li>Обязательные поля внутри: см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу: ничего.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">имя — одна строка с многоточием и тултипом; должность и деск — одна строка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">действия под профилем, переносятся</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">от 640px своей ширины — профиль слева, действия справа</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка телефона</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер в буфере обмена, подсказка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка почты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ссылка <code class="tok">mailto:</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кнопка профиля</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">событие перехода: уведомление страницы (личного кабинета в прототипе нет)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фото не загрузилось</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">инициалы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Повторить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> 0,7 с → данные</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Новая встреча»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно <code class="tok">MeetingCreateModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент, тема, дата, время</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">встреча в «Встречах» и «Моём дне»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingsTile</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Новая задача»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно <code class="tok">TaskCreateModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">формулировка, срок, приоритет, клиент, сделка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">задача в «Задачах» и «Моём дне»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">TasksTile</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Профиль вошедшего сотрудника; признак «в сети» — не решено (09.10.2026).</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-profile.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_EMPLOYEE_PROFILE</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EmployeeProfileRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../refs/profile-photo.jpg</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фото</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">портрет из refs прототипа AI Pitcher v02</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,3fr) minmax(0,2.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">демо витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-4 colw-12</code> на главной</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">error</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">быстрые действия</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Скрипт: <code class="tok">HomeProfileTile.js</code> (<code class="tok">window.LcHomeProfileTile</code>: <code class="tok">render</code>, <code class="tok">greeting</code>).</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeProfileTile.html</code>, <code class="tok">.css</code>, <code class="tok">.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/HomeProfileTile/HomeProfileTile.tsx</code> (host-app)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: «Станислав Алексеевич Петров», серый круг</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Анна Сергеевна Ким, фото</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека — аватар с фото; в проекте один портрет, имя демо подобрано под него</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: иконки связи крупные, четыре</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton S, три</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">размер — слот Icons Entity; четвёртая иконка макета не опознана</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Четвёртая иконка связи на макете — что она делает</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос дизайнеру</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.3fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Откуда признак «в сети»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос разработке</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/drafts/new-dashboard-mvp/pages/HomePage.html): окна и подчасти, которые открывает виджет. -->
+<!-- Локальный компонент «Новая встреча» (MeetingCreateModal) — окно главной.
+     Артефакт тайлов «Встречи» (подвал «Добавить», меню шапки, «Новая встреча»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая встреча»).
+     Вшивается отдельной меткой ds-include в конце страницы: скрим не может
+     лежать внутри тайла.
+
+     Поля — одна колонка (режим ввода); исключение — «Дата · Начало ·
+     Окончание» в один ряд: короткие связанные поля, одно понятие «когда».
+     Обязательны все четыре: пустое — ошибка поля (InputText: текст ошибки в
+     тултипе при фокусе, не в хелпере). Списки и проверку ведёт
+     MeetingCreateModal.js; «Создать встречу» без data-modal-close — окно
+     закрывает скрипт после проверки. -->
+<div class="modal-scrim" id="meeting-create-scrim" hidden>
+  <div class="modal modal--w4 lc-meeting-create" role="dialog" aria-modal="true" aria-labelledby="meeting-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="meeting-create-title">Новая встреча</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-meeting-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-client"><span class="ds-label__text">Клиент</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="meeting-create-client-list">
+              <input class="inp__control" id="meeting-create-client" autocomplete="off" placeholder="Выберите клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="meeting-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-topic"><span class="ds-label__text">Тема встречи</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="meeting-create-topic" autocomplete="off" maxlength="120" placeholder="Например, условия рефинансирования">
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-meeting-create__when">
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-date"><span class="ds-label__text">Дата</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="meeting-create-date" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-start"><span class="ds-label__text">Начало</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-start-list">
+                <input class="inp__control" id="meeting-create-start" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-end"><span class="ds-label__text">Окончание</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-end-list">
+                <input class="inp__control" id="meeting-create-end" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-end-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <p class="note note--s">
+          <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+          <span class="note__text">Встреча появится в «Моих встречах», а если она сегодня — и в «Моём дне».</span>
+        </p>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-meeting-create-save><span class="btn__label">Создать встречу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Новая задача» (TaskCreateModal) — окно главной.
+     Артефакт тайлов «Задачи» (подвал «Добавить», меню шапки, «Новая задача»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая задача»).
+     Вшивается отдельной меткой ds-include в конце страницы.
+
+     Поля — одна колонка (режим ввода). Обязательны формулировка, срок и
+     приоритет; клиент и сделка — нет. Приоритет — SegmentControl: три
+     взаимоисключающих значения одного параметра. Списки, проверку и
+     сохранение ведёт TaskCreateModal.js на общем слое форм LcHomeForm
+     (MeetingCreateModal.js). -->
+<div class="modal-scrim" id="task-create-scrim" hidden>
+  <div class="modal modal--w4 lc-task-create" role="dialog" aria-modal="true" aria-labelledby="task-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-create-title">Новая задача</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-task-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-title-input"><span class="ds-label__text">Задача</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-title-input" autocomplete="off" maxlength="160" placeholder="Что нужно сделать">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-due"><span class="ds-label__text">Срок</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-due" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-task-create__priority">
+          <span class="ds-label" id="task-create-priority-label"><span class="ds-label__text">Приоритет</span><span class="ds-label__req">*</span></span>
+          <div class="segctrl segctrl--fullwidth" role="radiogroup" aria-labelledby="task-create-priority-label" data-segctrl>
+            <div class="segctrl__thumb"></div>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="HIGH"><span class="segctrl__label">Высокий</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-priority="MEDIUM"><span class="segctrl__label">Средний</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="LOW"><span class="segctrl__label">Низкий</span></button>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-client"><span class="ds-label__text">Клиент</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="task-create-client-list">
+              <input class="inp__control" id="task-create-client" autocomplete="off" placeholder="Без клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="task-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-deal"><span class="ds-label__text">Номер сделки</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-deal" autocomplete="off" maxlength="12" placeholder="Например, D-126618">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-task-create-save><span class="btn__label">Создать задачу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-profile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-meetings.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-tasks.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-news.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/home-store.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"HomeProfileTile","type":"tile","base":"../../..","hub":"../../../../../index.html","states":["data","loading","error"],"modes":["edit","view"],"state":"data","mode":"edit","width":530,"scenario":false,"fixtures":{"_":"Демо-данные витрины. Тайл берёт профиль из HomeStore.profile (data/mock-profile.js страницы-хозяина): объекты ниже описывают состояния.","data":{"name":"Анна Сергеевна Ким","position":"Аналитик ДИД · Металлургия и машиностроение","photo":true,"online":true},"partial":{"name":"Анна Сергеевна Ким","photo":false,"initials":"АК","online":false},"error":{"message":"Не удалось загрузить профиль"},"long":{"name":"Констанция Александровна Константинопольская-Вознесенская","position":"Ведущий аналитик департамента инвестиционной деятельности · Металлургия, машиностроение и горнодобывающая промышленность"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Профиль на главной» (HomeProfileTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | error (данных нет не бывает: профиль есть
+                  у любого, кто вошёл)
+     data-mode  — edit: быстрые действия «Новая встреча» и «Новая задача» видны |
+                  view: роль не создаёт встречи и задачи, действий нет
+
+     Профиль — Entity L (аватар XL 96 с фото, точка «в сети» — Badge dot).
+     Фото не загрузилось — инициалы (цепочка Avatar фото → инициалы → иконка;
+     рантайма у Avatar нет, подмену делает HomeProfileTile.js). Адрес фото
+     ставит скрипт из данных профиля: относительный путь во фрагменте читался
+     бы от папки виджета, а не от страницы, которая его вшивает. Приветствие
+     зависит от времени суток. Окна — MeetingCreateModal и TaskCreateModal,
+     их скримы лежат в конце страницы. -->
+<section class="tile tile--headless lc-profile" data-state="data" data-mode="edit" aria-label="Профиль сотрудника">
+  <div class="tile__body lc-profile__body">
+    <div class="entity entity--l lc-profile__entity">
+      <div class="entity__lead">
+        <span class="av-stack" data-profile="avatar" aria-label="В сети">
+          <span class="av av--circular av--xl"><img class="av__img" alt=""></span>
+          <span class="badge badge--dot badge--success badge--bordered" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="entity__main">
+        <div class="entity__titles">
+          <p class="entity__header" data-profile="greeting">Добрый день,</p>
+          <div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-profile="name" data-tooltip="Анна Сергеевна Ким" data-tooltip-truncated="only">Анна Сергеевна Ким</span></div>
+        </div>
+        <div class="entity__subs entity__subs--single"><span class="entity__subs-list" data-profile="position">Аналитик ДИД · Металлургия и машиностроение</span></div>
+        <div class="entity__icons">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-profile-act="phone" aria-label="Скопировать телефон" data-tooltip="Скопировать телефон"><i data-icon="phone"></i></button>
+          <a class="ibtn ibtn--neutral ibtn--s" data-profile="mail" href="mailto:a.kim@example.ru" aria-label="Написать письмо" data-tooltip="Написать письмо"><i data-icon="mail"></i></a>
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-home-goto="profile" aria-label="Открыть профиль" data-tooltip="Открыть профиль"><i data-icon="user-circle"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-profile__actions">
+      <button type="button" class="btn btn--outline btn--s" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="sk-row lc-profile__loading" aria-busy="true" aria-label="Загрузка профиля">
+      <span class="sk-block sk-block--circle" style="--sk-w:var(--space-96);--sk-h:var(--space-96)" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span>
+        <span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lc-profile__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить профиль</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-profile-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Профиль на главной» (HomeProfileTile).
+   Только внутренняя раскладка и показ своих блоков по data-state / data-mode.
+   Цвета, шрифты, отступы — токены ДС; Entity, Avatar, Button не
+   переопределяются. */
+
+.lc-profile { container-type: inline-size; }
+
+/* Узкий тайл (4 колонки): профиль, под ним действия. Широкий: в одну строку,
+   действия справа. Порог — 640px своей ширины: Entity L с именем в 24px
+   (≈ 96 + 16 + 300) и две кнопки S (≈ 300) рядом без наложения. */
+.lc-profile__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-16);
+}
+.lc-profile__entity { min-width: 0; }
+.lc-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+@container (min-width: 640px) {
+  .lc-profile__body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .lc-profile__actions { flex: none; }
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-profile__loading,
+.lc-profile__error { display: none; }
+
+.lc-profile[data-state="loading"] .lc-profile__loading { display: flex; }
+.lc-profile[data-state="error"] .lc-profile__error { display: block; }
+.lc-profile:is([data-state="loading"], [data-state="error"]) :is(.lc-profile__entity, .lc-profile__actions) { display: none; }
+
+/* Режим просмотра: роль не создаёт встречи и задачи — действий нет */
+.lc-profile[data-mode="view"] .lc-profile__actions { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   HomeProfileTile.js — тайл профиля главной из HomeStore.profile.
+
+   API (window.LcHomeProfileTile):
+     render(root)   — имя, должность и деск, фото (нет или не загрузилось —
+                      инициалы), точка «в сети», приветствие по времени
+     greeting(hhmm) — «Доброе утро» | «Добрый день» | «Добрый вечер» | «Доброй ночи»
+   Телефон копируется в буфер (DSCopy), почта — ссылка mailto. Быстрые
+   действия открывают окна через data-modal — своего кода у них нет.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  function greeting(hhmm) {
+    var h = +String(hhmm || '12:00').split(':')[0];
+    if (h >= 5 && h < 12) return 'Доброе утро,';
+    if (h >= 12 && h < 18) return 'Добрый день,';
+    if (h >= 18 && h < 23) return 'Добрый вечер,';
+    return 'Доброй ночи,';
+  }
+
+  function initials(p) { return (p.firstName.charAt(0) + p.lastName.charAt(0)).toUpperCase(); }
+
+  /* Цепочка Avatar: фото → инициалы → иконка */
+  function toInitials(av, p) {
+    av.innerHTML = '<span class="av__text">' + initials(p) + '</span>';
+  }
+
+  function render(root) {
+    var S = window.HomeStore, p = S && S.profile;
+    if (!p) return;
+    var full = p.firstName + ' ' + p.middleName + ' ' + p.lastName;
+    var name = root.querySelector('[data-profile="name"]');
+    name.textContent = full;
+    name.setAttribute('data-tooltip', full);
+    root.querySelector('[data-profile="greeting"]').textContent = greeting(S.now);
+    root.querySelector('[data-profile="position"]').textContent = p.positionName + ' · ' + p.deskName;
+    root.querySelector('[data-profile="mail"]').setAttribute('href', 'mailto:' + p.email);
+
+    var stack = root.querySelector('[data-profile="avatar"]');
+    var av = stack.querySelector('.av');
+    var img = av.querySelector('img');
+    if (p.photoUrl && img) {
+      img.addEventListener('error', function () { toInitials(av, p); }, { once: true });
+      if (img.getAttribute('src') !== p.photoUrl) img.setAttribute('src', p.photoUrl);
+      if (img.complete && img.getAttribute('src') && !img.naturalWidth) toInitials(av, p);
+    } else {
+      toInitials(av, p);
+    }
+    var dot = stack.querySelector('.badge--dot');
+    if (dot) dot.hidden = !p.isOnline;
+    stack.setAttribute('aria-label', full + (p.isOnline ? ', в сети' : ''));
+  }
+
+  function init(root) {
+    if (root.__lcProfileInit) return;
+    root.__lcProfileInit = true;
+    root.addEventListener('click', function (e) {
+      var p = window.HomeStore && window.HomeStore.profile;
+      var phone = e.target.closest('[data-profile-act="phone"]');
+      if (phone && p && window.DSCopy) {
+        window.DSCopy.write(p.phone);
+        window.DSCopy.flash(phone, 'Телефон ' + p.phone + ' скопирован');
+      }
+      if (e.target.closest('[data-profile-act="retry"]')) {
+        root.setAttribute('data-state', 'loading');
+        setTimeout(function () { render(root); root.setAttribute('data-state', 'data'); }, 700);
+      }
+    });
+    render(root);
+  }
+
+  function initAll() { document.querySelectorAll('.lc-profile').forEach(init); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
+
+  window.LcHomeProfileTile = { render: render, greeting: greeting, init: init };
+})();
+</script>
+</body>
+</html>

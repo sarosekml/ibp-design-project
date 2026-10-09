@@ -1,0 +1,43 @@
+/* Локальный компонент «Профиль на главной» (HomeProfileTile).
+   Только внутренняя раскладка и показ своих блоков по data-state / data-mode.
+   Цвета, шрифты, отступы — токены ДС; Entity, Avatar, Button не
+   переопределяются. */
+
+.lc-profile { container-type: inline-size; }
+
+/* Узкий тайл (4 колонки): профиль, под ним действия. Широкий: в одну строку,
+   действия справа. Порог — 640px своей ширины: Entity L с именем в 24px
+   (≈ 96 + 16 + 300) и две кнопки S (≈ 300) рядом без наложения. */
+.lc-profile__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-16);
+}
+.lc-profile__entity { min-width: 0; }
+.lc-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+@container (min-width: 640px) {
+  .lc-profile__body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .lc-profile__actions { flex: none; }
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-profile__loading,
+.lc-profile__error { display: none; }
+
+.lc-profile[data-state="loading"] .lc-profile__loading { display: flex; }
+.lc-profile[data-state="error"] .lc-profile__error { display: block; }
+.lc-profile:is([data-state="loading"], [data-state="error"]) :is(.lc-profile__entity, .lc-profile__actions) { display: none; }
+
+/* Режим просмотра: роль не создаёт встречи и задачи — действий нет */
+.lc-profile[data-mode="view"] .lc-profile__actions { display: none; }

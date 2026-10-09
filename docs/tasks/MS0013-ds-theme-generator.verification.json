@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-07",
+  "pages": 178,
+  "identical": 174,
+  "intentional": [
+    "design-system/components/atoms/Switch/Switch.html",
+    "design-system/foundations/Colors/Colors.html",
+    "design-system/foundations/Themes/Themes.html",
+    "design-system/index.html"
+  ],
+  "unexpected": [],
+  "consoleErrors": [],
+  "layoutPages": 107,
+  "layoutVerdictsChanged": 0,
+  "artifacts": {
+    "before-snapshot.json": "b415bdc792f77cab3c076ab296e42bbd6f5b58ff2cb52a2574f9aa8ca26ae855",
+    "after-snapshot.json": "2c7216258446ea4d71fb8478ed668ffdcfd99643413b4eaab178e2365fe91ff7",
+    "comparison.json": "12217eb2bb9616e768c5d4829af805daf46c647e33d6e6a59ee8b8782987f3f6",
+    "inventory.json": "4261fc02bc4014144f609e7e1ce595f72c5a5f1950a8a8d36681c521377f30df",
+    "layout-after.json": "46bb136554c20bbd25a3e83995edbc72e0c85d966942710385a697186d0f2ca3"
+  }
+}

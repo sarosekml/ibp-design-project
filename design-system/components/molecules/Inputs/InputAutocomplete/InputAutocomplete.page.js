@@ -81,7 +81,7 @@
 
   /* =========================== PLAYGROUND =========================== */
   (function () {
-    const state = { size: 'm', state: 'default', display: 'summary', list: 'text', open: true };
+    const state = { size: 'm', state: 'default', display: 'summary', list: 'text', open: true, radius: 'field', filled: 'no' };
     const controls = document.getElementById('pg-controls');
     const stage = document.getElementById('pg-stage');
     const codeEl = document.getElementById('pg-code');
@@ -107,6 +107,8 @@
     ], 'state', true));
     controls.appendChild(ctlSelect('Показ выбора', [['summary', 'Выбор сводкой'], ['chips', 'Чипы в поле'], ['chips-ext', 'Чипы вне поля']], 'display'));
     controls.appendChild(ctlSelect('Тип списка', [['text', 'Текст'], ['checkbox', 'Чекбоксы']], 'list'));
+    controls.appendChild(ctlSelect('Скругление', [['field', 'Скругление 4 · по умолчанию'], ['m', 'Скругление 8 · M'], ['pill', 'Капсула']], 'radius'));
+    controls.appendChild(ctlSelect('Заливка', [['no', 'Нет'], ['yes', 'Да']], 'filled'));
 
     function render() {
       const table = state.size === 's';
@@ -129,6 +131,8 @@
         placeholder: 'Поиск…',
         tip: state.state === 'error-focus' ? 'Текст ошибки' : (state.state === 'warning-focus' ? 'Указана информация, которая не блокирует действие, но требует внимания пользователя' : null),
         open: state.open,
+        radius: state.radius,
+        filled: state.filled === 'yes',
         width: 'auto',
         id: 'pg-input',
       };
@@ -153,6 +157,9 @@
       if (state.state.startsWith('warning')) cls.push('inp--warning');
       if (state.state === 'disabled') cls.push('inp--disabled');
       if (state.open && state.state !== 'disabled') cls.push('is-open');
+      if (state.radius === 'm') cls.push('inp--radius-m');
+      if (state.radius === 'pill') cls.push('inp--rounded');
+      if (state.filled === true || state.filled === 'yes') cls.push('inp--filled');
       codeEl.innerHTML = '<code>' + cls.join('.') + '</code> + <code>.ddl' + (state.list === 'checkbox' ? ' · .ddl__item--checkbox' : '') + '</code>';
     }
     render();

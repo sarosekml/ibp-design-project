@@ -1,0 +1,82 @@
+/* Локальный компонент «Встречи» (MeetingsTile).
+   Только внутренняя раскладка и показ своих блоков по data-state / data-mode.
+   Цвета, шрифты, отступы — токены ДС; состояния компонентов ДС не
+   переопределяются. Счётчики — StatCard, дата — DateBadge (свои CSS). */
+
+/* Перестроение — по своей ширине: тайл стоит и на 4 колонках, и на 6. */
+.lc-meetings { container-type: inline-size; }
+
+/* Тело — колонка: подвал прижат к низу, поэтому у тайлов одного ряда
+   «Все встречи» и «Все задачи» стоят на одной линии. */
+.lc-meetings__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.lc-meetings__scope { align-self: stretch; }
+
+.lc-meetings__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+.lc-meetings__sk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+}
+
+.lc-meetings__none,
+.lc-meetings__empty-text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+.lc-meetings__empty {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+}
+
+.lc-meetings__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-top: auto;
+}
+.lc-meetings__foot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+.lc-meetings__count {
+  flex: 1;
+  font: var(--type-body-xs);
+  color: var(--text-inactive);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-meetings__loading,
+.lc-meetings__empty,
+.lc-meetings__error,
+.lc-meetings__busy { display: none; }
+
+.lc-meetings[data-state="loading"] .lc-meetings__loading { display: block; }
+.lc-meetings[data-state="empty"] .lc-meetings__empty { display: flex; }
+.lc-meetings[data-state="error"] .lc-meetings__error { display: block; }
+.lc-meetings[data-state="updating"] .lc-meetings__busy { display: inline-block; }
+
+.lc-meetings:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-meetings__body > .lc-meetings__stats, .lc-meetings__list, .lc-meetings__none, .lc-meetings__foot) { display: none; }
+.lc-meetings:is([data-state="loading"], [data-state="error"]) .lc-meetings__scope { display: none; }
+/* Пока грузится или обновляется — действий в шапке нет: обновлять нечего */
+.lc-meetings:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-meetings__busy) { display: none; }
+
+/* Режим просмотра: точки входа в правку не рисуются вовсе */
+.lc-meetings[data-mode="view"] .lc-meetings__edit { display: none; }
+
+/* Узкий тайл: подписи счётчиков длинные, ряд из трёх держится до 300px */
+@container (max-width: 300px) {
+  .lc-meetings__stats { grid-template-columns: minmax(0, 1fr); }
+}

@@ -17,6 +17,8 @@
 <link rel="stylesheet" href="../../atoms/Chip/Chip.css">
 <link rel="stylesheet" href="../../atoms/Badge/Badge.css">
 <link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="../../atoms/Avatar/Avatar.css">
+<link rel="stylesheet" href="../Entity/Entity.css">
 <link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
 <link rel="stylesheet" href="../../molecules/ReadOnlyField/ReadOnlyField.css">
 <link rel="stylesheet" href="../../molecules/Alert/Alert.css">
@@ -142,8 +144,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия <b>1.015</b></span>
-    <span>Обновлено <b>25.09.2026</b></span>
+    <span>Версия <b>1.016</b></span>
+    <span>Обновлено <b>06.10.2026</b></span>
     <span>CSS <b>components/organisms/Tile/Tile.css</b></span>
     <span>Зависимости <b>icon-button, button, link, chip, badge, alert, divider, read-only-field, table-cell</b></span>
   </div>
@@ -174,6 +176,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
       <li>Когда блоку нужен заголовок, опциональный статус (чипы/бейдж) и локальные действия в шапке.</li>
       <li>Когда блок раскрывается/сворачивается — вариант <b>AccordionTile</b>.</li>
       <li>Когда заголовок не нужен и блок целиком состоит из контента — вариант <b>TileHeadless</b>.</li>
+      <li>Когда внутри тайла, модального окна или панели нужна своя группа с заголовком и списком — вариант <b>Inset</b> (вложенная подложка на фоне <code class="tok">--bg-page</code>).</li>
     </ul>
   </div>
 
@@ -187,8 +190,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   </div>
 
   <div class="subsec">
-    <h3>Tile · TileHeadless · Card</h3>
-    <p class="desc tight">Три родственных тайла с общим TileHeader, но разной областью применения и системой отступов.</p>
+    <h3>Tile · TileHeadless · Card · Inset</h3>
+    <p class="desc tight">Четыре родственных тайла с общим TileHeader, но разной областью применения и системой отступов.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
         <div class="tbl__row" style="grid-template-columns:8px 130px 1.3fr 1fr 1.1fr 1.9fr 8px;">
@@ -225,6 +228,15 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
           <div class="tc"><span class="tc__row"><span class="tc__text">TileHeader Card</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">8 / 16 / 20 / 16</span></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Default / Hover / Active / Move / Disabled</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 130px 1.3fr 1fr 1.1fr 1.9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>Inset</b></span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">внутри тайла, карточки, модального окна, панели</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">TileHeader, Title Body S Strong</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 / 12 / 12 / 12</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">нет</span></span></div>
           <div class="tc tc--separator"></div>
         </div>
       </div>
@@ -275,7 +287,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
       </div>
     </div>
     <ol class="anat__legend">
-      <li><span class="n">1</span><span><span class="k">TileHeader — Title</span><span class="d">H5 Strong. Опц. Addition: Link / Icon / Chip / Badge.</span></span></li>
+      <li><span class="n">1</span><span><span class="k">TileHeader — Title</span><span class="d">H5 Strong. Опц. ведущая иконка (<code class="tok">.tile__title-icon</code>) и Addition: Link / Icon / Chip / Badge.</span></span></li>
       <li><span class="n">2</span><span><span class="k">Subtitle + Chiplist</span><span class="d">Subtitle — Body XS с опц. иконкой; ниже — ряд чипов (маркеры).</span></span></li>
       <li><span class="n">3</span><span><span class="k">Actions</span><span class="d">Трейлинг: 1–3 действия — IconButton (размер M, 20×20) и/или Button в любом сочетании, зазор 12.</span></span></li>
       <li><span class="n">4</span><span><span class="k">Alert-слот + контентная область</span><span class="d">Опц. полноширинный Alert, затем контент (индивидуальный).</span></span></li>
@@ -286,7 +298,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
 <!-- 4. ВАРИАНТЫ -->
 <section class="section" id="variants" data-screen-label="Варианты">
   <h2>Варианты</h2>
-  <p class="desc">Оси конфигурации тайла: наличие хэдера, разворачивание и вставка Alert. Состав самого хэдера (Title / Subtitle / Chiplist / Actions) настраивается независимо — см. Конструктор.</p>
+  <p class="desc">Оси конфигурации тайла: наличие хэдера, разворачивание, поверхность (вложенная подложка Inset), иконка заголовка и вставка Alert. Состав самого хэдера (Title / Subtitle / Chiplist / Actions) настраивается независимо — см. Конструктор.</p>
 
   <div class="subsec">
     <h3>Обычный Tile</h3>
@@ -510,6 +522,77 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   </div>
 
   <div class="subsec">
+    <h3>Inset — вложенная подложка <span class="badge-new">Новое</span></h3>
+    <p class="desc tight">Группа со своим заголовком и списком <b>внутри</b> другой поверхности — тайла, карточки, модального окна, панели поля ввода. Фон на ступень ниже (<code class="tok">--bg-page</code>), поля 12, Title — Body S Strong, ведущая иконка заголовка 18. Рамка и радиус — как у Tile; своих состояний нет. Строки — Entity S в <code class="tok">.entity-list</code>, между ними Divider.</p>
+    <div class="stagebg">
+      <div class="tile" style="max-width:560px;">
+        <div class="tile__header">
+          <div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Объект анализа</h4></div></div>
+        </div>
+        <div class="tile__body">
+          <section class="tile tile--inset" aria-labelledby="inset-demo-title">
+            <header class="tile__header">
+              <div class="tile__header-main">
+                <div class="tile__title-row">
+                  <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="history"></i></span>
+                  <h4 class="tile__title" id="inset-demo-title">История запросов по объекту анализа — 2</h4>
+                </div>
+                <p class="tile__subtitle">Документ откроется в чате, конструктор останется на месте. Содержание запросов доступно только их авторам.</p>
+              </div>
+            </header>
+            <div class="tile__body">
+              <div class="entity-list">
+                <div class="entity entity--s">
+                  <div class="entity__lead"><span class="av av--circular av--m" aria-hidden="true"><span class="av__text">ОН</span></span></div>
+                  <div class="entity__main">
+                    <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Минеральные удобрения, СЗФО — отраслевой обзор</span></div></div>
+                    <div class="entity__subs"><span class="entity__subs-list">Орлова Н. В. · 15.09.2026, 11:30 · Детальный</span></div>
+                  </div>
+                  <div class="entity__actions"><button type="button" class="btn btn--outline btn--xs"><i data-icon="message-text"></i><span class="btn__label">Показать в чате</span></button></div>
+                </div>
+                <hr class="dvd dvd--h">
+                <div class="entity entity--s">
+                  <div class="entity__lead"><span class="av av--circular av--m" aria-hidden="true"><span class="av__text">ГП</span></span></div>
+                  <div class="entity__main">
+                    <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Минеральные удобрения, СЗФО — бенчмарки маржинальности</span></div></div>
+                    <div class="entity__subs"><span class="entity__subs-list">Гусев П. И. · 28.08.2026, 09:15 · Краткий</span></div>
+                  </div>
+                  <div class="entity__actions"><button type="button" class="btn btn--outline btn--xs"><i data-icon="message-text"></i><span class="btn__label">Показать в чате</span></button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <ul class="bullets" style="margin-top:16px;">
+      <li>Inset — только внутри другой поверхности: на фоне страницы <code class="tok">--bg-page</code> сливается со страницей.</li>
+      <li>Inset в Inset не вкладывается.</li>
+      <li>Alert-слота, грипа и аккордеона у Inset не бывает.</li>
+      <li>Интерактивные строки (<code class="tok">.entity--interactive</code>) — только в <code class="tok">.entity-list</code>: поля 12 вмещают выноску подложки наведения 8/10px.</li>
+    </ul>
+  </div>
+
+  <div class="subsec">
+    <h3>Иконка заголовка <span class="badge-new">Новое</span></h3>
+    <p class="desc tight">Ведущая иконка перед заголовком — <code class="tok">.tile__title-icon</code>, во всех вариантах. Стоит по центру первой строки заголовка; глиф у Tile и Card — 20, у Inset — 18. Цвет по умолчанию — <code class="tok">--secondary</code> (штатный цвет иконки ДС); тон — модификатором: <code class="tok">--accent</code> (<code class="tok">--primary</code>), <code class="tok">--success</code>, <code class="tok">--warning</code>, <code class="tok">--error</code>, <code class="tok">--info</code>. Иконка декоративная (<code class="tok">aria-hidden</code>): смысл несёт заголовок.</p>
+    <div class="stagebg" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+      <div class="tile">
+        <div class="tile__header">
+          <div class="tile__header-main"><div class="tile__title-row"><span class="tile__title-icon" aria-hidden="true"><i data-icon="calendar"></i></span><h4 class="tile__title">Сроки сделки</h4></div></div>
+        </div>
+        <div class="tile__body"><p class="ws-cap" style="margin:0">Tile · тон по умолчанию</p></div>
+      </div>
+      <div class="tile tile--card">
+        <div class="tile__header">
+          <div class="tile__header-main"><div class="tile__title-row"><span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="document-check"></i></span><h4 class="tile__title">ООО «ЮгСтрой»</h4></div></div>
+        </div>
+        <div class="tile__body"><p class="ws-cap" style="margin:0">Card · тон Accent</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsec">
     <h3>С Alert-слотом</h3>
     <p class="desc tight">Полноширинный Alert между хэдером и контентом — статус, требующий внимания. Тона: Warning, Info, Error. В Card Alert-слот не предполагается.</p>
     <div class="stagebg" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px;">
@@ -582,7 +665,7 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
   <div class="subsec">
     <h3>Внутренние отступы и ритм</h3>
     <ul class="bullets">
-      <li><b>Отступы контентной области</b> — 10 / 20 / 24 / 20 (top / right / bottom / left), где 10 сверху даёт паддинг хэдера снизу. TileHeadless — 20 / 20 / 32 / 20.</li>
+      <li><b>Отступы контентной области</b> — 10 / 20 / 24 / 20 (top / right / bottom / left), где 10 сверху даёт паддинг хэдера снизу. TileHeadless — 20 / 20 / 32 / 20. Inset — хэдер 12 / 12 / 8, контент 12 / 12 / 12 / 12: от подзаголовка до списка 20.</li>
       <li><b>Расстояние между строками</b> — 16 или 24px.</li>
       <li><b>Расстояние между колонками</b> — 16px.</li>
       <li>TileHeader размещается над контентом вплотную, без отступа; Alert (если есть) — между ними полноширинным блоком.</li>
@@ -696,6 +779,16 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
           <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Title (Inset)</span></span></div>
+          <div class="tc"><code class="tok">--type-body-s-strong</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">SemiBold</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16, SemiBold</span></span></div>
+          <div class="tc"><span style="font:var(--type-body-s-strong)">Образец</span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.2fr 1.1fr .9fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">Subtitle</span></span></div>
           <div class="tc"><code class="tok">--type-body-xs</code></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">SB Sans Text</span></span></div>
@@ -759,6 +852,33 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
           <div class="tc"><code class="tok">--border-light</code></div>
           <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);background:var(--border-light)"></span></div>
           <div class="tc"><span class="tc__row"><span class="tc__text">#E1EDE7</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Inset</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Фон вложенной подложки</span></span></div>
+          <div class="tc"><code class="tok">--bg-page</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);background:var(--bg-page)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">#F5F7F7</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Хэдер</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Иконка заголовка · по умолчанию</span></span></div>
+          <div class="tc"><code class="tok">--secondary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);background:var(--secondary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">#B8D6D3</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Хэдер</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Иконка заголовка · Accent</span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);background:var(--primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div>
           <div class="tc tc--separator"></div>
         </div>
         <div class="tbl__row" style="grid-template-columns:8px 1.2fr 1.4fr 1.1fr .7fr .8fr 8px;">
@@ -991,6 +1111,15 @@ onToggle():
                       <option value="accordion">Аккордеон</option>
                       <option value="headless">Без хэдера</option>
                       <option value="card">Карточка (Card)</option>
+                      <option value="inset">Вложенная (Inset)</option>
+                    </select></div>
+                  </div>
+                  <div class="ctl" id="wrap-ticon">
+                    <div class="lbl">Иконка заголовка</div>
+                    <div class="pg-select"><select id="ctl-ticon">
+                      <option value="none" selected>Без иконки</option>
+                      <option value="default">Иконка · по умолчанию</option>
+                      <option value="accent">Иконка · Accent</option>
                     </select></div>
                   </div>
                   <div class="ctl">
@@ -1165,7 +1294,22 @@ onToggle():
   <div class="tile__body">…контент индивидуальный; поля значений — ReadOnlyField (.rof)…</div>
 </section>
 <!-- headless: .tile.tile--headless > .tile__body (без хэдера) -->
-<!-- accordion: .tile.tile--accordion; toggle .tile__toggle (aria-expanded) над .tile__collapsible; свёрнуто — .tile--collapsed --></script>
+<!-- accordion: .tile.tile--accordion; toggle .tile__toggle (aria-expanded) над .tile__collapsible; свёрнуто — .tile--collapsed -->
+<!-- ведущая иконка заголовка (все варианты): перед .tile__title; тон — --accent | --success | --warning | --error | --info -->
+<div class="tile__title-row"><span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="history"></i></span><h3 class="tile__title">Заголовок</h3></div>
+<!-- inset: вложенная подложка ВНУТРИ другой поверхности (Tile, Card, Modal, Drawer, панель); строки — Entity S в .entity-list -->
+<section class="tile tile--inset" aria-labelledby="insetTitle">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="history"></i></span>
+        <h3 class="tile__title" id="insetTitle">История запросов по объекту анализа — 2</h3>
+      </div>
+      <p class="tile__subtitle">Документ откроется в чате, конструктор останется на месте.</p>
+    </div>
+  </header>
+  <div class="tile__body"><div class="entity-list">…Entity S…<hr class="dvd dvd--h">…Entity S…</div></div>
+</section></script>
 
 <script type="text/plain" id="src-code-js">/* Tile — статичная разметка; сворачивание аккордеона — рантайм ДС (components/organisms/Tile/Tile.js).
    Демо страницы строит инлайн-функция buildTile() в Tile.html. */
@@ -1309,6 +1453,29 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
   -webkit-line-clamp: 2;
   line-clamp: 2;
 }
+/* Ведущая иконка заголовка (с 1.016) — перед тайтлом, во всех вариантах.
+   Коробка — высотой в строку тайтла (тот же шрифт, 1lh): глиф стоит по
+   центру первой строки и не сдвигает заголовок. Глиф: Tile и Card — 20,
+   Inset — 18. Цвет — штатный цвет иконки ДС; тон — модификатором, как у
+   иконки-приписки (решение человека 06.10.2026: одно правило всем). */
+.tile__title-icon {
+  --tile-title-icon: 20px;
+
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1lh;
+  font: var(--type-h5-strong);
+  color: var(--secondary);
+}
+.tile__title-icon > :is(svg,[data-icon]){ width: var(--tile-title-icon); height: var(--tile-title-icon); display: block; flex: none; }
+.tile__title-icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+.tile__title-icon--accent  { color: var(--primary); }
+.tile__title-icon--success { color: var(--success); }
+.tile__title-icon--warning { color: var(--warning); }
+.tile__title-icon--error   { color: var(--error); }
+.tile__title-icon--info    { color: var(--info); }
 /* Addition к тайтлу: Link / Icon / Chip / Badge — все inline после тайтла */
 .tile__title-add {
   display: inline-flex;
@@ -1506,7 +1673,8 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
 }
 /* Title Card — H6 Strong (16/20). Клэмп 2 строки и усечение уже заданы
    у .tile__title, здесь меняется только ступень шрифта. */
-.tile--card .tile__title {
+.tile--card .tile__title,
+.tile--card .tile__title-icon {
   font: var(--type-h6-strong);
 }
 /* Зазор Title↔Subtitle↔Chiplist у Card — 4 (у плашки 8): заголовок на
@@ -1574,6 +1742,43 @@ DSTile.toggle(tileEl, true);        // свернуть / развернуть �
 }
 @media (prefers-reduced-motion: reduce) {
   .tile--card { transition: none; }
+}
+
+/* ------------------------------------------------------------
+   Inset — вложенная подложка (с 1.016, задача MS0010g).
+   Нейтральная поверхность на ступень ниже: группа со своим заголовком
+   и списком ВНУТРИ другой поверхности — Tile, Card, Modal, Drawer,
+   панели поля промпта. На фоне страницы не ставится: фон --bg-page
+   сливается со страницей. Inset в Inset не вкладывается.
+
+   Отличия от Tile: фон --bg-page, поля 12, Title — Body S Strong,
+   глиф ведущей иконки 18; зазор хэдер↔контент 20 (8 хэдера + 12
+   контента). Рамка и радиус — как у Tile. Своих состояний нет;
+   Alert-слота, грипа и аккордеона у Inset не бывает. Строки внутри —
+   Entity S в .entity-list (поля 12 вмещают выноску hover 8/10px
+   интерактивной строки).
+   ------------------------------------------------------------ */
+.tile--inset {
+  --tile-pad-x: 12px;
+  --tile-pad-bottom: 12px;
+
+  background: var(--bg-page);
+}
+.tile--inset > .tile__header {
+  padding: 12px var(--tile-pad-x) 8px;
+}
+.tile--inset > .tile__body {
+  padding: 12px var(--tile-pad-x) var(--tile-pad-bottom);
+}
+.tile--inset.tile--headless > .tile__body {
+  padding: 12px var(--tile-pad-x);
+}
+.tile--inset .tile__title,
+.tile--inset .tile__title-icon {
+  font: var(--type-body-s-strong);
+}
+.tile--inset .tile__title-icon {
+  --tile-title-icon: 18px;
 }</script>
 
 <script>
@@ -1600,15 +1805,19 @@ function buildTile(){
   var actions = document.getElementById('ctl-actions').value;
   var alert   = document.getElementById('ctl-alert').value;
   var grip    = document.getElementById('ctl-grip').checked;
+  var ticon   = document.getElementById('ctl-ticon').value;
 
   var headless = (type === 'headless');
   var card = (type === 'card');
+  var inset = (type === 'inset');
   /* hide header-only controls when headless */
-  ['wrap-title','wrap-add','wrap-sub','wrap-chips','wrap-actions','wrap-alert'].forEach(function(id){
+  ['wrap-title','wrap-ticon','wrap-add','wrap-sub','wrap-chips','wrap-actions','wrap-alert'].forEach(function(id){
     document.getElementById(id).classList.toggle('is-off', headless);
   });
   /* Card: alert-слота нет, зато есть грип переноса (.tile__grip) */
   if (card) { document.getElementById('wrap-alert').classList.add('is-off'); alert = 'none'; }
+  /* Inset: alert-слота, грипа и аккордеона нет — вложенная подложка внутри другой поверхности */
+  if (inset) { document.getElementById('wrap-alert').classList.add('is-off'); alert = 'none'; }
   document.getElementById('wrap-grip').classList.toggle('is-off', !card);
 
   /* per-action controls: показываем только актуальные */
@@ -1629,6 +1838,7 @@ function buildTile(){
   if (headless) cls += ' tile--headless';
   if (type === 'accordion') cls += ' tile--accordion';
   if (card) cls += ' tile--card';
+  if (inset) cls += ' tile--inset';
 
   var host = document.getElementById('demo-tile');
   host.className = cls;
@@ -1644,6 +1854,18 @@ function buildTile(){
     host.innerHTML = content;
     return;
   }
+  /* Inset: строки Entity S в .entity-list, между ними Divider */
+  if (inset) {
+    var row = function(ini, name, meta){
+      return '<div class="entity entity--s"><div class="entity__lead"><span class="av av--circular av--m" aria-hidden="true"><span class="av__text">' + ini + '</span></span></div>' +
+        '<div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">' + name + '</span></div></div>' +
+        '<div class="entity__subs"><span class="entity__subs-list">' + meta + '</span></div></div></div>';
+    };
+    content = '<div class="tile__body"><div class="entity-list">' +
+      row('ОН', 'Минеральные удобрения, СЗФО — отраслевой обзор', 'Орлова Н. В. · 15.09.2026 · Детальный') + '<hr class="dvd dvd--h">' +
+      row('ГП', 'Минеральные удобрения, СЗФО — бенчмарки маржинальности', 'Гусев П. И. · 28.08.2026 · Краткий') +
+      '</div></div>';
+  }
 
   /* ---- title addition ---- */
   var addHtml = '';
@@ -1652,7 +1874,8 @@ function buildTile(){
   else if (add === 'chip') addHtml = '<span class="chip chip--s"><span class="chip__label">Погашен</span></span>';
   else if (add === 'badge') addHtml = '<span class="badge badge--s badge--neutral badge--text">9</span>';
 
-  var titleRow = '<div class="tile__title-row"><h3 class="tile__title">' + esc(title) + '</h3>' + addHtml + '</div>';
+  var ticonHtml = ticon === 'none' ? '' : '<span class="tile__title-icon' + (ticon === 'accent' ? ' tile__title-icon--accent' : '') + '" aria-hidden="true">' + getIcon(inset ? 'history' : 'calendar', 20) + '</span>';
+  var titleRow = '<div class="tile__title-row">' + ticonHtml + '<h3 class="tile__title">' + esc(title) + '</h3>' + addHtml + '</div>';
   var subHtml = sub ? '<p class="tile__subtitle"><span class="tile__subtitle-icon tile__subtitle-icon--success">' + getIcon('check-circle-filled',16) + '</span>Нерезидент</p>' : '';
   var chipsHtml = chips ? '<div class="tile__chiplist"><span class="chip chip--xs"><span class="chip__label">Погашен</span></span><span class="chip chip--xs"><span class="chip__label">Погашен</span></span></div>' : '';
 
@@ -1689,10 +1912,16 @@ function buildTile(){
     ? '<div class="tile__collapsible" id="demo-acc">' + content + '</div>'
     : content;
 
+  /* Inset — только внутри другой поверхности: в демо его несёт тайл без хэдера */
+  if (inset) {
+    host.className = 'tile tile--headless';
+    host.innerHTML = '<div class="tile__body"><section class="' + cls + '">' + header + body + '</section></div>';
+    return;
+  }
   host.innerHTML = header + alertHtml + body;
 }
 
-['ctl-type','ctl-cols','ctl-title','ctl-add','ctl-sub','ctl-chips','ctl-grip','ctl-actions','ctl-alert',
+['ctl-type','ctl-cols','ctl-title','ctl-ticon','ctl-add','ctl-sub','ctl-chips','ctl-grip','ctl-actions','ctl-alert',
  'ctl-act1-kind','ctl-act1-icon','ctl-act1-label','ctl-act2-kind','ctl-act2-icon','ctl-act2-label','ctl-act3-kind','ctl-act3-icon','ctl-act3-label'].forEach(function(id){
   var el = document.getElementById(id);
   if (el){ el.addEventListener('change', buildTile); el.addEventListener('input', buildTile); }

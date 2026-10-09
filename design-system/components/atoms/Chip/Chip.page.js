@@ -7,7 +7,12 @@
 
   /* ---------- chip factory ----------
      o: {
-       type:'edit'|'readonly', style:'fill'|'outline', size:'l'|'m'|'s'|'xs',
+       type:'edit'|'readonly', style:'fill'|'outline'|'dashed', size:'l'|'m'|'s'|'xs',
+       compact:bool — подпись на ступень мельче (L/M → Body S),
+       as:'span'|'button', selection:null|'toggle'|'radio' — чип-переключатель выбора
+       (aria-pressed / role=radio + aria-checked), press:null|true|false — сжатие при
+       нажатии (null — по умолчанию компонента: у кнопки есть, у span нет),
+       leading:…|'tag'|'toggle', tagText — мини-чип категории, check — галочка справа,
        tone:'system'|'success'|'info'|'warning'|'error'|'green'|'lblue'|'orange'|'red'|'dpurple'|'grey'|'primary'|'accent'|'dark',
        solid:bool — заливка base-тоном + белый текст (chip--<tone>-solid),
        label, leading:null|'marker'|'badge'|'avatar', leadingIcon, badgeText, avatarText,
@@ -21,28 +26,45 @@
       avatarText = 'A', avatarContent = 'text', avatarIcon = null, avatarImgId = null,
       removable = false, dropdown = false, count = null, rounded = false, solid = false,
       state = 'default', disabled = false, tooltip = null, maxWidth = null,
+      compact = false, as = 'span', selection = null, press = null, tagText = 'Тег', check = false,
+      expandable = null,
     } = o;
+    const isBtn = as === 'button';
+    const selected = state === 'selected';
     // marker defaults to a small status dot; a plain "icon" leading slot defaults to a pictographic glyph
     const resolvedLeadingIcon = leadingIcon || (leading === 'icon' ? 'star-filled' : 'circle-filled-small');
 
-    const el = document.createElement('span');
+    const el = document.createElement(isBtn ? 'button' : 'span');
+    if (isBtn) el.type = 'button';
     el.className = 'chip';
     el.classList.add('chip--' + type);
     if (style === 'outline') el.classList.add('chip--outline');
+    if (style === 'dashed') el.classList.add('chip--dashed');
     el.classList.add('chip--' + size);
+    if (compact) el.classList.add('chip--compact');
+    if (press === true && !isBtn) el.classList.add('chip--press');
+    if (press === false && isBtn) el.classList.add('chip--no-press');
     if (tone && tone !== 'system') el.classList.add('chip--' + tone + (solid ? '-solid' : ''));
     if (rounded) el.classList.add('chip--rounded');
-    if (state === 'selected') el.classList.add('chip--selected');
+    // выбор: у чипа-переключателя — атрибутом (так делает экран), у витринного — классом
+    if (selection === 'toggle') el.setAttribute('aria-pressed', String(selected));
+    else if (selection === 'radio') { el.setAttribute('role', 'radio'); el.setAttribute('aria-checked', String(selected)); }
+    else if (selected) el.classList.add('chip--selected');
     if (state === 'focus') el.classList.add('chip--edit', 'is-focus');
     if (state === 'invalid') el.classList.add('chip--invalid');
-    if (disabled) el.classList.add('chip--disabled');
-    if (type === 'edit' && !disabled) el.tabIndex = 0;
+    if (disabled) { if (isBtn) el.disabled = true; else el.classList.add('chip--disabled'); }
+    if (type === 'edit' && !disabled && !isBtn) el.tabIndex = 0;
     if (maxWidth) el.style.maxWidth = maxWidth + 'px';
 
     // leading slot
     if (state === 'loading') {
       const sp = document.createElement('span'); sp.className = 'spin'; el.appendChild(sp);
-    } else if (state === 'selected') {
+    } else if (leading === 'toggle') {
+      const ic = document.createElement('span'); ic.className = 'chip__icon chip__icon--toggle'; ic.setAttribute('aria-hidden', 'true');
+      ic.innerHTML = icon('add') + icon('check'); el.appendChild(ic);
+    } else if (leading === 'tag') {
+      const t = document.createElement('span'); t.className = 'chip__tag'; t.textContent = tagText; el.appendChild(t);
+    } else if (state === 'selected' && !selection) {
       const ic = document.createElement('span'); ic.className = 'chip__icon'; ic.innerHTML = icon('check'); el.appendChild(ic);
     } else if (leading === 'marker') {
       const m = document.createElement('span'); m.className = 'chip__marker'; m.innerHTML = icon(resolvedLeadingIcon); el.appendChild(m);
@@ -69,6 +91,12 @@
       const c = document.createElement('span'); c.className = 'chip__count'; c.textContent = count; el.appendChild(c);
     }
 
+    // галочка выбора справа (ведущий слот занят тегом / аватаром)
+    if (check) {
+      const c = document.createElement('span'); c.className = 'chip__check'; c.setAttribute('aria-hidden', 'true');
+      c.innerHTML = icon('check'); el.appendChild(c);
+    }
+
     // trailing action
     if (dropdown) {
       const d = document.createElement('span'); d.className = 'chip__dropdown'; d.innerHTML = icon('chevron-down'); el.appendChild(d);
@@ -81,14 +109,35 @@
     // tooltip on overflow / long text
     if (tooltip) { el.title = tooltip; if (disabled) el.classList.add('chip--has-tooltip'); }
 
+    /* раскрывающийся чип (1.020): шапка-кнопка .chip__toggle с ведущим слотом,
+       подписью, источником и стрелкой; крестик рядом; весь текст — в .chip__body */
+    if (expandable) {
+      el.classList.add('chip--expandable');
+      el.removeAttribute('tabindex');
+      const tg = document.createElement('button'); tg.type = 'button'; tg.className = 'chip__toggle';
+      const bodyId = 'chipx-' + (++makeChip.uid);
+      tg.setAttribute('aria-expanded', String(!!expandable.open)); tg.setAttribute('aria-controls', bodyId);
+      [...el.children].forEach(ch => { if (ch.matches('.chip__icon, .chip__marker, .chip__avatar, .chip__tag, .chip__label')) tg.appendChild(ch); });
+      const src = document.createElement('span'); src.className = 'chip__source'; src.textContent = expandable.source || ''; tg.appendChild(src);
+      const ex = document.createElement('span'); ex.className = 'chip__expand'; ex.setAttribute('aria-hidden', 'true'); ex.innerHTML = icon('chevron-down'); tg.appendChild(ex);
+      el.insertBefore(tg, el.firstChild);
+      const body = document.createElement('span'); body.className = 'chip__body'; body.id = bodyId;
+      const tx = document.createElement('span'); tx.className = 'chip__text ds-scroll'; tx.textContent = expandable.text || ''; body.appendChild(tx);
+      el.appendChild(body);
+    }
+
     return el;
   }
+  makeChip.uid = 0;
+  const FRAGMENT = 'Долговая нагрузка группы выросла за год на 18 %: чистый долг к EBITDA — 3,4×, на горизонте трёх лет пик погашений приходится на 2027 год (34 % портфеля). Запас по ковенантам — 0,6× до порога 4,0×; рефинансирование валютной части даст экономию 1,2 п. п. по ставке, но потребует продления сроков. Банк остаётся основным кредитором с долей 41 %.';
+  const fragmentChip = (open) => makeChip({ type: 'edit', size: 's', label: '«Долговая нагрузка группы выросла…»', leading: 'icon', leadingIcon: 'message-text', removable: true, expandable: { source: 'Фрагмент материала · Долговая нагрузка', text: FRAGMENT, open } });
 
   /* ============================ PLAYGROUND ============================ */
   (function () {
     const state = {
       type: 'edit', style: 'fill', size: 'm', tone: 'system', solid: false,
       leading: 'none', avatarContent: 'text', removable: true, dropdown: false, count: false, rounded: false, chipState: 'default',
+      compact: false, element: 'span', press: false, check: false, expandable: false,
     };
     const controls = document.getElementById('pg-controls');
     const preview = document.getElementById('pg-preview');
@@ -119,10 +168,19 @@
     }
 
     controls.appendChild(select('Тип', [['edit', 'Edit'], ['readonly', 'ReadOnly']], () => state.type, v => state.type = v));
-    controls.appendChild(select('Стиль', [['fill', 'Fill (Border + Fill)'], ['outline', 'Outline (Border)']], () => state.style, v => state.style = v));
+    controls.appendChild(select('Элемент', [['span', 'Чип (span)'], ['toggle', 'Кнопка · множественный выбор'], ['radio', 'Кнопка · одиночный выбор']], () => state.element, v => {
+      /* сжатие по умолчанию — у чипа-кнопки: при смене элемента свитч встаёт в значение компонента */
+      state.element = v; state.press = v !== 'span';
+      pressCtl._sel.value = state.press ? 'yes' : 'no';
+      const sw = [...document.querySelectorAll('.pg-toggle')].find(l => l.textContent.trim() === 'Сжатие при нажатии');
+      if (sw) sw.querySelector('input').checked = state.press;
+    }));
+    controls.appendChild(select('Стиль', [['fill', 'Fill (Border + Fill)'], ['outline', 'Outline (Border)'], ['dashed', 'Dashed (предложение)']], () => state.style, v => state.style = v));
     controls.appendChild(select('Размер', [['l', 'L · 40'], ['m', 'M · 32'], ['s', 'S · 24'], ['xs', 'XS · 20']], () => state.size, v => state.size = v));
+    const compactCtl = ctlToggle('Compact (текст на ступень мельче)', 'compact');
+    controls.appendChild(compactCtl);
     controls.appendChild(select('Тон', [['system', 'System'], ['success', 'Success'], ['info', 'Info'], ['warning', 'Warning'], ['error', 'Error'], ['green', 'Green'], ['lblue', 'LBlue'], ['orange', 'Orange'], ['red', 'Red'], ['dpurple', 'DPurple'], ['grey', 'Grey'], ['primary', 'Primary']], () => state.tone, v => state.tone = v));
-    controls.appendChild(select('Дополнительный элемент', [['none', 'Нет'], ['marker', 'Маркер'], ['icon', 'Иконка'], ['avatar', 'Аватар']], () => state.leading, v => state.leading = v));
+    controls.appendChild(select('Дополнительный элемент', [['none', 'Нет'], ['marker', 'Маркер'], ['icon', 'Иконка'], ['toggle', 'Иконка-переключатель'], ['avatar', 'Аватар'], ['tag', 'Тег']], () => state.leading, v => state.leading = v));
     const avatarCtl = select('Содержимое аватара', [['text', 'Аватар-инициалы'], ['icon', 'Аватар-иконка'], ['image', 'Аватар-фото']], () => state.avatarContent, v => state.avatarContent = v);
     controls.appendChild(avatarCtl);
     controls.appendChild(select('Состояние', [['default', 'Default'], ['selected', 'Selected'], ['focus', 'Focus'], ['loading', 'Loading'], ['invalid', 'Invalid'], ['disabled', 'Disabled']], () => state.chipState, v => state.chipState = v));
@@ -134,44 +192,80 @@
     ddToggle._sel.addEventListener('change', () => { if (state.dropdown && state.removable) { state.removable = false; rmToggle._sel.value = 'no'; render(); } });
     controls.appendChild(rmToggle);
     controls.appendChild(ddToggle);
+    const checkCtl = ctlToggle('Галочка выбора справа', 'check');
+    controls.appendChild(checkCtl);
     controls.appendChild(ctlToggle('Счётчик', 'count'));
     controls.appendChild(ctlToggle('Rounded', 'rounded'));
     const solidCtl = ctlToggle('Solid', 'solid');
     controls.appendChild(solidCtl);
+    const pressCtl = ctlToggle('Сжатие при нажатии', 'press');
+    controls.appendChild(pressCtl);
+    controls.appendChild(ctlToggle('Раскрывающийся', 'expandable'));
 
     function render() {
       const disabled = state.chipState === 'disabled';
       /* у ReadOnly-чипа крестика удаления не бывает — скрываем настройку */
-      rmToggle.classList.toggle('is-off', state.type !== 'edit');
+      rmToggle.classList.toggle('is-off', state.type !== 'edit' || state.element !== 'span');
+      ddToggle.classList.toggle('is-off', state.element !== 'span');
       /* содержимое аватара — только когда выбран аватар */
       avatarCtl.classList.toggle('is-off', state.leading !== 'avatar');
       /* solid — только у статусных тонов (у system solid нет) */
       solidCtl.classList.toggle('is-off', state.tone === 'system');
+      /* compact действует только на L и M */
+      compactCtl.classList.toggle('is-off', state.size === 's' || state.size === 'xs');
+      /* галочка справа — когда ведущий слот занят тегом или аватаром */
+      checkCtl.classList.toggle('is-off', state.leading !== 'tag' && state.leading !== 'avatar');
+      const isBtn = state.element !== 'span';
+      const selection = isBtn ? state.element : null;
+      const useCheck = state.check && (state.leading === 'tag' || state.leading === 'avatar');
       const o = {
         type: state.type, style: state.style, size: state.size, tone: state.tone, solid: state.solid,
         label: 'Text', leading: state.leading === 'none' ? null : state.leading,
         avatarContent: state.avatarContent, avatarText: 'И', avatarImgId: 'chip-pg-av-img',
-        removable: state.removable && state.type === 'edit',
-        dropdown: state.dropdown, rounded: state.rounded,
+        /* чип-переключатель — кнопка: крестик и шеврон внутри неё невалидны (кнопка в кнопке) */
+        removable: state.removable && state.type === 'edit' && !isBtn,
+        dropdown: state.dropdown && !isBtn, rounded: state.rounded,
         count: state.count ? '12' : null,
         state: disabled ? 'default' : state.chipState, disabled,
+        compact: state.compact, as: isBtn ? 'button' : 'span', selection, press: state.press,
+        tagText: 'Отрасль', check: useCheck,
       };
       preview.innerHTML = '';
+      if (state.expandable) {
+        /* раскрывающийся чип — свой состав: фрагмент текста, Edit S Fill */
+        const box = document.createElement('div'); box.className = 'chiplist'; box.style.width = '100%';
+        box.appendChild(fragmentChip(false));
+        preview.appendChild(box);
+        codeEl.innerHTML = '<code>&lt;span class="chip chip--edit chip--s chip--expandable"&gt;&lt;button class="chip__toggle" aria-expanded="false"&gt;…&lt;/button&gt;…&lt;span class="chip__body"&gt;…&lt;/span&gt;&lt;/span&gt;</code>';
+        return;
+      }
       const chip = makeChip(o);
       // live remove in playground
       const rm = chip.querySelector('.chip__remove');
       if (rm) rm.addEventListener('click', () => { chip.style.transition = 'opacity .2s, transform .2s'; chip.style.opacity = '0'; chip.style.transform = 'scale(.85)'; setTimeout(render, 220); });
+      // чип-переключатель живой: клик меняет выбор
+      if (selection) chip.addEventListener('click', () => { state.chipState = state.chipState === 'selected' ? 'default' : 'selected'; render(); });
       preview.appendChild(chip);
 
       const cls = ['chip', 'chip--' + state.type];
       if (state.style === 'outline') cls.push('chip--outline');
+      if (state.style === 'dashed') cls.push('chip--dashed');
       cls.push('chip--' + state.size);
+      if (state.compact && (state.size === 'l' || state.size === 'm')) cls.push('chip--compact');
+      if (isBtn && !state.press) cls.push('chip--no-press');
+      if (!isBtn && state.press) cls.push('chip--press');
       if (state.tone !== 'system') cls.push('chip--' + state.tone + (state.solid ? '-solid' : ''));
       if (state.rounded) cls.push('chip--rounded');
-      if (state.chipState === 'selected') cls.push('chip--selected');
+      const sel = state.chipState === 'selected';
+      if (sel && !isBtn) cls.push('chip--selected');
       if (state.chipState === 'invalid') cls.push('chip--invalid');
-      if (disabled) cls.push('chip--disabled');
-      codeEl.innerHTML = '<code>&lt;span class="' + cls.join(' ') + '"&gt;…&lt;/span&gt;</code>';
+      if (disabled && !isBtn) cls.push('chip--disabled');
+      let attrs = '';
+      if (selection === 'toggle') attrs = ' aria-pressed="' + sel + '"';
+      if (selection === 'radio') attrs = ' role="radio" aria-checked="' + sel + '"';
+      if (disabled && isBtn) attrs += ' disabled';
+      const tag = isBtn ? 'button' : 'span';
+      codeEl.innerHTML = '<code>&lt;' + tag + (isBtn ? ' type="button"' : '') + ' class="' + cls.join(' ') + '"' + attrs + '&gt;…&lt;/' + tag + '&gt;</code>';
     }
     render();
   })();
@@ -254,6 +348,15 @@
       host.appendChild(makeChip({ type: 'edit', style, size: 'm', label: 'Список', dropdown: true }));
     };
     variants('fill'); variants('outline');
+
+    const dashed = document.getElementById('style-dashed');
+    ['Структура владения', 'Рефинансирование'].forEach(t =>
+      dashed.appendChild(makeChip({ type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: t, leading: 'toggle', as: 'button', selection: 'toggle' })));
+    dashed.appendChild(makeChip({ type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Выбрано', leading: 'toggle', as: 'button', selection: 'toggle', state: 'selected' }));
+    const dTone = document.getElementById('style-dashed-tone');
+    const own = makeChip({ type: 'edit', style: 'dashed', tone: 'primary', size: 'm', compact: true, rounded: true, label: 'Использовать «мин»', leading: 'icon', leadingIcon: 'add', as: 'button' });
+    dTone.appendChild(own);
+    dashed.querySelectorAll('[aria-pressed]').forEach(b => b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))));
   })();
 
   /* ============================ SIZES ============================ */
@@ -267,15 +370,23 @@
       ['Текст', (sz) => makeChip({ type: 'edit', size: sz, label: 'Text' })],
       ['+ маркер', (sz) => makeChip({ type: 'edit', size: sz, label: 'Text', leading: 'marker' })],
       ['+ крестик', (sz) => makeChip({ type: 'edit', size: sz, label: 'Text', removable: true })],
+      ['+ тег', (sz) => makeChip({ type: 'edit', style: 'outline', size: sz, label: 'Text', leading: 'tag', tagText: 'Тег', rounded: true })],
     ];
     rows.forEach(([rl, build]) => {
       const rh = document.createElement('div'); rh.className = 'row-head'; rh.textContent = rl; g.appendChild(rh);
       cols.forEach(([, sz]) => { const c = document.createElement('div'); c.className = 'cell'; c.appendChild(build(sz)); g.appendChild(c); });
     });
 
+    const cmp = document.getElementById('sizes-compact');
+    [['L', 'l'], ['M', 'm']].forEach(([nm, sz]) => {
+      cmp.appendChild(makeChip({ type: 'edit', size: sz, label: nm + ' · Text' }));
+      cmp.appendChild(makeChip({ type: 'edit', size: sz, compact: true, label: nm + ' compact · Text' }));
+    });
+
     const tbl = [
       ['L', '40 px', 'Body M · 16/20', '20 px', '8 px', 'Крупный ReadOnly-показ (зарезервирован)'],
       ['M', '32 px', 'Body M · 16/20', '20 px', '8 px', 'Базовый: чиплисты, фильтры'],
+      ['M compact', '32 px', 'Body S · 14/16', '16 px', '8 px', 'Чипы выбора рядом с полями и кнопками S'],
       ['S', '24 px', 'Body S · 14/16', '16 px', '6 px', 'Компактные фильтры, InputAutocomplete'],
       ['XS', '20 px', 'Body XS · 12/16', '16 px', '6 px', 'Плотные таблицы, ReadOnlyField (значения-чипы)'],
     ];
@@ -319,6 +430,18 @@
         ['Fill', '--st-system-midlight', 'StSystem_MidLight', 'Swamp_400, 32%'],
         ['Text', '--st-system-dark', 'StSystem_Dark', 'CGrey_600'],
         ['Icons', '--st-system', 'StSystem', 'Swamp_400'],
+      ]],
+      ['Selected', { type: 'edit', size: 'm', label: 'Text', state: 'selected' }, [
+        ['Border', '--primary', 'Primary', 'Emerald_500, 56%'],
+        ['Fill', '--st-primary-light', 'StPrimary_Light', 'Emerald_500, 16%'],
+        ['Text', '--primary-dark', 'Primary_Dark', 'Emerald_700'],
+        ['Icons', '--primary', 'Primary', 'Emerald_500'],
+      ]],
+      ['Selected hover', { type: 'edit', size: 'm', label: 'Text', state: 'selected', _hover: true }, [
+        ['Border', '--primary', 'Primary', 'Emerald_500'],
+        ['Fill', '--st-primary-midlight', 'StPrimary_MidLight', 'Emerald_500, 32%'],
+        ['Text', '--primary-dark', 'Primary_Dark', 'Emerald_700'],
+        ['Icons', '--primary', 'Primary', 'Emerald_500'],
       ]],
       ['Disabled', { type: 'edit', size: 'm', label: 'Text', removable: true, disabled: true }, [
         ['Border', '--st-disabled-light', 'StDisabled_Light', 'CGrey_600, 4%'],
@@ -364,6 +487,30 @@
     const host = document.getElementById('state-specs');
     host.appendChild(buildSpec('Border + Fill', fillStates));
     host.appendChild(buildSpec('Border', outlineStates));
+    const dashedStates = [
+      ['Default', { type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Text', leading: 'toggle' }, [
+        ['Border', '--st-system-mid', 'StSystem_Mid · dashed', 'Swamp_400, 56%'],
+        ['Text', '--st-system-dark', 'StSystem_Dark', 'CGrey_600'],
+        ['Icons', '--st-system', 'StSystem', 'Swamp_400'],
+      ]],
+      ['Hover', { type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Text', leading: 'toggle', _hover: true }, [
+        ['Border', '--st-system-mid', 'StSystem_Mid · solid', 'Swamp_400, 56%'],
+        ['Fill', '--st-system-midlight', 'StSystem_MidLight', 'Swamp_400, 32%'],
+        ['Text', '--st-system-dark', 'StSystem_Dark', 'CGrey_600'],
+      ]],
+      ['Selected', { type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Text', leading: 'toggle', state: 'selected' }, [
+        ['Border', '--primary', 'Primary · solid', 'Emerald_500, 56%'],
+        ['Fill', '--st-primary-light', 'StPrimary_Light', 'Emerald_500, 16%'],
+        ['Text', '--primary-dark', 'Primary_Dark', 'Emerald_700'],
+        ['Icons', '--primary', 'Primary', 'Emerald_500'],
+      ]],
+      ['Disabled', { type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Text', leading: 'toggle', disabled: true }, [
+        ['Border', '--st-disabled-mid', 'StDisabled_Mid · dashed', 'CGrey_600, 16%'],
+        ['Text', '--st-disabled-dark', 'StDisabled_Dark', 'CGrey_600, 40%'],
+        ['Icons', '--st-disabled', 'StDisabled', 'CGrey_600, 24%'],
+      ]],
+    ];
+    host.appendChild(buildSpec('Dashed', dashedStates));
     probe.remove();
   })();
 
@@ -383,6 +530,14 @@
         makeChip({ type: 'edit', size: 'm', label: 'Иван Б.', leading: 'avatar', avatarText: 'И', removable: true }),
         makeChip({ type: 'edit', size: 'm', label: 'Бот', leading: 'avatar', avatarContent: 'icon' }),
         makeChip({ type: 'edit', size: 'm', label: 'Фото', leading: 'avatar', avatarContent: 'image', avatarImgId: 'chip-slot-av-img' }),
+      ]],
+      ['Тег', 'Мини-чип категории перед подписью — во всех размерах. Не сжимается: при нехватке места усекается подпись чипа. В выбранном чипе — заливка Primary и белый текст, в тоновом — фон Mid рампы.', [
+        makeChip({ type: 'edit', style: 'outline', size: 'm', compact: true, rounded: true, label: 'Минеральные удобрения', leading: 'tag', tagText: 'Отрасль' }),
+        makeChip({ type: 'edit', style: 'outline', size: 'm', compact: true, rounded: true, label: 'Логистика', leading: 'tag', tagText: 'Отрасль', state: 'selected', check: true }),
+      ]],
+      ['Иконка-переключатель', 'Два глифа в ведущем слоте: «add» — в невыбранном чипе, «check» — в выбранном. Смена — поворот и масштаб в пределах слота, соседи не сдвигаются.', [
+        makeChip({ type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Предложение', leading: 'toggle' }),
+        makeChip({ type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: 'Принято', leading: 'toggle', state: 'selected' }),
       ]],
       ['.Chip_Action', 'Завершающее действие: крестик удаления ИЛИ шеврон выпадающего списка — они взаимоисключающие, вместе не ставятся.', [
         makeChip({ type: 'edit', size: 'm', label: 'Удалить', removable: true }),
@@ -460,6 +615,38 @@
     host.parentElement.appendChild(reset);
   })();
 
+  /* ============================ CHOICE (interactive) ============================ */
+  (function () {
+    const multi = document.getElementById('choice-multi');
+    ['Долговая нагрузка и ковенанты', 'Оценка по мультипликаторам', 'Структура владения'].forEach((t, i) => {
+      const c = makeChip({ type: 'edit', style: 'dashed', size: 'm', compact: true, rounded: true, label: t, leading: 'toggle', as: 'button', selection: 'toggle', state: i === 0 ? 'selected' : 'default' });
+      c.addEventListener('click', () => c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true')));
+      multi.appendChild(c);
+    });
+    const single = document.getElementById('choice-single');
+    [['Группа', 'ГК «Северный агрохолдинг»'], ['Отрасль', 'Минеральные удобрения, СЗФО'], ['Компания', 'АО «Метизный завод»']].forEach(([tag, t], i) => {
+      const c = makeChip({ type: 'edit', style: 'outline', size: 'm', compact: true, rounded: true, label: t, leading: 'tag', tagText: tag, check: true, as: 'button', selection: 'radio', state: i === 1 ? 'selected' : 'default' });
+      c.addEventListener('click', () => {
+        const on = c.getAttribute('aria-checked') !== 'true';
+        single.querySelectorAll('[role="radio"]').forEach(r => r.setAttribute('aria-checked', 'false'));
+        c.setAttribute('aria-checked', String(on));
+      });
+      single.appendChild(c);
+    });
+  })();
+
+  /* ============================ EXPAND (раскрывающийся чип) ============================ */
+  (function () {
+    const host = document.getElementById('expand-demo');
+    if (!host) return;
+    host.appendChild(fragmentChip(false));
+    host.appendChild(makeChip({ type: 'edit', size: 's', label: '«Пик погашений — 2027 год»', leading: 'icon', leadingIcon: 'message-text', removable: true,
+      expandable: { source: 'Фрагмент материала · График погашений', text: 'Пик погашений приходится на 2027 год: 34 % портфеля, в основном облигации второго выпуска.' } }));
+    host.appendChild(makeChip({ type: 'edit', size: 's', label: 'График «Структура долга»', leading: 'icon', leadingIcon: 'bar-chart', removable: true }));
+    const status = document.getElementById('expand-status');
+    host.addEventListener('ds-chip:toggle', (e) => { if (status) status.textContent = 'Событие ds-chip:toggle · expanded = ' + e.detail.expanded; });
+  })();
+
   /* ============================ OVERFLOW ============================ */
   (function () {
     const d = document.getElementById('overflow-demo');
@@ -489,6 +676,9 @@
     const props = [
       ['Свёртка «+N»', 'Переполнение чиплиста сворачивается в чип-счётчик, открывающий полный список. Требует измерения ширины на уровне чиплиста (JS) — пока не реализовано.', [
         makeChip({ type: 'edit', style: 'outline', size: 'm', label: '+5', dropdown: true }),
+      ]],
+      ['Стрелки в одиночном выборе', 'В radiogroup фокус переходит стрелками, а Tab заходит в группу один раз (roving tabindex), как у нативных радиокнопок. Сейчас каждый чип — отдельная остановка Tab.', [
+        makeChip({ type: 'edit', style: 'outline', size: 'm', compact: true, rounded: true, label: 'Вариант', leading: 'tag', tagText: 'Тег', check: true, state: 'selected' }),
       ]],
     ];
     props.forEach(([name, desc, chips]) => {

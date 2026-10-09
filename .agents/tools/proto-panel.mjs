@@ -27,11 +27,14 @@
      ПН4  страница шага: нет файла в pages/, путь с «/» или «..», источник
           модульной страницы вместо собранной <Имя>.preview.html;
      ПН5  селектор действия не разбирается или его имена не найдены в тексте
-          страницы точки входа и её локальных скриптах (классы — ещё и в ДС);
+          страницы точки входа и её локальных скриптах (классы — в разметке,
+          стилях и строках, не в именах переменных; ещё и в ДС);
      ПН6  открытый комментарий ссылается на несуществующую страницу, шаг или
           номер состояния;
      ПН7  зеркала panel-data.js нет или оно разошлось с исходниками;
      ПН8  включателя нет или он разошёлся со списком приложений и рантаймом;
+          путь ДС во включателе (стили и рантаймы панели на страницах ДС)
+          не ведёт к файлу;
      ПН9  состав папки панели: нет flows.yaml или comments.md, посторонний файл;
      ПН10 рантайм: нет файла, файл не разбирается как JS, файл зовёт глобальную
           закрывашку слоёв ДС (closeAll, hideAll), кириллица в строке кода вне
@@ -133,56 +136,61 @@ function bootRel(P, a) {
 /** Текст включателя. Грузится на каждой странице (ds-body.js) и на страницах ДС
  *  (тег каркаса); панель есть везде: у приложения с папкой — данные, у остальных
  *  (хаб, концепт без папки, ДС) — заглушка. */
+/* Что панели нужно на странице ДС: там нет ds.css/ds.js (каркас грузит
+   поштучно) — включатель добирает недостающее, загруженное не трогает.
+   Пути — от корня ДС; каждый обязан вести к файлу (ПН8, dsPathDefects): путь
+   «molecules/Switch» вместо «atoms/Switch» давал 404 на всех страницах ДС
+   и панель без стилей свитчей — молча (05.10.2026). */
+const PANEL_CSS = [
+  'foundations/Typography/Typography.css',
+  'foundations/Colors/Colors.css',
+  'foundations/Colors/Palette.css',
+  'foundations/Spacing/Spacing.css',
+  'foundations/Radius/Radius.css',
+  'foundations/Elevation/Elevation.css',
+  'foundations/Illustrations/Illustrations.css',
+  'components/atoms/Avatar/Avatar.css',
+  'components/atoms/Buttons/Buttons.css',
+  'components/atoms/Chip/Chip.css',
+  'components/atoms/IconButton/IconButton.css',
+  'components/atoms/LabelHelper/LabelHelper.css',
+  'components/atoms/Spinner/Spinner.css',
+  'components/molecules/Alert/Alert.css',
+  'components/molecules/ContextMenu/ContextMenu.css',
+  'components/molecules/DropdownList/DropdownList.css',
+  'components/molecules/EmptyState/EmptyState.css',
+  'components/molecules/Inputs/Inputs.css',
+  'components/molecules/ReadOnlyField/ReadOnlyField.css',
+  'components/atoms/Switch/Switch.css',
+  'components/molecules/Tab/Tab.css',
+  'components/molecules/Toast/Toast.css',
+  'components/molecules/Tooltip/Tooltip.css',
+  /* Drawer снимает охранное поле Modal — как в ds.css, модификатор идёт после базы. */
+  'components/organisms/Modal/Modal.css',
+  'components/organisms/Drawer/Drawer.css'
+];
+const PANEL_JS = [
+  ['dsIcons', ['foundations/Icons/icons-data.js', 'foundations/Icons/Icons.js']],
+  ['DSFloat', ['utils/ds-float.js']],
+  ['DSTabs', ['components/molecules/Tab/Tab.js']],
+  ['DSMenu', ['components/molecules/ContextMenu/ContextMenu.js']],
+  ['DSTooltip', ['components/molecules/Tooltip/Tooltip.js']],
+  ['DSDropdownList', ['components/molecules/DropdownList/DropdownList.js']],
+  ['DSModal', ['components/organisms/Modal/Modal.js']],
+  ['DSDrawer', ['components/organisms/Drawer/Drawer.js']],
+  ['DSChip', ['components/atoms/Chip/Chip.js']],
+  ['DSInput', ['components/molecules/Inputs/InputKit.js', 'components/molecules/Inputs/Inputs.js']],
+  ['DSToast', ['utils/ds-notify.js']],
+  ['DSIllustrations', ['foundations/Illustrations/Illustrations.js']],
+  ['DSCopy', ['utils/ds-copy.js']]
+];
+
 export function renderBoot(P, apps, core) {
   const bootDir = path.posix.dirname(P.panel.boot);
   const list = apps.map((a) => (typeof a === 'string' ? a : bootRel(P, a))).sort();
   const runtime = (path.posix.relative(bootDir, P.panel.runtime) || '.') + '/';
   const ds = ((P.ds || 'design-system').replace(/\/+$/, '')) + '/';
   const q = (v) => JSON.stringify(v);
-  /* Что панели нужно на странице ДС: там нет ds.css/ds.js (каркас грузит
-     поштучно) — включатель добирает недостающее, загруженное не трогает. */
-  const PANEL_CSS = [
-    'foundations/Typography/Typography.css',
-    'foundations/Colors/Colors.css',
-    'foundations/Colors/Palette.css',
-    'foundations/Spacing/Spacing.css',
-    'foundations/Radius/Radius.css',
-    'foundations/Elevation/Elevation.css',
-    'foundations/Illustrations/Illustrations.css',
-    'components/atoms/Avatar/Avatar.css',
-    'components/atoms/Buttons/Buttons.css',
-    'components/atoms/Chip/Chip.css',
-    'components/atoms/IconButton/IconButton.css',
-    'components/atoms/LabelHelper/LabelHelper.css',
-    'components/atoms/Spinner/Spinner.css',
-    'components/molecules/Alert/Alert.css',
-    'components/molecules/ContextMenu/ContextMenu.css',
-    'components/molecules/DropdownList/DropdownList.css',
-    'components/molecules/EmptyState/EmptyState.css',
-    'components/molecules/Inputs/Inputs.css',
-    'components/molecules/ReadOnlyField/ReadOnlyField.css',
-    'components/molecules/Switch/Switch.css',
-    'components/molecules/Tab/Tab.css',
-    'components/molecules/Toast/Toast.css',
-    'components/molecules/Tooltip/Tooltip.css',
-    'components/organisms/Drawer/Drawer.css',
-    'components/organisms/Modal/Modal.css'
-  ];
-  const PANEL_JS = [
-    ['dsIcons', ['foundations/Icons/icons-data.js', 'foundations/Icons/Icons.js']],
-    ['DSFloat', ['utils/ds-float.js']],
-    ['DSTabs', ['components/molecules/Tab/Tab.js']],
-    ['DSMenu', ['components/molecules/ContextMenu/ContextMenu.js']],
-    ['DSTooltip', ['components/molecules/Tooltip/Tooltip.js']],
-    ['DSDropdownList', ['components/molecules/DropdownList/DropdownList.js']],
-    ['DSModal', ['components/organisms/Modal/Modal.js']],
-    ['DSDrawer', ['components/organisms/Drawer/Drawer.js']],
-    ['DSChip', ['components/atoms/Chip/Chip.js']],
-    ['DSInput', ['components/molecules/Inputs/InputKit.js', 'components/molecules/Inputs/Inputs.js']],
-    ['DSToast', ['utils/ds-notify.js']],
-    ['DSIllustrations', ['foundations/Illustrations/Illustrations.js']],
-    ['DSCopy', ['utils/ds-copy.js']]
-  ];
   return '/* СГЕНЕРИРОВАН ' + GEN + ' — руками не править; пересобрать:\n'
     + '   node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг panel).\n'
     + '   Включатель панели прототипа: ds-body.js подключает его на каждой странице,\n'
@@ -311,6 +319,18 @@ function hasToken(text, name) {
   return new RegExp('(^|[^A-Za-z0-9_\\-\\u0400-\\u04FF])' + esc + '($|[^A-Za-z0-9_\\-\\u0400-\\u04FF])').test(text);
 }
 
+/* Где в тексте может жить имя класса: строковые литералы (' и " — в пределах
+   строки, ` — и через строки) и содержимое <style>. Так класс находится в
+   class="…" разметки и шаблонов, в classList.add('…') и в стилях, а имя
+   переменной скрипта не в счёт: устаревший селектор '.doc …' проходил ПН5,
+   потому что «doc» нашлось в функции openPreview(doc) (урок Л195). */
+function classText(text) {
+  const parts = [];
+  for (const m of text.matchAll(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\[\s\S]|[^`\\])*`/g)) parts.push(m[0]);
+  for (const m of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) parts.push(m[1]);
+  return parts.join('\n');
+}
+
 function pageFile(page) {
   let file = String(page).split(/[?#]/)[0];
   try { file = decodeURIComponent(file); } catch { /* имя с «%» — как есть */ }
@@ -344,16 +364,18 @@ function pageCorpus(pageAbs, appAbs) {
   return text;
 }
 
-/* Текст ДС для классов состояния (.is-open ставит рантайм ДС). Словарь глифов не читается. */
+/* Текст ДС для классов состояния (.is-open ставит рантайм ДС): стили целиком,
+   из скриптов — то, где живут классы (classText). Словарь глифов не читается. */
 function dsCorpus(P) {
   if (!P.dsAbs) return '';
   const L = DSP.layout(P.dsAbs);
   /* стили, затем скрипты ДС; линтер — в корпусе, как до RE0002 (у стенда его нет) */
   const scripts = [...L.scripts(), ...(existsSync(L.abs(L.at.linter)) ? [L.at.linter] : [])];
   let text = '';
-  for (const f of [...L.styles().sort(), ...scripts.sort()]) {
+  for (const f of L.styles().sort()) text += '\n' + readFileSync(L.abs(f), 'utf8');
+  for (const f of scripts.sort()) {
     if (f === L.at.iconsData) continue;
-    text += '\n' + readFileSync(L.abs(f), 'utf8');
+    text += '\n' + classText(readFileSync(L.abs(f), 'utf8'));
   }
   return text;
 }
@@ -482,6 +504,18 @@ export function stringLiterals(src) {
   return out;
 }
 
+/* Все файлы ДС, которые включатель добирает на страницах ДС: стенд (свой
+   --selftest и стенды других инструментов) обязан их завести, иначе ПН8. */
+export const PANEL_DS_FILES = [...PANEL_CSS, ...PANEL_JS.flatMap((x) => x[1])];
+
+/* ПН8: пути ДС, которые включатель добирает на страницах ДС, ведут к файлам. */
+function dsPathDefects(P, defects) {
+  const ds = ((P.ds || 'design-system').replace(/\/+$/, '')) + '/';
+  for (const f of PANEL_DS_FILES) {
+    if (!existsSync(path.join(P.root, ds, f))) defects.push('ПН8 ' + P.panel.boot + ' — путь ДС «' + f + '» ведёт в пустоту: файла ' + ds + f + ' нет (список PANEL_CSS / PANEL_JS в ' + GEN + ')');
+  }
+}
+
 function runtimeDefects(P, defects) {
   const dir = P.panel.runtimeAbs;
   for (const f of FILES) {
@@ -576,8 +610,8 @@ function appDefects(P, a, core, defects, lazyDs, notes = []) {
         if (prob) { defects.push('ПН4 ' + dirRel + '/' + DATA.flows + ':' + sm.page + ' — сценарий ' + flow.id + ', шаг ' + step.id + ': ' + prob); entry = null; }
         else {
           const file = pageFile(step.page);
-          if (!corpus.has(file)) corpus.set(file, pageCorpus(path.join(pagesAbs, file), a.abs));
-          entry = { file, text: corpus.get(file) };
+          if (!corpus.has(file)) { const text = pageCorpus(path.join(pagesAbs, file), a.abs); corpus.set(file, { text, classes: classText(text) }); }
+          entry = { file, ...corpus.get(file) };
         }
       }
       step.do.forEach((act, ai) => {
@@ -593,8 +627,8 @@ function appDefects(P, a, core, defects, lazyDs, notes = []) {
           else if (x.value && !hasToken(entry.text, x.value)) miss.push(x.value);
         }
         if (miss.length) defects.push('ПН5 ' + at + ': ' + miss.map((m) => '«' + m + '»').join(', ') + (miss.length > 1 ? ' не встречаются' : ' не встречается') + ' в ' + entry.file + ' и её скриптах');
-        const noClass = t.classes.filter((c) => !hasToken(entry.text, c) && !hasToken(lazyDs(), c));
-        if (noClass.length) defects.push('ПН5 ' + at + ': ' + noClass.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + entry.file + ' и её скриптах, ни в ДС');
+        const noClass = t.classes.filter((c) => !hasToken(entry.classes, c) && !hasToken(lazyDs(), c));
+        if (noClass.length) defects.push('ПН5 ' + at + ': ' + noClass.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + entry.file + ' и её скриптах (разметка, стили, строки — не имена переменных), ни в ДС');
       });
     });
   });
@@ -631,6 +665,7 @@ export function check(P) {
   let core;
   try { core = loadCore(P); } catch (e) { return { defects: ['ПН10 ' + P.panel.runtime + '/core.js — ядро не загружается: ' + e.message], stats, notes }; }
   runtimeDefects(P, defects);
+  dsPathDefects(P, defects);
   const apps = panelApps(P);
   let ds = null;
   const lazyDs = () => (ds === null ? (ds = dsCorpus(P)) : ds);
@@ -906,6 +941,7 @@ function tree(root, runtime) {
   put(root, 'ds/components/atoms/X/X.css', '.is-open { display: block; }\n');
   put(root, 'ds/components/atoms/X/X.js', "el.classList.add('is-shown');\n");
   for (const d of ['foundations', 'utils', 'docs-kit']) put(root, 'ds/' + d + '/.keep', '');   // раскладка ДС стенда
+  for (const f of PANEL_DS_FILES) if (!existsSync(path.join(root, 'ds', f))) put(root, 'ds/' + f, '');   // что включатель добирает на страницах ДС (ПН8)
   cpSync(runtime, path.join(root, '.kit/proto-panel'), { recursive: true, filter: (s) => !path.basename(s).startsWith('.') });
   put(root, LAB + '/app.json', JSON.stringify({ id: 'lab', track: 'rnd', title: 'Лаборатория', desc: 'т', home: 'pages/A.html', icon: 'folder' }));
   put(root, LAB + '/pages/A.html', '<!DOCTYPE html>\n<button id="go" data-x="y">Пуск</button>\n<aside id="pv" hidden></aside>\n<script src="a.js"></script>\n');
@@ -1086,6 +1122,9 @@ const CASES = [
   { name: '6в селектор: класс состояния из ДС — не дефект, чужой класс — дефект', expect: 'ПН5 ' + PANEL + '/flows.yaml:22 — сценарий main, шаг next, действие 2 (waitFor \'#go.is-gone\'): класс «is-gone»',
     setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go.is-open'\n          - waitFor: '#go.is-gone'\n")); },
     extra: (r) => (check(P_(r)).defects.some((d) => d.includes('is-open')) ? ['класс из ДС принят за дефект'] : []) },
+  { name: '6д селектор: класс только именем переменной скрипта — дефект, классом в шаблоне — нет', expect: 'ПН5 ' + PANEL + '/flows.yaml:21 — сценарий main, шаг next, действие 1 (click \'#go.doc\'): класс «doc»',
+    setup: (r) => { enableLab(r); put(r, LAB + '/pages/a.js', "var late = document.getElementById('late');\nfunction openPreview(doc) { return '<div class=\"card\">' + doc.title + '</div>'; }\n"); setFlows(r, flowsWith("          - click: '#go.doc'\n          - waitFor: '#go.card'\n")); },
+    extra: (r) => (check(P_(r)).defects.some((d) => d.includes('«card»')) ? ['класс из шаблона скрипта принят за дефект'] : []) },
   { name: '6г селектор не разбирается', expect: 'ПН5 ' + PANEL + '/flows.yaml:21 — сценарий main, шаг next, действие 1 (click \'#go:hovr\'): селектор не разбирается', setup: (r) => { enableLab(r); setFlows(r, flowsWith("          - click: '#go:hovr'\n")); } },
   { name: '7а открытый комментарий на удалённый шаг', expect: 'ПН6 ' + PANEL + '/comments.md:9 — К-1 (открыт): шага «main/next» нет', setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON); } },
   { name: '7б тот же комментарий сделан — не дефект', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS.replace('- id: next', '- id: later')); setComments(r, CANON.replace('## К-1 · открыт', '## К-1 · сделан')); } },
@@ -1094,6 +1133,7 @@ const CASES = [
   { name: '8в после сборки — чисто', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, PANEL + '/flows.yaml', FLOWS.replace('Старт', 'Начало')); build(P_(r)); } },
   { name: '9а папку панели удалили без сборки', expect: 'ПН8 apps/proto-panel.js — включатель разошёлся', setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, PANEL), { recursive: true }); } },
   { name: '9б после сборки — чисто', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, PANEL), { recursive: true }); build(P_(r)); } },
+  { name: '9в путь ДС во включателе без файла', expect: 'ПН8 apps/proto-panel.js — путь ДС «components/atoms/Switch/Switch.css» ведёт в пустоту', setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, 'ds/components/atoms/Switch/Switch.css')); } },
   { name: '10 посторонний файл в папке панели', expect: 'ПН9 ' + PANEL + '/notes.txt — посторонний файл', setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, PANEL + '/notes.txt', 'x'); } },
   { name: '11 panel.css: литерал цвета, px, чужой селектор', expect: ['ПН10 .kit/proto-panel/panel.css', '«#fff»', '«13px»', 'селектор «.drawer»'],
     setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, '.kit/proto-panel/panel.css', read(r, '.kit/proto-panel/panel.css') + '\n.drawer { color: #fff; padding: 13px; }\n@media (max-width: 640px) { .pp-x { border: 1px solid var(--border-light); } }\n'); } },
@@ -1325,6 +1365,17 @@ async function selftest() {
       && dsPage.written.some((w) => w.includes('/ds/components/organisms/Drawer/Drawer.js'))
       && dsPage.written.some((w) => w.includes('panel.css')) && dsPage.written.length > 1 + FILES.length,
       '12к включатель на странице ДС — добирает стили и рантаймы панели', dsPage.written.length + ' тегов');
+    const modalCss = 'components/organisms/Modal/Modal.css';
+    const drawerCss = 'components/organisms/Drawer/Drawer.css';
+    const drawerAfterModal = (written) => {
+      const modalAt = written.findIndex((w) => w.includes('/' + modalCss));
+      const drawerAt = written.findIndex((w) => w.includes('/' + drawerCss));
+      return modalAt >= 0 && drawerAt > modalAt;
+    };
+    const brokenBoot = boot.replace(modalCss, '__modal_css__').replace(drawerCss, modalCss).replace('__modal_css__', drawerCss);
+    const brokenDsPage = runBoot(brokenBoot, src, base + 'ds/components/atoms/X/X.html', false);
+    pass(drawerAfterModal(dsPage.written) && !drawerAfterModal(brokenDsPage.written),
+      '12л CSS на странице ДС: Drawer после Modal; откат порядка возвращает охранное поле и отклоняется');
     let parsed = 0;
     for (const t of [boot, renderBoot(P, [], core), text]) { try { new Function(t); parsed++; } catch { /* ниже */ } }
     pass(parsed === 3, '12и генераты разбираются как JS');

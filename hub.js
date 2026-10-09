@@ -68,7 +68,7 @@ window.IBPHub = [
     desc: 'Прототип модуля AI Pitcher: новый отчёт, история, журнал',
     href: 'apps/ib/drafts/ai-bankster-prototype-v01/pages/index.html',
     root: 'apps/ib/drafts/ai-bankster-prototype-v01',
-    icon: 'folder'
+    icon: 'ai-stars'
   },
   {
     id: 'ai-bankster-prototype-v02',
@@ -78,6 +78,15 @@ window.IBPHub = [
     href: 'apps/ib/drafts/ai-bankster-prototype-v02/pages/index.html',
     root: 'apps/ib/drafts/ai-bankster-prototype-v02',
     icon: 'ai-stars'
+  },
+  {
+    id: 'new-dashboard-mvp',
+    group: 'concepts',
+    title: 'Главная — дашборд (MVP)',
+    desc: 'Редизайн главной: профиль, мой день, встречи, задачи и новости по клиентам',
+    href: 'apps/core/drafts/new-dashboard-mvp/pages/HomePage.preview.html',
+    root: 'apps/core/drafts/new-dashboard-mvp',
+    icon: 'layout-grid-01'
   },
   {
     id: 'pipelineManager-v01',

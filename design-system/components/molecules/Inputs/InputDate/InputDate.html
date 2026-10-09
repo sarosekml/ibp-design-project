@@ -59,7 +59,7 @@
             <div class="docs-main">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.015</b></span><span>Обновлено: <b>25.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.017</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>InputDate</h1>
     <p class="lead">Компонент ввода даты: поле с маской и кнопкой-календарём. При фокусе на поле или по кнопке-календарю поднимается <a class="inl" href="../../DatePicker/DatePicker.html">DatePicker</a>. Построен на той же базе Input_Content, что и <a class="inl" href="../InputText/InputText.html">InputText</a> и <a class="inl" href="../InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a>, — состояния и размеры общие.</p>
@@ -117,7 +117,12 @@
   <!-- VARIANTS -->
   <section class="section" data-screen-label="Variants">
     <h2>Варианты</h2>
-    <p class="desc">Оси конфигурации: хелпер, информер и табличный Table Edit.</p>
+    <p class="desc">Оси конфигурации: хелпер, информер, табличный Table Edit и опции семейства полей — скругление, заливка, акцентная иконка.</p>
+
+    <div class="subsec" data-screen-label="FieldOptions">
+      <h3>Скругление, заливка, акцентная иконка <span class="badge-new">Новое</span></h3>
+      <p class="desc">Опции всего семейства полей — те же, что у <a class="inl" href="../InputText/InputText.html">InputText</a>: скругление 8px (<code class="tok">.inp--radius-m</code>) или капсула (<code class="tok">.inp--rounded</code>) вместо 4px по умолчанию; заливка фоном страницы (<code class="tok">.inp--filled</code>), которая снимается в фокусе; акцентная иконка слева в фокусе (<code class="tok">.inp--focus-accent</code>). Скругление и заливка — в конструкторе даты.</p>
+    </div>
 
     <div class="subsec" data-screen-label="HelperVariants">
       <h3>С хелпером и без</h3>
@@ -329,7 +334,7 @@
 <script src="../../../organisms/Table/TableResize.js"></script>
 <script src="../../../organisms/Table/TableReorder.js"></script>
 <script src="InputDate.page.js"></script>
-<script>window.DS_SPLIT_SWITCH_LABELS = { 'Размер': 'S (Table Edit)', 'Наполнение': 'Заполнено', 'Label': 'Показывать метку', 'Helper': 'Показывать helper', 'Информер': 'Показывать информер' };</script>
+<script>window.DS_SPLIT_SWITCH_LABELS = { 'Размер': 'S (Table Edit)', 'Наполнение': 'Заполнено', 'Label': 'Показывать метку', 'Helper': 'Показывать helper', 'Информер': 'Показывать информер', 'Заливка': 'Заливка фоном страницы' };</script>
 <script src="../../../../docs-kit/docs-split.js"></script>
 
 <!-- ===== исходники для вкладки «Код» (статично) ===== -->
@@ -430,11 +435,14 @@ const spec = {
    1px, второй пиксель рисует внутренняя тень того же цвета. Толщину бордера
    фокус не меняет — иначе поле с высотой по содержимому (многострочное,
    чипы) вырастало на 2px и толкало соседей, а у поля фиксированной высоты
-   сдвигался текст на 1px (до 1.015, решение человека 25.09.2026). */
+   сдвигался текст на 1px (до 1.015, решение человека 25.09.2026).
+   Снаружи — светлое кольцо 3px ступени -light тона (16 %): заметное, как в
+   прототипе AI Pitcher (решение человека 05.10.2026, задача MS0010i); до
+   этого кольцо было 4–10 % и почти не читалось. */
 .inp__field:focus-within,
 .inp.is-focus .inp__field {
   border-color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary), 0 0 0 3px var(--primary-bg-light);
+  box-shadow: inset 0 0 0 1px var(--primary), 0 0 0 3px var(--st-primary-light);
 }
 
 /* многострочный вариант (InputText) */
@@ -452,13 +460,13 @@ const spec = {
 .inp--error .inp__field:focus-within,
 .inp--error.is-focus .inp__field {
   border-color: var(--error);
-  box-shadow: inset 0 0 0 1px var(--error), 0 0 0 3px color-mix(in srgb, var(--error) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--error), 0 0 0 3px var(--st-red-light);
 }
 .inp--warning .inp__field { border-color: var(--warning); }
 .inp--warning .inp__field:focus-within,
 .inp--warning.is-focus .inp__field {
   border-color: var(--warning);
-  box-shadow: inset 0 0 0 1px var(--warning), 0 0 0 3px color-mix(in srgb, var(--warning) 10%, transparent);
+  box-shadow: inset 0 0 0 1px var(--warning), 0 0 0 3px var(--st-orange-light);
 }
 .inp--disabled { pointer-events: none; }
 .inp--disabled .inp__field {
@@ -614,6 +622,52 @@ textarea.inp__control { resize: none; line-height: 20px; }
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
+}
+
+/* ============================================================
+   Опции поля (с InputText 1.017 / InputDate 1.017 /
+   InputAutocomplete 1.019; решение человека 06.10.2026).
+   Действуют на всё семейство: любое .inp, включая поля диапазонов.
+   Новые правила стоят в конце файла: строки прежних правил не
+   сдвигаются (их держат точечные правила тем).
+   ============================================================ */
+
+/* ---------- скругление углов ----------
+   По умолчанию --radius-field (4). M — --radius-control (8): как у кнопок
+   и полей прототипа AI Pitcher («Объект анализа», «Поиск по чатам»).
+   Капсула — --radius-pill, как chip--rounded; у многострочного поля
+   капсула не держит текст в углах, поэтому там она — M. */
+.inp--radius-m .inp__field { border-radius: var(--radius-control); }
+.inp--rounded .inp__field { border-radius: var(--radius-pill); }
+.inp--rounded.inp--multiline .inp__field { border-radius: var(--radius-control); }
+
+/* ---------- заливка (.inp--filled) ----------
+   Поле на фоне страницы, как было у «Объект анализа» в прототипе: в покое
+   фон --bg-page и рамка --border-light, на наведении рамка --border-primary;
+   в фокусе — фон, рамка и кольцо обычного поля (заливка снимается).
+   Ошибка и предупреждение красят рамку своими правилами поверх заливки,
+   недоступность — свой фон. */
+.inp--filled:not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  background: var(--bg-page);
+}
+.inp--filled:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  border-color: var(--border-light);
+}
+.inp--filled:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within):hover,
+.inp--filled.is-hover:not(.inp--error):not(.inp--warning):not(.inp--disabled):not(.is-focus) .inp__field:not(:focus-within) {
+  border-color: var(--border-primary);
+}
+
+/* ---------- акцентная иконка в фокусе (.inp--focus-accent) ----------
+   Иконка слева в фокусе — тон Primary, вместе с рамкой (как «Поиск по
+   чатам» в прототипе). В ошибке и предупреждении иконка не меняется. */
+.inp--focus-accent .inp__lead { transition: color .15s ease; }
+.inp--focus-accent:not(.inp--error):not(.inp--warning) .inp__field:focus-within .inp__lead,
+.inp--focus-accent.is-focus:not(.inp--error):not(.inp--warning) .inp__lead {
+  color: var(--primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .inp--focus-accent .inp__lead { transition: none; }
 }</script>
 <script src="../../../../../apps/proto-panel.js"></script>
 </body>

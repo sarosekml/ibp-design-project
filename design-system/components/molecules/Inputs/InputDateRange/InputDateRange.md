@@ -2,7 +2,7 @@
 component: InputDateRange
 title: "InputDateRange"
 version: "1.010"
-updated: "13.09.2026"
+updated: "06.10.2026"
 page: components/molecules/Inputs/InputDateRange/InputDateRange.html
 page_js: components/molecules/Inputs/InputDateRange/InputDateRange.page.js
 runtime: components/molecules/DatePicker/DatePicker.js, components/molecules/Inputs/Inputs.js
@@ -30,6 +30,7 @@ status: curated
 - «Плейсхолдер обещает ДД.ММ.ГГГГ, а точки не появляются» → маска до 05.09.2026 жила только в демо-скрипте страницы и на экраны не попадала; нужен `components/molecules/DatePicker/DatePicker.js` версии 1.007+
 
 ## Ключевые правила (из разделов страницы)
+- **Опции полей (с 06.10.2026)** — каждое поле диапазона — обычный `.inp`: скругление (`.inp--radius-m` / `.inp--rounded`), заливка (`.inp--filled`) и акцентная иконка (`.inp--focus-accent`) ставятся на оба поля одинаково; в конструкторе — «Скругление» и «Заливка».
 - **Использование** — диапазон дат «с … по …» в фильтрах/формах (период сделки, срок действия, окно отчётности); одно поле может быть пустым (открытая граница). Одиночная дата → InputDate; числовой диапазон → InputAmountRange.
 - **Анатомия** — Label (общая) · два InputDate с префиксом «От»/«До» · Range_Line между ними · Helper (опц.). У каждого поля мин. ширина 186px (контент даты + иконки крестика и календаря). В полях всегда есть префикс. Толщина/цвет Range_Line = бордер инпута (1px, `--border-primary`).
 - **Варианты** — С хелпером/без · Наполнение (пусто / одно поле / оба).

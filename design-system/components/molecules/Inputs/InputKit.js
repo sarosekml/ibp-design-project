@@ -40,6 +40,7 @@
          (spec.tip) в состояниях *-focus. Хелпер = правило заполнения и остаётся
          нейтральным. helperError:true — намеренное исключение, заложенное при разработке.)
       state: 'default'|'hover'|'focus'|'error'|'error-focus'|'warning'|'warning-focus'|'disabled'
+      radius: 'm'|'pill' (по умолчанию 4px) · filled bool (заливка) · focusAccent bool (иконка в фокусе — Primary)
       lead bool (иконка поиска) · prefix · postfix
       value · placeholder · multiline bool
       summary ('Value 1, +4') · chips [..] · ext [..] (внешний стек)
@@ -59,6 +60,12 @@
     if (s.table) root.classList.add('inp--table');
     if (s.multiline) root.classList.add('inp--multiline');
     if (s.multiline && s.resizable) root.classList.add('inp--resizable');
+    /* опции поля (1.017): скругление 'm' | 'pill' (по умолчанию — 4px),
+       заливка фоном страницы, акцентная иконка в фокусе */
+    if (s.radius === 'm') root.classList.add('inp--radius-m');
+    if (s.radius === 'pill') root.classList.add('inp--rounded');
+    if (s.filled) root.classList.add('inp--filled');
+    if (s.focusAccent) root.classList.add('inp--focus-accent');
     const st = s.state || 'default';
     if (st.startsWith('error')) root.classList.add('inp--error');
     if (st.startsWith('warning')) root.classList.add('inp--warning');

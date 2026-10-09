@@ -1,0 +1,27 @@
+{
+  "name": "ibp-neo",
+  "label": "IBP Neo",
+  "locked": true,
+  "light": {
+    "brand": "#18A59E",
+    "neutral": "#617179",
+    "adjust": {
+      "hue": 0,
+      "saturation": 0,
+      "temperature": 0
+    },
+    "overrides": {},
+    "onFill": "white"
+  },
+  "dark": {
+    "brand": "#18A59E",
+    "neutral": "#617179",
+    "adjust": {
+      "hue": 0,
+      "saturation": 0,
+      "temperature": 0
+    },
+    "overrides": {},
+    "onFill": "white"
+  }
+}

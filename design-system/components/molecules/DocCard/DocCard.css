@@ -1,0 +1,119 @@
+/* =========================================================================
+   Design System — DocCard (Карточка документа)
+   Документ как вложение: плашка с иконкой, название (открывает просмотр),
+   параметры документа и до двух действий — «Просмотр», «Скачать ▾».
+   Перенесена из нити AI Pitcher (прототип ai-bankster v02, задача MS0011):
+   карточка готового материала и документа коллеги.
+
+   Интерактив: кликабельны только название (кнопка) и кнопки действий —
+            вложенного интерактива нет, сама карточка не кнопка. Наведение
+            на карточку подсвечивает рамку и поднимает её тенью — подсказка,
+            что внутри есть действия; фона и «нажатия» у карточки нет.
+   Parts:   __icon — плашка 40 с иконкой документа (тон Primary)
+            __title — кнопка-название: одна строка, усечение + тултип
+            __meta — параметры: тип · версия · дата, одна строка
+            __actions — Buttons Outline S (до двух), меню — ContextMenu
+   Visual:  фон --bg-tile, рамка --border-light, радиус --radius-xl, поля 12;
+            наведение — рамка --border-primary + --shadow-card-hover
+   Requires: Typography.css, Palette.css, Radius.css, Spacing.css,
+             Elevation.css, Buttons.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.doccard[hidden] { display: none; }
+
+.doccard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-width: 0;
+  padding: var(--space-12);
+  background: var(--bg-tile);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  transition: border-color .15s ease, box-shadow .2s ease;
+}
+.doccard:hover,
+.doccard.is-hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ---------- плашка иконки ------------------------------------------------- */
+.doccard__icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-40);
+  height: var(--space-40);
+  border-radius: var(--radius-m);
+  color: var(--primary);
+  background: var(--primary-bg);
+}
+.doccard__icon > :is(svg,[data-icon]) { width: 22px; height: 22px; display: block; }
+.doccard__icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- текст ---------------------------------------------------------- */
+.doccard__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Название — кнопка: открывает просмотр. Сброс браузерной кнопки, одна
+   строка с многоточием; наведение — тон Primary Dark и подчёркивание,
+   фокус с клавиатуры — обводка 2px. */
+.doccard__title {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font: var(--type-body-m-strong);
+  letter-spacing: 0;
+  color: var(--text-primary);
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-2xs);
+  transition: color .15s ease;
+}
+.doccard__title:hover,
+.doccard__title.is-hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.doccard__title:focus-visible,
+.doccard__title.is-focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.doccard__meta {
+  overflow: hidden;
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- действия ------------------------------------------------------- */
+.doccard__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doccard,
+  .doccard__title { transition: none; }
+}

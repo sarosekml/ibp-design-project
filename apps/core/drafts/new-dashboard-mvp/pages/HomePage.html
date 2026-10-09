@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!-- Главная — дашборд (концепт new-dashboard-mvp). Источник модульной страницы:
+     тайлы и окна стоят метками <ds-include>, открывается собранная
+     HomePage.preview.html (node .agents/tools/assemble.mjs). Макет дизайнера —
+     refs/home-mockup-09102026.jpg; решения человека 09.10.2026 — спека
+     HomePage.screen.md. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Главная — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Сетка — штатная .grid12 (12 колонок, зазор 16px по обеим осям), ширины
+     тайлов — пары col-N / colw-N на метках. Перестроение считается от ширины
+     рабочей области: первый шаг даёт пара, второй (всё в одну колонку)
+     пишется экраном той же специфичностью (0,2,0) и ниже по файлу. */
+  @container screen (max-width: 1300px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+  @container screen (max-width: 760px) {
+    .grid12 > .tile { grid-column: span 12; }
+  }
+</style>
+<!-- @lc-css -->
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- меню строится экранным скриптом из ibp-home.js (общий каталог ДС) -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Главная</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Главная">
+
+      <!-- #sec:head ── Шапки страницы нет: стартовая страница (Layout,
+           «Стартовая страница») — один блок, сетка тайлов. Первый тайл —
+           профиль сотрудника. -->
+
+      <!-- #sec:content ── Дашборд: профиль · мой день / встречи · задачи · новости -->
+      <div class="grid12" id="home-grid">
+        <ds-include src="../widgets/tiles/HomeProfileTile/HomeProfileTile.html" class="col-4 colw-12" id="tile-profile" state="loading" mode="edit"></ds-include>
+        <ds-include src="../widgets/tiles/MyDayTile/MyDayTile.html" class="col-8 colw-12" id="tile-day" state="loading" mode="view"></ds-include>
+        <ds-include src="../widgets/tiles/MeetingsTile/MeetingsTile.html" class="col-4 colw-6" id="tile-meetings" state="loading" mode="edit"></ds-include>
+        <ds-include src="../widgets/tiles/TasksTile/TasksTile.html" class="col-4 colw-6" id="tile-tasks" state="loading" mode="edit"></ds-include>
+        <ds-include src="../widgets/tiles/NewsTile/NewsTile.html" class="col-4 colw-12" id="tile-news" state="loading" mode="view"></ds-include>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна — в конце body, скримы с hidden; триггеры data-modal -->
+<ds-include src="../widgets/modals/MeetingCreateModal/MeetingCreateModal.html"></ds-include>
+<ds-include src="../widgets/modals/TaskCreateModal/TaskCreateModal.html"></ds-include>
+
+<!-- Шаблоны подчастей, которые рисуют скрипты тайлов (кандидаты в ДС) -->
+<ds-include src="../widgets/tiles/StatCard/StatCard.html"></ds-include>
+<ds-include src="../widgets/tiles/DateBadge/DateBadge.html"></ds-include>
+
+<!-- данные и хранилище — до рантаймов ДС -->
+<script src="../data/mock-profile.js"></script>
+<script src="../data/mock-meetings.js"></script>
+<script src="../data/mock-tasks.js"></script>
+<script src="../data/mock-news.js"></script>
+<script src="../data/home-store.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<!-- подчасти — раньше тайлов, окно встречи (общий слой форм) — раньше окна задачи -->
+<script src="../widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../widgets/tiles/MyDayTile/MyDayTile.js"></script>
+<script src="../widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+/* Экранный скрипт главной: меню, загрузка тайлов, демо-состояния, переходы.
+   Данные и поведение тайлов — в их скриптах и HomeStore; здесь только то,
+   что принадлежит странице. */
+(function () {
+  'use strict';
+  var S = window.HomeStore;
+  var P = S.profile;
+  var ROLE = window.IBPHome.defaultRole;
+
+  /* ── Меню: каталог ДС ibp-home.js, строка пользователя — профиль и хаб ── */
+  /* Футер отдаёт IBPHome.footerHTML с href="#" — ссылка подменяется на хаб
+     проектов, инициалы — на фото профиля (каталог ДС не трогаем). */
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var INITIALS = (P.firstName.charAt(0) + P.lastName.charAt(0)).toUpperCase();
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">' +
+        it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('') +
+        '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">' +
+        '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' +
+        '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>' : '';
+    return '<a class="nav__item" href="#"><span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">' +
+      '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню">' + ic('left-menu') + '</button>' +
+      '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>' +
+      '</div><div class="nav__list">' +
+      '<a class="nav__item nav__item--selected" href="#" aria-current="page"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    window.IBPHome.itemsFor(ROLE).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>';
+    var fullName = P.lastName + ' ' + P.firstName + ' ' + P.middleName;
+    var footer = window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(P.positionName, { initials: INITIALS, name: fullName }).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">' +
+        '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">' +
+        '<span class="av av--circular av--m"><span class="av__text">' + INITIALS + '</span></span>' +
+        '<span class="nav__user-text"><span class="nav__user-name">' + fullName + '</span>' +
+        '<span class="nav__user-role">' + P.positionName + '</span></span></a>' +
+        '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>' +
+        '</div>';
+    s += footer.replace('<span class="av__text">' + INITIALS + '</span>', '<img class="av__img" src="' + P.photoUrl + '" alt="">');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+    if (window.dsIcons) window.dsIcons.apply(nav);
+  }
+
+  /* ── Загрузка: тайлы появляются по мере ответа своих сервисов ──────── */
+  /* Демо-состояния — параметром адреса: ?state=loading | empty | error
+     держит тайлы данных в этом состоянии (профиль — только loading и error:
+     пустого профиля не бывает). Без параметра — каскадная загрузка. */
+  var forced = (new URLSearchParams(location.search).get('state') || '').toLowerCase();
+  var TILES = [
+    { id: 'tile-profile', api: window.LcHomeProfileTile, delay: 500, profile: true },
+    { id: 'tile-day', api: window.LcMyDayTile, delay: 700 },
+    { id: 'tile-meetings', api: window.LcMeetingsTile, delay: 900 },
+    { id: 'tile-tasks', api: window.LcTasksTile, delay: 1100 },
+    { id: 'tile-news', api: window.LcNewsTile, delay: 1300 }
+  ];
+
+  function show(t) {
+    var root = document.getElementById(t.id);
+    if (!root) return;
+    if (forced === 'loading') return;
+    var state = forced === 'error' ? 'error' : forced === 'empty' && !t.profile ? 'empty' : 'data';
+    if (t.profile && state === 'data') { root.setAttribute('data-state', 'data'); return; }
+    if (t.api && t.api.setState && state === 'data') t.api.setState(root, 'data');
+    else root.setAttribute('data-state', state);
+  }
+  TILES.forEach(function (t) { setTimeout(function () { show(t); }, t.delay); });
+
+  /* ── Переходы в разделы: в прототипе разделов нет — уведомление ───── */
+  var SECTIONS = {
+    meetings: 'Раздел «Встречи»',
+    tasks: 'Раздел «Задачи»',
+    news: 'Лента новостей по клиентам',
+    profile: 'Личный кабинет',
+    'news-source': 'Публикация в источнике'
+  };
+  function goto(section) {
+    if (window.DSSnack) window.DSSnack.show({
+      tone: 'info', title: (SECTIONS[section] || 'Раздел') + ' — в следующей версии прототипа',
+      text: 'В этом концепте собрана только главная.', dedup: true
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-home-goto]');
+    if (!a) return;
+    e.preventDefault();
+    goto(a.getAttribute('data-home-goto'));
+  });
+  document.addEventListener('home:goto', function (e) { goto(e.detail && e.detail.section); });
+
+  buildNav();
+})();
+</script>
+</body>
+</html>

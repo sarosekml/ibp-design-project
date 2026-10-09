@@ -1,7 +1,7 @@
 ---
 component: InputText
 title: "InputText"
-version: "1.017"
+version: "1.018"
 updated: "07.10.2026"
 page: components/molecules/Inputs/InputText/InputText.html
 runtime: components/molecules/Inputs/Inputs.js
@@ -41,13 +41,14 @@ status: curated
 - **Анатомия** — Label · поле Input_Content (иконка слева `.inp__lead` (любая из библиотеки ДС, не только поиск) · префикс · `input.inp__control` · постфикс · действия `.inp__acts`) · Helper. Всё кроме поля опционально. Порядок действий слева направо: информер → крестик очистки (в пароле — «показать/скрыть» вместо крестика, информер всегда левее).
 - **Варианты** — Текстовый слой (префикс/постфикс/иконка слева/иконка справа) · Многострочный (`--multiline`, textarea; опциональный resize по вертикали — `--resizable`, тянуть за правый нижний угол) · InputAmount (числовой) · Пароль (`--password`, действие «показать/скрыть» вместо крестика) · Ограничение длины (`maxLength` → счётчик `.inp__counter` справа под полем, Body XS) · Table Edit (размер S, без label/helper).
 - **Размеры** — M (`.inp--m`, высота 40px, текст Body M) — основной; S (`.inp--s`, 32px, Body S) — только Table Edit. Модификатор обязателен: `.inp` без него размера не имеет. Ширину задаёт контейнер.
-- **Размеры · Радиус скругления** — Радиус поля не зависит от размера; поля — единственная группа контролов на 4px. поле M и S — 4px (--radius-field) · кнопка-действие в поле — 4px (--radius-xs) · textarea — inherit.
+- **Размеры · Радиус скругления** — Радиус поля не зависит от размера: по умолчанию 4px (--radius-field) в M и S; опции — 8px (`.inp--radius-m`, --radius-control) и капсула (`.inp--rounded`, --radius-pill; у многострочного — 8px) · кнопка-действие в поле — 4px (--radius-xs) · textarea — inherit.
+- **Варианты · опции семейства (с 1.017)** — скругление (4 / 8 / капсула); заливка `.inp--filled` (фон `--bg-page`, рамка `--border-light`, наведение — `--border-primary`, в фокусе заливка снимается — как «Объект анализа» в прототипе AI Pitcher); акцентная иконка `.inp--focus-accent` (иконка слева в фокусе — `--primary`, как «Поиск по чатам»). Действуют на всё семейство: InputText, InputDate, InputAutocomplete, поля диапазонов. Решения человека 06.10.2026.
 - **Контент** — метка-существительное без двоеточия; плейсхолдер = формат/пример, не дублирует метку; хелпер = правило (в Error → текст ошибки); префикс/постфикс — неизменяемые единицы.
 - **Поведение** — плейсхолдер исчезает при вводе (не при фокусе); крестик только у заполненного поля; очищенное поле по blur возвращается в пустое; многострочный растёт по высоте.
-- **Состояния** — Default/Hover/Focus/Error/ErrorFocus/Warning/WarningFocus/Disabled. Фокус — обводка 2px `--primary` (бордер 1px + `inset`-тень 1px) + кольцо `--primary-bg-light`; габариты поля те же, что без фокуса, в том числе у многострочного поля и поля с чипами — у них высота по содержимому, и 2px-бордер до 1.015 растил поле и толкал соседей. ПРАВИЛО: текст ошибки/предупреждения по умолчанию НЕ в хелпере — только в тултипе при *Focus; тултип не смещает хелпер (position:absolute, z-index — слой тултипа `--tip-z`, максимальный). helperError:true — намеренное исключение.
+- **Состояния** — Default/Hover/Focus/Error/ErrorFocus/Warning/WarningFocus/Disabled. Фокус — обводка 2px `--primary` (бордер 1px + `inset`-тень 1px) + светлое кольцо 3px `--st-primary-light` (Error — `--st-red-light`, Warning — `--st-orange-light`; с 1.016, как в прототипе AI Pitcher); габариты поля те же, что без фокуса, в том числе у многострочного поля и поля с чипами — у них высота по содержимому, и 2px-бордер до 1.015 растил поле и толкал соседей. ПРАВИЛО: текст ошибки/предупреждения по умолчанию НЕ в хелпере — только в тултипе при *Focus; тултип не смещает хелпер (position:absolute, z-index — слой тултипа `--tip-z`, максимальный). helperError:true — намеренное исключение.
 - **Доступность** — `label[for]`, `aria-describedby`, `aria-invalid="true"`; ошибка не только цветом; крестик — button с aria-label.
 - **Типографика** — значение SB Sans Text (M — Body M, S — Body S); Label/Helper — Body XS.
-- **Цвета** — фон `--bg-tile`, рамка `--border-primary`, hover/focus `--primary` (+ тень `--primary-bg-light`), Error `--error`, Warning `--warning`, disabled `--st-disabled-light`,плейсхолдер/префикс/постфикс `--text-inactive`. Иконки в поле (ведущая + действия) — Active · `--secondary`, hover → `--secondary-dark`.
+- **Цвета** — фон `--bg-tile`, рамка `--border-primary`, hover/focus `--primary` (+ кольцо фокуса `--st-primary-light`; Error/Warning — `--st-red-light` / `--st-orange-light`), Error `--error`, Warning `--warning`, disabled `--st-disabled-light`,плейсхолдер/префикс/постфикс `--text-inactive`. Иконки в поле (ведущая + действия) — Active · `--secondary`, hover → `--secondary-dark`.
 
 ## Для разработчиков (выжимка)
 
@@ -92,6 +93,9 @@ status: curated
 | `.inp--m` / `.inp--s` | размер 40px / 32px (S — только Table Edit). Один из двух обязателен — размерные переменные живут в модификаторе, не в `.inp` |
 | `.inp--error` / `--warning` / `--disabled` | статусы |
 | `.inp--multiline` | многострочный (textarea) |
+| `.inp--radius-m` / `.inp--rounded` | скругление 8px (`--radius-control`) / капсула (`--radius-pill`; у многострочного — 8px); по умолчанию 4px (`--radius-field`) — с 1.017 |
+| `.inp--filled` | заливка: фон `--bg-page`, рамка `--border-light`, наведение — `--border-primary`; в фокусе снимается; ошибка/предупреждение красят рамку поверх, disabled — свой фон — с 1.017 |
+| `.inp--focus-accent` | иконка слева в фокусе — `--primary` (кроме ошибки и предупреждения) — с 1.017 |
 | `.is-hover` / `.is-focus` / `.is-open` | форсированные состояния |
 | `.inp__field` | Input_Content: рамка, радиус, фон, flex-строка |
 | `.inp__lead` | иконка поиска |

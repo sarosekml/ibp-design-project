@@ -7,7 +7,7 @@ window.ProtoPanelData = {
     "title": "AI Pitcher ver. 02"
   },
   "sources": {
-    "flows": "db481bc7",
+    "flows": "67ccc605",
     "comments": "e533f5f9"
   },
   "flowsHeader": [
@@ -248,7 +248,7 @@ window.ProtoPanelData = {
             },
             {
               "verb": "waitFor",
-              "target": ".doc [data-act=\"open\"]",
+              "target": "[data-act=\"open\"]",
               "text": null,
               "index": 0,
               "timeout": 4000,
@@ -277,7 +277,7 @@ window.ProtoPanelData = {
           "do": [
             {
               "verb": "click",
-              "target": ".doc .btn[data-act=\"open\"]",
+              "target": "[data-act=\"open\"]",
               "text": null,
               "index": -1,
               "timeout": 4000,
@@ -388,7 +388,7 @@ window.ProtoPanelData = {
           "do": [
             {
               "verb": "click",
-              "target": ".doc .btn[data-act=\"open\"]",
+              "target": "[data-act=\"open\"]",
               "text": null,
               "index": -1,
               "timeout": 4000,

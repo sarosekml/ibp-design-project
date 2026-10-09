@@ -37,7 +37,7 @@ const REGISTRY_CATS = ['foundations', 'atoms', 'molecules', 'organisms'];
 const SKIP_ALL = [/^index\.html$/, /^templates\//];
 // CSS документации и экранов — намеренно вне ds.css (не компоненты ДС);
 // Themes.pages.css — правила только страниц ДС, на экраны не подключается (RE0005)
-const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css', 'Themes.pages.css', 'Themes.panel.css'];
+const CSS_NOT_IN_BUNDLE = ['ds-docs.css', 'ds-nav.css', 'ds-toc.css', 'pg-kit.css', 'docs-split.css', 'input-pages.css', 'screens.css', 'Themes.pages.css', 'Themes.page.css'];
 // hex, которые легальны: демо-тени и шахматная подложка прозрачности
 const HEX_OK = /(chess|checker|shadow-demo|elevation-demo)/i;
 // значения, легальные в разметке документации (не выдуманные цвета продукта):
@@ -55,7 +55,7 @@ const JS_CSS_PAIRS = [['ds-nav.js', 'ds-nav.css'], ['ds-toc.js', 'ds-toc.css'], 
   // Chip, Entity, Table). Потому BLOCKER, а не WARN, как у самодогружающих пар.
   ['Tooltip.js', 'Tooltip.css', 'BLOCKER']];
 // рантаймы, которые ds.js (RulesAudit W0/K0) догружает сам — экран не должен подключать их напрямую
-const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
+const DS_JS_BUNDLES = ['icons-data.js', 'Icons.js', 'ds-float.js', 'screens-chrome.js', 'Tab.js', 'Tile.js', 'ProductRow.js', 'ContextMenu.js', 'Popover.js', 'Tooltip.js', 'Modal.js', 'Table.js', 'TableResize.js', 'TableReorder.js', 'TablePin.js', 'Pagination.js', 'RiskMetric.js', 'Alert.js', 'Chip.js', 'Buttons.js', 'AllocationBar.js', 'ds-notify.js', 'DatePicker.js', 'InputKit.js', 'NavPanel.js', 'Splitter.js', 'Illustrations.js'];
 // утилитарные классы разметки документации — владельца в CSS ДС не имеют
 const CLASS_IGNORE = new Set(['page', 'section', 'masthead', 'meta', 'lead', 'eyebrow', 'crumb', 'desc', 'panel', 'row', 'col', 'grid', 'card', 'note', 'name', 'c', 'n', 'is-off']);
 // F5 — реестр «анатомия компонента взята целиком, не урезана под текущий вид». Каждый
@@ -248,6 +248,29 @@ async function loadProject() {
   const owner = new Map();
   for (const [c, set] of classOwners) if (set.size === 1) owner.set(c, [...set][0]);
   const cssClasses = new Set(classOwners.keys());
+  /* Корни блоков ДС (B18, P5): простой класс и часть до первого `__`/`--`
+     у каждого класса CSS ДС. `alert--m` даёт корень `alert`, `tbl__row` — `tbl`. */
+  const blockRoots = new Set();
+  for (const c of cssClasses) blockRoots.add(bemRoot(c) || c);
+  /* Классы без собственных правил, но не выдуманные (B18): хуки, которые ищут
+     рантаймы и сценарии страниц (`tile__toggle`), и разметка, которую пишет сам
+     рантайм компонента. Классы, которые пишет сценарий страницы (демо), сюда
+     не входят: демо так же может выдумать модификатор, как и разметка. */
+  const jsClasses = new Set();
+  const jsFiles = list.filter((f) => (lay.script(f) || lay.pageScript(f)) && !/icons-data|ds-lint/.test(f));
+  const jsSources = await Promise.all(jsFiles.map((f) => readFile(f).catch(() => '')));
+  for (let i = 0; i < jsFiles.length; i++) {
+    const js = jsSources[i];
+    collectHooks(js, jsClasses);
+    if (lay.pageScript(jsFiles[i])) continue;
+    for (const a of [...all(RX.cls, js), ...all(RX.classNameAssign, js)]) for (const c of a.split(/\s+/)) if (c) jsClasses.add(c);
+  }
+  /* Признак состояния, описанный в спеке компонента, без собственных правил
+     (`.entity--skeleton`: вид дают `.sk-*` внутри) — тоже не выдумка. Берутся
+     спеки компонентов и основ, не шпаргалка: она пересказ, а не источник. */
+  const specFiles = list.filter((f) => lay.spec(f) && !/^specs\//.test(f));
+  const specSources = await Promise.all(specFiles.map((f) => readFile(f).catch(() => '')));
+  for (const md of specSources) for (const c of all(/\.(-?[a-zA-Z][a-zA-Z0-9-]*(?:__|--)[a-zA-Z0-9_-]+)/g, md)) jsClasses.add(c);
 
   const [index, nav, specIndex, cheat, dsCss, dsRules] = await Promise.all(
     [dsLayout.at.home, dsLayout.at.nav, dsLayout.at.specIndex, dsLayout.at.cheatsheet, dsLayout.at.bundleCss, 'MAINTAINING.md'].map((f) => readFile(f))
@@ -261,7 +284,7 @@ async function loadProject() {
       .map((s) => s.split(/\s+[—(]|:/)[0].trim())
       .filter((s) => s && !/^Шапка/.test(s));
   }
-  return { files, list, lay, scriptByName, styleFiles, tokens, owner, cssClasses, index, nav, specIndex, cheat, dsCss, canon };
+  return { files, list, lay, scriptByName, styleFiles, tokens, owner, cssClasses, blockRoots, jsClasses, index, nav, specIndex, cheat, dsCss, canon };
 }
 
 /* ---------- шапка главной ДС: версия, дата, счётчик компонентов ----------
@@ -669,14 +692,17 @@ async function globalChecks(P, out) {
     }
     for (const [f, c] of need) out.push(['BLOCKER', 'A6', 'index.html: есть разметка .' + c + ', но ' + f + ' не подключён — компонент рендерится без стилей']);
   }
-  // D3/D4 — секции index.html
+  // D3/D4 — секции index.html. Закреплённые первыми пункты (решение человека
+  // 07.10.2026: «Темы» — первая в «Основах») стоят вне алфавита, остальные — по нему.
+  const PINNED_FIRST = ['Темы'];
+  const unpin = (list) => { let i = 0; while (i < list.length && PINNED_FIRST.includes(list[i])) i++; return list.slice(i); };
   const parts = P.index.split(/<div class="sec-head">/).slice(1);
   for (const part of parts) {
     const head = part.slice(0, 300);
     const title = (head.match(/<h2>([^<]*)<\/h2>/) || [, '?'])[1];
     const declared = parseInt((head.match(/class="n">\s*(\d+)/) || [, ''])[1], 10);
     const body = part.split('</section>')[0];
-    const titles = all(/class="card__title"[^>]*>([^<]*)/g, body).map((s) => strip(s));
+    const titles = unpin(all(/class="card__title"[^>]*>([^<]*)/g, body).map((s) => strip(s)));
     const cards = (body.match(/class="card"/g) || []).length;
     const jsGrid = /class="grid" id="/.test(body) && cards === 0;
     if (!isNaN(declared) && declared !== cards && !jsGrid) out.push(['BLOCKER', 'D3', 'index.html: «' + title + '» → карточек ' + cards + ', счётчик говорит ' + declared]);
@@ -693,7 +719,7 @@ async function globalChecks(P, out) {
     const body = ch.split(/(?:cat|group):\s*'/)[0];
     const labels = all(/label:\s*'([^']+)'[^}]*\}/g, body).filter((l) => !/^\d/.test(l)); // экраны нумерованы — порядок по номеру
     const soon = new Set(all(/label:\s*'([^']+)'[^}]*soon:\s*true/g, body));
-    const real = labels.filter((l) => !soon.has(l));
+    const real = unpin(labels.filter((l) => !soon.has(l)));
     if (real.length < 2) continue;
     const sorted = [...real].sort((a, b) => a.localeCompare(b, 'ru'));
     if (real.join('|') !== sorted.join('|')) out.push(['WARN', 'D4', 'ds-nav.js: «' + gname + '» — порядок не алфавитный']);
@@ -823,6 +849,8 @@ async function runtimeApiCheck(P, out) {
    каталога экранов самой ДС, а такого каталога давно нет — его вход был пуст, и оно
    не срабатывало никогда. Выдуманный класс на экране приложения ловит сенсор (Б4). */
 const PARITY_SKIP = /^(is-|js-|has-)/;
+// корень BEM-класса: часть до первого `__` или `--` (`ds-label--left` → `ds-label`); у простого класса — null
+function bemRoot(c) { const m = /^(-?[a-zA-Z][a-zA-Z0-9-]*?)(?:__|--)/.exec(c); return m ? m[1] : null; }
 // стили этих рантаймов живут в shadow DOM самого скрипта, а не в CSS ДС
 const SHADOW_RUNTIMES = /image-slot\.js$/;
 function parityIgnore(c) { return CLASS_IGNORE.has(c) || PARITY_SKIP.test(c) || /[^a-z0-9_-]/i.test(c); }
@@ -885,8 +913,14 @@ async function parityChecks(P, out) {
     for (const st of all(RX.styleBlock, h, 0)) for (const c of all(/\.(-?[a-zA-Z][a-zA-Z0-9_-]*)/g, st.replace(/\{[^{}]*\}/g, '{}'))) local.add(c);
     const live = h.replace(RX.styleBlock, '').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<pre[\s\S]*?<\/pre>/gi, '').replace(/<code[\s\S]*?<\/code>/gi, '');
     const used = uniq(all(RX.cls, live).filter((a) => !/['`+]|\$\{/.test(a)).flatMap((a) => a.split(/\s+/)).filter(Boolean));
-    for (const c of used.filter((c) => !parityIgnore(c) && !known(c) && !local.has(c)))
-      out.push(['WARN', 'P5', f + ': .' + c + ' в разметке страницы без правил в CSS — блок отрендерится без стиля']);
+    /* Элемент или модификатор блока ДС (`alert--s`, `tbl__head`) — выдумка в
+       чужом пространстве имён: компонент выглядит подключённым, а правила нет.
+       Такой класс — блокер (Л190); класс самой страницы — замечание. */
+    for (const c of used.filter((c) => !parityIgnore(c) && !known(c) && !local.has(c))) {
+      const root = bemRoot(c);
+      if (root && P.blockRoots.has(root) && !P.jsClasses.has(c)) out.push(['BLOCKER', 'P5', f + ': .' + c + ' — в блоке .' + root + ' ДС такого элемента или модификатора нет; разметку брать из CSS блока и раздела «Разметка» его спеки']);
+      else out.push(['WARN', 'P5', f + ': .' + c + ' в разметке страницы без правил в CSS — блок отрендерится без стиля']);
+    }
   }
   // P3 — код-панели витрин: то, что страница предлагает скопировать, тоже документация.
   // Внутри <code>…</code> в исходнике могут быть куски JS (конкатенация,
@@ -1100,6 +1134,24 @@ async function pageChecks(p, P, opts, out) {
   if (!isScreen && !/^templates\//.test(p) && !/class="page ds-split"/.test(noHtmlComments)
     && !/<script[^>]+src="[^"]*docs-kit\/ds-theme-boot\.js"/.test(noHtmlComments)) {
     say('BLOCKER', 'B17', 'страница ДС без тега темы docs-kit/ds-theme-boot.js');
+  }
+  /* B18 — элемент или модификатор блока ДС, которого нет в CSS (Л190): `.alert--s`
+     при единственном размере M, `.tbl__head` у таблицы без такой обёртки. Класс
+     выглядит родным, линтер парности (P5) видел его только в общем прогоне и
+     замечанием, а гейт страницы — не видел вовсе. Корень берётся до первого
+     `__`/`--`; блок — если корень есть среди классов CSS ДС. Не в счёт: классы
+     из <style> страницы, хуки рантаймов и сценариев страниц, разметка, которую
+     пишет рантайм компонента, признаки состояния из спек компонентов, сниппеты
+     <pre>/<code>. Экраны не проверяются — у них сенсор (Б4). */
+  if (!isScreen) {
+    const live = markup.replace(/<pre[\s\S]*?<\/pre>/gi, '').replace(/<code[\s\S]*?<\/code>/gi, '');
+    const local = new Set(all(/\.(-?[a-zA-Z][a-zA-Z0-9_-]*)/g, styleSrc.replace(/\{[^{}]*\}/g, '{}')));
+    const used = uniq(all(RX.cls, live).filter((a) => !/['`+]|\$\{/.test(a)).flatMap((a) => a.split(/\s+/)).filter(Boolean));
+    const invented = used.filter((c) => {
+      const root = bemRoot(c);
+      return root && P.blockRoots.has(root) && !P.cssClasses.has(c) && !P.jsClasses.has(c) && !local.has(c) && !CLASS_IGNORE.has(c);
+    });
+    if (invented.length) say('BLOCKER', 'B18', 'в блоках ДС нет таких элементов или модификаторов: ' + invented.slice(0, 5).map((c) => '.' + c).join(', ') + (invented.length > 5 ? ' и ещё ' + (invented.length - 5) : '') + ' — разметку брать из CSS блока и раздела «Разметка» его спеки');
   }
   /* ---------- R* — каскад раскатки docs-split ----------
      Пункты К1/К2/К6/К10 чек-листа screen-review живут здесь, а не в сенсоре

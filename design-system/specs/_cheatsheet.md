@@ -186,10 +186,10 @@ css: `components/molecules/ButtonGroup/ButtonGroup.css` · js: `components/molec
 
 ## Buttons
 css: `components/atoms/Buttons/Buttons.css` · deps: [spinner]
-**Оси:** type (accent/outline/transparent) · тон-модификатор (error/warning/success/info) · размер (M/S/XS) · кнопка-меню (chevron) · fullwidth · loader · icon-only.
-**Инварианты:** справа — либо шеврон, либо иконка, не одновременно; на области экрана — только один Accent.
+**Оси:** type (accent/outline/transparent) · тон-модификатор (error/warning/success/info) · размер (M/S/XS) · кнопка-меню (chevron) · fullwidth · loader · icon-only · нажата (вкл).
+**Инварианты:** справа — либо шеврон, либо иконка, не одновременно; на области экрана — только один Accent; **нажата — атрибутом** `aria-pressed="true"` (вкл/выкл) или `aria-expanded="true"` (открыта панель или меню), вид = Hover, наведение на нажатую: Outline/Transparent — фон Active, Accent — заливка Default; **иконка при смене кнопки — только с анимацией**: переключатель — две иконки `.btn__icon--toggle`, замена на другую кнопку — `DSButton.swap()` (Buttons.js), руками содержимое кнопки не переписывают.
 **Корнер-кейсы:** `.btn{min-width:0}` + `.btn__label` ellipsis — длинный текст не распирает fullwidth/flex-родителя.
-**Классы:** .btn · .btn--accent / --outline / --transparent · .btn--error / --warning / --success / --info · .btn--danger · .btn--m / --s / --xs · .btn--icon-only · .btn--fullwidth · .btn--loading · disabled / .btn--disabled · .is-hover / .is-active · .btn__label · .btn__chevron · .spin.spin--current
+**Классы:** .btn · .btn--accent / --outline / --transparent · .btn--error / --warning / --success / --info · .btn--danger · .btn--m / --s / --xs · .btn--icon-only · .btn--fullwidth · .btn--loading · disabled / .btn--disabled · .is-hover / .is-active / .is-pressed · `[aria-pressed="true"]` / `[aria-expanded="true"]` · .btn__label · .btn__icon · .btn__icon--toggle · .btn__chevron · .spin.spin--current
 **Диагностика:** «Текст кнопки распирает контейнер» → на родителе-flex/grid между кнопкой и краем не хватает `min-width:0` · «На экране рядом два синих Accent» → нарушение инварианта — один должен стать Outline/Transparent
 
 Кнопка инициирует действие.
@@ -202,6 +202,11 @@ css: `components/atoms/Buttons/Buttons.css` · deps: [spinner]
 <button type="button" class="btn btn--outline btn--m" aria-haspopup="menu" aria-expanded="false">
   <span class="btn__label">Действия</span>
   <i class="btn__chevron" data-icon="chevron-down"></i>
+</button>
+<!-- переключатель: нажата, пока панель открыта; две иконки меняются сами -->
+<button type="button" class="btn btn--outline btn--s" aria-expanded="false" aria-controls="drawer">
+  <span class="btn__icon btn__icon--toggle" aria-hidden="true"><i data-icon="ai-stars"></i><i data-icon="close"></i></span>
+  <span class="btn__label">Конструктор</span>
 </button>
 <button type="button" class="btn btn--outline btn--s btn--icon-only" aria-label="Скачать">
   <i data-icon="download"></i>
@@ -291,7 +296,7 @@ css: `components/atoms/Checkbox/Checkbox.css` · deps: [label-helper]
 
 ## Chip
 css: `components/atoms/Chip/Chip.css` · deps: [label-helper, avatar, spinner]
-**Оси:** тип (edit/readonly) · стиль (fill/outline) · размер (L/M/S/XS) · тон (системный StSystem · семантический success/info/warning/error · тональный по имени рампы green/lblue/orange/red/dpurple/grey/primary · алиасы accent=primary, dark=grey · solid-модификатор `-solid` на любой тон) · ведущий элемент (иконка/маркер/аватар) · действие (крестик ИЛИ шеврон — взаимоисключающе).
+**Оси:** тип (edit/readonly) · стиль (fill/outline/dashed — пунктир = предложение) · размер (L/M/S/XS) + `.chip--compact` (L/M с текстом Body S, как Button S) · тон (системный StSystem · семантический success/info/warning/error · тональный по имени рампы green/lblue/orange/red/dpurple/grey/primary · алиасы accent=primary, dark=grey · solid-модификатор `-solid` на любой тон) · ведущий элемент (иконка/маркер/аватар/тег/иконка-переключатель) · действие (крестик ИЛИ шеврон — взаимоисключающе) · галочка выбора `.chip__check` · элемент (span / `<button>`-переключатель выбора).
 **Инварианты:** max-width 320px фиксирован на всех размерах; чип сжимаем (`min-width: 0`) — в чужой flex-строке уступает место и усекает подпись внутри плашки, а не вылезает за границу контейнера; `.chip--fit` — несжимаемый вариант для коротких фиксированных значений (код валюты, PE, «Применено: N»): подпись показывается целиком, не усекается до «R…»; hover/selected — только у Edit, Readonly не реагирует на курсор; атрибут `hidden` работает (`.chip[hidden]{display:none}` рядом с базовым `display:inline-flex`) — им `Inputs.js` прячет чипы, свёрнутые в «+N».
 **Диагностика:** «Чип обрезан многоточием, тултипа нет» → не подключён `components/molecules/Tooltip/Tooltip.js` (механизм) или `components/atoms/Chip/Chip.js` (регистрация); с 1.018 тултип навешивает общий `DSTooltip.truncated`, руками `data-tooltip` не пишут · «У чипа два тултипа сразу» → на чипе остался `title` (рантайм забирает его текст и снимает атрибут только когда навешивает свой) · «Тултип не показывается на обрезанном disabled-чипе» → чип построен после загрузки: `.chip--has-tooltip` ставит проход `DSChip.refresh(root)` · «Инфо-кнопка внутри readonly-чипа не фокусируется» → она должна быть отдельным `<button class="chip__info">`, не декоративным span · «Крестик чипа «Применено: N» убирает чип, но фильтр остаётся» → рантайм старше 1.014: `Chip.js` снимал чип раньше `TableFilter.js` и обрывал событие `tfilter:reset`; теперь `.tfilter__applied` он пропускает
 **Из коробки:** подключить `components/atoms/Chip/Chip.js` (входит в `ds.js`). Удаление: клик по `.chip__remove` или Backspace/Delete на сфокусированном `.chip--edit` (чип `.tfilter__applied` пропускается — владелец `TableFilter.js`). **Тултип на усечённой подписи** — правило Chip, работает везде, где стоит чип; механизм общий — `DSTooltip.truncated` (Tooltip.js), регистрация — `Chip.js`: по первому наведению или фокусу подпись получает `data-tooltip` с полным текстом, `data-tooltip-truncated="only"` и `data-tooltip-multiline="yes"`, дальше её ведёт `Tooltip.js` (нужен на странице); показ — только при реальном усечении, `title` цели забирается в текст и снимается. Счётчики «+N» (`[data-tc-count]`, `[data-inp-count]`) исключены — у них собственный тултип со списком скрытых значений от владельца стека. Disabled-чип событий не даёт (`pointer-events:none`), поэтому обслуживается проходом при загрузке и вызовом `DSChip.refresh(root)`: усечённой подписи ставится `.chip--has-tooltip` (хук CSS вернёт указатель).
@@ -308,9 +313,41 @@ css: `components/atoms/Chip/Chip.css` · deps: [label-helper, avatar, spinner]
 <span class="chip chip--edit chip--m"><span class="chip__avatar av av--circular"><span class="av__text">И</span></span><span class="chip__label">Иван Б.</span></span>
 <span class="chip chip--m"><span class="chip__label">Договор</span></span>
 <div class="chiplist" role="group" aria-label="Фильтры">…</div>
+<!-- чип-переключатель: множественный выбор, предложение Dashed -->
+<div class="chiplist" role="group" aria-label="Дополнительный фокус">
+  <button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--dashed" aria-pressed="false">
+    <span class="chip__icon chip__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>
+    <span class="chip__label">Структура владения</span>
+  </button>
+</div>
+<!-- чип-переключатель: одиночный выбор, тег категории + галочка справа -->
+<div class="chiplist" role="radiogroup" aria-label="Объект анализа">
+  <button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--outline" role="radio" aria-checked="false">
+    <span class="chip__tag">Отрасль</span>
+    <span class="chip__label">Минеральные удобрения, СЗФО</span>
+    <span class="chip__check" aria-hidden="true"><i data-icon="check"></i></span>
+  </button>
+</div>
 ```
 
-Ведущие слоты: `.chip__marker` / `.chip__icon` / `.chip__avatar` (Avatar-компонент; бейдж объединён с аватаром). Trailing `.chip__remove` И `.chip__dropdown` — взаимоисключающие. Отступы по слотам (как у кнопок): сторона с иконкой/аватаром/действием — меньше. Outline (`.chip--outline`) — без заливки даже у тонов. Тона: семантические `--success/--info/--warning/--error` · тональные `--green/--lblue/--orange/--red/--dpurple/--grey/--primary` (все — фон `-light` + обводка `-light`, текст `-dark`, иконка base) · алиасы `--accent`(=primary) `--dark`(=grey) · solid: модификатор `-solid` на любой тон (`chip--<tone>-solid`, base-заливка + белый текст). `--rounded` = pill — **статусные чипы всегда rounded**; **теги/флаг-категории (PE, валюта) — не статусы: не rounded, цвет кастомный по кейсу, и не сжимаются (`.chip--fit` — подпись показывается целиком)**. Аватар в статусном чипе: фон `-mid`, текст/иконка белые (`--text-on-dark`). Trailing `.chip__info` (button) — открывает Popover.
+**Раскрывающийся чип (1.020).** `.chip--expandable`: шапка — `<button class="chip__toggle" aria-expanded aria-controls>` (ведущий слот, `.chip__label`, `.chip__source`, стрелка `.chip__expand`), рядом `.chip__remove`, весь текст — `.chip__body > .chip__text.ds-scroll` рядом с кнопкой, не внутри. Свёрнут — обычный Edit-чип (подпись, ˅, ×); раскрыт — на всю строку, стиль прежний, источник вместо подписи, ˄, текст до 8 строк. `Chip.js`: клик по шапке, один раскрытый в чиплисте, событие `ds-chip:toggle`, `DSChip.expand(chip, open)`. Стиль — Fill.
+
+```html
+<span class="chip chip--edit chip--s chip--expandable">
+  <button type="button" class="chip__toggle" aria-expanded="false" aria-controls="frag-1">
+    <span class="chip__icon"><i data-icon="message-text"></i></span>
+    <span class="chip__label">«Долговая нагрузка группы…»</span>
+    <span class="chip__source">Фрагмент материала · Долговая нагрузка</span>
+    <span class="chip__expand" aria-hidden="true"><i data-icon="chevron-down"></i></span>
+  </button>
+  <span class="chip__remove" role="button" aria-label="Убрать из запроса"><i data-icon="close"></i></span>
+  <span class="chip__body" id="frag-1"><span class="chip__text ds-scroll">…весь текст…</span></span>
+</span>
+```
+
+**Чип выбора (1.019).** Переключатель — только `<button type="button">`: выбор задаётся атрибутом — `aria-pressed` (множественный, чиплист `role="group"`) или `role="radio"` + `aria-checked` (одиночный, `role="radiogroup"`); компонент красит выбранный по ним, класс `.chip--selected` — только витрина. Недоступный — нативный `disabled`. Крестика и шеврона у чипа-кнопки нет (кнопка в кнопке). Сжатие при нажатии `scale(.97)` — у чипа-кнопки по умолчанию, `.chip--no-press` выключает, `.chip--press` включает статичному. `.chip--dashed` — пунктир (цвета Outline), на hover и в выбранном — сплошная линия. `.chip__tag` — мини-чип категории (все размеры; не сжимается; в выбранном — заливка Primary + белый текст, в тоновом — фон `-mid`). `.chip__icon--toggle` — два глифа: первый в невыбранном, второй в выбранном. `.chip__check` — галочка справа, когда ведущий слот занят тегом/аватаром; выезжает при выборе, чип расширяется. Чип — не кнопка действия («Сохранить», «Сбросить» — Button).
+
+Ведущие слоты: `.chip__marker` / `.chip__icon` / `.chip__avatar` (Avatar-компонент; бейдж объединён с аватаром) / `.chip__tag` — один из них. Trailing `.chip__remove` И `.chip__dropdown` — взаимоисключающие. Отступы по слотам (как у кнопок): сторона с иконкой/аватаром/действием — меньше. Outline (`.chip--outline`) — без заливки даже у тонов. Тона: семантические `--success/--info/--warning/--error` · тональные `--green/--lblue/--orange/--red/--dpurple/--grey/--primary` (все — фон `-light` + обводка `-light`, текст `-dark`, иконка base) · алиасы `--accent`(=primary) `--dark`(=grey) · solid: модификатор `-solid` на любой тон (`chip--<tone>-solid`, base-заливка + белый текст). `--rounded` = pill — **статусные чипы всегда rounded**; **теги/флаг-категории (PE, валюта) — не статусы: не rounded, цвет кастомный по кейсу, и не сжимаются (`.chip--fit` — подпись показывается целиком)**. Аватар в статусном чипе: фон `-mid`, текст/иконка белые (`--text-on-dark`). Trailing `.chip__info` (button) — открывает Popover.
 
 ReadOnly-чип — база `.chip`: модификатора `chip--readonly` в CSS нет, редактируемый вариант помечается `.chip--edit`.
 
@@ -319,7 +356,7 @@ ReadOnly-чип — база `.chip`: модификатора `chip--readonly` 
 ## ContextMenu
 css: `components/molecules/ContextMenu/ContextMenu.css` · js: `components/molecules/ContextMenu/ContextMenu.js` · deps: [button]
 **Оси:** тип пункта (текст/иконка/шорткат/каретка-подменю/чекбокс-радио выбор) · позиционирование (start/end, авто-flip вверх/по горизонтали) · подменю (flyout по наведению) · переполнение (скролл, группировка, ~10 пунктов — предел).
-**Инварианты:** галочка выбранного пункта — справа (trailing), не слева; до открытия меню невидимо и не участвует в layout. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
+**Инварианты:** одно меню на несколько триггеров — закрывает и возвращает фокус тот триггер, что открыл (`aria-expanded` сбрасывается у него; ContextMenu 1.012); галочка выбранного пункта — справа (trailing), не слева; до открытия меню невидимо и не участвует в layout. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
 **Классы:** .menu · .menu--scroll · .menu--floating · .menu__item · .menu__item--danger · .menu__item--wrap · .menu__item--sub · .menu__item-icon / -label / -hint / -caret / -check · .menu__label · .menu__divider · .is-hover / .is-focus / .is-active · role / aria-haspopup / aria-expanded / aria-checked / aria-disabled
 **Диагностика:** «Меню открывается не из того угла» → `--menu-origin` не проставлен рантаймом относительно триггера · «Подменю уходит за край экрана» → должен появиться `.menu__sub--left`, разворот считает `ContextMenu.js` · «Меню из модалки не видно / не ловит клики» → рантайм старше 1.009: меню уходило в общий слой `DSFloat` под скрим
 
@@ -514,8 +551,8 @@ css: `foundations/Layout/Layout.css` · runtime: `foundations/Layout/Layout.js` 
 css: `components/molecules/Inputs/Inputs.css` · deps: [label-helper, tooltip, chip]
 **Оси:** слой (текст/пароль/многострочный/InputAmount) · размер (M/S Table Edit) · ограничение длины (`maxLength` → счётчик) · resizable.
 **Инварианты:** текст ошибки/предупреждения — только в тултипе при *Focus, не в хелпере.
-**Классы:** `.inp` · `.inp--m` / `.inp--s` · `.inp--error` / `--warning` / `--disabled` · `.inp--multiline` · `.is-hover` / `.is-focus` / `.is-open` · `.inp__field` · `.inp__lead` · `.inp__prefix` / `.inp__postfix` · `.inp__control` · `.inp__acts` / `.inp__act` · `.ds-label` / `.ds-helper`
-**Диагностика:** «Ошибка показана и в хелпере, и в тултипе одновременно» → убрать текст ошибки из хелпера, оставить только тултип на фокусе · «Крестик очистки виден на disabled-поле» → должен скрываться правилом `.inp--disabled .inp__act[aria-label="Очистить поле"]` · «Значение есть, а крестика нет» / «крестик висит на пустом поле» → не подключён `components/molecules/Inputs/Inputs.js`, поле помечено `data-input-static`, либо значение поставлено присваиванием `.value` без `DSInput.sync`/`syncAll` · «Поле при фокусе толкает соседей / текст внутри сдвигается на 1px» → стили старше 1.015: фокус менял толщину бордера на 2px; обводка фокуса — бордер 1px + `inset`-тень 1px, габариты поля фокус не меняет
+**Классы:** `.inp` · `.inp--m` / `.inp--s` · `.inp--error` / `--warning` / `--disabled` · `.inp--multiline` · `.is-hover` / `.is-focus` / `.is-open` · `.inp__field` · `.inp__lead` · `.inp__prefix` / `.inp__postfix` · `.inp__control` · `.inp__acts` / `.inp__act` · `.ds-label` / `.ds-helper` · опции семейства (с 1.017): `.inp--radius-m` (8px) / `.inp--rounded` (капсула) · `.inp--filled` (заливка фоном страницы, в фокусе снимается) · `.inp--focus-accent` (иконка слева в фокусе — `--primary`)
+**Диагностика:** «Ошибка показана и в хелпере, и в тултипе одновременно» → убрать текст ошибки из хелпера, оставить только тултип на фокусе · «Крестик очистки виден на disabled-поле» → должен скрываться правилом `.inp--disabled .inp__act[aria-label="Очистить поле"]` · «Значение есть, а крестика нет» / «крестик висит на пустом поле» → не подключён `components/molecules/Inputs/Inputs.js`, поле помечено `data-input-static`, либо значение поставлено присваиванием `.value` без `DSInput.sync`/`syncAll` · «Поле при фокусе толкает соседей / текст внутри сдвигается на 1px» → стили старше 1.015: фокус менял толщину бордера на 2px; обводка фокуса — бордер 1px + `inset`-тень 1px + светлое кольцо 3px (`--st-primary-light`; Error — `--st-red-light`, Warning — `--st-orange-light`, с 1.016), габариты поля фокус не меняет
 **Из коробки:** подключить `components/molecules/Inputs/Inputs.js` (входит в `ds.js`). Крестик очистки живёт по значению: виден, когда в контроле есть текст или в `.inp__chips` есть чипы, иначе скрыт атрибутом `hidden` (парное правило `.inp__act[hidden]` — в `components/molecules/Inputs/Inputs.css`). Нет крестика в разметке — рантайм добавит сам, в порядке информер → крестик → календарь → шеврон. Очистка стирает только DOM поля и всплывает наружу как `ds-input:clear` на `.inp` (плюс `input`/`change` на контроле) — модель потребителя рантайму неизвестна. Демо-поля документации помечаются `data-input-static` и не обслуживаются. **Значение, поставленное кодом, рантайм не видит** — присваивание `.value` событий не шлёт, поэтому заполнил форму данными → позови `DSInput.syncAll(область)`; выбор из списка синхронизирует сам DropdownList (1.014). API: `DSInput.{bind,bindAll,sync,syncAll,clear}`.
 
 Базовое поле ввода текста. База `.inp` (метка + поле Input_Content + хелпер) общая для InputText / InputDate / InputAutocomplete. Текстовый слой: иконка слева (любая из библиотеки ДС, не привязана к поиску), префикс, значение, постфикс. Действия справа: информер → крестик очистки (или «показать/скрыть» для пароля — крестика тогда нет) → календарь → шеврон. Опционально — счётчик символов (`maxLength`, справа под полем) и resize по вертикали у многострочного (`--resizable`). Размеры M (40px) / S (32px, только Table Edit). Состояния: Default/Hover/Focus/Error/ErrorFocus/Warning/WarningFocus/Disabled.
@@ -663,6 +700,58 @@ css: `components/molecules/Inputs/InputRanges.css` · deps: [input, label-helper
 ```
 
 Полная анатомия: components/molecules/Inputs/InputDateRange/InputDateRange.md.
+
+## Keyboard
+css: `components/atoms/Keyboard/Keyboard.css` · deps: —
+**Оси:** размер (S / M / L — по кеглю текста вокруг: Body XS / Body S / Body M) · одна клавиша или сочетание (`.kbd-combo`).
+**Инварианты:** нативный `<kbd>` — читается и копируется как текст, `aria-*` не нужны; не интерактивен (не кнопка, не чип, без состояний); сочетание — только в `.kbd-combo`, «+» обычным текстом, не больше трёх клавиш, модификаторы впереди (Ctrl → Alt → Shift); действие — обычным текстом рядом, не внутри клавиши.
+**Классы:** `.kbd` · `.kbd--s` / `.kbd--m` / `.kbd--l` · `.kbd-combo`
+
+Клавиша — обозначение клавиши в тексте подсказок, тултипов и справки. Имя компонента — Keyboard (до 06.10.2026 — Kbd); классы — короткие `.kbd`, от HTML-элемента `<kbd>` (keyboard input), как `.ibtn` у IconButton. Плашка `--bg-tile`, рамка 1px и нижняя грань 2px `--border-light`, подпись `--text-secondary`; одна буква — квадрат. В пункте меню сочетание пишется в `.menu__item-hint` ContextMenu.
+
+```html
+<kbd class="kbd kbd--s">Enter</kbd> — отправить
+<span class="kbd-combo"><kbd class="kbd kbd--s">Shift</kbd> + <kbd class="kbd kbd--s">Enter</kbd></span> — новая строка
+```
+
+Полная анатомия: components/atoms/Keyboard/Keyboard.md.
+
+## Note
+css: `components/atoms/Note/Note.css` · deps: [link]
+**Оси:** размер (XS / S / M — по кеглю текста: Body XS / Body S / Body M) · тон иконки (по умолчанию `--secondary` · `.note--accent` — `--primary`).
+**Инварианты:** не статус (ошибка, предупреждение, успех — Alert) и не подпись поля (LabelHelper); фона, рамки и полей нет — линию над заметкой рисует контейнер; иконка декоративная (`aria-hidden`), по центру первой строки (коробка высотой `1lh`); внутри — только ссылка Link inline, кнопок нет.
+**Классы:** `.note` · `.note--xs` / `.note--s` / `.note--m` · `.note--accent` · `.note__icon` · `.note__text`
+
+Заметка — нейтральное пояснение «иконка + вторичный текст» в потоке: под формой, в модальном окне, в подвале StepForm. Текст `--text-secondary`, переносится; иконка остаётся у первой строки.
+
+```html
+<p class="note note--s note--accent">
+  <span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+  <span class="note__text">Подготовка отчета обычно занимает до 30 минут.</span>
+</p>
+```
+
+Полная анатомия: components/atoms/Note/Note.md.
+
+## StepMarker
+css: `components/atoms/StepMarker/StepMarker.css` · deps: —
+**Оси:** размер (S 20 · M 24 · L 32) · состояние (ожидает · текущий · готов · ошибка · недоступен).
+**Инварианты:** декоративный (`aria-hidden`) — номер и статус шага озвучивает контейнер; не интерактивен; состояние — данными: модификатор `.stepmark--<state>` на маркере или `data-state` шага StepForm (маркер красится сам, классы на маркер экран не ставит); смена номера на глиф не меняет габарит; глиф ошибки `.stepmark__icon--error` — в разметке, только если шаг бывает с ошибкой; номер — одна-две цифры.
+**Классы:** `.stepmark` · `.stepmark--s` / `.stepmark--m` / `.stepmark--l` · `.stepmark--current` / `--done` / `--error` / `--disabled` · `.stepmark__num` · `.stepmark__icon` · `.stepmark__icon--error`
+
+Номер шага — кружок с номером пошаговой формы; готов — номер сменяется галочкой (анимация из прототипа: поворот −30° и масштаб 0,3 → 1, 0,4 с), ошибка — глифом ошибки. Ожидает — `--st-primary-light` / `--primary-dark`, текущий — + рамка 1px внутрь `--primary`, готов — `--primary` / `--text-on-dark`, ошибка — `--st-red-light` / `--error-dark`, недоступен — `--st-disabled-light` / `--st-disabled-dark`.
+
+```html
+<span class="stepmark stepmark--m" aria-hidden="true">
+  <span class="stepmark__num">1</span>
+  <i class="stepmark__icon" data-icon="check"></i>
+  <!-- опц.: шаг бывает с ошибкой -->
+  <i class="stepmark__icon stepmark__icon--error" data-icon="alert-circle"></i>
+</span>
+<!-- готов: .stepmark--done или data-state="done" на .stepform__step -->
+```
+
+Полная анатомия: components/atoms/StepMarker/StepMarker.md.
 
 ## LabelHelper
 css: `components/atoms/LabelHelper/LabelHelper.css` · deps: [checkbox, radio, switch, icon-button]
@@ -896,7 +985,7 @@ css: `components/molecules/Pagination/Pagination.css` · js: `components/molecul
 ## Popover
 css: `components/organisms/Popover/Popover.css` · deps: [button, icon-button, link, chip, label-helper]
 **Оси:** ширина (5 шагов `--pop-w-s…max`, 240–560px) · состав (header/body/footer/arrow) · размещение (floating/pinned).
-**Инварианты:** >560px — переход на Modal. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
+**Инварианты:** один поповер на несколько триггеров — закрывает и возвращает фокус тот триггер, что открыл (Popover 1.011). >560px — переход на Modal. Плавающий слой, открытый ИЗ модалки, монтируется в её скрим (`DSFloat.mount(el, {anchor})`), а не в общий слой — иначе рисуется под подложкой (z-index 1000) и попадает под её `inert`; см. Elevation.
 **Классы:** `.pop-anchor` · `.pop` · `.pop--w-s … --w-max` · `.pop--floating` / `.pop--pinned` · `.pop--top/-bottom/-left/-right` + `--start/-center/-end` · `.pop--arrow` · `.pop__head` / `.pop__foot` · `.pop__head-main` · `.pop__title` · `.pop__close` · `.pop__body` (+ `--flush`) · `.pop__foot-left` / `-right` · `.sk-line` / `.sk-group` · `role="dialog"` / `aria-modal="false"` · `aria-haspopup` / `aria-expanded` / `aria-controls`
 **Диагностика:** «В поповере не хватает места, скроллит вся страница» → сигнал заменить на Modal, не увеличивать `--pop-w-max` · «Стрелка не совпадает цветом с зоной» → проверить, к какой зоне она примыкает по стороне размещения · «Поповер из модалки не видно / не ловит клики» → рантайм старше 1.007: поповер уходил в общий слой `DSFloat` под скрим
 
@@ -1404,6 +1493,7 @@ css: `components/molecules/SubTab/SubTab.css` · js: `components/molecules/Tab/T
 Полная анатомия: components/molecules/SubTab/SubTab.md.
 
 ## Switch
+Новый вариант: `.sw--dual`, подписи `.sw__side--off` / `.sw__side--on`, gap 8px. Нативный input непосредственно перед control; доступная метка описывает положение on.
 css: `components/atoms/Switch/Switch.css` · deps: [label-helper, spinner]
 **Оси:** состояние (off/on) · интерактивное состояние (default/hover/focus/pressed/disabled/loading) · состав (label/helper) · группа+обязательность (независимы).
 **Инварианты:** мгновенное действие без подтверждения; Loading сохраняет текущий цвет on/off.
@@ -1567,9 +1657,9 @@ css: `components/organisms/TableFilter/TableFilter.css` · js: `components/molec
 
 ## Tile
 css: `components/organisms/Tile/Tile.css` · js: `components/organisms/Tile/Tile.js` · deps: [icon-button, button, link, chip, badge, alert, divider, read-only-field]
-**Оси:** вариант (обычный/Accordion/Headless/Card) · alert-слот (warning/info/error, у Card нет) · ширина (3–12 колонок).
+**Оси:** вариант (обычный/Accordion/Headless/Card/Inset) · ведущая иконка заголовка (`.tile__title-icon`, все варианты) · alert-слот (warning/info/error, у Card и Inset нет) · ширина (3–12 колонок).
 **Инварианты:** высота тайла в ряду = высоте самого высокого (`align-self:stretch`+Grid); своих интерактивных состояний у Tile нет — они есть только у родственника Card (`.tile--card`): Default · Hover · Active · Move · Disabled · Selected (выбрана в списке с выбором — `aria-checked`/`aria-selected`, подложка `--primary-bg`, рамка `--primary`). Тип TileHeader определяет, чем становится тайл: M — плашка, без хэдера — TileHeadless, Card — карточка. Button в контенте Tile — S (`btn--s`), в шапке — XS (`btn--outline btn--xs`), если макет/ТЗ не задают иное; M (40) — только модальные окна (решение человека 25.09.2026).
-**Классы:** `.tile` · `.tile--headless` · `.tile--accordion` · `.tile--collapsed` · `.tile__header` · `.tile__header-main` · `.tile__title-row` · `.tile__title` · `.tile__title-add` (+ `--icon`, тон `--success` / `--warning` / `--error` / `--info`) · `.tile__subtitle` · `.tile__subtitle-icon` (тон `--success` / `--warning` / `--error` / `--info`) · `.tile__chiplist` · `.tile__actions` · `.tile__toggle` / `.tile__chevron` · `.tile__alert` · `.tile__body` · `.tile__collapsible` · `.tile__grid` / `.tile__rows` · `.tile__grid-full` (элемент на всю ширину сетки) · `.tile--card` (+ `.is-hover` / `.is-pressed` / `.is-move` / `.is-disabled` / `[aria-disabled]` / `.is-selected` / `[aria-checked="true"]` / `[aria-selected="true"]`) · `.tile__grip` (грип переноса Card) · `.tile-row` · `.tile-group` (обёртка рядов, зазор 16px) · `.tile-stack`
+**Классы:** `.tile` · `.tile--headless` · `.tile--accordion` · `.tile--collapsed` · `.tile__header` · `.tile__header-main` · `.tile__title-row` · `.tile__title-icon` (тон `--accent` / `--success` / `--warning` / `--error` / `--info`) · `.tile__title` · `.tile__title-add` (+ `--icon`, тон `--success` / `--warning` / `--error` / `--info`) · `.tile__subtitle` · `.tile__subtitle-icon` (тон `--success` / `--warning` / `--error` / `--info`) · `.tile__chiplist` · `.tile__actions` · `.tile__toggle` / `.tile__chevron` · `.tile__alert` · `.tile__body` · `.tile__collapsible` · `.tile__grid` / `.tile__rows` · `.tile__grid-full` (элемент на всю ширину сетки) · `.tile--card` (+ `.is-hover` / `.is-pressed` / `.is-move` / `.is-disabled` / `[aria-disabled]` / `.is-selected` / `[aria-checked="true"]` / `[aria-selected="true"]`) · `.tile__grip` (грип переноса Card) · `.tile--inset` (вложенная подложка внутри другой поверхности) · `.tile-row` · `.tile-group` (обёртка рядов, зазор 16px) · `.tile-stack`
 **Диагностика:** «Тайлы в одном ряду разной высоты» → ряд должен быть CSS Grid (`align-items:stretch` по умолчанию), не flex с `align-items:start` · «У тайла есть свой hover-эффект» → нарушение инварианта: состояния есть только у `.tile--card`, у обычного Tile их быть не должно · «Карточка в модалке/списке выглядит как плашка страницы» → нужен `.tile--card`, а не `.tile`: у него своя геометрия (8/16/20/16) и Title на ступень ниже
 
 Основная плашка рабочей области: TileHeader (M) + опц. Alert + контентная область (наполнение индивидуально). Ширина 3–12 колонок, отступы контента 10/20/24/20. Собственных состояний нет. Варианты: `--headless` (без хэдера, отступы 24/24/32/24), `--accordion` (+ `--collapsed`).
@@ -1656,6 +1746,22 @@ css: `components/organisms/Tile/Tile.css` · js: `components/organisms/Tile/Tile
 </article>
 
 <!-- accordion: toggle .tile__toggle (aria-expanded) над .tile__collapsible; свёрнуто — .tile--collapsed -->
+
+<!-- Inset (с 1.016): вложенная подложка ВНУТРИ Tile / Card / Modal / Drawer / панели — фон --bg-page, хэдер 12/12/8,
+     контент 12/12/12/12, Title Body S Strong; Alert-слота, грипа и аккордеона нет; Inset в Inset нельзя.
+     Ведущая иконка заголовка — .tile__title-icon во всех вариантах (глиф 20, у Inset 18; по умолчанию --secondary) -->
+<section class="tile tile--inset" aria-labelledby="insetTitle">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="history"></i></span>
+        <h3 class="tile__title" id="insetTitle">История запросов по объекту анализа — 2</h3>
+      </div>
+      <p class="tile__subtitle">Документ откроется в чате, конструктор останется на месте.</p>
+    </div>
+  </header>
+  <div class="tile__body"><div class="entity-list">…Entity S…<hr class="dvd dvd--h">…Entity S…</div></div>
+</section>
 <section class="tile tile--accordion">
   <header class="tile__header">… <button class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="acc-1"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></header>
   <div class="tile__collapsible" id="acc-1"><div class="tile__body">…</div></div>
@@ -1668,6 +1774,64 @@ css: `components/organisms/Tile/Tile.css` · js: `components/organisms/Tile/Tile
 `.tile__toggle` — JS-хук на кнопке-шевроне (собственных правил в CSS нет, стилизует IconButton), обязателен: обработчик аккордеона делегирует по нему.
 
 **Из коробки:** подключить `components/organisms/Tile/Tile.js` — любая `.tile--accordion` с `.tile__toggle` сворачивается сама (делегированно, переживает перерисовку). Рантайм держит `.tile--collapsed`, `aria-expanded`/`aria-label`/`aria-controls` и шлёт событие `tiletoggle`. Свёрнуто по умолчанию — просто добавить класс в разметке. API: `DSTile.wire(el,{collapsed,onToggle})`, `DSTile.toggle(el,v)`.
+
+## StepForm
+css: `components/molecules/StepForm/StepForm.css` · deps: [step-marker, note, input, chip, tile]
+**Оси:** состав шага (поле · чипы · поле и чипы) · блок на всю ширину шага (`.stepform__wide`) · подвал (`.stepform__foot`, Note) · появление (`.stepform--appear`, опция).
+**Инварианты:** своего фона, рамки и полей нет — их даёт контейнер; колонка подписи общая у всех шагов (`fit-content(33%)` + `subgrid`): по самой длинной подписи, не шире трети формы; строка подписи 40 — поля в шагах M, на всю ширину колонки (`.inp--fullwidth`); шаги разделяет сам компонент (пунктир 1px `--border-light`, отступ 12; у первого нет) — `hr` между шагами не ставится; состояние шага — `data-state` на `.stepform__step` (`pending` · `current` · `done` · `error` · `disabled`), маркер красится сам; поле без своей метки — `aria-labelledby` на `.stepform__title`; форма уже 840px — подпись над контролами (container query `stepform`).
+**Классы:** `.stepform` · `.stepform--appear` · `.stepform__step` (`[data-state]`) · `.stepform__label` · `.stepform__title` · `.stepform__status` (`--done` / `--error`) · `.stepform__control` · `.stepform__wide` · `.stepform__foot`
+**Диагностика:** «Две линии между шагами» → свой `hr` между шагами: разделитель рисует компонент · «Пустая строка под контролами» → `.stepform__wide` на обёртке, а не на самом скрытом блоке · «Галочка не появляется» → экран ставит класс на маркер вместо `data-state` шага или перерисовывает шаг целиком
+
+Пошаговая форма: слева номер шага (StepMarker M) и подпись Body S Strong, справа контролы (InputText M, Chip), внизу опц. заметка Note. Шаг заполнен — экран ставит `data-state="done"`, номер сменяется галочкой, скрытый статус «выполнено» читается скринридером. Опция `.stepform--appear` — анимация появления из прототипа по снятию `inert` с панели.
+
+```html
+<div class="stepform stepform--appear" role="group" aria-label="Конструктор запроса">
+  <section class="stepform__step" data-state="pending" aria-labelledby="stObjLabel">
+    <div class="stepform__label" id="stObjLabel">
+      <span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+      <span class="stepform__title" id="stObjTitle">Объект анализа</span>
+      <span class="stepform__status stepform__status--done">выполнено</span>
+    </div>
+    <div class="stepform__control">
+      <div class="inp inp--m inp--fullwidth"><div class="inp__field"><span class="inp__lead" aria-hidden="true"><i data-icon="client-search"></i></span><input class="inp__control" type="text" role="searchbox" aria-labelledby="stObjTitle"></div></div>
+      <div class="chiplist" role="radiogroup" aria-labelledby="stObjTitle">…</div>
+    </div>
+    <section class="tile tile--inset stepform__wide" hidden>…</section>
+  </section>
+  <p class="note note--s note--accent stepform__foot"><span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span><span class="note__text">…</span></p>
+</div>
+```
+
+**Из коробки:** своего рантайма нет — состояние шага ставит экран атрибутом; поле — рантайм InputText (`Inputs.js`, крестик очистки), после `.value =` — `DSInput.sync(inp)`.
+
+Полная анатомия: components/molecules/StepForm/StepForm.md.
+
+## DocCard
+css: `components/molecules/DocCard/DocCard.css` · deps: [button, context-menu, tooltip]
+**Оси:** действия (два · одно · нет) · иконка документа.
+**Инварианты:** кликабельны только название (`button.doccard__title`) и кнопки — карточка не кнопка и не ссылка, вложенного интерактива нет; наведение — рамка `--border-primary` и тень `--shadow-card-hover`, без фона и «нажатия»; название и параметры — одна строка, название с тултипом при усечении; действий кнопками — не больше двух (Outline S), остальное — в меню; действие под карточкой — раскладка экрана.
+**Классы:** `.doccard` · `.doccard__icon` · `.doccard__main` · `.doccard__title` · `.doccard__meta` · `.doccard__actions` · `.is-hover` / `.is-focus`
+**Диагностика:** «Клик по кнопке открывает и документ» → обработчик повешен на всю карточку: открывает только название · «Длинное название без тултипа» → нет `data-tooltip` + `data-tooltip-truncated="only"` или не подключён Tooltip
+
+Карточка документа — документ как вложение в потоке (нить чата, лента): плашка 40 с иконкой (`--primary-bg`, глиф 22 `--primary`), название Body M Strong (кнопка, открывает просмотр), параметры Body XS, «Просмотр» и «Скачать ▾» (ContextMenu). Рамка `--border-light`, радиус `--radius-xl`, поля 12.
+
+```html
+<div class="doccard">
+  <span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span>
+  <div class="doccard__main">
+    <button type="button" class="doccard__title" data-tooltip="Название" data-tooltip-truncated="only">Название</button>
+    <span class="doccard__meta">Детальный · версия 2 · 05.10.2026</span>
+  </div>
+  <div class="doccard__actions">
+    <button type="button" class="btn btn--outline btn--s"><i data-icon="visibility-on"></i><span class="btn__label">Просмотр</span></button>
+    <button type="button" class="btn btn--outline btn--s" aria-haspopup="menu" aria-expanded="false" data-menu="doc-menu"><i data-icon="download"></i><span class="btn__label">Скачать</span><i data-icon="chevron-down"></i></button>
+  </div>
+</div>
+```
+
+**Из коробки:** своего рантайма нет — тултип усечённого названия даёт `Tooltip.js`, меню «Скачать» — `ContextMenu.js` (карточка, вставленная скриптом, — `DSMenu.bindAll(scope)`).
+
+Полная анатомия: components/molecules/DocCard/DocCard.md.
 
 ## Drawer
 css: `components/organisms/Drawer/Drawer.css` · js: `components/organisms/Drawer/Drawer.js` · deps: [modal, button, icon-button, read-only-field, label-helper]
@@ -1817,9 +1981,48 @@ css: `foundations/Spacing/Spacing.css` · deps: — · 1.004
 Полная анатомия: foundations/Spacing/Spacing.md.
 
 ## Themes (Темы)
-css: `foundations/Themes/Themes.css` · js: `foundations/Themes/Themes.js` · deps: — · 1.001
-**Инварианты:** без атрибута `data-theme` ни одно правило файла не действует — `legacy` как прежде; тема задаёт рампы `--ramp-*`, роли `--color-*` и значения всех 119 старых имён через роли; точечные правила мест выходят под `:where([data-theme]:not([data-theme="legacy"]):not([data-theme="ibp-light"]))` — нулевой специфичности, состояния компонента сильнее; тема-«палитра» (`seeds[тема].palette`, сейчас `ibp-light` — копия текущей) задаёт роли значениями `Palette.css` и точечные правила к ней не применяются; правила страниц ДС — отдельным `Themes.pages.css`.
-**Классы:** правил на классы у темы нет — только селекторы `[data-theme]`; источник — `foundations/Themes/Themes.tokens.js`, генерат собирает `node tools/theme-build.mjs`. Рантайм — `window.DSTheme = { get(), set(id), list() }`, событие `ds:themechange`; сервисное окно (кнопка слева внизу, `Alt+Shift+T`) и хром `Themes.panel.css`; окно и протопанель — в теме `service`.
-**Диагностика:** «тема не действует» → нет атрибута на `<html>` или контейнере · «legacy изменилась» → правило вне `[data-theme]` · «состояние компонента пропало» → точечное правило добавлено без `:where` · «в экране/компоненте `--color-*`» → правило B16 · «на странице ДС нет тега темы» → B17/ДС20.
+css: `foundations/Themes/Themes.css` · js: `foundations/Themes/Themes.js` (+ `ThemeBoot.js`, `ThemeEngine.js`, `ThemeFiles.js`) · deps: — · 1.015
+**Инварианты:** тема — JSON в `foundations/Themes/tokens/` (IBP Legacy, IBP Neo, Custom, свои); без выбранной темы атрибута `data-theme` нет — текущая ДС как есть; Legacy и Neo не перезаписываются. Основная кнопка — ровно brand 500, наведение и нажатие — 600 и 700; заливку ради контраста не затемняем. Опорная ступень (`brandStep` / `neutralStep`) — ровно заданный цвет, растяжка строится от неё. Роли `--color-*` и рампы `--ramp-*` — только в файлах тем (B16).
+**Классы:** правил на классы у темы нет — только селекторы `[data-theme]`. Рантайм — `window.DSTheme = { get(), set(name, mode), list(), files(), selection(), preview(file, mode), reload(data) }`, событие `ds:themechange`. Выбор темы — страница «Темы» (конструктор) и панель прототипа; плавающего окна нет. Сборка — `node tools/theme-build.mjs` (`--check`, `--selftest`).
+**Диагностика:** «тема не действует» → нет атрибута на `<html>` или контейнере · «legacy изменилась» → правило вне `[data-theme]` · «состояние компонента пропало» → точечное правило добавлено без `:where` · «в экране/компоненте `--color-*`» → правило B16 · «на странице ДС нет тега темы» → B17/ДС20 · «тема из папки не видна» → папка не подключена или нет разрешения: меню темы → «Обновить список из папки»; без браузерного доступа — `node tools/theme-build.mjs`.
 
 Полная анатомия: foundations/Themes/Themes.md.
+
+## Slider
+css: `components/atoms/Slider/Slider.css` · deps: [label-helper]
+
+Непрерывное числовое значение: трек, бегунок, метка и текущая величина. Нативный range обеспечивает клавиатуру и поддержку вспомогательных технологий.
+
+**Инварианты:** Задавать min, max, step и доступную метку нативному range. Не заменять range перетаскиваемым div: клавиатура принадлежит нативному контролу.
+
+```html
+<div class="slr" data-unit="%"><div class="slr__head"><label for="demo-slider">Насыщенность</label><output class="slr__value" for="demo-slider"></output></div><input type="range" class="slr__input" id="demo-slider" min="0" max="100" step="1" value="50"></div>
+```
+
+```js
+DSSlider.bindAll();
+DSSlider.bind(document.querySelector('.slr')).set(75);
+```
+
+Полная анатомия: components/atoms/Slider/Slider.md.
+
+## ColorPicker
+css: `components/molecules/ColorPicker/ColorPicker.css` · js: `components/molecules/ColorPicker/ColorPicker.js` · deps: [slider, input-text, icon-button, button, popover] · 1.002
+
+Выбор одного цвета sRGB, как у coolors: поле насыщенности и яркости, ползунок тона, строка Hex (InputText S, слева плашка цвета) + IconButton «Пипетка» (`dropper`, есть только в Chromium) и «Копировать» (`copy`); необязательный подвал — слот потребителя и «Сбросить».
+
+**Инварианты:** у триггера — Popover M (320), поле SV — квадрат. После `bind` триггер сам открывает и закрывает пикер по клику: `open()` — только программно (первый клик, в котором вызван `bind`), иначе второй клик откроет и тут же закроет. Hex принимает «18a59e», «#18A59E», «#abc»; ошибка формата — только по Enter или уходу из поля. `onChange` — каждое движение (живой предпросмотр), `onCommit` — законченная правка (история). Альфа-канала нет. Пикер не пишет файлы и не хранит черновики. Повторный `bind` того же триггера перенастраивает живой пикер (`configure`).
+
+```js
+DSColorPicker.bind(trigger, {
+  value: '#18A59E',
+  onChange: function (hex) { /* предпросмотр */ },
+  onCommit: function (hex) { /* шаг истории */ },
+  onReset: function () { /* показать «Сбросить» */ },
+  footer: node,                /* узел подвала: переключатель потребителя */
+  popover: { placement: 'top', align: 'center', boundary: area } /* как у DSPopover */
+}).open();                     // только в первый раз — дальше триггер переключает сам
+DSColorPicker.create(container, { value: '#18A59E', onChange: fn }); // в форме
+```
+
+Полная анатомия: components/molecules/ColorPicker/ColorPicker.md.

@@ -1,0 +1,59 @@
+/* =========================================================================
+   Design System — Keyboard (Клавиша)
+   Обозначение клавиши и сочетания клавиш в тексте подсказок, тултипов и
+   пунктов меню: «Enter — отправить», «Shift + Enter — новая строка».
+   Классы .kbd — от HTML-элемента <kbd> (keyboard input), на котором
+   компонент собран; имя компонента — Keyboard.
+
+   Элемент: нативный <kbd> — текст копируется и читается скринридером как
+            текст. Не интерактивен: не фокусируется, состояний нет.
+   Sizes:   s (по умолчанию) — Body XS, в подсказках и тултипах
+            m — Body S, в пунктах меню и подписях
+            l — Body M, в обычном тексте
+   Combo:   .kbd-combo — сочетание: клавиши и «+» между ними на одной строке
+   Visual:  светлая плашка, рамка 1px, нижняя грань 2px — «клавиша»;
+            одна буква — квадрат (min-width = высоте клавиши)
+   Requires: Typography.css, Palette.css, Radius.css, Spacing.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.kbd[hidden],
+.kbd-combo[hidden] { display: none; }
+
+.kbd {
+  box-sizing: border-box;
+  display: inline-block;
+  /* S: строка Body XS 16px + рамки 1 + 2 = 19px; одна буква — квадрат */
+  min-width: 19px;
+  margin: 0;
+  padding: 0 var(--space-4);
+  font: var(--type-body-xs);
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  background: var(--bg-tile);
+  border: 1px solid var(--border-light);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-control-s);
+  vertical-align: baseline;
+}
+
+/* ---------- sizes ---------------------------------------------------------
+   Высота клавиши = строка текста размера + рамки 1 + 2; min-width равен
+   высоте — клавиша из одной буквы квадратная. */
+.kbd--s { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-xs); }
+.kbd--m { min-width: 19px; padding: 0 var(--space-4); font: var(--type-body-s); }
+.kbd--l { min-width: 23px; padding: 0 var(--space-6); font: var(--type-body-m); }
+
+/* ---------- combo ---------------------------------------------------------
+   Сочетание: «Shift + Enter». «+» — обычный текст между клавишами; обёртка
+   не даёт переносу разорвать сочетание посередине. */
+.kbd-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  white-space: nowrap;
+  vertical-align: baseline;
+}

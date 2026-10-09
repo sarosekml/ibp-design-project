@@ -253,6 +253,9 @@ function extractTiles(html, opts = {}) {
   while ((m = tagRe.exec(html))) {
     const tokens = m[2].split(/\s+/).filter(Boolean);
     if (!tokens.includes('tile')) continue; // tile-group/tile-row/tile-stack не тайлы
+    /* Inset (Tile 1.016) — вложенная подложка внутри другой поверхности:
+       в сетку не встаёт, ширину даёт контейнер — не тайл сетки */
+    if (tokens.includes('tile--inset')) continue;
     const tag = m[1];
     const el = sliceTag(html, m.index, tag);
     if (!el) continue;
@@ -768,7 +771,8 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   /* Б23 классы документационного слоя на экране мертвы (урок Л27: их даёт
      только ds-docs.css, а экран подключает ds.css). Проверка по точным
      токенам класса, чтобы не цеплять tc--numbers и т.п. */
-  const docTokens = ['desc', 'tight', 'panel', 'masthead', 'lead', 'eyebrow', 'claim', 'note', 'bullets', 'rules', 'guide', 'subhead'];
+  /* 'note' убран 06.10.2026: с Note 1.000 это атом ДС (.note в ds.css) */
+  const docTokens = ['desc', 'tight', 'panel', 'masthead', 'lead', 'eyebrow', 'claim', 'bullets', 'rules', 'guide', 'subhead'];
   const usedDoc = [];
   for (const m of html.matchAll(/class="([^"]+)"/g)) {
     for (const tok of m[1].split(/\s+/)) {
@@ -1294,8 +1298,15 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      «вёл» родитель, оказалась недоступной из панели (20.09.2026, урок Л137).
 
      Вход двойной — разметка и литералы скриптов: панели кита и страницы
-     сделки строятся JS-шаблоном (как у Б31 и Б33). */
+     сделки строятся JS-шаблоном (как у Б31 и Б33).
+
+     «Не ссылка» — про адрес, а не про тег: пункт панели, родитель аккордеона
+     тоже, — <a href="#"> из чит-шита. NavPanel оформляет пункт-ссылку; на
+     <button> остаётся рамка браузера. Формулировку прочли как «не тег a» и
+     собрали родителя кнопкой (09.10.2026, урок Л197) — поэтому тег пункта
+     сверяется здесь же. */
   const accHref = [];
+  const itemTag = [];
   for (const src of [html, markupInScripts]) {
     for (const m of src.matchAll(/<a\b[^>]*>/gi)) {
       const tag = m[0];
@@ -1305,11 +1316,15 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       if (!isLiteralAttr(href)) continue;
       accHref.push(`${href} (строка ${lineOf(src, m.index)})`);
     }
+    for (const m of src.matchAll(/<([a-z][a-z0-9]*)\b[^>]*\sclass="(?:[^"]*\s)?nav__item(?:--[a-z-]+)?(?:\s[^"]*)?"[^>]*>/gi)) {
+      if (m[1].toLowerCase() !== 'a') itemTag.push(`<${m[1].toLowerCase()}> (строка ${lineOf(src, m.index)})`);
+    }
   }
-  if (/nav__item--acc/.test(html + markupInScripts)) {
-    ok(accHref.length === 0, accHref.length
-      ? `Б35 у родителя аккордеона адрес ${accHref.join(', ')} — ds-nav-panel.js отменяет по нему переход; страница открывается под-пунктом, а не родителем`
-      : 'Б35 родители аккордеонов панели не ведут ссылкой');
+  if (/nav__item/.test(html + markupInScripts)) {
+    const bad = [];
+    if (accHref.length) bad.push(`у родителя аккордеона адрес ${accHref.join(', ')} — ds-nav-panel.js отменяет по нему переход; страница открывается под-пунктом, а не родителем`);
+    if (itemTag.length) bad.push(`пункт панели — ${itemTag.join(', ')}, а не <a href="#"> из чит-шита: NavPanel оформляет пункт-ссылку, у другого тега остаётся вид браузера`);
+    ok(bad.length === 0, bad.length ? `Б35 ${bad.join('; ')}` : 'Б35 пункты панели — ссылки, родители аккордеонов не ведут на адрес');
   }
 
   /* З12 — разметка с хуком рантайма, собранная скриптом. Рантаймы ДС связывают

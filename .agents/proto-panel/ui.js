@@ -115,11 +115,11 @@
       + '<p class="drawer__path">' + esc(t('panel.name')) + '<i data-icon="chevron-right"></i>' + esc(appTitle() || appId()) + '</p>'
       + '<h2 class="drawer__title" id="pp-drawer-title">' + esc(appId()) + '</h2>'
       + '</div>'
-      + '<div class="drawer__acts">'
+      + '<div class="drawer__acts pp-head-acts">'
       + '<span class="pp-fix" id="pp-fix"></span>'
-      + '<span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.actions')) + '" data-menu="pp-head-menu" data-menu-align="end" data-tooltip="' + esc(t('panel.actions')) + '"><i data-icon="more-dots"></i></button>'
+      + '<span class="menu-anchor pp-head-control"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.actions')) + '" data-menu="pp-head-menu" data-menu-align="end" data-tooltip="' + esc(t('panel.actions')) + '"><i data-icon="more-dots"></i></button>'
       + '<div id="pp-head-menu" class="menu" role="menu" hidden></div></span>'
-      + '<span class="drawer__close"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.close')) + '" data-modal-close data-tooltip="' + esc(t('panel.closeTip')) + '"><i data-icon="close"></i></button></span>'
+      + '<span class="drawer__close pp-head-control"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="' + esc(t('panel.close')) + '" data-modal-close data-tooltip="' + esc(t('panel.closeTip')) + '"><i data-icon="close"></i></button></span>'
       + '</div>'
       + '</header>'
       + '<div class="drawer__body drawer__body--flush pp-body" id="pp-body">'
@@ -542,8 +542,8 @@
     var box = document.getElementById('pp-rail');
     if (!box) return;
     box.innerHTML = RAIL.map(function (r) {
-      return '<button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
-        + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button>';
+      return '<span class="pp-rail-control"><button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
+        + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button></span>';
     }).join('');
     wire(box);
     box.addEventListener('click', function (e) {
@@ -574,8 +574,8 @@
 
   /** Темы для панели: из рантайма ДС, служебная (service) не показывается. */
   function themeList() {
-    try { if (window.DSTheme && window.DSTheme.list) return window.DSTheme.list().filter(function (x) { return x.id !== 'service'; }); } catch (e) { /* ДС без тем */ }
-    return [{ id: 'legacy', label: t('theme.legacy') }, { id: 'ibp-light', label: t('theme.light') }, { id: 'ibp-dark', label: t('theme.dark') }];
+    try { if (window.DSTheme && window.DSTheme.files) return window.DSTheme.files(); } catch (e) { /* ДС без тем */ }
+    return [{ name: 'ibp-legacy', label: 'IBP Legacy', modes: ['light'] }];
   }
   function renderThemePane() {
     var box = document.getElementById('pp-theme');
@@ -584,16 +584,22 @@
     try { cur = window.DSTheme && window.DSTheme.get ? window.DSTheme.get() : 'legacy'; } catch (e) { /* нет рантайма тем */ }
     box.innerHTML = '<p class="ds-body-s pp-muted">' + esc(t('theme.title')) + '</p>'
       + '<div class="pp-theme__list">' + themeList().map(function (th) {
-        var on = th.id === cur;
-        return '<button type="button" class="btn btn--transparent btn--s btn--fullwidth pp-theme__item' + (on ? ' is-active' : '') + '"'
-          + ' data-pp-theme="' + esc(th.id) + '" role="menuitemradio" aria-checked="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>';
+        var on = th.name === 'ibp-legacy' ? cur === 'legacy' : cur.indexOf(th.name + '-') === 0;
+        var dark = on && cur.slice(-5) === '-dark';
+        return '<div class="pp-theme__row"><button type="button" class="btn btn--transparent btn--s pp-theme__item' + (on ? ' is-active' : '') + '"'
+          + ' data-pp-theme="' + esc(th.name) + '" aria-pressed="' + on + '"><span class="btn__label">' + esc(th.label) + '</span></button>'
+          + (th.modes.length < 2 ? '' : '<label class="sw sw--dual"><input class="sw__input" type="checkbox" role="switch" data-pp-mode="' + esc(th.name) + '" aria-label="' + esc(t('theme.darkLabel')) + ' ' + esc(th.label) + '"' + (dark ? ' checked' : '') + '><span class="sw__control"><span class="sw__thumb"></span></span><span class="sw__side sw__side--off">' + esc(t('theme.light')) + '</span><span class="sw__side sw__side--on">' + esc(t('theme.dark')) + '</span></label>') + '</div>';
       }).join('') + '</div>';
     wire(box);
     box.onclick = function (e) {
       var b = e.target.closest && e.target.closest('[data-pp-theme]');
       if (!b) return;
-      try { if (window.DSTheme && window.DSTheme.set) window.DSTheme.set(b.getAttribute('data-pp-theme')); } catch (err) { /* нет рантайма тем */ }
+      try { if (window.DSTheme && window.DSTheme.set) { var name=b.getAttribute('data-pp-theme'),mode=box.querySelector('[data-pp-mode="'+name+'"]'); window.DSTheme.set(name,mode&&mode.checked?'dark':'light'); } } catch (err) { /* нет рантайма тем */ }
       renderThemePane();
+    };
+    box.onchange = function(e) {
+      var name = e.target.getAttribute('data-pp-mode');
+      if(name && window.DSTheme) { window.DSTheme.set(name,e.target.checked?'dark':'light'); renderThemePane(); }
     };
   }
 
@@ -888,6 +894,10 @@
     wireGrip();
     wireSettings();
     wireKeys();
+    /* Новая тема и внешний выбор обновляют открытую вкладку без перезагрузки. */
+    ['ds:themelistchange', 'ds:themechange'].forEach(function (event) {
+      document.addEventListener(event, function () { if (rail === 'theme') renderThemePane(); });
+    });
 
     /* команды шапки, Alert и меню — с задержкой: меню ДС сначала закрывается и возвращает фокус */
     document.addEventListener('click', function (e) {

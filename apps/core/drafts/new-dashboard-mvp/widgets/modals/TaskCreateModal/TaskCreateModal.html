@@ -1,0 +1,80 @@
+<!-- Локальный компонент «Новая задача» (TaskCreateModal) — окно главной.
+     Артефакт тайлов «Задачи» (подвал «Добавить», меню шапки, «Новая задача»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая задача»).
+     Вшивается отдельной меткой ds-include в конце страницы.
+
+     Поля — одна колонка (режим ввода). Обязательны формулировка, срок и
+     приоритет; клиент и сделка — нет. Приоритет — SegmentControl: три
+     взаимоисключающих значения одного параметра. Списки, проверку и
+     сохранение ведёт TaskCreateModal.js на общем слое форм LcHomeForm
+     (MeetingCreateModal.js). -->
+<div class="modal-scrim" id="task-create-scrim" hidden>
+  <div class="modal modal--w4 lc-task-create" role="dialog" aria-modal="true" aria-labelledby="task-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-create-title">Новая задача</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-task-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-title-input"><span class="ds-label__text">Задача</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-title-input" autocomplete="off" maxlength="160" placeholder="Что нужно сделать">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-due"><span class="ds-label__text">Срок</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-due" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-task-create__priority">
+          <span class="ds-label" id="task-create-priority-label"><span class="ds-label__text">Приоритет</span><span class="ds-label__req">*</span></span>
+          <div class="segctrl segctrl--fullwidth" role="radiogroup" aria-labelledby="task-create-priority-label" data-segctrl>
+            <div class="segctrl__thumb"></div>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="HIGH"><span class="segctrl__label">Высокий</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-priority="MEDIUM"><span class="segctrl__label">Средний</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="LOW"><span class="segctrl__label">Низкий</span></button>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-client"><span class="ds-label__text">Клиент</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="task-create-client-list">
+              <input class="inp__control" id="task-create-client" autocomplete="off" placeholder="Без клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="task-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-deal"><span class="ds-label__text">Номер сделки</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-deal" autocomplete="off" maxlength="12" placeholder="Например, D-126618">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-task-create-save><span class="btn__label">Создать задачу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

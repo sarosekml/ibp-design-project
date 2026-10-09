@@ -125,6 +125,29 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
 }
+/* Ведущая иконка заголовка (с 1.016) — перед тайтлом, во всех вариантах.
+   Коробка — высотой в строку тайтла (тот же шрифт, 1lh): глиф стоит по
+   центру первой строки и не сдвигает заголовок. Глиф: Tile и Card — 20,
+   Inset — 18. Цвет — штатный цвет иконки ДС; тон — модификатором, как у
+   иконки-приписки (решение человека 06.10.2026: одно правило всем). */
+.tile__title-icon {
+  --tile-title-icon: 20px;
+
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1lh;
+  font: var(--type-h5-strong);
+  color: var(--secondary);
+}
+.tile__title-icon > :is(svg,[data-icon]){ width: var(--tile-title-icon); height: var(--tile-title-icon); display: block; flex: none; }
+.tile__title-icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+.tile__title-icon--accent  { color: var(--primary); }
+.tile__title-icon--success { color: var(--success); }
+.tile__title-icon--warning { color: var(--warning); }
+.tile__title-icon--error   { color: var(--error); }
+.tile__title-icon--info    { color: var(--info); }
 /* Addition к тайтлу: Link / Icon / Chip / Badge — все inline после тайтла */
 .tile__title-add {
   display: inline-flex;
@@ -322,7 +345,8 @@
 }
 /* Title Card — H6 Strong (16/20). Клэмп 2 строки и усечение уже заданы
    у .tile__title, здесь меняется только ступень шрифта. */
-.tile--card .tile__title {
+.tile--card .tile__title,
+.tile--card .tile__title-icon {
   font: var(--type-h6-strong);
 }
 /* Зазор Title↔Subtitle↔Chiplist у Card — 4 (у плашки 8): заголовок на
@@ -390,4 +414,41 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .tile--card { transition: none; }
+}
+
+/* ------------------------------------------------------------
+   Inset — вложенная подложка (с 1.016, задача MS0010g).
+   Нейтральная поверхность на ступень ниже: группа со своим заголовком
+   и списком ВНУТРИ другой поверхности — Tile, Card, Modal, Drawer,
+   панели поля промпта. На фоне страницы не ставится: фон --bg-page
+   сливается со страницей. Inset в Inset не вкладывается.
+
+   Отличия от Tile: фон --bg-page, поля 12, Title — Body S Strong,
+   глиф ведущей иконки 18; зазор хэдер↔контент 20 (8 хэдера + 12
+   контента). Рамка и радиус — как у Tile. Своих состояний нет;
+   Alert-слота, грипа и аккордеона у Inset не бывает. Строки внутри —
+   Entity S в .entity-list (поля 12 вмещают выноску hover 8/10px
+   интерактивной строки).
+   ------------------------------------------------------------ */
+.tile--inset {
+  --tile-pad-x: 12px;
+  --tile-pad-bottom: 12px;
+
+  background: var(--bg-page);
+}
+.tile--inset > .tile__header {
+  padding: 12px var(--tile-pad-x) 8px;
+}
+.tile--inset > .tile__body {
+  padding: 12px var(--tile-pad-x) var(--tile-pad-bottom);
+}
+.tile--inset.tile--headless > .tile__body {
+  padding: 12px var(--tile-pad-x);
+}
+.tile--inset .tile__title,
+.tile--inset .tile__title-icon {
+  font: var(--type-body-s-strong);
+}
+.tile--inset .tile__title-icon {
+  --tile-title-icon: 18px;
 }

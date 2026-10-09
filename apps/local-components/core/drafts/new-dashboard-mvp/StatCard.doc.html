@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карточка-счётчик — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Карточка-счётчик">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Карточка-счётчик» (StatCard) — подчасть, которую рисуют
+     скрипты тайлов главной (MeetingsTile, TasksTile). Кандидат в ДС: в ДС нет
+     компонента «показатель-фильтр» с тоном и выбранным состоянием (решение
+     человека 09.10.2026 — пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     StatCard.css, а LcStatCard.render() (StatCard.js) клонирует шаблон.
+
+     Классы корня:
+       размер — без класса M (подпись, число, пояснение) · .lc-stat--s (число над подписью);
+       тон    — без класса нейтральный · --accent · --info · --warning · --error · --success;
+       выбор  — aria-pressed="true" на кнопке (фильтр списка включён);
+       .lc-stat--static — показатель без действия: корень span, без наведения и выбора. -->
+<template id="lc-stat-card-tpl">
+  <button type="button" class="lc-stat" aria-pressed="false">
+    <span class="lc-stat__label">Подпись</span>
+    <span class="lc-stat__value">0</span>
+    <span class="lc-stat__caption">Пояснение</span>
+  </button>
+</template>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>09.10.2026</b></span><span>Категория: <b>Общие</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../../index.html">Локальные компоненты</a> · core/drafts/new-dashboard-mvp</p>
+  <h1>Карточка-счётчик</h1>
+  <p class="lead">Число с подписью и тоном, по клику включает выборку списка — счётчики встреч и задач главной</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/drafts/new-dashboard-mvp</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard">apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Главная — дашборд, тайл «Встречи» (размер S), тайл «Задачи» (размер M)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/pages/HomePage.preview.html">apps/core/drafts/new-dashboard-mvp/pages/HomePage.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M — подпись<br>число<br>пояснение; S — число над подписью</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет дизайнера «Главная» 09.10.2026<br>решение человека 09.10.2026 — локально с расчётом на перенос в ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Показатель-фильтр: число записей выборки, подпись и, у размера M, короткое пояснение. Клик включает выборку в списке своего тайла, повторный — снимает; выбранная карточка несёт рамку в своём тоне. Тон кодирует смысл выборки, а не украшает: «Просрочено» — error, «Сегодня» — warning, «Новые» — accent.</p>
+<p class="desc">Кандидат в ДС: в ДС нет компонента «показатель с тоном и выбором». Состояния сделаны по образцу Card (<code class="tok">.tile--card</code>), тоновые подложки — те же, что у Alert и SnackBar, поэтому при переносе в ДС меняется только имя класса.</p>
+<p class="desc">Карточку рисует скрипт тайла функцией <code class="tok">LcStatCard.render()</code> из шаблона <code class="tok">#lc-stat-card-tpl</code>; страница вшивает шаблон один раз.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>button.lc-stat (или span.lc-stat--static)
+├── .lc-stat__label    — подпись
+├── .lc-stat__value    — число
+└── .lc-stat__caption  — пояснение (только M)</code></pre>
+<p class="desc">У размера S число стоит над подписью, пояснения нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в загрузке тайла вместо карточки — <code class="tok">sk-block--rounded</code> той же высоты (рисует тайл)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Своих компонентов ДС внутри нет: карточка — кандидат на новый компонент ДС.</p>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.css">StatCard.css</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.html">StatCard.html</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.js">StatCard.js</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md">StatCard.md</a> · <a class="inl" href="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">label</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">название выборки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, до 20 знаков</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">value</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число записей в выборке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">целое</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore</code> (<code class="tok">meetingCounters</code>, <code class="tok">taskCounters</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">caption</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">контекст числа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет; у S не показывается</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения у размера M. Нет значения — прочерк.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<p class="desc">Не применимо: карточка не правит данные, её клик — фильтр отображения. Видна всем, кто видит тайл.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не рисуется: тайл показывает <code class="tok">sk-block--rounded</code> той же высоты</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число, подпись, пояснение на тоновой подложке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число «0», карточка остаётся на месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ошибку показывает тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">индикацию держит шапка тайла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.lc-stat--static</code> — без наведения и выбора</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает тайл</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.1fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">курсор над кнопкой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рамка в тоне, 40%</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выбрана</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">включён фильтр, <code class="tok">aria-pressed=&quot;true&quot;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">рамка в тоне, 100%</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,2.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Фокус</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клавиатура</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обводка <code class="tok">--primary</code> 2px, отступ 2px</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — это показатель.</li><li>Обязательные поля внутри: <code class="tok">label</code>, <code class="tok">value</code>.</li><li>Что показывает, когда обязательное не заполнено: прочерк вместо числа.</li><li>Что отдаёт наружу: <code class="tok">data-stat</code> — ключ выборки для тайла.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись и пояснение — одна строка с многоточием</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число любой длины, моноширинные цифры</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл перестраивает ряд карточек в колонку (<code class="tok">@container</code> тайла)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка тянется на ячейку сетки тайла</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик, Enter, Space</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл включает выборку <code class="tok">data-stat</code>; повторно — снимает</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.9fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Число считается на клиенте из списка тайла (<code class="tok">HomeStore</code>). Если бэкенд отдаёт список постранично, ему нужно отдавать и счётчики выборок — вопрос разработке.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">демо витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../widgets/tiles/StatCard/StatCard.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шаблон вшивается один раз на страницу</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Параметры карточки — аргумент <code class="tok">LcStatCard.render({ key, label, value, caption, tone, size, pressed, static, ariaLabel })</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Шаблон</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">StatCard.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент ДС после переноса; до него — <code class="tok">src/shared/ui/StatCard</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">StatCard.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">стили компонента</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отрисовка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">StatCard.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент с пропсами из <code class="tok">render()</code></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,0.9fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Элемент, которого нет в ДС, сначала заводится в ДС (правила локальных компонентов)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">собран локально</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решение человека 09.10.2026: сейчас локально, перенос в ДС — следующим шагом</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.8fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Имя и место компонента в ДС (атом «Показатель» или вариант Card)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос владельцу ДС</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/drafts/new-dashboard-mvp/pages/HomePage.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-profile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-meetings.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-tasks.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/mock-news.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/data/home-store.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/MyDayTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../../../../core/drafts/new-dashboard-mvp/widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"StatCard","type":"tile","base":"../../..","hub":"../../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":400,"scenario":false,"fixtures":{"_":"Демо-данные витрины: параметры LcStatCard.render(). Значения — счётчики главной на 09.10.2026.","data":{"label":"Просрочено","value":3,"caption":"самая старая — 4 дня","tone":"error"},"empty":{"label":"Просрочено","value":0,"caption":"просрочек нет","tone":"error"},"long":{"label":"Требует внимания руководителя","value":1284,"caption":"самая старая — 128 дней, обновить статус","tone":"warning"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Карточка-счётчик» (StatCard) — подчасть, которую рисуют
+     скрипты тайлов главной (MeetingsTile, TasksTile). Кандидат в ДС: в ДС нет
+     компонента «показатель-фильтр» с тоном и выбранным состоянием (решение
+     человека 09.10.2026 — пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     StatCard.css, а LcStatCard.render() (StatCard.js) клонирует шаблон.
+
+     Классы корня:
+       размер — без класса M (подпись, число, пояснение) · .lc-stat--s (число над подписью);
+       тон    — без класса нейтральный · --accent · --info · --warning · --error · --success;
+       выбор  — aria-pressed="true" на кнопке (фильтр списка включён);
+       .lc-stat--static — показатель без действия: корень span, без наведения и выбора. -->
+<template id="lc-stat-card-tpl">
+  <button type="button" class="lc-stat" aria-pressed="false">
+    <span class="lc-stat__label">Подпись</span>
+    <span class="lc-stat__value">0</span>
+    <span class="lc-stat__caption">Пояснение</span>
+  </button>
+</template>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Карточка-счётчик» (StatCard) — кандидат в ДС.
+   Цвета, шрифты, отступы, радиусы — токены ДС; своих значений здесь нет.
+   Тон задаёт тройку переменных: подложка, цвет числа, линия выбора. Тоновые
+   подложки — те же, что у Alert и SnackBar (--info-bg, --warning-bg,
+   --error-bg-light, --success-bg), поэтому цвет читается одинаково по всей ДС.
+   Состояния — по образцу Card (Tile 1.012): наведение — рамка, выбор — рамка
+   в тоне, фокус — обводка --primary. */
+
+.lc-stat {
+  --lc-stat-bg: var(--bg-page);
+  --lc-stat-fg: var(--text-primary);
+  --lc-stat-line: var(--border-primary);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-12);
+  border: 1px solid transparent;
+  border-radius: var(--radius-m);
+  background: var(--lc-stat-bg);
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.lc-stat__label,
+.lc-stat__caption {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+}
+.lc-stat__value {
+  font: var(--type-h4-strong);
+  color: var(--lc-stat-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* S — компактный: число над подписью, по центру, без пояснения */
+.lc-stat--s {
+  align-items: center;
+  gap: 0;
+  padding: var(--space-8);
+  text-align: center;
+}
+.lc-stat--s .lc-stat__value { order: -1; font: var(--type-h5-strong); }
+.lc-stat--s .lc-stat__caption { display: none; }
+
+/* Тоны */
+.lc-stat--accent  { --lc-stat-bg: var(--primary-bg);     --lc-stat-fg: var(--primary-dark); --lc-stat-line: var(--primary); }
+.lc-stat--info    { --lc-stat-bg: var(--info-bg);        --lc-stat-fg: var(--info-dark);    --lc-stat-line: var(--info); }
+.lc-stat--warning { --lc-stat-bg: var(--warning-bg);     --lc-stat-fg: var(--warning-dark); --lc-stat-line: var(--warning); }
+.lc-stat--error   { --lc-stat-bg: var(--error-bg-light); --lc-stat-fg: var(--error-dark);   --lc-stat-line: var(--error); }
+.lc-stat--success { --lc-stat-bg: var(--success-bg);     --lc-stat-fg: var(--success-dark); --lc-stat-line: var(--success); }
+
+/* Наведение, выбор, фокус. Выбор сильнее наведения той же формой селектора
+   плюс атрибут (Л92): наведение на выбранную карточку рамку не гасит. */
+.lc-stat:hover { border-color: color-mix(in srgb, var(--lc-stat-line) 40%, transparent); }
+.lc-stat[aria-pressed="true"],
+.lc-stat[aria-pressed="true"]:hover { border-color: var(--lc-stat-line); }
+.lc-stat:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Показатель без действия */
+.lc-stat.lc-stat--static { cursor: default; }
+.lc-stat.lc-stat--static:hover { border-color: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-stat { transition: none; }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   StatCard.js — карточка-счётчик из шаблона #lc-stat-card-tpl.
+
+   Шаблон вшивает страница (StatCard.html), поэтому разметка одна на все
+   места, где карточка стоит: тайлы главной и витрина компонента.
+
+   API (window.LcStatCard):
+     render(opts) → HTMLElement
+       opts.key       — значение data-stat (фильтр, который включает карточка)
+       opts.label     — подпись
+       opts.value     — число
+       opts.caption   — пояснение (у размера S не показывается)
+       opts.tone      — '' | 'accent' | 'info' | 'warning' | 'error' | 'success'
+       opts.size      — 'm' (по умолчанию) | 's'
+       opts.pressed   — фильтр включён
+       opts.static    — показатель без действия (span вместо кнопки)
+       opts.ariaLabel — полная подпись для чтения с экрана
+   ============================================================ */
+(function () {
+  'use strict';
+
+  function render(o) {
+    o = o || {};
+    var tpl = document.getElementById('lc-stat-card-tpl');
+    if (!tpl) { console.warn('StatCard: нет шаблона #lc-stat-card-tpl — вшейте StatCard.html меткой ds-include'); return document.createElement('span'); }
+    var el = tpl.content.firstElementChild.cloneNode(true);
+    if (o.static) {
+      var span = document.createElement('span');
+      span.className = el.className + ' lc-stat--static';
+      span.innerHTML = el.innerHTML;
+      el = span;
+    } else {
+      el.setAttribute('aria-pressed', o.pressed ? 'true' : 'false');
+    }
+    if (o.size === 's') el.classList.add('lc-stat--s');
+    if (o.tone) el.classList.add('lc-stat--' + o.tone);
+    if (o.key) el.setAttribute('data-stat', o.key);
+    if (o.ariaLabel) el.setAttribute('aria-label', o.ariaLabel);
+    el.querySelector('.lc-stat__label').textContent = o.label || '';
+    el.querySelector('.lc-stat__value').textContent = o.value == null ? '—' : String(o.value);
+    var cap = el.querySelector('.lc-stat__caption');
+    if (o.caption) cap.textContent = o.caption; else cap.remove();
+    return el;
+  }
+
+  window.LcStatCard = { render: render };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!-- @dsCard group="Components" name="StepMarker" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StepMarker — Дизайн-система</title>
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="StepMarker.css">
+<link rel="stylesheet" href="../Buttons/Buttons.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<style>
+  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+
+  /* ---------- playground ---------- */
+  .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center; background: var(--bg-page); }
+  .ctl { display:flex; flex-direction:column; gap:10px; }
+  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+
+  /* ---------- demo layout ---------- */
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:680px){ .cols2{ grid-template-columns:1fr; } }
+  .cols3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols3{ grid-template-columns:1fr; } }
+  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin:0 0 7px; }
+  .demo-stack { display:flex; flex-direction:column; gap:12px; }
+
+  /* ---------- do / don't ---------- */
+  .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
+  .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+
+  /* ---------- StepMarker demo ---------- */
+  .cols4 { display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols4{ grid-template-columns:1fr 1fr; } }
+  .cols5 { display:grid; grid-template-columns:repeat(5, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols5{ grid-template-columns:1fr 1fr; } }
+</style>
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="StepMarker">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="pg__stage" id="pg-stage"></div>
+        <p class="pg__code" id="pg-code"></p>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+    <div class="meta"><span>Версия: <b>1.000</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Компоненты</p>
+    <h1>StepMarker</h1>
+    <p class="lead">Номер шага — кружок с номером шага пошаговой формы. Шаг выполнен — номер сменяется галочкой, ошибка — глифом ошибки. Маркер декоративный: номер и статус шага озвучивает подпись шага, в которой он стоит (<a class="inl" href="../../molecules/StepForm/StepForm.html">StepForm</a>).</p>
+  </header>
+
+  <!-- USAGE -->
+  <section class="section" data-screen-label="Usage">
+    <h2>Использование</h2>
+    <p class="desc">Маркер стоит в подписи шага, слева от названия: показывает порядок шагов и что уже заполнено. Шаг заполнен — номер сменяется галочкой.</p>
+    <div class="cols2">
+      <div class="panel">
+        <p class="demo-rowlabel">Подписи шагов пошаговой формы</p>
+        <div class="demo-stack" id="use-steps"></div>
+      </div>
+      <div class="panel">
+        <p class="demo-rowlabel">Где ещё</p>
+        <ul class="bullets" style="margin:0;">
+          <li>степпер мастера (бэклог ДС) — маркеры шагов в ряд;</li>
+          <li>список этапов в модальном окне, где этапы заполняются по порядку.</li>
+        </ul>
+      </div>
+    </div>
+
+<div class="subsec" data-screen-label="WhenToUse">
+    <h3>Когда использовать</h3>
+    <ul class="bullets" style="margin-bottom:26px;">
+      <li>форма разбита на шаги, и порядок шагов важен — маркер нумерует их и показывает, какие уже заполнены;</li>
+      <li>шаг может быть в ошибке или недоступен, пока не заполнен предыдущий.</li>
+    </ul>
+    <p class="desc">Не используйте маркер как счётчик — это <a class="inl" href="../Badge/Badge.html">Badge</a>; как изображение человека или объекта — это <a class="inl" href="../Avatar/Avatar.html">Avatar</a>. Маркер не кнопка: переход к шагу по клику даёт контейнер, а не маркер.</p>
+  </div>
+
+<div class="subsec" data-screen-label="Guidelines">
+    <h3>Правила</h3>
+    <div class="guide">
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good1"></span>Так</div>
+        <div class="guide-card__body" id="guide-good1"></div>
+        <p class="guide-card__cap">Номер — порядок шага: 1, 2, 3. Готовый шаг показывает галочку.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad1"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad1"></div>
+        <p class="guide-card__cap">Буквы и слова в маркер не ставятся — только одна-две цифры.</p>
+      </div>
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good2"></span>Так</div>
+        <div class="guide-card__body" id="guide-good2"></div>
+        <p class="guide-card__cap">Состояние меняет и цвет, и содержимое: готовый шаг — заливка и галочка.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad2"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad2"></div>
+        <p class="guide-card__cap">Готовность только цветом не прочитать без цвета — нужен глиф.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section class="section" data-screen-label="Anatomy">
+    <h2>Анатомия</h2>
+    <p class="desc">Кружок и три слоя внутри: номер, глиф готовности и необязательный глиф ошибки. Глифы лежат по центру поверх номера, поэтому смена номера на глиф не меняет размер маркера.</p>
+    <div class="panel">
+      <ol class="bullets">
+        <li><b>Кружок</b> (<code class="tok">.stepmark</code>) — заливка по состоянию, скругление <code class="tok">--radius-full</code>.</li>
+        <li><b>Номер</b> (<code class="tok">.stepmark__num</code>) — номер шага по порядку, Body XS полужирным (L — Body S).</li>
+        <li><b>Глиф готовности</b> (<code class="tok">.stepmark__icon</code>, <code class="tok">check</code>) — виден, когда шаг выполнен.</li>
+        <li><b>Глиф ошибки</b> (<code class="tok">.stepmark__icon--error</code>, <code class="tok">alert-circle</code>) — необязательный: ставится в разметку, только если шаг бывает с ошибкой.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- VARIANTS -->
+  <section class="section" data-screen-label="Variants">
+    <h2>Варианты</h2>
+    <p class="desc">Оси конфигурации компонента — каждая описана отдельным подразделом.</p>
+
+<div class="subsec" data-screen-label="Content">
+    <h3>Номер и глиф</h3>
+    <p class="desc">Внутри кружка — номер шага, галочка (шаг выполнен) или глиф ошибки. Без глифа ошибки в разметке маркер в ошибке оставляет номер тоном Error.</p>
+    <div class="panel">
+      <div class="cols4" id="var-content"></div>
+    </div>
+  </div>
+  </section>
+
+  <!-- SIZES -->
+  <section class="section" data-screen-label="Sizes">
+    <h2>Размеры</h2>
+    <p class="desc">Три размера. M — по умолчанию, в подписи шага рядом с полями M (40px). S — в плотных списках этапов, L — в крупном степпере.</p>
+    <div class="panel">
+      <div class="cols3" id="sizes-demo"></div>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px .8fr .8fr 2.2fr .5fr 1.4fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Размер</span></div>
+          <div class="th"><span class="th__label">Диаметр</span></div>
+          <div class="th"><span class="th__label">Цифра</span></div>
+          <div class="th"><span class="th__label">Глиф</span></div>
+          <div class="th"><span class="th__label">Где</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr .8fr 2.2fr .5fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b></span></span></div>
+          <div class="tc"><code class="tok">--space-20</code></div>
+          <div class="tc"><code class="tok">--type-body-xs</code> + <code class="tok">--weight-semibold</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">плотные списки этапов</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr .8fr 2.2fr .5fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>M</b> · по умолчанию</span></span></div>
+          <div class="tc"><code class="tok">--space-24</code></div>
+          <div class="tc"><code class="tok">--type-body-xs</code> + <code class="tok">--weight-semibold</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">подпись шага StepForm</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr .8fr 2.2fr .5fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>L</b></span></span></div>
+          <div class="tc"><code class="tok">--space-32</code></div>
+          <div class="tc"><code class="tok">--type-body-s</code> + <code class="tok">--weight-semibold</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">18</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">крупный степпер</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="section" data-screen-label="Content">
+    <h2>Контент</h2>
+    <ul class="bullets">
+      <li>номер шага по порядку, с 1; одна-две цифры;</li>
+      <li>буквы, слова и иконки вместо номера не ставятся — смысл шага несёт подпись рядом;</li>
+      <li>глиф готовности — всегда <code class="tok">check</code>, глиф ошибки — <code class="tok">alert-circle</code>; другие глифы в маркер не ставятся.</li>
+    </ul>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section class="section" data-screen-label="Behavior">
+    <h2>Поведение</h2>
+    <p class="desc">Своего поведения у маркера нет: состояние ему задаёт контейнер. Анимирована только смена состояния.</p>
+
+<div class="subsec" data-screen-label="Done">
+    <h3>Смена номера на галочку</h3>
+    <p class="desc">Номер гаснет и уменьшается (0,2 с), галочка появляется с поворотом −30° и масштабом 0,3 → 1 (0,4 с, <code class="tok">cubic-bezier(.22, 1, .36, 1)</code>). Заливка и цвет меняются плавно (0,25 с). Глиф ошибки появляется так же. Размер маркера не меняется. При <code class="tok">prefers-reduced-motion</code> — без анимации.</p>
+    <div class="panel">
+      <div class="demo-stack" id="beh-steps"></div>
+      <div style="display:flex; gap:var(--space-8); margin-top:var(--space-16);">
+        <button type="button" class="btn btn--outline btn--s" id="beh-next"><span class="btn__label">Отметить шаг</span></button>
+        <button type="button" class="btn btn--transparent btn--s" id="beh-reset"><span class="btn__label">Сбросить</span></button>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- STATES -->
+  <section class="section" data-screen-label="States">
+    <h2>Состояния</h2>
+    <p class="desc">Пять состояний шага. Состояние задаётся данными: модификатором на маркере или атрибутом <code class="tok">data-state</code> шага StepForm — маркер внутри шага красится сам, экран меняет только атрибут.</p>
+    <div class="panel">
+      <div class="cols5" id="states-demo"></div>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Состояние</span></div>
+          <div class="th"><span class="th__label">Как задаётся</span></div>
+          <div class="th"><span class="th__label">Заливка</span></div>
+          <div class="th"><span class="th__label">Содержимое</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ожидает</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">без модификатора · <code class="tok">data-state="pending"</code></span></span></div>
+          <div class="tc"><code class="tok">--st-primary-light</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">номер <code class="tok">--primary-dark</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Текущий</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.stepmark--current</code> · <code class="tok">data-state="current"</code></span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--st-primary-light</code> + рамка 1px внутрь <code class="tok">--primary</code></span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">номер <code class="tok">--primary-dark</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Готов</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.stepmark--done</code> · <code class="tok">data-state="done"</code></span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">галочка <code class="tok">--text-on-dark</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.stepmark--error</code> · <code class="tok">data-state="error"</code></span></span></div>
+          <div class="tc"><code class="tok">--st-red-light</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">глиф ошибки (или номер) <code class="tok">--error-dark</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .8fr 1.4fr 1.2fr 1.4fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Недоступен</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">.stepmark--disabled</code> · <code class="tok">data-state="disabled"</code></span></span></div>
+          <div class="tc"><code class="tok">--st-disabled-light</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">номер <code class="tok">--st-disabled-dark</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+    <p class="desc" style="margin-top:20px;">Наведения, нажатия и фокуса нет: маркер не интерактивен.</p>
+  </section>
+
+  <!-- ACCESSIBILITY -->
+  <section class="section" data-screen-label="A11y">
+    <h2>Доступность</h2>
+    <p class="desc">Маркер скрыт от скринридера (<code class="tok">aria-hidden="true"</code>): номер шага уже есть в порядке шагов, а статус озвучивает контейнер текстом — в StepForm это скрытый статус «выполнено» в подписи шага. Цвет не единственный носитель смысла: вместе с заливкой меняется содержимое — номер сменяется галочкой или глифом ошибки. Маркер не попадает в порядок Tab.</p>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="section" data-screen-label="Typography">
+    <h2>Типографика</h2>
+    <p class="desc">Номер набирается гарнитурой <b>SB Sans Text</b> полужирным: начертание шкалы и вес <code class="tok">--weight-semibold</code> поверх него — отдельного полужирного Body XS в шкале нет.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.6fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Размер</span></div>
+          <div class="th"><span class="th__label">Токены</span></div>
+          <div class="th"><span class="th__label">Кегль / строка</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.6fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>S</b>, <b>M</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-xs</code> + <code class="tok">--weight-semibold</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12 / 16 px, 600</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px .6fr 1.6fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><b>L</b></span></span></div>
+          <div class="tc"><code class="tok">--type-body-s</code> + <code class="tok">--weight-semibold</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16 px, 600</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="section" data-screen-label="Colors">
+    <h2>Цвета</h2>
+    <p class="desc">Только семантические токены палитры состояний (Situative) и текста. Своих цветов нет.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Роль</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Образец</span></div>
+          <div class="th"><span class="th__label">Hex</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ожидает и текущий — заливка</span></span></div>
+          <div class="tc"><code class="tok">--st-primary-light</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--st-primary-light)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--st-primary-light">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ожидает и текущий — номер</span></span></div>
+          <div class="tc"><code class="tok">--primary-dark</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary-dark)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary-dark">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Текущий — рамка</span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Готов — заливка</span></span></div>
+          <div class="tc"><code class="tok">--primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Готов — галочка</span></span></div>
+          <div class="tc"><code class="tok">--text-on-dark</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-on-dark)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-on-dark">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ошибка — заливка</span></span></div>
+          <div class="tc"><code class="tok">--st-red-light</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--st-red-light)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--st-red-light">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ошибка — глиф и номер</span></span></div>
+          <div class="tc"><code class="tok">--error-dark</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--error-dark)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--error-dark">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Недоступен — заливка</span></span></div>
+          <div class="tc"><code class="tok">--st-disabled-light</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--st-disabled-light)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--st-disabled-light">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Недоступен — номер</span></span></div>
+          <div class="tc"><code class="tok">--st-disabled-dark</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--st-disabled-dark)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--st-disabled-dark">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVELOPER HANDOFF -->
+  <section class="section" data-screen-label="Dev">
+    <h2>Для разработчиков</h2>
+    <p class="desc">Хендофф-пакет: точные размеры и поведение. Не привязан к стеку.</p>
+
+    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="desc tight">Значения измерены на живом экземпляре (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/atoms/StepMarker/StepMarker.css</code>.</p>
+    <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">S</span></div>
+          <div class="th"><span class="th__label">M</span></div>
+          <div class="th"><span class="th__label">L</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Диаметр</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-d-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-d-m">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-d-l">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Глиф</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-m">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-icon-l">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Кегль / строка</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-m">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-font-l">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Начертание</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-weight-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-weight-m">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-weight-l">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1fr 1fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Скругление</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-radius-s">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-radius-m">—</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-radius-l">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev-intro">
+      <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Palette.css</code>
+      <code class="tok">foundations/Spacing/Spacing.css</code>
+      <code class="tok">components/atoms/StepMarker/StepMarker.css</code>
+    </div>
+
+    <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
+<div class="code-panel">
+      <div class="code-panel__head">
+        <span class="code-panel__name">Поведение · псевдокод (framework-agnostic)</span>
+        <button type="button" class="code-panel__copy" data-copy-target="code-js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg><span class="copy-label">Копировать</span></button>
+      </div>
+      <pre><code id="code-js"><span class="tk-cm">// 1. Маркер декоративный: aria-hidden="true", статус шага озвучивает контейнер</span>
+
+<span class="tk-cm">// 2. Разметка: номер + глиф готовности (+ глиф ошибки, если шаг бывает с ошибкой)</span>
+<span class="tk-cm">//    span.stepmark.stepmark--{s|m|l} &gt; span.stepmark__num + i.stepmark__icon[check] (+ i.stepmark__icon--error[alert-circle])</span>
+
+<span class="tk-cm">// 3. Состояние — данными, одним местом:</span>
+<span class="tk-cm">//    на маркере: .stepmark--{current|done|error|disabled}</span>
+<span class="tk-cm">//    в StepForm: шаг[data-state] = pending | current | done | error | disabled — маркер красится сам</span>
+
+<span class="tk-cm">// 4. Смена состояния — без перерисовки маркера: меняется только класс/атрибут,</span>
+<span class="tk-cm">//    иначе анимация смены номера на глиф не проигрывается</span></code></pre>
+    </div>
+    <p class="dev-note">Это не готовый сниппет — алгоритм поверх вашего стека (рабочий референс — функция <code class="tok">makeMarker</code> в <code class="tok">StepMarker.page.js</code>).</p>
+  </section>
+
+  <!-- BACKLOG -->
+  <section class="section" data-screen-label="Backlog">
+    <h2>Бэклог</h2>
+    <p class="desc">Кейсы, которых недостаёт компоненту.</p>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>Stepper</b> — горизонтальный и вертикальный степпер мастера на маркерах: линия между шагами, подпись и подзаголовок шага, переход к шагу по клику. Отдельный компонент, маркер в нём — этот атом.</li>
+        <li><b>Интерактивный маркер</b> — маркер-кнопка для перехода к выполненному шагу. Сейчас маркер не интерактивен: переход даёт контейнер.</li>
+      </ul>
+    </div>
+  </section>
+
+<footer class="page-foot">
+    <span>Дизайн-система · StepMarker</span>
+    <span>Номер шага — S / M / L · ожидает · текущий · готов · ошибка · недоступен</span>
+  </footer>
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Соберите маркер шага: размер, состояние, номер, поверхность и глиф ошибки в разметке — превью обновляется мгновенно.</p>
+              <div class="pg__controls" id="pg-controls"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка, полный CSS компонента и выжимка API для интеграции.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main>
+
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="StepMarker.page.js"></script>
+<script>window.DS_SPLIT_SWITCH_LABELS = {"Глиф ошибки":{"label":"Глиф ошибки в разметке","on":"y"}};</script>
+<script src="../../../docs-kit/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично) ===== -->
+<script type="text/plain" id="src-code-html"><!-- номер шага: декоративный, статус озвучивает подпись шага; размер s (20) · m (24) · l (32) -->
+<span class="stepmark stepmark--m" aria-hidden="true">
+  <span class="stepmark__num">1</span>
+  <i class="stepmark__icon" data-icon="check"></i>
+</span>
+
+<!-- готов: номер сменяется галочкой -->
+<span class="stepmark stepmark--m stepmark--done" aria-hidden="true">
+  <span class="stepmark__num">1</span>
+  <i class="stepmark__icon" data-icon="check"></i>
+</span>
+
+<!-- шаг бывает с ошибкой: глиф ошибки в разметке -->
+<span class="stepmark stepmark--m stepmark--error" aria-hidden="true">
+  <span class="stepmark__num">2</span>
+  <i class="stepmark__icon" data-icon="check"></i>
+  <i class="stepmark__icon stepmark__icon--error" data-icon="alert-circle"></i>
+</span>
+
+<!-- в шаге StepForm состояние задаёт атрибут шага, маркер красится сам -->
+<section class="stepform__step" data-state="done">
+  <div class="stepform__label">
+    <span class="stepmark stepmark--m" aria-hidden="true">…</span>
+    <span class="stepform__title">Объект анализа</span>
+  </div>
+</section></script>
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/StepMarker/StepMarker.page.js)
+function makeMarker(n, size, state, err) {
+  // n: номер шага; size: 's' | 'm' | 'l'
+  // state: '' (ожидает) | 'current' | 'done' | 'error' | 'disabled'
+  // err: глиф ошибки в разметке
+  // → span.stepmark.stepmark--<size>[.stepmark--<state>] aria-hidden
+  //     > span.stepmark__num + i.stepmark__icon[check] (+ i.stepmark__icon--error[alert-circle])
+}
+// Смена состояния — только класс (или data-state шага StepForm), без перерисовки:
+marker.classList.add('stepmark--done');</script>
+<script type="text/plain" id="src-code-css">/* =========================================================================
+   Design System — StepMarker (Номер шага)
+   Кружок с номером шага в пошаговой форме: шаг выполнен — номер сменяется
+   галочкой, ошибка — глифом ошибки. Перенесён из конструктора запроса
+   AI Pitcher (прототип ai-bankster v02, задача MS0010d).
+
+   Элемент: <span aria-hidden="true"> — декоративный: номер и статус шага
+            озвучивает его контейнер (подпись шага StepForm).
+   Sizes:   s — 20, цифра Body XS полужирным, глиф 12
+            m (по умолчанию) — 24, цифра Body XS полужирным, глиф 14
+            l — 32, цифра Body S полужирным, глиф 18
+   States:  ожидает (по умолчанию) · текущий --current · готов --done ·
+            ошибка --error · недоступен --disabled. Задаётся модификатором
+            на маркере или атрибутом data-state шага StepForm
+            (.stepform__step[data-state]) — экран меняет только атрибут.
+   Motion:  цифра гаснет, глиф появляется с поворотом и масштабом в пределах
+            кружка — габарит не меняется; prefers-reduced-motion — без
+            анимации.
+   Requires: Typography.css, Palette.css, Radius.css, Spacing.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.stepmark[hidden] { display: none; }
+
+.stepmark {
+  --stepmark-icon: var(--space-14);
+
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: var(--radius-full);
+  font: var(--type-body-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  color: var(--primary-dark);
+  background: var(--st-primary-light);
+  vertical-align: middle;
+  transition: background-color .25s ease, color .25s ease, box-shadow .25s ease;
+}
+
+/* ---------- sizes ---------------------------------------------------------
+   Цифра — на ступень полужирного (вес токеном поверх Body XS / Body S:
+   отдельного начертания в шкале нет, тот же приём у Avatar и Chip). */
+.stepmark--s { width: var(--space-20); height: var(--space-20); --stepmark-icon: var(--space-12); }
+.stepmark--m { width: var(--space-24); height: var(--space-24); --stepmark-icon: var(--space-14); }
+.stepmark--l {
+  width: var(--space-32);
+  height: var(--space-32);
+  font: var(--type-body-s);
+  font-weight: var(--weight-semibold);
+  --stepmark-icon: 18px;
+}
+
+/* ---------- parts ---------------------------------------------------------
+   Номер и глифы лежат друг на друге: глиф — абсолютно по центру кружка,
+   поэтому смена номера на глиф не меняет габарит. Глиф ошибки
+   (.stepmark__icon--error) — в разметке, только если шаг бывает с ошибкой. */
+.stepmark__num {
+  transition: opacity .2s ease, transform .2s ease;
+}
+.stepmark__icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: var(--stepmark-icon);
+  height: var(--stepmark-icon);
+  opacity: 0;
+  pointer-events: none;
+}
+.stepmark__icon > svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- states --------------------------------------------------------
+   Текущий — рамка 1px внутрь (inset-тень: габарит не меняется). */
+:is(.stepmark--current, .stepform__step[data-state="current"] .stepmark) {
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* Готов — заливка Primary, номер гаснет, проявляется галочка. */
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) {
+  color: var(--text-on-dark);
+  background: var(--primary);
+}
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) .stepmark__num {
+  opacity: 0;
+  transform: scale(.3);
+}
+:is(.stepmark--done, .stepform__step[data-state="done"] .stepmark) .stepmark__icon:not(.stepmark__icon--error) {
+  opacity: 1;
+  animation: stepmark-pop .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* Ошибка — тон Error; номер сменяется глифом ошибки, если глиф есть в
+   разметке, иначе остаётся номер красным (цвет — не единственный носитель
+   смысла: статус ошибки озвучивает контейнер). */
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark) {
+  color: var(--error-dark);
+  background: var(--st-red-light);
+}
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark):has(> .stepmark__icon--error) .stepmark__num {
+  opacity: 0;
+  transform: scale(.3);
+}
+:is(.stepmark--error, .stepform__step[data-state="error"] .stepmark) .stepmark__icon--error {
+  opacity: 1;
+  animation: stepmark-pop .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* Недоступен — шаг пока нельзя заполнить. */
+:is(.stepmark--disabled, .stepform__step[data-state="disabled"] .stepmark) {
+  color: var(--st-disabled-dark);
+  background: var(--st-disabled-light);
+}
+
+/* Появление глифа — из прототипа: масштаб .3 и поворот −30° → на место. */
+@keyframes stepmark-pop {
+  from { opacity: 0; transform: scale(.3) rotate(-30deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepmark,
+  .stepmark__num,
+  .stepmark__icon { transition: none; animation: none; }
+}</script>
+<script src="../../../../apps/proto-panel.js"></script>
+</body>
+</html>

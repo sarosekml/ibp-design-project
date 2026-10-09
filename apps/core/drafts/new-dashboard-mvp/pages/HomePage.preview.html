@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<!-- Главная — дашборд (концепт new-dashboard-mvp). Источник модульной страницы:
+     тайлы и окна стоят метками <ds-include>, открывается собранная
+     HomePage.preview.html (node .agents/tools/assemble.mjs). Макет дизайнера —
+     refs/home-mockup-09102026.jpg; решения человека 09.10.2026 — спека
+     HomePage.screen.md. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Главная — IBP</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* ── Раскладка этого экрана ──────────────────────────────────────────────
+     Сетка — штатная .grid12 (12 колонок, зазор 16px по обеим осям), ширины
+     тайлов — пары col-N / colw-N на метках. Перестроение считается от ширины
+     рабочей области: первый шаг даёт пара, второй (всё в одну колонку)
+     пишется экраном той же специфичностью (0,2,0) и ниже по файлу. */
+  @container screen (max-width: 1300px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+  @container screen (max-width: 760px) {
+    .grid12 > .tile { grid-column: span 12; }
+  }
+</style>
+<!-- @lc-css -->
+<link rel="stylesheet" href="../widgets/tiles/HomeProfileTile/HomeProfileTile.css">
+<link rel="stylesheet" href="../widgets/tiles/MyDayTile/MyDayTile.css">
+<link rel="stylesheet" href="../widgets/tiles/MeetingsTile/MeetingsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/TasksTile/TasksTile.css">
+<link rel="stylesheet" href="../widgets/tiles/NewsTile/NewsTile.css">
+<link rel="stylesheet" href="../widgets/modals/MeetingCreateModal/MeetingCreateModal.css">
+<link rel="stylesheet" href="../widgets/modals/TaskCreateModal/TaskCreateModal.css">
+<link rel="stylesheet" href="../widgets/tiles/StatCard/StatCard.css">
+<link rel="stylesheet" href="../widgets/tiles/DateBadge/DateBadge.css">
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- меню строится экранным скриптом из ibp-home.js (общий каталог ДС) -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Главная</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Главная">
+
+      <!-- #sec:head ── Шапки страницы нет: стартовая страница (Layout,
+           «Стартовая страница») — один блок, сетка тайлов. Первый тайл —
+           профиль сотрудника. -->
+
+      <!-- #sec:content ── Дашборд: профиль · мой день / встречи · задачи · новости -->
+      <div class="grid12" id="home-grid">
+        <!-- Локальный компонент «Профиль на главной» (HomeProfileTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | error (данных нет не бывает: профиль есть
+                  у любого, кто вошёл)
+     data-mode  — edit: быстрые действия «Новая встреча» и «Новая задача» видны |
+                  view: роль не создаёт встречи и задачи, действий нет
+
+     Профиль — Entity L (аватар XL 96 с фото, точка «в сети» — Badge dot).
+     Фото не загрузилось — инициалы (цепочка Avatar фото → инициалы → иконка;
+     рантайма у Avatar нет, подмену делает HomeProfileTile.js). Адрес фото
+     ставит скрипт из данных профиля: относительный путь во фрагменте читался
+     бы от папки виджета, а не от страницы, которая его вшивает. Приветствие
+     зависит от времени суток. Окна — MeetingCreateModal и TaskCreateModal,
+     их скримы лежат в конце страницы. -->
+<section aria-label="Профиль сотрудника" id="tile-profile" data-state="loading" data-mode="edit" class="tile tile--headless lc-profile col-4 colw-12">
+  <div class="tile__body lc-profile__body">
+    <div class="entity entity--l lc-profile__entity">
+      <div class="entity__lead">
+        <span class="av-stack" data-profile="avatar" aria-label="В сети">
+          <span class="av av--circular av--xl"><img class="av__img" alt=""></span>
+          <span class="badge badge--dot badge--success badge--bordered" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="entity__main">
+        <div class="entity__titles">
+          <p class="entity__header" data-profile="greeting">Добрый день,</p>
+          <div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-profile="name" data-tooltip="Анна Сергеевна Ким" data-tooltip-truncated="only">Анна Сергеевна Ким</span></div>
+        </div>
+        <div class="entity__subs entity__subs--single"><span class="entity__subs-list" data-profile="position">Аналитик ДИД · Металлургия и машиностроение</span></div>
+        <div class="entity__icons">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-profile-act="phone" aria-label="Скопировать телефон" data-tooltip="Скопировать телефон"><i data-icon="phone"></i></button>
+          <a class="ibtn ibtn--neutral ibtn--s" data-profile="mail" href="mailto:a.kim@example.ru" aria-label="Написать письмо" data-tooltip="Написать письмо"><i data-icon="mail"></i></a>
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" data-home-goto="profile" aria-label="Открыть профиль" data-tooltip="Открыть профиль"><i data-icon="user-circle"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-profile__actions">
+      <button type="button" class="btn btn--outline btn--s" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+      <button type="button" class="btn btn--accent btn--s" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="sk-row lc-profile__loading" aria-busy="true" aria-label="Загрузка профиля">
+      <span class="sk-block sk-block--circle" style="--sk-w:var(--space-96);--sk-h:var(--space-96)" aria-hidden="true"></span>
+      <div class="sk-group">
+        <span class="sk-line sk-line--caption" style="--sk-w:30%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span>
+        <span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lc-profile__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить профиль</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-profile-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        <!-- Локальный компонент «Мой день» (MyDayTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error
+     data-mode  — только view: тайл ничего не правит, а ведёт к выборкам
+
+     Лента дня: свои встречи сегодня по времени (прошла / идёт / ближайшая /
+     позже) и две строки задач — со сроком сегодня и просроченные. Каждое
+     событие — интерактивная строка Entity M (объект в списке — Entity, не
+     Card: правило Tile); строки стоят сеткой внутри .entity-list, зазор
+     16px — контракт списка Entity. Клик или Enter/Space по строке просит
+     тайл «Встречи» или «Задачи» показать свою выборку (HomeStore.focus).
+     Ленту рисует MyDayTile.js; строки ниже — пример. -->
+<section aria-labelledby="lc-day-title" id="tile-day" data-state="loading" data-mode="view" class="tile lc-day col-8 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+        <h3 class="tile__title" id="lc-day-title">Мой день</h3>
+      </div>
+      <p class="tile__subtitle" data-day="subtitle">Пятница, 9 октября · сейчас 12:40</p>
+    </div>
+  </header>
+
+  <div class="tile__body lc-day__body">
+    <div class="entity-list lc-day__slots" role="group" aria-label="События и сроки сегодня" data-day="slots">
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="09:30–10:30, ГК «Волга Тех». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--neutral" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">09:30–10:30</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity entity--interactive" role="button" tabindex="0" data-day-widget="meetings" data-day-filter="today" aria-label="14:00–15:00, АО «Урал-Инвест». Показать встречи сегодня">
+        <div class="entity__lead"><span class="entity__icon entity__icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span></div>
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header">14:00–15:00</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div>
+          </div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--accent"><span class="chip__label">Через 1 ч 20 мин</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-day__slots lc-day__loading" aria-busy="true" aria-label="Загрузка дня">
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:90%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:80%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:85%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div></div>
+      <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:75%" aria-hidden="true"></span></div></div>
+    </div>
+
+    <p class="lc-day__empty">На сегодня встреч нет и сроки задач не горят</p>
+
+    <div class="lc-day__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось собрать план на день</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-day-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        <!-- Локальный компонент «Встречи» (MeetingsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+     Внешние отступы и место в колонках задаёт страница.
+
+     data-state — loading | data | empty | error | updating (partial не бывает:
+                  у встречи все поля обязательны)
+     data-mode  — edit: можно добавить встречу | view: только просмотр
+
+     Разметка держит все состояния сразу, нужное показывает MeetingsTile.css.
+     Строки, счётчики и выборку рисует MeetingsTile.js из HomeStore; две строки
+     ниже — пример для витрины без данных. Счётчики — StatCard, дата в строке —
+     DateBadge (оба — подчасти-кандидаты в ДС). Окно «Новая встреча» —
+     MeetingCreateModal, скрим лежит в конце страницы. -->
+<section aria-labelledby="lc-meetings-title" id="tile-meetings" data-state="loading" data-mode="edit" class="tile lc-meetings col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="calendar"></i></span>
+        <h3 class="tile__title" id="lc-meetings-title">Встречи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-meetings__busy" role="status" aria-label="Обновление встреч"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="meetings" aria-label="Все встречи" data-tooltip="Все встречи"><i data-icon="arrow-right"></i></button>
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия виджета «Встречи»" aria-haspopup="menu" data-menu="lc-meetings-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-meetings-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-meetings-act="refresh">
+            <span class="menu__item-icon"><i data-icon="refresh"></i></span>
+            <span class="menu__item-label">Обновить</span>
+          </button>
+          <button type="button" class="menu__item lc-meetings__edit" role="menuitem" data-meetings-act="add">
+            <span class="menu__item-icon"><i data-icon="calendar-plus"></i></span>
+            <span class="menu__item-label">Новая встреча</span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-meetings__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-meetings__scope" role="radiogroup" aria-label="Чьи встречи показать" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои встречи</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Встречи моего деска</span></button>
+    </div>
+
+    <!-- Данные: счётчики-фильтры и список. Клик по счётчику показывает
+         только его выборку, повторный клик снимает фильтр. -->
+    <div class="lc-meetings__stats" role="group" aria-label="Фильтр встреч">
+      <button type="button" class="lc-stat lc-stat--s lc-stat--info" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">3</span></button>
+      <button type="button" class="lc-stat lc-stat--s" aria-pressed="false" data-stat="week"><span class="lc-stat__label">На неделе</span><span class="lc-stat__value">7</span></button>
+      <button type="button" class="lc-stat lc-stat--s lc-stat--warning" aria-pressed="false" data-stat="attention"><span class="lc-stat__label">Требует внимания</span><span class="lc-stat__value">1</span></button>
+    </div>
+    <div class="entity-list lc-meetings__list" aria-live="polite">
+      <div class="entity" data-meeting-id="M-0101">
+        <div class="entity__lead"><span class="lc-date lc-date--today" role="img" aria-label="09.10.2026"><span class="lc-date__day" aria-hidden="true">09</span><span class="lc-date__month" aria-hidden="true">окт</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">ГК «Волга Тех»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">09:30–10:30 · Ким А. С.</span></div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--success"><span class="chip__label">Протокол заполнен</span></span></div>
+        </div>
+      </div>
+      <div class="entity" data-meeting-id="M-0102">
+        <div class="entity__lead"><span class="lc-date lc-date--today" role="img" aria-label="09.10.2026"><span class="lc-date__day" aria-hidden="true">09</span><span class="lc-date__month" aria-hidden="true">окт</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">АО «Урал-Инвест»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">14:00–15:00 · Ким А. С.</span></div>
+          <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--warning"><span class="chip__label">Требует внимания</span></span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Выборка фильтра пуста — строка причины на месте списка -->
+    <p class="lc-meetings__none" hidden>Встреч, требующих внимания, нет</p>
+
+    <!-- Загрузка: каркас в габаритах итогового содержимого -->
+    <div class="lc-meetings__loading" aria-busy="true" aria-label="Загрузка встреч">
+      <div class="lc-meetings__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-meetings__sk-rows">
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:45%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:30%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><span class="sk-block sk-block--rounded" style="--sk-w:var(--space-40);--sk-h:var(--space-40)" aria-hidden="true"></span><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+      </div>
+    </div>
+
+    <!-- Данных нет: тайл на 4 колонках — строка причины и действие, без
+         иллюстрации (правила локальных компонентов, «Данных нет») -->
+    <div class="lc-meetings__empty">
+      <p class="lc-meetings__empty-text">Встреч пока нет</p>
+      <button type="button" class="btn btn--outline btn--s lc-meetings__edit" data-modal="meeting-create-scrim"><i data-icon="calendar-plus"></i><span class="btn__label">Новая встреча</span></button>
+    </div>
+
+    <!-- Ошибка: причина и повтор; остальные тайлы работают -->
+    <div class="lc-meetings__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить встречи</p>
+          <p class="alert__text">Сервис календаря не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-meetings-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-meetings__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-meetings__foot-row">
+        <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="meetings">Все встречи<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+        <span class="lc-meetings__count"></span>
+        <button type="button" class="btn btn--transparent btn--s lc-meetings__edit" data-modal="meeting-create-scrim"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</section>
+        <!-- Локальный компонент «Задачи» (TasksTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error | updating
+     data-mode  — edit: можно брать в работу, менять статус, создавать задачу |
+                  view: только просмотр
+
+     Разметка держит все состояния сразу, нужное показывает TasksTile.css.
+     Строки и счётчики рисует TasksTile.js из HomeStore; строка ниже — пример.
+     Меню строки одно на все строки (ContextMenu: одно меню — несколько
+     триггеров); задачу, чьё меню открыто, скрипт запоминает по триггеру —
+     меню живёт в общем слое, не в строке (Л88). -->
+<section aria-labelledby="lc-tasks-title" id="tile-tasks" data-state="loading" data-mode="edit" class="tile lc-tasks col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <span class="tile__title-icon tile__title-icon--accent" aria-hidden="true"><i data-icon="tasks"></i></span>
+        <h3 class="tile__title" id="lc-tasks-title">Задачи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-tasks__busy" role="status" aria-label="Обновление задач"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="tasks" aria-label="Все задачи" data-tooltip="Все задачи"><i data-icon="arrow-right"></i></button>
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия виджета «Задачи»" aria-haspopup="menu" data-menu="lc-tasks-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-tasks-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-tasks-act="refresh">
+            <span class="menu__item-icon"><i data-icon="refresh"></i></span>
+            <span class="menu__item-label">Обновить</span>
+          </button>
+          <button type="button" class="menu__item" role="menuitem" data-tasks-act="add">
+            <span class="menu__item-icon"><i data-icon="add-circle"></i></span>
+            <span class="menu__item-label">Новая задача</span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-tasks__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-tasks__scope" role="radiogroup" aria-label="Чьи задачи показать" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои задачи</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Задачи моего деска</span></button>
+    </div>
+
+    <div class="lc-tasks__stats" role="group" aria-label="Фильтр задач">
+      <button type="button" class="lc-stat lc-stat--accent" aria-pressed="false" data-stat="new"><span class="lc-stat__label">Новые</span><span class="lc-stat__value">6</span><span class="lc-stat__caption">2 пришли сегодня</span></button>
+      <button type="button" class="lc-stat lc-stat--warning" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">8</span><span class="lc-stat__caption">срок истекает сегодня</span></button>
+      <button type="button" class="lc-stat lc-stat--error" aria-pressed="false" data-stat="overdue"><span class="lc-stat__label">Просрочено</span><span class="lc-stat__value">3</span><span class="lc-stat__caption">самая старая — 4 дня</span></button>
+    </div>
+    <div class="entity-list lc-tasks__list" aria-live="polite">
+      <div class="entity lc-tasks__row" data-task-id="T-1001">
+        <div class="entity__main">
+          <div class="entity__titles">
+            <p class="entity__header"><span class="badge badge--dot badge--error" aria-hidden="true"></span>Высокий приоритет</p>
+            <div class="entity__labelrow"><span class="entity__label entity__label--truncate">Обновить forecast P&amp;L по АО «Платформа»</span></div>
+          </div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Сделка D-126618 · АО «Платформа»</span></div>
+          <div class="entity__chips">
+            <span class="chip chip--xs chip--rounded chip--error"><span class="chip__label">Просрочено на 4 дня</span></span>
+            <span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">В работе</span></span>
+          </div>
+        </div>
+        <div class="entity__actions">
+          <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Действия с задачей" aria-haspopup="menu" data-menu="lc-tasks-row-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        </div>
+      </div>
+    </div>
+    <p class="lc-tasks__none" hidden>Просроченных задач нет</p>
+
+    <!-- Меню строки: одно на все строки, пункты включает скрипт по статусу задачи -->
+    <div id="lc-tasks-row-menu" class="menu menu--floating" role="menu" hidden>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="take">
+        <span class="menu__item-icon"><i data-icon="check"></i></span>
+        <span class="menu__item-label">Взять в работу</span>
+      </button>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="return">
+        <span class="menu__item-icon"><i data-icon="flip-backward"></i></span>
+        <span class="menu__item-label">Вернуть в новые</span>
+      </button>
+      <button type="button" class="menu__item" role="menuitem" data-task-act="done">
+        <span class="menu__item-icon"><i data-icon="check-circle"></i></span>
+        <span class="menu__item-label">Отметить выполненной</span>
+      </button>
+      <hr class="menu__divider">
+      <button type="button" class="menu__item" role="menuitem" data-task-act="open">
+        <span class="menu__item-icon"><i data-icon="arrow-right"></i></span>
+        <span class="menu__item-label">Открыть в разделе «Задачи»</span>
+      </button>
+    </div>
+
+    <div class="lc-tasks__loading" aria-busy="true" aria-label="Загрузка задач">
+      <div class="lc-tasks__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-80)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-tasks__sk-rows">
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:55%" aria-hidden="true"></span></div>
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:70%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:50%" aria-hidden="true"></span></div>
+        <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:25%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:75%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:45%" aria-hidden="true"></span></div>
+      </div>
+    </div>
+
+    <div class="lc-tasks__empty">
+      <p class="lc-tasks__empty-text">Открытых задач нет</p>
+      <button type="button" class="btn btn--outline btn--s lc-tasks__edit" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+    </div>
+
+    <div class="lc-tasks__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить задачи</p>
+          <p class="alert__text">Сервис задач не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-tasks-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-tasks__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-tasks__foot-row">
+        <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="tasks">Все задачи<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+        <span class="lc-tasks__count"></span>
+        <button type="button" class="btn btn--transparent btn--s lc-tasks__edit" data-modal="task-create-scrim"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</section>
+        <!-- Локальный компонент «Новости по клиентам» (NewsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+
+     data-state — loading | data | empty | error | updating
+     data-mode  — только view: править нечего
+
+     Поверхность тайла тонирована (--primary-bg) — по макету: лента новостей
+     отделена от рабочих тайлов. В ДС у Tile тона поверхности нет; это
+     осознанное отклонение и кандидат в ДС (модификатор поверхности Tile).
+     Ленту рисует NewsTile.js из HomeStore; запись ниже — пример. -->
+<section aria-labelledby="lc-news-title" id="tile-news" data-state="loading" data-mode="view" class="tile lc-news col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" id="lc-news-title">Новости</h3></div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-news__busy" role="status" aria-label="Обновление новостей"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="news" aria-label="Все новости" data-tooltip="Все новости"><i data-icon="arrow-right"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-news-act="refresh" aria-label="Обновить новости" data-tooltip="Обновить"><i data-icon="refresh"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body lc-news__body">
+    <div class="segctrl segctrl--s segctrl--fullwidth lc-news__scope" role="radiogroup" aria-label="Чьи клиенты" data-segctrl>
+      <div class="segctrl__thumb"></div>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-scope="MY"><span class="segctrl__label">Мои клиенты</span></button>
+      <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-scope="DESK"><span class="segctrl__label">Клиенты моего деска</span></button>
+    </div>
+
+    <div class="lc-news__list" aria-live="polite">
+      <article class="lc-news__item" data-news-id="N-301">
+        <div class="lc-news__meta">
+          <span>08.10.2026</span>
+          <span class="lc-news__source">Деловой вестник</span>
+          <a class="ibtn ibtn--neutral ibtn--s lc-news__open" href="#" aria-label="Открыть в источнике: Деловой вестник" data-tooltip="Открыть в источнике"><i data-icon="arrow-up-right"></i></a>
+        </div>
+        <h4 class="lc-news__title">ГК «Волга Тех» запускает вторую очередь логистического комплекса</h4>
+        <p class="lc-news__text">Группа рассчитывает завершить строительство до конца 2027 года и увеличить складские мощности на 40%.</p>
+      </article>
+    </div>
+
+    <div class="lc-news__loading" aria-busy="true" aria-label="Загрузка новостей">
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:90%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:70%" aria-hidden="true"></span></div>
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:80%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:60%" aria-hidden="true"></span></div>
+      <div class="sk-group"><span class="sk-line sk-line--caption" style="--sk-w:40%" aria-hidden="true"></span><span class="sk-line sk-line--title" style="--sk-w:85%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:100%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:65%" aria-hidden="true"></span></div>
+    </div>
+
+    <p class="lc-news__empty">О ваших клиентах новостей пока нет</p>
+
+    <div class="lc-news__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить новости</p>
+          <p class="alert__text">Лента СМИ не ответила. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-news-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-news__foot">
+      <a class="link link--accent link--s link--with-icon" href="#" data-home-goto="news">Смотреть все<span class="link__icon"><i data-icon="arrow-right"></i></span></a>
+    </footer>
+  </div>
+</section>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── Окна — в конце body, скримы с hidden; триггеры data-modal -->
+<!-- Локальный компонент «Новая встреча» (MeetingCreateModal) — окно главной.
+     Артефакт тайлов «Встречи» (подвал «Добавить», меню шапки, «Новая встреча»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая встреча»).
+     Вшивается отдельной меткой ds-include в конце страницы: скрим не может
+     лежать внутри тайла.
+
+     Поля — одна колонка (режим ввода); исключение — «Дата · Начало ·
+     Окончание» в один ряд: короткие связанные поля, одно понятие «когда».
+     Обязательны все четыре: пустое — ошибка поля (InputText: текст ошибки в
+     тултипе при фокусе, не в хелпере). Списки и проверку ведёт
+     MeetingCreateModal.js; «Создать встречу» без data-modal-close — окно
+     закрывает скрипт после проверки. -->
+<div class="modal-scrim" id="meeting-create-scrim" hidden>
+  <div class="modal modal--w4 lc-meeting-create" role="dialog" aria-modal="true" aria-labelledby="meeting-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="meeting-create-title">Новая встреча</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-meeting-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-client"><span class="ds-label__text">Клиент</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="meeting-create-client-list">
+              <input class="inp__control" id="meeting-create-client" autocomplete="off" placeholder="Выберите клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="meeting-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="meeting-create-topic"><span class="ds-label__text">Тема встречи</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="meeting-create-topic" autocomplete="off" maxlength="120" placeholder="Например, условия рефинансирования">
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-meeting-create__when">
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-date"><span class="ds-label__text">Дата</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field">
+                <input class="inp__control" id="meeting-create-date" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-start"><span class="ds-label__text">Начало</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-start-list">
+                <input class="inp__control" id="meeting-create-start" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth">
+            <label class="ds-label" for="meeting-create-end"><span class="ds-label__text">Окончание</span><span class="ds-label__req">*</span></label>
+            <div class="inp__box">
+              <div class="inp__field" data-ddl="meeting-create-end-list">
+                <input class="inp__control" id="meeting-create-end" autocomplete="off" placeholder="ЧЧ:ММ">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <div id="meeting-create-end-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+        </div>
+
+        <p class="note note--s">
+          <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+          <span class="note__text">Встреча появится в «Моих встречах», а если она сегодня — и в «Моём дне».</span>
+        </p>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-meeting-create-save><span class="btn__label">Создать встречу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- Локальный компонент «Новая задача» (TaskCreateModal) — окно главной.
+     Артефакт тайлов «Задачи» (подвал «Добавить», меню шапки, «Новая задача»
+     пустого тайла) и «Профиль на главной» (быстрое действие «Новая задача»).
+     Вшивается отдельной меткой ds-include в конце страницы.
+
+     Поля — одна колонка (режим ввода). Обязательны формулировка, срок и
+     приоритет; клиент и сделка — нет. Приоритет — SegmentControl: три
+     взаимоисключающих значения одного параметра. Списки, проверку и
+     сохранение ведёт TaskCreateModal.js на общем слое форм LcHomeForm
+     (MeetingCreateModal.js). -->
+<div class="modal-scrim" id="task-create-scrim" hidden>
+  <div class="modal modal--w4 lc-task-create" role="dialog" aria-modal="true" aria-labelledby="task-create-title" data-mode="edit">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-create-title">Новая задача</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-task-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-title-input"><span class="ds-label__text">Задача</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-title-input" autocomplete="off" maxlength="160" placeholder="Что нужно сделать">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-due"><span class="ds-label__text">Срок</span><span class="ds-label__req">*</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-due" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-task-create__priority">
+          <span class="ds-label" id="task-create-priority-label"><span class="ds-label__text">Приоритет</span><span class="ds-label__req">*</span></span>
+          <div class="segctrl segctrl--fullwidth" role="radiogroup" aria-labelledby="task-create-priority-label" data-segctrl>
+            <div class="segctrl__thumb"></div>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="HIGH"><span class="segctrl__label">Высокий</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-priority="MEDIUM"><span class="segctrl__label">Средний</span></button>
+            <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-priority="LOW"><span class="segctrl__label">Низкий</span></button>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-client"><span class="ds-label__text">Клиент</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="task-create-client-list">
+              <input class="inp__control" id="task-create-client" autocomplete="off" placeholder="Без клиента">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="task-create-client-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="task-create-deal"><span class="ds-label__text">Номер сделки</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="task-create-deal" autocomplete="off" maxlength="12" placeholder="Например, D-126618">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-task-create-save><span class="btn__label">Создать задачу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Шаблоны подчастей, которые рисуют скрипты тайлов (кандидаты в ДС) -->
+<!-- Локальный компонент «Карточка-счётчик» (StatCard) — подчасть, которую рисуют
+     скрипты тайлов главной (MeetingsTile, TasksTile). Кандидат в ДС: в ДС нет
+     компонента «показатель-фильтр» с тоном и выбранным состоянием (решение
+     человека 09.10.2026 — пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     StatCard.css, а LcStatCard.render() (StatCard.js) клонирует шаблон.
+
+     Классы корня:
+       размер — без класса M (подпись, число, пояснение) · .lc-stat--s (число над подписью);
+       тон    — без класса нейтральный · --accent · --info · --warning · --error · --success;
+       выбор  — aria-pressed="true" на кнопке (фильтр списка включён);
+       .lc-stat--static — показатель без действия: корень span, без наведения и выбора. -->
+<template id="lc-stat-card-tpl">
+  <button type="button" class="lc-stat" aria-pressed="false">
+    <span class="lc-stat__label">Подпись</span>
+    <span class="lc-stat__value">0</span>
+    <span class="lc-stat__caption">Пояснение</span>
+  </button>
+</template>
+<!-- Локальный компонент «Блок даты» (DateBadge) — подчасть, которую рисуют скрипты
+     тайлов главной в ведущем слоте Entity M (строка встречи). Кандидат в ДС: в ДС
+     нет компактного «листка календаря» день + месяц (решение человека 09.10.2026 —
+     пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     DateBadge.css, а LcDateBadge.render() (DateBadge.js) клонирует шаблон.
+
+     Модификатор .lc-date--today — дата совпадает с сегодняшней (тон accent).
+     Блок декоративен для чтения с экрана: дату полностью называет aria-label. -->
+<template id="lc-date-badge-tpl">
+  <span class="lc-date" role="img" aria-label="09.10.2026">
+    <span class="lc-date__day" aria-hidden="true">09</span>
+    <span class="lc-date__month" aria-hidden="true">окт</span>
+  </span>
+</template>
+
+<!-- данные и хранилище — до рантаймов ДС -->
+<script src="../data/mock-profile.js"></script>
+<script src="../data/mock-meetings.js"></script>
+<script src="../data/mock-tasks.js"></script>
+<script src="../data/mock-news.js"></script>
+<script src="../data/home-store.js"></script>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<!-- подчасти — раньше тайлов, окно встречи (общий слой форм) — раньше окна задачи -->
+<script src="../widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../widgets/tiles/MyDayTile/MyDayTile.js"></script>
+<script src="../widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+/* Экранный скрипт главной: меню, загрузка тайлов, демо-состояния, переходы.
+   Данные и поведение тайлов — в их скриптах и HomeStore; здесь только то,
+   что принадлежит странице. */
+(function () {
+  'use strict';
+  var S = window.HomeStore;
+  var P = S.profile;
+  var ROLE = window.IBPHome.defaultRole;
+
+  /* ── Меню: каталог ДС ibp-home.js, строка пользователя — профиль и хаб ── */
+  /* Футер отдаёт IBPHome.footerHTML с href="#" — ссылка подменяется на хаб
+     проектов, инициалы — на фото профиля (каталог ДС не трогаем). */
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var INITIALS = (P.firstName.charAt(0) + P.lastName.charAt(0)).toUpperCase();
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">' +
+        it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('') +
+        '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">' +
+        '<span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' +
+        '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>' : '';
+    return '<a class="nav__item" href="#"><span class="nav__ico">' + ic(it.icon) + '</span><span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">' +
+      '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню">' + ic('left-menu') + '</button>' +
+      '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>' +
+      '</div><div class="nav__list">' +
+      '<a class="nav__item nav__item--selected" href="#" aria-current="page"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    window.IBPHome.itemsFor(ROLE).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>';
+    var fullName = P.lastName + ' ' + P.firstName + ' ' + P.middleName;
+    var footer = window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(P.positionName, { initials: INITIALS, name: fullName }).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">' +
+        '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">' +
+        '<span class="av av--circular av--m"><span class="av__text">' + INITIALS + '</span></span>' +
+        '<span class="nav__user-text"><span class="nav__user-name">' + fullName + '</span>' +
+        '<span class="nav__user-role">' + P.positionName + '</span></span></a>' +
+        '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>' +
+        '</div>';
+    s += footer.replace('<span class="av__text">' + INITIALS + '</span>', '<img class="av__img" src="' + P.photoUrl + '" alt="">');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+    if (window.dsIcons) window.dsIcons.apply(nav);
+  }
+
+  /* ── Загрузка: тайлы появляются по мере ответа своих сервисов ──────── */
+  /* Демо-состояния — параметром адреса: ?state=loading | empty | error
+     держит тайлы данных в этом состоянии (профиль — только loading и error:
+     пустого профиля не бывает). Без параметра — каскадная загрузка. */
+  var forced = (new URLSearchParams(location.search).get('state') || '').toLowerCase();
+  var TILES = [
+    { id: 'tile-profile', api: window.LcHomeProfileTile, delay: 500, profile: true },
+    { id: 'tile-day', api: window.LcMyDayTile, delay: 700 },
+    { id: 'tile-meetings', api: window.LcMeetingsTile, delay: 900 },
+    { id: 'tile-tasks', api: window.LcTasksTile, delay: 1100 },
+    { id: 'tile-news', api: window.LcNewsTile, delay: 1300 }
+  ];
+
+  function show(t) {
+    var root = document.getElementById(t.id);
+    if (!root) return;
+    if (forced === 'loading') return;
+    var state = forced === 'error' ? 'error' : forced === 'empty' && !t.profile ? 'empty' : 'data';
+    if (t.profile && state === 'data') { root.setAttribute('data-state', 'data'); return; }
+    if (t.api && t.api.setState && state === 'data') t.api.setState(root, 'data');
+    else root.setAttribute('data-state', state);
+  }
+  TILES.forEach(function (t) { setTimeout(function () { show(t); }, t.delay); });
+
+  /* ── Переходы в разделы: в прототипе разделов нет — уведомление ───── */
+  var SECTIONS = {
+    meetings: 'Раздел «Встречи»',
+    tasks: 'Раздел «Задачи»',
+    news: 'Лента новостей по клиентам',
+    profile: 'Личный кабинет',
+    'news-source': 'Публикация в источнике'
+  };
+  function goto(section) {
+    if (window.DSSnack) window.DSSnack.show({
+      tone: 'info', title: (SECTIONS[section] || 'Раздел') + ' — в следующей версии прототипа',
+      text: 'В этом концепте собрана только главная.', dedup: true
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-home-goto]');
+    if (!a) return;
+    e.preventDefault();
+    goto(a.getAttribute('data-home-goto'));
+  });
+  document.addEventListener('home:goto', function (e) { goto(e.detail && e.detail.section); });
+
+  buildNav();
+})();
+</script>
+</body>
+</html>

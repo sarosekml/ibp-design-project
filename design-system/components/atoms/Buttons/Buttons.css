@@ -2,7 +2,13 @@
    Design System — Button
    Types:  accent · outline · transparent
    Sizes:  m (40) · s (32) · xs (24)
-   States: default · hover · active · disabled · loading
+   States: default · hover · active · pressed (вкл) · disabled · loading
+           pressed — aria-pressed="true" (переключатель вкл/выкл) или
+           aria-expanded="true" (кнопка открыла панель или меню); вид — как у
+           наведения, наведение на нажатую — свой шаг. Форс для витрины —
+           .is-pressed. Две иконки переключателя — .btn__icon--toggle;
+           замена кнопки на другую — DSButton.swap() (Buttons.js), иконка
+           меняется с анимацией
    Text uses the Button M/S/XS typography tokens (SB Sans Screen).
    Requires: typography.css, colors.css
    ========================================================================= */
@@ -87,6 +93,25 @@
 .btn__chevron { transition: transform .15s ease; }
 .btn[aria-expanded="true"] .btn__chevron { transform: rotate(180deg); }
 
+/* ---------- слот иконки и иконка-переключатель ------------------------------
+   .btn__icon — слот размером иконки кнопки (M 20 · S 18 · XS 16).
+   .btn__icon--toggle — две иконки в одном слоте: первая видна у отжатой
+   кнопки, вторая — у нажатой. Смена — поворотом, масштабом и угасанием в
+   пределах слота: габарит кнопки и положение подписи не меняются. Правило ДС:
+   кнопка меняется на другую и у них есть иконки — иконка меняется с
+   анимацией (решение человека 05.10.2026, задача MS0010b). */
+.btn__icon { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn--m .btn__icon  { width: 20px; height: 20px; }
+.btn--s .btn__icon  { width: 18px; height: 18px; }
+.btn--xs .btn__icon { width: 16px; height: 16px; }
+.btn__icon--toggle > :is(svg,[data-icon]) { position: absolute; inset: 0; margin: auto; transition: transform .4s cubic-bezier(.22, 1, .36, 1), opacity .2s ease; }
+.btn__icon--toggle > :is(svg,[data-icon]):last-child { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.btn:is([aria-pressed="true"],[aria-expanded="true"],.is-pressed) .btn__icon--toggle > :is(svg,[data-icon]):first-child { opacity: 0; transform: rotate(90deg) scale(.5); }
+.btn:is([aria-pressed="true"],[aria-expanded="true"],.is-pressed) .btn__icon--toggle > :is(svg,[data-icon]):last-child { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .btn__icon--toggle > :is(svg,[data-icon]) { transition: none; }
+}
+
 /* icon-only: square-ish, padding per size (mirror --btn-iconpad) */
 .btn--icon-only { gap: 0; }
 .btn--m.btn--icon-only  { padding: 0 8px; }
@@ -102,6 +127,10 @@
 .btn--accent svg { color: var(--text-on-dark); }
 .btn--accent:hover  { background: var(--primary-dark); border-color: var(--primary-dark); }
 .btn--accent:active { background: var(--btn-pale);     border-color: var(--btn-pale); }
+/* нажата (вкл) — вид наведения; наведение на нажатую — заливка по умолчанию:
+   светлый фон клика с белой подписью на постоянном состоянии не читается */
+.btn--accent[aria-pressed="true"], .btn--accent[aria-expanded="true"], .btn--accent.is-pressed { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn--accent[aria-pressed="true"]:hover, .btn--accent[aria-expanded="true"]:hover, .btn--accent.is-pressed:hover, .btn--accent.is-pressed.is-hover { background: var(--primary); border-color: var(--primary); }
 
 /* ---------- type: OUTLINE -------------------------------------------------- */
 .btn--outline {
@@ -113,6 +142,9 @@
 .btn--outline:hover  { background: var(--btn-hover-bg); }
 .btn--outline:active { background: var(--btn-active-bg); color: var(--btn-pale); border-color: var(--btn-pale); }
 .btn--outline:active svg { color: var(--btn-pale); }
+/* нажата (вкл) — вид наведения; наведение на нажатую — фон клика, подпись и рамка прежние */
+.btn--outline[aria-pressed="true"], .btn--outline[aria-expanded="true"], .btn--outline.is-pressed { background: var(--btn-hover-bg); }
+.btn--outline[aria-pressed="true"]:hover, .btn--outline[aria-expanded="true"]:hover, .btn--outline.is-pressed:hover, .btn--outline.is-pressed.is-hover { background: var(--btn-active-bg); }
 
 /* ---------- type: TRANSPARENT ---------------------------------------------- */
 .btn--transparent {
@@ -124,6 +156,9 @@
 .btn--transparent:hover  { background: var(--btn-hover-bg); }
 .btn--transparent:active { background: var(--btn-active-bg); color: var(--btn-pale); }
 .btn--transparent:active svg { color: var(--btn-pale); }
+/* нажата (вкл) — вид наведения; наведение на нажатую — фон клика */
+.btn--transparent[aria-pressed="true"], .btn--transparent[aria-expanded="true"], .btn--transparent.is-pressed { background: var(--btn-hover-bg); }
+.btn--transparent[aria-pressed="true"]:hover, .btn--transparent[aria-expanded="true"]:hover, .btn--transparent.is-pressed:hover, .btn--transparent.is-pressed.is-hover { background: var(--btn-active-bg); }
 
 /* ---------- state: DISABLED ------------------------------------------------ */
 .btn:disabled,
@@ -169,6 +204,13 @@
 .btn--error.btn--transparent:hover,  .btn--danger.btn--transparent:hover  { background: var(--error-bg-light); }
 .btn--error.btn--transparent:active, .btn--danger.btn--transparent:active { background: var(--error-bg); color: var(--error-dark); }
 .btn--error.btn--transparent:active svg, .btn--danger.btn--transparent:active svg { color: var(--error-dark); }
+/* error: нажата — вид наведения тона; наведение на нажатую — заливка по умолчанию (accent) / фон клика (outline, transparent) */
+.btn--error.btn--accent[aria-pressed="true"], .btn--error.btn--accent[aria-expanded="true"], .btn--error.btn--accent.is-pressed, .btn--danger.btn--accent[aria-pressed="true"], .btn--danger.btn--accent[aria-expanded="true"], .btn--danger.btn--accent.is-pressed { background: var(--error-dark); border-color: var(--error-dark); }
+.btn--error.btn--accent[aria-pressed="true"]:hover, .btn--error.btn--accent[aria-expanded="true"]:hover, .btn--error.btn--accent.is-pressed:hover, .btn--error.btn--accent.is-pressed.is-hover, .btn--danger.btn--accent[aria-pressed="true"]:hover, .btn--danger.btn--accent[aria-expanded="true"]:hover, .btn--danger.btn--accent.is-pressed:hover, .btn--danger.btn--accent.is-pressed.is-hover { background: var(--error); border-color: var(--error); }
+.btn--error.btn--outline[aria-pressed="true"], .btn--error.btn--outline[aria-expanded="true"], .btn--error.btn--outline.is-pressed, .btn--danger.btn--outline[aria-pressed="true"], .btn--danger.btn--outline[aria-expanded="true"], .btn--danger.btn--outline.is-pressed { background: var(--error-bg-light); }
+.btn--error.btn--outline[aria-pressed="true"]:hover, .btn--error.btn--outline[aria-expanded="true"]:hover, .btn--error.btn--outline.is-pressed:hover, .btn--error.btn--outline.is-pressed.is-hover, .btn--danger.btn--outline[aria-pressed="true"]:hover, .btn--danger.btn--outline[aria-expanded="true"]:hover, .btn--danger.btn--outline.is-pressed:hover, .btn--danger.btn--outline.is-pressed.is-hover { background: var(--error-bg); }
+.btn--error.btn--transparent[aria-pressed="true"], .btn--error.btn--transparent[aria-expanded="true"], .btn--error.btn--transparent.is-pressed, .btn--danger.btn--transparent[aria-pressed="true"], .btn--danger.btn--transparent[aria-expanded="true"], .btn--danger.btn--transparent.is-pressed { background: var(--error-bg-light); }
+.btn--error.btn--transparent[aria-pressed="true"]:hover, .btn--error.btn--transparent[aria-expanded="true"]:hover, .btn--error.btn--transparent.is-pressed:hover, .btn--error.btn--transparent.is-pressed.is-hover, .btn--danger.btn--transparent[aria-pressed="true"]:hover, .btn--danger.btn--transparent[aria-expanded="true"]:hover, .btn--danger.btn--transparent.is-pressed:hover, .btn--danger.btn--transparent.is-pressed.is-hover { background: var(--error-bg); }
 
 /* Warning */
 .btn--warning.btn--accent { background: var(--warning); border-color: var(--warning); color: var(--text-on-dark); }
@@ -187,6 +229,13 @@
 .btn--warning.btn--transparent:hover  { background: var(--warning-bg); }
 .btn--warning.btn--transparent:active { background: color-mix(in srgb, var(--warning) 18%, var(--warning-bg)); color: var(--warning-dark); }
 .btn--warning.btn--transparent:active svg { color: var(--warning-dark); }
+/* warning: нажата — вид наведения тона; наведение на нажатую — заливка по умолчанию (accent) / фон клика (outline, transparent) */
+.btn--warning.btn--accent[aria-pressed="true"], .btn--warning.btn--accent[aria-expanded="true"], .btn--warning.btn--accent.is-pressed { background: var(--warning-dark); border-color: var(--warning-dark); }
+.btn--warning.btn--accent[aria-pressed="true"]:hover, .btn--warning.btn--accent[aria-expanded="true"]:hover, .btn--warning.btn--accent.is-pressed:hover, .btn--warning.btn--accent.is-pressed.is-hover { background: var(--warning); border-color: var(--warning); }
+.btn--warning.btn--outline[aria-pressed="true"], .btn--warning.btn--outline[aria-expanded="true"], .btn--warning.btn--outline.is-pressed { background: var(--warning-bg); }
+.btn--warning.btn--outline[aria-pressed="true"]:hover, .btn--warning.btn--outline[aria-expanded="true"]:hover, .btn--warning.btn--outline.is-pressed:hover, .btn--warning.btn--outline.is-pressed.is-hover { background: color-mix(in srgb, var(--warning) 18%, var(--warning-bg)); }
+.btn--warning.btn--transparent[aria-pressed="true"], .btn--warning.btn--transparent[aria-expanded="true"], .btn--warning.btn--transparent.is-pressed { background: var(--warning-bg); }
+.btn--warning.btn--transparent[aria-pressed="true"]:hover, .btn--warning.btn--transparent[aria-expanded="true"]:hover, .btn--warning.btn--transparent.is-pressed:hover, .btn--warning.btn--transparent.is-pressed.is-hover { background: color-mix(in srgb, var(--warning) 18%, var(--warning-bg)); }
 
 /* Success */
 .btn--success.btn--accent { background: var(--success); border-color: var(--success); color: var(--text-on-dark); }
@@ -205,6 +254,13 @@
 .btn--success.btn--transparent:hover  { background: var(--success-bg); }
 .btn--success.btn--transparent:active { background: color-mix(in srgb, var(--success) 18%, var(--success-bg)); color: var(--success-dark); }
 .btn--success.btn--transparent:active svg { color: var(--success-dark); }
+/* success: нажата — вид наведения тона; наведение на нажатую — заливка по умолчанию (accent) / фон клика (outline, transparent) */
+.btn--success.btn--accent[aria-pressed="true"], .btn--success.btn--accent[aria-expanded="true"], .btn--success.btn--accent.is-pressed { background: var(--success-dark); border-color: var(--success-dark); }
+.btn--success.btn--accent[aria-pressed="true"]:hover, .btn--success.btn--accent[aria-expanded="true"]:hover, .btn--success.btn--accent.is-pressed:hover, .btn--success.btn--accent.is-pressed.is-hover { background: var(--success); border-color: var(--success); }
+.btn--success.btn--outline[aria-pressed="true"], .btn--success.btn--outline[aria-expanded="true"], .btn--success.btn--outline.is-pressed { background: var(--success-bg); }
+.btn--success.btn--outline[aria-pressed="true"]:hover, .btn--success.btn--outline[aria-expanded="true"]:hover, .btn--success.btn--outline.is-pressed:hover, .btn--success.btn--outline.is-pressed.is-hover { background: color-mix(in srgb, var(--success) 18%, var(--success-bg)); }
+.btn--success.btn--transparent[aria-pressed="true"], .btn--success.btn--transparent[aria-expanded="true"], .btn--success.btn--transparent.is-pressed { background: var(--success-bg); }
+.btn--success.btn--transparent[aria-pressed="true"]:hover, .btn--success.btn--transparent[aria-expanded="true"]:hover, .btn--success.btn--transparent.is-pressed:hover, .btn--success.btn--transparent.is-pressed.is-hover { background: color-mix(in srgb, var(--success) 18%, var(--success-bg)); }
 
 /* Info */
 .btn--info.btn--accent { background: var(--info); border-color: var(--info); color: var(--text-on-dark); }
@@ -223,6 +279,13 @@
 .btn--info.btn--transparent:hover  { background: var(--info-bg); }
 .btn--info.btn--transparent:active { background: color-mix(in srgb, var(--info) 18%, var(--info-bg)); color: var(--info-dark); }
 .btn--info.btn--transparent:active svg { color: var(--info-dark); }
+/* info: нажата — вид наведения тона; наведение на нажатую — заливка по умолчанию (accent) / фон клика (outline, transparent) */
+.btn--info.btn--accent[aria-pressed="true"], .btn--info.btn--accent[aria-expanded="true"], .btn--info.btn--accent.is-pressed { background: var(--info-dark); border-color: var(--info-dark); }
+.btn--info.btn--accent[aria-pressed="true"]:hover, .btn--info.btn--accent[aria-expanded="true"]:hover, .btn--info.btn--accent.is-pressed:hover, .btn--info.btn--accent.is-pressed.is-hover { background: var(--info); border-color: var(--info); }
+.btn--info.btn--outline[aria-pressed="true"], .btn--info.btn--outline[aria-expanded="true"], .btn--info.btn--outline.is-pressed { background: var(--info-bg); }
+.btn--info.btn--outline[aria-pressed="true"]:hover, .btn--info.btn--outline[aria-expanded="true"]:hover, .btn--info.btn--outline.is-pressed:hover, .btn--info.btn--outline.is-pressed.is-hover { background: color-mix(in srgb, var(--info) 18%, var(--info-bg)); }
+.btn--info.btn--transparent[aria-pressed="true"], .btn--info.btn--transparent[aria-expanded="true"], .btn--info.btn--transparent.is-pressed { background: var(--info-bg); }
+.btn--info.btn--transparent[aria-pressed="true"]:hover, .btn--info.btn--transparent[aria-expanded="true"]:hover, .btn--info.btn--transparent.is-pressed:hover, .btn--info.btn--transparent.is-pressed.is-hover { background: color-mix(in srgb, var(--info) 18%, var(--info-bg)); }
 
 /* forced states (документация) — Error/Danger */
 .btn--error.btn--accent.is-hover,  .btn--danger.btn--accent.is-hover  { background: var(--error-dark); border-color: var(--error-dark); }

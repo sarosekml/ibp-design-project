@@ -1,0 +1,70 @@
+/* =========================================================================
+   Design System — Note (Заметка)
+   Нейтральное пояснение «иконка + вторичный текст» в потоке: под формой,
+   в модальном окне, в тайле. Без заливки, рамки и полей. Перенесена из
+   подвала конструктора запроса AI Pitcher (прототип ai-bankster v02,
+   задача MS0010e).
+
+   Элемент: <p class="note"> — обычный текст; иконка декоративная
+            (aria-hidden). Не интерактивна: внутри допустима только
+            ссылка Link (.link--inline), кнопок нет.
+   Sizes:   xs — Body XS, иконка 16, зазор 4
+            s (по умолчанию) — Body S, иконка 18, зазор 8
+            m — Body M, иконка 20, зазор 8
+   Tone:    иконка по умолчанию --secondary (правило ДС);
+            .note--accent — иконка --primary
+   Layout:  иконка — по центру первой строки: её коробка высотой в строку
+            текста (1lh); длинный текст переносится, иконка остаётся у
+            первой строки.
+   Requires: Typography.css, Palette.css, Spacing.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.note[hidden] { display: none; }
+
+.note {
+  --note-icon: 18px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  margin: 0;
+  font: var(--type-body-s);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* ---------- sizes --------------------------------------------------------- */
+.note--xs { --note-icon: 16px; gap: var(--space-4); font: var(--type-body-xs); }
+.note--s  { --note-icon: 18px; gap: var(--space-8); font: var(--type-body-s); }
+.note--m  { --note-icon: 20px; gap: var(--space-8); font: var(--type-body-m); }
+
+/* ---------- parts ---------------------------------------------------------
+   Коробка иконки — высотой в строку текста (1lh от шрифта заметки): глиф
+   встаёт по центру первой строки; глиф выше строки (S: 18 при строке 16)
+   выступает на равные доли сверху и снизу и ничего не сдвигает. */
+.note__icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1lh;
+  color: var(--secondary);
+}
+.note__icon > :is(svg,[data-icon]) {
+  width: var(--note-icon);
+  height: var(--note-icon);
+  display: block;
+  flex: none;
+}
+.note__icon > [data-icon] > svg { width: 100%; height: 100%; display: block; }
+.note__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-wrap: pretty;
+}
+
+/* ---------- tone ---------------------------------------------------------- */
+.note--accent .note__icon { color: var(--primary); }

@@ -1,0 +1,76 @@
+/* Локальный компонент «Карточка-счётчик» (StatCard) — кандидат в ДС.
+   Цвета, шрифты, отступы, радиусы — токены ДС; своих значений здесь нет.
+   Тон задаёт тройку переменных: подложка, цвет числа, линия выбора. Тоновые
+   подложки — те же, что у Alert и SnackBar (--info-bg, --warning-bg,
+   --error-bg-light, --success-bg), поэтому цвет читается одинаково по всей ДС.
+   Состояния — по образцу Card (Tile 1.012): наведение — рамка, выбор — рамка
+   в тоне, фокус — обводка --primary. */
+
+.lc-stat {
+  --lc-stat-bg: var(--bg-page);
+  --lc-stat-fg: var(--text-primary);
+  --lc-stat-line: var(--border-primary);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-12);
+  border: 1px solid transparent;
+  border-radius: var(--radius-m);
+  background: var(--lc-stat-bg);
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.lc-stat__label,
+.lc-stat__caption {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+}
+.lc-stat__value {
+  font: var(--type-h4-strong);
+  color: var(--lc-stat-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* S — компактный: число над подписью, по центру, без пояснения */
+.lc-stat--s {
+  align-items: center;
+  gap: 0;
+  padding: var(--space-8);
+  text-align: center;
+}
+.lc-stat--s .lc-stat__value { order: -1; font: var(--type-h5-strong); }
+.lc-stat--s .lc-stat__caption { display: none; }
+
+/* Тоны */
+.lc-stat--accent  { --lc-stat-bg: var(--primary-bg);     --lc-stat-fg: var(--primary-dark); --lc-stat-line: var(--primary); }
+.lc-stat--info    { --lc-stat-bg: var(--info-bg);        --lc-stat-fg: var(--info-dark);    --lc-stat-line: var(--info); }
+.lc-stat--warning { --lc-stat-bg: var(--warning-bg);     --lc-stat-fg: var(--warning-dark); --lc-stat-line: var(--warning); }
+.lc-stat--error   { --lc-stat-bg: var(--error-bg-light); --lc-stat-fg: var(--error-dark);   --lc-stat-line: var(--error); }
+.lc-stat--success { --lc-stat-bg: var(--success-bg);     --lc-stat-fg: var(--success-dark); --lc-stat-line: var(--success); }
+
+/* Наведение, выбор, фокус. Выбор сильнее наведения той же формой селектора
+   плюс атрибут (Л92): наведение на выбранную карточку рамку не гасит. */
+.lc-stat:hover { border-color: color-mix(in srgb, var(--lc-stat-line) 40%, transparent); }
+.lc-stat[aria-pressed="true"],
+.lc-stat[aria-pressed="true"]:hover { border-color: var(--lc-stat-line); }
+.lc-stat:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Показатель без действия */
+.lc-stat.lc-stat--static { cursor: default; }
+.lc-stat.lc-stat--static:hover { border-color: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-stat { transition: none; }
+}

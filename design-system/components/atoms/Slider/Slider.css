@@ -1,0 +1,82 @@
+/* ============================================================
+   Slider 1.001 — нативный range: метка и значение над треком,
+   заполненная часть трека, бегунок, клавиатура браузера.
+   Состояния: Default · Hover (ореол бегунка) · Focus (обводка) · Disabled.
+   Трек-градиент (тон, насыщенность) задаёт потребитель переменной --slr-track.
+   ============================================================ */
+:root {
+  --slr-track-height: 4px;
+  --slr-thumb-size: 16px;
+  --slr-hit-height: 32px;
+  --slr-halo: 6px;
+}
+
+.slr { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.slr[hidden] { display: none; }
+
+.slr__head {
+  display: flex; justify-content: space-between; gap: var(--space-8);
+  font: var(--type-body-xs); color: var(--text-secondary);
+}
+.slr__head[hidden] { display: none; }
+.slr__value { font-variant-numeric: tabular-nums; }
+
+.slr__input {
+  appearance: none; width: 100%; height: var(--slr-hit-height);
+  margin: 0; padding: 0; background: transparent; cursor: pointer;
+}
+
+/* Трек: заполненная часть — --primary до --slr-progress (ставит Slider.js). */
+.slr__input::-webkit-slider-runnable-track {
+  height: var(--slr-track-height); border-radius: var(--radius-pill);
+  background: var(--slr-track, linear-gradient(to right, var(--primary) 0 var(--slr-progress, 0%), var(--border-light) var(--slr-progress, 0%) 100%));
+}
+.slr__input::-moz-range-track {
+  height: var(--slr-track-height); border-radius: var(--radius-pill);
+  background: var(--slr-track, var(--border-light));
+}
+/* Firefox рисует заполненную часть отдельным элементом. */
+.slr__input::-moz-range-progress {
+  height: var(--slr-track-height); border-radius: var(--radius-pill);
+  background: var(--primary);
+}
+.slr__input[style*="--slr-track"]::-moz-range-progress { background: transparent; }
+
+/* Бегунок. */
+.slr__input::-webkit-slider-thumb {
+  appearance: none; width: var(--slr-thumb-size); height: var(--slr-thumb-size);
+  margin-top: calc((var(--slr-track-height) - var(--slr-thumb-size)) / 2);
+  background: var(--primary); border: var(--space-2) solid var(--bg-tile);
+  border-radius: var(--radius-circle); box-shadow: var(--elevation-1);
+  transition: box-shadow .15s ease;
+}
+.slr__input::-moz-range-thumb {
+  width: var(--slr-thumb-size); height: var(--slr-thumb-size); box-sizing: border-box;
+  background: var(--primary); border: var(--space-2) solid var(--bg-tile);
+  border-radius: var(--radius-circle); box-shadow: var(--elevation-1);
+  transition: box-shadow .15s ease;
+}
+
+/* Hover: ореол бегунка. .is-hover — витрина. */
+.slr__input:not(:disabled):hover::-webkit-slider-thumb,
+.slr.is-hover .slr__input::-webkit-slider-thumb { box-shadow: var(--elevation-1), 0 0 0 var(--slr-halo) var(--primary-bg); }
+.slr__input:not(:disabled):hover::-moz-range-thumb,
+.slr.is-hover .slr__input::-moz-range-thumb { box-shadow: var(--elevation-1), 0 0 0 var(--slr-halo) var(--primary-bg); }
+
+/* Focus: обводка трека-области. .is-focus — витрина. */
+.slr__input:focus-visible,
+.slr.is-focus .slr__input { outline: var(--space-2) solid var(--primary); outline-offset: var(--space-2); border-radius: var(--radius-field); }
+
+/* Disabled: цвета ДС вместо прозрачности; значение сохраняется. */
+.slr__input:disabled { cursor: default; }
+.slr__input:disabled::-webkit-slider-runnable-track {
+  background: var(--slr-track, linear-gradient(to right, var(--text-inactive) 0 var(--slr-progress, 0%), var(--border-light) var(--slr-progress, 0%) 100%));
+}
+.slr__input:disabled::-moz-range-progress { background: var(--text-inactive); }
+.slr__input:disabled::-webkit-slider-thumb { background: var(--text-inactive); box-shadow: none; }
+.slr__input:disabled::-moz-range-thumb { background: var(--text-inactive); box-shadow: none; }
+.slr:has(.slr__input:disabled) .slr__head { color: var(--text-inactive); }
+
+@media (prefers-reduced-motion: reduce) {
+  .slr__input::-webkit-slider-thumb, .slr__input::-moz-range-thumb { transition: none; }
+}

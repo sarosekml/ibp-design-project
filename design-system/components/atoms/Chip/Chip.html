@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
 <link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
 <link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../../foundations/Layout/Layout.css">
 <link rel="stylesheet" href="../LabelHelper/LabelHelper.css">
 <link rel="stylesheet" href="../Avatar/Avatar.css">
 <link rel="stylesheet" href="Chip.css">
@@ -169,7 +171,7 @@
             <div class="docs-main">
 
 <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.018</b></span><span>Обновлено: <b>21.09.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.020</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>Chip</h1>
     <p class="lead">Чип — компактный интерактивный элемент для фильтрации и группировки данных. Применяется как <b>тег</b>, <b>маркер</b> и <b>статус</b>, входит в состав чиплиста и InputAutocomplete. Два типа — <b>Edit</b> и <b>ReadOnly</b>, два стиля — <b>Fill</b> и <b>Outline</b>.</p>
@@ -222,7 +224,7 @@
   
 <div class="subsec" data-screen-label="Guidelines">
     <h3>Правила</h3>
-    <p class="desc">Чип несёт короткую метку или статус. Не превращайте его в кнопку и не помещайте длинные предложения — для этого есть другие компоненты.</p>
+    <p class="desc">Чип несёт короткую метку или статус. Не превращайте его в кнопку действия («Сохранить», «Сбросить» — это <a class="inl" href="../Buttons/Buttons.html">Button</a>) и не помещайте длинные предложения — для этого есть другие компоненты. Чип-<b>переключатель выбора</b> на <code class="tok">&lt;button&gt;</code> допустим: он показывает, выбран ли вариант, и не запускает действие (см. «Поведение · Выбор»).</p>
     <div class="guide">
       <div class="guide-card good">
         <div class="guide-card__bar"></div>
@@ -305,7 +307,7 @@
 
 <div class="subsec" data-screen-label="Style">
     <h3>Стиль</h3>
-    <p class="desc"><b>Fill</b> (Border + Fill) — заливка плюс обводка, базовый стиль для чиплистов и инпутов. <b>Outline</b> (Border) — только обводка, для более лёгкого вида на плотных поверхностях; при наведении появляется заливка.</p>
+    <p class="desc"><b>Fill</b> (Border + Fill) — заливка плюс обводка, базовый стиль для чиплистов и инпутов. <b>Outline</b> (Border) — только обводка, для более лёгкого вида на плотных поверхностях; при наведении появляется заливка. <b>Dashed</b> — пунктирная обводка: <b>предложение</b>, вариант, который ещё не выбран или не добавлен («+ Структура владения», «+ Использовать «мин»»). Цвета — как у Outline; на наведении и в выбранном чипе линия становится сплошной той же толщины — габарит не меняется.</p>
     <div class="cols2">
       <div class="panel">
         <p class="demo-col__title">Fill</p>
@@ -318,11 +320,23 @@
         <div class="chiplist" id="style-outline"></div>
       </div>
     </div>
+    <div class="cols2" style="margin-top:20px;">
+      <div class="panel">
+        <p class="demo-col__title">Dashed</p>
+        <p class="demo-col__sub">Пунктир — предложение. Наведите: линия станет сплошной</p>
+        <div class="chiplist" id="style-dashed"></div>
+      </div>
+      <div class="panel">
+        <p class="demo-col__title">Dashed + тон</p>
+        <p class="demo-col__sub">Свой вариант в списке выбора — тон Primary</p>
+        <div class="chiplist" id="style-dashed-tone"></div>
+      </div>
+    </div>
   </div>
 
 <div class="subsec" data-screen-label="Leading">
     <h3>Ведущие элементы</h3>
-    <p class="desc">Слева к тексту можно добавить дополнительный элемент. <code class="tok">.Chip_Content</code> — иконка-маркер; <b>Иконка</b> — смысловая пиктограмма, не завязанная на тон/статус; <b>Аватар</b> — компонент <a class="inl" href="../Avatar/Avatar.html">Avatar</a> с выбираемым содержимым (текст-инициалы, иконка или фото). Отдельный слот «бейдж» убран — он объединён с аватаром. Справа — действие: крестик удаления или шеврон выпадающего списка (<code class="tok">.Chip_Action</code>) — взаимоисключающие, вместе не ставятся.</p>
+    <p class="desc">Слева к тексту можно добавить дополнительный элемент. <code class="tok">.Chip_Content</code> — иконка-маркер; <b>Иконка</b> — смысловая пиктограмма, не завязанная на тон/статус; <b>Аватар</b> — компонент <a class="inl" href="../Avatar/Avatar.html">Avatar</a> с выбираемым содержимым (текст-инициалы, иконка или фото). Отдельный слот «бейдж» убран — он объединён с аватаром. <b>Тег</b> (<code class="tok">.chip__tag</code>) — мини-чип категории перед подписью («Отрасль», «Компания»): есть во всех размерах, не сжимается — усекается подпись чипа. <b>Иконка-переключатель</b> (<code class="tok">.chip__icon--toggle</code>) — два глифа, «add» в невыбранном чипе и «check» в выбранном. Справа — действие: крестик удаления или шеврон выпадающего списка (<code class="tok">.Chip_Action</code>) — взаимоисключающие, вместе не ставятся. Галочка выбора <code class="tok">.chip__check</code> — справа, когда ведущий слот занят тегом или аватаром; с крестиком и шевроном не сочетается. Стрелка раскрытия <code class="tok">.chip__expand</code> у раскрывающегося чипа — признак раскрытия, а не список значений: стоит рядом с крестиком (см. «Поведение · Раскрытие»).</p>
     <div class="panel">
       <div class="slot-tiles" id="slot-tiles"></div>
     </div>
@@ -361,6 +375,10 @@
     <p class="desc">Четыре размера. <b>L</b> — крупный ReadOnly-показ (зарезервирован). <b>M</b> и <b>S</b> — базовые для чиплистов и фильтров. <b>XS</b> — для компактных мест (плотные таблицы, инлайн-метки, значения-чипы в <a class="inl" href="../../molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a>).</p>
     <div class="panel">
       <div class="matrix-wrap"><div class="sizes-grid" id="sizes-grid"></div></div>
+    </div>
+    <p class="desc" style="margin-top:20px;"><b>Compact</b> (<code class="tok">.chip--compact</code>) — подпись на ступень мельче при той же высоте: L и M набираются Body S (14/16), иконки в M — 16px. Так же устроена кнопка S (32px, 14px): чипы выбора рядом с полями и кнопками. S и XS уже на нижней ступени — модификатор на них не действует.</p>
+    <div class="panel">
+      <div class="chiplist" id="sizes-compact"></div>
     </div>
     <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
       <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 0.45fr 0.6fr 1fr 0.6fr 0.7fr 1.6fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Размер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Высота</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кегль текста</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Иконка</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--right"><span class="th__label">Скругление</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Применение</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div id="sizes-table"></div></div>
@@ -414,12 +432,49 @@
       <p class="surface__cap" id="removable-status">Осталось чипов: 5</p>
     </div>
   </div>
+
+<div class="subsec" data-screen-label="Expand">
+    <h3>Раскрытие</h3>
+    <p class="desc">Раскрывающийся чип (<code class="tok">.chip--expandable</code>) несёт длинное содержимое — например, фрагмент текста, добавленный в запрос. Свёрнутый — обычный Edit-чип: подпись, стрелка ˅, крестик. Клик по чипу растягивает его на всю строку и показывает весь текст внутри; в шапке вместо подписи — источник, стрелка поворачивается в ˄. Повторный клик сворачивает. Стиль чипа не меняется — только размер и содержимое; подложка наведения у раскрытого — только над шапкой. В одном чиплисте раскрыт один чип. Длинный текст — до 8 строк, дальше прокрутка внутри. Чип без текста (график) не раскрывается.</p>
+    <ul class="bullets">
+      <li>шапка — кнопка <code class="tok">&lt;button class="chip__toggle" aria-expanded aria-controls&gt;</code> с ведущим слотом, подписью <code class="tok">.chip__label</code>, источником <code class="tok">.chip__source</code> и стрелкой <code class="tok">.chip__expand</code>; Enter и Space даёт сама кнопка;</li>
+      <li>текст — <code class="tok">.chip__body</code> рядом с кнопкой, а не внутри неё: скринридер читает его отдельно от имени кнопки;</li>
+      <li>раскрытием управляет <code class="tok">Chip.js</code>; на чипе всплывает событие <code class="tok">ds-chip:toggle</code> (<code class="tok">detail.expanded</code>), кодом — <code class="tok">DSChip.expand(chip, open)</code>.</li>
+    </ul>
+    <div class="panel">
+      <p class="demo-rowlabel">Нажмите на чип фрагмента</p>
+      <div class="chiplist" id="expand-demo" role="group" aria-label="Фрагменты в запросе"></div>
+      <p class="surface__cap" id="expand-status">&nbsp;</p>
+    </div>
+  </div>
+
+<div class="subsec" data-screen-label="Choice">
+    <h3>Выбор</h3>
+    <p class="desc">Чип-переключатель выбора — <code class="tok">&lt;button type="button"&gt;</code>: фокус, Enter и Space даёт сама кнопка. Выбор задаётся данными — атрибутом, а не классом: компонент красит чип выбранным по <code class="tok">aria-pressed="true"</code> или <code class="tok">aria-checked="true"</code> (класс <code class="tok">.chip--selected</code> — только для витрины). Недоступный вариант — нативный <code class="tok">disabled</code>.</p>
+    <ul class="bullets">
+      <li><b>Множественный выбор</b> — чиплист <code class="tok">role="group"</code> с <code class="tok">aria-label</code>, на каждом чипе <code class="tok">aria-pressed</code>. Предложения рисуются стилем Dashed с иконкой-переключателем: принятое предложение становится выбранным чипом со сплошной линией;</li>
+      <li><b>Одиночный выбор</b> — чиплист <code class="tok">role="radiogroup"</code>, чипы <code class="tok">role="radio"</code> + <code class="tok">aria-checked</code>. Категория — тегом, выбранный вариант отмечает галочка справа: чип расширяется на неё, соседи в ряду сдвигаются;</li>
+      <li><b>Сжатие при нажатии</b> (<code class="tok">scale(.97)</code>) — у чипа-кнопки по умолчанию; <code class="tok">.chip--no-press</code> выключает его, <code class="tok">.chip--press</code> включает статичному чипу. У чипа с крестиком (приложенные файлы, фильтры) сжатия нет.</li>
+    </ul>
+    <div class="cols2">
+      <div class="panel">
+        <p class="demo-col__title">Множественный</p>
+        <p class="demo-col__sub">aria-pressed · Dashed + иконка-переключатель</p>
+        <div class="chiplist" id="choice-multi" role="group" aria-label="Дополнительный фокус"></div>
+      </div>
+      <div class="panel">
+        <p class="demo-col__title">Одиночный</p>
+        <p class="demo-col__sub">role="radio" · тег + галочка справа</p>
+        <div class="chiplist" id="choice-single" role="radiogroup" aria-label="Объект анализа"></div>
+      </div>
+    </div>
+  </div>
   </section>
 
   <!-- STATES -->
   <section class="section" data-screen-label="States">
     <h2>Состояния</h2>
-    <p class="desc">Базовые состояния чипа и их цветовые токены. При наведении меняется цвет фона. Чип в состоянии Disabled на наведение не реагирует — кроме случаев с длинными текстовками, когда показываем тултип.</p>
+    <p class="desc">Базовые состояния чипа и их цветовые токены. При наведении меняется цвет фона. Selected — выбранный чип-переключатель (по <code class="tok">aria-pressed</code> / <code class="tok">aria-checked</code>), одинаковый для всех стилей; у Dashed в выбранном чипе линия сплошная. Чип в состоянии Disabled на наведение не реагирует — кроме случаев с длинными текстовками, когда показываем тултип.</p>
     <div id="state-specs"></div>
   </section>
 
@@ -438,7 +493,7 @@
         <li>усечённая подпись объясняет себя тултипом из коробки (<code class="tok">components/atoms/Chip/Chip.js</code> + <code class="tok">components/molecules/Tooltip/Tooltip.js</code>): по первому наведению или фокусу рантайм навешивает тултип с полным текстом и показывает его только при реальном усечении — <code class="tok">data-tooltip</code> руками писать не нужно, а оставленный <code class="tok">title</code> рантайм заберёт в текст и снимет, чтобы поверх не всплыл нативный;</li>
         <li>Disabled-чип исключён из таб-порядка (<code class="tok">pointer-events:none</code>), но если текст обрезан — класс <code class="tok">.chip--has-tooltip</code> возвращает наведение для тултипа; класс ставит рантайм при загрузке, чипу, построенному позже, — вызов <code class="tok">DSChip.refresh(root)</code>;</li>
         <li>не полагайтесь только на тон (цвет) для критичных статусов (например, Error против Success) — для пользователей с нарушениями цветовосприятия дублируйте смысл маркером/иконкой;</li>
-        <li>для чипов-фильтров с выбором (<code class="tok">chip--selected</code>, Предложение) рекомендуем <code class="tok">aria-pressed</code> на каждом чипе и <code class="tok">role="group"</code> на чиплисте.</li>
+        <li>чип-переключатель — <code class="tok">&lt;button type="button"&gt;</code>: множественный выбор — <code class="tok">aria-pressed</code> на каждом чипе и <code class="tok">role="group"</code> на чиплисте; одиночный — <code class="tok">role="radio"</code> + <code class="tok">aria-checked</code> и <code class="tok">role="radiogroup"</code>. Компонент красит выбранный по этим атрибутам, отдельный класс не нужен. Тег и галочка озвучиваются как часть подписи: галочке ставьте <code class="tok">aria-hidden="true"</code>, состояние передаёт атрибут на чиплисте.</li>
       </ul>
     </div>
   </section>
@@ -515,14 +570,14 @@
     <p class="desc">Сверяясь с Material Design и практиками других ДС, в документации недостаёт ряда состояний и кейсов. Ниже — предлагаемые дополнения; все собраны на существующих токенах.</p>
     <div class="callout">
       <h3>Предлагаемые дополнения</h3>
-      <p>Состояния Selected / Focus / Loading / Invalid, статусные тона и числовой счётчик уже реализованы и переехали в «Варианты» / «Состояния». В бэклоге осталось одно нереализованное предложение.</p>
+      <p>Состояния Selected / Focus / Loading / Invalid, статусные тона и числовой счётчик уже реализованы и переехали в «Варианты» / «Состояния». В бэклоге — нереализованные предложения.</p>
       <div class="prop-grid" id="proposals"></div>
     </div>
   </section>
 
   <footer class="page-foot">
     <span>Дизайн-система · Chip</span>
-    <span>Edit · ReadOnly — Fill / Outline — L / M / S / XS</span>
+    <span>Edit · ReadOnly — Fill / Outline / Dashed — L / M / S / XS · раскрывающийся</span>
   </footer>
             </div><!-- /docs-main -->
             <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
@@ -610,10 +665,43 @@
 <span class="chip chip--m"><span class="chip__label">Договор</span></span>
 
 <!-- чиплист: контейнер с авто-переносом и единым зазором -->
-<div class="chiplist" role="group" aria-label="Фильтры">…</div></script>
+<div class="chiplist" role="group" aria-label="Фильтры">…</div>
+
+<!-- множественный выбор: предложение (Dashed) с иконкой-переключателем -->
+<div class="chiplist" role="group" aria-label="Дополнительный фокус">
+  <button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--dashed" aria-pressed="false">
+    <span class="chip__icon chip__icon--toggle" aria-hidden="true"><i data-icon="add"></i><i data-icon="check"></i></span>
+    <span class="chip__label">Структура владения</span>
+  </button>
+</div>
+
+<!-- раскрывающийся чип: шапка-кнопка, крестик, весь текст в .chip__body -->
+<span class="chip chip--edit chip--s chip--expandable">
+  <button type="button" class="chip__toggle" aria-expanded="false" aria-controls="frag-1">
+    <span class="chip__icon"><i data-icon="message-text"></i></span>
+    <span class="chip__label">«Долговая нагрузка группы…»</span>
+    <span class="chip__source">Фрагмент материала · Долговая нагрузка</span>
+    <span class="chip__expand" aria-hidden="true"><i data-icon="chevron-down"></i></span>
+  </button>
+  <span class="chip__remove" role="button" aria-label="Убрать из запроса"><i data-icon="close"></i></span>
+  <span class="chip__body" id="frag-1"><span class="chip__text ds-scroll">…весь текст фрагмента…</span></span>
+</span>
+
+<!-- одиночный выбор: тег категории и галочка справа -->
+<div class="chiplist" role="radiogroup" aria-label="Объект анализа">
+  <button type="button" class="chip chip--edit chip--m chip--compact chip--rounded chip--outline" role="radio" aria-checked="true">
+    <span class="chip__tag">Отрасль</span>
+    <span class="chip__label">Минеральные удобрения, СЗФО</span>
+    <span class="chip__check" aria-hidden="true"><i data-icon="check"></i></span>
+  </button>
+</div></script>
 <script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/atoms/Chip/Chip.page.js)
 function makeChip(o) {
-  // o: { type:'edit'|'readonly', style:'fill'|'outline', size, tone, label, leading, removable, dropdown, count, rounded, state, disabled }
+  // o: { type:'edit'|'readonly', style:'fill'|'outline'|'dashed', size, compact, tone, label,
+  //      leading:'marker'|'icon'|'avatar'|'tag'|'toggle', tagText, check, as:'span'|'button',
+  //      selection:'toggle'|'radio', press, removable, dropdown, count, rounded, state, disabled,
+  //      expandable: { source, text, open } }  → .chip--expandable: шапка .chip__toggle + .chip__body
+  // DSChip.expand(chip, open) — раскрыть / свернуть кодом; событие ds-chip:toggle (detail.expanded)
   // span.chip.chip--<size>(.chip--outline)(.chip--<tone>)(.chip--removable)(.chip--rounded)
   //   → .chip__label + .chip__marker/.chip__icon/.chip__avatar + .chip__remove (крестик)
   // выпадающий список: .chip + .menu (ContextMenu, DSMenu) — крестик и меню взаимоисключаются
@@ -624,9 +712,11 @@ function makeChip(o) {
    a child inside other components (InputAutocomplete, chiplists).
 
    Type:    edit (interactive) · readonly (inside ReadOnly inputs)
-   Style:   fill  (Border + Fill) · outline (Border only)
+   Style:   fill  (Border + Fill) · outline (Border only) · dashed (пунктир —
+            предложение, ещё не выбранный вариант)
    Sizes:   l (40) · m (32) · s (24) · xs (20)
             l — readonly only · xs — content/compact
+            compact — подпись на ступень мельче при той же высоте (L/M → Body S)
    Tone:    system (default) · СЕМАНТИЧЕСКИЕ (цвет = смысл): success · info ·
             warning · error · ТОНАЛЬНЫЕ (цвет = просто цвет, имя рампы): green ·
             lblue · orange · red · dpurple · grey · primary · алиасы: accent (=primary),
@@ -639,10 +729,18 @@ function makeChip(o) {
             (тот же), текст = -dark, иконка = base-тон (Local-рампы, colors.css).
             Статусные чипы ВСЕГДА скруглённые (.chip--rounded). Аватар в статусном
             чипе: фон = -mid, текст/иконка — белые (--text-on-dark).
-   States:  default · hover · selected ← proposed · focus ← proposed
+   States:  default · hover · selected · focus ← proposed
             disabled · loading ← proposed · error/invalid ← proposed
-   Slots:   leading icon / marker / avatar (компонент Avatar) · trailing remove (×) /
-            dropdown (chevron) / info-trigger (Popover) / counter
+   Slots:   leading icon / marker / avatar (компонент Avatar) / tag (мини-чип
+            категории) · trailing remove (×) / dropdown (chevron) / info-trigger
+            (Popover) / counter / check (галочка выбора)
+   Expand:  .chip--expandable — раскрывающийся чип: шапка-кнопка .chip__toggle
+            (aria-expanded) + стрелка .chip__expand, весь текст в .chip__body;
+            раскрыт — на всю строку, стиль прежний (1.020)
+   Choice:  чип-переключатель выбора на <button>: aria-pressed (множественный) или
+            role="radio" + aria-checked (одиночный) — красится как selected;
+            сжатие при нажатии — у чипа-кнопки по умолчанию (.chip--no-press
+            выключает, .chip--press включает статичному)
    Extras:  rounded (999px pill) · max-width 320px → ellipsis + tooltip
    Requires: typography.css, colors.css
    ========================================================================= */
@@ -703,7 +801,7 @@ function makeChip(o) {
   user-select: none;
   cursor: default;
   vertical-align: middle;
-  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
 
 /* doesn't shrink; the label never truncates.
@@ -837,6 +935,15 @@ function makeChip(o) {
 .chip--edit.chip--outline:not(:is(.chip--disabled,[aria-disabled="true"])):hover,
 .chip--edit.chip--outline:not(:is(.chip--disabled,[aria-disabled="true"])).is-hover { border-color: var(--st-system-mid); }
 
+/* ---------- style: dashed (пунктир — предложение) ------------------------- *
+   Вариант, который ещё не выбран или не добавлен («+ Структура владения»).
+   Геометрия и цвета — как у Outline, только линия пунктирная. На наведении и в
+   выбранном чипе линия сплошная: толщина та же — габарит не меняется. */
+.chip--dashed { background: transparent; border-style: dashed; border-color: var(--st-system-mid); }
+.chip--edit.chip--dashed:not(:is(.chip--disabled,[aria-disabled="true"])):hover,
+.chip--edit.chip--dashed:not(:is(.chip--disabled,[aria-disabled="true"])).is-hover { border-style: solid; border-color: var(--st-system-mid); }
+.chip--dashed:is(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) { border-style: solid; }
+
 /* ---------- rounded (full pill) ------------------------------------------- *
    Статусные чипы ВСЕГДА скруглённые: .chip--rounded (пилюля) — обязательное
    правило для любых чипов-статусов (см. components/atoms/Chip/Chip.md «Тон и статусы»). */
@@ -856,11 +963,20 @@ function makeChip(o) {
   outline-offset: 2px;
 }
 
-/* ---------- selected (filter toggle) — PROPOSED --------------------------- */
+/* ---------- selected (выбор) --------------------------------------------- *
+   Класс .chip--selected — форс-состояние витрины; экран задаёт выбор данными:
+   aria-pressed="true" (множественный выбор) или aria-checked="true" (одиночный,
+   role="radio"). :where не поднимает специфичность — disabled по-прежнему
+   перекрывает выбранный. */
 .chip--selected { background: var(--st-primary-light); border-color: color-mix(in srgb, var(--primary) 56%, transparent); color: var(--primary-dark); }
 .chip--selected .chip__icon, .chip--selected .chip__marker, .chip--selected .chip__remove, .chip--selected .chip__dropdown, .chip--selected .chip__info, .chip--selected .chip__count { color: var(--primary); }
 .chip--edit.chip--selected:not(:is(.chip--disabled,[aria-disabled="true"])):hover,
 .chip--edit.chip--selected:not(:is(.chip--disabled,[aria-disabled="true"])).is-hover { background: var(--st-primary-midlight); border-color: var(--primary); }
+/* то же по ARIA — отдельными правилами: селекторы выше дословно держат точечные
+   правила тем (Themes.tokens.js), а генератор тем делит селектор по запятым */
+.chip:where([aria-pressed="true"]), .chip:where([aria-checked="true"]) { background: var(--st-primary-light); border-color: color-mix(in srgb, var(--primary) 56%, transparent); color: var(--primary-dark); }
+.chip:where([aria-pressed="true"]) .chip__icon, .chip:where([aria-pressed="true"]) .chip__count, .chip:where([aria-checked="true"]) .chip__icon, .chip:where([aria-checked="true"]) .chip__count { color: var(--primary); }
+.chip.chip--edit:where([aria-pressed="true"]):not(:is(.chip--disabled,[aria-disabled="true"])):hover, .chip.chip--edit:where([aria-checked="true"]):not(:is(.chip--disabled,[aria-disabled="true"])):hover { background: var(--st-primary-midlight); border-color: var(--primary); }
 
 /* ---------- tones / statuses --------------------------------------------- *
    Две категории статусных тонов; ОКРАСКА ОДИНАКОВАЯ для всех:
@@ -914,6 +1030,15 @@ function makeChip(o) {
 .chip--outline.chip--error, .chip--outline.chip--red       { background: transparent; border-color: var(--st-red-mid); }
 .chip--outline.chip--dark, .chip--outline.chip--grey       { background: transparent; border-color: var(--st-grey-mid); }
 .chip--outline.chip--dpurple                                 { background: transparent; border-color: var(--st-dpurple-mid); }
+
+/* dashed + tone — как outline + tone: только цвет рамки (Mid), фон прозрачный */
+.chip--dashed.chip--accent, .chip--dashed.chip--primary  { background: transparent; border-color: color-mix(in srgb, var(--primary) 56%, transparent); }
+.chip--dashed.chip--success, .chip--dashed.chip--green   { background: transparent; border-color: var(--st-green-mid); }
+.chip--dashed.chip--info, .chip--dashed.chip--lblue      { background: transparent; border-color: var(--st-blue-mid); }
+.chip--dashed.chip--warning, .chip--dashed.chip--orange  { background: transparent; border-color: var(--st-orange-mid); }
+.chip--dashed.chip--error, .chip--dashed.chip--red       { background: transparent; border-color: var(--st-red-mid); }
+.chip--dashed.chip--dark, .chip--dashed.chip--grey       { background: transparent; border-color: var(--st-grey-mid); }
+.chip--dashed.chip--dpurple                              { background: transparent; border-color: var(--st-dpurple-mid); }
 
 /* ---------- аватар в статусном чипе --------------------------------------- *
    Правило для всех статусных тонов: фон = -mid той же рампы, текст/иконка —
@@ -975,6 +1100,162 @@ function makeChip(o) {
 .chip--edit.chip--invalid:not(:is(.chip--disabled,[aria-disabled="true"])):hover,
 .chip--edit.chip--invalid:not(:is(.chip--disabled,[aria-disabled="true"])).is-hover { background: var(--error-bg); border-color: var(--error); }
 
+/* ---------- compact — подпись на ступень мельче --------------------------- *
+   Та же высота, текст Body S (как у Button S: 32 px / 14 px). Для чипов выбора
+   рядом с полями и кнопками. S и XS уже на нижней ступени — не действует. */
+.chip--compact.chip--l, .chip--compact.chip--m { font: var(--type-body-s); }
+.chip--compact.chip--m :is(.chip__icon, .chip__marker, .chip__remove, .chip__dropdown, .chip__info, .spin) { width: 16px; height: 16px; }
+
+/* ---------- чип-кнопка: переключатель выбора ------------------------------ *
+   Чип бывает <button> только как переключатель выбора (aria-pressed /
+   role="radio" + aria-checked), не как кнопка действия. Сброс — только того,
+   чего нет у состояний (фон, рамку и цвет задаёт .chip). */
+button.chip { margin: 0; -webkit-appearance: none; appearance: none; text-align: left; }
+.chip:where(button, [role="button"], [role="radio"], [role="checkbox"]) { cursor: pointer; }
+
+/* сжатие при нажатии: по умолчанию — у чипа-кнопки; .chip--no-press выключает,
+   .chip--press включает статичному чипу */
+.chip:is(button, [role="button"], [role="radio"], [role="checkbox"], .chip--press):not(.chip--no-press, .chip--disabled, [aria-disabled="true"], :disabled):active { transform: scale(.97); }
+
+/* ---------- ведущий тег — мини-чип категории ------------------------------ *
+   «Отрасль», «Компания» перед подписью. Один из ведущих слотов (не сочетается
+   с icon / marker / avatar). Не сжимается — усекается подпись чипа. Геометрия
+   концентрична капсуле: отступ тега от рамки = паддинг чипа слева. */
+.chip__tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: var(--radius-control-s);
+  background: var(--st-system-light);
+  color: var(--text-secondary);
+  font: var(--type-body-xs);
+  white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease;
+}
+.chip--rounded .chip__tag { border-radius: var(--radius-pill); }
+.chip--l .chip__tag { height: 28px; padding: 0 10px; font: var(--type-body-s); }
+.chip--m .chip__tag { height: 20px; padding: 0 8px; }
+.chip--s .chip__tag, .chip--xs .chip__tag { height: 16px; padding: 0 6px; }
+.chip--l:has(.chip__tag), .chip--m:has(.chip__tag) { padding-left: 5px; }
+.chip--s:has(.chip__tag) { padding-left: 3px; }
+.chip--xs:has(.chip__tag) { padding-left: 2px; }
+.chip--m:has(.chip__tag) { gap: 8px; }
+/* тег в тоновом чипе — как аватар в статусном: фон -mid, белый текст */
+.chip--accent .chip__tag, .chip--primary .chip__tag   { background: var(--st-primary-mid); color: var(--text-on-dark); }
+.chip--success .chip__tag, .chip--green .chip__tag    { background: var(--st-green-mid);   color: var(--text-on-dark); }
+.chip--info .chip__tag, .chip--lblue .chip__tag       { background: var(--st-blue-mid);    color: var(--text-on-dark); }
+.chip--warning .chip__tag, .chip--orange .chip__tag   { background: var(--st-orange-mid);  color: var(--text-on-dark); }
+.chip--error .chip__tag, .chip--red .chip__tag        { background: var(--st-red-mid);     color: var(--text-on-dark); }
+.chip--dark .chip__tag, .chip--grey .chip__tag        { background: var(--st-grey-mid);    color: var(--text-on-dark); }
+.chip--dpurple .chip__tag                             { background: var(--st-dpurple-mid); color: var(--text-on-dark); }
+/* тег выбранного чипа — насыщенная заливка + белый текст (как solid) */
+.chip:where(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__tag { background: var(--st-primary); color: var(--text-on-dark); }
+
+/* ---------- галочка выбора ------------------------------------------------ *
+   Ведущая иконка-переключатель .chip__icon--toggle: два глифа — первый
+   («add») виден в невыбранном чипе, второй («check») — в выбранном; смена
+   в пределах слота, без сдвига соседей. */
+.chip__icon--toggle { position: relative; }
+.chip__icon--toggle > :is(svg,[data-icon]) { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.22, 1, .36, 1), opacity .2s ease; }
+.chip__icon--toggle > :is(svg,[data-icon]):last-child { opacity: 0; transform: rotate(-45deg) scale(.4); }
+.chip:where(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__icon--toggle > :is(svg,[data-icon]):first-child { opacity: 0; transform: rotate(90deg) scale(.4); }
+.chip:where(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__icon--toggle > :is(svg,[data-icon]):last-child { opacity: 1; transform: none; }
+
+/* Замыкающая галочка .chip__check — когда ведущий слот занят тегом или аватаром.
+   Невыбранный чип её не показывает: ширина 0, отрицательный отступ съедает
+   зазор. Выбранный — выезжает справа, чип шире на иконку и зазор (решение
+   05.10.2026). Не сочетается с remove / dropdown / info. */
+.chip__check {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  width: 0;
+  height: 16px;
+  opacity: 0;
+  color: var(--primary);
+  transition: width .25s cubic-bezier(.22, 1, .36, 1), margin .25s cubic-bezier(.22, 1, .36, 1), opacity .2s ease;
+}
+.chip__check > :is(svg,[data-icon]) { flex: none; display: block; width: auto; height: 100%; aspect-ratio: 1 / 1; }
+.chip--l .chip__check, .chip--m:not(.chip--compact) .chip__check { height: 20px; }
+.chip:not(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check { margin-left: -6px; }
+.chip--l:not(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check,
+.chip--m:has(.chip__tag):not(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check { margin-left: -8px; }
+.chip--xs:not(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check { margin-left: -4px; }
+.chip:where(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check { width: 16px; opacity: 1; }
+.chip--l:is(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check,
+.chip--m:not(.chip--compact):is(.chip--selected,[aria-pressed="true"],[aria-checked="true"]) .chip__check { width: 20px; }
+
+/* ---------- раскрывающийся чип (1.020, задача MS0010f) -------------------
+   Чип с длинным содержимым (фрагмент текста): свёрнутый — обычный Edit-чип
+   с подписью, стрелкой ˅ и крестиком; по клику растягивается на всю строку и
+   показывает весь текст внутри, стрелка — ˄. Стиль чипа не меняется: только
+   размер и содержимое (решение человека 06.10.2026). Шапка — настоящая кнопка
+   .chip__toggle (aria-expanded): текст фрагмента лежит рядом с ней, а не
+   внутри — иначе скринридер слил бы его в имя кнопки. Раскрытием управляет
+   Chip.js. Стрелка .chip__expand — признак раскрытия, не список значений
+   (.chip__dropdown): с крестиком сочетается. Стиль — Fill. */
+.chip__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.chip__toggle:focus-visible { outline: none; }
+.chip--expandable:has(.chip__toggle:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
+.chip__expand { flex: none; display: inline-flex; align-items: center; justify-content: center; color: var(--chip-icon-color); transition: transform .15s ease; }
+.chip__expand :is(svg,[data-icon]) { display: block; width: 100%; height: 100%; }
+.chip--l .chip__expand, .chip--m .chip__expand { width: 20px; height: 20px; }
+.chip--s .chip__expand, .chip--xs .chip__expand { width: 16px; height: 16px; }
+.chip__toggle[aria-expanded="true"] .chip__expand { transform: rotate(180deg); }
+.chip__source, .chip__body { display: none; }
+/* сжатие при нажатии — у свёрнутого (он кнопка), раскрытый не сжимается */
+.chip--expandable:not(.chip--no-press):has(> .chip__toggle[aria-expanded="false"]:active) { transform: scale(.97); }
+
+/* раскрыт: на всю строку (исключение из max-width 320px), шапка — на месте
+   свёрнутого чипа (тот же отступ сверху), ниже — весь текст */
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 100%;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  row-gap: var(--space-4);
+}
+.chip--l.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) { padding-top: 9px; padding-bottom: 12px; }
+.chip--m.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) { padding-top: 5px; padding-bottom: 8px; }
+.chip--s.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) { padding-top: 3px; padding-bottom: 6px; }
+.chip--xs.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) { padding-top: 1px; padding-bottom: 4px; }
+.chip--rounded.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) { border-radius: var(--radius-xl); }
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) > .chip__toggle { flex: 1 1 auto; }
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) .chip__label { display: none; }
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) .chip__source { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]) > .chip__body { display: block; flex: 1 1 100%; min-width: 0; animation: chip-body-in .25s ease both; }
+.chip__text { display: block; max-height: 128px; overflow-y: auto; white-space: normal; overflow-wrap: anywhere; }
+.chip--l .chip__text, .chip--m .chip__text { max-height: 160px; }   /* 8 строк Body M; S и XS — 8 строк по 16px */
+@keyframes chip-body-in { from { opacity: 0; transform: translateY(-4px); } }
+/* подложка наведения у раскрытого — только над шапкой, не над текстом */
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]):hover { background: var(--chip-fill); }
+.chip--expandable:has(> .chip__toggle[aria-expanded="true"]):has(.chip__toggle:hover) { background: var(--chip-fill-hover); }
+@media (prefers-reduced-motion: reduce) {
+  .chip--expandable:has(> .chip__toggle[aria-expanded="true"]) > .chip__body { animation: none; }
+  .chip__expand { transition: none; }
+}
+
 /* ---------- disabled ------------------------------------------------------ */
 :is(.chip--disabled,[aria-disabled="true"]) {
   background: var(--st-disabled-light);          /* CGrey_600 4% */
@@ -985,6 +1266,15 @@ function makeChip(o) {
 }
 :is(.chip--disabled,[aria-disabled="true"]) .chip__icon, :is(.chip--disabled,[aria-disabled="true"]) .chip__marker, :is(.chip--disabled,[aria-disabled="true"]) .chip__remove, :is(.chip--disabled,[aria-disabled="true"]) .chip__dropdown, :is(.chip--disabled,[aria-disabled="true"]) .chip__info, :is(.chip--disabled,[aria-disabled="true"]) .chip__count { color: var(--st-disabled); /* CGrey_600 24% */ }
 .chip--outline:is(.chip--disabled,[aria-disabled="true"]) { background: transparent; border-color: var(--st-disabled-mid); /* CGrey_600 16% */ }
+.chip--dashed:is(.chip--disabled,[aria-disabled="true"]) { background: transparent; border-style: dashed; border-color: var(--st-disabled-mid); }
+:is(.chip--disabled,[aria-disabled="true"]) .chip__tag { background: var(--st-disabled-light); color: var(--st-disabled-dark); }
+:is(.chip--disabled,[aria-disabled="true"]) :is(.chip__check, .chip__icon--toggle) { color: var(--st-disabled); }
+/* нативный disabled чипа-кнопки — те же цвета, что у .chip--disabled
+   (специфичность выше выбранного и тонов) */
+button.chip:disabled { background: var(--st-disabled-light); border-color: var(--st-disabled-light); color: var(--st-disabled-dark); cursor: not-allowed; pointer-events: none; }
+button.chip:disabled .chip__icon, button.chip:disabled .chip__marker, button.chip:disabled .chip__count, button.chip:disabled .chip__check { color: var(--st-disabled); }
+button.chip--outline:disabled, button.chip--dashed:disabled { background: transparent; border-color: var(--st-disabled-mid); }
+button.chip:disabled .chip__tag { background: var(--st-disabled-light); color: var(--st-disabled-dark); }
 /* a disabled chip with long, truncated text must still show its tooltip */
 :is(.chip--disabled,[aria-disabled="true"]).chip--has-tooltip { pointer-events: auto; }
 :is(.chip--disabled,[aria-disabled="true"]) .chip__remove { pointer-events: none; }

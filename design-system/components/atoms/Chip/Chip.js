@@ -1,7 +1,7 @@
 /* =========================================================================
    ds-chip.js — общий рантайм Chip.
 
-   Закрывает два поведения:
+   Закрывает три поведения:
 
    1. УДАЛЕНИЕ (RulesAudit W5 · K5). Клик по .chip__remove ИЛИ Backspace/Delete
       на сфокусированном .chip убирает чип и переносит фокус на соседний чип
@@ -16,11 +16,18 @@
       этот рантайм регистрирует селектор подписи чипа и держит только
       специфическое для чипа: исключение счётчиков «+N» и скан disabled-чипов.
 
+   3. РАСКРЫТИЕ (1.020, задача MS0010f). Раскрывающийся чип .chip--expandable:
+      клик по шапке-кнопке .chip__toggle (Enter / Space — сама кнопка)
+      раскрывает и сворачивает чип — aria-expanded на шапке; в одном
+      чиплисте раскрыт один чип; на чипе всплывает событие ds-chip:toggle
+      (detail.expanded). Стиль раскрытого рисует CSS.
+
    Зависимости: components/atoms/Chip/Chip.css; опционально components/molecules/Tooltip/Tooltip.js (без него
    тултипов просто нет, остальное работает).
 
-   Экспорт: window.DSChip = { refresh(root) } — привязать тултипы у disabled-
-   чипов внутри root (см. ниже, почему только у них).
+   Экспорт: window.DSChip = { refresh(root), expand(chip, open) } — refresh
+   привязывает тултипы у disabled-чипов внутри root (см. ниже, почему только у
+   них); expand раскрывает / сворачивает раскрывающийся чип кодом.
    ========================================================================= */
 (function () {
   'use strict';
@@ -30,7 +37,8 @@
     var list = chip.parentElement;
     var next = chip.nextElementSibling || chip.previousElementSibling;
     chip.remove();
-    if (next && next.classList && next.classList.contains('chip')) next.focus();
+    /* у раскрывающегося чипа фокус живёт на шапке-кнопке */
+    if (next && next.classList && next.classList.contains('chip')) (next.querySelector('.chip__toggle') || next).focus();
     else if (list) list.focus && list.focus();
   }
   document.addEventListener('click', function (e) {
@@ -47,11 +55,46 @@
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Backspace' && e.key !== 'Delete') return;
     var chip = e.target.closest ? e.target.closest('.chip.chip--edit') : null;
-    if (!chip || chip !== document.activeElement) return;
+    var onToggle = chip && document.activeElement && document.activeElement.classList.contains('chip__toggle') && chip.contains(document.activeElement);
+    if (!chip || (chip !== document.activeElement && !onToggle)) return;
     if (chip.classList.contains('tfilter__applied')) return; /* см. выше — владелец ds-table-filter.js */
     if (!chip.querySelector('.chip__remove')) return;
     e.preventDefault();
     removeChip(chip);
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Раскрытие (1.020)                                                   */
+  /* ------------------------------------------------------------------ */
+  function emit(chip, open) {
+    var ev;
+    try { ev = new CustomEvent('ds-chip:toggle', { bubbles: true, detail: { expanded: open } }); }
+    catch (err) { ev = document.createEvent('CustomEvent'); ev.initCustomEvent('ds-chip:toggle', true, false, { expanded: open }); }
+    chip.dispatchEvent(ev);
+  }
+  function expand(chip, open) {
+    var toggle = chip && chip.querySelector('.chip__toggle');
+    if (!toggle) return;
+    open = !!open;
+    if ((toggle.getAttribute('aria-expanded') === 'true') === open) return;
+    /* в одном чиплисте раскрыт один чип */
+    var list = open && chip.parentElement && chip.parentElement.classList.contains('chiplist') ? chip.parentElement : null;
+    if (list) {
+      list.querySelectorAll('.chip--expandable > .chip__toggle[aria-expanded="true"]').forEach(function (t) {
+        if (t === toggle) return;
+        t.setAttribute('aria-expanded', 'false');
+        emit(t.parentElement, false);
+      });
+    }
+    toggle.setAttribute('aria-expanded', String(open));
+    emit(chip, open);
+  }
+  document.addEventListener('click', function (e) {
+    var toggle = e.target.closest ? e.target.closest('.chip__toggle') : null;
+    if (!toggle) return;
+    var chip = toggle.parentElement;
+    if (!chip || !chip.classList.contains('chip--expandable')) return;
+    expand(chip, toggle.getAttribute('aria-expanded') !== 'true');
   });
 
   /* ------------------------------------------------------------------ */
@@ -102,5 +145,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { refresh(document); });
   else refresh(document);
 
-  window.DSChip = { refresh: refresh };
+  window.DSChip = { refresh: refresh, expand: expand };
 })();

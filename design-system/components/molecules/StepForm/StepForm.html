@@ -1,0 +1,804 @@
+<!-- @dsCard group="Components" name="StepForm" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>window.__DS_ROOT = '../../../';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StepForm — Дизайн-система</title>
+<link rel="stylesheet" href="../../../foundations/Typography/Typography.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Colors.css">
+<link rel="stylesheet" href="../../../foundations/Colors/Palette.css">
+<link rel="stylesheet" href="../../../foundations/Radius/Radius.css">
+<link rel="stylesheet" href="../../../foundations/Spacing/Spacing.css">
+<link rel="stylesheet" href="../../atoms/StepMarker/StepMarker.css">
+<link rel="stylesheet" href="../../atoms/Note/Note.css">
+<link rel="stylesheet" href="../../atoms/Chip/Chip.css">
+<link rel="stylesheet" href="../../atoms/LabelHelper/LabelHelper.css">
+<link rel="stylesheet" href="../Inputs/Inputs.css">
+<link rel="stylesheet" href="../../atoms/Avatar/Avatar.css">
+<link rel="stylesheet" href="../../atoms/Divider/Divider.css">
+<link rel="stylesheet" href="../../atoms/Buttons/Buttons.css">
+<link rel="stylesheet" href="../../organisms/Entity/Entity.css">
+<link rel="stylesheet" href="../../organisms/Tile/Tile.css">
+<link rel="stylesheet" href="StepForm.css">
+<link rel="stylesheet" href="../../../docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../organisms/TableCell/TableCell.css">
+<style>
+  .section > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin:0 0 28px; max-width:74ch; text-wrap:pretty; }
+
+  /* ---------- playground ---------- */
+  .pg__stage { flex:1; min-height:0; width:100%; padding:48px 40px; display:flex; align-items:center; justify-content:center; background: var(--bg-page); }
+  .ctl { display:flex; flex-direction:column; gap:10px; }
+  .ctl > .lbl { font: var(--type-body-s-strong); color: var(--text-inactive); text-transform:uppercase; letter-spacing:.05em; font-size:11px; }
+  .pg__code { margin-top:4px; font: var(--type-body-s); color: var(--text-inactive); }
+
+  /* ---------- demo layout ---------- */
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:680px){ .cols2{ grid-template-columns:1fr; } }
+  .cols3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  @media (max-width:820px){ .cols3{ grid-template-columns:1fr; } }
+  .demo-rowlabel { font: var(--type-body-xs); color: var(--text-inactive); margin:0 0 7px; }
+  .demo-stack { display:flex; flex-direction:column; gap:12px; }
+
+  /* ---------- do / don't ---------- */
+  .guide { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .guide { grid-template-columns:1fr; } }
+  .guide-card { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; background: var(--bg-tile); display:flex; flex-direction:column; }
+  .guide-card__tag { display:inline-flex; align-items:center; gap:7px; font: var(--type-body-s-strong); padding:14px 20px 0; }
+  .guide-card__body { padding:28px 20px; flex:1; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .guide-card__cap { padding:0 20px 18px; font: var(--type-body-xs); color: var(--text-inactive); text-wrap:pretty; }
+
+  /* ---------- StepForm demo ---------- */
+  .pg__stage { align-items:flex-start; overflow:auto; }
+  #states-demo .stepform__control { justify-content:center; }
+</style>
+<link rel="stylesheet" href="../../../docs-kit/ds-nav.css">
+<link rel="stylesheet" href="../../molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../docs-kit/docs-split.css">
+<script src="../../../docs-kit/ds-theme-boot.js"></script>
+</head>
+<body>
+<main class="page ds-split" data-screen-label="StepForm">
+
+  <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+    <div class="splitpane__panel splitpane__a app-pane-demo">
+      <div class="demo-stage">
+        <div class="pg__stage" id="pg-stage"></div>
+        <p class="pg__code" id="pg-code"></p>
+      </div>
+    </div>
+
+    <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+
+    <div class="splitpane__panel splitpane__b app-pane-docs">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+        <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+        <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+        <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+      </div>
+
+      <div class="tabs-body">
+        <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+          <div class="docs-layout">
+            <div class="docs-main">
+
+<header class="masthead">
+    <div class="meta"><span>Версия: <b>1.000</b></span><span>Обновлено: <b>06.10.2026</b></span></div>
+    <p class="eyebrow">Дизайн-система · Компоненты</p>
+    <h1>StepForm</h1>
+    <p class="lead">Пошаговая форма — шаги «номер и подпись слева, контролы справа», разделённые пунктиром, с заметкой внизу. Шаг заполнен — номер сменяется галочкой. Собирается из <a class="inl" href="../../atoms/StepMarker/StepMarker.html">StepMarker</a>, полей <a class="inl" href="../Inputs/InputText/InputText.html">InputText</a>, чипов <a class="inl" href="../../atoms/Chip/Chip.html">Chip</a>, вложенной подложки <a class="inl" href="../../organisms/Tile/Tile.html">Tile Inset</a> и заметки <a class="inl" href="../../atoms/Note/Note.html">Note</a>. Своего фона, рамки и полей нет — их даёт контейнер.</p>
+  </header>
+
+  <!-- USAGE -->
+  <section class="section" data-screen-label="Usage">
+    <h2>Использование</h2>
+    <p class="desc">Форма, где порядок шагов важен и пользователь видит, что уже заполнено: конструктор запроса в панели поля ввода, мастер настройки в боковой панели. Выберите объект и фокус — шаги отметятся галочкой.</p>
+    <div class="panel">
+      <p class="demo-rowlabel">Конструктор запроса — живое демо</p>
+      <div id="use-live"></div>
+    </div>
+
+<div class="subsec" data-screen-label="WhenToUse">
+    <h3>Когда использовать</h3>
+    <ul class="bullets" style="margin-bottom:26px;">
+      <li>форма разбита на 2–5 шагов, и заполненный шаг стоит показать: номер сменяется галочкой;</li>
+      <li>у шага есть подпись, которая объясняет, что выбирать, а контролы — поле, чипы или оба.</li>
+    </ul>
+    <p class="desc">Не используйте для обычной формы полей с метками — там поля ДС со своей меткой (<a class="inl" href="../Inputs/InputText/InputText.html">InputText</a>, <a class="inl" href="../../organisms/TableFilter/TableFilter.html">TableFilter</a>). Навигация по экранам мастера — Stepper (бэклог ДС), а не StepForm.</p>
+  </div>
+
+<div class="subsec" data-screen-label="Guidelines">
+    <h3>Правила</h3>
+    <div class="guide">
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good1"></span>Так</div>
+        <div class="guide-card__body" id="guide-good1"></div>
+        <p class="guide-card__cap">Шаги разделяет сам компонент — пунктир над каждым шагом, кроме первого.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad1"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad1"></div>
+        <p class="guide-card__cap">Свой разделитель между шагами — линия встаёт второй рядом с пунктиром компонента.</p>
+      </div>
+      <div class="guide-card good">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-good2"></span>Так</div>
+        <div class="guide-card__body" id="guide-good2"></div>
+        <p class="guide-card__cap">Подпись шага — короткое существительное: колонка подписей узкая, поля широкие.</p>
+      </div>
+      <div class="guide-card bad">
+        <div class="guide-card__bar"></div>
+        <div class="guide-card__tag"><span class="ic" id="ic-bad2"></span>Не так</div>
+        <div class="guide-card__body" id="guide-bad2"></div>
+        <p class="guide-card__cap">Подпись-предложение упирается в треть формы и переносится, поля сжимаются.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section class="section" data-screen-label="Anatomy">
+    <h2>Анатомия</h2>
+    <p class="desc">Форма — грид из двух колонок; шаг — подсетка формы, поэтому колонка подписи общая у всех шагов.</p>
+    <div class="panel">
+      <ol class="bullets">
+        <li><b>Форма</b> (<code class="tok">.stepform</code>) — колонка подписи (по самой длинной подписи, не шире трети) и колонка контролов; зазор колонок 16, шагов — 12. Контейнер для запроса ширины <code class="tok">stepform</code>.</li>
+        <li><b>Шаг</b> (<code class="tok">.stepform__step</code>, атрибут <code class="tok">data-state</code>) — пунктир сверху с отступом 12 (у первого шага нет), строки шага через 8.</li>
+        <li><b>Подпись</b> (<code class="tok">.stepform__label</code>) — <a class="inl" href="../../atoms/StepMarker/StepMarker.html">StepMarker</a> M + название <code class="tok">.stepform__title</code> (Body S Strong) + скрытый статус <code class="tok">.stepform__status</code>; строка высотой 40 — по полю M.</li>
+        <li><b>Контролы</b> (<code class="tok">.stepform__control</code>) — колонка, зазор 8: поле InputText M, ряд чипов, подсказки.</li>
+        <li><b>Блок на всю ширину</b> (<code class="tok">.stepform__wide</code>) — опц., класс на самом блоке: Tile Inset с историей, сводка выбора.</li>
+        <li><b>Подвал</b> (<code class="tok">.stepform__foot</code>) — опц. заметка <a class="inl" href="../../atoms/Note/Note.html">Note</a> S под пунктиром.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- VARIANTS -->
+  <section class="section" data-screen-label="Variants">
+    <h2>Варианты</h2>
+    <p class="desc">Оси конфигурации компонента — каждая описана отдельным подразделом.</p>
+
+<div class="subsec" data-screen-label="Controls">
+    <h3>Состав шага</h3>
+    <p class="desc">Контролы шага — любые поля ДС размера M: поле поиска, ряд чипов выбора, поле и чипы вместе. Поле без своей метки подписано названием шага (<code class="tok">aria-labelledby</code>).</p>
+    <div class="cols2">
+      <div class="panel"><p class="demo-rowlabel">Поля InputText M</p><div id="var-field"></div></div>
+      <div class="panel"><p class="demo-rowlabel">Чипы выбора</p><div id="var-chips"></div></div>
+    </div>
+  </div>
+
+<div class="subsec" data-screen-label="Wide">
+    <h3>Блок на всю ширину шага</h3>
+    <p class="desc">Под подписью и контролами — блок на обе колонки: <a class="inl" href="../../organisms/Tile/Tile.html">Tile Inset</a> со списком, сводка. Класс <code class="tok">.stepform__wide</code> ставится на сам блок: пока блок скрыт (<code class="tok">hidden</code>), пустой строки нет.</p>
+    <div class="panel" id="var-wide"></div>
+  </div>
+
+<div class="subsec" data-screen-label="Foot">
+    <h3>Подвал</h3>
+    <p class="desc">Заметка <a class="inl" href="../../atoms/Note/Note.html">Note</a> S под пунктиром — срок, условие, что будет дальше. Подвал один, после всех шагов.</p>
+    <div class="panel" id="var-foot"></div>
+  </div>
+
+<div class="subsec" data-screen-label="Appear">
+    <h3>Появление — опция</h3>
+    <p class="desc">Модификатор <code class="tok">.stepform--appear</code> переносит анимацию прототипа: форма в панели, которую открыли, проявляется со сдвигом, шаги и подвал — лесенкой. По умолчанию выключено — форма на странице появляется сразу. Тайминги — раздел «Поведение».</p>
+  </div>
+  </section>
+
+  <!-- SIZES -->
+  <section class="section" data-screen-label="Sizes">
+    <h2>Размеры</h2>
+    <p class="desc">Один размер — под поля M (40px). Ширина — по контейнеру; колонка подписи — по самой длинной подписи, не шире трети формы.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">Значение</span></div>
+          <div class="th"><span class="th__label">Токен / правило</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Колонка подписи</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">по самой длинной подписи, ≤ 33 %</span></span></div>
+          <div class="tc"><code class="tok">fit-content(33%)</code></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор колонок · шагов · строк шага</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">16 · 12 · 8</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--space-16</code> · <code class="tok">--space-12</code> · <code class="tok">--space-8</code></span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Отступ шага над пунктиром</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">12</span></span></div>
+          <div class="tc"><code class="tok">--space-12</code></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Строка подписи</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">40 — по полю M</span></span></div>
+          <div class="tc"><code class="tok">--space-40</code></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 1.2fr 1.6fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Порог узкой формы</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">уже 840px</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">нижняя граница класса Expanded Material 3</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="section" data-screen-label="Content">
+    <h2>Контент</h2>
+    <ul class="bullets">
+      <li>название шага — существительное или короткая фраза: «Объект анализа», «Дополнительный фокус»; без двоеточия и точки;</li>
+      <li>шаги нумеруются по порядку с 1, номер ставит StepMarker;</li>
+      <li>контролы — только компоненты ДС размера M; плейсхолдер поля подсказывает, что вводить;</li>
+      <li>подвал — одна заметка Note: срок, условие, что будет дальше.</li>
+    </ul>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section class="section" data-screen-label="Behavior">
+    <h2>Поведение</h2>
+    <p class="desc">Своего рантайма нет: состояние шага выставляет экран атрибутом <code class="tok">data-state</code>, раскладку и анимацию делает CSS.</p>
+
+<div class="subsec" data-screen-label="Narrow">
+    <h3>Узкая форма</h3>
+    <p class="desc">Форма уже 840px — подпись встаёт над контролами. Порог считается по ширине самой формы (container query, контейнер <code class="tok">stepform</code>), а не окна: форма сжимается и в узкой панели, и когда рядом открыта боковая панель. 840 — нижняя граница класса Expanded Material 3; в поле промпта шириной 880 форма — 846px, две колонки.</p>
+    <div class="panel" id="beh-narrow"></div>
+  </div>
+
+<div class="subsec" data-screen-label="Done">
+    <h3>Шаг готов</h3>
+    <p class="desc">Экран меняет <code class="tok">data-state</code> шага по данным (выбор, ввод) — маркер внутри шага красится сам: номер гаснет, галочка появляется с поворотом (StepMarker). Скрытый статус «выполнено» становится доступен скринридеру. Демо — раздел «Использование».</p>
+  </div>
+
+<div class="subsec" data-screen-label="AppearBehavior">
+    <h3>Появление панели — опция <code class="tok">.stepform--appear</code></h3>
+    <p class="desc">Значения из прототипа. Пока панель закрыта (<code class="tok">inert</code> на ней или на предке), форма прозрачна и сдвинута на 16 вверх. Панель открыли — форма проявляется (0,25 с) и встаёт на место (0,55 с) с задержкой 0,06 с, шаги и подвал — лесенкой: 145 / 200 / 255 мс, сдвиг 10 → 0 за 0,6 с; кривая <code class="tok">cubic-bezier(.22, 1, .36, 1)</code>. Блок на всю ширину шага появляется так же (0,4 с), когда его показывают. При <code class="tok">prefers-reduced-motion</code> — без анимации.</p>
+    <div class="panel">
+      <div id="beh-appear"></div>
+      <div style="margin-top:var(--space-16);"><button type="button" class="btn btn--outline btn--s" id="beh-replay"><span class="btn__label">Закрыть и открыть панель</span></button></div>
+    </div>
+  </div>
+  </section>
+
+  <!-- STATES -->
+  <section class="section" data-screen-label="States">
+    <h2>Состояния</h2>
+    <p class="desc">Состояние шага — атрибут <code class="tok">data-state</code> на <code class="tok">.stepform__step</code>. Маркер красится сам; у недоступного шага название тоном неактивного текста, контролы выключает экран (<code class="tok">disabled</code>).</p>
+    <div class="panel" id="states-demo"></div>
+    <div class="panel" style="padding:0;overflow:hidden; margin-top:20px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Состояние</span></div>
+          <div class="th"><span class="th__label">data-state</span></div>
+          <div class="th"><span class="th__label">Что меняется</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ожидает</span></span></div>
+          <div class="tc"><code class="tok">pending</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">номер на светлой заливке</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Текущий</span></span></div>
+          <div class="tc"><code class="tok">current</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">рамка маркера</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Готов</span></span></div>
+          <div class="tc"><code class="tok">done</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">галочка на заливке Primary; скрытый статус «выполнено»</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Ошибка</span></span></div>
+          <div class="tc"><code class="tok">error</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">глиф ошибки тоном Error; скрытый статус «ошибка»; текст ошибки — у поля</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Недоступен</span></span></div>
+          <div class="tc"><code class="tok">disabled</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">маркер и название неактивны; контролы выключает экран</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESSIBILITY -->
+  <section class="section" data-screen-label="A11y">
+    <h2>Доступность</h2>
+    <ul class="bullets">
+      <li>Форма — <code class="tok">role="group"</code> с <code class="tok">aria-label</code>; шаг — <code class="tok">section</code> с <code class="tok">aria-labelledby</code> на подпись: скринридер читает «Объект анализа, выполнено».</li>
+      <li>Статус шага — скрытый текст <code class="tok">.stepform__status--done</code> / <code class="tok">--error</code>: компонент открывает его скринридеру только в своём состоянии. Маркер — <code class="tok">aria-hidden</code>.</li>
+      <li>Контролы шага подписаны названием шага: <code class="tok">aria-labelledby</code> на <code class="tok">.stepform__title</code> — у поля без своей метки и у группы чипов (<code class="tok">radiogroup</code> / <code class="tok">group</code>).</li>
+      <li>Порядок Tab — по шагам сверху вниз, внутри шага — по контролам.</li>
+    </ul>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="section" data-screen-label="Typography">
+    <h2>Типографика</h2>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Часть</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Кегль / строка</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название шага</span></span></div>
+          <div class="tc"><code class="tok">--type-body-s-strong</code></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16 px, 600</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1fr 1.4fr 1fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Подвал</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Note S — <code class="tok">--type-body-s</code></span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">14 / 16 px</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="section" data-screen-label="Colors">
+    <h2>Цвета</h2>
+    <p class="desc">Свои цвета компонента — подпись и пунктир; маркер, поля, чипы и заметка красятся по своим спекам.</p>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Роль</span></div>
+          <div class="th"><span class="th__label">Токен</span></div>
+          <div class="th"><span class="th__label">Образец</span></div>
+          <div class="th"><span class="th__label">Hex</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название шага</span></span></div>
+          <div class="tc"><code class="tok">--text-primary</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-primary)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-primary">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Название недоступного шага</span></span></div>
+          <div class="tc"><code class="tok">--text-inactive</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--text-inactive)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--text-inactive">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.3fr 1.1fr .6fr .9fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Пунктир между шагами и над подвалом</span></span></div>
+          <div class="tc"><code class="tok">--border-light</code></div>
+          <div class="tc"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid var(--border-light);vertical-align:middle;background:var(--border-light)"></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" data-hex="--border-light">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVELOPER HANDOFF -->
+  <section class="section" data-screen-label="Dev">
+    <h2>Для разработчиков</h2>
+    <p class="desc">Хендофф-пакет: точные размеры и поведение. Не привязан к стеку.</p>
+
+    <p class="subhead" style="font: var(--type-body-m-strong); color: var(--text-primary); margin:0 0 16px;">Точные размеры (redline)</p>
+    <p class="desc tight">Значения измерены на живом экземпляре шириной 880px (<code class="tok">getComputedStyle</code>), источник — <code class="tok">components/molecules/StepForm/StepForm.css</code>.</p>
+    <div class="panel" style="padding:0;overflow:hidden; margin-bottom:34px;">
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;">
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="th th--separator"></div>
+          <div class="th"><span class="th__label">Параметр</span></div>
+          <div class="th"><span class="th__label">Значение</span></div>
+          <div class="th th--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Колонка подписи</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-col-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор колонок</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gapc-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор шагов</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gaps-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор строк шага</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-gapr-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Отступ и линия шага</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-pad-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Подпись: строка · шрифт</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-label-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор маркер ↔ название</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-lgap-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Зазор контролов</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-ctl-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+        <div class="tbl__row" style="grid-template-columns:8px 1.4fr 2fr 8px;">
+          <div class="tc tc--separator"></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text">Отступ и линия подвала</span></span></div>
+          <div class="tc"><span class="tc__row"><span class="tc__text" id="dv-foot-x">—</span></span></div>
+          <div class="tc tc--separator"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev-intro">
+      <span class="req">Подключить (если переиспользуете этот CSS напрямую):</span>
+      <code class="tok">foundations/Typography/Typography.css</code>
+      <code class="tok">foundations/Colors/Palette.css</code>
+      <code class="tok">foundations/Spacing/Spacing.css</code>
+      <code class="tok">components/atoms/StepMarker/StepMarker.css</code>
+      <code class="tok">components/atoms/Note/Note.css</code>
+      <code class="tok">components/molecules/StepForm/StepForm.css</code>
+    </div>
+
+    <p class="subhead">Поведение · псевдокод (framework-agnostic)</p>
+<div class="code-panel">
+      <div class="code-panel__head">
+        <span class="code-panel__name">Поведение · псевдокод (framework-agnostic)</span>
+        <button type="button" class="code-panel__copy" data-copy-target="code-js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg><span class="copy-label">Копировать</span></button>
+      </div>
+      <pre><code id="code-js"><span class="tk-cm">// 1. Раскладка: форма — grid [fit-content(33%) | minmax(0,1fr)], шаг — subgrid на обе колонки</span>
+<span class="tk-cm">//    колонка подписи = самая длинная подпись, но не шире трети формы</span>
+
+<span class="tk-cm">// 2. Узкая форма: container query по ширине формы (контейнер stepform), width &lt; 840px</span>
+<span class="tk-cm">//    → шаг в одну колонку: подпись над контролами</span>
+
+<span class="tk-cm">// 3. Состояние шага — по данным, одним атрибутом:</span>
+<span class="tk-cm">//    on change(step): step.dataset.state = есть выбор или ввод ? 'done' : 'pending'</span>
+<span class="tk-cm">//    маркер и скрытый статус шага переключает CSS — классы на маркер не ставить</span>
+
+<span class="tk-cm">// 4. Появление (.stepform--appear): панель закрыта → inert на панели;</span>
+<span class="tk-cm">//    открыли → снять inert — форма проявляется, шаги появляются лесенкой</span></code></pre>
+    </div>
+    <p class="dev-note">Это не готовый сниппет — алгоритм поверх вашего стека (рабочий референс — функции <code class="tok">makeForm</code> и <code class="tok">live</code> в <code class="tok">StepForm.page.js</code>).</p>
+  </section>
+
+  <!-- BACKLOG -->
+  <section class="section" data-screen-label="Backlog">
+    <h2>Бэклог</h2>
+    <p class="desc">Кейсы, которых недостаёт компоненту.</p>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>Поля S</b> — строка подписи 32 под поля S для плотных панелей. Сейчас в StepForm только поля M.</li>
+        <li><b>Сворачиваемые шаги</b> — готовый шаг сворачивается в строку со сводкой выбора, текущий раскрыт (вертикальный мастер).</li>
+        <li><b>Stepper</b> — навигация мастера по экранам на тех же StepMarker; отдельный компонент.</li>
+      </ul>
+    </div>
+  </section>
+
+<footer class="page-foot">
+    <span>Дизайн-система · StepForm</span>
+    <span>Пошаговая форма — шаги · блок на всю ширину · подвал · появление</span>
+  </footer>
+            </div><!-- /docs-main -->
+            <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+          </div><!-- /docs-layout -->
+        </div><!-- /pane-docs -->
+
+        <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Конструктор</h2>
+              <p class="desc">Соберите пошаговую форму: число шагов, контролы, состояние шагов, ширину, блок на всю ширину, подвал и анимацию появления. В живом демо выбор делает шаг готовым.</p>
+              <div class="pg__controls" id="pg-controls"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+          <div class="docs-layout">
+            <div class="docs-main">
+              <h2>Код компонента</h2>
+              <p class="desc">Эталонная разметка, полный CSS компонента и выжимка API для интеграции.</p>
+              <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                <div class="segctrl__thumb"></div>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+              </div>
+              <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+              <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+              <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tabs-body -->
+    </div><!-- /app-pane-docs -->
+  </div><!-- /splitpane -->
+</main>
+
+<script src="../../../foundations/Icons/icons-data.js"></script>
+<script src="../../../foundations/Icons/Icons.js"></script>
+<script src="../../../docs-kit/ds-nav.js"></script>
+<script src="../../molecules/Splitter/Splitter.js"></script>
+<script src="../../molecules/Tab/Tab.js"></script>
+<script src="../../organisms/Table/TableResize.js"></script>
+<script src="../Inputs/Inputs.js"></script>
+<script src="StepForm.page.js"></script>
+<script>window.DS_SPLIT_SWITCH_LABELS = {"Блок на всю ширину":{"label":"Блок на всю ширину шага","on":"y"},"Подвал":{"label":"Подвал с заметкой","on":"y"},"Появление":{"label":"Анимация появления","on":"y"}};</script>
+<script src="../../../docs-kit/docs-split.js"></script>
+
+<!-- ===== исходники для вкладки «Код» (статично) ===== -->
+<script type="text/plain" id="src-code-html"><!-- пошаговая форма: своего фона, рамки и полей нет — их даёт контейнер -->
+<div class="stepform stepform--appear" role="group" aria-label="Конструктор запроса">
+
+  <!-- шаг: состояние — data-state (pending | current | done | error | disabled), маркер красится сам -->
+  <section class="stepform__step" data-state="pending" aria-labelledby="stObjectLabel">
+    <div class="stepform__label" id="stObjectLabel">
+      <span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+      <span class="stepform__title" id="stObjectTitle">Объект анализа</span>
+      <span class="stepform__status stepform__status--done">выполнено</span>
+    </div>
+    <div class="stepform__control">
+      <div class="inp inp--m inp--fullwidth">
+        <div class="inp__field">
+          <span class="inp__lead" aria-hidden="true"><i data-icon="client-search"></i></span>
+          <input class="inp__control" type="text" role="searchbox" placeholder="Компания, группа, бенефициар или отрасль" aria-labelledby="stObjectTitle">
+        </div>
+      </div>
+      <div class="chiplist" role="radiogroup" aria-labelledby="stObjectTitle">…Chip выбора…</div>
+    </div>
+    <!-- блок на всю ширину шага: класс на самом блоке -->
+    <section class="tile tile--inset stepform__wide" aria-labelledby="…" hidden>…</section>
+  </section>
+
+  <section class="stepform__step" data-state="pending" aria-labelledby="stFocusLabel">
+    <div class="stepform__label" id="stFocusLabel">
+      <span class="stepmark stepmark--m" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+      <span class="stepform__title" id="stFocusTitle">Дополнительный фокус</span>
+      <span class="stepform__status stepform__status--done">выполнено</span>
+    </div>
+    <div class="stepform__control">
+      <div class="chiplist" role="group" aria-labelledby="stFocusTitle">…Chip-переключатели…</div>
+    </div>
+  </section>
+
+  <!-- подвал: заметка Note под пунктиром -->
+  <p class="note note--s note--accent stepform__foot">
+    <span class="note__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+    <span class="note__text">Подготовка отчета обычно занимает до 30 минут. Работа продолжится, даже если закрыть инструмент.</span>
+  </p>
+</div></script>
+<script type="text/plain" id="src-code-js">// Выжимка API (полный код — components/molecules/StepForm/StepForm.page.js)
+// Своего рантайма нет: экран ставит data-state шага по своим данным.
+function updateStep(step) {
+  var picked = step.querySelector('.chip[aria-checked="true"], .chip[aria-pressed="true"]');
+  var typed = step.querySelector('.stepform__control .inp__control');
+  step.setAttribute('data-state', picked || (typed && typed.value.trim()) ? 'done' : 'pending');
+}
+// Появление (.stepform--appear): закрыли панель — panel.setAttribute('inert', ''),
+// открыли — panel.removeAttribute('inert'): форма проявляется, шаги — лесенкой.</script>
+<script type="text/plain" id="src-code-css">/* =========================================================================
+   Design System — StepForm (Пошаговая форма)
+   Форма из шагов: слева номер шага (StepMarker) и подпись, справа контролы
+   (любые поля ДС — InputText M, чипы Chip), шаги разделены пунктиром, внизу
+   опц. заметка (Note). Шаг заполнен — номер сменяется галочкой. Перенесена
+   из конструктора запроса AI Pitcher (прототип ai-bankster v02, задача
+   MS0010h).
+
+   Раскладка: форма — грид из двух колонок, шаг — подсетка (subgrid):
+            колонка подписи общая у всех шагов и равна самой длинной
+            подписи, но не шире трети формы (fit-content(33%)); длиннее —
+            подпись переносится.
+   Narrow:  форма уже 840px (container query по ширине самой формы;
+            840 — нижняя граница класса Expanded Material 3) — подпись
+            встаёт над контролами.
+   States:  data-state шага — pending · current · done · error · disabled;
+            маркер внутри красится сам (StepMarker), скрытый статус
+            шага озвучивается скринридером. Экран меняет только атрибут.
+   Option:  .stepform--appear — анимация появления из прототипа: форма
+            проявляется со сдвигом, шаги — лесенкой; срабатывает, когда с
+            панели снимают inert (закрытая панель), и при показе блока на
+            всю ширину шага.
+   Своего фона, рамки и полей нет — их даёт контейнер.
+   Requires: Typography.css, Palette.css, Spacing.css, StepMarker.css,
+             Note.css
+   ========================================================================= */
+
+/* Парные [hidden] — правило B11 линтера: корень, объявивший display,
+   объявляет и пару к нему (браузерное [hidden] слабее класса). */
+.stepform[hidden] { display: none; }
+
+.stepform {
+  container: stepform / inline-size;
+  display: grid;
+  grid-template-columns: fit-content(33%) minmax(0, 1fr);
+  column-gap: var(--space-16);
+  row-gap: var(--space-12);
+  min-width: 0;
+}
+
+/* ---------- шаг ------------------------------------------------------------
+   Подсетка формы: подпись в первой колонке, контролы во второй, блок на
+   всю ширину — под ними. Шаги разделяет пунктир (как Divider dashed) с
+   отступом 12 сверху; у первого шага линии и отступа нет — над ним уже
+   граница контейнера. */
+.stepform__step {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--space-8);
+  align-items: start;
+  min-width: 0;
+  padding-top: var(--space-12);
+  border-top: 1px dashed var(--border-light);
+}
+.stepform__step:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Подпись: маркер + название. Высота строки — как у поля M (40): название
+   стоит на уровне поля справа. */
+.stepform__label {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: var(--space-40);
+  font: var(--type-body-s-strong);
+  color: var(--text-primary);
+}
+.stepform__title {
+  min-width: 0;
+  text-wrap: pretty;
+}
+
+/* Скрытый статус шага — для скринридера: виден только в своём состоянии,
+   в остальных выключен из дерева доступности (display: none). */
+.stepform__status { display: none; }
+.stepform__step[data-state="done"] .stepform__status--done,
+.stepform__step[data-state="error"] .stepform__status--error {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Контролы шага — колонка: поле, ряд чипов, подсказки. */
+.stepform__control {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+/* Блок на всю ширину шага (Tile Inset — история, сводка выбора). Класс
+   ставится на сам блок: скрытый блок (hidden) не оставляет пустой строки. */
+.stepform__wide {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+/* Недоступный шаг — название тоном неактивного текста; контролы шага
+   выключает экран (disabled у полей). */
+.stepform__step[data-state="disabled"] .stepform__label {
+  color: var(--text-inactive);
+}
+
+/* Подвал — заметка Note под пунктиром. */
+.stepform__foot {
+  grid-column: 1 / -1;
+  padding-top: var(--space-12);
+  border-top: 1px dashed var(--border-light);
+}
+
+/* ---------- узкая форма -------------------------------------------------- */
+@container stepform (width < 840px) {
+  .stepform__step { grid-template-columns: minmax(0, 1fr); }
+  .stepform__label,
+  .stepform__control { grid-column: 1; }
+}
+
+/* ---------- опция: появление (.stepform--appear) --------------------------
+   Значения из прототипа. Закрытая панель (inert): форма прозрачна и
+   сдвинута вверх на 16; панель открыли — форма проявляется (0,25 с) и
+   встаёт на место (0,55 с), шаги и подвал появляются лесенкой через 55 мс.
+   Блок на всю ширину шага появляется так же, когда его показывают. */
+.stepform--appear {
+  transition: opacity .25s ease .06s, transform .55s cubic-bezier(.22, 1, .36, 1) .06s;
+}
+[inert] .stepform--appear {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity .25s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+.stepform--appear > * {
+  animation: stepform-in .6s cubic-bezier(.22, 1, .36, 1) both;
+}
+.stepform--appear > :nth-child(1) { animation-delay: 145ms; }
+.stepform--appear > :nth-child(2) { animation-delay: 200ms; }
+.stepform--appear > :nth-child(3) { animation-delay: 255ms; }
+.stepform--appear > :nth-child(4) { animation-delay: 310ms; }
+.stepform--appear > :nth-child(n+5) { animation-delay: 365ms; }
+.stepform--appear .stepform__wide {
+  animation: stepform-in .4s cubic-bezier(.22, 1, .36, 1) both;
+}
+[inert] .stepform--appear > *,
+[inert] .stepform--appear .stepform__wide {
+  animation: none;
+}
+@keyframes stepform-in {
+  from { opacity: 0; transform: translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stepform--appear,
+  .stepform--appear > *,
+  .stepform--appear .stepform__wide { transition: none; animation: none; }
+}</script>
+<script src="../../../../apps/proto-panel.js"></script>
+</body>
+</html>

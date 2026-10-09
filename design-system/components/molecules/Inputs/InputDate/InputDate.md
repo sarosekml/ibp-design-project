@@ -1,8 +1,8 @@
 ---
 component: InputDate
 title: "InputDate"
-version: "1.015"
-updated: "25.09.2026"
+version: "1.017"
+updated: "06.10.2026"
 page: components/molecules/Inputs/InputDate/InputDate.html
 page_js: components/molecules/Inputs/InputDate/InputDate.page.js
 runtime: components/molecules/DatePicker/DatePicker.js, components/molecules/Inputs/Inputs.js
@@ -79,6 +79,7 @@ status: curated
 | Класс/атрибут | Назначение |
 |---|---|
 | `.inp / --m / --s / --error / --warning / --disabled` | база — общая с InputText |
+| `.inp--radius-m` / `--rounded` · `--filled` · `--focus-accent` | опции семейства (с 1.017): скругление 8 / капсула, заливка фоном страницы, акцентная иконка в фокусе — см. InputText |
 | `.inp__act[aria-label="Открыть календарь"]` | кнопка-календарь, всегда последняя |
 | `input[inputmode="numeric"]` | цифровая клавиатура; маска в placeholder |
 | `aria-haspopup="dialog"` / `aria-expanded` | связь с DatePicker |

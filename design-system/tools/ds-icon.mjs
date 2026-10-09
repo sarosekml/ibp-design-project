@@ -9,7 +9,7 @@
 
    Запуск (из корня ДС):
      node tools/ds-icon.mjs check              # SVG одного глифа
-     node tools/ds-icon.mjs --list             # все имена (247 шт.)
+     node tools/ds-icon.mjs --list             # все имена (253 шт.)
      node tools/ds-icon.mjs --list deal        # имена по подстроке
      node tools/ds-icon.mjs --selftest         # рантайм ds-icons.js: уникальные id копий
 
@@ -22,6 +22,12 @@
    суффиксами id; apply() и window.DS_ICONS отдают такие копии; в ds.js
    ds-icons.js грузится сразу за icons-data.js и раньше рантаймов, которые
    читают DS_ICONS напрямую. Шаг гейта харнеса и ds-check.mjs --all.
+   Кейсы 5–6 (урок Л191): каждый глиф пака входит в группу страницы «Иконки»
+   (группы — ручной список, новый ключ сам туда не попадает); видимые контуры
+   глифа — `currentColor`: страница «Иконки» и рантаймы, читающие DS_ICONS
+   строкой, вставляют SVG как есть, без перекраски dsIcons.apply. Обе проверки
+   доказываются мутацией прямо в кейсе: выкинутый из группы глиф и чёрный
+   контур обязаны найтись.
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
    ============================================================ */
 import { readFile } from 'node:fs/promises';
@@ -52,6 +58,33 @@ try {
 
 const names = Object.keys(icons);
 const args = process.argv.slice(2);
+
+/* ---------------- пак против страницы «Иконки» (Л191) ---------------- */
+const ICONS_PAGE = path.posix.join(path.posix.dirname(L.at.iconsData), 'Icons.html');
+/* Намеренно цветные системные глифы: выбранные чекбокс и радио — фирменный
+   цвет отметки, пульсары — статусный оранжевый. Остальные контуры — currentColor. */
+const PAINTED = new Set(['check-box', 'check-box-indeterminate', 'radio-button-checked', 'pulsar-1', 'pulsar-2']);
+
+/* Имена из групп страницы (CATS: icons:[…], у Menu — пары [имя, подпись]). */
+function pageGlyphs(html) {
+  const out = new Set();
+  for (const m of html.matchAll(/icons:\s*\[([\s\S]*?)\]\s*\}/g)) for (const n of m[1].matchAll(/'([^']+)'/g)) out.add(n[1]);
+  return out;
+}
+/* Видимая заливка или обводка не currentColor: вне defs/clipPath/mask/градиентов,
+   кроме прозрачных рамок (fill-opacity="0"). */
+function paintViolations(svg) {
+  const bad = [];
+  let hidden = 0;
+  for (const m of svg.matchAll(/<(\/?)([a-zA-Z]+)([^>]*?)(\/?)>/g)) {
+    const [, close, tag, attrs, self] = m;
+    const t = tag.toLowerCase();
+    if (['defs', 'clippath', 'mask', 'lineargradient', 'radialgradient'].includes(t)) { if (close) hidden--; else if (!self) hidden++; continue; }
+    if (close || hidden > 0 || t === 'svg' || /fill-opacity="0(\.0+)?"/.test(attrs)) continue;
+    for (const a of attrs.matchAll(/\b(fill|stroke)="([^"]+)"/g)) if (a[2] !== 'none' && a[2] !== 'currentColor') bad.push(t + ' ' + a[1] + '="' + a[2] + '"');
+  }
+  return [...new Set(bad)];
+}
 
 /* ---------------- --selftest: рантайм ds-icons.js ---------------- */
 
@@ -168,6 +201,35 @@ async function selftest() {
     pass(iData >= 0 && iRt === iData + 1 && !early.length,
       '4 ds.js: ' + RT_NAME + ' сразу за icons-data.js и раньше рантаймов, читающих DS_ICONS (' + readers.join(', ') + ')',
       'icons-data.js — ' + iData + ', ' + RT_NAME + ' — ' + iRt + (early.length ? ', раньше рантайма иконок: ' + early.join(', ') : ''));
+  });
+
+  /* 5. Каждый глиф пака — в группе страницы «Иконки»; мутация: выкинутый глиф находится. */
+  await guard('5 глифы на странице «Иконки»', async () => {
+    const html = await readFile(L.abs(ICONS_PAGE), 'utf8');
+    const listed = pageGlyphs(html);
+    const missing = names.filter((n) => !listed.has(n));
+    const probe = names.find((n) => html.includes("'" + n + "'"));
+    const mutated = probe ? pageGlyphs(html.split("'" + probe + "'").join("''")) : listed;
+    const caught = Boolean(probe) && !mutated.has(probe);
+    pass(!missing.length && caught,
+      '5 все ' + names.length + ' глифов пака — в группах страницы ' + path.posix.basename(ICONS_PAGE) + '; мутация (глиф выкинут из группы) находится',
+      missing.length ? 'нет ни в одной группе: ' + missing.slice(0, 6).join(', ') : 'мутация не поймана');
+  });
+
+  /* 6. Видимые контуры — currentColor (кроме PAINTED); мутация: чёрная обводка находится. */
+  await guard('6 цвет контуров', async () => {
+    const bad = [];
+    for (const n of names) {
+      if (PAINTED.has(n)) continue;
+      const v = paintViolations(icons[n]);
+      if (v.length) bad.push(n + ': ' + v.join(', '));
+    }
+    const sample = names.find((n) => !PAINTED.has(n) && /stroke="currentColor"|fill="currentColor"/.test(icons[n]));
+    const caught = Boolean(sample) && paintViolations(icons[sample].replace(/(stroke|fill)="currentColor"/, '$1="black"')).length > 0;
+    const stale = [...PAINTED].filter((n) => !icons[n] || !paintViolations(icons[n]).length);
+    pass(!bad.length && caught && !stale.length,
+      '6 видимые контуры глифов — currentColor (намеренно цветные: ' + [...PAINTED].join(', ') + '); мутация (чёрный контур) находится',
+      bad.length ? bad.slice(0, 4).join('; ') : (stale.length ? 'в исключениях глифы без цвета или без пака: ' + stale.join(', ') : 'мутация не поймана'));
   });
 
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));

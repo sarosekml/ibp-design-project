@@ -193,3 +193,12 @@
 }
 .sw-group__items { display: flex; flex-direction: column; }
 .sw-group .sw { padding: 6px 0; }
+
+/* Два названия положений. Input остаётся непосредственно перед control:
+   прежнее кольцо focus-visible действует без изменения старого варианта. */
+.sw--dual { align-items: center; gap: var(--space-8); }
+.sw--dual .sw__side { font: var(--type-body-s); color: var(--text-secondary); }
+.sw--dual .sw__side--off { order: -1; color: var(--text-primary); }
+.sw--dual:has(.sw__input:checked) .sw__side--off { color: var(--text-secondary); }
+.sw--dual:has(.sw__input:checked) .sw__side--on { color: var(--text-primary); }
+.sw--dual:has(.sw__input:disabled) .sw__side { color: var(--text-inactive); }
