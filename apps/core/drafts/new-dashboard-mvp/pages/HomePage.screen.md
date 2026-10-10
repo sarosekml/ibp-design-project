@@ -6,7 +6,7 @@ file: apps/core/drafts/new-dashboard-mvp/pages/HomePage.preview.html
 module: core/drafts/new-dashboard-mvp
 frontend: core/host-app/pages/HomePage
 route: не решено (09.10.2026)
-source: макет дизайнера «Главная» 1920 (refs/home-mockup-09102026.jpg); решения человека 09.10.2026
+source: макет дизайнера «Главная» 1920 от 09.10.2026 (в репозитории не хранится); решения человека 09.10.2026
 version: "1.000"
 created: "09.10.2026"
 design_system: IBP DS
