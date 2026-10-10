@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 375.
+Документов: 378.
 
 ## Корень (4)
 
@@ -243,7 +243,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (184)
+## Приложения (185)
 
 | Документ | Аннотация |
 |---|---|
@@ -260,6 +260,12 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/core/documents-app/README.md](../apps/core/documents-app/README.md) | documents-app — модуль раздела core |
+
+### apps/core/drafts/ibp-redesign-v1 — снимки задач
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/ibp-redesign-v1/ibp-redesign-v1.handoff.md](../apps/core/drafts/ibp-redesign-v1/ibp-redesign-v1.handoff.md) | ibp-redesign-v1 — handoff |
 
 ### apps/core/drafts/new-dashboard-mvp
 
@@ -617,7 +623,7 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (68)
+## Задачи и заметки (70)
 
 ### Архив/черновики
 
@@ -672,6 +678,8 @@
 | [docs/tasks/MS0013-ds-theme-generator.md](tasks/MS0013-ds-theme-generator.md) | Темы ДС из файлов (ibp-legacy, ibp-neo, custom), генератор палитры из brand 500 и neutral 500, страница «Темы» — выбор темы и конструктор по образцу coolors |
 | [docs/tasks/MS0013-ds-theme-generator.review-2.md](tasks/MS0013-ds-theme-generator.review-2.md) | MS0013 — ревью реализации и задание на доработку |
 | [docs/tasks/MS0013-ds-theme-generator.review.md](tasks/MS0013-ds-theme-generator.review.md) | MS0013 — приёмка и сохранность |
+| [docs/tasks/MS0014-ibp-redesign-context-pages.md](tasks/MS0014-ibp-redesign-context-pages.md) | IBP Redesign v1, часть 1: страницы системы Аналитика ДИД на компонентах ДС (контекст прототипа) |
+| [docs/tasks/MS0015-ibp-redesign-leads-concept.md](tasks/MS0015-ibp-redesign-leads-concept.md) | IBP Redesign v1, часть 2 (R&amp;D): единая сущность «Лид», раздел «Лиды (New)», главная-канбан «Мои проекты» и плавающий «Путь лида» |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |
