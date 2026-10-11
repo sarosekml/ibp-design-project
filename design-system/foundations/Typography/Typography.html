@@ -114,6 +114,13 @@
   .spec .v { font: var(--type-body-s-strong); color: var(--text-primary); font-variant-numeric: tabular-nums; }
   .spec .v.font { color: var(--text-primary); }
 
+  /* ---------- UI-kit comparison ---------- */
+  .uk-desc { font: var(--type-body-m); color: var(--text-secondary); margin: 0 0 16px; max-width: 82ch; text-wrap: pretty; }
+  .uk-table { margin-top: 24px; }
+  .uk-table .tc__text { white-space: nowrap; }
+  .uk-table .uk-wrap .tc__text { white-space: normal; }
+  .uk-diff { color: var(--error); }
+
   @media (max-width: 860px) {
     .row { grid-template-columns: 1fr; gap: 18px; }
     .spec { justify-content: start; grid-template-columns: repeat(4, auto); gap: 4px 18px; }
@@ -129,7 +136,7 @@
 <main class="page" data-screen-label="Typography">
 
   <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.002</b></span><span>Обновлено: <b>01.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.002</b></span><span>Обновлено: <b>11.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Основы</p>
     <h1>Типографика</h1>
     <p>Три гарнитуры SB Sans формируют всю текстовую иерархию продукта. Display — для заголовков, Text — для контента, Screen — для элементов управления. Letter spacing везде равен 0.</p>
@@ -214,6 +221,61 @@
     </div>
   </section>
 
+  <!-- ===================== UI-KIT ===================== -->
+  <section class="section" data-screen-label="UiKit">
+    <div class="section-head">
+      <h2>Соответствие UI-kit</h2>
+      <span class="count" id="uikit-count"></span>
+      <span class="fam">11.10.2026</span>
+    </div>
+    <p class="uk-desc">Сверка токенов типографики ДС со стилями UI-kit разработчиков. Источник — репозиторий UI-kit, файл <code>src/styles/theme/typography.ts</code>: 29 стилей, имена в CamelCase. По решению разработки эталон — имена в коде, поэтому ДС переходит на них в кебаб-кейсе. Сами токены ДС пока не менялись: таблица и порядок переезда ниже — план.</p>
+    <p class="uk-desc">Стили совпадают, если у них одинаковые семейство, вес, кегль и интерлиньяж. Образец ДС нарисован токеном ДС, образец UI-kit — значениями из кита. В колонке размера: кегль / интерлиньяж, под ними вес. Значение UI-kit, которое расходится с ДС, выделено красным. Семейства в каждой паре одинаковые.</p>
+
+    <div class="tbl tbl--scroll uk-table" id="uikit"></div>
+
+    <div class="subsec">
+      <h3>Правило имени</h3>
+      <p class="desc">Новое имя — префикс ДС <code>--type-</code> и имя стиля из кита в кебаб-кейсе. Слово начинается с каждой заглавной буквы. Обозначение размера (XL, XS, L, M, S) — одно слово. Утилитарный класс называется так же: <code>.ds-</code> и то же имя.</p>
+      <ul class="rules">
+        <li><code>H3StrongSmb</code> → <code>--type-h3-strong-smb</code>, класс <code>.ds-h3-strong-smb</code></li>
+        <li><code>BodyXLReg</code> → <code>--type-body-xl-reg</code></li>
+        <li><code>H4StrongExtensiveSmb</code> → <code>--type-h4-strong-extensive-smb</code></li>
+        <li><code>ButtonXS</code> → <code>--type-button-xs</code>: имя совпадает с нынешним, у кнопочных стилей M, S и XS переименования нет</li>
+      </ul>
+    </div>
+
+    <div class="subsec">
+      <h3>Расхождения</h3>
+      <ul class="rules">
+        <li><b>Вес H1 и H2.</b> В ките стили называются <code>H1Light</code> и <code>H2Light</code>, но вес в них 400 (Regular). В ДС вес 300 (Light). Кегль и интерлиньяж совпадают.</li>
+        <li><b>Стили кита, которых нет в ДС</b> (7): <code>H4StrongExtensiveSmb</code> (22/28), <code>BodyMExtensive</code> (16/24), <code>BodyXSExtensive</code> (12/20), <code>ButtonL</code> (24/32) и <code>DisplayL</code>, <code>DisplayM</code>, <code>DisplayS</code>. В таблице у них в колонке нового имени — имя, под которым стиль войдёт в ДС, если его добавят.</li>
+        <li><b>Семейство SB Sans Text Cond.</b> Его используют Display L/M/S. В ДС этого шрифта нет, поэтому образцы в таблице нарисованы запасным SB Sans Text.</li>
+      </ul>
+    </div>
+
+    <div class="subsec">
+      <h3>Как переехать</h3>
+      <p class="desc">Переезд идёт этапами, и после каждого этапа ДС работает. Старые имена остаются, пока ими пользуется хоть один файл.</p>
+      <ul class="rules">
+        <li><b>Этап 0. Решения.</b> Закрыть открытые вопросы ниже: какой вес у H1 и H2, какие из 7 стилей кита нужны ДС, нужен ли шрифт SB Sans Text Cond. Пока вопросы открыты, значения в ДС не меняются.</li>
+        <li><b>Этап 1. Новые имена рядом со старыми.</b> В <code>Typography.css</code> новые токены получают значения, а каждое старое имя ссылается на новое (<code>--type-h3-strong</code> → <code>--type-h3-strong-smb</code>) и помечается как устаревшее. Классы <code>.ds-*</code> заводятся в обоих вариантах. Внешне ничего не меняется. Версия Typography +0.001, строка в журнале правок ДС.</li>
+        <li><b>Этап 2. Перевод потребителей.</b> Замену делает скрипт по таблице соответствия, а не правка руками. Длинные имена заменяются раньше коротких (<code>--type-h3-strong</code> раньше <code>--type-h3</code>), и имя заменяется только целиком: после него не должно идти <code>-</code>, буква или цифра. Так же заменяются классы <code>ds-*</code> в атрибутах <code>class</code> и в скриптах. Порядок: CSS и спеки компонентов ДС вместе с чит-шитом → страницы документации ДС → виджеты и экраны приложений (сначала модули, потом концепты) → оснастка проекта (панель прототипа, скиллы, уроки, примеры для линтера). Сейчас токены <code>--type-*</code> есть примерно в 330 файлах. CSS компонентов ДС переводится только по согласованию с разработкой: каждое изменение ДС для неё — работа в продукте.</li>
+        <li><b>Этап 3. Проверка.</b> Поиск по старым именам должен дать ноль вхождений. Предупреждение линтера на старые имена — только как предложение, заводится с согласия.</li>
+        <li><b>Этап 4. Удаление старых имён.</b> Ссылки со старых имён на новые удаляются из <code>Typography.css</code>. Совместимость ломается, поэтому версия Typography — 2.000.</li>
+        <li><b>Этап 5. Макеты.</b> Текстовые стили в макетах переименовываются под те же имена кита. У разработчиков это отдельный шаг в бэклоге токенов: имена в макетах приводятся к именам в коде.</li>
+      </ul>
+    </div>
+
+    <div class="subsec">
+      <h3>Открытые вопросы</h3>
+      <ul class="rules">
+        <li>Какой вес у H1 и H2: 300, как в ДС, или 400, как в ките? Если верен 300, ошибка в значении кита или в имени <code>Light</code>?</li>
+        <li>Нужны ли ДС стили <code>H4StrongExtensiveSmb</code>, <code>BodyMExtensive</code>, <code>BodyXSExtensive</code>, <code>ButtonL</code>? Где они используются в продукте?</li>
+        <li>Нужны ли ДС стили <code>DisplayL/M/S</code> и шрифт SB Sans Text Cond? Если нужны, кто передаст файлы шрифта?</li>
+      </ul>
+    </div>
+  </section>
+
   <footer class="page-foot">
     <span>Дизайн-система · Типографика</span>
     <span>SB Sans Display · Text · Screen — Letter spacing 0</span>
@@ -284,7 +346,111 @@
   render("headings", headings);
   render("body", body);
   render("buttons", buttons);
+
+  // Сверка с UI-kit. Значения кита — src/styles/theme/typography.ts (11.10.2026).
+  // [токен ДС | null, [семейство, вес, кегль, строка] ДС | null, стиль кита, [то же] кита, новое имя ДС]
+  const uikit = [
+    ["--type-h1",             ["Display", 300, 52, 68], "H1Light",              ["Display", 400, 52, 68],  "--type-h1-light"],
+    ["--type-h2",             ["Display", 300, 42, 52], "H2Light",              ["Display", 400, 42, 52],  "--type-h2-light"],
+    ["--type-h3-strong",      ["Display", 600, 28, 32], "H3StrongSmb",          ["Display", 600, 28, 32],  "--type-h3-strong-smb"],
+    ["--type-h3",             ["Display", 400, 28, 32], "H3Reg",                ["Display", 400, 28, 32],  "--type-h3-reg"],
+    [null,                    null,                     "H4StrongExtensiveSmb", ["Display", 600, 22, 28],  "--type-h4-strong-extensive-smb"],
+    ["--type-h4-strong",      ["Display", 600, 22, 24], "H4StrongSmb",          ["Display", 600, 22, 24],  "--type-h4-strong-smb"],
+    ["--type-h4",             ["Display", 400, 22, 24], "H4Reg",                ["Display", 400, 22, 24],  "--type-h4-reg"],
+    ["--type-h5-strong",      ["Display", 600, 18, 24], "H5StrongSmb",          ["Display", 600, 18, 24],  "--type-h5-strong-smb"],
+    ["--type-h5",             ["Display", 400, 18, 24], "H5Reg",                ["Display", 400, 18, 24],  "--type-h5-reg"],
+    ["--type-h6-strong",      ["Display", 600, 16, 20], "H6StrongSmb",          ["Display", 600, 16, 20],  "--type-h6-strong-smb"],
+    ["--type-h6",             ["Display", 400, 16, 20], "H6Reg",                ["Display", 400, 16, 20],  "--type-h6-reg"],
+    ["--type-body-xl",        ["Text", 400, 24, 32],    "BodyXLReg",            ["Text", 400, 24, 32],     "--type-body-xl-reg"],
+    ["--type-body-xl-strong", ["Text", 600, 24, 32],    "BodyXLStrongSmb",      ["Text", 600, 24, 32],     "--type-body-xl-strong-smb"],
+    ["--type-body-l",         ["Text", 400, 18, 24],    "BodyLReg",             ["Text", 400, 18, 24],     "--type-body-l-reg"],
+    ["--type-body-l-strong",  ["Text", 600, 18, 24],    "BodyLStrongSmb",       ["Text", 600, 18, 24],     "--type-body-l-strong-smb"],
+    [null,                    null,                     "BodyMExtensive",       ["Text", 400, 16, 24],     "--type-body-m-extensive"],
+    ["--type-body-m",         ["Text", 400, 16, 20],    "BodyMReg",             ["Text", 400, 16, 20],     "--type-body-m-reg"],
+    ["--type-body-m-strong",  ["Text", 600, 16, 20],    "BodyMStrongSmb",       ["Text", 600, 16, 20],     "--type-body-m-strong-smb"],
+    ["--type-body-s",         ["Text", 400, 14, 16],    "BodySReg",             ["Text", 400, 14, 16],     "--type-body-s-reg"],
+    ["--type-body-s-strong",  ["Text", 600, 14, 16],    "BodySStrongSmb",       ["Text", 600, 14, 16],     "--type-body-s-strong-smb"],
+    [null,                    null,                     "BodyXSExtensive",      ["Text", 400, 12, 20],     "--type-body-xs-extensive"],
+    ["--type-body-xs",        ["Text", 400, 12, 16],    "BodyXSReg",            ["Text", 400, 12, 16],     "--type-body-xs-reg"],
+    [null,                    null,                     "DisplayL",             ["TextCond", 400, 36, 48], "--type-display-l"],
+    [null,                    null,                     "DisplayM",             ["TextCond", 400, 24, 40], "--type-display-m"],
+    [null,                    null,                     "DisplayS",             ["TextCond", 400, 20, 32], "--type-display-s"],
+    [null,                    null,                     "ButtonL",              ["Screen", 400, 24, 32],   "--type-button-l"],
+    ["--type-button-m",       ["Screen", 400, 16, 24],  "ButtonM",              ["Screen", 400, 16, 24],   "--type-button-m"],
+    ["--type-button-s",       ["Screen", 400, 14, 20],  "ButtonS",              ["Screen", 400, 14, 20],   "--type-button-s"],
+    ["--type-button-xs",      ["Screen", 400, 12, 16],  "ButtonXS",             ["Screen", 400, 12, 16],   "--type-button-xs"],
+  ];
+
+  const UK_FAMILY = {
+    Display:  ["SB Sans Display",   "var(--font-display)"],
+    Text:     ["SB Sans Text",      "var(--font-text)"],
+    Screen:   ["SB Sans Screen",    "var(--font-screen)"],
+    TextCond: ["SB Sans Text Cond", "'SB Sans Text Cond', var(--font-text)"],
+  };
+  const UK_WEIGHT = { 300: "Light", 400: "Regular", 600: "Semibold" };
+  const UK_FIELDS = ["семейство", "вес", "кегль", "строка"];
+  const UK_COLS = "8px 176px 96px 124px 196px 96px 124px 128px minmax(200px,1fr) 8px";
+  const UK_SAMPLE = "Аа";
+
+  function ukCell(inner, mod) {
+    return `<div class="tc${mod ? " " + mod : ""}">${inner}</div>`;
+  }
+  function ukText(text, sub) {
+    const row = `<span class="tc__row"><span class="tc__text">${text}</span></span>`;
+    return sub ? `<span class="tc__body">${row}<span class="tc__subtext">${sub}</span></span>` : row;
+  }
+  function ukSize(spec, diff) {
+    const [, w, size, lh] = spec;
+    const mark = (i, v) => diff.includes(i) ? `<span class="uk-diff">${v}</span>` : v;
+    return ukText(`${mark(2, size)} / ${mark(3, lh)}`, mark(1, UK_WEIGHT[w] + " " + w));
+  }
+  function ukEmpty() {
+    return `<span class="tc__row"><span class="tc__empty">—</span></span>`;
+  }
+
+  function renderUikit() {
+    const head = ["Токен ДС", "Образец ДС", "Размер / строка", "Стиль UI-kit", "Образец UI-kit", "Размер / строка", "Совпадение", "Имя ДС после переезда"];
+    let html = `<div class="tbl__row" style="grid-template-columns:${UK_COLS};">
+      <div class="th th--separator"></div>
+      ${head.map(h => `<div class="th"><span class="th__label">${h}</span></div>`).join("")}
+      <div class="th th--separator"></div>
+    </div>`;
+    let same = 0;
+
+    uikit.forEach(([dsTok, ds, kitName, kit, next]) => {
+      const diff = ds ? kit.map((v, i) => v === ds[i] ? -1 : i).filter(i => i >= 0) : [];
+      const ok = ds && !diff.length;
+      if (ok) same++;
+      const reason = !ds ? "нет в ДС" : diff.map(i => UK_FIELDS[i]).join(", ");
+      const [, w, size, lh] = kit;
+      const kitFont = `font:${w} ${size}px/${lh}px ${UK_FAMILY[kit[0]][1]}`;
+      const nextSub = !ds ? "добавить в ДС" : next === dsTok ? "имя не меняется" : "";
+
+      html += `<div class="tbl__row" style="grid-template-columns:${UK_COLS};">
+        <div class="tc tc--separator"></div>
+        ${ukCell(ds ? ukText(dsTok) : ukEmpty())}
+        ${ds ? ukCell(`<span class="tc__row"><span class="tc__text" style="font:var(${dsTok})">${UK_SAMPLE}</span></span>`) : ukCell(ukEmpty())}
+        ${ukCell(ds ? ukSize(ds, []) : ukEmpty())}
+        ${ukCell(ukText(kitName))}
+        ${ukCell(`<span class="tc__row"><span class="tc__text" style="${kitFont}">${UK_SAMPLE}</span></span>`)}
+        ${ukCell(ukSize(kit, diff))}
+        ${ukCell(ok
+          ? `<span class="tc__row"><span class="tc__icon tc__icon--success" aria-label="Совпадает"><i data-icon="check"></i></span><span class="tc__text">Да</span></span>`
+          : `<span class="tc__row"><span class="tc__icon tc__icon--error" aria-label="Не совпадает"><i data-icon="close"></i></span><span class="tc__text">${reason}</span></span>`)}
+        ${ukCell(ukText(next, nextSub), "uk-wrap")}
+        <div class="tc tc--separator"></div>
+      </div>`;
+    });
+
+    document.getElementById("uikit").innerHTML = html;
+    document.getElementById("uikit-count").textContent =
+      `${uikit.length} стилей UI-kit · совпадают ${same}`;
+  }
+
+  renderUikit();
 </script>
+<script src="../Icons/icons-data.js"></script>
+<script src="../Icons/Icons.js"></script>
 <script src="../../docs-kit/ds-nav.js"></script>
 <script src="../../docs-kit/ds-toc.js"></script>
 <script src="../../../apps/proto-panel.js"></script>

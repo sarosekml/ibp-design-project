@@ -171,6 +171,11 @@
    ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
    своей видимой рамки у .pop__body не бывает. Резерв места —
    `scrollbar-gutter: stable`: ширина не зависит от появления бегунка (RE0007).
+   Полоса --scroll-w справа есть и без прокрутки, и это не паддинг, поэтому
+   правый паддинг меньше левого на её ширину: видимые поля слева и справа
+   равны. 1.012; до этого справа было на 8px больше (замечание человека
+   10.10.2026). Тело без резерва (scrollbar-gutter: auto) возвращает полный
+   правый паддинг само — пример ColorPicker.
    1.008; до этого бегунок --border-light был виден всегда (решение человека
    01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .pop__body {
@@ -178,6 +183,7 @@
   --scroll-show: .1s;
   --scroll-fade: .3s;
   scrollbar-gutter: stable;
+  padding-right: calc(var(--pop-pad-x) - var(--scroll-w));
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

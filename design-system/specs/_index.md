@@ -17,7 +17,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Checkbox | components/atoms/Checkbox/Checkbox.md | components/atoms/Checkbox/Checkbox.css | label-helper | 1.007 |
 | Chip | components/atoms/Chip/Chip.md | components/atoms/Chip/Chip.css | label-helper, spinner | 1.020 |
 | Colors | foundations/Colors/Colors.md | — | — | 1.005 |
-| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, icon-button, button, popover | 1.002 |
+| ColorPicker | components/molecules/ColorPicker/ColorPicker.md | components/molecules/ColorPicker/ColorPicker.css | slider, input-text, icon-button, button, popover | 1.003 |
 | ContextMenu | components/molecules/ContextMenu/ContextMenu.md | components/molecules/ContextMenu/ContextMenu.css | button | 1.012 |
 | DatePicker | components/molecules/DatePicker/DatePicker.md | components/molecules/DatePicker/DatePicker.css | icon-button, button | 1.009 |
 | Divider | components/atoms/Divider/Divider.md | components/atoms/Divider/Divider.css | button | 2.001 |
@@ -25,7 +25,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | DropdownList | components/molecules/DropdownList/DropdownList.md | components/molecules/DropdownList/DropdownList.css | checkbox, label-helper, spinner | 1.018 |
 | EmptyState | components/molecules/EmptyState/EmptyState.md | components/molecules/EmptyState/EmptyState.css | illustration, button | 1.002 |
 | Elevation | foundations/Elevation/Elevation.md | foundations/Elevation/Elevation.css | — | 1.003 |
-| Drawer | components/organisms/Drawer/Drawer.md | components/organisms/Drawer/Drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.003 |
+| Drawer | components/organisms/Drawer/Drawer.md | components/organisms/Drawer/Drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.004 |
 | Entity | components/organisms/Entity/Entity.md | components/organisms/Entity/Entity.css | avatar, chip, icon-button, button, badge | 1.008 |
 | IconButton | components/atoms/IconButton/IconButton.md | components/atoms/IconButton/IconButton.css | badge, spinner | 1.011 |
 | Icons | foundations/Icons/Icons.md | — | — | 1.003 |
@@ -40,13 +40,13 @@ purpose: Манифест спек компонентов. Читай нужну
 | Keyboard | components/atoms/Keyboard/Keyboard.md | components/atoms/Keyboard/Keyboard.css | — | 1.000 |
 | LabelHelper | components/atoms/LabelHelper/LabelHelper.md | components/atoms/LabelHelper/LabelHelper.css | checkbox, radio, switch | 1.007 |
 | Link | components/atoms/Link/Link.md | components/atoms/Link/Link.css | breadcrumbs | 1.007 |
-| Modal | components/organisms/Modal/Modal.md | components/organisms/Modal/Modal.css | button, icon-button, label-helper, checkbox | 1.012 |
+| Modal | components/organisms/Modal/Modal.md | components/organisms/Modal/Modal.css | button, icon-button, label-helper, checkbox | 1.015 |
 | NavPanel | components/organisms/NavPanel/NavPanel.md | components/organisms/NavPanel/NavPanel.css | icon-button, badge, avatar | 1.024 |
 | NavTile | components/molecules/NavTile/NavTile.md | components/molecules/NavTile/NavTile.css | illustration, link | 1.011 |
 | Note | components/atoms/Note/Note.md | components/atoms/Note/Note.css | link | 1.000 |
 | PageHeader | components/organisms/PageHeader/PageHeader.md | components/organisms/PageHeader/PageHeader.css | button, icon-button, chip, badge, context-menu, tooltip, breadcrumbs | 1.010 |
 | Pagination | components/molecules/Pagination/Pagination.md | components/molecules/Pagination/Pagination.css | dropdown-list, checkbox, label-helper, button, splitter | 1.010 |
-| Popover | components/organisms/Popover/Popover.md | components/organisms/Popover/Popover.css | button, icon-button, link, chip, label-helper | 1.011 |
+| Popover | components/organisms/Popover/Popover.md | components/organisms/Popover/Popover.css | button, icon-button, link, chip, label-helper | 1.012 |
 | ProductRow | components/organisms/ProductRow/ProductRow.md | components/organisms/ProductRow/ProductRow.css | icon-button, context-menu, tooltip, skeleton | 1.001 |
 | ProgressBar | components/atoms/ProgressBar/ProgressBar.md | components/atoms/ProgressBar/ProgressBar.css | label-helper | 1.003 |
 | Radiobutton | components/atoms/Radiobutton/Radiobutton.md | components/atoms/Radiobutton/Radiobutton.css | label-helper | 2.008 |
