@@ -1,0 +1,86 @@
+# Карта экранов Post — страницы проекта от главной, в состоянии по умолчанию.
+# Формат и коды КЭ — шапка .agents/tools/screen-map.mjs; README — apps/screen-map/README.md.
+# После правки: node .agents/tools/screen-map.mjs (пересобрать map-data.js).
+# Демо-id — из apps/postrade/deals-app/data/: сделка 1024, транш 1024.d1.p1.i1.t1, ФИ FI-1024-1.
+version: 1
+section: postrade
+title: Карта экранов Post
+desc: Все страницы Post в один клик — от главной до транша и расчета FV
+nodes:
+  - id: main
+    app: deals-app
+    title: Главная
+    page: MainPage.html
+
+  - id: portfolio
+    app: deals-app
+    title: Текущий портфель
+    page: Portfolio.html
+    parent: main
+    states:
+      - id: deal-new
+        title: Новая сделка
+        do:
+          - click: '[data-modal="new-deal-scrim"]'
+          - waitFor: '#new-deal-title'
+
+  - id: deal
+    app: deals-app
+    title: Сделка
+    page: Deal.preview.html?id=1024
+    parent: portfolio
+
+  - id: tranche
+    app: deals-app
+    title: Транш
+    page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+    parent: deal
+    states:
+      # тайл «Корректировки процентов РСБУ»: тексты — из паспорта RsbuInterestAdjustmentsTile.md
+      - id: hards-locked
+        title: Требуется расчёт процентных платежей
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=locked
+      - id: hards-none
+        title: Корректировки отсутствуют
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=none
+      - id: hards-filled
+        title: Корректировки внесены
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled
+
+  - id: rsbu
+    app: deals-app
+    title: Корректировки РСБУ
+    page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+    parent: tranche
+    states:
+      - id: adjustment-new
+        title: Новая корректировка
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add
+      - id: filled
+        title: Корректировки внесены
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
+
+  - id: fin-instrument
+    app: deals-app
+    title: Финансовый инструмент
+    page: FinInstrument.preview.html?id=1024&fi=FI-1024-1
+    parent: deal
+
+  - id: fv-register
+    app: post-reports-app
+    title: Реестр расчетов FV
+    page: FairValueRegister.preview.html
+    parent: main  # с главной: плитка «Расчет FV»
+    states:
+      - flow: register
+        steps:
+          - register-new
+          - register-file-error
+
+  - id: fv-calc
+    app: post-reports-app
+    title: Расчет FV
+    page: FairValueCalculation.preview.html?id=16&role=FINANCIER
+    parent: fv-register
+    states:
+      - flow: statuses-financier
