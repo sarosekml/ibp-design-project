@@ -17,6 +17,7 @@ apps/
 ├── ds-body.js              ← второй тег загрузчика ДС
 ├── proto-panel.js          ← включатель панели прототипа (генерат proto-panel.mjs)
 ├── local-components/       ← витрина локальных компонентов: не раздел, генерат kit-build
+├── screen-map/             ← карта экранов проекта: не раздел, map.yaml → map-data.js (screen-map.mjs)
 ├── <раздел>/               ← core · ib · pretrade · postrade · common
 │   ├── <имя>-app/          ← модуль раздела, как у фронтенда: clients-app, deals-app …
 │   │   ├── README.md       ← описание модуля + дерево (генерат) + «Имена фронтенда»
@@ -46,6 +47,12 @@ apps/
   Каталог записан в `../project.json → localKit.dir`, по нему витрину обходят
   сторож хаба, сборщик страниц, сенсор и линтер. Как с ней работать —
   [`local-components/README.md`](local-components/README.md).
+- **`screen-map/`** — карта экранов проекта (пункт хаба «Карта Post» в «Проектах»):
+  майндмап страниц модулей от главной, клик открывает страницу с демо-данными. Не
+  раздел и не приложение: `app.json` нет, источник — `<раздел>/map.yaml`,
+  `map-data.js` собирает `node .agents/tools/screen-map.mjs`, он же проверяет, что
+  каждая страница модуля стоит на карте. Каталог — `../project.json → screenMap.dir`.
+  Подробно — [`screen-map/README.md`](screen-map/README.md).
 
 Сейчас в проекте:
 
@@ -131,6 +138,8 @@ apps/
 ├── local-components/   ← витрина локальных компонентов (не раздел)
 │   └── postrade/
 │       └── deals-app/
+├── screen-map/         ← карта экранов проекта (не раздел)
+│   └── postrade/
 ├── postrade/
 │   ├── corporate-requests-app/
 │   │   ├── data/
@@ -348,7 +357,9 @@ README пересобираются. Конфликт (у модуля своя 
 `ib/drafts/ai-bankster-prototype-v02`.
 
 Форматы, горячие клавиши, запись на диск и ограничения —
-`../.agents/proto-panel/README.md`; процедура агента — скилл `proto-panel`.
+`../.agents/proto-panel/README.md`; процедура агента — скилл `proto-panel`. На
+страницах модулей раздела с картой экранов в рельсе панели есть кнопка «Screen map»
+— дерево страниц проекта ([`screen-map/README.md`](screen-map/README.md)).
 
 ## Дизайн-система: адрес в одном месте
 
@@ -447,5 +458,8 @@ var DS_PATH = "../design-system/";   // путь от папки apps/
 | П8 | приложение лежит не в модуле `<раздел>/<имя>-app/` и не в концепте `<раздел>/drafts/<имя>/` |
 
 Исключение — любые папки `fixtures/` и витрина `local-components/` (её сверяет
-`kit-build.mjs --check`, шаг гейта `kit`). Вручную, из корня проекта:
+`kit-build.mjs --check`, шаг гейта `kit`). Карта экранов `screen-map/` — не экраны:
+сенсор, линтер и сборщик её не обходят; её страницу сторож проверяет по записи хаба
+(root — папка карты, `app.json` не нужен; П4, П5, П7), саму карту — `screen-map.mjs`
+(шага в гейте нет). Вручную, из корня проекта:
 `node .agents/tools/registry-check.mjs`.

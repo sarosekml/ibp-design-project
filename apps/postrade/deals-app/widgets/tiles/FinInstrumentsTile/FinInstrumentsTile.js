@@ -31,7 +31,9 @@
               «+ Финансовый инструмент», «Заполнить вручную»);
      EDIT   — DealFinancialInstrumentEditModal (пункт «Изменить» меню
               карточки — временный: что в меню, не решено, 02.10.2026).
-   «→», «+ Добавить», ⇄ у инструмента и ссылка у кодов RWA нарисованы по
+     OPEN   — «→» в шапке карточки: страница сделки открывает страницу ФИ
+              (FinInstrument.html).
+   «+ Добавить», ⇄ у инструмента и ссылка у кодов RWA нарисованы по
    макету и пока ничего не делают: что они делают, человек опишет позже
    (02.10.2026).
    ============================================================ */
@@ -183,14 +185,14 @@
   }
 
   function headHTML(c, edit, open) {
-    var pe = c.isPE
-      ? '<span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">Private Equity</span></span></span>' : '';
+    var pe = c.isTypeC
+      ? '<span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">ФИ типа С</span></span></span>' : '';
     return '<header class="tile__header"><div class="tile__header-main">'
       + '<div class="tile__title-row"><h4 class="tile__title">' + esc(c.name) + '</h4>' + pe + '</div>'
       + subtitleHTML(c) + '</div>'
       + '<div class="tile__actions">'
-      /* страницы финансового инструмента в прототипе нет (02.10.2026) */
-      + '<button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button>'
+      /* переход на страницу ФИ — событие 'fiaction' OPEN, навигацию делает страница */
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент" data-fi-act="OPEN" data-fi-id="' + esc(c.id) + '"><i data-icon="arrow-right"></i></button>'
       + (edit ? menuHTML(c) : '')
       + '<button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="' + open + '" aria-label="' + (open ? 'Свернуть' : 'Развернуть') + '">'
       + '<span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>'
@@ -404,22 +406,24 @@
 
   /* Вкладки: выбор ведёт рантайм Tab (data-tabs), список фильтрует тайл —
      по выбранной вкладке после клика или клавиши, а не по onChange: рантайм
-     мог привязать группу раньше скрипта тайла. Выбор читается микрозадачей —
-     когда обработчики рантайма этого же события уже отработали, в каком бы
-     порядке они ни были привязаны. */
+     мог привязать группу раньше скрипта тайла. Выбор читается макрозадачей
+     (setTimeout 0) — после всей рассылки события, в каком бы порядке ни были
+     привязаны слушатели. Микрозадача не годится: при настоящем клике браузер
+     выполняет её сразу после слушателя тайла, до рантайма, — фильтр отставал
+     на клик (урок Л203; синтетический клик смоука этого не воспроизводит). */
   function watchTabs(tile) {
     var bar = tile && tile.querySelector('[data-fi-tabs]');
     if (!bar || bar.__fiWatch) return;
     bar.__fiWatch = true;
     function sync() {
-      Promise.resolve().then(function () {
+      setTimeout(function () {
         var sel = bar.querySelector('[data-fi-filter][aria-selected="true"]');
         var key = sel && sel.getAttribute('data-fi-filter');
         var memo = memoOf(tile);
         if (!key || key === memo.filter) return;
         memo.filter = key;
         if (tile.__fiPaint) tile.__fiPaint();
-      });
+      }, 0);
     }
     bar.addEventListener('click', sync);
     bar.addEventListener('keydown', sync);

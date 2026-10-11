@@ -32,7 +32,8 @@
      ПН6  открытый комментарий ссылается на несуществующую страницу, шаг или
           номер состояния;
      ПН7  зеркала panel-data.js нет или оно разошлось с исходниками;
-     ПН8  включателя нет или он разошёлся со списком приложений и рантаймом;
+     ПН8  включателя нет или он разошёлся со списком приложений, картами
+          экранов (screenMap) и рантаймом;
           путь ДС во включателе (стили и рантаймы панели на страницах ДС)
           не ведёт к файлу;
      ПН9  состав папки панели: нет flows.yaml или comments.md, посторонний файл;
@@ -86,7 +87,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
 const GEN = 'proto-panel.mjs';
 /** Файлы рантайма в порядке подключения: его пишет включатель, его же сверяет ПН10. */
-export const FILES = ['core.js', 'strings.js', 'store.js', 'runner.js', 'recorder.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'panel.js'];
+export const FILES = ['core.js', 'strings.js', 'store.js', 'runner.js', 'recorder.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'map-view.js', 'panel.js'];
 /* Файлы рантайма, где кириллица в строках допустима (ПН10): ядро — диагностика
    форматов для гейта и агента, strings.js — единственный словарь интерфейса. */
 const CYRILLIC_OK = ['core.js', 'strings.js'];
@@ -191,18 +192,28 @@ export function renderBoot(P, apps, core) {
   const runtime = (path.posix.relative(bootDir, P.panel.runtime) || '.') + '/';
   const ds = ((P.ds || 'design-system').replace(/\/+$/, '')) + '/';
   const q = (v) => JSON.stringify(v);
+  /* Карты экранов (задача RE0015): разделы из project.json → screenMap; данные
+     карты — на страницах модулей раздела (у deals-app папки панели нет — карта
+     живёт по разделу, а не по приложению). Только из манифеста: появление
+     map-data.js включатель не сдвигает. */
+  const sm = P.screenMap;
+  const maps = sm ? [...new Set(sm.maps.map((m) => (m && typeof m.section === 'string' ? m.section.trim() : '')).filter(Boolean))].sort() : [];
+  const mapDir = sm ? (path.posix.relative(bootDir, sm.dir) || '.') + '/' : '';
+  const suffix = P.places ? P.places.moduleSuffix : '-app';
   return '/* СГЕНЕРИРОВАН ' + GEN + ' — руками не править; пересобрать:\n'
     + '   node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг panel).\n'
     + '   Включатель панели прототипа: ds-body.js подключает его на каждой странице,\n'
     + '   страницы ДС — тегом каркаса. Панель есть везде: у приложения с папкой\n'
     + '   ' + P.panel.dir + '/ — сценарии из зеркала, у остальных (хаб, концепт без папки,\n'
     + '   ДС) — заглушка «сценария нет». Во фрейме превью своей панели нет —\n'
-    + '   только пересылка горячих клавиш наверх. */\n'
+    + '   только пересылка горячих клавиш наверх. На странице модуля раздела с\n'
+    + '   картой экранов — ещё и её данные (map-data.js) для инструмента «Карта». */\n'
     + '(function () {\n'
     + '  var APPS = [' + (list.length ? '\n' + list.map((x) => '    ' + q(x)).join(',\n') + '\n  ' : '') + '];\n'
     + '  var RUNTIME = ' + q(runtime) + ';\n'
     + '  var DIR = ' + q(P.panel.dir) + ', BASE = ' + q(bootDir) + ', MANIFEST = ' + q(P.appsManifest) + '; // для записи: путь от корня проекта\n'
     + '  var DATA = DIR + ' + q('/' + DATA.mirror) + ', PAGES = ' + q(P.appShape.pages) + ';\n'
+    + '  var MAPS = [' + maps.map(q).join(', ') + '], MAPDIR = ' + q(mapDir) + ', SUFFIX = ' + q(suffix) + '; // карты экранов: разделы project.json → screenMap\n'
     + '  var FILES = [' + FILES.map(q).join(', ') + '];\n'
     + '  var KEYS = [' + core.HOTKEYS.codes.map(q).join(', ') + ']; // core.js → HOTKEYS: одна константа на панель и включатель\n'
     + '  var DSDIR = ' + q(ds) + ';\n'
@@ -212,10 +223,15 @@ export function renderBoot(P, apps, core) {
     + '  if (!me || !me.src) return;\n'
     + '  var apps = new URL(\'./\', me.src), here, base;\n'
     + '  try { here = decodeURIComponent(location.pathname); base = decodeURIComponent(apps.pathname); } catch (e) { return; }\n'
-    + '  var app = null;\n'
+    + '  var app = null, mapSection = null;\n'
     + '  if (here.indexOf(base) === 0) {\n'
     + '    var rel = here.slice(base.length), cut = rel.lastIndexOf(\'/\' + PAGES + \'/\');\n'
-    + '    if (cut >= 0) { var cand = rel.slice(0, cut); if (APPS.indexOf(cand) >= 0) app = cand; }\n'
+    + '    if (cut >= 0) {\n'
+    + '      var cand = rel.slice(0, cut); if (APPS.indexOf(cand) >= 0) app = cand;\n'
+    + '      /* модуль раздела с картой: <раздел>/<имя>' + suffix + '/' + P.appShape.pages + '/…; концепт (drafts/x) — не модуль */\n'
+    + '      var sl = cand.indexOf(\'/\'), sec = cand.slice(0, sl), mod = cand.slice(sl + 1);\n'
+    + '      if (sl > 0 && MAPS.indexOf(sec) >= 0 && mod.indexOf(\'/\') < 0 && mod.length > SUFFIX.length && mod.slice(-SUFFIX.length) === SUFFIX) mapSection = sec;\n'
+    + '    }\n'
     + '  }\n'
     + '  if (window.top !== window.self) {\n'
     + '    /* страница во фрейме (превью материала): своей панели нет, но её клавиши\n'
@@ -233,7 +249,7 @@ export function renderBoot(P, apps, core) {
     + '  var onDs = !!dsPath && here.indexOf(dsPath) === 0;\n'
     + '  var rt = new URL(RUNTIME, apps).href;\n'
     + '  var appUrl = app ? new URL(app.split(\'/\').map(encodeURIComponent).join(\'/\') + \'/\', apps).href : null;\n'
-    + '  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl ? appUrl + PAGES + \'/\' : null, runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST, ds: onDs };\n'
+    + '  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl ? appUrl + PAGES + \'/\' : null, runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST, ds: onDs, appsUrl: apps.href, mapSection: mapSection };\n'
     + '  /* Страница ДС: нет ds.css/ds.js (каркас грузит поштучно) — добираем\n'
     + '     недостающие стили и рантаймы панели, уже загруженное не трогаем. */\n'
     + '  if (onDs) {\n'
@@ -249,6 +265,7 @@ export function renderBoot(P, apps, core) {
     + '  }\n'
     + '  document.write(\'<link rel="stylesheet" href="\' + rt + \'' + CSS + '">\');\n'
     + '  if (appUrl) document.write(\'<scr\' + \'ipt src="\' + appUrl + DATA + \'"><\\/scr\' + \'ipt>\');\n'
+    + '  if (mapSection) document.write(\'<scr\' + \'ipt src="\' + new URL(MAPDIR + encodeURIComponent(mapSection) + \'/map-data.js\', apps).href + \'"><\\/scr\' + \'ipt>\');\n'
     + '  for (var i = 0; i < FILES.length; i++) document.write(\'<scr\' + \'ipt src="\' + rt + FILES[i] + \'"><\\/scr\' + \'ipt>\');\n'
     + '})();\n';
 }
@@ -314,7 +331,7 @@ export function build(P) {
 /* ---------------- проверка ---------------- */
 
 /* Имя как отдельный токен текста: «pv» не находится внутри «pvWide». */
-function hasToken(text, name) {
+export function hasToken(text, name) {
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp('(^|[^A-Za-z0-9_\\-\\u0400-\\u04FF])' + esc + '($|[^A-Za-z0-9_\\-\\u0400-\\u04FF])').test(text);
 }
@@ -324,21 +341,21 @@ function hasToken(text, name) {
    class="…" разметки и шаблонов, в classList.add('…') и в стилях, а имя
    переменной скрипта не в счёт: устаревший селектор '.doc …' проходил ПН5,
    потому что «doc» нашлось в функции openPreview(doc) (урок Л195). */
-function classText(text) {
+export function classText(text) {
   const parts = [];
   for (const m of text.matchAll(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\[\s\S]|[^`\\])*`/g)) parts.push(m[0]);
   for (const m of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) parts.push(m[1]);
   return parts.join('\n');
 }
 
-function pageFile(page) {
+export function pageFile(page) {
   let file = String(page).split(/[?#]/)[0];
   try { file = decodeURIComponent(file); } catch { /* имя с «%» — как есть */ }
   return file;
 }
 
 /** Беда со страницей шага или null. */
-function pageProblem(page, pagesAbs) {
+export function pageProblem(page, pagesAbs) {
   const file = pageFile(page);
   if (!file) return 'пустое имя страницы';
   if (/[\\/]/.test(file) || file === '..' || file === '.') return 'путь «' + page + '» — только имя файла в pages/ приложения, без «/» и «..»';
@@ -350,7 +367,7 @@ function pageProblem(page, pagesAbs) {
 }
 
 /* Текст страницы точки входа и её локальных скриптов (<script src> внутри приложения). */
-function pageCorpus(pageAbs, appAbs) {
+export function pageCorpus(pageAbs, appAbs) {
   const html = readFileSync(pageAbs, 'utf8');
   let text = html;
   for (const m of html.matchAll(/<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)) {
@@ -366,7 +383,7 @@ function pageCorpus(pageAbs, appAbs) {
 
 /* Текст ДС для классов состояния (.is-open ставит рантайм ДС): стили целиком,
    из скриптов — то, где живут классы (classText). Словарь глифов не читается. */
-function dsCorpus(P) {
+export function dsCorpus(P) {
   if (!P.dsAbs) return '';
   const L = DSP.layout(P.dsAbs);
   /* стили, затем скрипты ДС; линтер — в корпусе, как до RE0002 (у стенда его нет) */
@@ -378,6 +395,37 @@ function dsCorpus(P) {
     text += '\n' + classText(readFileSync(L.abs(f), 'utf8'));
   }
   return text;
+}
+
+/**
+ * Имена селектора действия, которых нет в тексте страницы точки входа (ПН5):
+ * { error } — селектор не разбирается; иначе { names — id и data-* (имя или
+ * значение), которых нет в странице и её скриптах; classes — классы, которых
+ * нет ни там (разметка, стили, строки), ни в ДС }. entry — { text, classes }:
+ * pageCorpus и classText страницы; lazyDs — корпус ДС, читается по требованию.
+ * Один код на сценарии панели и состояния карты экранов (screen-map.mjs).
+ */
+export function selectorMisses(core, target, entry, lazyDs) {
+  const t = core.selectorTokens(target);
+  if (t.error) return { error: t.error, names: [], classes: [] };
+  const names = [];
+  for (const id of t.ids) if (!hasToken(entry.text, id)) names.push(id);
+  for (const x of t.attrs) {
+    if (!/^data-/.test(x.name)) continue;
+    if (!hasToken(entry.text, x.name)) names.push(x.name);
+    else if (x.value && !hasToken(entry.text, x.value)) names.push(x.value);
+  }
+  const classes = t.classes.filter((c) => !hasToken(entry.classes, c) && !hasToken(lazyDs(), c));
+  return { error: null, names, classes };
+}
+
+/** Строки дефектов по selectorMisses: at — код и место действия, file — страница точки входа. */
+export function selectorDefects(at, miss, file) {
+  if (miss.error) return [at + ': селектор не разбирается — ' + miss.error];
+  const out = [];
+  if (miss.names.length) out.push(at + ': ' + miss.names.map((m) => '«' + m + '»').join(', ') + (miss.names.length > 1 ? ' не встречаются' : ' не встречается') + ' в ' + file + ' и её скриптах');
+  if (miss.classes.length) out.push(at + ': ' + miss.classes.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + file + ' и её скриптах (разметка, стили, строки — не имена переменных), ни в ДС');
+  return out;
 }
 
 function splitSelectors(prelude) {
@@ -543,7 +591,7 @@ function runtimeDefects(P, defects) {
 }
 
 /* Пометки записи (задача 0005a, §5.6) для заметок проверки — подсказка агенту, не дефект. */
-const ISSUE_NOTE = {
+export const ISSUE_NOTE = {
   fragile: 'хрупкий селектор (структурный путь) — дать элементу id или data-* и поправить селектор',
   frame: 'действия во фрейме превью не записаны',
   drag: 'перетаскивание не записано',
@@ -617,18 +665,7 @@ function appDefects(P, a, core, defects, lazyDs, notes = []) {
       step.do.forEach((act, ai) => {
         if (!act.target || !entry) return;
         const at = dirRel + '/' + DATA.flows + ':' + sm.actions[ai] + ' — сценарий ' + flow.id + ', шаг ' + step.id + ', действие ' + (ai + 1) + ' (' + core.describeAction(act) + ')';
-        const t = core.selectorTokens(act.target);
-        if (t.error) { defects.push('ПН5 ' + at + ': селектор не разбирается — ' + t.error); return; }
-        const miss = [];
-        for (const id of t.ids) if (!hasToken(entry.text, id)) miss.push(id);
-        for (const x of t.attrs) {
-          if (!/^data-/.test(x.name)) continue;
-          if (!hasToken(entry.text, x.name)) miss.push(x.name);
-          else if (x.value && !hasToken(entry.text, x.value)) miss.push(x.value);
-        }
-        if (miss.length) defects.push('ПН5 ' + at + ': ' + miss.map((m) => '«' + m + '»').join(', ') + (miss.length > 1 ? ' не встречаются' : ' не встречается') + ' в ' + entry.file + ' и её скриптах');
-        const noClass = t.classes.filter((c) => !hasToken(entry.classes, c) && !hasToken(lazyDs(), c));
-        if (noClass.length) defects.push('ПН5 ' + at + ': ' + noClass.map((c) => 'класс «' + c + '»').join(', ') + ' — нет ни в ' + entry.file + ' и её скриптах (разметка, стили, строки — не имена переменных), ни в ДС');
+        defects.push(...selectorDefects('ПН5 ' + at, selectorMisses(core, act.target, entry, lazyDs), entry.file));
       });
     });
   });
@@ -677,7 +714,7 @@ export function check(P) {
   const want = renderBoot(P, apps.filter((a) => !bootRel(P, a).startsWith('..')), core);
   if (!existsSync(boot)) defects.push('ПН8 ' + P.panel.boot + ' — включателя нет: node ' + P.tools + '/' + GEN);
   else if (readFileSync(boot, 'utf8') !== want) {
-    defects.push('ПН8 ' + P.panel.boot + ' — включатель разошёлся со списком приложений с папкой панели (' + (apps.map((a) => a.rel).join(', ') || 'нет') + '), путём до рантайма и порядком файлов: node ' + P.tools + '/' + GEN);
+    defects.push('ПН8 ' + P.panel.boot + ' — включатель разошёлся со списком приложений с папкой панели (' + (apps.map((a) => a.rel).join(', ') || 'нет') + '), картами экранов (' + (P.screenMap ? P.screenMap.maps.map((m) => m && m.section).filter(Boolean).join(', ') || 'нет' : 'нет') + '), путём до рантайма и порядком файлов: node ' + P.tools + '/' + GEN);
   }
   return { defects, stats, notes };
 }
@@ -1089,6 +1126,12 @@ const enableLab = (r) => enable(P_(r), LAB);
 const setFlows = (r, text) => { put(r, PANEL + '/flows.yaml', text); build(P_(r)); };
 const setComments = (r, text) => { put(r, PANEL + '/comments.md', text); build(P_(r)); };
 const flowsWith = (lines) => FLOWS.replace("          - click: '#late'\n", lines);
+/* карта экранов раздела core в манифесте стенда (RE0015): включатель знает её разделы */
+const withMap = (r) => {
+  const m = JSON.parse(read(r, 'project.json'));
+  m.screenMap = { dir: 'apps/screen-map', maps: [{ id: 'map-core', section: 'core', title: 'Карта', desc: 'т', icon: 'tree-view', after: 'lab' }] };
+  put(r, 'project.json', JSON.stringify(m, null, 2));
+};
 
 const CASES = [
   { name: '1 чистое дерево после --enable и сборки', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); },
@@ -1133,6 +1176,8 @@ const CASES = [
   { name: '8в после сборки — чисто', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, PANEL + '/flows.yaml', FLOWS.replace('Старт', 'Начало')); build(P_(r)); } },
   { name: '9а папку панели удалили без сборки', expect: 'ПН8 apps/proto-panel.js — включатель разошёлся', setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, PANEL), { recursive: true }); } },
   { name: '9б после сборки — чисто', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, PANEL), { recursive: true }); build(P_(r)); } },
+  { name: '9г карту экранов объявили без сборки (RE0015)', expect: 'ПН8 apps/proto-panel.js — включатель разошёлся', setup: (r) => { enableLab(r); setFlows(r, FLOWS); withMap(r); } },
+  { name: '9д карта экранов после сборки — чисто', expect: null, setup: (r) => { enableLab(r); setFlows(r, FLOWS); withMap(r); build(P_(r)); } },
   { name: '9в путь ДС во включателе без файла', expect: 'ПН8 apps/proto-panel.js — путь ДС «components/atoms/Switch/Switch.css» ведёт в пустоту', setup: (r) => { enableLab(r); setFlows(r, FLOWS); rmSync(path.join(r, 'ds/components/atoms/Switch/Switch.css')); } },
   { name: '10 посторонний файл в папке панели', expect: 'ПН9 ' + PANEL + '/notes.txt — посторонний файл', setup: (r) => { enableLab(r); setFlows(r, FLOWS); put(r, PANEL + '/notes.txt', 'x'); } },
   { name: '11 panel.css: литерал цвета, px, чужой селектор', expect: ['ПН10 .kit/proto-panel/panel.css', '«#fff»', '«13px»', 'селектор «.drawer»'],
@@ -1376,9 +1421,26 @@ async function selftest() {
     const brokenDsPage = runBoot(brokenBoot, src, base + 'ds/components/atoms/X/X.html', false);
     pass(drawerAfterModal(dsPage.written) && !drawerAfterModal(brokenDsPage.written),
       '12л CSS на странице ДС: Drawer после Modal; откат порядка возвращает охранное поле и отклоняется');
+    /* 12м–12п (RE0015): данные карты экранов — только на странице модуля раздела с картой */
+    const PM = { ...P, screenMap: { dir: 'apps/screen-map', dirAbs: '', maps: [{ section: 'core' }] } };
+    const bootM = renderBoot(PM, ['core/drafts/lab', 'core/lab-app'], core);
+    const mm = runBoot(bootM, src, base + 'apps/core/lab-app/pages/A.html', false);
+    pass(mm.written.length === 3 + FILES.length && mm.written[1].includes('apps/core/lab-app/proto-panel/panel-data.js') && mm.written[2].includes('apps/screen-map/core/map-data.js')
+      && mm.written[3].includes('/.kit/proto-panel/core.js') && mm.panel.mapSection === 'core' && mm.panel.app === 'core/lab-app' && mm.panel.appsUrl === base + 'apps/',
+      '12м включатель: модуль раздела с картой — данные карты после зеркала, перед рантаймом', mm.written.slice(0, 4).join(' | '));
+    const mn = runBoot(bootM, src, base + 'apps/core/x-app/pages/B.html', false);
+    pass(mn.written.length === 2 + FILES.length && mn.written[1].includes('apps/screen-map/core/map-data.js') && mn.panel.app === null && mn.panel.mapSection === 'core',
+      '12н включатель: модуль без папки панели — карта есть, сценариев нет', mn.written.length + ' тегов');
+    const withData = ['apps/core/drafts/lab/pages/A.html', 'apps/ib/x-app/pages/A.html', 'apps/core/x/pages/A.html', 'index.html', 'apps/screen-map/core/index.html']
+      .filter((u) => { const x = runBoot(bootM, src, base + u, false); return !x.panel || x.panel.mapSection !== null || x.written.some((w) => w.includes('map-data.js')); });
+    pass(!withData.length, '12о включатель: концепт, другой раздел, папка без суффикса модуля, хаб и сама страница карты — без карты', withData.join(', '));
+    const mf = runBoot(bootM, src, base + 'apps/core/x-app/pages/B.html', true);
+    pass(!mf.written.length && !mf.panel, '12п включатель: фрейм страницы модуля — без карты и рантайма');
+    pass(page.panel.mapSection === null && page.panel.appsUrl === base + 'apps/' && !page.written.some((w) => w.includes('map-data.js')),
+      '12р включатель без screenMap: карты нет, адрес apps/ — в контексте');
     let parsed = 0;
-    for (const t of [boot, renderBoot(P, [], core), text]) { try { new Function(t); parsed++; } catch { /* ниже */ } }
-    pass(parsed === 3, '12и генераты разбираются как JS');
+    for (const t of [boot, renderBoot(P, [], core), text, bootM]) { try { new Function(t); parsed++; } catch { /* ниже */ } }
+    pass(parsed === 4, '12и генераты разбираются как JS');
   });
 
   /* 13. comments.md по кругу. */
@@ -1578,6 +1640,91 @@ async function selftest() {
     await r9.goTo('demo', 'ready');
     const l10 = r9.lastRun();
     pass(!!l10 && l10.ok === true && l10.from === 1, '18и R4: живой документ — приращение от текущего шага');
+
+    /* 18п–18ф (RE0015): состояние карты экранов #ppmap=<узел>/<состояние> —
+       действия проигрываются без состояния сценария и стража; рельс знает карту. */
+    const mkMap = (hash) => {
+      const sess = fakeStorage();
+      const c = pageEnv({ files: panelFiles(core18), href: A + hash, session: sess });
+      Object.assign(c.__PROTO_PANEL, { mapSection: 'core', appsUrl: 'file:///proj/apps/' });
+      const replaced = [], clicks = [], errs = [], busy = [];
+      c.history = { state: null, replaceState(s, _t, u) { replaced.push(u); c.location = new URL(u, c.location.href); } };
+      const btn = { isConnected: true, disabled: false, checkVisibility: () => true, getBoundingClientRect: () => ({ left: 0, top: 0, width: 10, height: 10 }),
+        closest: () => null, getAttribute: () => null, matches: () => false, scrollIntoView() {}, dispatchEvent: (e) => { clicks.push(e.type); return true; } };
+      c.document.querySelectorAll = (sel) => (sel === '#open' ? [btn] : []);
+      c.MouseEvent = class { constructor(type, o) { this.type = type; Object.assign(this, o); } };
+      const pg = 'core/drafts/lab/pages/A.html', mk = core18.makeAction;
+      c.ScreenMaps = { core: { section: 'core', title: 'T', nodes: [{ id: 'a', href: pg, page: 'A.html', title: 'A', states: [
+        { id: 'open', kind: 'do', title: 'Open', href: pg + '#ppmap=a/open', do: [mk({ verb: 'click', target: '#open' }), mk({ verb: 'waitFor', target: '#gone', state: 'absent' })] },
+        { id: 'broken', kind: 'do', title: 'Broken', href: pg + '#ppmap=a/broken', do: [mk({ verb: 'waitFor', target: '#nope', timeout: 60 })] },
+        { id: 'far', kind: 'do', title: 'Far', href: 'core/drafts/lab/pages/B.html#ppmap=a/far', do: [mk({ verb: 'wait', ms: 1 })] }] }] } };
+      const PPm = loadRuntime(c, runtime, RT_BASE);
+      PPm._ui = { releasePage: () => Promise.resolve(), open() {}, close() {} };
+      PPm._bus.on('error', (x) => errs.push(x));
+      PPm._bus.on('busy', (x) => busy.push(x));
+      loadRuntime(c, runtime, ['runner.js']);
+      return { c, sess, replaced, clicks, errs, busy, r: PPm._runner, PP: PPm };
+    };
+    {
+      const m = mkMap('#ppmap=a/open');
+      const ok = await m.r.mapFromHash(true);
+      pass(ok === true && m.clicks.includes('click') && m.replaced[0] === '/proj/apps/core/drafts/lab/pages/A.html' && m.c.location.hash === '' && !m.errs.length
+        && m.sess.getItem('pp.state:core/drafts/lab') === null && m.sess.getItem('pp.guard') === null && !m.r.busy() && m.r.lastRun() === null,
+        '18п #ppmap: действия состояния проиграны, хеш снят, сценарий и страж не тронуты', JSON.stringify({ ok, clicks: m.clicks.length, errs: m.errs.map((e) => e.message) }));
+      pass(m.busy.length === 2 && m.busy[0] && m.busy[0].map === true && !m.busy[0].flow && m.busy[1] === null,
+        '18п2 #ppmap: busy без flow в начале и null в конце — плеер и Fix State перерисовываются', JSON.stringify(m.busy));
+    }
+    {
+      const m = mkMap('#ppmap=a/open&pp=99');
+      await m.r.mapFromHash(true);
+      pass(m.c.location.hash === '#pp=99' && m.clicks.includes('click'),
+        '18п3 #ppmap рядом с #pp: снимается только свой параметр, соседний остаётся', String(m.c.location.hash));
+    }
+    {
+      const m = mkMap('#ppmap=a/far');
+      m.sess.setItem('pp.mapnav', JSON.stringify({ ref: 'a/far', at: Date.now() - 10000 }));
+      const ok = await m.r.mapFromHash(true);
+      const loc = new URL(String(m.c.location.href || m.c.location));
+      pass(ok === false && m.errs.length === 1 && m.errs[0].map === true && !loc.pathname.endsWith('/B.html'),
+        '18т2 #ppmap: второй круг через 10 с (медленная загрузка) — ошибка петли, а не новый переход', JSON.stringify({ ok, href: loc.href }));
+    }
+    {
+      const m = mkMap('#ppmap=a/nope');
+      const ok = await m.r.mapFromHash(true);
+      pass(ok === false && m.errs.length === 1 && m.errs[0].map === true && m.errs[0].message.includes('nope') && m.c.location.hash === '',
+        '18р #ppmap: состояния нет на карте — ошибка карты, хеш снят', JSON.stringify(m.errs.map((e) => e.message)));
+    }
+    {
+      const m = mkMap('#ppmap=a/broken');
+      const ok = await m.r.mapFromHash(true);
+      pass(ok === false && m.errs.length === 1 && m.errs[0].action === 0 && /not found/i.test(m.errs[0].message) && m.sess.getItem('pp.state:core/drafts/lab') === null,
+        '18с #ppmap: действие не выполнилось — ошибка с номером действия, состояние сценария не тронуто', JSON.stringify(m.errs.map((e) => e.message)));
+    }
+    {
+      const m = mkMap('#ppmap=a/far');
+      const ok = await m.r.mapFromHash(true);
+      const loc = new URL(String(m.c.location.href || m.c.location));
+      pass(ok === 'nav' && loc.pathname.endsWith('/B.html') && loc.hash === '#ppmap=a/far' && !m.clicks.length,
+        '18т #ppmap: состояние другой страницы — переход на неё с тем же адресом, без действий здесь', String(m.c.location.href || m.c.location));
+    }
+    {
+      const m = mkMap('#ppmap=a/open');
+      await m.r.resume();
+      const before = m.replaced.length, run0 = m.r.lastRun();
+      const ok = await m.r.mapFromHash(true);
+      pass(before === 0 && run0 === null && ok === true && m.clicks.includes('click'),
+        '18у #ppmap: адрес шага сценария (#pp=) его не перехватывает — resume() не трогает, mapFromHash проигрывает');
+    }
+    {
+      const m = mkMap('');
+      m.c.ProtoPanelMap = {};
+      loadRuntime(m.c, runtime, ['ui.js']);
+      const u = m.PP._ui;
+      const withMapIds = u.railIds().join(','), modeMap = u.railMode('map');
+      delete m.c.ScreenMaps.core;
+      pass(withMapIds === 'panel,theme,map' && modeMap === 'map' && u.railMode('map') === 'panel' && u.railMode('theme') === 'theme' && u.railMode('x') === 'panel',
+        '18ф рельс: кнопка «Карта» — только при данных карты раздела, иначе режим панели', withMapIds + ' → ' + u.railIds().join(','));
+    }
 
     /* R6: контекст недописанного комментария фиксируется при вводе */
     const filesG = panelFiles(core18);

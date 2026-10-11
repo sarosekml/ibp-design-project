@@ -1,7 +1,7 @@
 ---
 name: Окно формирования нового расчета FV
 type: modal
-category: Отчёты
+category: Расчет FV
 purpose: Задать дату и сформировать новый расчет FV
 version: 1.000
 updated: "08.10.2026"

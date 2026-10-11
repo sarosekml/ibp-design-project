@@ -107,8 +107,8 @@ a{color:var(--link);} a:hover{color:var(--link-dark);}
     Обзор компонентов
   </a>
   <div class="meta">
-    <span>Версия: <b>1.003</b></span>
-    <span>Обновлено: <b>04.10.2026</b></span>
+    <span>Версия: <b>1.004</b></span>
+    <span>Обновлено: <b>10.10.2026</b></span>
     <span>CSS <b>components/organisms/Drawer/Drawer.css</b></span>
     <span>Рантайм <b>components/organisms/Drawer/Drawer.js</b></span>
   </div>
@@ -659,6 +659,10 @@ window.DS_SPLIT_SWITCH_LABELS = {
    ds-scroll.js (делегированно). Бегунок берёт цвет из border-color тела —
    своей видимой рамки у .drawer__body не бывает. Резерв места —
    `scrollbar-gutter: stable`: ширина не зависит от появления бегунка (RE0007).
+   Полоса --scroll-w справа есть и без прокрутки, и это не паддинг, поэтому
+   правый паддинг меньше левого на её ширину: видимые поля слева и справа
+   равны. 1.004; до этого справа было на 8px больше (замечание человека
+   10.10.2026).
    1.001; до этого бегунок --border-light был виден всегда (решение человека
    01.10.2026 — все полосы прокрутки ДС в одном виде). */
 .drawer__body {
@@ -666,6 +670,7 @@ window.DS_SPLIT_SWITCH_LABELS = {
   --scroll-show: .1s;
   --scroll-fade: .3s;
   scrollbar-gutter: stable;
+  padding-right: calc(var(--drawer-pad-x) - var(--scroll-w));
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

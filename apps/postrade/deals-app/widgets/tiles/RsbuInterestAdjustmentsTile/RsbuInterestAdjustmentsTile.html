@@ -1,0 +1,20 @@
+<!-- Локальный компонент «Корректировки процентов РСБУ» — фрагмент страницы транша.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     data-adjustments — вид по данным: locked | none | filled. Разметка держит все три
+                        блока сразу, показывает нужный RsbuInterestAdjustmentsTile.css.
+     data-state       — состояние данных: data (единственное; загрузки у тайла нет).
+     Ссылки (href, по умолчанию «#») и число корректировок ставит RsbuInterestAdjustmentsTile.js. -->
+<section class="tile lc-rsbu-adj" data-state="data" data-adjustments="none">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Корректировки процентов РСБУ</h3></div></div>
+    <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m lc-rsbu-adj__open" href="#" aria-label="Открыть: Корректировки процентов РСБУ"><i data-icon="arrow-right"></i></a></div>
+  </header>
+  <div class="tile__body">
+    <p class="lc-rsbu-adj__text lc-rsbu-adj__text--locked">Требуется расчёт процентных платежей</p>
+    <p class="lc-rsbu-adj__text lc-rsbu-adj__text--none">Корректировки отсутствуют</p>
+    <p class="lc-rsbu-adj__text lc-rsbu-adj__text--filled">Внесено корректировок: <span data-rsbu-count>3</span></p>
+    <a class="btn btn--outline btn--s lc-rsbu-adj__add" href="#"><span class="btn__label">Внести корректировку</span></a>
+  </div>
+</section>

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/tiles/Navigator/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заведение сделки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.css">
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Заведение сделки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Заведение сделки» (Navigator) — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | error
+     data-mode  — режим прав: edit | view. Действия процесса (кнопки подвала и
+                  пункты кебаба) задаёт статусная модель, а не режим: в «Активной»
+                  сделке, где сущности не правятся, её всё равно гасят и вводят
+                  изменения. Что из процесса видно роли без права правки — открытый
+                  вопрос паспорта (4); пока view у тайла ничего не прячет.
+
+     Вкладки — дорожки статусной модели (data/deal-status-model.js): Сделка · ЦУП ·
+     Operations · Мониторинг. На каждой — степпер и подвал: кнопки переходов из
+     текущего статуса дорожки или строка статуса, если действий нет.
+
+     Ниже — пример: черновик, вкладка «Сделка», «Согласование» ещё не нажато.
+     На странице сделки вкладки, степперы, подвал и кебаб перерисовывает
+     Navigator.js (PostNavigator.render) по модели и записи сделки. -->
+<section class="tile lc-navigator" data-state="data" data-mode="edit" id="tile-navigator">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Заведение сделки</h3></div>
+    </div>
+    <!-- Кебаб — переходы модели с via: 'menu' из текущих статусов дорожек.
+         Пунктов нет — кебаб не рисуется (data-menu-empty). -->
+    <div class="tile__actions lc-navigator__actions">
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со сделкой"
+                data-menu="lc-navigator-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-navigator-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-nav-act="deal_delete"><span class="menu__item-label">Удалить</span></button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-navigator__body">
+
+    <div class="lc-navigator__content">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs data-nav-tabs aria-label="Статусы по подразделениям">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-nav-lane="deal"><span class="tab__label">Сделка</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="tsup"><span class="tab__label">ЦУП</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="ops"><span class="tab__label">Operations</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="mon"><span class="tab__label">Мониторинг</span></button>
+      </div>
+
+      <!-- Панель вкладки. Степпер: StepMarker S и подпись; шаги соединяет линия
+           (Navigator.css). Пройденные статусы вместе с текущим — галочка, следующий
+           шаг — «текущий» маркер (макет screenflow). На вкладке «Сделка» степпер —
+           чек-лист заполнения: отметки разделов даёт страница, «Согласование»
+           нажимается и включает «Передать на сопровождение». -->
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="deal">
+        <ol class="lc-navigator__steps">
+          <li class="lc-navigator__step" data-state="pending">
+            <span class="stepmark stepmark--s" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Общая информация</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Продукты ДИД</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Финансовые инструменты</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Расчёт метрик</span>
+          </li>
+          <li class="lc-navigator__step lc-navigator__step--action" data-state="current" aria-current="step">
+            <span class="stepmark stepmark--s stepmark--current" aria-hidden="true"><span class="stepmark__num">5</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <button type="button" class="btn btn--transparent btn--s" data-nav-agree><span class="btn__label">Согласование</span></button>
+          </li>
+        </ol>
+        <!-- Подвал: кнопки переходов дорожки, первая — Accent, остальные — Outline.
+             Выключенная кнопка — своё состояние тайла: «Передать на сопровождение»
+             ждёт нажатия «Согласования». Действий нет — строка статуса. -->
+        <div class="lc-navigator__foot">
+          <button type="button" class="btn btn--accent btn--s btn--fullwidth" disabled data-nav-act="deal_submit"><span class="btn__label">Передать на сопровождение</span></button>
+        </div>
+      </div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="tsup" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="ops" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="mon" hidden></div>
+    </div>
+
+    <!-- Загрузка: каркас в габаритах вкладок и пяти шагов. -->
+    <div class="lc-navigator__loading" aria-busy="true">
+      <span class="sk-line sk-line--title" style="--sk-w:88%" aria-hidden="true"></span>
+      <div class="sk-group lc-navigator__loading-steps">
+        <span class="sk-line sk-line--title" style="--sk-w:62%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:54%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Ошибка: статусы не пришли. Причина и повтор — внутри тайла, остальная
+         страница работает. «Повторить» шлёт navaction RETRY — повтор делает страница. -->
+    <div class="lc-navigator__error">
+      <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить статусы сделки</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-nav-retry><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.002</b></span><span>Обновлено: <b>10.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Заведение сделки</h1>
+  <p class="lead">Путь сделки по четырём подразделениям и действия, доступные в текущем статусе</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator">apps/postrade/deals-app/widgets/tiles/Navigator/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/Navigator</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — блок «Общая информация», правая колонка 320px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="NavigatorAppointmentOfResponsibleModal.doc.html">Назначение ответственного (NavigatorAppointmentOfResponsibleModal)</a><br><a class="inl" href="NavigatorApprovalModal.doc.html">Подтверждение приёма на мониторинг (NavigatorApprovalModal)</a><br><a class="inl" href="NavigatorForwardToTransferModal.doc.html">Направление на передачу (NavigatorForwardToTransferModal)</a><br><a class="inl" href="NavigatorDealCloseModal.doc.html">Погашение сделки (NavigatorDealCloseModal)</a><br><a class="inl" href="NavigatorChangeReasonModal.doc.html">Причина ввода изменений (NavigatorChangeReasonModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="deal-status-model.doc.html">data/deal-status-model.js — вкладки и шаги и действия тайла</a><br>DealsStore — статусы записи сделки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ТЗ страницы сделки 19.09.2026<br>макеты дизайнера «Статусы сделки» и «screenflow»<br>требования refs/Текущий портфель.md<br>задача docs/tasks/RE0013-deal-navigator.md</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.002 · обновлено 10.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайл ведёт сделку от черновика до мониторинга. Статус у сделки не один: свой статус у самой сделки, у ЦУП, у Operations и у мониторинга. Тайл показывает их вкладками (Сделка · ЦУП · Operations · Мониторинг): на каждой — путь дорожки степпером и действия, которые доступны в её текущем статусе.</p>
+<p class="desc">Всё, что тайл рисует и делает, берётся из статусной модели сделки (<code class="tok">data/deal-status-model.js</code>): вкладки — её дорожки, шаги — её степперы, кнопки и пункты меню — её ручные переходы, последствия действия — её автопереходы. Модель — единственный источник; её схема, таблицы и несостыковки макетов — генерат <code class="tok">data/deal-status-model.md</code> (раздел «Несостыковки» там же, здесь не копируется).</p>
+<p class="desc">Действие тайла меняет статусы записи сделки в <code class="tok">DealsStore</code>, поэтому вместе с тайлом меняются чипы статусов в шапке страницы и режим правки страницы (статус сильнее роли).</p>
+<p class="desc">Вкладка «Сделка» — не путь статусов, а чек-лист заполнения: Общая информация · Продукты ДИД · Финансовые инструменты · Расчёт метрик · Согласование. Шаг «Согласование» нажимается и включает «Передать на сопровождение».</p>
+<p class="desc">Место тайла на странице и ширину задаёт страница сделки (<code class="tok">apps/postrade/deals-app/pages/Deal.html</code>): правая колонка 320px, минимальная высота 400px — из ТЗ.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «Заведение сделки», кебаб действий процесса)
+└── тело
+    ├── Tab S — Сделка · ЦУП · Operations · Мониторинг
+    └── панель вкладки
+        ├── степпер: шаг = StepMarker S + подпись; линия между шагами
+        │   └── группа «Передача» — заголовок и рамка с шагами РМ · ПМ · Залоги
+        └── подвал (линия сверху, прижат книзу)
+            ├── Button S на всю ширину — переходы дорожки (первая Accent, дальше Outline)
+            └── или строка текущего статуса, если действий нет</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный, без вариантов; тело — колонка на всю высоту тайла</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Neutral M, глиф <code class="tok">more-dots</code>, триггер ContextMenu</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ContextMenu</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">плавающее, выравнивание по правому краю; пункты — переходы модели с <code class="tok">via: 'menu'</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tab</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальные, размер S, <code class="tok">data-tabs</code> — рантайм ведёт выбор и клавиатуру</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">StepMarker</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">S; <code class="tok">--done</code> — пройден, <code class="tok">--current</code> — следующий шаг, без модификатора — впереди</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Button</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">S, <code class="tok">--fullwidth</code>: Accent — первый переход вкладки, Outline — остальные и «Список изменений»; Transparent — шаг «Согласование»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">error, M — состояние «Ошибка» с «Повторить» (Button Outline XS error)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки Title — состояние «Загрузка»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/molecules/Tab/Tab.html">Tab</a> · <a class="inl" href="../../../../design-system/components/atoms/StepMarker/StepMarker.html">StepMarker</a> · Button · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/molecules/ContextMenu/ContextMenu.html">ContextMenu</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.css">Navigator.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.html">Navigator.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js">Navigator.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.md">Navigator.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/tiles/Navigator/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">status</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус сделки — вкладка «Сделка»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, <code class="tok">label</code> статуса модели</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки, <code class="tok">DealsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">statusTsup</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус ЦУП — вкладка «ЦУП»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, <code class="tok">label</code> статуса модели</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">statusOps</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус Operations — вкладка «Operations»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, <code class="tok">label</code> статуса модели</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">statusMon</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус мониторинга — вкладка «Мониторинг»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, <code class="tok">label</code> статуса модели</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">monitoringAcceptance</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отметки РМ, ПМ, ПМЗ внутри статусов «Передана» и «Передача изменений»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MonitoringAcceptanceRsDto</code> (<code class="tok">mock-deals.js</code>) или <code class="tok">null</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ставит тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,2.2fr) minmax(0,2.8fr) minmax(0,1.1fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отметки чек-листа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнены ли разделы «Общая информация», «Продукты ДИД», «Финансовые инструменты», «Расчёт метрик»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4 × да/нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">считает страница (см. «Данные»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Значение статуса, которого нет в модели, показывается строкой как есть, без степпера и без действий.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЦУП (директор, сотрудник)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">назначение ответственного, утверждение, на корректировку, мониторинг — по макету; в прототипе — допущение, вопрос 5</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,2.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Operations</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подтверждение, на корректировку — по макету; в прототипе — допущение, вопрос 5</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим прав приходит атрибутом <code class="tok">data-mode</code> от страницы. Действия тайла — это действия процесса, их задаёт статусная модель, а не режим: страница режимом статуса тайл не выключает (в «Активной» сделке сущности не правятся, а погасить и ввести изменения можно). Что из действий процесса видно роли без права правки — открытый вопрос 4; пока <code class="tok">data-mode=&quot;view&quot;</code> у тайла ничего не прячет (допущение 10.10.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас Skeleton: строка вкладок и пять строк шагов; кебаба нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вкладки, степпер и подвал текущей вкладки (базовый вид)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус у дорожки есть всегда; неизвестное значение — строка статуса как есть</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у сделки всегда есть статус («Черновик» при создании)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert error «Не удалось загрузить статусы сделки» и «Повторить» (событие <code class="tok">navaction</code> RETRY — повтор делает страница)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статусы в прототипе меняются мгновенно; индикация сохранения перехода — не решено</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тот же вид: действия процесса по модели</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тот же вид — действия процесса не прячутся (допущение, вопрос 4)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (19.09.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Этап процесса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">всегда — по статусам записи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид каждой вкладки задаёт её статус: степпер модели (<code class="tok">steppers</code>, по <code class="tok">shownIn</code>) и кнопки переходов из этого статуса</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Шаг пройден / следующий / впереди</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">путь статусов</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пройденные статусы вместе с текущим — галочка (<code class="tok">stepmark--done</code>), следующий шаг — «текущий» маркер (<code class="tok">stepmark--current</code>), дальше — номер (макет screenflow). Текущего статуса среди шагов нет (корректировка, «На утверждении») — «текущий» у шага, куда из него ведёт переход модели, шаги до него пройдены (допущение 10.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отметки РМ · ПМ · Залоги</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">мониторинг в «Передана» или «Передача изменений»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в рамке «Передача» отмеченные подразделения — галочка, остальные — номер</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Передать на сопровождение» выключена</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">черновик, корректировка, ввод и корректировка изменений, пока не нажато «Согласование»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Button Accent <code class="tok">disabled</code>; «Согласование» — следующий шаг, Button Transparent</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Согласование» нажато</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">после клика по шагу</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">шаг пройден, кнопки вкладки «Сделка» включены; флаг сбрасывается любым переходом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Действий нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у вкладки нет ручных переходов из её статуса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подвал — строка текущего статуса (Body M Strong)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Кебаб пуст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ни одного перехода с <code class="tok">via: 'menu'</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кебаб не рисуется</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.7fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Удалена</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус сделки «Удалена»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на вкладках ЦУП, Operations, Мониторинг — прочерк: статусы трёх других ролей не показываются (пояснение модели)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не применимо — тайл не форма, значения ставит процесс.</li><li>Обязательные поля внутри: см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: чек-лист «Сделки» — незаполненный раздел без галочки. Минимум для передачи на сопровождение по пояснению к «Черновику» — дата заключения и один инструмент; прототип его не проверяет: дату заключения на странице не завести (окно «Сроки сделки» правит только первую выдачу) — допущение 10.10.2026, вопрос 7.</li><li>Что отдаёт наружу: patch статусов записи сделки (страница пишет его в <code class="tok">DealsStore</code>).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись шага переносится по словам, маркер стоит у первой строки, линия тянется до следующего шага</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">степпер растёт вниз, подвал остаётся под ним; шагов в модели не больше пяти</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вкладки не помещаются — переполнение ведёт рантайм Tab (скролл со стрелками); кнопки на всю ширину, подпись усекает Button</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо: тайл стоит в колонке 320px</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Переход статуса</h3>
+<p class="desc">Клик по кнопке подвала или пункту кебаба → переход модели → автопереходы модели в цикле (<code class="tok">after.any</code> — сработал любой из переходов, <code class="tok">after.all</code> — собраны все отметки, <code class="tok">requires</code> — запись стоит во всех статусах списка) → patch статусов → страница пишет его в <code class="tok">DealsStore</code> → тайл, чипы шапки и режим страницы перерисовываются по событию стора. Пример: «Утвердить» ЦУП при подтверждённой Operations → ЦУП «Утверждена», сделка «Активная», мониторинг «Утверждена».</p>
+<h3 class="kit-md__h3">Кнопки и меню</h3>
+<ul class="bullets"><li>Кнопки вкладки — ручные переходы модели с <code class="tok">via: 'button'</code> из текущего статуса её дорожки, в порядке модели; первая — Accent, остальные — Outline (на области один Accent, Button ДС).</li><li>Пункты кебаба — переходы с <code class="tok">via: 'menu'</code> из текущих статусов всех дорожек: ввести изменения, погасить, вернуть в действующие, на мониторинг (ГК СБИ), передать изменения на мониторинг, удалить.</li><li>Переход без <code class="tok">via</code> (технический, «Ожидает передачи» → ПАО) не показывается.</li><li>«Список изменений» — кнопка из <code class="tok">extraButtons</code> степпера; куда ведёт — не решено (вопрос 3).</li></ul>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Назначить ответственного» (ЦУП)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">NavigatorAppointmentOfResponsibleModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответственный от ЦУП, ГСЗ сделки, таблица «Сделки ГСЗ», «Назначить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЦУП «Ожидает подтверждения»; ответственный — в команду сделки (<code class="tok">tsupEmployee</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«РМ принял», «ПМ принял», «ПМЗ принял»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">NavigatorApprovalModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердите действие»: согласующий, дата согласования; у ПМЗ — Switch «С обеспечением»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">отметка в <code class="tok">monitoringAcceptance</code>; три отметки — «На мониторинге ГК СБИ»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Направить на передачу»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">NavigatorForwardToTransferModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Подтвердите действие»: дата передачи (<code class="tok">monitoringTransferDate</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">мониторинг «Направлена на передачу» / «Изменения направлены на передачу»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кебаб «Погасить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">NavigatorDealCloseModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата погашения, по умолчанию сегодня</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">все дорожки «Погашена», дата — в <code class="tok">repayDate</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,2.7fr) minmax(0,2.7fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кебаб «Ввести изменения»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно <code class="tok">NavigatorChangeReasonModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">причина (<code class="tok">changeReason</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделка, ЦУП и Operations «Ввод изменений»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно открывает тайл по полю <code class="tok">modal</code> перехода модели: <code class="tok">bind</code> зовёт <code class="tok">openModal(name, transition, done)</code> страницы, страница берёт окно из реестра <code class="tok">PostNavigatorModals</code>. «Сохранить» окна → <code class="tok">done(extra)</code> → переход вместе с полями окна (<code class="tok">extra.patch</code>) или отметкой (<code class="tok">extra.mark</code>). Крестик и Esc — перехода нет, статусы не меняются. Окна нет в реестре — переход сразу.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<ul class="bullets"><li>Четыре статуса сделки и отметки приёма на мониторинг — поля записи (см. «Поля»).</li><li>Справочник статусной модели (дорожки, статусы, переходы, степперы) — в прототипе данные <code class="tok">data/deal-status-model.js</code>; DTO нет, приходит ли модель с бэкенда — не решено (10.10.2026).</li><li>Переход статуса — действие на бэкенде, автопереходы считает бэкенд; методы выбирает разработка.</li></ul>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/deal-status-model.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DEAL_STATUS_MODEL</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">StatusModel</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/mock-deals.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_DEALS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки, <code class="tok">MonitoringAcceptanceRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.2fr) minmax(0,1.9fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/Navigator/fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">срезы записи на этапы процесса + <code class="tok">progress</code>, <code class="tok">lane</code> витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Отметки чек-листа на странице сделки</h3>
+<p class="desc">Как мерить заполненность раздела, макеты не говорят — допущение 10.10.2026: «Общая информация» — есть дата заключения (<code class="tok">signDate</code>); «Продукты ДИД» — в дереве продуктов есть продукт ДИД; «Финансовые инструменты» — есть карточка ФИ; «Расчёт метрик» — у сделки есть финансовые метрики. Считает страница (<code class="tok">fillNavigator</code> в <code class="tok">Deal.html</code>), тайл получает готовые отметки. Счётчик «Продукты ДИД (1 из 1)» с макета не показан — вопрос 6.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на странице сделки тайл стоит в своей колонке, классов сетки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">error</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав (см. «Права»)</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Скрипт <code class="tok">Navigator.js</code> (<code class="tok">window.PostNavigator</code>)</h3>
+<ul class="bullets"><li><code class="tok">laneStatus(deal, lane)</code>, <code class="tok">actions(deal)</code>, <code class="tok">apply(deal, transitionId, extra)</code> — движок модели без DOM; <code class="tok">apply</code> возвращает <code class="tok">{ patch, fired }</code> и запись не меняет.</li><li><code class="tok">markOf(transition)</code> — чью отметку ставит переход на себя (<code class="tok">rm</code> · <code class="tok">pm</code> · <code class="tok">pmz</code>); по нему окно <code class="tok">NavigatorApprovalModal</code> выбирает вариант.</li><li><code class="tok">render(tile, deal, opts)</code> — вкладки, панели, кебаб; <code class="tok">bind(tile, { get, save, progress, openModal })</code> → <code class="tok">{ paint, off }</code>.</li><li>Клик без <code class="tok">bind</code> — событие <code class="tok">navaction</code> (<code class="tok">TRANSITION</code>, <code class="tok">RETRY</code>) на корне тайла.</li></ul>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/Navigator/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/widgets/Navigator</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Статусная модель</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/deal-status-model.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник статусов и переходов — не решено</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окна навигатора</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/Navigator…Modal/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Navigator…Modal</code> фронтенда</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Имя виджета — тип в конце (<code class="tok">…Tile</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Navigator</code> без суффикса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пара во фронтенде называется <code class="tok">Navigator</code> (виджет вне групп), окна — <code class="tok">Navigator…Modal</code>; решение человека 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет компонента в ДС — не изобретать</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">степпер собран из StepMarker S, подписи и линии на токенах</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонента Stepper в ДС нет (бэклог ДС «Компонент Stepper (шаги заведения)»); решение человека 09.10.2026 (задача RE0013, §5)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: незаполненный шаг — пустое кольцо, следующий — подсветка подписи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">StepMarker с номером; следующий шаг — <code class="tok">stepmark--current</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид маркера — компонента ДС; подсветки подписи в ДС нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: «Согласование» — подпись с подсветкой при наведении</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Button Transparent S; подпись сдвинута на поле кнопки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кликабельный шаг без своего компонента; Link не бывает кнопкой</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: несколько кнопок подвала залиты (Accent)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">первая Accent, остальные Outline</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">на области один Accent — инвариант Button ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2fr) minmax(0,1.9fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Button в контенте Tile — S</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">S</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет рисует кнопки крупнее; правило ДС (решение человека 25.09.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Состав полей, порядок и источники значений — от владельца продукта. 10.10.2026 тайл собран по макетам «Статусы сделки» и «screenflow» и статусной модели (задача RE0013); подтверждения владельца нет.</li><li>Минимальная высота тайла — закрыт: 200px, задаёт страница сделки (решение человека 21.09.2026). С 10.10.2026 правая колонка страницы держит 400px по ТЗ.</li><li>Куда ведёт «Список изменений» (у фронтенда есть страница <code class="tok">ChangesList</code> и виджет <code class="tok">DetailedChanges</code>) — не решено (09.10.2026).</li><li>Действия процесса в статусах без правки и в режиме <code class="tok">view</code>. По требованиям погашение сделки и возврат погашенной в действующие вызываются из контекстного меню этого тайла. Какие из действий процесса видны роли без права правки — не решено (21.09.2026). Допущение 10.10.2026: режим <code class="tok">view</code> у тайла ничего не прячет, статус тайл не выключает.</li><li>Кто из ролей видит какие кнопки (ЦУП, Operations, ЦУП за РМ/ПМ/ПМЗ) — не решено (09.10.2026). Допущение: все кнопки видны одной роли.</li><li>Отметки чек-листа «Сделки»: чем мерить заполненность раздела и что значит счётчик «Продукты ДИД (1 из 1)» — не решено (10.10.2026). Допущение — раздел «Данные».</li><li>Минимум для передачи на сопровождение (дата заключения и один инструмент): блокирует ли он «Согласование» и как его показывать — не решено (10.10.2026); прототип минимум не проверяет.</li><li>Противоречия макетов и статусной модели — 28 вопросов модели (<code class="tok">openQuestions</code>), список и несостыковки — <code class="tok">data/deal-status-model.md</code>. На тайле сказываются: 9 (РМ · ПМ · ПМЗ — отметки, порядок), 18 (степпер и кнопки ЦУП в цикле изменений не показаны — только строка статуса), 19 (из «Направлена на передачу» в «Передана» действия нет — на странице путь мониторинга здесь останавливается), 21 (степпер мониторинга — история или план), 26 («Список изменений»).</li><li>Индикация сохранения перехода (состояние «Обновление») — не решено (10.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">Navigator.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/tiles/Navigator/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<!-- NavigatorAppointmentOfResponsibleModal — окно «Назначение ответственного».
+     Артефакт тайла «Заведение сделки» (Navigator): открывается кнопкой
+     «Назначить ответственного» на вкладке «ЦУП» в статусе «Ожидает назначения
+     ответственного». Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Состав — макет screenflow дизайнера и пояснение к нему: «кроме выбора
+     ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные
+     с этим ГСЗ сделки и ответственные по этим сделкам».
+     – «Ответственный от ЦУП» — InputAutocomplete по справочнику сотрудников;
+     – «Группа связанных заемщиков» — ReadOnlyField, ГСЗ сделки;
+     – «Сделки ГСЗ» — Table: номер, наименование, ответственный ЦУП;
+     – «Назначить» — ответственный уходит в команду сделки (tsupEmployee).
+     Крестик и Esc — без назначения. Клик мимо окна не закрывает: в окне поле
+     ввода (Modal ДС).
+
+     Значения ставит NavigatorAppointmentOfResponsibleModal.js из записи
+     сделки и DealsStore; ниже — пример: сделка 1025, ГСЗ «СвязьКапитал». -->
+<div class="modal-scrim" id="nav-appoint-scrim" hidden>
+  <div class="modal modal--w5 lc-nav-appoint" role="dialog" aria-modal="true" aria-labelledby="nav-appoint-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-appoint-title">Назначение ответственного</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как в
+           окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-appoint-employee"><span class="ds-label__text">Ответственный от ЦУП</span></label>
+        <div class="inp__field" data-ddl="nav-appoint-employee-list">
+          <input class="inp__control" id="nav-appoint-employee" name="tsupEmployee" autocomplete="off" value="Щукин Щ.Щ. 100134">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-appoint-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value" data-nav-appoint-gsz>Группа «СвязьКапитал»</span></div>
+      </div>
+
+      <h3 class="ds-h6-strong">Сделки ГСЗ</h3>
+
+      <!-- Table ДС без тулбара: строки рисует скрипт окна. Наименование —
+           в одну строку с многоточием и тултипом (TableCell). Других сделок
+           у ГСЗ нет или ГСЗ не указана — пустое состояние тела таблицы. -->
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-nav-appoint-table>
+            <div class="tbl__row tbl__row--head lc-nav-appoint__cols">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">Номер сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Наименование сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Ответственный ЦУП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1035</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Реконструкция аэропортового комплекса</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Степанов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1045</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Приобретение пакета акций энергокомпании</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Смирнов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1055</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Финансирование модернизации нефтеперерабатывающего завода</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Баранов Б.Б.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1065</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Кредитование лесопромышленного комбината</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Захаров З.З.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+          <div class="dtable__empty" data-nav-appoint-empty hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title" data-nav-appoint-empty-text>Других сделок у этой ГСЗ нет</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-appoint-save><span class="btn__label">Назначить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorApprovalModal — окно «Подтвердите действие»: приём сделки на
+     мониторинг РМ, ПМ или ПМЗ. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопками «РМ принял», «ПМ принял», «ПМЗ принял» на вкладке
+     «Мониторинг» в статусах «Передана» и «Передача изменений». Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Три варианта (data-variant на .modal), макет screenflow дизайнера:
+     – rm, pm — «Согласующий» и «Дата согласования»;
+     – pmz — сверху Switch «С обеспечением», затем те же поля.
+     «Сохранить» отдаёт отметку тайлу и закрывает окно; крестик и Esc — без
+     отметки. Клик мимо окна не закрывает: в окне поля ввода (Modal ДС).
+
+     Список согласующих и значения ставит NavigatorApprovalModal.js; ниже —
+     пример с макета: ПМЗ, Switch включён, поля пусты. -->
+<div class="modal-scrim" id="nav-approval-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-approval" data-variant="pmz" role="dialog" aria-modal="true" aria-labelledby="nav-approval-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-approval-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- Switch ДС: только у ПМЗ — «для залоговиков сначала нужно поставить
+           флаг, что залог есть» (пояснение макета) -->
+      <label class="sw lc-nav-approval__collateral">
+        <input type="checkbox" class="sw__input" role="switch" name="withCollateral" checked>
+        <span class="sw__control"><span class="sw__thumb"></span></span>
+        <span class="sw__content"><span class="sw__label">С обеспечением</span></span>
+      </label>
+
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как
+           в окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-approver"><span class="ds-label__text">Согласующий</span></label>
+        <div class="inp__field" data-ddl="nav-approval-approver-list">
+          <input class="inp__control" id="nav-approval-approver" name="approver" autocomplete="off">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-approval-approver-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- InputDate ДС: маска и календарь — из коробки; крестик очистки рисует
+           рантайм поля по значению. Во всю ширину тела, как «Согласующий»
+           (решение человека 10.10.2026; на макете — полширины). -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-date"><span class="ds-label__text">Дата согласования</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-approval-date" name="approvalDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-approval-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorForwardToTransferModal — окно «Подтвердите действие» с датой
+     передачи на мониторинг. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопкой «Направить на передачу» на вкладке «Мониторинг» в
+     статусах «Ожидает передачи на мониторинг» и «Изменения ожидают передачи на
+     мониторинг». Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Состав — макет screenflow дизайнера: строка текста и InputDate «Дата
+     передачи». Текст и подпись кнопки на макете размыты — «Отправка на
+     передачу» и «Сохранить» взяты по очертаниям (допущение 10.10.2026, вопрос 1
+     паспорта). «Сохранить» отдаёт дату тайлу и закрывает окно; крестик и Esc —
+     без перехода. Дату ставит NavigatorForwardToTransferModal.js. -->
+<div class="modal-scrim" id="nav-forward-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-forward" role="dialog" aria-modal="true" aria-labelledby="nav-forward-title" aria-describedby="nav-forward-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-forward-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-nav-forward__text" id="nav-forward-text">Отправка на передачу</p>
+      <!-- InputDate ДС: маска и календарь — из коробки; во всю ширину тела
+           (решение человека 10.10.2026; на макете — полширины) -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-forward-date"><span class="ds-label__text">Дата передачи</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-forward-date" name="monitoringTransferDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-forward-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorDealCloseModal — окно погашения сделки. Артефакт тайла «Заведение
+     сделки» (Navigator): открывается пунктом кебаба «Погасить» у активной
+     сделки. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макета окна нет. Из пояснения screenflow известно одно поле — дата
+     погашения («встаёт в „Сроки сделки“»). Остальное собрано по образцу окна
+     погашения инструмента (RepaymentModal): заголовок, строка «Погашение сделки
+     N. Имя», InputDate «Дата погашения» — по умолчанию сегодня, «Подтвердить»
+     (допущение 10.10.2026, вопрос 1 паспорта). Крестик и Esc — без перехода.
+
+     Текст и дату ставит NavigatorDealCloseModal.js; ниже — пример. -->
+<div class="modal-scrim" id="nav-deal-close-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-deal-close" role="dialog" aria-modal="true" aria-labelledby="nav-deal-close-title" aria-describedby="nav-deal-close-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-deal-close-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-nav-deal-close__text" id="nav-deal-close-text">Погашение сделки 1024. Финансирование строительства логистического хаба</p>
+      <!-- InputDate ДС: маска и календарь — из коробки; крестик очистки рисует
+           рантайм поля по значению, после заполнения кодом окно зовёт
+           DSInput.syncAll -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-deal-close-date"><span class="ds-label__text">Дата погашения</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-deal-close-date" name="repayDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="10.10.2026">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-deal-close-save><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorChangeReasonModal — окно причины ввода изменений. Артефакт тайла
+     «Заведение сделки» (Navigator): открывается пунктом кебаба «Ввести
+     изменения» у активной сделки. Фрагмент вшивается отдельной меткой
+     ds-include: скрим лежит в конце body.
+
+     Окно есть у фронтенда (features/modals/NavigatorChangeReasonModal), на
+     макетах его нет. Здесь — оболочка: заголовок, многострочное поле «Причина»
+     и «Сохранить» (задача RE0013, раздел 4). Заголовок — как у остальных окон
+     навигатора; состав не согласован (допущение 10.10.2026, вопрос 1
+     паспорта). Крестик и Esc — без перехода. -->
+<div class="modal-scrim" id="nav-change-reason-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="nav-change-reason-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-change-reason-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputText ДС, многострочный: textarea растёт по высоте сам -->
+      <div class="inp inp--m inp--fullwidth inp--multiline">
+        <label class="ds-label" for="nav-change-reason-text"><span class="ds-label__text">Причина</span></label>
+        <div class="inp__field">
+          <textarea class="inp__control" id="nav-change-reason-text" name="changeReason" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-change-reason-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
+<script src="Navigator.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"Navigator","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","error"],"modes":["edit"],"state":"data","mode":"edit","width":400,"scenario":true,"fixtures":{"_":"Демо-данные витрины: по объекту на состояние процесса. Ключи status, statusTsup, statusOps, statusMon, monitoringAcceptance — поля записи сделки (data/mock-deals.js); значения статусов — ровно label статусной модели (data/deal-status-model.js). progress и lane — только для витрины: progress — отметки четырёх разделов чек-листа «Сделки» до «Согласования» (на странице их считает страница), lane — вкладка, которая открыта в демо. Переходы в демо работают на копии записи и не сохраняются.","draft":{"_":"Черновик: «Согласование» ещё не нажато, «Передать на сопровождение» выключена. Отметки разделов — как на макете screenflow: «Общая информация» не заполнена.","status":"Черновик","statusTsup":"Черновик","statusOps":"Черновик","statusMon":"На утверждении","progress":[false,true,true,true],"lane":"deal"},"awaiting":{"_":"Ожидает подтверждения: ЦУП ждёт назначения ответственного, Operations проверяет. На вкладке «Сделка» действий нет — строка статуса.","status":"Ожидает подтверждения","statusTsup":"Ожидает назначения ответственного","statusOps":"Ожидает подтверждения","statusMon":"На утверждении","progress":[true,true,true,true],"lane":"tsup"},"correction":{"_":"Корректировка: вернули на исправление; в демо-данных у таких сделок все три статуса — «Корректировка» (вопрос 23 модели).","status":"Корректировка","statusTsup":"Корректировка","statusOps":"Корректировка","statusMon":"На утверждении","progress":[true,true,true,true],"lane":"deal"},"active":{"_":"Активная: обе команды утвердили, мониторинг «Утверждена» — кнопки «На мониторинг (ГК СБИ)» и «(ПАО Сбербанк)». В кебабе — «Погасить» и «Ввести изменения».","status":"Активная","statusTsup":"Утверждена","statusOps":"На сопровождении","statusMon":"Утверждена","progress":[true,true,true,true],"lane":"mon"},"changesInput":{"_":"Ввод изменений: сущности снова правятся; в подвале «Передать на сопровождение» и «Список изменений».","status":"Ввод изменений","statusTsup":"Ввод изменений","statusOps":"Ввод изменений","statusMon":"На мониторинге ГК СБИ","progress":[true,true,true,true],"lane":"deal"},"changesConfirm":{"_":"Подтверждение изменений: Operations — степпер цикла изменений и кнопки «Подтвердить», «На корректировку».","status":"Подтверждение изменений","statusTsup":"Подтверждение изменений","statusOps":"Подтверждение изменений","statusMon":"На мониторинге ГК СБИ","progress":[true,true,true,true],"lane":"ops"},"repaid":{"_":"Погашена: все дорожки погашены; в кебабе «Вернуть в действующие».","status":"Погашена","statusTsup":"Погашена","statusOps":"Погашена","statusMon":"Погашена","progress":[true,true,true,true],"lane":"deal"},"monAwaitingTransfer":{"_":"Мониторинг — ожидает передачи: кнопка «Направить на передачу».","status":"Активная","statusTsup":"Утверждена","statusOps":"На сопровождении","statusMon":"Ожидает передачи на мониторинг","progress":[true,true,true,true],"lane":"mon"},"monSentToTransfer":{"_":"Мониторинг — направлена на передачу: действия к «Передана» макеты не показывают (вопрос 19 модели) — строка статуса.","status":"Активная","statusTsup":"Утверждена","statusOps":"На сопровождении","statusMon":"Направлена на передачу","progress":[true,true,true,true],"lane":"mon"},"monTransferred":{"_":"Мониторинг — передана, РМ уже принял: в рамке «Передача» РМ отмечен; кнопки «РМ принял», «ПМ принял», «ПМЗ принял». Все три отметки ставят «На мониторинге ГК СБИ».","status":"Активная","statusTsup":"Утверждена","statusOps":"На сопровождении","statusMon":"Передана","monitoringAcceptance":{"rm":{"approver":"Орлов О.О.","approvalDate":"08.10.2026"},"pm":null,"pmz":null},"progress":[true,true,true,true],"lane":"mon"},"monOnMonitoring":{"_":"Мониторинг — на мониторинге ГК СБИ: путь пройден; в кебабе «Передать изменения на мониторинг».","status":"Активная","statusTsup":"Утверждена","statusOps":"На сопровождении","statusMon":"На мониторинге ГК СБИ","progress":[true,true,true,true],"lane":"mon"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Заведение сделки» (Navigator) — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | error
+     data-mode  — режим прав: edit | view. Действия процесса (кнопки подвала и
+                  пункты кебаба) задаёт статусная модель, а не режим: в «Активной»
+                  сделке, где сущности не правятся, её всё равно гасят и вводят
+                  изменения. Что из процесса видно роли без права правки — открытый
+                  вопрос паспорта (4); пока view у тайла ничего не прячет.
+
+     Вкладки — дорожки статусной модели (data/deal-status-model.js): Сделка · ЦУП ·
+     Operations · Мониторинг. На каждой — степпер и подвал: кнопки переходов из
+     текущего статуса дорожки или строка статуса, если действий нет.
+
+     Ниже — пример: черновик, вкладка «Сделка», «Согласование» ещё не нажато.
+     На странице сделки вкладки, степперы, подвал и кебаб перерисовывает
+     Navigator.js (PostNavigator.render) по модели и записи сделки. -->
+<section class="tile lc-navigator" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Заведение сделки</h3></div>
+    </div>
+    <!-- Кебаб — переходы модели с via: 'menu' из текущих статусов дорожек.
+         Пунктов нет — кебаб не рисуется (data-menu-empty). -->
+    <div class="tile__actions lc-navigator__actions">
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со сделкой"
+                data-menu="lc-navigator-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-navigator-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-nav-act="deal_delete"><span class="menu__item-label">Удалить</span></button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-navigator__body">
+
+    <div class="lc-navigator__content">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs data-nav-tabs aria-label="Статусы по подразделениям">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-nav-lane="deal"><span class="tab__label">Сделка</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="tsup"><span class="tab__label">ЦУП</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="ops"><span class="tab__label">Operations</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="mon"><span class="tab__label">Мониторинг</span></button>
+      </div>
+
+      <!-- Панель вкладки. Степпер: StepMarker S и подпись; шаги соединяет линия
+           (Navigator.css). Пройденные статусы вместе с текущим — галочка, следующий
+           шаг — «текущий» маркер (макет screenflow). На вкладке «Сделка» степпер —
+           чек-лист заполнения: отметки разделов даёт страница, «Согласование»
+           нажимается и включает «Передать на сопровождение». -->
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="deal">
+        <ol class="lc-navigator__steps">
+          <li class="lc-navigator__step" data-state="pending">
+            <span class="stepmark stepmark--s" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Общая информация</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Продукты ДИД</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Финансовые инструменты</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Расчёт метрик</span>
+          </li>
+          <li class="lc-navigator__step lc-navigator__step--action" data-state="current" aria-current="step">
+            <span class="stepmark stepmark--s stepmark--current" aria-hidden="true"><span class="stepmark__num">5</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <button type="button" class="btn btn--transparent btn--s" data-nav-agree><span class="btn__label">Согласование</span></button>
+          </li>
+        </ol>
+        <!-- Подвал: кнопки переходов дорожки, первая — Accent, остальные — Outline.
+             Выключенная кнопка — своё состояние тайла: «Передать на сопровождение»
+             ждёт нажатия «Согласования». Действий нет — строка статуса. -->
+        <div class="lc-navigator__foot">
+          <button type="button" class="btn btn--accent btn--s btn--fullwidth" disabled data-nav-act="deal_submit"><span class="btn__label">Передать на сопровождение</span></button>
+        </div>
+      </div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="tsup" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="ops" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="mon" hidden></div>
+    </div>
+
+    <!-- Загрузка: каркас в габаритах вкладок и пяти шагов. -->
+    <div class="lc-navigator__loading" aria-busy="true">
+      <span class="sk-line sk-line--title" style="--sk-w:88%" aria-hidden="true"></span>
+      <div class="sk-group lc-navigator__loading-steps">
+        <span class="sk-line sk-line--title" style="--sk-w:62%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:54%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Ошибка: статусы не пришли. Причина и повтор — внутри тайла, остальная
+         страница работает. «Повторить» шлёт navaction RETRY — повтор делает страница. -->
+    <div class="lc-navigator__error">
+      <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить статусы сделки</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-nav-retry><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Заведение сделки» (Navigator).
+   Только внутренняя раскладка и показ своих блоков по data-state. Цвета,
+   шрифты, отступы — токены ДС; состояния компонентов ДС отсюда не
+   переопределяются.
+   Режим (data-mode) ставит страница: edit | view. Действия процесса задаёт
+   статусная модель, а не режим, поэтому правил по data-mode здесь нет —
+   что из процесса видно роли без права правки, решает открытый вопрос 4
+   паспорта. */
+
+/* ── Тело: колонка на всю высоту тайла ─────────────────────────────── */
+/* Тайл — flex-колонка (Tile), его минимальную высоту задаёт страница. Тело
+   занимает свободную высоту, подвал прижат книзу: кнопки стоят на одном
+   месте, сколько бы шагов ни было у вкладки. */
+.lc-navigator__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.lc-navigator__content,
+.lc-navigator__panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+/* ── Степпер ───────────────────────────────────────────────────────── */
+/* Компонента Stepper в ДС нет (бэклог ДС «Компонент Stepper (шаги
+   заведения)») — шаг собран из StepMarker S и подписи, шаги соединяет линия
+   на токенах (паспорт, «Осознанные отклонения»). Маркер стоит у первой
+   строки подписи: длинная подпись переносится, линия тянется от маркера
+   до следующего шага при любой высоте шага. */
+.lc-navigator__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-navigator__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: var(--space-10);
+  top: calc(var(--space-20) + var(--space-4));
+  bottom: calc(var(--space-4) - var(--space-24));
+  border-left: 1px solid var(--border-light);
+  transform: translateX(-50%);
+}
+.lc-navigator__label {
+  min-width: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+/* Шаг-действие («Согласование»): подпись — кнопка Transparent S, она выше
+   строки подписи, поэтому маркер центрируется по ней. */
+.lc-navigator__step--action { align-items: center; }
+
+/* Группа шагов («Передача»: РМ · ПМ · Залоги) — заголовок и рамка вокруг
+   вложенных шагов. */
+.lc-navigator__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  flex: 1;
+}
+.lc-navigator__group-title {
+  margin: 0;
+  font: var(--type-body-s-strong);
+  color: var(--text-secondary);
+}
+.lc-navigator__group .lc-navigator__steps {
+  padding: var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  gap: var(--space-16);
+}
+.lc-navigator__group .lc-navigator__step:not(:last-child)::after {
+  bottom: calc(var(--space-4) - var(--space-16));
+}
+/* У шага-группы своего маркера нет: линия к следующему шагу идёт от низа
+   рамки, а не от маркера. */
+.lc-navigator__step--group:not(:last-child)::after {
+  top: calc(100% + var(--space-4));
+}
+
+/* ── Подвал ────────────────────────────────────────────────────────── */
+/* Отделён линией на всю ширину тайла, как на макете: поля тела тайла
+   (--tile-pad-x, Tile) компенсируются, кнопки стоят в поле контента. */
+.lc-navigator__foot {
+  margin-top: auto;
+  margin-inline: calc(-1 * var(--tile-pad-x));
+  padding: var(--space-16) var(--tile-pad-x) 0;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.lc-navigator__status {
+  margin: 0;
+  font: var(--type-body-m-strong);
+  color: var(--text-primary);
+}
+
+/* ── Что видно в каком состоянии ───────────────────────────────────── */
+.lc-navigator__loading,
+.lc-navigator__error { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__content,
+.lc-navigator[data-state="error"] .lc-navigator__content,
+.lc-navigator[data-state="loading"] .lc-navigator__actions,
+.lc-navigator[data-state="error"] .lc-navigator__actions { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__loading-steps { gap: var(--space-24); }
+.lc-navigator[data-state="error"] .lc-navigator__error { display: block; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   Navigator.js — тайл «Заведение сделки» на статусной модели сделки.
+
+   Модель — window.DEAL_STATUS_MODEL (data/deal-status-model.js), единственный
+   источник: дорожки (вкладки тайла), статусы, переходы, степперы. Тайл ничего
+   о статусах не знает сам — всё, что он рисует и делает, берётся из модели.
+
+   Две части:
+   — движок (без DOM): какие действия доступны записи сделки и какой patch
+     даёт действие вместе с автопереходами модели. Тот же код проверяется в
+     Node — смоук этапа Э2 задачи RE0013;
+   — отрисовка: вкладки, степпер, подвал, кебаб; клики → движок → save.
+
+   API:
+     PostNavigator.laneStatus(deal, laneId) → статус модели | null
+       Статус дорожки по полю записи (lanes[].field) и подписи (label).
+     PostNavigator.actions(deal) → { buttons: { <дорожка>: [переход] }, menu: [переход] }
+       Ручные переходы из текущих статусов: via 'button' — подвал вкладки своей
+       дорожки, via 'menu' — кебаб. Переход без via (технический) не показывается.
+     PostNavigator.apply(deal, transitionId[, extra]) → { patch, fired } | null
+       Ставит статус перехода и в цикле применяет автопереходы модели: after.any —
+       сработал любой из переходов, after.all — собраны все отметки (РМ, ПМ, ПМЗ),
+       requires — запись стоит во всех статусах списка. extra.patch — поля из
+       окна навигатора (дата погашения, ответственный ЦУП), extra.mark —
+       отметка РМ/ПМ/ПМЗ. Запись не меняет: patch пишет страница.
+     PostNavigator.markOf(transition) → 'rm' | 'pm' | 'pmz' | null
+       Чью отметку ставит переход на себя («РМ принял» → 'rm'); ключ поля
+       monitoringAcceptance. По нему окно NavigatorApprovalModal выбирает вариант.
+     PostNavigator.render(tile, deal, opts)
+       opts.progress — [bool×4]: заполнены ли разделы чек-листа «Сделки» до
+       «Согласования»; opts.agreed — «Согласование» нажато; opts.lane — вкладка.
+     PostNavigator.bind(tile, { get, save, progress, openModal }) → { paint, off }
+       get() — текущая запись; save(patch) — запись в стор; progress(deal) →
+       [bool×4]; openModal(name, transition, done(extra)) — окно навигатора
+       (widgets/modals/Navigator…Modal; страница берёт его из реестра
+       PostNavigatorModals); вернуть false — окна нет, переход сразу. Не дала openModal —
+       тоже сразу. Без save тайл перерисовывается сам; с save перерисовку
+       зовёт страница — paint() по событию стора.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var ROOT = '.lc-navigator';
+  /* Отметки внутри статуса (переход на себя) — поле записи monitoringAcceptance
+     (mock-deals.js, typedef MonitoringAcceptanceRsDto). Ключ — по подписи
+     кнопки; порядок ключей — порядок шагов в рамке «Передача» степпера
+     (РМ · ПМ · Залоги). */
+  var MARKS = [
+    { key: 'rm', action: 'РМ принял' },
+    { key: 'pm', action: 'ПМ принял' },
+    { key: 'pmz', action: 'ПМЗ принял' }
+  ];
+  var MARK_FIELD = 'monitoringAcceptance';
+  /* Удалённая сделка: статусы трёх других ролей не показываются (пояснение
+     к статусу «Удалена» в модели). */
+  var DELETED = 'deal_deleted';
+
+  /* ── Индексы модели ─────────────────────────────────────────────── */
+
+  var IX = null;
+  function ix() {
+    if (IX) return IX;
+    var m = window.DEAL_STATUS_MODEL;
+    if (!m) { console.error('Navigator: нет window.DEAL_STATUS_MODEL — подключите deal-status-model.js'); return null; }
+    IX = { model: m, lane: {}, status: {}, byLabel: {}, tr: {} };
+    m.lanes.forEach(function (l) { IX.lane[l.id] = l; IX.byLabel[l.id] = {}; });
+    m.statuses.forEach(function (s) {
+      IX.status[s.id] = s;
+      if (!(s.label in IX.byLabel[s.lane])) IX.byLabel[s.lane][s.label] = s;
+    });
+    m.transitions.forEach(function (t) { IX.tr[t.id] = t; });
+    return IX;
+  }
+
+  function laneOfTransition(t) { var s = ix().status[t.from]; return s ? s.lane : null; }
+
+  function markOf(t) {
+    if (!t || t.from !== t.to) return null;
+    for (var i = 0; i < MARKS.length; i++) if (MARKS[i].action === t.action) return MARKS[i].key;
+    return null;
+  }
+
+  /* ── Движок ─────────────────────────────────────────────────────── */
+
+  function laneStatus(deal, laneId) {
+    var I = ix(); if (!I || !deal) return null;
+    var lane = I.lane[laneId];
+    return lane ? (I.byLabel[laneId][deal[lane.field]] || null) : null;
+  }
+
+  function actions(deal) {
+    var I = ix(); var out = { buttons: {}, menu: [] };
+    if (!I) return out;
+    I.model.lanes.forEach(function (l) { out.buttons[l.id] = []; });
+    I.model.transitions.forEach(function (t) {
+      if (t.trigger !== 'manual' || !t.via || !t.action) return;
+      var lane = laneOfTransition(t);
+      var cur = laneStatus(deal, lane);
+      if (!cur || cur.id !== t.from) return;
+      if (t.via === 'button') out.buttons[lane].push(t);
+      else out.menu.push(t);
+    });
+    return out;
+  }
+
+  function apply(deal, transitionId, extra) {
+    var I = ix(); if (!I || !deal) return null;
+    var first = I.tr[transitionId];
+    if (!first) return null;
+    extra = extra || {};
+    var rec = {};
+    I.model.lanes.forEach(function (l) { rec[l.field] = deal[l.field]; });
+    var marks = Object.assign({}, deal[MARK_FIELD] || {});
+    var cur = function (laneId) { return I.byLabel[laneId][rec[I.lane[laneId].field]] || null; };
+    var fired = [];
+
+    function fire(t) {
+      var lane = laneOfTransition(t);
+      var key = markOf(t);
+      if (key) marks[key] = extra.mark || { approver: '', approvalDate: '' };
+      if (t.from !== t.to) {
+        rec[I.lane[lane].field] = I.status[t.to].label;
+        /* отметки РМ/ПМ/ПМЗ живут, пока статус не сменился */
+        if (lane === 'mon') marks = {};
+      }
+      fired.push(t.id);
+    }
+
+    var c0 = cur(laneOfTransition(first));
+    if (!c0 || c0.id !== first.from) return null;
+    fire(first);
+
+    function triggered(a) {
+      if (!a.after) return false;
+      if (a.after.any) return a.after.any.some(function (id) { return fired.indexOf(id) !== -1; });
+      if (a.after.all) {
+        var now = a.after.all.some(function (id) { return fired.indexOf(id) !== -1; });
+        return now && a.after.all.every(function (id) { var k = markOf(I.tr[id]); return k && marks[k]; });
+      }
+      return false;
+    }
+    function required(a) {
+      return (a.requires || []).every(function (sid) {
+        var s = I.status[sid]; var c = s && cur(s.lane); return c && c.id === sid;
+      });
+    }
+
+    var autos = I.model.transitions.filter(function (t) { return t.trigger === 'auto'; });
+    for (var guard = 0, changed = true; changed && guard < 20; guard++) {
+      changed = false;
+      autos.forEach(function (a) {
+        if (fired.indexOf(a.id) !== -1) return;
+        var c = cur(laneOfTransition(a));
+        if (!c || c.id !== a.from || !triggered(a) || !required(a)) return;
+        fire(a); changed = true;
+      });
+    }
+
+    var patch = {};
+    Object.keys(rec).forEach(function (f) { if (rec[f] !== deal[f]) patch[f] = rec[f]; });
+    var before = JSON.stringify(deal[MARK_FIELD] || {});
+    var hasMarks = Object.keys(marks).length > 0;
+    if (JSON.stringify(marks) !== before) patch[MARK_FIELD] = hasMarks ? marks : null;
+    Object.assign(patch, extra.patch || {});
+    return { patch: patch, fired: fired };
+  }
+
+  /* ── Степпер ────────────────────────────────────────────────────── */
+
+  function stepperOf(laneId, statusId) {
+    var I = ix();
+    for (var i = 0; i < I.model.steppers.length; i++) {
+      var s = I.model.steppers[i];
+      if (s.lane === laneId && s.shownIn.indexOf(statusId) !== -1) return s;
+    }
+    return null;
+  }
+
+  /* Состояния шагов пути статусов. Пройденные статусы вместе с текущим —
+     done, следующий шаг — current, дальше — pending (макет screenflow).
+     Текущего статуса среди шагов нет (корректировка, «На утверждении») —
+     current у шага, куда из него ведёт переход модели, шаги до него — done
+     (допущение 10.10.2026). */
+  function pathStates(steps, statusId) {
+    var I = ix();
+    var at = -1;
+    steps.forEach(function (st, i) { if (st.status === statusId && at === -1) at = i; });
+    var next;
+    if (at !== -1) next = at + 1;
+    else {
+      next = -1;
+      I.model.transitions.forEach(function (t) {
+        if (next !== -1 || t.from !== statusId || t.from === t.to) return;
+        steps.forEach(function (st, i) { if (next === -1 && st.status === t.to) next = i; });
+      });
+      if (next === -1) next = 0;
+    }
+    return steps.map(function (st, i) { return i < next ? 'done' : (i === next ? 'current' : 'pending'); });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  var STATE_TEXT = { done: 'пройден', current: 'следующий', pending: 'впереди' };
+
+  function markerHTML(n, state) {
+    var mod = state === 'done' ? ' stepmark--done' : (state === 'current' ? ' stepmark--current' : '');
+    return '<span class="stepmark stepmark--s' + mod + '" aria-hidden="true"><span class="stepmark__num">' + n
+      + '</span><i class="stepmark__icon" data-icon="check"></i></span>';
+  }
+
+  function stepHTML(n, label, state, inner) {
+    return '<li class="lc-navigator__step" data-state="' + state + '"' + (state === 'current' ? ' aria-current="step"' : '')
+      + ' aria-label="' + esc(label + ' — ' + STATE_TEXT[state]) + '">'
+      + markerHTML(n, state) + (inner || '<span class="lc-navigator__label">' + esc(label) + '</span>') + '</li>';
+  }
+
+  function groupHTML(step, state, marks, isCurrent) {
+    var items = step.group.items.map(function (label, i) {
+      var key = MARKS[i] && MARKS[i].key;
+      var st = state === 'done' && !isCurrent ? 'done' : ((isCurrent && key && marks[key]) ? 'done' : 'pending');
+      return stepHTML(i + 1, label, st);
+    }).join('');
+    return '<li class="lc-navigator__step lc-navigator__step--group">'
+      + '<div class="lc-navigator__group"><p class="lc-navigator__group-title">' + esc(step.group.title) + '</p>'
+      + '<ol class="lc-navigator__steps">' + items + '</ol></div></li>';
+  }
+
+  function checklistHTML(stepper, deal, opts, editable) {
+    var progress = opts.progress || [];
+    var last = stepper.steps.length - 1;
+    return stepper.steps.map(function (st, i) {
+      if (i < last) return stepHTML(i + 1, st.label, progress[i] ? 'done' : 'pending');
+      /* «Согласование» нажимается, пока статус допускает правку; в статусах
+         без правки сделка уже согласована — шаг пройден */
+      if (!editable || opts.agreed) return stepHTML(i + 1, st.label, 'done');
+      return '<li class="lc-navigator__step lc-navigator__step--action" data-state="current" aria-current="step">'
+        + markerHTML(i + 1, 'current')
+        + '<button type="button" class="btn btn--transparent btn--s" data-nav-agree>'
+        + '<span class="btn__label">' + esc(st.label) + '</span></button></li>';
+    }).join('');
+  }
+
+  function statusesHTML(stepper, status, deal) {
+    var states = pathStates(stepper.steps, status.id);
+    var marks = deal[MARK_FIELD] || {};
+    var n = 0;
+    return stepper.steps.map(function (st, i) {
+      if (st.group) return groupHTML(st, states[i], marks, st.status === status.id);
+      n += 1;
+      return stepHTML(n, st.label, states[i]);
+    }).join('');
+  }
+
+  /* ── Панель вкладки ─────────────────────────────────────────────── */
+
+  function footHTML(lane, status, rawValue, buttons, extra, gated) {
+    var parts = buttons.map(function (t, i) {
+      var type = i === 0 ? 'btn--accent' : 'btn--outline';
+      return '<button type="button" class="btn ' + type + ' btn--s btn--fullwidth"' + (gated ? ' disabled' : '')
+        + ' data-nav-act="' + esc(t.id) + '"><span class="btn__label">' + esc(t.action) + '</span></button>';
+    });
+    /* дополнительные кнопки степпера («Список изменений») — куда ведут, не
+       решено (вопрос 26 модели): кнопка есть, действия нет */
+    (extra || []).forEach(function (b) {
+      parts.push('<button type="button" class="btn btn--outline btn--s btn--fullwidth" data-nav-extra>'
+        + '<span class="btn__label">' + esc(b.label) + '</span></button>');
+    });
+    if (!parts.length) {
+      parts.push('<p class="lc-navigator__status">' + esc(status ? status.label : (rawValue || '—')) + '</p>');
+    }
+    return '<div class="lc-navigator__foot">' + parts.join('') + '</div>';
+  }
+
+  function panelHTML(lane, deal, acts, opts) {
+    var status = laneStatus(deal, lane.id);
+    var dealStatus = laneStatus(deal, 'deal');
+    if (dealStatus && dealStatus.id === DELETED && lane.id !== dealStatus.lane) {
+      return footHTML(lane, null, '—', [], [], false);
+    }
+    var stepper = status ? stepperOf(lane.id, status.id) : null;
+    var steps = '';
+    var gated = false;
+    if (stepper && stepper.steps.length) {
+      if (stepper.mode === 'checklist') {
+        var editable = status.editable !== false;
+        steps = checklistHTML(stepper, deal, opts, editable);
+        /* кнопки дорожки с чек-листом ждут последнего шага («Согласование») */
+        gated = editable && !opts.agreed;
+      } else {
+        steps = statusesHTML(stepper, status, deal);
+      }
+    }
+    var extra = stepper && stepper.extraButtons
+      ? stepper.extraButtons.filter(function (b) { return b.shownIn.indexOf(status.id) !== -1; })
+      : [];
+    return (steps ? '<ol class="lc-navigator__steps">' + steps + '</ol>' : '')
+      + footHTML(lane, status, deal[lane.field], acts.buttons[lane.id] || [], extra, gated);
+  }
+
+  /* ── Отрисовка ──────────────────────────────────────────────────── */
+
+  var seq = 0;
+
+  function menuHTML(tile, items) {
+    if (!tile.__navMenuId) tile.__navMenuId = 'lc-navigator-menu-' + (++seq);
+    var id = tile.__navMenuId;
+    return '<span class="menu-anchor">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со сделкой" data-menu="' + id + '" data-menu-align="end"><i data-icon="more-dots"></i></button>'
+      + '<div id="' + id + '" class="menu menu--floating" role="menu" hidden>'
+      + items.map(function (t) {
+        return '<button type="button" class="menu__item" role="menuitem" data-nav-act="' + esc(t.id) + '">'
+          + '<span class="menu__item-label">' + esc(t.action) + '</span></button>';
+      }).join('')
+      + '</div></span>';
+  }
+
+  function render(tile, deal, opts) {
+    var I = ix();
+    if (!tile || !I) return;
+    opts = opts || {};
+    if (!deal) { tile.setAttribute('data-state', 'error'); return; }
+    var acts = actions(deal);
+    var laneSel = opts.lane || tile.__navLane || I.model.lanes[0].id;
+    tile.__navLane = laneSel;
+
+    if (window.DSMenu) window.DSMenu.closeAll();
+
+    /* кебаб: переходы с via 'menu'; пунктов нет — кебаба нет. Старое меню
+       рантайм мог унести в общий слой — убираем его по id. */
+    var actionsBox = tile.querySelector('.lc-navigator__actions');
+    if (actionsBox) {
+      var oldMenu = tile.__navMenuId && document.getElementById(tile.__navMenuId);
+      if (oldMenu && !actionsBox.contains(oldMenu)) oldMenu.remove();
+      actionsBox.innerHTML = acts.menu.length ? menuHTML(tile, acts.menu) : '';
+      actionsBox.hidden = !acts.menu.length;
+    }
+
+    I.model.lanes.forEach(function (lane) {
+      var tab = tile.querySelector('.tab[data-nav-lane="' + lane.id + '"]');
+      var panel = tile.querySelector('.lc-navigator__panel[data-nav-lane="' + lane.id + '"]');
+      var on = lane.id === laneSel;
+      if (tab) {
+        var lbl = tab.querySelector('.tab__label');
+        if (lbl) lbl.textContent = lane.label;
+        tab.classList.toggle('tab--selected', on);
+        tab.setAttribute('aria-selected', String(on));
+        tab.setAttribute('tabindex', on ? '0' : '-1');
+      }
+      if (panel) {
+        panel.innerHTML = panelHTML(lane, deal, acts, opts);
+        panel.hidden = !on;
+      }
+    });
+
+    tile.setAttribute('data-state', 'data');
+    if (window.dsIcons) window.dsIcons.apply(tile);
+    if (window.DSMenu) window.DSMenu.bindAll(tile);
+  }
+
+  /* Вкладки ведёт рантайм Tab (data-tabs), показ панели — тайл. Выбор читается
+     макрозадачей (setTimeout 0) — после всей рассылки события, когда рантайм
+     уже переставил aria-selected, в каком бы порядке ни привязали слушатели.
+     Микрозадача здесь не годится: при настоящем клике браузер выполняет
+     микрозадачи после КАЖДОГО слушателя, а слушатель тайла встаёт раньше
+     рантайма (ds-body грузит рантаймы асинхронно) — тайл читал прежнюю вкладку,
+     и панель отставала на клик (урок Л203; синтетический клик смоука этого не
+     воспроизводит). onChange рантайма тоже не годится: группу он привязывает
+     сам, повторный DSTabs.tabs отдаёт готовый api без onChange. */
+  function watchTabs(tile) {
+    var bar = tile.querySelector('[data-nav-tabs]');
+    if (!bar || bar.__navWatch) return;
+    bar.__navWatch = true;
+    function sync() {
+      setTimeout(function () {
+        var sel = bar.querySelector('.tab[aria-selected="true"]');
+        var lane = sel && sel.getAttribute('data-nav-lane');
+        if (!lane || lane === tile.__navLane) return;
+        tile.__navLane = lane;
+        tile.querySelectorAll('.lc-navigator__panel').forEach(function (p) {
+          p.hidden = p.getAttribute('data-nav-lane') !== lane;
+        });
+      }, 0);
+    }
+    bar.addEventListener('click', sync);
+    bar.addEventListener('keydown', sync);
+  }
+
+  function emit(tile, action, detail) {
+    tile.dispatchEvent(new CustomEvent('navaction', {
+      bubbles: true, detail: Object.assign({ action: action }, detail || {})
+    }));
+  }
+
+  function bind(tile, cfg) {
+    if (!tile || !cfg || !cfg.get) return function () {};
+    /* «Согласование» нажато — флаг тайла, привязан к статусу сделки: смена
+       статуса его сбрасывает */
+    var agreedAt = null;
+
+    function opts(deal) {
+      var s = laneStatus(deal, 'deal');
+      return {
+        progress: cfg.progress ? cfg.progress(deal) : [],
+        agreed: !!(s && agreedAt === s.id)
+      };
+    }
+    function paint() { var d = cfg.get(); render(tile, d, opts(d)); }
+
+    function run(tid, extra) {
+      var res = apply(cfg.get(), tid, extra);
+      if (!res) return;
+      agreedAt = null;
+      if (cfg.save) cfg.save(res.patch, res);
+      else paint();
+    }
+
+    tile.__navAct = function (tid) {
+      var t = ix().tr[tid];
+      if (!t) return;
+      if (t.modal && cfg.openModal && cfg.openModal(t.modal, t, function (extra) { run(tid, extra); }) !== false) return;
+      run(tid);
+    };
+    tile.__navAgree = function () {
+      var s = laneStatus(cfg.get(), 'deal');
+      agreedAt = s ? s.id : null;
+      paint();
+    };
+    watchTabs(tile);
+    paint();
+    return {
+      paint: paint,
+      off: function () { tile.__navAct = null; tile.__navAgree = null; }
+    };
+  }
+
+  /* Пункты кебаба рантайм держит в общем слое DSFloat, вне тайла: их тайл
+     восстанавливается по кнопке-триггеру меню (Л88). */
+  function ownerOf(el) {
+    var menu = el.closest('.menu');
+    if (menu && menu.id) {
+      var trigger = document.querySelector('[data-menu="' + menu.id + '"]');
+      return trigger ? trigger.closest(ROOT) : null;
+    }
+    return el.closest(ROOT);
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-nav-act], [data-nav-agree], [data-nav-retry]');
+    if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
+    var tile = ownerOf(el);
+    if (!tile) return;
+    if (el.hasAttribute('data-nav-agree')) { if (tile.__navAgree) tile.__navAgree(); return; }
+    if (el.hasAttribute('data-nav-retry')) { emit(tile, 'RETRY'); return; }
+    var tid = el.getAttribute('data-nav-act');
+    if (tile.__navAct) tile.__navAct(tid);
+    else emit(tile, 'TRANSITION', { transition: tid });
+  });
+
+  function wireTabs(root) { (root || document).querySelectorAll(ROOT).forEach(watchTabs); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { wireTabs(document); });
+  else wireTabs(document);
+
+  window.PostNavigator = {
+    laneStatus: laneStatus,
+    actions: actions,
+    apply: apply,
+    markOf: markOf,
+    stepperOf: stepperOf,
+    pathStates: pathStates,
+    render: render,
+    bind: bind
+  };
+})();
+</script>
+</body>
+</html>

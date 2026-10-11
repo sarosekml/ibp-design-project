@@ -3,8 +3,8 @@ name: Финансовые инструменты
 type: tile
 category: Сделка
 purpose: Финансовые инструменты сделки — карточки ФИ с параметрами, контрагентами и прикреплёнными инструментами дерева продуктов
-version: 1.001
-updated: "04.10.2026"
+version: 1.003
+updated: "10.10.2026"
 rulesVersion: 2.000
 owner: не решено (19.09.2026)
 designer: Роман Эсэф
@@ -54,7 +54,7 @@ knowledge: []
 (`apps/postrade/deals-app/pages/Deal.html`), не компонент.
 
 **Откуда данные.** Во фрагменте `FinInstrumentsTile.html` список — пример с макетов (сделка
-1027: кредит с траншем развёрнут, акции с PE и кредит с ошибкой свёрнуты). На странице сделки
+1027: кредит с траншем развёрнут, акции с ФИ типа С и кредит с ошибкой свёрнуты). На странице сделки
 его заменяет `FinInstrumentsTile.js`: `PostTileFinInstruments.bind` рисует
 `FinInstrumentsStore.view()` своей сделки и перерисовывает тайл после сохранения в окнах ФИ и
 в окне связи с ФИ у дерева. Карточки сохраняются между перезагрузками (`PostApi`,
@@ -68,7 +68,7 @@ Tile (заголовок «Финансовые инструменты»; в ш�
 └── тело
     ├── вкладки Tab S «Все · Активные · Погашенные» со счётчиками
     ├── карточки ФИ ×N — Card с аккордеоном (.tile--card.tile--accordion)
-    │   ├── шапка: наименование [+ чип «Private Equity»]; у погашенной —
+    │   ├── шапка: наименование [+ чип «ФИ типа С»]; у погашенной —
     │   │   сабхедер «✓ Фактическая дата погашения ДД.ММ.ГГГГ»;
     │   │   IconButton «→», ⋮ (правка), шеврон
     │   ├── [Alert error «Ошибка» — во всю ширину карточки]
@@ -90,11 +90,11 @@ Tile (заголовок «Финансовые инструменты»; в ш�
 
 | Компонент | Откуда | Варианты и ключевые параметры |
 |---|---|---|
-| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | тайл — обычный, действие шапки `btn--outline btn--xs`; карточка ФИ — Card `.tile--card` + `.tile--accordion` (частичный коллапс: два блока `.tile__collapsible`), PE — в слоте `.tile__title-add`; сабхедер погашенной карточки — `.tile__subtitle` с иконкой `tile__subtitle-icon--success` |
+| Tile | ДС — `design-system/components/organisms/Tile/Tile.md` | тайл — обычный, действие шапки `btn--outline btn--xs`; карточка ФИ — Card `.tile--card` + `.tile--accordion` (частичный коллапс: два блока `.tile__collapsible`), ФИ типа С — в слоте `.tile__title-add`; сабхедер погашенной карточки — `.tile__subtitle` с иконкой `tile__subtitle-icon--success` |
 | Tab | ДС — `design-system/components/molecules/Tab/Tab.md` | `.tabs--horiz`, `.tab--s`, счётчик `.tab__badge`, пустая — `aria-disabled`; рантайм `data-tabs`, переполнение `none` |
 | ReadOnlyField | ДС — `design-system/components/molecules/ReadOnlyField/ReadOnlyField.md` | значения — `.rof__value--clamp-1`, контрагент — `--clamp-n` (2 строки), IRR — `.rof__affix` «%», признаки — `.rof__icon` `check`, коды RWA — `.rof__value--chips` |
 | RiskMetric | ДС — `design-system/components/organisms/RiskMetric/RiskMetric.md` | `data-riskmetric` с рейтингом и зоной контрагента, `DSRiskMetric.mount` |
-| Chip | ДС — `design-system/components/atoms/Chip/Chip.md` | коды RWA — `chip--s chip--grey` в `.chiplist--s`; PE — `chip--s chip--fit` с цветом флаг-категории |
+| Chip | ДС — `design-system/components/atoms/Chip/Chip.md` | коды RWA — `chip--s chip--grey` в `.chiplist--s`; ФИ типа С — `chip--s chip--fit` с цветом флаг-категории |
 | Badge | ДС — `design-system/components/atoms/Badge/Badge.md` | `badge--s badge--neutral` у «Инструменты» |
 | ProductRow | ДС — `design-system/components/organisms/ProductRow/ProductRow.md` | строка без дерева: заголовок «номер название», `.prow__status--success` у погашенного, `.prow__meta` — дата и сумма |
 | Alert | ДС — `design-system/components/molecules/Alert/Alert.md` | `alert--error alert--m alert--flush`, глиф `alert-circle-filled` |
@@ -114,7 +114,7 @@ Tile (заголовок «Финансовые инструменты»; в ш�
 | Поле | Смысл | Тип, единица | Источник | Обязательное |
 |---|---|---|---|---|
 | `name` | наименование ФИ — заголовок карточки | строка «127-Кредит-201» | при создании — по образцу карточек сделки (допущение), правит окно изменения | да |
-| `isPE` | Private Equity — чип у заголовка | да / нет | окно изменения (акции) | нет — чипа нет |
+| `isTypeC` | ФИ типа С — чип у заголовка | да / нет | окно изменения (акции) | нет — чипа нет |
 | `errorText` | ошибка карточки — Alert «Ошибка» | строка | система, только чтение; когда и что — не решено (02.10.2026) | нет |
 | `balance` | баланс | строка; разные — через запятую | производное: балансы прикреплённых узлов (у транша — его инструмента) | нет |
 | `reportingType` | тип отчётности | «МСФО и РСБУ» · «МСФО» · «РСБУ» | при создании | да |

@@ -5,7 +5,7 @@
    (не входит в репозиторий), правится здесь вручную. 50 сделок — рендер
    таблицы «Текущий портфель ДИД», модалка фильтра, будущая страница сделки.
 
-   Плоские поля этой записи (balances/currencies/isPE/mainProductDid/
+   Плоские поля этой записи (balances/currencies/isTypeC/mainProductDid/
    productsDidNames/productsNames) вычислены из дерева продуктов сделки
    (window.MOCK_DEAL_TREES, файл mock-deal-trees.js) формулой
    ProductTreeStore.summary (product-tree-store.js) в момент генерации и
@@ -15,7 +15,7 @@
    названия из того же каталога. Правка дерева на странице сделки переносит
    поля в DealsStore той же формулой — в памяти вкладки. Пересчитаны
    04.10.2026 после заполнения портфеля (привязка узлов к ФИ, погашение в
-   «Погашена», продукты PE): у 1039 погашены все инструменты, поэтому балансы
+   «Погашена», продукты ФИ типа С): у 1039 погашены все инструменты, поэтому балансы
    и валюты пусты; у 1025, 1045 и 1060 в продукты ДИД добавлено «Долевое
    участие в капитале».
 
@@ -144,6 +144,48 @@
  * @property {string} regionCode регион города — код ISO 3166-2:RU
  */
 
+/**
+ * Отметки приёма сделки на мониторинг — поле записи monitoringAcceptance.
+ * Ставит тайл «Заведение сделки» (widgets/tiles/Navigator) кнопками «РМ
+ * принял», «ПМ принял», «ПМЗ принял» в статусах мониторинга «Передана» и
+ * «Передача изменений»; все три отметки переводят сделку «На мониторинг ГК
+ * СБИ», и отметки сбрасываются (data/deal-status-model.js, вопрос 9). null или
+ * нет поля — никто не принял. У сделок портфеля поля нет.
+ * Source: invented (10.10.2026) — заменить на DTO, когда он появится.
+ * @typedef {Object} MonitoringAcceptanceRsDto
+ * @property {MonitoringAcceptanceMark|null} rm   РМ — кнопка «РМ принял»
+ * @property {MonitoringAcceptanceMark|null} pm   ПМ — кнопка «ПМ принял»
+ * @property {MonitoringAcceptanceMark|null} pmz  ПМЗ — кнопка «ПМЗ принял»,
+ *                                                в степпере шаг «Залоги»
+ */
+
+/**
+ * Отметка одного подразделения. Согласующего и дату вносит окно «Подтвердите
+ * действие» (widgets/modals/NavigatorApprovalModal).
+ * Source: invented (10.10.2026).
+ * @typedef {Object} MonitoringAcceptanceMark
+ * @property {string} approver          согласующий — ФИО из справочника mock-team.js
+ * @property {string} approverTab       табельный номер согласующего — по нему
+ *                                      различают однофамильцев, как в команде сделки
+ * @property {string} approvalDate      дата согласования, ДД.ММ.ГГГГ
+ * @property {boolean} [withCollateral] только у pmz: Switch «С обеспечением»
+ */
+
+/**
+ * Поля записи сделки, которые вносят окна тайла «Заведение сделки»
+ * (widgets/tiles/Navigator). Дату погашения (repayDate) пишет окно погашения
+ * NavigatorDealCloseModal, ответственного ЦУП (tsupEmployee, tsupEmployeeTab) —
+ * окно NavigatorAppointmentOfResponsibleModal; оба поля описаны в шапке файла.
+ * Нет поля — не заполнено. У сделок портфеля полей нет.
+ * Source: invented (10.10.2026) — заменить на DTO, когда он появится.
+ * @typedef {Object} NavigatorDealFields
+ * @property {string} [monitoringTransferDate] дата передачи на мониторинг,
+ *   ДД.ММ.ГГГГ — окно «Направить на передачу» (NavigatorForwardToTransferModal);
+ *   в цикле изменений перезаписывается
+ * @property {string} [changeReason]           причина ввода изменений — окно
+ *   NavigatorChangeReasonModal
+ */
+
 window.MOCK_DEALS = [
   {
     "id": 1024,
@@ -232,7 +274,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false,
+    "isTypeC": false,
     "projectInformation": {
       "propertyTypeCode": "OTHER",
       "housingClassCode": "COMFORT",
@@ -290,7 +332,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "USD"
     ],
-    "isPE": true
+    "isTypeC": true
   },
   {
     "id": 1026,
@@ -338,7 +380,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1027,
@@ -400,7 +442,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1028,
@@ -445,7 +487,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1029,
@@ -489,7 +531,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1030,
@@ -533,7 +575,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1031,
@@ -581,7 +623,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1032,
@@ -628,7 +670,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": true,
+    "isTypeC": true,
     "projectInformation": {
       "propertyTypeCode": "RESIDENTIAL",
       "housingClassCode": "COMFORT",
@@ -683,7 +725,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "USD"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1034,
@@ -728,7 +770,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1035,
@@ -761,7 +803,7 @@ window.MOCK_DEALS = [
     "productsNames": [],
     "balances": [],
     "currencies": [],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1036,
@@ -804,7 +846,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1037,
@@ -849,7 +891,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1038,
@@ -895,7 +937,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1039,
@@ -934,7 +976,7 @@ window.MOCK_DEALS = [
     ],
     "balances": [],
     "currencies": [],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1040,
@@ -977,7 +1019,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false,
+    "isTypeC": false,
     "projectInformation": {
       "propertyTypeCode": "COMMERCIAL",
       "housingClassCode": null,
@@ -1036,7 +1078,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1042,
@@ -1071,7 +1113,7 @@ window.MOCK_DEALS = [
     "productsNames": [],
     "balances": [],
     "currencies": [],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1043,
@@ -1116,7 +1158,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1044,
@@ -1155,7 +1197,7 @@ window.MOCK_DEALS = [
     ],
     "balances": [],
     "currencies": [],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1045,
@@ -1203,7 +1245,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": true
+    "isTypeC": true
   },
   {
     "id": 1046,
@@ -1248,7 +1290,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1047,
@@ -1295,7 +1337,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1048,
@@ -1338,7 +1380,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false,
+    "isTypeC": false,
     "projectInformation": null
   },
   {
@@ -1384,7 +1426,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1050,
@@ -1431,7 +1473,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1051,
@@ -1480,7 +1522,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1052,
@@ -1525,7 +1567,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1053,
@@ -1571,7 +1613,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": true
+    "isTypeC": true
   },
   {
     "id": 1054,
@@ -1614,7 +1656,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1055,
@@ -1668,7 +1710,7 @@ window.MOCK_DEALS = [
     ],
     "balances": [],
     "currencies": [],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1056,
@@ -1715,7 +1757,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": false,
+    "isTypeC": false,
     "projectInformation": {
       "propertyTypeCode": "RESIDENTIAL",
       "housingClassCode": "BUSINESS",
@@ -1772,7 +1814,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1058,
@@ -1817,7 +1859,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1059,
@@ -1864,7 +1906,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1060,
@@ -1910,7 +1952,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": true
+    "isTypeC": true
   },
   {
     "id": 1061,
@@ -1955,7 +1997,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1062,
@@ -2002,7 +2044,7 @@ window.MOCK_DEALS = [
       "EUR",
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1063,
@@ -2045,7 +2087,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "JPY"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1064,
@@ -2090,7 +2132,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1065,
@@ -2137,7 +2179,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1066,
@@ -2180,7 +2222,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1067,
@@ -2225,7 +2267,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1068,
@@ -2271,7 +2313,7 @@ window.MOCK_DEALS = [
       "RUB",
       "USD"
     ],
-    "isPE": true
+    "isTypeC": true
   },
   {
     "id": 1069,
@@ -2316,7 +2358,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1070,
@@ -2359,7 +2401,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1071,
@@ -2406,7 +2448,7 @@ window.MOCK_DEALS = [
       "JPY",
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1072,
@@ -2449,7 +2491,7 @@ window.MOCK_DEALS = [
     "currencies": [
       "RUB"
     ],
-    "isPE": false
+    "isTypeC": false
   },
   {
     "id": 1073,
@@ -2494,7 +2536,7 @@ window.MOCK_DEALS = [
       "USD",
       "EUR"
     ],
-    "isPE": false
+    "isTypeC": false
   }
 ];
 

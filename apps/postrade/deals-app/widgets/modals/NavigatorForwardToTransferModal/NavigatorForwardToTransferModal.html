@@ -1,0 +1,39 @@
+<!-- NavigatorForwardToTransferModal — окно «Подтвердите действие» с датой
+     передачи на мониторинг. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопкой «Направить на передачу» на вкладке «Мониторинг» в
+     статусах «Ожидает передачи на мониторинг» и «Изменения ожидают передачи на
+     мониторинг». Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Состав — макет screenflow дизайнера: строка текста и InputDate «Дата
+     передачи». Текст и подпись кнопки на макете размыты — «Отправка на
+     передачу» и «Сохранить» взяты по очертаниям (допущение 10.10.2026, вопрос 1
+     паспорта). «Сохранить» отдаёт дату тайлу и закрывает окно; крестик и Esc —
+     без перехода. Дату ставит NavigatorForwardToTransferModal.js. -->
+<div class="modal-scrim" id="nav-forward-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-forward" role="dialog" aria-modal="true" aria-labelledby="nav-forward-title" aria-describedby="nav-forward-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-forward-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-nav-forward__text" id="nav-forward-text">Отправка на передачу</p>
+      <!-- InputDate ДС: маска и календарь — из коробки; во всю ширину тела
+           (решение человека 10.10.2026; на макете — полширины) -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-forward-date"><span class="ds-label__text">Дата передачи</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-forward-date" name="monitoringTransferDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-forward-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

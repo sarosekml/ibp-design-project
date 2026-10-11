@@ -143,7 +143,7 @@ IconButton L ⓘ «Описание продукта ДИД» и ⇄ «Пере�
 - Новый продукт ДИД приходит со своим обязательным составом; что с ним делать дальше —
   окна «Продукты» и «Инструменты».
 - Что отдаёт наружу: после «Сохранить» — производные поля записи сделки
-  (`mainProductDid`, `productsDidNames`, `productsNames`, `balances`, `currencies`, `isPE`),
+  (`mainProductDid`, `productsDidNames`, `productsNames`, `balances`, `currencies`, `isTypeC`),
   стор переносит их в `DealsStore` и сохраняет дерево, их читает реестр портфеля.
 
 ## Переполнение (Overflow)

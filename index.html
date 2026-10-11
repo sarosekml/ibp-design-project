@@ -31,9 +31,8 @@
      средствами ДС»). Здесь только подъём над абсолютной иллюстрацией. */
   .hub-groups { position: relative; }
 
-  /* подзаголовок раздела apps/<раздел>/ внутри колонки «Концепты» */
-  .hub-sub { margin: var(--space-16) 0 var(--space-8); color: var(--text-secondary); }
-  .hub-sub:first-child { margin-top: 0; }
+  /* табы разделов внутри колонки «Концепты»: отступ между табами и списком */
+  .hub-tabs { margin-bottom: var(--space-8); }
 
   /* Перестроение по рецепту стартовой страницы (Layout): первый шаг — штатная
      пара .col-N / .colw-N, второй парой не выражается и обязан иметь ту же
@@ -81,9 +80,9 @@
   /* подзаголовки колонки по разделу apps/<раздел>/ (порядок — как в apps/README.md) */
   var SECTIONS = [
     { key: 'core', label: 'Core' },
+    { key: 'pretrade', label: 'Pre' },
+    { key: 'postrade', label: 'Post' },
     { key: 'ib', label: 'IB' },
-    { key: 'pretrade', label: 'Pretrade' },
-    { key: 'postrade', label: 'Postrade' },
     { key: 'common', label: 'Common' }
   ];
 
@@ -153,16 +152,35 @@
   }
 
   function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
-  /* записи по разделам: подзаголовок + свой .entity-list; раздел вне SECTIONS — в конец, подписью папки */
+  /* концепты по разделам — табы с каунтерами, под каждым свой .entity-list;
+     раздел вне SECTIONS — отдельным табом в конце, подписью папки */
   function sectionsHTML(items) {
     var keys = SECTIONS.map(function (x) { return x.key; });
     items.forEach(function (p) { if (keys.indexOf(sectionOf(p)) < 0) keys.push(sectionOf(p)); });
-    return keys.map(function (k) {
-      var list = items.filter(function (p) { return sectionOf(p) === k; });
-      if (!list.length) return '';
+    var secs = keys.map(function (k) {
       var sec = SECTIONS.filter(function (x) { return x.key === k; })[0];
-      return '<h3 class="hub-sub ds-h6-strong">' + esc(sec ? sec.label : k) + '</h3>' + listHTML(list);
+      return { key: k, label: sec ? sec.label : k, list: items.filter(function (p) { return sectionOf(p) === k; }) };
+    }).filter(function (x) { return x.list.length; });
+    var tabs = secs.map(function (x, i) {
+      return '<button type="button" class="tab tab--m' + (i ? '' : ' tab--selected') + '" role="tab" aria-selected="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(x.key) + '">'
+        + '<span class="tab__label">' + esc(x.label) + '</span><span class="tab__badge">' + x.list.length + '</span></button>';
     }).join('');
+    var panes = secs.map(function (x, i) {
+      return '<div role="tabpanel" data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + listHTML(x.list) + '</div>';
+    }).join('');
+    return '<div class="tabs tabs--horiz hub-tabs" role="tablist" aria-label="Разделы концептов" data-tabs>' + tabs + '</div>' + panes;
+  }
+
+  /* переключение панелей; выделение табов ведёт Tab.js */
+  function bindTabs(host) {
+    host.addEventListener('click', function (e) {
+      var tab = e.target.closest('.hub-tabs .tab');
+      if (!tab) return;
+      var key = tab.getAttribute('data-pane');
+      Array.prototype.forEach.call(host.querySelectorAll('[data-pane-of]'), function (p) {
+        p.hidden = p.getAttribute('data-pane-of') !== key;
+      });
+    });
   }
 
   function buildGroups() {
@@ -179,6 +197,7 @@
       html += '</section>';
     });
     host.innerHTML = html;
+    bindTabs(host);
   }
 
   buildNav();

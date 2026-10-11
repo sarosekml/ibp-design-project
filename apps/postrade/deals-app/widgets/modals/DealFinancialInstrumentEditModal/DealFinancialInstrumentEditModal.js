@@ -69,7 +69,7 @@
       }
     })
   };
-  var CHECKS = { isPE: 'fi-edit-pe', isDkkk: 'fi-edit-dkkk', hasLinkedUnconditionalOption: 'fi-edit-option-flag' };
+  var CHECKS = { isTypeC: 'fi-edit-pe', isDkkk: 'fi-edit-dkkk', hasLinkedUnconditionalOption: 'fi-edit-option-flag' };
 
   var nameInput = el('fi-edit-name');
   var irrInput = el('fi-edit-irr');

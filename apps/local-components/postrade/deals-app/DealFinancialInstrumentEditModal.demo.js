@@ -38,7 +38,7 @@
     setInp('#fi-edit-fvac', fv ? fv.label : '');
     var opt = S.optionNodes().filter(function (x) { return x.id === c.ifrsOptionNodeId; })[0];
     setInp('#fi-edit-option', opt ? opt.label : '');
-    [['#fi-edit-pe', c.isPE], ['#fi-edit-dkkk', c.isDkkk], ['#fi-edit-option-flag', c.hasLinkedUnconditionalOption]].forEach(function (p) {
+    [['#fi-edit-pe', c.isTypeC], ['#fi-edit-dkkk', c.isDkkk], ['#fi-edit-option-flag', c.hasLinkedUnconditionalOption]].forEach(function (p) {
       var cb = el.querySelector(p[0]); if (cb) cb.checked = p[1] === true;
     });
   }

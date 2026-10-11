@@ -60,7 +60,7 @@
 
 Если сделку не сохраняли, записи нет — стор показывает дерево из `mock-deal-trees.js`.
 Плоские поля реестра (`mainProductDid`, `productsDidNames`, `productsNames`, `balances`,
-`currencies`, `isPE`) стор вычисляет из дерева (`ProductTreeStore.summary`), поэтому
+`currencies`, `isTypeC`) стор вычисляет из дерева (`ProductTreeStore.summary`), поэтому
 отдельно не хранятся. Правки в прототипе — ответ человека 30.09.2026 (задача
 `docs/tasks/RE0001-product-row-tree.md`, вопрос 15): в продукте дерево сохраняется.
 

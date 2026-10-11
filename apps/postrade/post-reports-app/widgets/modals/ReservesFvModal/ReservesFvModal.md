@@ -1,7 +1,7 @@
 ---
 name: Окно «Данные FV»
 type: modal
-category: Отчёты
+category: Расчет FV
 purpose: Показать предпросмотр загруженного файла FV перед сохранением
 version: 1.000
 updated: "08.10.2026"

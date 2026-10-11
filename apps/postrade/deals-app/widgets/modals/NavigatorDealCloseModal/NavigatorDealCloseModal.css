@@ -1,0 +1,11 @@
+/* Окно погашения сделки (NavigatorDealCloseModal). Только текст сообщения.
+   Геометрия — Modal ДС (modal--w3), поле — InputDate ДС; своих значений
+   здесь нет. */
+
+/* Текст сообщения — Body M, --text-secondary, как в окне погашения
+   инструмента (RepaymentModal) */
+.lc-nav-deal-close .lc-nav-deal-close__text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}

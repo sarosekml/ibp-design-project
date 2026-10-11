@@ -25,7 +25,7 @@
   /* Модалка фильтра — штатная структура TableFilter (.tfm__*), см. components/organisms/TableFilter/TableFilter.md.
      Собственного CSS на форме фильтра нет: сетка/зазоры/заголовки секций — из ДС. */
 
-  /* Тег-флаг PE — НЕ статус, кастомный цвет по кейсу (согласовано 04.09.2026).
+  /* Тег-флаг ФИ типа С — НЕ статус, кастомный цвет по кейсу (согласовано 04.09.2026).
      Фон/обводка = StOrange_mid, текст = --text-primary. Только токены ДС,
      к тон-вариантам чипа не привязан, не скругляется. */
   .chip--pe { background: var(--st-orange-mid); border-color: var(--st-orange-mid); color: var(--text-primary); }
@@ -91,7 +91,7 @@
           <div class="tbl tbl--scroll" data-table data-sort-rows data-table-persist="post-portfolio-did">
 
             <!-- Шапка. grid-template-columns одинаковый у шапки и всех строк -->
-            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 150px 280px 140px 176px 176px 320px 120px 150px 220px 88px 180px 240px 240px 170px 170px 150px 130px 130px 130px 120px 120px 120px 140px minmax(8px,1fr);">
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 150px 280px 140px 176px 176px 320px 120px 150px 220px 140px 180px 240px 240px 170px 170px 150px 130px 130px 130px 120px 120px 120px 140px minmax(8px,1fr);">
               <div class="th th--separator"></div>
               <div class="th th--pinned" data-col="id" aria-sort="none" data-sort-type="number">
                 <span class="th__label">Номер сделки</span>
@@ -147,11 +147,11 @@
                 <span class="th__tools"><button class="ibtn ibtn--neutral ibtn--s th__pin" aria-pressed="false" aria-label="Закрепить колонку"><i data-icon="pin"></i></button></span>
                 <span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span>
               </div>
-              <!-- Private Equity — флаг, а не текст: значение сортировки берётся
-                   из data-sort-value ячейки (1 / 0), иначе строки без PE читались
+              <!-- ФИ типа С — флаг, а не текст: значение сортировки берётся
+                   из data-sort-value ячейки (1 / 0), иначе строки без ФИ типа С читались
                    бы как пустые и всегда падали вниз при обоих направлениях -->
-              <div class="th" data-col="isPE" aria-sort="none" data-sort-type="number">
-                <span class="th__label">Private Equity</span>
+              <div class="th" data-col="isTypeC" aria-sort="none" data-sort-type="number">
+                <span class="th__label">ФИ типа С</span>
                 <span class="th__tools">
                   <button class="ibtn ibtn--neutral ibtn--s th__pin" aria-pressed="false" aria-label="Закрепить колонку"><i data-icon="pin"></i></button>
                   <button class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="pe" aria-label="Сортировать"><i data-icon="arrow-up-down"></i></button>
@@ -669,7 +669,7 @@
                 </div>
               </div>
               <div class="inp inp--m">
-                <label class="ds-label" for="f-pe"><span class="ds-label__text">Сделки Private Equity</span></label>
+                <label class="ds-label" for="f-pe"><span class="ds-label__text">ФИ типа С</span></label>
                 <div class="inp__field" data-ddl="f-pe-list">
                   <input class="inp__control" id="f-pe">
                   <span class="inp__acts"><button class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
@@ -703,6 +703,7 @@
      data-table-settings на кнопке-шестерёнке (см. components/organisms/Table/Table.md «Настройка таблицы») -->
 
 <script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
 <script src="../data/deals-store.js"></script>
 <!-- состав участников сделок: стор переносит сохранённые на странице сделки
      КНР в DealsStore, колонка «КНР» читает их оттуда. Хранение — data/API.md -->
@@ -710,7 +711,7 @@
 <script src="../data/post-api.js"></script>
 <script src="../data/counterparties-store.js"></script>
 <!-- дерево продуктов: стор переносит сохранённые на странице сделки деревья в
-     DealsStore — баланс, PE, продукты и валюты реестра читают их оттуда -->
+     DealsStore — баланс, ФИ типа С, продукты и валюты реестра читают их оттуда -->
 <script src="../data/mock-product-catalog.js"></script>
 <script src="../data/product-tree-store.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
@@ -853,7 +854,7 @@
 (function () {
   'use strict';
 
-  var GRID = '8px 150px 280px 140px 176px 176px 320px 120px 150px 220px 88px 180px 240px 240px 170px 170px 150px 130px 130px 130px 120px 120px 120px 140px minmax(8px,1fr)';
+  var GRID = '8px 150px 280px 140px 176px 176px 320px 120px 150px 220px 140px 180px 240px 240px 170px 170px 150px 130px 130px 130px 120px 120px 120px 140px minmax(8px,1fr)';
 
   /* Тон статусного чипа — общий словарь DealsStore.statusTone: те же статусы
      показывает страница сделки чипами шапки, и копия словаря на экране
@@ -881,13 +882,13 @@
     var avatar = avatarLetter ? '<span class="chip__avatar av av--circular"><span class="av__text">' + esc(avatarLetter) + '</span></span>' : '';
     return cellOpen(key) + '<span class="tc__row"><span class="chip chip--s chip--rounded ' + tone + '">' + avatar + '<span class="chip__label">' + esc(label) + '</span></span></span></div>';
   }
-  function peCell(key, isPE) {
-    /* data-sort-value — колонка-флаг: «нет PE» показывается прочерком, а прочерк
+  function peCell(key, isTypeC) {
+    /* data-sort-value — колонка-флаг: «нет ФИ типа С» показывается прочерком, а прочерк
        рантайм считает пустым значением и всегда уводит вниз (при любом
        направлении). Явные 1/0 дают честный цикл: по возрастанию сверху сделки
-       без PE, по убыванию — сделки PE */
-    if (!isPE) return cellOpen(key, '', ' data-sort-value="0"') + '<span class="tc__row"><span class="tc__text tc__text--truncate">—</span></span></div>';
-    return cellOpen(key, '', ' data-sort-value="1"') + '<span class="tc__row"><span class="chip chip--s chip--pe chip--fit"><span class="chip__label">PE</span></span></span></div>';
+       без ФИ типа С, по убыванию — сделки с ФИ типа С */
+    if (!isTypeC) return cellOpen(key, '', ' data-sort-value="0"') + '<span class="tc__row"><span class="tc__text tc__text--truncate">—</span></span></div>';
+    return cellOpen(key, '', ' data-sort-value="1"') + '<span class="tc__row"><span class="chip chip--s chip--pe chip--fit"><span class="chip__label">ФИ типа С</span></span></span></div>';
   }
   function currencyCell(key, list) {
     if (!list || !list.length) return textCell(key, '');
@@ -912,7 +913,7 @@
     cells.push(textCell('restricted', deal.restricted));
     cells.push(textCell('desk', deal.desk));
     cells.push(joinedCell('balances', deal.balances));
-    cells.push(peCell('isPE', deal.isPE));
+    cells.push(peCell('isTypeC', deal.isTypeC));
     cells.push(textCell('mainProductDid', deal.mainProductDid));
     cells.push(joinedCell('productsDidNames', deal.productsDidNames));
     cells.push(joinedCell('productsNames', deal.productsNames));
@@ -960,7 +961,7 @@
   headRow.parentNode.insertBefore(frag, headRow.nextSibling);
 
   /* Колонки из сохранённого на странице сделки: «КНР» — состав участников
-     (CounterpartiesStore), баланс, PE, продукты и валюты — дерево продуктов
+     (CounterpartiesStore), баланс, ФИ типа С, продукты и валюты — дерево продуктов
      (ProductTreeStore). Сторы переносят их в DealsStore; если хранилище
      ответило раньше рендера строк (localStorage), строки уже нарисованы с
      ними, если позже (сервер данных) — ячейки перерисовываются здесь.
@@ -968,7 +969,7 @@
   var SAVED_CELLS = {
     knr: function (d) { return linkCell('knr', d.knr); },
     balances: function (d) { return joinedCell('balances', d.balances); },
-    isPE: function (d) { return peCell('isPE', d.isPE); },
+    isTypeC: function (d) { return peCell('isTypeC', d.isTypeC); },
     mainProductDid: function (d) { return textCell('mainProductDid', d.mainProductDid); },
     productsDidNames: function (d) { return joinedCell('productsDidNames', d.productsDidNames); },
     productsNames: function (d) { return joinedCell('productsNames', d.productsNames); },
@@ -1291,7 +1292,7 @@
       { id: 'f-collateral', section: 'tfm-sec-other', match: function (d, v) { return d.collateral === v; } },
       { id: 'f-board', section: 'tfm-sec-other', match: function (d, v) { return d.boardRep === v; } },
       { id: 'f-fin-tpl', section: 'tfm-sec-other', match: function (d, v) { return d.finTpl === v; } },
-      { id: 'f-pe', section: 'tfm-sec-other', match: function (d, v) { return (d.isPE ? 'Да' : 'Нет') === v; } },
+      { id: 'f-pe', section: 'tfm-sec-other', match: function (d, v) { return (d.isTypeC ? 'Да' : 'Нет') === v; } },
     ];
     var TEXT_FIELDS = [
       { id: 'f-number', section: 'tfm-sec-general', match: function (d, v) { return String(d.id).indexOf(v) >= 0; } },

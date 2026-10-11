@@ -173,7 +173,7 @@
           <!-- Правая колонка: ширина 320 и минимальная высота 400 — из ТЗ, вне
                12-колоночной сетки, поэтому помечена data-off-grid (Spacing). -->
           <div class="gen__side" data-off-grid="Заведение сделки — фиксированные 320px по ТЗ">
-            <ds-include src="../widgets/tiles/DealSetupTile/DealSetupTile.html"></ds-include>
+            <ds-include src="../widgets/tiles/Navigator/Navigator.html" id="tile-navigator" state="loading" mode="edit"></ds-include>
           </div>
 
         </div>
@@ -208,9 +208,8 @@
             <ds-include src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.html" id="tile-fin-instruments" state="loading" mode="edit"></ds-include>
           </div>
         </div>
-        <!-- Второй ряд: обычный ряд — высоты выравниваются по самому высокому -->
+        <!-- Второй ряд: один тайл в 6 колонок (тайл «Влияние на ЭПС/ВБС» снят 10.10.2026) -->
         <div class="tile-row">
-          <ds-include src="../widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.html" class="col-6 colw-12"></ds-include>
           <ds-include src="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.html" class="col-6 colw-12"></ds-include>
         </div>
       </div>
@@ -260,7 +259,7 @@
 <ds-include src="../widgets/modals/CounterpartiesEcmModal/EcmModal/EcmModal.html"></ds-include>
 <ds-include src="../widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.html"></ds-include>
 <!-- Окно тайла «Финансовые метрики сделки»: только просмотр — ОСЗ, резервы
-     по ФИ и переоценка по PE, которых в тайле нет. -->
+     по ФИ и переоценка по Equity инструментам, которых в тайле нет. -->
 <ds-include src="../widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.html"></ds-include>
 <!-- Окно тайла «Сведения о проекте»: правка; открывают карандаш и
      «Заполнить» тайла. -->
@@ -282,8 +281,19 @@
 <ds-include src="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.html"></ds-include>
 <ds-include src="../widgets/modals/LinkChangeModal/LinkChangeModal.html"></ds-include>
 <ds-include src="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.html"></ds-include>
+<!-- Окна тайла «Заведение сделки» (Navigator): назначение ответственного ЦУП,
+     приём на мониторинг РМ/ПМ/ПМЗ, направление на передачу, погашение сделки,
+     причина ввода изменений. Открывает их тайл по полю modal перехода
+     статусной модели — через openModal, который даёт страница
+     (fillNavigator). -->
+<ds-include src="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.html"></ds-include>
+<ds-include src="../widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.html"></ds-include>
 
 <script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
 <script src="../data/deals-store.js"></script>
 <!-- справочник сотрудников для списков окна «Команда сделки»: сами назначения
      лежат в записи сделки, здесь только кандидаты -->
@@ -345,6 +355,17 @@
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<!-- Тайл «Заведение сделки» — статусы по модели (data/deal-status-model.js);
+     переходы пишет в DealsStore страница (fillNavigator). Окна тайла
+     регистрируются в PostNavigatorModals; согласующего и ответственного они
+     показывают «ФИО номер» по контракту окна «Команда сделки», поэтому идут
+     после DealTeamModal.js. -->
+<script src="../widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
    меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
@@ -481,6 +502,7 @@
     fillChips(deal);
     fillSubtitle(deal);
     applyMode(deal);
+    watchStatus(deal);
     fillKnr(deal);
     fillTerms(deal);
     fillTeam(deal);
@@ -489,6 +511,7 @@
     fillProjectInfo(deal);
     fillProducts(deal);
     fillFinInstruments(deal);
+    fillNavigator(deal);
   }
 
   /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
@@ -540,14 +563,101 @@
      (data-mode): его ставит страница, а свой вид в просмотре каждый компонент
      держит сам (действия правки не рисуются). Окно КНР — такой же компонент.
      Статус правку не закрыл — режимы остаются теми, что пришли с фрагментами.
-     Кнопка переименования — разметка самого экрана, её прячет экран. */
+     Кнопка переименования — разметка самого экрана, её прячет экран.
+
+     Статус меняется на самой странице (тайл «Заведение сделки»), поэтому
+     режим обратим: исходный режим компонента запоминается при первом проходе
+     (data-mode-own) и возвращается, когда статус снова допускает правку
+     («Ввод изменений», «Корректировка»). Навигатор режимом статуса не
+     выключается: его действия — процесс, их задаёт статусная модель (в
+     «Активной» сделку гасят и вводят изменения). Дерево продуктов и карточки
+     ФИ кладут режим в разметку при отрисовке — после смены их перерисовывают. */
   function applyMode(deal) {
-    if (window.DealsStore.isEditable(deal)) return;
+    var view = !window.DealsStore.isEditable(deal);
+    var changed = false;
     document.querySelectorAll('.screen__content .tile[data-mode], .lc-knrm[data-mode]').forEach(function (el) {
-      el.setAttribute('data-mode', 'view');
+      if (el.classList.contains('lc-navigator')) return;
+      if (!el.hasAttribute('data-mode-own')) el.setAttribute('data-mode-own', el.getAttribute('data-mode'));
+      var mode = view ? 'view' : el.getAttribute('data-mode-own');
+      if (el.getAttribute('data-mode') !== mode) { el.setAttribute('data-mode', mode); changed = true; }
     });
     var rename = document.querySelector('.phead__edit');
-    if (rename) rename.hidden = true;
+    if (rename) rename.hidden = view;
+    if (!changed) return;
+    var tree = document.getElementById('tile-deal-products');
+    if (tree && window.PostTileProductTree && window.ProductTreeStore && window.ProductTreeStore.dealId() != null) {
+      window.PostTileProductTree.render(tree, window.ProductTreeStore.view());
+    }
+    var fi = document.getElementById('tile-fin-instruments');
+    if (fi && fi.__fiPaint) fi.__fiPaint();
+  }
+
+  /* Статусы сделки меняет тайл «Заведение сделки» — чипы шапки, подзаголовок
+     погашенной сделки и режим правки следуют за записью в сторе. */
+  function watchStatus(deal) {
+    window.DealsStore.on('change', function (d) {
+      if (!d || d.deal !== deal) return;
+      fillChips(d.deal);
+      fillSubtitle(d.deal);
+      applyMode(d.deal);
+    });
+  }
+
+  /* Тайл «Заведение сделки» (Navigator) — путь сделки по четырём дорожкам и
+     действия текущего статуса, всё из статусной модели. Действие тайла
+     отдаёт patch статусов сюда, страница пишет его в стор; тайл, чипы и
+     режим перерисовываются по событию стора.
+
+     Отметки чек-листа «Сделки» до «Согласования» — заполненность разделов
+     (пояснение к «Черновику» в модели). Как мерить заполненность, макеты не
+     говорят — допущение 10.10.2026 (паспорт тайла): «Общая информация» —
+     есть дата заключения, «Продукты ДИД» — в дереве есть продукт ДИД,
+     «Финансовые инструменты» — есть карточка ФИ, «Расчёт метрик» — у сделки
+     есть метрики. Сторы дерева и ФИ открываются асинхронно — отметки
+     пересчитываются по их событиям.
+
+     Окна навигатора (назначение ответственного, отметки РМ/ПМ/ПМЗ, передача,
+     погашение, причина изменений) открывает openModal по имени из поля modal
+     перехода: окно берёт запись сделки и переход, по «Сохранить» отдаёт тайлу
+     extra — patch полей сделки или отметку, тайл применяет переход вместе с
+     ним. Крестик и Esc — перехода нет. Окна нет в реестре — переход сразу. */
+  function fillNavigator(deal) {
+    var tile = document.getElementById('tile-navigator');
+    if (!tile || !window.PostNavigator) return;
+    var trees = window.ProductTreeStore;
+    var cards = window.FinInstrumentsStore;
+    var metrics = window.MOCK_DEAL_FIN_METRICS || {};
+
+    function progress(d) {
+      var own = function (store) { return store && String(store.dealId()) === openedId; };
+      return [
+        !!String(d.signDate || '').trim(),
+        own(trees) ? trees.view().length > 0 : (d.productsDidNames || []).length > 0,
+        own(cards) ? cards.list().length > 0 : false,
+        !!metrics[openedId]
+      ];
+    }
+
+    function current() { return window.DealsStore.byId(deal.id) || deal; }
+
+    var nav = window.PostNavigator.bind(tile, {
+      get: current,
+      save: function (patch) { window.DealsStore.update(deal.id, patch); },
+      progress: progress,
+      openModal: function (name, transition, done) {
+        var modal = (window.PostNavigatorModals || {})[name];
+        if (!modal) return false;
+        modal.open({ deal: current(), transition: transition }, done);
+      }
+    });
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) nav.paint();
+    });
+    [trees, cards].forEach(function (store) {
+      if (!store) return;
+      store.on('change', function (e) { if (e && e.reason === 'use') nav.paint(); });
+      store.on('commit', nav.paint);
+    });
   }
 
   /* Тайл «КНР» — КНР этой сделки из CounterpartiesStore. Пока состав
@@ -745,6 +855,24 @@
         window.PostTileFinInstruments.bind(tile, store);
       });
   }
+
+  /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
+     тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('fiaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.id) return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinInstrument.preview.html' : 'FinInstrument.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&fi=' + encodeURIComponent(d.id);
+  });
+
+  /* Название транша в дереве продуктов — переход на страницу транша: тайл шлёт
+     'ptreeaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('ptreeaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.node || d.node.kind !== 'TRANCHE') return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(d.id);
+  });
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты
      недвижимости (заказчик 23.09.2026). Ряд прячется целиком, а не пустым

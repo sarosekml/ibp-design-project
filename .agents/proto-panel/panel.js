@@ -129,8 +129,12 @@
     ui.mount();
     store.init().then(function () { ui.updateAlert(); });
     /* Без приложения (хаб, ДС, концепт без папки) сценариев нет — возобновлять
-       нечего; панель показывает заглушку. */
-    if (ctx.app) store.frames(2).then(function () { runner.resume(); });
+       нечего; панель показывает заглушку. Состояние карты экранов (#ppmap=) —
+       и без приложения: у страниц модуля без папки панели карта есть (RE0015);
+       после сценария, чтобы проигрыватель был свободен. */
+    store.frames(2).then(function () { return ctx.app ? runner.resume() : null; })
+      .then(function () { return runner.mapFromHash(true); })
+      .then(function (r) { if (r !== 'nav' && ui.reopenMap) ui.reopenMap(); }, function (e) { console.warn('[proto panel]', e); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();

@@ -14,8 +14,8 @@
           иконка-предупреждение о просрочке с тултипом;
        2. раздел «Резервы на …» — сводка тремя карточками всегда видна,
           таблица по ФИ раскрывается;
-       3. раздел «Переоценка по PE» — сводка четырьмя полями, таблица по ФИ
-          раскрывается. Только у сделки с PE (data-pe на .modal): без PE
+       3. раздел «Переоценка по Equity инструментам» — сводка четырьмя полями, таблица по ФИ
+          раскрывается. Только у сделки с ФИ типа С (data-pe на .modal): без ФИ типа С
           раздела нет совсем (решение человека 25.09.2026).
      Разделы — Tile Accordion ДС (частичный коллапс: .tile__body — сводка,
      .tile__collapsible — таблица), сворачивает их рантайм ds-tile.js. При
@@ -163,11 +163,11 @@
         </div>
       </section>
 
-      <!-- ── Переоценка по PE ─────────────────────────────────────────── -->
+      <!-- ── Переоценка по Equity инструментам ─────────────────────────────────────────── -->
       <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section lc-deal-metrics-modal__pe" data-fin-section="pe">
         <header class="tile__header">
           <div class="tile__header-main">
-            <div class="tile__title-row"><h3 class="tile__title">Переоценка по PE</h3></div>
+            <div class="tile__title-row"><h3 class="tile__title">Переоценка по Equity инструментам</h3></div>
           </div>
           <div class="tile__actions">
             <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-pe-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
@@ -176,7 +176,7 @@
         <div class="tile__body">
           <div class="tile__grid lc-deal-metrics-modal__pe-grid">
             <div class="rof" data-fin-field="revaluationAmount">
-              <span class="ds-label"><span class="ds-label__text">Сумма переоценки по PE</span></span>
+              <span class="ds-label"><span class="ds-label__text">Суммарная оценка Equity инструментов</span></span>
               <div class="rof__row"><span class="rof__value">1 234 567,89</span><span class="rof__affix">RUB</span></div>
             </div>
             <div class="rof" data-fin-field="revaluationDelta">
@@ -203,6 +203,7 @@
                     <div class="th"><span class="th__label">Финансовый инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Дата оценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Периодичность</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Стоимость покупки акции</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th th--right"><span class="th__label">Оценка на дату</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th th--right"><span class="th__label">Δ переоценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Кем определена</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -213,6 +214,7 @@
                     <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1025-Акции-01</a></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text">21.12.2025</span></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Ежемесячно</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 400 000,00</span><span class="tc__postfix">RUB</span></span></div>
                     <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 456 789,00</span><span class="tc__postfix">RUB</span></span></div>
                     <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text lc-deal-metrics-modal__delta">+56 789,00</span></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Независимый оценщик</span></span></div>

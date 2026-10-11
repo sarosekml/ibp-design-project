@@ -1,0 +1,12 @@
+/* Окно «Подтвердите действие» — направление на передачу
+   (NavigatorForwardToTransferModal). Только текст сообщения. Геометрия — Modal
+   ДС (modal--w3), поле — InputDate ДС во всю ширину тела; своих
+   значений здесь нет. */
+
+/* Текст сообщения — Body M, --text-secondary, как в окне погашения
+   инструмента (RepaymentModal) */
+.lc-nav-forward .lc-nav-forward__text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}

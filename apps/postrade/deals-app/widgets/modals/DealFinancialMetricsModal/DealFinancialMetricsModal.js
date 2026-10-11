@@ -14,8 +14,8 @@
    Что делает скрипт (рантаймы ДС этого не делают):
      1. Бары: ВБС и ОСЗ из метрик; у ОСЗ — плашка «Данные рассчитываются»
         и предупреждение о просрочке.
-     2. Сводки и таблицы: «Резервы на …» и «Переоценка по PE», строки по ФИ.
-     3. Раздел PE — только у сделки с PE (data-pe на .modal).
+     2. Сводки и таблицы: «Резервы на …» и «Переоценка по Equity инструментам», строки по ФИ.
+     3. Раздел «Переоценка по Equity инструментам» — только у сделки с ФИ типа С (data-pe на .modal).
      4. Оба раздела при открытии свёрнуты (DSTile.toggle) — так на макете.
         Сворачивает открытие (bind), а не render: витрина перерисовывает
         окно переключателями, и раскрытый раздел остаётся раскрытым.
@@ -95,6 +95,7 @@
         + linkCell(r.financialInstrumentTitle)
         + textCell(f.date(r.valuationDate))
         + textCell(per[r.periodicityCode] || r.periodicityCode || '—')
+        + numCell(f.amount(r.purchaseCost), cur)
         + numCell(f.amount(r.valuationAmount), cur)
         + numCell(f.signed(r.revaluationDelta), '', cls)
         + textCell(val[r.valuerCode] || r.valuerCode || '—')
@@ -142,7 +143,7 @@
     setField(modal, 'calcDate', f.date(r.calcDate));
     fillTable(modal, 'reserves', reserveRows(r.instruments, cur));
 
-    /* 3. Переоценка по PE — только у сделки с PE. */
+    /* 3. Переоценка по Equity инструментам — только у сделки с ФИ типа С. */
     var pe = metrics.peRevaluation;
     modal.setAttribute('data-pe', pe ? 'yes' : 'no');
     if (pe) {
@@ -161,7 +162,7 @@
     if (window.DSTable) window.DSTable.bindAll(scrim);
   }
 
-  /* Разделы «Резервы» и «Переоценка по PE» — свёрнуты. */
+  /* Разделы «Резервы» и «Переоценка по Equity инструментам» — свёрнуты. */
   function collapse(scrim) {
     if (!scrim || !window.DSTile) return;
     Array.prototype.forEach.call(scrim.querySelectorAll('.lc-deal-metrics-modal__section'), function (s) {
