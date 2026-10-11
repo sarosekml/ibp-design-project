@@ -4,7 +4,8 @@
    страницы ДС — тегом каркаса. Панель есть везде: у приложения с папкой
    proto-panel/ — сценарии из зеркала, у остальных (хаб, концепт без папки,
    ДС) — заглушка «сценария нет». Во фрейме превью своей панели нет —
-   только пересылка горячих клавиш наверх. */
+   только пересылка горячих клавиш наверх. На странице модуля раздела с
+   картой экранов — ещё и её данные (map-data.js) для инструмента «Карта». */
 (function () {
   var APPS = [
     "core/drafts/new-dashboard-mvp",
@@ -16,7 +17,8 @@
   var RUNTIME = "../.agents/proto-panel/";
   var DIR = "proto-panel", BASE = "apps", MANIFEST = "app.json"; // для записи: путь от корня проекта
   var DATA = DIR + "/panel-data.js", PAGES = "pages";
-  var FILES = ["core.js", "strings.js", "store.js", "runner.js", "recorder.js", "ui.js", "tab-flows.js", "tab-comments.js", "panel.js"];
+  var MAPS = ["postrade"], MAPDIR = "screen-map/", SUFFIX = "-app"; // карты экранов: разделы project.json → screenMap
+  var FILES = ["core.js", "strings.js", "store.js", "runner.js", "recorder.js", "ui.js", "tab-flows.js", "tab-comments.js", "map-view.js", "panel.js"];
   var KEYS = ["KeyP", "ArrowRight", "ArrowLeft", "KeyS"]; // core.js → HOTKEYS: одна константа на панель и включатель
   var DSDIR = "design-system/";
   var PCSS = ["foundations/Typography/Typography.css", "foundations/Colors/Colors.css", "foundations/Colors/Palette.css", "foundations/Spacing/Spacing.css", "foundations/Radius/Radius.css", "foundations/Elevation/Elevation.css", "foundations/Illustrations/Illustrations.css", "components/atoms/Avatar/Avatar.css", "components/atoms/Buttons/Buttons.css", "components/atoms/Chip/Chip.css", "components/atoms/IconButton/IconButton.css", "components/atoms/LabelHelper/LabelHelper.css", "components/atoms/Spinner/Spinner.css", "components/molecules/Alert/Alert.css", "components/molecules/ContextMenu/ContextMenu.css", "components/molecules/DropdownList/DropdownList.css", "components/molecules/EmptyState/EmptyState.css", "components/molecules/Inputs/Inputs.css", "components/molecules/ReadOnlyField/ReadOnlyField.css", "components/atoms/Switch/Switch.css", "components/molecules/Tab/Tab.css", "components/molecules/Toast/Toast.css", "components/molecules/Tooltip/Tooltip.css", "components/organisms/Modal/Modal.css", "components/organisms/Drawer/Drawer.css"];
@@ -25,10 +27,15 @@
   if (!me || !me.src) return;
   var apps = new URL('./', me.src), here, base;
   try { here = decodeURIComponent(location.pathname); base = decodeURIComponent(apps.pathname); } catch (e) { return; }
-  var app = null;
+  var app = null, mapSection = null;
   if (here.indexOf(base) === 0) {
     var rel = here.slice(base.length), cut = rel.lastIndexOf('/' + PAGES + '/');
-    if (cut >= 0) { var cand = rel.slice(0, cut); if (APPS.indexOf(cand) >= 0) app = cand; }
+    if (cut >= 0) {
+      var cand = rel.slice(0, cut); if (APPS.indexOf(cand) >= 0) app = cand;
+      /* модуль раздела с картой: <раздел>/<имя>-app/pages/…; концепт (drafts/x) — не модуль */
+      var sl = cand.indexOf('/'), sec = cand.slice(0, sl), mod = cand.slice(sl + 1);
+      if (sl > 0 && MAPS.indexOf(sec) >= 0 && mod.indexOf('/') < 0 && mod.length > SUFFIX.length && mod.slice(-SUFFIX.length) === SUFFIX) mapSection = sec;
+    }
   }
   if (window.top !== window.self) {
     /* страница во фрейме (превью материала): своей панели нет, но её клавиши
@@ -46,7 +53,7 @@
   var onDs = !!dsPath && here.indexOf(dsPath) === 0;
   var rt = new URL(RUNTIME, apps).href;
   var appUrl = app ? new URL(app.split('/').map(encodeURIComponent).join('/') + '/', apps).href : null;
-  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl ? appUrl + PAGES + '/' : null, runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST, ds: onDs };
+  window.__PROTO_PANEL = { app: app, appUrl: appUrl, pagesUrl: appUrl ? appUrl + PAGES + '/' : null, runtimeUrl: rt, keys: KEYS, dir: DIR, base: BASE, manifest: MANIFEST, ds: onDs, appsUrl: apps.href, mapSection: mapSection };
   /* Страница ДС: нет ds.css/ds.js (каркас грузит поштучно) — добираем
      недостающие стили и рантаймы панели, уже загруженное не трогаем. */
   if (onDs) {
@@ -62,5 +69,6 @@
   }
   document.write('<link rel="stylesheet" href="' + rt + 'panel.css">');
   if (appUrl) document.write('<scr' + 'ipt src="' + appUrl + DATA + '"><\/scr' + 'ipt>');
+  if (mapSection) document.write('<scr' + 'ipt src="' + new URL(MAPDIR + encodeURIComponent(mapSection) + '/map-data.js', apps).href + '"><\/scr' + 'ipt>');
   for (var i = 0; i < FILES.length; i++) document.write('<scr' + 'ipt src="' + rt + FILES[i] + '"><\/scr' + 'ipt>');
 })();

@@ -14,6 +14,9 @@
                          включатель (его пишет генератор из этой же константы);
      parseYaml         — подмножество YAML с номерами строк; подмножество —
                          договор, он описан в README панели;
+     schemaReader      — поля, строки и действия do по узлам разбора: один
+                         читатель на flows.yaml и карту экранов раздела
+                         (.agents/tools/screen-map.mjs);
      readFlows         — схема flows.yaml и нормализованная модель сценариев;
      parseComments,
      serializeComments — comments.md: разбор и каноническая запись;
@@ -417,28 +420,16 @@
   }
 
   /**
-   * flows.yaml → { flows, errors: [{ code: ПН1|ПН2, line, text }], meta, doc,
-   * header, innerComments, numbering }.
-   * При любой ошибке flows пуст (и doc — null): панель показывает ошибки, а не
-   * половину сценария. meta — номера строк (для сообщений оснастки), в зеркало
-   * не идёт. doc — документ для канонической записи: { header, version,
-   * lastState, flows }. innerComments — строки с комментариями внутри файла:
-   * при переписывании они потерялись бы (ПН11). numbering — шаги без номера,
-   * повторы, негодные номера, lastState меньше максимума (ПН11, ПН12): файл
-   * при этом читается, нумерацию чинит сборка.
+   * Читатель схемы по узлам parseYaml — поля, строки, числа и действия do.
+   * Один на flows.yaml и на файлы того же языка: карта экранов раздела
+   * (.agents/tools/screen-map.mjs, задача RE0015) описывает состояния экранов
+   * теми же действиями, что сценарии панели, и разбирает их этим же кодом —
+   * второго разбора действий нет. errs — куда складывать ошибки { code,
+   * line, text }; code — код ошибки схемы (у flows.yaml — ПН2).
+   * { err, fields, kindName, str, named, int, bool, action }.
    */
-  function readFlows(src) {
-    var numbering = { missing: [], duplicates: [], bad: [], low: null };
-    var res = { flows: [], errors: [], meta: [], doc: null, header: [], innerComments: [], numbering: numbering };
-    var parsed = parseYaml(src);
-    res.header = parsed.header || [];
-    res.innerComments = parsed.comments || [];
-    if (parsed.error) {
-      res.errors.push({ code: 'ПН1', line: parsed.error.line, text: parsed.error.text });
-      return res;
-    }
-    var errs = res.errors;
-    function err(node, text, line) { errs.push({ code: 'ПН2', line: line || (node && node.line) || 1, text: text }); }
+  function schemaReader(errs, code) {
+    function err(node, text, line) { errs.push({ code: code, line: line || (node && node.line) || 1, text: text }); }
 
     /* Словарь → { поле: запись }, неизвестные поля — ошибка с подсказкой. */
     function fields(node, allowed, where) {
@@ -489,15 +480,6 @@
       var n = entry.value;
       if (n.kind !== 'scalar' || typeof n.value !== 'boolean') { err(n, what + ' — true или false', entry.line); return false; }
       return n.value;
-    }
-
-    /* Номер состояния и lastState: негодное значение — не ошибка схемы, а
-       нумерация (ПН12): файл читается, сборка выдаёт номер заново. */
-    function number(entry, what, min) {
-      var n = entry.value;
-      if (n.kind === 'scalar' && typeof n.value === 'number' && n.value >= min) return n.value;
-      numbering.bad.push({ what: what, line: entry.line, value: n.kind === 'scalar' ? n.value : kindName(n) });
-      return null;
     }
 
     function readAction(node, where) {
@@ -559,6 +541,44 @@
       if (verb === 'fill' && !f.value) err(v, at + ': нет value — что ввести', ve.line);
       if (verb === 'press' && !f.key) err(v, at + ': нет key — какую клавишу нажать', ve.line);
       return a;
+    }
+
+    return { err: err, fields: fields, kindName: kindName, str: str, named: named, int: int, bool: bool, action: readAction };
+  }
+
+  /**
+   * flows.yaml → { flows, errors: [{ code: ПН1|ПН2, line, text }], meta, doc,
+   * header, innerComments, numbering }.
+   * При любой ошибке flows пуст (и doc — null): панель показывает ошибки, а не
+   * половину сценария. meta — номера строк (для сообщений оснастки), в зеркало
+   * не идёт. doc — документ для канонической записи: { header, version,
+   * lastState, flows }. innerComments — строки с комментариями внутри файла:
+   * при переписывании они потерялись бы (ПН11). numbering — шаги без номера,
+   * повторы, негодные номера, lastState меньше максимума (ПН11, ПН12): файл
+   * при этом читается, нумерацию чинит сборка.
+   */
+  function readFlows(src) {
+    var numbering = { missing: [], duplicates: [], bad: [], low: null };
+    var res = { flows: [], errors: [], meta: [], doc: null, header: [], innerComments: [], numbering: numbering };
+    var parsed = parseYaml(src);
+    res.header = parsed.header || [];
+    res.innerComments = parsed.comments || [];
+    if (parsed.error) {
+      res.errors.push({ code: 'ПН1', line: parsed.error.line, text: parsed.error.text });
+      return res;
+    }
+    var errs = res.errors;
+    /* Поля, строки и действия — общий читатель схемы (schemaReader выше). */
+    var R = schemaReader(errs, 'ПН2');
+    var err = R.err, fields = R.fields, kindName = R.kindName, str = R.str, named = R.named, readAction = R.action;
+
+    /* Номер состояния и lastState: негодное значение — не ошибка схемы, а
+       нумерация (ПН12): файл читается, сборка выдаёт номер заново. */
+    function number(entry, what, min) {
+      var n = entry.value;
+      if (n.kind === 'scalar' && typeof n.value === 'number' && n.value >= min) return n.value;
+      numbering.bad.push({ what: what, line: entry.line, value: n.kind === 'scalar' ? n.value : kindName(n) });
+      return null;
     }
 
     var root = parsed.node;
@@ -1382,6 +1402,9 @@
     yamlPlain: yamlPlain,
     VERBS: VERBS,
     LIMITS: LIMITS,
+    ID_RX: ID_RX,
+    suggest: suggest,
+    schemaReader: schemaReader,
     readFlows: readFlows,
     describeAction: describeAction,
     STATUS: STATUS,
@@ -1411,6 +1434,7 @@
     hash: hash,
     mirrorData: mirrorData,
     mirrorText: mirrorText,
+    ascii: ascii,
     selectorTokens: selectorTokens
   };
 });

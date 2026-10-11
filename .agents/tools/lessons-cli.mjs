@@ -1198,6 +1198,12 @@ const KIT_BUILD = path.join(HERE, 'kit-build.mjs');
    не «экранная область» и поднимает только свой шаг `kit`. */
 const SHOWCASE_REL = PRJ.showcase;
 const inShowcase = (rel) => Boolean(SHOWCASE_REL) && rel.startsWith(SHOWCASE_REL + '/');
+/* Карта экранов (`screenMap.dir`, задача RE0015): тоже не экраны — сенсор,
+   линтер, сборщик и README модулей её не обходят. Её страницу проверяет сторож
+   хаба (П4, П5, П7: запись хаба держит root на папке карты), сверку карты —
+   генератор screen-map.mjs, шага в гейте нет (решение человека 11.10.2026). */
+const MAP_REL = PRJ.screenMap ? PRJ.screenMap.dir : null;
+const inMap = (rel) => Boolean(MAP_REL) && rel.startsWith(MAP_REL + '/');
 const SELF = fileURLToPath(import.meta.url);
 
 /* Корневые текстовые файлы в отпечаток идут ВСЕ, а не списком: до 21.09.2026
@@ -1421,8 +1427,8 @@ function gateStepsFor(rel, deleted) {
 
   // проекты, концепты и сам хаб, в том числе удалённое: реестр хаба мог разойтись с папками;
   // витрина локальных компонентов внутри apps/ — не экраны (SHOWCASE_REL выше)
-  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/')) && !inShowcase(rel);
-  if ((screenArea && !inFixtures) || HUB_FILES.has(rel)) add('registry');
+  const screenArea = TRACK_DIRS.some((d) => rel.startsWith(d + '/')) && !inShowcase(rel) && !inMap(rel);
+  if ((screenArea && !inFixtures) || HUB_FILES.has(rel) || (inMap(rel) && rel.endsWith('.html'))) add('registry');
   // конфиг, в том числе удалённый или появившийся в корне; шапка скилла — КФ4 (видим ли скилл модели);
   // файл адаптера, роль или команда харнеса, в том числе удалённые, — КФ5 (указатели не разошлись с харнесом)
   if (AGENT_CONFIG_FILES.has(rel) || (!deleted && underKit('skills/[^/]+/SKILL\\.md$').test(rel))
@@ -1561,7 +1567,7 @@ function gateStepsFor(rel, deleted) {
   if (rel.startsWith(KIT_REL + '/skills/session-plan/')) add('ctx-budget');
   if (rel === TOOL_REL + '/registry-check.mjs') add('registry-selftest', 'registry');
   // загрузчик: его файлы, генератор, манифест (designSystem.mount, boot)
-  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/') && !inShowcase(rel)) || rel === 'project.json') add('boot');
+  if ((BOOT_DIR && rel.startsWith(BOOT_DIR + '/') && !inShowcase(rel) && !inMap(rel)) || rel === 'project.json') add('boot');
   if (rel === TOOL_REL + '/boot-build.mjs') add('boot-selftest', 'boot');
   // реестр хаба: записи приложений, сам реестр, манифест (треки, hub.ds, каталог приложений)
   if (rel === PRJ.hubRegistry || rel === 'project.json'
@@ -1819,7 +1825,7 @@ function afterSession(paths) {
   const places = PRJ.places, shape = PRJ.appShape;
   // область модуля: 'pages' | 'widgets' | null — модуль `<раздел>/<имя>-app/`, не концепт и не витрина
   const moduleArea = (rel) => {
-    if (!PRJ.appsDir || !places || !shape || !rel.startsWith(PRJ.appsDir + '/') || inShowcase(rel)) return null;
+    if (!PRJ.appsDir || !places || !shape || !rel.startsWith(PRJ.appsDir + '/') || inShowcase(rel) || inMap(rel)) return null;
     const parts = rel.slice(PRJ.appsDir.length + 1).split('/');
     const i = parts.findIndex((p) => p.endsWith(places.moduleSuffix));
     if (i < 1 || parts.slice(0, i).includes(places.drafts)) return null;

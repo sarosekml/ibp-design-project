@@ -127,6 +127,7 @@
       + '<div class="drawer__alert" id="pp-alert" hidden></div>'
       + '<div class="pp-panes" id="pp-panes"></div>'
       + '<div class="pp-pane pp-theme" id="pp-theme" hidden></div>'
+      + '<div class="pp-pane" id="pp-map" role="region" aria-label="' + esc(t('rail.map')) + '" hidden></div>'
       + '</div>'
       + '</aside>';
     return s;
@@ -205,6 +206,10 @@
     renderHeadMenu();
     renderFix();
     updateAlert();
+    if (rail === 'map') {   // карта: текущая страница — в видимой части дерева
+      var cur = el.drawer.querySelector('#pp-map [aria-current="page"]');
+      if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+    }
     bus.emit('open');
   }
   function onClosed() {
@@ -218,9 +223,10 @@
     if (isOpen()) { renderActive(); updateAlert(); renderFix(); return; }
     var nested = !!(window.DSModal && window.DSModal.stack().length);
     el.drawer.classList.toggle('modal-scrim--nested', nested);
-    /* фокус при открытии — на выбранном табе: ряд табов первый в теле */
+    /* фокус при открытии — по режиму рельса: выбранный таб, текущая страница карты или нажатая кнопка рельса */
     el.drawer.querySelectorAll('[autofocus]').forEach(function (n) { n.removeAttribute('autofocus'); });
-    var tb = el.drawer.querySelector('.tab[aria-selected="true"]');
+    var tb = rail === 'panel' ? el.drawer.querySelector('.tab[aria-selected="true"]')
+      : (rail === 'map' && el.drawer.querySelector('#pp-map [aria-current="page"]')) || el.drawer.querySelector('#pp-rail [aria-pressed="true"]');
     if (tb) tb.setAttribute('autofocus', '');
     if (!window.DSDrawer) { console.warn(LOG, 'DS Drawer runtime is not loaded'); return; }
     window.DSDrawer.open(el.drawer, { returnFocus: document.activeElement, nested: nested, onOpen: onOpened, onClose: onClosed });
@@ -374,6 +380,7 @@
       var label = core.stateLabel(r.state);
       if (!r.draft && r.drafted !== r.state) toast(t('toast.savedAs', { state: label }), 'neutral');
       if (inDrawer) {
+        if (rail !== 'panel') railShow('panel');   // шторка на карте или теме: табы скрыты
         selectTab('flows');
         if (PP._flowsTab) PP._flowsTab.rename(r.state, true);
         refresh('flows');
@@ -535,13 +542,21 @@
   var rail = 'panel';
   var RAIL = [
     { id: 'panel', icon: 'layout-rows-01', label: 'rail.panel', tip: 'rail.panelTip' },
-    { id: 'theme', icon: 'settings', label: 'rail.theme', tip: 'rail.themeTip' }
+    { id: 'theme', icon: 'settings', label: 'rail.theme', tip: 'rail.themeTip' },
+    /* карта экранов проекта (RE0015) — только там, где включатель загрузил её данные */
+    { id: 'map', icon: 'tree-view', label: 'rail.map', tip: 'rail.mapTip' }
   ];
+
+  function mapData() { var M = window.ScreenMaps; return ctx.mapSection && M ? M[ctx.mapSection] || null : null; }
+  function hasMap() { return !!(mapData() && window.ProtoPanelMap && ctx.appsUrl); }
+  function railIds() { return RAIL.filter(function (r) { return r.id !== 'map' || hasMap(); }).map(function (r) { return r.id; }); }
+  function railMode(id) { return railIds().indexOf(id) >= 0 ? id : 'panel'; }
 
   function buildRail() {
     var box = document.getElementById('pp-rail');
     if (!box) return;
-    box.innerHTML = RAIL.map(function (r) {
+    var ids = railIds();
+    box.innerHTML = RAIL.filter(function (r) { return ids.indexOf(r.id) >= 0; }).map(function (r) {
       return '<span class="pp-rail-control"><button type="button" class="ibtn ibtn--neutral ibtn--l ibtn--circle" data-pp-rail="' + r.id + '" aria-pressed="false"'
         + ' aria-label="' + esc(t(r.label)) + '" data-tooltip="' + esc(t(r.tip)) + '"><i data-icon="' + r.icon + '"></i></button></span>';
     }).join('');
@@ -552,24 +567,71 @@
     });
   }
 
-  /** Переключить содержимое дровера: 'panel' — табы панели, 'theme' — темы. */
-  function railShow(id) {
-    if (id !== 'theme') id = 'panel';
+  /** Переключить содержимое дровера: 'panel' — табы панели, 'theme' — темы,
+      'map' — карта экранов проекта. restore — восстановление при старте: выбор
+      не перезаписывается (ключ pp.ui общий у всех страниц без приложения —
+      хаб не должен сбрасывать «Карту», выбранную на странице Post). */
+  function railShow(id, restore) {
+    id = railMode(id);
     rail = id;
-    store.setUi({ rail: id });
-    var panelMode = id !== 'theme';
+    if (!restore) store.setUi({ rail: id });
+    var panelMode = id === 'panel';
     var tabsEl = document.querySelector('#pp-body > .pp-tabs');
     var panesEl = document.getElementById('pp-panes');
     var themeEl = document.getElementById('pp-theme');
+    var mapEl = document.getElementById('pp-map');
     var fixEl = document.getElementById('pp-fix');
     if (tabsEl) tabsEl.hidden = !panelMode;
     if (panesEl) panesEl.hidden = !panelMode;
-    if (themeEl) themeEl.hidden = panelMode;
+    if (themeEl) themeEl.hidden = id !== 'theme';
+    if (mapEl) mapEl.hidden = id !== 'map';
     if (fixEl) fixEl.hidden = !panelMode || !store.data();
     var btns = document.querySelectorAll('#pp-rail [data-pp-rail]');
     for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-pp-rail') === id ? 'true' : 'false');
-    if (panelMode) refresh(); else renderThemePane();
-    if (!panelMode) hideFloating();
+    var title = document.getElementById('pp-drawer-title');
+    if (title) title.textContent = id === 'map' ? (mapData().title || t('map.title')) : appId();
+    if (panelMode) { refresh(); return; }
+    hideFloating();
+    if (id === 'theme') renderThemePane(); else renderMapPane();
+  }
+
+  /* ---------------- карта экранов (RE0015) ---------------- */
+
+  var mapView = null, K_REOPEN = 'pp.mapReopen';
+  function renderMapPane() {
+    var box = document.getElementById('pp-map');
+    if (!box || !hasMap()) return;
+    if (mapView) mapView.destroy();   // render вешает обработчик на хост при каждом вызове
+    mapView = window.ProtoPanelMap.render(box, mapData(), {
+      mode: 'tree', base: ctx.appsUrl, here: location.href, states: true,
+      labels: { map: t('map.title'), states: t('map.states'), empty: t('map.empty') }, onGo: mapGo
+    });
+  }
+  /* Переход из карты: состояние с действиями на этой же странице — перезагрузка
+     с адресом состояния (чистый DOM); остальное — обычный переход браузера
+     (#pp= той же страницы ловит hashchange проигрывателя). Шторка снова на
+     карте — только после загрузки документа и не для шага сценария (#pp=):
+     у сценария своё открытие панели. */
+  function mapGo(href) {
+    var u;
+    try { u = new URL(href); } catch (e) { return false; }
+    var path = u.pathname;
+    try { path = decodeURIComponent(path); } catch (e) { /* как есть */ }
+    var same = runner.here() === path + u.search, isMap = /(?:^#|&)ppmap=/.test(u.hash);
+    var loads = isMap || !same;
+    if (loads && !/(?:^#|&)pp=/.test(u.hash) && !store.prefs().closeOnGo) store.session.set(K_REOPEN, { at: Date.now() });
+    if (same && isMap) {
+      history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+      location.reload();
+      return true;
+    }
+    return false;
+  }
+  /* настройка «не закрывать панель при переходе»: после перехода по карте шторка снова на карте */
+  function reopenMap() {
+    var r = store.session.get(K_REOPEN, null);
+    store.session.set(K_REOPEN, null);
+    if (r && Date.now() - r.at < 20000 && hasMap() && !store.prefs().closeOnGo) { railShow('map'); open(); }
   }
 
   /** Темы для панели: из рантайма ДС, служебная (service) не показывается. */
@@ -692,6 +754,7 @@
     if (!box) return;
     var p = store.prefs();
     var c = runner.current(), b = runner.busy();
+    if (b && !b.flow) b = null;   // действия карты экранов — не шаг сценария
     var on = p.showPlayer && !!(c || b);
     if (!on) { if (!box.hidden) { hideFloating(); box.hidden = true; box.innerHTML = ''; } return; }
     var flow = runner.flowById(b ? b.flow : c.flow);
@@ -921,7 +984,7 @@
 
     buildTabs();
     buildRail();
-    railShow(store.ui().rail || 'panel');
+    railShow(store.ui().rail || 'panel', true);
     renderPlayer();
     renderFab();
     renderHeadMenu();
@@ -932,7 +995,8 @@
     bus.on('busy', function (b) {
       renderPlayer();
       refresh('flows');
-      if (b) { var f = runner.flowById(b.flow); announce(t('live.going', { state: f ? runner.stepName(f, b.to) : '' })); }
+      renderFix();
+      if (b && b.flow) { var f = runner.flowById(b.flow); announce(t('live.going', { state: f ? runner.stepName(f, b.to) : '' })); }
     });
     bus.on('stop', function () { renderPlayer(); refresh(); announce(t('live.stopped')); });
     bus.on('step', function (s) {
@@ -943,6 +1007,10 @@
       renderPlayer();
       refresh('flows');
       announce(x.message);
+      if (x && x.map) {   // состояние карты экранов (#ppmap=) не открылось — кнопка ведёт на карту, а не в сценарии
+        snack({ tone: 'error', title: t('snack.mapFailed'), text: x.message, buttons: hasMap() ? [{ label: t('btn.openMap'), onClick: function () { railShow('map'); open(); } }] : [] });
+        return;
+      }
       snack({ tone: 'error', title: t('snack.stepFailed'), text: x.message, buttons: [{ label: t('btn.openPanel'), onClick: function () { open('flows'); } }] });
     });
     bus.on('store', function () { renderHeadMenu(); updateAlert(); refresh(); });
@@ -969,7 +1037,8 @@
   PP._ui = {
     mount: mount, open: open, close: close, toggle: toggle, isOpen: isOpen, tab: tab, refresh: refresh, selectTab: selectTab,
     releasePage: releasePage, toast: toast, snack: snack, confirm: confirm, announce: announce, esc: esc, wire: wire,
-    activeTab: function () { return activeId; }, updateAlert: updateAlert, fix: fix, targetFlow: targetFlow, fixBlocked: fixBlocked
+    activeTab: function () { return activeId; }, updateAlert: updateAlert, fix: fix, targetFlow: targetFlow, fixBlocked: fixBlocked,
+    railIds: railIds, railMode: railMode, reopenMap: reopenMap
   };
   PP.tab = tab;
 })();

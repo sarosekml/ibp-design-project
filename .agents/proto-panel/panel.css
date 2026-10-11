@@ -362,3 +362,20 @@
   #pp-drawer,
   .pp-modal { display: none; }
 }
+
+/* ---------------- карта экранов (map-view.js, задача RE0015) ----------------
+   Майндмап страниц проекта: HTML-узлы (Tile Card + Entity ДС) поверх SVG-слоя
+   линий — компонента схемы в ДС нет. Ширина карточки и зазоры — токены, их
+   вычисленные значения читает скрипт раскладки. */
+.pp-map { --pp-map-card: calc(var(--space-48) * 5); min-width: 0; }
+.pp-map__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-24); margin-block-end: var(--space-16); }
+.pp-map__scroll { overflow: auto; padding: var(--space-4); }
+.pp-map__board { position: relative; column-gap: var(--space-48); row-gap: var(--space-16); }
+.pp-map__edges { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.pp-map__edge { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; }
+.pp-map__node { position: absolute; left: 0; top: 0; z-index: 1; box-sizing: border-box; width: var(--pp-map-card); }
+.pp-map__link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-s); }
+.pp-map__states { margin-block-start: var(--space-12); }
+.pp-map__state { text-decoration: none; cursor: pointer; }
+.pp-map--tree .pp-map__states { padding-inline-start: var(--space-16); }
+.pp-map__empty { margin: 0; color: var(--text-secondary); }

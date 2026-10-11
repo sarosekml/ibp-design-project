@@ -67,6 +67,12 @@
    неё своя запись хаба в группе ДС, без root. П4 и П7 её пропускают, как
    пропускали, пока она лежала в корне; сверяет её шаг гейта `kit`.
 
+   Карта экранов проекта (`project.json → screenMap.dir`, с 11.10.2026 —
+   `apps/screen-map/`, задача RE0015) — тоже не приложение: её запись стоит в
+   колонке приложения (под записью `after`), root — папка карты раздела, и
+   П3 не требует от неё app.json. Остальное — как у всех: href внутри root,
+   П4 (страница карты внутри root), П5 (строка пользователя → хаб), П7.
+
    Честная граница П5: проверка статическая. Разметку, склеенную из кусков
    без литерала пути, и подмену, которая ничего не находит, она не видит —
    это видно только в браузере.
@@ -158,6 +164,9 @@ export function check(from = HERE) {
   const relOf = (abs) => slash(path.relative(repo, abs));
   /* Витрина локальных компонентов — генерат kit-build, не страница приложения (шапка). */
   const inShowcase = (f) => Boolean(P.showcaseAbs) && inside(f, P.showcaseAbs);
+  /* Карта экранов (project.json → screenMap.dir, RE0015) — не приложение: её
+     запись на хабе держит root на папке карты; П4, П5, П7 — как у всех. */
+  const inMap = (f) => Boolean(P.screenMap) && inside(f, P.screenMap.dirAbs);
   stats.areas = AREAS;
   const regFile = path.join(repo, REGISTRY);
 
@@ -196,7 +205,8 @@ export function check(from = HERE) {
       rootAbs = path.resolve(repo, e.root);
       if (!existsSync(rootAbs) || !statSync(rootAbs).isDirectory()) defects.push('П3 ' + name + ' — папки root нет: ' + e.root);
       else if (!inside(href, rootAbs)) defects.push('П3 ' + name + ' — href лежит вне root: ' + e.href);
-      if (APPS && groupDir) appDefects(name, e, rootAbs);
+      /* запись карты экранов (RE0015): root — папка карты, не приложения — app.json у неё нет */
+      if (APPS && groupDir && !inMap(rootAbs)) appDefects(name, e, rootAbs);
       else if (groupDir && !inside(rootAbs, path.join(repo, groupDir))) {
         defects.push('П3 ' + name + ' — root «' + e.root + '» вне папки группы ' + groupDir + '/ (group: \'' + e.group + '\')');
       }
@@ -415,6 +425,16 @@ function cleanTree(root) {
   put(root, 'apps/fixtures/lint/X.html', '<a class="nav__user" href="#">фикстура</a>');
 }
 
+/* Карта экранов стенда: запись хаба в колонке проектов под alpha, root — папка карты. */
+const MAP_ENTRY = { id: 'map-post', group: 'projects', title: 'Карта', desc: 'тест', href: 'apps/screen-map/postrade/index.html', root: 'apps/screen-map/postrade', icon: 'folder' };
+const MAP_PAGE = '<div class="nav__footer"><a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">К</a></div><script src="map-data.js"></script>';
+function mapTree(root, declared = true) {
+  if (declared) put(root, 'project.json', JSON.stringify({ ...MANIFEST, screenMap: { dir: 'apps/screen-map', maps: [] } }, null, 2));
+  put(root, 'hub.js', registryJs([...CLEAN_ENTRIES.slice(0, 2), MAP_ENTRY, CLEAN_ENTRIES[2]]));
+  put(root, 'apps/screen-map/postrade/index.html', MAP_PAGE);
+  put(root, 'apps/screen-map/postrade/map-data.js', '');
+}
+
 const CASES = [
   { name: 'чистое дерево', expect: null },
   { name: 'приложение без строки на хабе (hub: false) — не дефект', expect: null,
@@ -512,6 +532,16 @@ const CASES = [
     } },
   { name: 'та же папка без localKit — страница вне реестра', expect: 'П4 apps/showcase/index.html',
     mutate: (r) => put(r, 'apps/showcase/index.html', '<p>обзор</p>') },
+  /* Карта экранов (RE0015): запись в колонке проектов, root — папка карты;
+     app.json ей не нужен, П4, П5, П7 страницы карты — как у всех. */
+  { name: 'запись карты экранов — root папки карты, app.json не нужен', expect: null,
+    mutate: (r) => mapTree(r) },
+  { name: 'та же запись без screenMap — root не каталог приложения', expect: 'П3 запись 3 «map-post» — root «apps/screen-map/postrade» не каталог приложения',
+    mutate: (r) => mapTree(r, false) },
+  { name: 'страница карты: строка пользователя на «#»', expect: 'П5 apps/screen-map/postrade/index.html',
+    mutate: (r) => { mapTree(r); put(r, 'apps/screen-map/postrade/index.html', '<div class="nav__footer"><a class="nav__user" href="#">К</a></div>'); } },
+  { name: 'страница карты: битая ссылка', expect: 'П7 apps/screen-map/postrade/index.html — битая ссылка gone.js',
+    mutate: (r) => { mapTree(r); put(r, 'apps/screen-map/postrade/index.html', MAP_PAGE + '<script src="gone.js"></script>'); } },
   { name: 'реестр не выполняется', expect: 'не выполняется',
     mutate: (r) => put(r, 'hub.js', 'window.IBPHub = [ {;') },
   /* Имена — из манифеста, а не литералами: то же дерево под другими именами

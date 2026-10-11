@@ -22,6 +22,12 @@
    рекордер знает, до какого шага страницу довела панель; адрес шага — по
    номеру состояния (#pp=07). Сценарии —
    зеркало плюс черновые операции (store.flows).
+
+   Задача RE0015: адрес состояния карты экранов — #ppmap=<узел>/<состояние>
+   (данные — window.ScreenMaps[ctx.mapSection], включатель грузит их на
+   страницах модулей раздела, в том числе без папки панели). mapFromHash
+   открывает страницу состояния и проигрывает его действия play() — без
+   состояния сценария и стража: сценарий и плеер не меняются.
    ============================================================ */
 (function () {
   'use strict';
@@ -39,6 +45,8 @@
   /* свои элементы панели: не цель действий, не «изменено вручную», не запись */
   var PANEL_SEL = '.pp-root, #pp-drawer, .pp-modal, .pp-hl, .snackbar-layer, .toast-layer';
   var busy = null;   // { flow, from, to, phase } — пока идёт переход
+  var playing = null;   // { node, state } — пока идут действия карты экранов (без busy и шины)
+  var K_MAPNAV = 'pp.mapnav', MAP_RE = /(?:^#|&)ppmap=([^&]+)/;
   var last = null;   // последний прогон: { flow, from, to, start, end, ok } — время от начала загрузки страницы, мс (диагностика)
 
   /* ---------------- сценарии ---------------- */
@@ -268,6 +276,30 @@
     });
   }
 
+  /* Действия карты экранов (задача RE0015): по порядку, без состояния сценария,
+     стража перехода и событий replay-start/step — сценарий и плеер не меняются.
+     replay-action шлётся: Fix State после перехода по карте включит эти действия
+     в шаг, и шаг проиграется. → { ok } | { ok: false, index, action, message } */
+  function play(actions, opts) {
+    opts = opts || {};
+    if (busy || playing) return Promise.resolve({ ok: false, index: null, action: null, message: t('fix.busy') });
+    var list = (actions || []).map(core.makeAction), i = 0;
+    playing = { map: true, node: opts.node || null, state: opts.state || null };
+    bus.emit('busy', playing);   // без flow: плеер и Fix State перерисуются, сценарий не тронут
+    var ui = PP._ui;
+    function done(r) { playing = null; bus.emit('busy', null); return r; }
+    return (ui ? ui.releasePage() : Promise.resolve()).then(function loop() {
+      if (i >= list.length) return null;
+      var act = list[i];
+      return exec(act, !!opts.show).then(function (el) {
+        bus.emit('replay-action', { map: true, action: act, el: el });
+        i++;
+        return frames(2).then(loop);
+      });
+    }).then(function () { return done({ ok: true }); },
+      function (e) { return done({ ok: false, index: i, action: list[i] || null, message: e && e.message || String(e) }); });
+  }
+
   /* ---------------- переходы ---------------- */
 
   function message(flow, s, ai, why) {
@@ -329,7 +361,7 @@
   /** Перейти к шагу: без перезагрузки, если шаг — приращение текущего на той же странице. */
   function goTo(flowId, stepRef, opts) {
     opts = opts || {};
-    if (busy) return Promise.resolve(false);
+    if (busy || playing) return Promise.resolve(false);
     var flow = flowById(flowId);
     if (!flow) return Promise.reject(new Error(t('run.noFlow', { id: flowId })));
     var j = stepIdx(flow, stepRef);
@@ -367,7 +399,7 @@
 
   function step(delta) {
     var c = current();
-    if (!c || busy) return Promise.resolve(false);
+    if (!c || busy || playing) return Promise.resolve(false);
     var flow = flowById(c.flow);
     var base = c.index;
     /* после ошибки «вперёд» повторяет шаг с ошибкой */
@@ -389,10 +421,15 @@
   /* ---------------- после загрузки страницы ---------------- */
 
   /* Адрес шага #pp=07 (номер состояния) или прежний #pp=<сценарий>/<шаг>: хеш убирается, панель идёт к шагу. */
+  /* Снять из хеша только свой параметр (pp или ppmap): соседний остаётся своему разбору. */
+  function dropHashParam(name) {
+    var rest = (location.hash || '').replace(/^#/, '').split('&').filter(function (p) { return p && p.indexOf(name + '=') !== 0; });
+    history.replaceState(history.state, '', location.pathname + location.search + (rest.length ? '#' + rest.join('&') : ''));
+  }
   function fromHash(fresh) {
     var m = /(?:^#|&)pp=([^&]+)/.exec(location.hash || '');
     if (!m) return null;
-    history.replaceState(history.state, '', location.pathname + location.search);
+    dropHashParam('pp');
     var ref = decode(m[1]);
     var go;
     if (ref.indexOf('/') < 0 && core.parseStateRef(ref)) go = goToState(core.parseStateRef(ref), { fresh: !!fresh });
@@ -401,8 +438,59 @@
       bus.emit('error', { message: t('run.hash', { msg: e.message }) });
     });
   }
+  /* ---------------- карта экранов: #ppmap=<узел>/<состояние> ---------------- */
+
+  function mapData() { var M = window.ScreenMaps; return ctx.mapSection && M ? M[ctx.mapSection] || null : null; }
+  function mapFail(ref, msg, extra) {
+    var text = t('map.hash', { ref: ref, msg: msg });
+    console.warn(LOG + ' ' + text);
+    var x = { map: true, ref: ref, message: text };
+    if (extra) Object.keys(extra).forEach(function (k) { x[k] = extra[k]; });
+    bus.emit('error', x);
+    return false;
+  }
+  /* Адрес состояния карты: страница открывается и доводится до состояния
+     действиями do (play). Живой DOM (переход по хешу без загрузки) —
+     перезагрузка: состояние строится с чистой страницы. Хеш снимается.
+     → true | false (ошибка) | 'nav' (ушли на другую страницу — там и продолжится). */
+  function mapFromHash(fresh) {
+    var m = MAP_RE.exec(location.hash || '');
+    if (!m) return null;
+    if (!fresh) { location.reload(); return Promise.resolve('nav'); }
+    dropHashParam('ppmap');
+    var ref = decode(m[1]), cut = ref.indexOf('/');
+    var nodeId = cut < 0 ? ref : ref.slice(0, cut), stateId = cut < 0 ? '' : ref.slice(cut + 1);
+    var data = mapData();
+    if (!data || !ctx.appsUrl) return Promise.resolve(mapFail(ref, t('map.noData')));
+    var node = (data.nodes || []).filter(function (n) { return n.id === nodeId; })[0];
+    if (!node) return Promise.resolve(mapFail(ref, t('map.noNode', { node: nodeId })));
+    var st = stateId ? (node.states || []).filter(function (s) { return s.id === stateId; })[0] : null;
+    if (stateId && !st) return Promise.resolve(mapFail(ref, t('map.noState', { state: stateId, title: node.title })));
+    var target = new URL((st || node).href, ctx.appsUrl).href;
+    if (st && st.kind === 'flow') { location.href = target; return Promise.resolve('nav'); }   // #pp=NN — адрес сценария панели
+    if (urlKey(target) !== here()) {
+      /* не та страница — переход с тем же хешем; второй круг подряд — ошибка, а не петля.
+         Срок — как у ожидания перехода (PENDING_TTL): медленная загрузка не обходит стража */
+      var g = session.get(K_MAPNAV, null);
+      if (g && g.ref === ref && Date.now() - g.at < PENDING_TTL) { session.set(K_MAPNAV, null); return Promise.resolve(mapFail(ref, t('map.loop', { page: (st || node).page }))); }
+      session.set(K_MAPNAV, { ref: ref, at: Date.now() });
+      location.href = target;
+      return Promise.resolve('nav');
+    }
+    session.set(K_MAPNAV, null);
+    if (!st || !st.do || !st.do.length) return Promise.resolve(true);
+    return play(st.do, { show: store.prefs().showActions, node: node.id, state: st.id }).then(function (r) {
+      if (r.ok) return true;
+      var act = r.action ? t('run.action', { n: r.index + 1, what: core.describeAction(r.action) }) : '';
+      return mapFail(ref, t('map.message', { title: st.title, action: act, why: r.message }), { node: node.id, state: st.id, action: r.index });
+    });
+  }
+
   /* та же страница, другой хеш — документ не перезагружается */
-  window.addEventListener('hashchange', function () { if (!busy) fromHash(); });
+  window.addEventListener('hashchange', function () {
+    if (busy || playing) return;
+    if (MAP_RE.test(location.hash || '')) mapFromHash(false); else fromHash();
+  });
 
   function resume() {
     var now = Date.now();
@@ -460,7 +548,7 @@
 
   PP._runner = {
     flows: flows, flowById: flowById, stepIdx: stepIdx, entryIdx: entryIdx, entryUrl: entryUrl, stepUrl: stepUrl, byState: byState, stepName: stepName,
-    state: state, current: current, busy: function () { return busy; }, setAt: setAt,
+    state: state, current: current, busy: function () { return busy || playing; }, setAt: setAt, play: play, mapFromHash: mapFromHash, mapData: mapData,
     goTo: goTo, goToState: goToState, next: next, prev: prev, stop: stop, start: start, resume: resume,
     here: here, lastRun: function () { return last; }, textOf: textOf, isOwn: isOwn, matches: matches, PANEL_SEL: PANEL_SEL
   };
