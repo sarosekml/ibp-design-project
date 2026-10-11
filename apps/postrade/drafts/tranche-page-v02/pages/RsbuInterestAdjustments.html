@@ -4,7 +4,7 @@
 <script src="../../../../ds-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Харды в РСБУ — IBP</title>
+<title>Корректировки процентов РСБУ — IBP</title>
 <style>
   /* ---------- только раскладка экрана, на токенах ДС ---------- */
   *, *::before, *::after { box-sizing: border-box; }
@@ -30,7 +30,7 @@
       <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="Tranche.html" id="rh-crumb-tranche">Транш</a></li>
       <li class="crumbs__item crumbs__item--current">
-        <span class="crumbs__current" aria-current="page">Харды в РСБУ</span>
+        <span class="crumbs__current" aria-current="page">Корректировки процентов РСБУ</span>
       </li>
     </nav>
 
@@ -40,7 +40,7 @@
       <div class="phead">
         <div class="phead__main">
           <div class="phead__title-row">
-            <div class="phead__title-group"><h1 class="phead__title">Харды в РСБУ</h1></div>
+            <div class="phead__title-group"><h1 class="phead__title">Корректировки процентов РСБУ</h1></div>
           </div>
         </div>
         <div class="phead__actions">
@@ -52,11 +52,12 @@
       <div class="dtable dtable--fill">
         <div class="dtable__body">
           <div class="tbl" data-table data-sort-rows id="rh-tbl">
-              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 200px 200px 200px 400px 128px minmax(8px,1fr);">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 280px 280px 200px 400px 128px minmax(8px,1fr);">
                 <div class="th th--separator"></div>
-                <div class="th" data-col="sourceDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="sourceDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
-                <div class="th" data-col="targetDate"><span class="th__label">Целевая дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="targetDate" aria-label="Сортировать: Целевая дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
-                <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма добивки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="adjustmentAmount" aria-label="Сортировать: Сумма добивки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="startDate"><span class="th__label">Начальная дата корректировки значения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Начальная дата корректировки значения"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="endDate"><span class="th__label">Конечная дата корректировки значения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Конечная дата корректировки значения"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма корректировки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="adjustmentAmount" aria-label="Сортировать: Сумма корректировки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="comment"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--separator"></div>
@@ -70,7 +71,7 @@
 
 <!-- #sec:modals ── «Новая корректировка» / «Редактирование корректировки»: одна форма -->
 <div class="modal-scrim" id="rh-modal-scrim" hidden>
-  <div class="modal modal--w5" role="dialog" aria-modal="true" aria-labelledby="rh-modal-title">
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="rh-modal-title">
     <header class="modal__head">
       <h2 class="modal__title" id="rh-modal-title">Новая корректировка</h2>
       <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть"><i data-icon="close"></i></button>
@@ -85,18 +86,24 @@
       <form class="rh-form" id="rh-form" onsubmit="return false" novalidate>
         <div class="rh-form__row">
         <div class="inp inp--m">
-          <label class="ds-label ds-label--wrap" for="ad-src"><span class="ds-label__text">Исходная дата — откуда переносим</span></label>
-          <div class="inp__field"><input class="inp__control" id="ad-src" name="sourceDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
-          <span class="ds-helper ds-helper--left" data-helper="sourceDate">&nbsp;</span>
+          <label class="ds-label ds-label--wrap" for="ad-start"><span class="ds-label__text">Начальная дата корректировки</span></label>
+          <div class="inp__box">
+            <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="ad-start-list" data-ddl="ad-start-list">
+              <input class="inp__control" id="ad-start" name="startDate" placeholder="Выберите дату" autocomplete="off">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <span class="ds-helper ds-helper--left" data-helper="startDate">&nbsp;</span>
+          <div id="ad-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
         </div>
         <div class="inp inp--m">
-          <label class="ds-label ds-label--wrap" for="ad-tgt"><span class="ds-label__text">Целевая дата — куда переносим</span></label>
-          <div class="inp__field"><input class="inp__control" id="ad-tgt" name="targetDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
-          <span class="ds-helper ds-helper--left" data-helper="targetDate">&nbsp;</span>
+          <label class="ds-label ds-label--wrap" for="ad-end"><span class="ds-label__text">Конечная дата корректировки</span></label>
+          <div class="inp__field"><input class="inp__control" id="ad-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+          <span class="ds-helper ds-helper--left" data-helper="endDate">&nbsp;</span>
         </div>
         </div>
         <div class="inp inp--m">
-          <label class="ds-label ds-label--wrap" for="ad-amt"><span class="ds-label__text">Сумма добивки</span></label>
+          <label class="ds-label ds-label--wrap" for="ad-amt"><span class="ds-label__text">Сумма корректировки</span></label>
           <div class="inp__field"><input class="inp__control" id="ad-amt" name="adjustmentAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-f="currencyCode">RUB</span></div>
           <span class="ds-helper ds-helper--left" data-helper="adjustmentAmount">&nbsp;</span>
         </div>
@@ -116,7 +123,7 @@
   </div>
 </div>
 
-<!-- Подтверждение удаления периода -->
+<!-- Подтверждение удаления корректировки -->
 <div class="modal-scrim" id="rh-delete-scrim" hidden>
   <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="rh-delete-title">
     <header class="modal__head">
@@ -207,7 +214,7 @@
   function demoHas(name) { var m = /[?&]demo=([a-z,]+)/.exec(location.search); return !!m && m[1].split(',').indexOf(name) >= 0; }
   var rows = (demoHas('filled') || demoHas('delete') || demoHas('edit')) ? data.adjustments.map(function (r) { return Object.assign({}, r); }) : [];
 
-  var GRID = '8px 200px 200px 200px 400px 128px minmax(8px,1fr)';
+  var GRID = '8px 64px 280px 280px 200px 400px 128px minmax(8px,1fr)';
   var tbl = document.getElementById('rh-tbl');
 
   function cell(key, text, num, sortValue) {
@@ -221,8 +228,9 @@
 
   function rowHTML(r, i) {
     return '<div class="tbl__row" data-idx="' + i + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
-      + cell('sourceDate', date(r.sourceDate), false, r.sourceDate)
-      + cell('targetDate', date(r.targetDate), false, r.targetDate)
+      + cell('num', String(i + 1), true)
+      + cell('startDate', date(r.startDate), false, r.startDate)
+      + cell('endDate', date(r.endDate), false, r.endDate)
       + cell('adjustmentAmount', money(r.adjustmentAmount), true, r.adjustmentAmount)
       + cell('comment', r.comment || '—', false)
       + ROW_ACTIONS + '<div class="tc tc--separator"></div></div>';
@@ -250,7 +258,7 @@
   var form = document.getElementById('rh-form');
   var alertBox = document.getElementById('rh-modal-alert');
   var editIdx = -1;   // индекс строки в rows; -1 — новая корректировка
-  var KEYS = ['sourceDate', 'targetDate', 'adjustmentAmount'];
+  var KEYS = ['startDate', 'endDate', 'adjustmentAmount'];
 
   function fieldEl(k) { return form.elements[k]; }
   function boxOf(k) { return fieldEl(k).closest('.inp'); }
@@ -293,13 +301,45 @@
     }
   });
 
+  /* Начальная дата — список дат процентных платежей (в продукте — из другого тайла, здесь статичный перечень) */
+  var startIso = '';
+  var startCtl = fieldEl('startDate');
+  var startList = document.getElementById('ad-start-list');
+  function paintStart() {
+    startList.innerHTML = data.startDateOptions.map(function (iso) {
+      return '<button type="button" class="ddl__item" role="option" aria-selected="' + (iso === startIso) + '" data-code="' + iso + '">'
+        + '<span class="ddl__item-body"><span class="ddl__item-label">' + date(iso) + '</span></span></button>';
+    }).join('');
+  }
+  function setStart(iso) {
+    startIso = iso || '';
+    startCtl.value = startIso ? date(startIso) : '';
+    paintStart();
+    boxOf('startDate').classList.remove('inp--error');
+    if (window.DSInput) window.DSInput.syncAll(scrim);
+  }
+  /* Набранный руками текст: совпал с датой списка — выбор; пусто — сброс; иначе откат к выбранной */
+  startCtl.addEventListener('change', function () {
+    var t = startCtl.value.trim();
+    if (!t) { if (startIso) setStart(''); return; }
+    var hit = data.startDateOptions.filter(function (iso) { return date(iso) === t; })[0];
+    setStart(hit || startIso);
+  });
+  startCtl.closest('.inp').addEventListener('ds-input:clear', function () { setStart(''); });
+  if (window.DSDropdownList) {
+    window.DSDropdownList.bind(startCtl.closest('.inp__field'), {
+      list: startList,
+      onSelect: function (it) { setStart(it.getAttribute('data-code')); }
+    });
+  }
+
   function openModal(idx) {
     editIdx = idx;
     var r = idx >= 0 ? rows[idx] : null;
     document.getElementById('rh-modal-title').textContent = r ? 'Редактирование корректировки' : 'Новая корректировка';
     document.querySelector('#rh-modal-submit .btn__label').textContent = r ? 'Сохранить' : 'Добавить';
-    fieldEl('sourceDate').value = r ? date(r.sourceDate) : '';
-    fieldEl('targetDate').value = r ? date(r.targetDate) : '';
+    setStart(r ? r.startDate : '');
+    fieldEl('endDate').value = r ? date(r.endDate) : '';
     fieldEl('adjustmentAmount').value = r ? money(r.adjustmentAmount) : '';
     fieldEl('comment').value = r ? r.comment : '';
     clearErrors();
@@ -308,15 +348,15 @@
 
   document.getElementById('rh-modal-submit').addEventListener('click', function () {
     clearErrors();
-    var src = parseDate(fieldEl('sourceDate').value), tgt = parseDate(fieldEl('targetDate').value), amt = parseMoney(fieldEl('adjustmentAmount').value);
+    var start = startIso, end = parseDate(fieldEl('endDate').value), amt = parseMoney(fieldEl('adjustmentAmount').value);
     var bad = [];
-    if (!src) bad.push('sourceDate');
-    if (!tgt) bad.push('targetDate');
+    if (!start) bad.push('startDate');
+    if (!end) bad.push('endDate');
     if (isNaN(amt)) bad.push('adjustmentAmount');
-    if (bad.length) { showError('Заполните даты в формате ДД.ММ.ГГГГ и сумму добивки числом.', bad); return; }
-    if (src === tgt) { showError('Даты должны различаться: переносить на ту же дату нечего.', ['sourceDate', 'targetDate']); return; }
-    if (amt === 0) { showError('Сумма добивки не может быть равна нулю.', ['adjustmentAmount']); return; }
-    var rec = { sourceDate: src, targetDate: tgt, adjustmentAmount: amt, comment: fieldEl('comment').value.trim() };
+    if (bad.length) { showError('Выберите начальную дату, введите конечную дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.', bad); return; }
+    if (end < start) { showError('Конечная дата не может быть раньше начальной.', ['startDate', 'endDate']); return; }
+    if (amt === 0) { showError('Сумма корректировки не может быть равна нулю.', ['adjustmentAmount']); return; }
+    var rec = { startDate: start, endDate: end, adjustmentAmount: amt, comment: fieldEl('comment').value.trim() };
     var wasEdit = editIdx >= 0;
     if (wasEdit) rows[editIdx] = rec; else rows.push(rec);
     render();
@@ -332,7 +372,7 @@
     if (idx < 0) return;
     deleteIdx = idx;
     var r = rows[idx];
-    document.getElementById('rh-delete-text').textContent = 'Удалить корректировку с ' + date(r.sourceDate) + ' на ' + date(r.targetDate) + '? Действие нельзя отменить.';
+    document.getElementById('rh-delete-text').textContent = 'Удалить корректировку с ' + date(r.startDate) + ' по ' + date(r.endDate) + '? Действие нельзя отменить.';
     if (window.DSModal) window.DSModal.open(document.getElementById('rh-delete-scrim'));
   }
   document.getElementById('rh-delete-confirm').addEventListener('click', function () {
