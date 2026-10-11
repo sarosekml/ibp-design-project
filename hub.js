@@ -13,6 +13,8 @@
      projects — приложения трека product: соответствует настоящей системе, строго на ДС;
      concepts — приложения трека rnd: R&D: кастом допустим, если ТЗ прямо просит;
    Группа приложения — hubGroup его трека (project.json → tracks).
+   Карта экранов (project.json → screenMap.maps) — сразу под записью приложения
+   after, в его колонке; root — папка карты, не приложения.
 
    Поля:
      id     — уникальный ключ, латиница; у приложения — его каталог;
@@ -35,11 +37,47 @@ window.IBPHub = [
     icon: 'layer-01'
   },
   {
-    id: 'local-kit',
+    id: 'local-kit-post',
     group: 'ds',
-    title: 'Локальные компоненты',
-    desc: 'Тайлы, окна и поповеры модулей: как работают, из чего собраны, зачем',
-    href: 'apps/local-components/index.html',
+    title: 'Локальные компоненты Post',
+    desc: 'Тайлы, окна и поповеры модулей Post: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/postrade/index.html',
+    root: null,
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'local-kit-pre',
+    group: 'ds',
+    title: 'Локальные компоненты Pre',
+    desc: 'Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/pretrade/index.html',
+    root: null,
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'local-kit-core',
+    group: 'ds',
+    title: 'Локальные компоненты Core',
+    desc: 'Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/core/index.html',
+    root: null,
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'local-kit-ib',
+    group: 'ds',
+    title: 'Локальные компоненты IB',
+    desc: 'Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/ib/index.html',
+    root: null,
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'local-kit-common',
+    group: 'ds',
+    title: 'Локальные компоненты Общие',
+    desc: 'Тайлы, окна и поповеры, общие для разделов: как работают, из чего собраны, зачем',
+    href: 'apps/local-components/common/index.html',
     root: null,
     icon: 'layout-grid-01'
   },
@@ -51,6 +89,15 @@ window.IBPHub = [
     href: 'apps/postrade/deals-app/pages/MainPage.html',
     root: 'apps/postrade/deals-app',
     icon: 'folder'
+  },
+  {
+    id: 'screen-map-post',
+    group: 'projects',
+    title: 'Карта Post',
+    desc: 'Все страницы Post в один клик: от главной до транша и расчета FV',
+    href: 'apps/screen-map/postrade/index.html',
+    root: 'apps/screen-map/postrade',
+    icon: 'tree-view'
   },
   {
     id: 'ai-bankster-prototype-mvp',
@@ -128,7 +175,7 @@ window.IBPHub = [
     id: 'tranche-page-v02',
     group: 'concepts',
     title: 'Post — Страница транша v02',
-    desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи. Версия 2: харды РСБУ — корректировки платежей',
+    desc: 'Транш кредитной линии (НКЛ): шапка, общая информация, проценты, комиссии, платежи. Версия 2: корректировки процентов РСБУ',
     href: 'apps/postrade/drafts/tranche-page-v02/pages/Tranche.html',
     root: 'apps/postrade/drafts/tranche-page-v02',
     icon: 'folder'

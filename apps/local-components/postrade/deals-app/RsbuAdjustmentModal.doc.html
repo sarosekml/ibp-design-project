@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модальное окно внесения корректировки — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Модальное окно внесения корректировки">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Корректировки процентов РСБУ»: окно внесения и правки
+     корректировки. Одна форма на оба случая — «Новая корректировка» (кнопка «Добавить»)
+     и «Редактирование корректировки» (кнопка «Сохранить»); заголовок и кнопку ставит
+     RsbuAdjustmentModal.js (PostModalRsbuAdjustment) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. Даты начала берутся из списка (выпадающий
+     список заполняет скрипт), конечная дата и сумма вводятся руками, комментарий
+     необязателен. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div id="rsbu-adj-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="rsbu-adj-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rsbu-adj-title">Новая корректировка</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" id="rsbu-adj-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rsbu-adj-alert-text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-rsbu-form" id="rsbu-adj-form" onsubmit="return false" novalidate>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Начальная дата корректировки</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="rsbu-adj-start-list" data-ddl="rsbu-adj-start-list">
+                <input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left" data-helper="startDate">&nbsp;</span>
+            <div id="rsbu-adj-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Конечная дата корректировки</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+            <span class="ds-helper ds-helper--left" data-helper="endDate">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-amt"><span class="ds-label__text">Сумма корректировки</span></label>
+          <div class="inp__field"><input class="inp__control" id="rsbu-adj-amt" name="adjustmentAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="adjustmentAmount">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="rsbu-adj-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left" data-helper="comment">&nbsp;</span>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rsbu-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>09.10.2026</b></span><span>Категория: <b>Транш</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Модальное окно внесения корректировки</h1>
+  <p class="lead">Внести или поправить корректировку процентов РСБУ транша — период, сумму и комментарий</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal">apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/RsbuInterestAdjustments.preview.html">apps/postrade/deals-app/pages/RsbuInterestAdjustments.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="RsbuInterestAdjustmentsTile.doc.html">Корректировки процентов РСБУ (RsbuInterestAdjustmentsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Корректировки процентов РСБУ» — кнопка «Внести корректировку», карандаш и двойной клик по строке таблицы; открывается и по ссылке тайла (?open=add)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет дизайнера «1920_Post_NKL» 07.10.2026<br>бизнес-требование «Критерии приемки»<br>устные правки дизайнера 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 09.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Артефакт тайла «Корректировки процентов РСБУ». Не компонент: сам по себе не существует и в плоском списке кита его нет — он принадлежит своему тайлу и живёт под-пунктом его навигации. Заголовок окна — «Новая корректировка» при внесении и «Редактирование корректировки» при правке, форма одна.</p>
+<p class="desc">Корректировка — сумма, плюс или минус, которая прибавляется или вычитается начиная с «Начальной даты»; «Конечная дата» после сохранения попадает в список дат начисления процентов. Данные влияют только на отчёт РСБУ.</p>
+<p class="desc">Транш и таблицу окно не знает: параметры списка берёт у страницы, проверенную запись отдаёт ей же (<code class="tok">PostModalRsbuAdjustment.bind(scrim, { options, save })</code>, <code class="tok">RsbuAdjustmentModal.js</code>). Страница добавляет или правит строку и показывает тост.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w4 (заголовок «Новая корректировка» / «Редактирование корректировки», IconButton L «Закрыть»)
+├── modal__alert — Alert error (скрыт, пока ошибки нет)
+├── тело — форма в одну колонку
+│   ├── ряд из двух колонок: «Начальная дата корректировки» (Select + DropdownList) · «Конечная дата корректировки» (InputDate)
+│   ├── «Сумма корректировки» — InputAmount, постфикс — код валюты
+│   └── «Комментарий» — InputText multiline
+└── подвал: «Отменить» (transparent) · «Добавить» / «Сохранить» (accent)</code></pre>
+<p class="desc">Ширина — <code class="tok">modal--w4</code>. Раскладку формы (колонка и ряд из двух дат на токенах отступов) задаёт <code class="tok">RsbuAdjustmentModal.css</code>, остальное — Modal.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w4</code>, <code class="tok">modal__alert</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Alert/Alert.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert--error alert--m alert--flush</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Select + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/</code>, <code class="tok">…/DropdownList/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Начальная дата»: <code class="tok">inp--m</code>, <code class="tok">ddl--floating ddl--scroll</code>, только выбор из списка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDate</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputDate/InputDate.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Конечная дата»: <code class="tok">inp--m</code>, маска и календарь из коробки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAmount</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сумма»: <code class="tok">inp--m</code>, <code class="tok">inp__postfix</code> — код валюты</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Комментарий»: <code class="tok">inp--multiline</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">btn--transparent</code>, <code class="tok">btn--accent</code>, <code class="tok">btn--m</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.7fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · Select · <a class="inl" href="../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputDate/InputDate.html">InputDate</a> · InputAmount · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.css">RsbuAdjustmentModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.html">RsbuAdjustmentModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.js">RsbuAdjustmentModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md">RsbuAdjustmentModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Чем собрано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник значений</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Начальная дата корректировки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Select + DropdownList, крестик очистки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">даты процентных платежей — из другого тайла; в прототипе статичный перечень (<code class="tok">startDateOptions</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Конечная дата корректировки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputDate, ручной ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">любая дата <code class="tok">ДД.ММ.ГГГГ</code>, вводится руками</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма корректировки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAmount, постфикс — код валюты</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">любая сумма в валюте инструмента, со знаком «-» для вычитания</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText multiline</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">свободный текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Поле «Начальная дата» только для выбора; набранный руками текст принимается, если совпал с датой списка, иначе откат к выбранной. Сумма форматируется при вводе: разряды неразрывным пробелом, запятая, не более двух знаков.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист СБИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Окно показывается только пользователю, который вносит корректировки; для просмотра окно не нужно.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список дат берётся у страницы при открытии</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка: поля заполнены корректировкой строки, кнопка «Сохранить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новая корректировка: поля пусты, кнопка «Добавить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка проверки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert вверху и красные поля; окно остаётся открытым</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка сервиса</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе сохранение не уходит на сервер</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сохранение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе мгновенное</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма активна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает экран</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Окно обязательно к заполнению целиком: нет.</li><li>Обязательные поля внутри: «Начальная дата», «Конечная дата», «Сумма корректировки»; комментарий необязателен.</li><li>Что показывает, когда обязательное не заполнено: Alert «Выберите начальную дату, введите конечную дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.» и красные поля.</li><li>Что отдаёт наружу: запись <code class="tok">{ startDate, endDate, adjustmentAmount, comment }</code> (даты ISO) — странице (<code class="tok">save</code>).</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий — многострочное поле; прочие значения короткие</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: одна корректировка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Не встречается: ширина окна фиксирована шагом ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<ol class="kit-md__ol"><li>«Добавить» / «Сохранить» проверяют форму:<ul class="bullets kit-md__sub"><li>не заполнены даты или сумма — «Выберите начальную дату, введите конечную дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.»;</li><li>конечная дата раньше начальной — «Конечная дата не может быть раньше начальной.»;</li><li>сумма равна нулю — «Сумма корректировки не может быть равна нулю.»</li></ul></li><li>С ошибкой окно остаётся открытым, ошибка — в Alert вверху окна, поля подсвечены; правка поля снимает подсветку.</li><li>Без ошибки запись уходит странице, окно закрывается, страница показывает тост «Корректировка добавлена» или «Корректировка изменена».</li><li>«Отменить», крестик и Esc закрывают окно без сохранения.</li></ol>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Список дат процентных платежей транша (для «Начальной даты»), валюта инструмента, создание и изменение корректировки. Имена методов и хуков API не придумываются: их выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/tranche-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_RSBU_ADJUSTMENTS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">RsbuInterestAdjustmentsRsDto</code>, строка <code class="tok">RsbuInterestAdjustmentRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт: окно открывает страница через <code class="tok">api.open(rec|null)</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Раскладка формы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">RsbuAdjustmentModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">RsbuAdjustmentModal.js</code> (<code class="tok">PostModalRsbuAdjustment.bind(scrim, { options, save })</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Пары во фронтенде нет — имя наше (09.10.2026).</li><li>Владелец компонента — <code class="tok">не решено (09.10.2026)</code>.</li><li>Откуда в продукте берётся список дат процентных платежей и когда он становится доступен — <code class="tok">не решено (09.10.2026)</code>.</li><li>Права на внесение корректировок за пределами ролей Финансист ДИД и Финансист СБИ — <code class="tok">не решено (09.10.2026)</code>.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">RsbuAdjustmentModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/RsbuInterestAdjustments.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/data/tranche-data.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.js"></script>
+<script src="RsbuAdjustmentModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"RsbuAdjustmentModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины. options — валюта и даты процентных платежей для списка «Начальная дата» (ISO); edit — корректировка, с которой окно открыто на правку.","options":{"currencyCode":"RUB","startDateOptions":["2025-01-31","2025-02-28","2025-03-31","2025-04-30","2025-05-31","2025-06-30","2025-07-31","2025-08-31","2025-09-30"]},"edit":{"startDate":"2025-03-31","endDate":"2025-04-10","adjustmentAmount":150000,"comment":"Корректировка по просьбе контрагента"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Корректировки процентов РСБУ»: окно внесения и правки
+     корректировки. Одна форма на оба случая — «Новая корректировка» (кнопка «Добавить»)
+     и «Редактирование корректировки» (кнопка «Сохранить»); заголовок и кнопку ставит
+     RsbuAdjustmentModal.js (PostModalRsbuAdjustment) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. Даты начала берутся из списка (выпадающий
+     список заполняет скрипт), конечная дата и сумма вводятся руками, комментарий
+     необязателен. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="rsbu-adj-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="rsbu-adj-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rsbu-adj-title">Новая корректировка</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" id="rsbu-adj-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rsbu-adj-alert-text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-rsbu-form" id="rsbu-adj-form" onsubmit="return false" novalidate>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Начальная дата корректировки</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="rsbu-adj-start-list" data-ddl="rsbu-adj-start-list">
+                <input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left" data-helper="startDate">&nbsp;</span>
+            <div id="rsbu-adj-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Конечная дата корректировки</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+            <span class="ds-helper ds-helper--left" data-helper="endDate">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-amt"><span class="ds-label__text">Сумма корректировки</span></label>
+          <div class="inp__field"><input class="inp__control" id="rsbu-adj-amt" name="adjustmentAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="adjustmentAmount">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="rsbu-adj-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left" data-helper="comment">&nbsp;</span>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rsbu-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Внесение корректировки» — связанный артефакт тайла RsbuInterestAdjustmentsTile.
+   Только раскладка формы: одна колонка, две даты — в одном ряду. Цвета, шрифты и
+   отступы тела окна даёт Modal; здесь токены ДС. */
+.lc-rsbu-form { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-rsbu-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   RsbuAdjustmentModal.js — поведение окна внесения корректировки процентов РСБУ.
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) разводит два режима одной формы: новая корректировка (кнопка «Добавить») и
+      правка существующей («Сохранить») — заголовок, кнопка и значения полей;
+   2) собирает список «Начальная дата» из дат процентных платежей и принимает
+      набранную руками дату, если она совпала с датой списка;
+   3) форматирует сумму при вводе: знак «-» только первым, разряды неразрывным
+      пробелом, запятая, не более двух знаков;
+   4) проверяет форму по «Добавить» / «Сохранить» и показывает ошибку в Alert
+      вверху окна с подсветкой полей; правка поля снимает его подсветку.
+
+   Открытие, фокус, Esc, крестик, календарь и маску даты делают рантаймы ДС.
+   Транш и таблицу окно не знает: параметры списка берёт у страницы, проверенную
+   запись отдаёт ей же.
+
+   API:
+     PostModalRsbuAdjustment.bind(scrim, { options, save }) → api
+       options()           → { currencyCode, startDateOptions } — валюта и даты ISO
+       save(rec, wasEdit)  — принять запись { startDate, endDate, adjustmentAmount,
+                             comment } (даты ISO); wasEdit — окно открыто на правку
+       api.open(rec|null)  — заполнить окно (null — новая корректировка) и открыть
+       api.fill(rec|null)  — только заполнить (на витрине окно уже на экране)
+       api.validate()      → boolean — проверить форму и показать ошибку
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var NBSP = ' ';
+  var KEYS = ['startDate', 'endDate', 'adjustmentAmount'];
+
+  /* ── Формат ─────────────────────────────────────────────────────── */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  /* «-1 250 000,5» → число; пусто или мусор → NaN */
+  function parseMoney(str) {
+    var s = String(str).replace(/[\s ]/g, '').replace(',', '.');
+    return s === '' || s === '-' || isNaN(Number(s)) ? NaN : Number(s);
+  }
+  /* «ДД.ММ.ГГГГ» → ISO; мусор (в том числе 31.02) → '' */
+  function parseDate(str) {
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(str).trim());
+    if (!m) return '';
+    var d = new Date(Date.UTC(+m[3], +m[2] - 1, +m[1]));
+    return (d.getUTCFullYear() === +m[3] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[1]) ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+
+  function bind(scrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__rsbuAdjustment) return scrim.__rsbuAdjustment;
+    opts = opts || {};
+
+    var form = scrim.querySelector('form');
+    var alertBox = scrim.querySelector('.modal__alert');
+    var alertText = scrim.querySelector('.alert__text');
+    var title = scrim.querySelector('.modal__title');
+    var submit = scrim.querySelector('[data-rsbu-submit]');
+    var currency = scrim.querySelector('[data-rsbu-currency]');
+    var startCtl = form.elements.startDate;
+    var startList = scrim.querySelector('.ddl');
+    var startIso = '';
+    var editing = false;
+
+    function params() { return (opts.options && opts.options()) || { currencyCode: 'RUB', startDateOptions: [] }; }
+    function field(k) { return form.elements[k]; }
+    function boxOf(k) { return field(k).closest('.inp'); }
+    function isInline() { return scrim.classList.contains('modal-scrim--inline'); }
+
+    /* ── Ошибки ─────────────────────────────────────────────────────── */
+    function clearErrors() {
+      alertBox.hidden = true;
+      KEYS.forEach(function (k) { boxOf(k).classList.remove('inp--error'); });
+    }
+    function showError(text, keys) {
+      alertText.textContent = text;
+      alertBox.hidden = false;
+      (keys || []).forEach(function (k) { boxOf(k).classList.add('inp--error'); });
+    }
+
+    /* ── Сумма ──────────────────────────────────────────────────────── */
+    function formatAmount(inp) {
+      var raw = inp.value, pos = inp.selectionStart == null ? raw.length : inp.selectionStart;
+      var left = raw.slice(0, pos).replace(/[^\d,.]/g, '').length;
+      var neg = /^\s*[-−–]/.test(raw);
+      var clean = raw.replace(/\./g, ',').replace(/[^\d,]/g, '');
+      var parts = clean.split(',');
+      var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+      var out = (neg ? '-' : '') + intPart + (parts.length > 1 ? ',' + parts.slice(1).join('').slice(0, 2) : '');
+      inp.value = out;
+      var n = 0, caret = neg ? 1 : 0;
+      while (caret < out.length && n < left) { if (/[\d,]/.test(out.charAt(caret))) n++; caret++; }
+      try { inp.setSelectionRange(caret, caret); } catch (e) { /* поле без выделения */ }
+    }
+    form.addEventListener('input', function (e) {
+      var inp = e.target;
+      if (inp.hasAttribute('data-amount')) formatAmount(inp);
+      inp.closest('.inp').classList.remove('inp--error');
+    });
+    form.addEventListener('focusout', function (e) {
+      var inp = e.target;
+      if (inp.hasAttribute && inp.hasAttribute('data-amount')) {
+        var n = parseMoney(inp.value);
+        if (!isNaN(n)) inp.value = money(n);
+      }
+    });
+
+    /* ── Начальная дата: список дат процентных платежей ─────────────── */
+    function paintStart() {
+      startList.innerHTML = params().startDateOptions.map(function (iso) {
+        return '<button type="button" class="ddl__item" role="option" aria-selected="' + (iso === startIso) + '" data-code="' + iso + '">'
+          + '<span class="ddl__item-body"><span class="ddl__item-label">' + date(iso) + '</span></span></button>';
+      }).join('');
+    }
+    function setStart(iso) {
+      startIso = iso || '';
+      startCtl.value = startIso ? date(startIso) : '';
+      paintStart();
+      boxOf('startDate').classList.remove('inp--error');
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+    /* Набранный руками текст: совпал с датой списка — выбор; пусто — сброс; иначе откат к выбранной */
+    startCtl.addEventListener('change', function () {
+      var t = startCtl.value.trim();
+      if (!t) { if (startIso) setStart(''); return; }
+      var hit = params().startDateOptions.filter(function (iso) { return date(iso) === t; })[0];
+      setStart(hit || startIso);
+    });
+    startCtl.closest('.inp').addEventListener('ds-input:clear', function () { setStart(''); });
+    if (window.DSDropdownList) {
+      window.DSDropdownList.bind(startCtl.closest('.inp__field'), {
+        list: startList,
+        onSelect: function (it) { setStart(it.getAttribute('data-code')); }
+      });
+    }
+
+    /* ── Заполнение и проверка ──────────────────────────────────────── */
+    function fill(rec) {
+      editing = !!rec;
+      title.textContent = rec ? 'Редактирование корректировки' : 'Новая корректировка';
+      submit.querySelector('.btn__label').textContent = rec ? 'Сохранить' : 'Добавить';
+      if (currency) currency.textContent = params().currencyCode;
+      setStart(rec ? rec.startDate : '');
+      field('endDate').value = rec ? date(rec.endDate) : '';
+      field('adjustmentAmount').value = rec ? money(rec.adjustmentAmount) : '';
+      field('comment').value = rec ? rec.comment : '';
+      clearErrors();
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+
+    function read() {
+      return { start: startIso, end: parseDate(field('endDate').value), amt: parseMoney(field('adjustmentAmount').value) };
+    }
+
+    function validate() {
+      clearErrors();
+      var v = read(), bad = [];
+      if (!v.start) bad.push('startDate');
+      if (!v.end) bad.push('endDate');
+      if (isNaN(v.amt)) bad.push('adjustmentAmount');
+      if (bad.length) { showError('Выберите начальную дату, введите конечную дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.', bad); return false; }
+      if (v.end < v.start) { showError('Конечная дата не может быть раньше начальной.', ['startDate', 'endDate']); return false; }
+      if (v.amt === 0) { showError('Сумма корректировки не может быть равна нулю.', ['adjustmentAmount']); return false; }
+      return true;
+    }
+
+    submit.addEventListener('click', function () {
+      if (!validate()) return;
+      var v = read();
+      var rec = { startDate: v.start, endDate: v.end, adjustmentAmount: v.amt, comment: field('comment').value.trim() };
+      if (opts.save) opts.save(rec, editing);
+      if (!isInline() && window.DSModal) window.DSModal.closeTop();
+    });
+
+    function open(rec) {
+      fill(rec || null);
+      if (window.DSModal) window.DSModal.open(scrim);
+    }
+
+    fill(null);
+
+    var api = { open: open, fill: fill, validate: validate };
+    scrim.__rsbuAdjustment = api;
+    return api;
+  }
+
+  window.PostModalRsbuAdjustment = { bind: bind };
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* Реестр витрины локальных компонентов — меню и карточки страниц apps/local-components/.
+/* Реестр витрины локальных компонентов (Локальные компоненты Post) — меню и карточки страниц apps/local-components/postrade/.
 
    СГЕНЕРИРОВАН kit-build.mjs из паспортов виджетов (apps/<раздел>/<модуль>/widgets/<группа>/<Имя>/<Имя>.md)
    и project.json → localKit. Руками не править: пересобрать — node .agents/tools/kit-build.mjs
@@ -7,145 +7,20 @@
    Обычный <script>, а не JSON: страницы открываются по file://, где fetch не работает.
 
    Поля компонента: id — папка виджета; name, category, purpose, version, updated —
-   из паспорта; type — tile | table | modal | popover | context-menu | part (подчасть);
+   из паспорта; type — tile | table | modal | popover | context-menu | part (подчасть)
+   | model (статусная модель data/*-status-model.js: name, category, purpose — из meta);
    module — <раздел>/<модуль>; doc — страница компонента от папки витрины; owner —
    id компонента, чей это артефакт (окно, поповер), или null; stub — заглушка. */
 window.IBPKit = {
-  "title": "Локальные компоненты",
+  "title": "Локальные компоненты Post",
   "categories": [
     "Общие",
     "Сделка",
-    "Инструменты",
-    "Отчёты",
+    "Транш",
+    "Расчет FV",
     "Другое"
   ],
   "components": [
-    {
-      "id": "DateBadge",
-      "name": "Блок даты",
-      "category": "Общие",
-      "purpose": "День и месяц «листком календаря» в ведущем слоте строки встречи; сегодняшняя дата — в тоне accent",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/DateBadge.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "HomeProfileTile",
-      "name": "Профиль на главной",
-      "category": "Другое",
-      "purpose": "Кто вошёл — фото, имя, должность и деск, связь — и быстрый вход в создание встречи и задачи",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/HomeProfileTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "MeetingCreateModal",
-      "name": "Новая встреча",
-      "category": "Другое",
-      "purpose": "Быстро назначить встречу с клиентом с главной — клиент, тема, дата и время",
-      "type": "modal",
-      "typeLabel": "модальное окно",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/MeetingCreateModal.doc.html",
-      "owner": "MeetingsTile",
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "MeetingsTile",
-      "name": "Встречи",
-      "category": "Другое",
-      "purpose": "Ближайшие встречи с клиентами — свои или деска, с выборками «сегодня», «на неделе», «требует внимания»",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/MeetingsTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "MyDayTile",
-      "name": "Мой день",
-      "category": "Другое",
-      "purpose": "Сегодняшние встречи по времени и горящие сроки задач — с переходом к нужной выборке в один клик",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/MyDayTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "NewsTile",
-      "name": "Новости по клиентам",
-      "category": "Другое",
-      "purpose": "Свежие публикации о клиентах сотрудника или деска — повод для звонка и тема встречи",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/NewsTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "StatCard",
-      "name": "Карточка-счётчик",
-      "category": "Общие",
-      "purpose": "Число с подписью и тоном, по клику включает выборку списка — счётчики встреч и задач главной",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/StatCard.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "TaskCreateModal",
-      "name": "Новая задача",
-      "category": "Другое",
-      "purpose": "Быстро поставить себе задачу с главной — формулировка, срок, приоритет, клиент и сделка",
-      "type": "modal",
-      "typeLabel": "модальное окно",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/TaskCreateModal.doc.html",
-      "owner": "TasksTile",
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
-    {
-      "id": "TasksTile",
-      "name": "Задачи",
-      "category": "Другое",
-      "purpose": "Открытые задачи по срочности — свои или деска, с выборками «новые», «сегодня», «просрочено» и сменой статуса на месте",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "core/drafts/new-dashboard-mvp",
-      "doc": "core/drafts/new-dashboard-mvp/TasksTile.doc.html",
-      "owner": null,
-      "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
-    },
     {
       "id": "CounterpartiesEcmModal",
       "name": "Модальное окно «Документы по сделке»",
@@ -255,36 +130,36 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialInstrumentEditModal.doc.html",
       "owner": "FinInstrumentsTile",
       "stub": false,
-      "version": "1.000",
-      "updated": "02.10.2026"
+      "version": "1.001",
+      "updated": "09.10.2026"
     },
     {
       "id": "DealFinancialMetricsModal",
       "name": "Модальное окно финансовых метрик сделки",
       "category": "Сделка",
-      "purpose": "Финансовые метрики сделки целиком — ВБС и ОСЗ, резервы по ФИ, переоценка по PE по ФИ",
+      "purpose": "Финансовые метрики сделки целиком — ВБС и ОСЗ, резервы по ФИ, переоценка по Equity инструментам по ФИ",
       "type": "modal",
       "typeLabel": "модальное окно",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/DealFinancialMetricsModal.doc.html",
       "owner": "DealFinancialMetricsTile",
       "stub": false,
-      "version": "1.004",
-      "updated": "04.10.2026"
+      "version": "1.006",
+      "updated": "09.10.2026"
     },
     {
       "id": "DealFinancialMetricsTile",
       "name": "Финансовые метрики сделки",
       "category": "Сделка",
-      "purpose": "ВБС сделки в разрезе продуктов, резерв, обесценение, RWA и переоценка по PE — сводка с входом в окно метрик",
+      "purpose": "ВБС сделки в разрезе продуктов, резерв, обесценение, RWA и переоценка по Equity инструментам — сводка с входом в окно метрик",
       "type": "tile",
       "typeLabel": "тайл",
       "module": "postrade/deals-app",
       "doc": "postrade/deals-app/DealFinancialMetricsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.003",
-      "updated": "04.10.2026"
+      "version": "1.004",
+      "updated": "09.10.2026"
     },
     {
       "id": "DealMetricsCalculationTile",
@@ -339,8 +214,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealProductTreeTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.003",
-      "updated": "02.10.2026"
+      "version": "1.004",
+      "updated": "09.10.2026"
     },
     {
       "id": "DealProjectInformationModal",
@@ -368,20 +243,6 @@ window.IBPKit = {
       "owner": null,
       "stub": true,
       "version": "0.003",
-      "updated": "02.10.2026"
-    },
-    {
-      "id": "DealSetupTile",
-      "name": "Заведение сделки",
-      "category": "Сделка",
-      "purpose": "Навигатор заведения сделки: степпер этапов по контурам и переход к следующему шагу",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "postrade/deals-app",
-      "doc": "postrade/deals-app/DealSetupTile.doc.html",
-      "owner": null,
-      "stub": true,
-      "version": "0.004",
       "updated": "02.10.2026"
     },
     {
@@ -441,20 +302,6 @@ window.IBPKit = {
       "updated": "02.10.2026"
     },
     {
-      "id": "EpsVbsImpactTile",
-      "name": "Влияние на ЭПС/ВБС",
-      "category": "Сделка",
-      "purpose": "Расчёт влияния модификации на ЭПС и ВБС по сделке",
-      "type": "tile",
-      "typeLabel": "тайл",
-      "module": "postrade/deals-app",
-      "doc": "postrade/deals-app/EpsVbsImpactTile.doc.html",
-      "owner": null,
-      "stub": true,
-      "version": "0.003",
-      "updated": "02.10.2026"
-    },
-    {
       "id": "FinInstrumentsTile",
       "name": "Финансовые инструменты",
       "category": "Сделка",
@@ -465,8 +312,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.001",
-      "updated": "04.10.2026"
+      "version": "1.003",
+      "updated": "10.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",
@@ -479,8 +326,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/InstrumentsCounterpartiesModal.doc.html",
       "owner": "CounterpartiesTile",
       "stub": false,
-      "version": "0.007",
-      "updated": "02.10.2026"
+      "version": "0.008",
+      "updated": "10.10.2026"
     },
     {
       "id": "InstrumentsModal",
@@ -523,6 +370,90 @@ window.IBPKit = {
       "stub": false,
       "version": "1.001",
       "updated": "02.10.2026"
+    },
+    {
+      "id": "Navigator",
+      "name": "Заведение сделки",
+      "category": "Сделка",
+      "purpose": "Путь сделки по четырём подразделениям и действия, доступные в текущем статусе",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/Navigator.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.002",
+      "updated": "10.10.2026"
+    },
+    {
+      "id": "NavigatorAppointmentOfResponsibleModal",
+      "name": "Назначение ответственного",
+      "category": "Сделка",
+      "purpose": "Назначить ответственного от ЦУП, видя другие сделки той же ГСЗ и их ответственных",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/NavigatorAppointmentOfResponsibleModal.doc.html",
+      "owner": "Navigator",
+      "stub": false,
+      "version": "1.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "id": "NavigatorApprovalModal",
+      "name": "Подтверждение приёма на мониторинг",
+      "category": "Сделка",
+      "purpose": "Отметить, что РМ, ПМ или ПМЗ приняли сделку на мониторинг, — согласующий и дата",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/NavigatorApprovalModal.doc.html",
+      "owner": "Navigator",
+      "stub": false,
+      "version": "1.001",
+      "updated": "10.10.2026"
+    },
+    {
+      "id": "NavigatorChangeReasonModal",
+      "name": "Причина ввода изменений",
+      "category": "Сделка",
+      "purpose": "Указать причину, по которой в активную сделку вводятся изменения",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/NavigatorChangeReasonModal.doc.html",
+      "owner": "Navigator",
+      "stub": false,
+      "version": "1.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "id": "NavigatorDealCloseModal",
+      "name": "Погашение сделки",
+      "category": "Сделка",
+      "purpose": "Погасить сделку вручную с датой погашения",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/NavigatorDealCloseModal.doc.html",
+      "owner": "Navigator",
+      "stub": false,
+      "version": "1.000",
+      "updated": "10.10.2026"
+    },
+    {
+      "id": "NavigatorForwardToTransferModal",
+      "name": "Направление на передачу",
+      "category": "Сделка",
+      "purpose": "Направить сделку на передачу на мониторинг с датой передачи",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/NavigatorForwardToTransferModal.doc.html",
+      "owner": "Navigator",
+      "stub": false,
+      "version": "1.001",
+      "updated": "10.10.2026"
     },
     {
       "id": "ProductsModal",
@@ -595,9 +526,37 @@ window.IBPKit = {
       "updated": "02.10.2026"
     },
     {
+      "id": "RsbuAdjustmentModal",
+      "name": "Модальное окно внесения корректировки",
+      "category": "Транш",
+      "purpose": "Внести или поправить корректировку процентов РСБУ транша — период, сумму и комментарий",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/RsbuAdjustmentModal.doc.html",
+      "owner": "RsbuInterestAdjustmentsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "09.10.2026"
+    },
+    {
+      "id": "RsbuInterestAdjustmentsTile",
+      "name": "Корректировки процентов РСБУ",
+      "category": "Транш",
+      "purpose": "Сводка по корректировкам процентов РСБУ транша — сколько внесено, с переходом на страницу корректировок и входом в добавление",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/RsbuInterestAdjustmentsTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.001",
+      "updated": "09.10.2026"
+    },
+    {
       "id": "CreateFairValueCalculationModal",
       "name": "Окно формирования нового расчета FV",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Задать дату и сформировать новый расчет FV",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -611,7 +570,7 @@ window.IBPKit = {
     {
       "id": "DownloadReportModal",
       "name": "Выгрузка расчета FV",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Подтвердить выгрузку файла с данными K2 и, в сети с шифрованием, выбрать сотрудников, которым он будет доступен",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -625,7 +584,7 @@ window.IBPKit = {
     {
       "id": "FairValueInstrumentablesUploadFileModal",
       "name": "Окно «Данные по инструменту»",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Показать содержимое загружаемого XML-файла инструмента и принять загрузку",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -639,7 +598,7 @@ window.IBPKit = {
     {
       "id": "FairValueUserMetricsModal",
       "name": "Окно ФИ расчета FV",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Показать ФИ, поправить рейтинг, LGD, ставку ПАО и комментарий, управлять файлами инструментов",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -653,7 +612,7 @@ window.IBPKit = {
     {
       "id": "ReservesFvComponentsModal",
       "name": "Окно «Данные FV» с компонентами",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Показать предпросмотр загруженного файла компонентов FV перед сохранением",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -667,7 +626,7 @@ window.IBPKit = {
     {
       "id": "ReservesFvModal",
       "name": "Окно «Данные FV»",
-      "category": "Отчёты",
+      "category": "Расчет FV",
       "purpose": "Показать предпросмотр загруженного файла FV перед сохранением",
       "type": "modal",
       "typeLabel": "модальное окно",
@@ -677,6 +636,20 @@ window.IBPKit = {
       "stub": false,
       "version": "1.000",
       "updated": "08.10.2026"
+    },
+    {
+      "id": "deal-status-model",
+      "name": "Статусная модель сделки",
+      "category": "Сделка",
+      "purpose": "Статусы сделки по дорожкам Сделка, ЦУП, Operations и Мониторинг: как и при каких условиях они переходят друг в друга",
+      "type": "model",
+      "typeLabel": "статусная модель",
+      "module": "postrade/deals-app",
+      "doc": "postrade/deals-app/deal-status-model.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": null,
+      "updated": null
     }
   ]
 };
