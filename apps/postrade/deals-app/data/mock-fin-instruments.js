@@ -37,7 +37,7 @@
    Сделки под состояния тайла «Финансовые инструменты» (02.10.2026):
    – 1027 (Корректировка, правка) — заполненные карточки: кредит с
      прикреплённым траншем, кредит с погашенным траншем (вкладка
-     «Погашенные»), акции с PE, свободные «не заполнено», карточка с
+     «Погашенные»), акции с ФИ типа С, свободные «не заполнено», карточка с
      ошибкой (5), РЕПО и «Доп. доходность»;
    – 1024 (Активная, просмотр) — то же без права правки;
    – 1026 (Черновик) — карточек нет, а в дереве есть транши и акции:
@@ -45,7 +45,7 @@
    – 1035 (Черновик) и 1042 (Активная) — карточек нет и дерева нет: пусто в
      правке и в просмотре.
 
-   Признак PE на карточке (isPE, акции): у сделок с PE — 1025 (FI-1025-3),
+   Признак ФИ типа С на карточке (isTypeC, акции): у сделок с ФИ типа С — 1025 (FI-1025-3),
    1032 (FI-1032-1), 1045 (FI-1045-3), 1053 (FI-1053-2), 1060 (FI-1060-3),
    1068 (FI-1068-2); к каждой прикреплён узел акций (решение человека
    04.10.2026).
@@ -69,7 +69,7 @@
  * @property {FinFvAcCode|null} fvAcCode          FV/AC
  * @property {number|null} targetIrr              целевой IRR, % (акции, дебиторская задолженность)
  * @property {boolean} isDkkk                     участие ДККК
- * @property {boolean} isPE                       Private Equity (акции)
+ * @property {boolean} isTypeC                       ФИ типа С (акции)
  * @property {boolean} hasLinkedUnconditionalOption связанный безусловный опцион (акции)
  * @property {string|null} linkedContractNumber   номер связанного договора (РЕПО, доп. доходность)
  * @property {string|null} ifrsOptionNodeId       опцион, включённый в расчёт МСФО, — id узла
@@ -108,14 +108,14 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
   "1025": [
     {"id": "FI-1025-1", "number": 1, "typeCode": "LOAN", "name": "125-Кредит-201", "reportingType": "IFRS"},
     {"id": "FI-1025-2", "number": 2, "typeCode": "LOAN", "name": "125-Кредит-202", "reportingType": "RAS"},
-    {"id": "FI-1025-3", "number": 3, "typeCode": "SHARES", "name": "125-Акции-203", "reportingType": "IFRS_RAS", "isPE": true},
+    {"id": "FI-1025-3", "number": 3, "typeCode": "SHARES", "name": "125-Акции-203", "reportingType": "IFRS_RAS", "isTypeC": true},
     {"id": "FI-1025-4", "number": 4, "typeCode": "REPO", "name": "125-РЕПО-204", "reportingType": "IFRS_RAS"}
   ],
   "1026": [],
   "1027": [
     {"id": "FI-1027-1", "number": 1, "typeCode": "LOAN", "name": "127-Кредит-201", "reportingType": "IFRS_RAS", "counterpartyId": "ul-22", "reserveCounterpartyId": "ul-2", "allocationCounterpartyId": "ul-20", "fvAcCode": "AC", "isDkkk": true, "rwaCodes": ["6002-1,5%", "6005-5%"]},
     {"id": "FI-1027-2", "number": 2, "typeCode": "LOAN", "name": "127-Кредит-202", "reportingType": "IFRS", "counterpartyId": "ul-22", "fvAcCode": "FV", "rwaCodes": ["6002-1,5%"]},
-    {"id": "FI-1027-3", "number": 3, "typeCode": "SHARES", "name": "127-Акции-203", "reportingType": "RAS", "counterpartyId": "ul-22", "reserveCounterpartyId": "ul-31", "allocationCounterpartyId": "ul-23", "fvAcCode": "FV", "targetIrr": 17.03, "isDkkk": true, "isPE": true, "hasLinkedUnconditionalOption": true, "rwaCodes": ["6002-1,5%"]},
+    {"id": "FI-1027-3", "number": 3, "typeCode": "SHARES", "name": "127-Акции-203", "reportingType": "RAS", "counterpartyId": "ul-22", "reserveCounterpartyId": "ul-31", "allocationCounterpartyId": "ul-23", "fvAcCode": "FV", "targetIrr": 17.03, "isDkkk": true, "isTypeC": true, "hasLinkedUnconditionalOption": true, "rwaCodes": ["6002-1,5%"]},
     {"id": "FI-1027-4", "number": 4, "typeCode": "LOAN", "name": "127-Кредит-204", "reportingType": "IFRS"},
     {"id": "FI-1027-5", "number": 5, "typeCode": "LOAN", "name": "127-Кредит-205", "reportingType": "RAS", "errorText": "Текст описания ошибки"},
     {"id": "FI-1027-6", "number": 6, "typeCode": "SHARES", "name": "127-Акции-206", "reportingType": "IFRS_RAS", "counterpartyId": "ul-22"},
@@ -146,7 +146,7 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
     {"id": "FI-1031-4", "number": 4, "typeCode": "REPO", "name": "131-РЕПО-204", "reportingType": "IFRS_RAS"}
   ],
   "1032": [
-    {"id": "FI-1032-1", "number": 1, "typeCode": "SHARES", "name": "132-Акции-201", "reportingType": "IFRS_RAS", "isPE": true},
+    {"id": "FI-1032-1", "number": 1, "typeCode": "SHARES", "name": "132-Акции-201", "reportingType": "IFRS_RAS", "isTypeC": true},
     {"id": "FI-1032-2", "number": 2, "typeCode": "LOAN", "name": "132-Кредит-202", "reportingType": "IFRS"},
     {"id": "FI-1032-3", "number": 3, "typeCode": "SHARES", "name": "132-Акции-203", "reportingType": "RAS"},
     {"id": "FI-1032-4", "number": 4, "typeCode": "REPO", "name": "132-РЕПО-204", "reportingType": "IFRS_RAS"},
@@ -224,7 +224,7 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
   "1045": [
     {"id": "FI-1045-1", "number": 1, "typeCode": "LOAN", "name": "145-Кредит-201", "reportingType": "IFRS"},
     {"id": "FI-1045-2", "number": 2, "typeCode": "LOAN", "name": "145-Кредит-202", "reportingType": "RAS"},
-    {"id": "FI-1045-3", "number": 3, "typeCode": "SHARES", "name": "145-Акции-203", "reportingType": "IFRS_RAS", "isPE": true},
+    {"id": "FI-1045-3", "number": 3, "typeCode": "SHARES", "name": "145-Акции-203", "reportingType": "IFRS_RAS", "isTypeC": true},
     {"id": "FI-1045-4", "number": 4, "typeCode": "REPO", "name": "145-РЕПО-204", "reportingType": "IFRS_RAS"}
   ],
   "1046": [
@@ -274,7 +274,7 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
   ],
   "1053": [
     {"id": "FI-1053-1", "number": 1, "typeCode": "LOAN", "name": "153-Кредит-201", "reportingType": "IFRS_RAS"},
-    {"id": "FI-1053-2", "number": 2, "typeCode": "SHARES", "name": "153-Акции-202", "reportingType": "IFRS", "isPE": true},
+    {"id": "FI-1053-2", "number": 2, "typeCode": "SHARES", "name": "153-Акции-202", "reportingType": "IFRS", "isTypeC": true},
     {"id": "FI-1053-3", "number": 3, "typeCode": "REPO", "name": "153-РЕПО-203", "reportingType": "RAS"},
     {"id": "FI-1053-4", "number": 4, "typeCode": "LOAN", "name": "153-Кредит-204", "reportingType": "IFRS_RAS"},
     {"id": "FI-1053-5", "number": 5, "typeCode": "LOAN", "name": "153-Кредит-205", "reportingType": "IFRS"},
@@ -326,7 +326,7 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
   "1060": [
     {"id": "FI-1060-1", "number": 1, "typeCode": "LOAN", "name": "160-Кредит-201", "reportingType": "IFRS"},
     {"id": "FI-1060-2", "number": 2, "typeCode": "LOAN", "name": "160-Кредит-202", "reportingType": "RAS"},
-    {"id": "FI-1060-3", "number": 3, "typeCode": "SHARES", "name": "160-Акции-203", "reportingType": "IFRS_RAS", "isPE": true},
+    {"id": "FI-1060-3", "number": 3, "typeCode": "SHARES", "name": "160-Акции-203", "reportingType": "IFRS_RAS", "isTypeC": true},
     {"id": "FI-1060-4", "number": 4, "typeCode": "REPO", "name": "160-РЕПО-204", "reportingType": "IFRS_RAS"}
   ],
   "1061": [
@@ -379,7 +379,7 @@ window.MOCK_DEAL_FIN_INSTRUMENTS = {
   ],
   "1068": [
     {"id": "FI-1068-1", "number": 1, "typeCode": "LOAN", "name": "168-Кредит-201", "reportingType": "IFRS_RAS"},
-    {"id": "FI-1068-2", "number": 2, "typeCode": "SHARES", "name": "168-Акции-202", "reportingType": "IFRS", "isPE": true},
+    {"id": "FI-1068-2", "number": 2, "typeCode": "SHARES", "name": "168-Акции-202", "reportingType": "IFRS", "isTypeC": true},
     {"id": "FI-1068-3", "number": 3, "typeCode": "REPO", "name": "168-РЕПО-203", "reportingType": "RAS"},
     {"id": "FI-1068-4", "number": 4, "typeCode": "LOAN", "name": "168-Кредит-204", "reportingType": "IFRS_RAS"},
     {"id": "FI-1068-5", "number": 5, "typeCode": "LOAN", "name": "168-Кредит-205", "reportingType": "IFRS"},

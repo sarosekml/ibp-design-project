@@ -33,7 +33,7 @@
      fiCards(id) → карточки ФИ сделки для узла · linkFi(id, fiIds) → boolean
      summary(tree) → поля записи сделки    — mainProductDid, productsDidNames,
                                              productsNames, balances,
-                                             currencies, isPE
+                                             currencies, isTypeC
      begin() · rollback() · commit() · dirty() → boolean
      on('change' | 'commit', fn) → off()
    }
@@ -54,7 +54,7 @@
      (допущение, вопрос 34); «Фондирование» основным не бывает (ответ 11);
    – погашение гасит и вложенные узлы (ответ 3), отмена снимает погашение с
      них же (допущение, вопрос 32); погашенный инструмент не входит в
-     балансы, валюты и PE реестра (допущение, вопрос 33);
+     балансы, валюты и ФИ типа С реестра (допущение, вопрос 33);
    – инструмент переносится в продукт, в состав которого входит его тип;
      неизвестный состав — любой продукт (допущение, вопрос 41);
    – узел прикрепляется не больше чем к двум карточкам ФИ своего типа
@@ -365,7 +365,7 @@
     var type = INSTRUMENT[code];
     return {
       id: newId(), code: code, name: type ? type.name : code,
-      currency: null, balance: null, isPE: false,
+      currency: null, balance: null, isTypeC: false,
       signedAt: null, amount: null, didEntryAt: null, didExitAt: null,
       fiIds: [], repaidAt: null, tranches: []
     };
@@ -561,7 +561,7 @@
   }
 
   /* Одна формула на генератор демо-данных и на стор: плоские поля
-     mock-deals.js посчитаны ею же. Балансы, валюты и признак PE — с
+     mock-deals.js посчитаны ею же. Балансы, валюты и признак ФИ типа С — с
      инструментов; транши их не добавляют; погашенный инструмент исключён
      из отчётов (ответ 3, вопрос 33). */
   function summary(tree) {
@@ -578,7 +578,7 @@
       productsNames: uniq(products.map(function (p) { return p.name; })),
       balances: uniq(live.map(function (i) { return i.balance; })),
       currencies: uniq(live.map(function (i) { return i.currency; })),
-      isPE: live.some(function (i) { return i.isPE === true; })
+      isTypeC: live.some(function (i) { return i.isTypeC === true; })
     };
   }
 

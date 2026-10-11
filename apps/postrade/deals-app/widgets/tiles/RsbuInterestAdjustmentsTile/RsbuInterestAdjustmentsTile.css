@@ -1,0 +1,17 @@
+/* Локальный компонент «Корректировки процентов РСБУ».
+   Только внутренняя раскладка и показ блоков по data-adjustments.
+   Цвета, шрифты, отступы — токены ДС. */
+
+.lc-rsbu-adj .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
+
+.lc-rsbu-adj__text { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+
+/* База — все три текста скрыты, нужный открывает атрибут вида */
+.lc-rsbu-adj__text { display: none; }
+.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__text--locked,
+.lc-rsbu-adj[data-adjustments="none"]   .lc-rsbu-adj__text--none,
+.lc-rsbu-adj[data-adjustments="filled"] .lc-rsbu-adj__text--filled { display: block; }
+
+/* «Требуется расчёт»: перехода на страницу корректировок и кнопки нет вовсе */
+.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__open,
+.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__add { display: none; }

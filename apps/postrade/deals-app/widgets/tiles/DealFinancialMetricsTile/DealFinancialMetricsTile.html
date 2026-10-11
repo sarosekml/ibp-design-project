@@ -6,8 +6,8 @@
      data-mode  — режим прав: всегда view. Метрики считает система, править в
                   тайле нечего ни одной роли (макет: «Редактирование
                   недоступно»); атрибут стоит для общего правила страницы.
-     data-pe    — yes | no: у сделки есть Private Equity — внизу блок
-                  «Переоценка по PE». Без PE блока нет совсем.
+     data-pe    — yes | no: у сделки есть ФИ типа С — внизу блок
+                  «Переоценка по Equity инструментам». Без ФИ типа С блока нет совсем.
 
      Разметка держит ВСЕ состояния сразу, показывает нужное
      DealFinancialMetricsTile.css по этим атрибутам — как у тайлов «КНР»,
@@ -16,10 +16,10 @@
      Значения ниже — пример с макета дизайнера.
      На странице сделки их заменяет DealFinancialMetricsTile.js
      (PostTileDealFinMetrics.render) метриками сделки: бар ВБС, четыре поля и
-     блок PE. Им же рисуются бары окна — разметка AllocationBar одна.
+     блок переоценки. Им же рисуются бары окна — разметка AllocationBar одна.
 
      Действие шапки одно — «Развернуть»: окно DealFinancialMetricsModal
-     показывает ОСЗ, резервы по ФИ и переоценку по PE, которых в тайле нет.
+     показывает ОСЗ, резервы по ФИ и переоценку по ФИ типа С, которых в тайле нет.
      Это не действие правки, поэтому оно есть и в просмотре. -->
 <section class="tile lc-deal-metrics" data-state="data" data-mode="view" data-pe="yes">
   <header class="tile__header">
@@ -80,11 +80,11 @@
         </div>
       </div>
 
-      <!-- Переоценка по PE — только у сделок с Private Equity (data-pe).
+      <!-- Переоценка по Equity инструментам — только у сделок с ФИ типа С (data-pe).
            Плашка на фоне страницы: итог слева с датой, сумма и Δ справа. -->
       <div class="lc-deal-metrics__pe">
         <div class="lc-deal-metrics__pe-main">
-          <p class="lc-deal-metrics__pe-title">Переоценка по PE, <span class="lc-deal-metrics__pe-unit">RUB</span></p>
+          <p class="lc-deal-metrics__pe-title">Переоценка по Equity инструментам, <span class="lc-deal-metrics__pe-unit">RUB</span></p>
           <p class="lc-deal-metrics__pe-date">на 21.12.2025</p>
         </div>
         <div class="lc-deal-metrics__pe-values">

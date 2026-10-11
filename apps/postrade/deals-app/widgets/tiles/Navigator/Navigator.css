@@ -1,0 +1,130 @@
+/* Локальный компонент «Заведение сделки» (Navigator).
+   Только внутренняя раскладка и показ своих блоков по data-state. Цвета,
+   шрифты, отступы — токены ДС; состояния компонентов ДС отсюда не
+   переопределяются.
+   Режим (data-mode) ставит страница: edit | view. Действия процесса задаёт
+   статусная модель, а не режим, поэтому правил по data-mode здесь нет —
+   что из процесса видно роли без права правки, решает открытый вопрос 4
+   паспорта. */
+
+/* ── Тело: колонка на всю высоту тайла ─────────────────────────────── */
+/* Тайл — flex-колонка (Tile), его минимальную высоту задаёт страница. Тело
+   занимает свободную высоту, подвал прижат книзу: кнопки стоят на одном
+   месте, сколько бы шагов ни было у вкладки. */
+.lc-navigator__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.lc-navigator__content,
+.lc-navigator__panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+/* ── Степпер ───────────────────────────────────────────────────────── */
+/* Компонента Stepper в ДС нет (бэклог ДС «Компонент Stepper (шаги
+   заведения)») — шаг собран из StepMarker S и подписи, шаги соединяет линия
+   на токенах (паспорт, «Осознанные отклонения»). Маркер стоит у первой
+   строки подписи: длинная подпись переносится, линия тянется от маркера
+   до следующего шага при любой высоте шага. */
+.lc-navigator__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.lc-navigator__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: var(--space-10);
+  top: calc(var(--space-20) + var(--space-4));
+  bottom: calc(var(--space-4) - var(--space-24));
+  border-left: 1px solid var(--border-light);
+  transform: translateX(-50%);
+}
+.lc-navigator__label {
+  min-width: 0;
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+/* Шаг-действие («Согласование»): подпись — кнопка Transparent S, она выше
+   строки подписи, поэтому маркер центрируется по ней. */
+.lc-navigator__step--action { align-items: center; }
+
+/* Группа шагов («Передача»: РМ · ПМ · Залоги) — заголовок и рамка вокруг
+   вложенных шагов. */
+.lc-navigator__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  flex: 1;
+}
+.lc-navigator__group-title {
+  margin: 0;
+  font: var(--type-body-s-strong);
+  color: var(--text-secondary);
+}
+.lc-navigator__group .lc-navigator__steps {
+  padding: var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  gap: var(--space-16);
+}
+.lc-navigator__group .lc-navigator__step:not(:last-child)::after {
+  bottom: calc(var(--space-4) - var(--space-16));
+}
+/* У шага-группы своего маркера нет: линия к следующему шагу идёт от низа
+   рамки, а не от маркера. */
+.lc-navigator__step--group:not(:last-child)::after {
+  top: calc(100% + var(--space-4));
+}
+
+/* ── Подвал ────────────────────────────────────────────────────────── */
+/* Отделён линией на всю ширину тайла, как на макете: поля тела тайла
+   (--tile-pad-x, Tile) компенсируются, кнопки стоят в поле контента. */
+.lc-navigator__foot {
+  margin-top: auto;
+  margin-inline: calc(-1 * var(--tile-pad-x));
+  padding: var(--space-16) var(--tile-pad-x) 0;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.lc-navigator__status {
+  margin: 0;
+  font: var(--type-body-m-strong);
+  color: var(--text-primary);
+}
+
+/* ── Что видно в каком состоянии ───────────────────────────────────── */
+.lc-navigator__loading,
+.lc-navigator__error { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__content,
+.lc-navigator[data-state="error"] .lc-navigator__content,
+.lc-navigator[data-state="loading"] .lc-navigator__actions,
+.lc-navigator[data-state="error"] .lc-navigator__actions { display: none; }
+
+.lc-navigator[data-state="loading"] .lc-navigator__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.lc-navigator__loading-steps { gap: var(--space-24); }
+.lc-navigator[data-state="error"] .lc-navigator__error { display: block; }

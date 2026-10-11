@@ -23,10 +23,9 @@
 <link rel="stylesheet" href="../widgets/tiles/DealDescriptionTile/DealDescriptionTile.css">
 <link rel="stylesheet" href="../widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.css">
 <link rel="stylesheet" href="../widgets/tiles/ProjectInformationTile/ProjectInformationTile.css">
-<link rel="stylesheet" href="../widgets/tiles/DealSetupTile/DealSetupTile.css">
+<link rel="stylesheet" href="../widgets/tiles/Navigator/Navigator.css">
 <link rel="stylesheet" href="../widgets/tiles/DealProductTreeTile/DealProductTreeTile.css">
 <link rel="stylesheet" href="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.css">
-<link rel="stylesheet" href="../widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.css">
 <link rel="stylesheet" href="../widgets/tiles/DealMetricsCalculationTile/DealMetricsCalculationTile.css">
 <link rel="stylesheet" href="../widgets/tables/DealCounterpartiesTable/DealCounterpartiesTable.css">
 <link rel="stylesheet" href="../widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.css">
@@ -44,7 +43,11 @@
 <link rel="stylesheet" href="../widgets/modals/RepaymentModal/RepaymentModal.css">
 <link rel="stylesheet" href="../widgets/modals/InstrumentTransferModal/InstrumentTransferModal.css">
 <link rel="stylesheet" href="../widgets/modals/LinkChangeModal/LinkChangeModal.css">
-<link rel="stylesheet" href="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
+<link rel="stylesheet" href="../widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.css">
+<link rel="stylesheet" href="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.css">
+<link rel="stylesheet" href="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.css">
+<link rel="stylesheet" href="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.css">
+<link rel="stylesheet" href="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
 <style>
   /* ---------- только раскладка экрана, на токенах ДС ---------- */
   *, *::before, *::after { box-sizing: border-box; }
@@ -640,8 +643,8 @@
      data-mode  — режим прав: всегда view. Метрики считает система, править в
                   тайле нечего ни одной роли (макет: «Редактирование
                   недоступно»); атрибут стоит для общего правила страницы.
-     data-pe    — yes | no: у сделки есть Private Equity — внизу блок
-                  «Переоценка по PE». Без PE блока нет совсем.
+     data-pe    — yes | no: у сделки есть ФИ типа С — внизу блок
+                  «Переоценка по Equity инструментам». Без ФИ типа С блока нет совсем.
 
      Разметка держит ВСЕ состояния сразу, показывает нужное
      DealFinancialMetricsTile.css по этим атрибутам — как у тайлов «КНР»,
@@ -650,10 +653,10 @@
      Значения ниже — пример с макета дизайнера.
      На странице сделки их заменяет DealFinancialMetricsTile.js
      (PostTileDealFinMetrics.render) метриками сделки: бар ВБС, четыре поля и
-     блок PE. Им же рисуются бары окна — разметка AllocationBar одна.
+     блок переоценки. Им же рисуются бары окна — разметка AllocationBar одна.
 
      Действие шапки одно — «Развернуть»: окно DealFinancialMetricsModal
-     показывает ОСЗ, резервы по ФИ и переоценку по PE, которых в тайле нет.
+     показывает ОСЗ, резервы по ФИ и переоценку по ФИ типа С, которых в тайле нет.
      Это не действие правки, поэтому оно есть и в просмотре. -->
 <section data-pe="yes" id="tile-deal-fin-metrics" data-state="loading" data-mode="view" class="tile lc-deal-metrics col-6 colw-12">
   <header class="tile__header">
@@ -714,11 +717,11 @@
         </div>
       </div>
 
-      <!-- Переоценка по PE — только у сделок с Private Equity (data-pe).
+      <!-- Переоценка по Equity инструментам — только у сделок с ФИ типа С (data-pe).
            Плашка на фоне страницы: итог слева с датой, сумма и Δ справа. -->
       <div class="lc-deal-metrics__pe">
         <div class="lc-deal-metrics__pe-main">
-          <p class="lc-deal-metrics__pe-title">Переоценка по PE, <span class="lc-deal-metrics__pe-unit">RUB</span></p>
+          <p class="lc-deal-metrics__pe-title">Переоценка по Equity инструментам, <span class="lc-deal-metrics__pe-unit">RUB</span></p>
           <p class="lc-deal-metrics__pe-date">на 21.12.2025</p>
         </div>
         <div class="lc-deal-metrics__pe-values">
@@ -929,27 +932,117 @@
           <!-- Правая колонка: ширина 320 и минимальная высота 400 — из ТЗ, вне
                12-колоночной сетки, поэтому помечена data-off-grid (Spacing). -->
           <div class="gen__side" data-off-grid="Заведение сделки — фиксированные 320px по ТЗ">
-            <!-- Локальный компонент «Заведение сделки» — фрагмент страницы сделки.
+            <!-- Локальный компонент «Заведение сделки» (Navigator) — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view. Ставит страница: статус сделки,
-                  не допускающий правку, даёт view при любой роли. В view
-                  действия правки не рисуются (DealSetupTile.css)
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (DealSetupTile.css). -->
-<section class="tile lc-deal-setup" data-state="empty" data-mode="edit">
+     data-state — состояние данных: loading | data | error
+     data-mode  — режим прав: edit | view. Действия процесса (кнопки подвала и
+                  пункты кебаба) задаёт статусная модель, а не режим: в «Активной»
+                  сделке, где сущности не правятся, её всё равно гасят и вводят
+                  изменения. Что из процесса видно роли без права правки — открытый
+                  вопрос паспорта (4); пока view у тайла ничего не прячет.
+
+     Вкладки — дорожки статусной модели (data/deal-status-model.js): Сделка · ЦУП ·
+     Operations · Мониторинг. На каждой — степпер и подвал: кнопки переходов из
+     текущего статуса дорожки или строка статуса, если действий нет.
+
+     Ниже — пример: черновик, вкладка «Сделка», «Согласование» ещё не нажато.
+     На странице сделки вкладки, степперы, подвал и кебаб перерисовывает
+     Navigator.js (PostNavigator.render) по модели и записи сделки. -->
+<section class="tile lc-navigator" id="tile-navigator" data-state="loading" data-mode="edit">
   <header class="tile__header">
     <div class="tile__header-main">
       <div class="tile__title-row"><h3 class="tile__title">Заведение сделки</h3></div>
     </div>
-    <div class="tile__actions">
-      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+    <!-- Кебаб — переходы модели с via: 'menu' из текущих статусов дорожек.
+         Пунктов нет — кебаб не рисуется (data-menu-empty). -->
+    <div class="tile__actions lc-navigator__actions">
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со сделкой"
+                data-menu="lc-navigator-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-navigator-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-nav-act="deal_delete"><span class="menu__item-label">Удалить</span></button>
+        </div>
+      </span>
     </div>
   </header>
-  <div class="tile__body">
-    <p class="lc-deal-setup__stub">Данные ещё не заведены</p>
+
+  <div class="tile__body lc-navigator__body">
+
+    <div class="lc-navigator__content">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs data-nav-tabs aria-label="Статусы по подразделениям">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-nav-lane="deal"><span class="tab__label">Сделка</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="tsup"><span class="tab__label">ЦУП</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="ops"><span class="tab__label">Operations</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="mon"><span class="tab__label">Мониторинг</span></button>
+      </div>
+
+      <!-- Панель вкладки. Степпер: StepMarker S и подпись; шаги соединяет линия
+           (Navigator.css). Пройденные статусы вместе с текущим — галочка, следующий
+           шаг — «текущий» маркер (макет screenflow). На вкладке «Сделка» степпер —
+           чек-лист заполнения: отметки разделов даёт страница, «Согласование»
+           нажимается и включает «Передать на сопровождение». -->
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="deal">
+        <ol class="lc-navigator__steps">
+          <li class="lc-navigator__step" data-state="pending">
+            <span class="stepmark stepmark--s" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Общая информация</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Продукты ДИД</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Финансовые инструменты</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Расчёт метрик</span>
+          </li>
+          <li class="lc-navigator__step lc-navigator__step--action" data-state="current" aria-current="step">
+            <span class="stepmark stepmark--s stepmark--current" aria-hidden="true"><span class="stepmark__num">5</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <button type="button" class="btn btn--transparent btn--s" data-nav-agree><span class="btn__label">Согласование</span></button>
+          </li>
+        </ol>
+        <!-- Подвал: кнопки переходов дорожки, первая — Accent, остальные — Outline.
+             Выключенная кнопка — своё состояние тайла: «Передать на сопровождение»
+             ждёт нажатия «Согласования». Действий нет — строка статуса. -->
+        <div class="lc-navigator__foot">
+          <button type="button" class="btn btn--accent btn--s btn--fullwidth" disabled data-nav-act="deal_submit"><span class="btn__label">Передать на сопровождение</span></button>
+        </div>
+      </div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="tsup" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="ops" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="mon" hidden></div>
+    </div>
+
+    <!-- Загрузка: каркас в габаритах вкладок и пяти шагов. -->
+    <div class="lc-navigator__loading" aria-busy="true">
+      <span class="sk-line sk-line--title" style="--sk-w:88%" aria-hidden="true"></span>
+      <div class="sk-group lc-navigator__loading-steps">
+        <span class="sk-line sk-line--title" style="--sk-w:62%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:54%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Ошибка: статусы не пришли. Причина и повтор — внутри тайла, остальная
+         страница работает. «Повторить» шлёт navaction RETRY — повтор делает страница. -->
+    <div class="lc-navigator__error">
+      <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить статусы сделки</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-nav-retry><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
           </div>
@@ -1026,10 +1119,10 @@
                   <div class="prow"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1. Договор займа (НКЛ)</a></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Добавить транш" data-tooltip="Добавить транш" data-ptree-act="ADD" data-ptree-id="1027.d1.p1.i1"><i data-icon="add-circle"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" data-ptree-act="MOVE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Перенести</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
                   <ul class="prow-tree__group">
                     <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t1">
-                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.1. Транш</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#" data-ptree-act="OPEN" data-ptree-id="1027.d1.p1.i1.t1">1.1.1.1. Транш</a></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t1"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="REPAY" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Погасить</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t1"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
                     </li>
                     <li class="prow-tree__node" data-ptree-id="1027.d1.p1.i1.t2">
-                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#">1.1.1.2. Транш</a></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t2"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
+                      <div class="prow prow--tinted"><div class="prow__main"><div class="prow__head"><a class="prow__title prow__title--link" href="#" data-ptree-act="OPEN" data-ptree-id="1027.d1.p1.i1.t2">1.1.1.2. Транш</a></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Изменить связь с ФИ" data-tooltip="Изменить связь с ФИ" data-ptree-act="ATTACH" data-ptree-id="1027.d1.p1.i1.t2"><i data-icon="arrow-left-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Действия" data-menu="ptree-m-1027-d1-p1-i1-t2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="ptree-m-1027-d1-p1-i1-t2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-ptree-act="UNDO_REPAY" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Отменить погашение</span></button><button type="button" class="menu__item" role="menuitem" aria-disabled="true" data-ptree-act="DELETE" data-ptree-id="1027.d1.p1.i1.t2"><span class="menu__item-label">Удалить</span></button></div></span></div></div>
                     </li>
                   </ul>
                 </li>
@@ -1102,7 +1195,7 @@
      Разметка держит ВСЕ состояния сразу, показывает нужное FinInstrumentsTile.css по этим
      двум атрибутам — так устроен шаблон ДС (templates/local-component/Component.css).
      Список ниже — пример с макетов «Tile-Deal-Fininstrument» и «Card-Fininstrument»
-     (сделка 1027 демо-данных: кредит с траншем развёрнут, акции с PE и кредит с
+     (сделка 1027 демо-данных: кредит с траншем развёрнут, акции с ФИ типа С и кредит с
      ошибкой свёрнуты), разметка — вывод PostTileFinInstruments.cardHTML. На странице
      сделки его заменяет FinInstrumentsTile.js карточками своей сделки.
      Кнопки с data-fi-act тайл отдаёт событием fiaction, окна слушают его сами:
@@ -1138,10 +1231,10 @@
         <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-fi-filter="repaid"><span class="tab__label">Погашенные</span><span class="tab__badge">1</span></button>
       </div>
       <div class="lc-fin-instruments__list">
-        <article class="tile tile--card tile--accordion lc-fin-card" data-fi-id="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-201</h4></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-1"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-label="Свернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">VPE CAPITAL</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">МСФО и РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">AC</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для целей резервирования</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">КГ Самолёт</span><span data-riskmetric data-risk="26" data-zone="red" data-rating-date="24.10.2025" data-zone-date="24.10.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">АО «НефтьСервис»</span><span data-riskmetric data-risk="13" data-zone="green" data-rating-date="24.10.2025" data-zone-date="24.10.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="lc-fin-card__flags"><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Участие ДККК</span></div></div><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span><span class="chip chip--s chip--grey"><span class="chip__label">6005-5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d1.p1.i1.t1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Транш</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
-        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Акции-203</h4><span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">Private Equity</span></span></span></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-3" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-3" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-3"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid lc-fin-card__grid--irr"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">ПромФинанс</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">FV</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Целевой IRR</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">17,03</span><span class="rof__affix">%</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Стоимость покупки</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для целей резервирования</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">АО «МеталлИнвест»</span><span data-riskmetric data-risk="12" data-zone="red" data-rating-date="12.09.2025" data-zone-date="12.09.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ЖилСтрой»</span><span data-riskmetric data-risk="8" data-zone="green" data-rating-date="17.07.2025" data-zone-date="17.07.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="lc-fin-card__flags"><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Участие ДККК</span></div><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Связанный безусловный опцион</span></div></div><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d2.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1.1. Акции / Доли</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Стоимость покупки"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
-        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-205</h4></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-5" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-5" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-5"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__title">Ошибка</p><p class="alert__text">Текст описания ошибки</p></div></div><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">—</span></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full"><p class="lc-fin-card__no-nodes">Нет связанных инструментов</p></div></div></div></article>
-        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-202</h4></div><p class="tile__subtitle"><span class="tile__subtitle-icon tile__subtitle-icon--success"><i data-icon="check-circle-filled"></i></span>Фактическая дата погашения 30.06.2025</p></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-2"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">VPE CAPITAL</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">МСФО</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">FV</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d1.p1.i1.t2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.2. Транш</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
+        <article class="tile tile--card tile--accordion lc-fin-card" data-fi-id="FI-1027-1"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-201</h4></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент" data-fi-act="OPEN" data-fi-id="FI-1027-1"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-1" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-1" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-1"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-label="Свернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">VPE CAPITAL</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">МСФО и РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">AC</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для целей резервирования</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">КГ Самолёт</span><span data-riskmetric data-risk="26" data-zone="red" data-rating-date="24.10.2025" data-zone-date="24.10.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">АО «НефтьСервис»</span><span data-riskmetric data-risk="13" data-zone="green" data-rating-date="24.10.2025" data-zone-date="24.10.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="lc-fin-card__flags"><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Участие ДККК</span></div></div><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span><span class="chip chip--s chip--grey"><span class="chip__label">6005-5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d1.p1.i1.t1"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.1. Транш</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
+        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-3"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Акции-203</h4><span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">ФИ типа С</span></span></span></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент" data-fi-act="OPEN" data-fi-id="FI-1027-3"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-3" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-3" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-3"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid lc-fin-card__grid--irr"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">ПромФинанс</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">FV</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Целевой IRR</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">17,03</span><span class="rof__affix">%</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Стоимость покупки</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для целей резервирования</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">АО «МеталлИнвест»</span><span data-riskmetric data-risk="12" data-zone="red" data-rating-date="12.09.2025" data-zone-date="12.09.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ЖилСтрой»</span><span data-riskmetric data-risk="8" data-zone="green" data-rating-date="17.07.2025" data-zone-date="17.07.2025" data-segment="Крупный бизнес" data-profile="Непроектный"></span></div></div><div class="lc-fin-card__flags"><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Участие ДККК</span></div><div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span><span class="rof__value">Связанный безусловный опцион</span></div></div><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d2.p1.i1"><div class="prow__main"><div class="prow__head"><span class="prow__title">2.1.1. Акции / Доли</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Стоимость покупки"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
+        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-5"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-205</h4></div></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент" data-fi-act="OPEN" data-fi-id="FI-1027-5"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-5" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-5" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-5"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="alert alert--error alert--m alert--flush" role="alert" aria-live="assertive"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__title">Ошибка</p><p class="alert__text">Текст описания ошибки</p></div></div><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">РСБУ</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">—</span></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full"><p class="lc-fin-card__no-nodes">Нет связанных инструментов</p></div></div></div></article>
+        <article class="tile tile--card tile--accordion lc-fin-card tile--collapsed" data-fi-id="FI-1027-2"><header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">127-Кредит-202</h4></div><p class="tile__subtitle"><span class="tile__subtitle-icon tile__subtitle-icon--success"><i data-icon="check-circle-filled"></i></span>Фактическая дата погашения 30.06.2025</p></div><div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть финансовый инструмент" data-fi-act="OPEN" data-fi-id="FI-1027-2"><i data-icon="arrow-right"></i></button><span class="menu-anchor"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия" data-menu="fi-m-FI-1027-2" data-menu-align="end"><i data-icon="more-dots"></i></button><div id="fi-m-FI-1027-2" class="menu menu--floating" role="menu" hidden><button type="button" class="menu__item" role="menuitem" data-fi-act="EDIT" data-fi-id="FI-1027-2"><span class="menu__item-label">Изменить</span></button></div></span><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div></header><div class="tile__body"><div class="tile__grid lc-fin-card__grid"><div class="rof"><span class="ds-label"><span class="ds-label__text">Баланс</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">VPE CAPITAL</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Тип отчетности</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">МСФО</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">RUB</span></div></div><div class="rof"><span class="ds-label"><span class="ds-label__text">FV/AC</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">FV</span></div></div><div class="rof lc-fin-card__amount"><span class="ds-label"><span class="ds-label__text">Сумма лимита</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">800 000,00</span></div></div><div class="rof lc-fin-card__signed"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">22.04.2024</span></div></div><div class="rof lc-fin-card__planned"><span class="ds-label"><span class="ds-label__text">Плановая дата погашения</span></span><div class="rof__row"><span class="rof__value rof__value--clamp-1">—</span></div></div><div class="rof tile__grid-full lc-fin-card__party"><span class="ds-label"><span class="ds-label__text">Контрагент</span></span><div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">ООО «ГорноКапитал»</span><span data-riskmetric data-risk="13" data-zone="watchlist" data-rating-date="03.11.2025" data-zone-date="03.11.2025" data-segment="Крупный бизнес" data-profile="Проектный"></span></div></div><div class="tile__collapsible tile__grid-full"><div class="tile__grid"><div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Код для RWA</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s"><span class="chip chip--s chip--grey"><span class="chip__label">6002-1,5%</span></span></div></div><span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span></div></div></div></div><div class="tile__grid-full lc-fin-card__nodes-head"><h5 class="lc-fin-card__nodes-title">Инструменты</h5><span class="badge badge--s badge--neutral" aria-label="Инструментов: 1">1</span><button type="button" class="btn btn--outline btn--xs lc-fin-card__add-node"><i data-icon="add"></i><span class="btn__label">Добавить</span></button></div><div class="tile__collapsible tile__grid-full lc-fin-card__nodes"><div class="prow" data-fi-node="1027.d1.p1.i1.t2"><div class="prow__main"><div class="prow__head"><span class="prow__title">1.1.1.2. Транш</span></div><div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i><span class="prow__status-text">Фактическая дата погашения 30.06.2025</span></div><div class="prow__meta"><span class="prow__meta-item" data-tooltip="Дата подписания договора"><i data-icon="calendar"></i><span class="prow__meta-text">22.04.2024</span></span><span class="prow__meta-item" data-tooltip="Сумма лимита"><i data-icon="bar-chart-square"></i><span class="prow__meta-text">800 000,00 <span class="prow__meta-affix">RUB</span></span></span></div></div><div class="prow__actions"><button type="button" class="ibtn ibtn--neutral ibtn--l lc-fin-card__move" aria-label="Перенести"><i data-icon="arrow-left-right"></i></button></div></div></div></div></div></article>
       </div>
       <button type="button" class="btn btn--outline btn--s btn--fullwidth lc-fin-instruments__add" data-fi-act="CREATE"><i data-icon="add"></i><span class="btn__label">Финансовый инструмент</span></button>
     </div>
@@ -1182,26 +1275,8 @@
 </section>
           </div>
         </div>
-        <!-- Второй ряд: обычный ряд — высоты выравниваются по самому высокому -->
+        <!-- Второй ряд: один тайл в 6 колонок (тайл «Влияние на ЭПС/ВБС» снят 10.10.2026) -->
         <div class="tile-row">
-          <!-- Локальный компонент «Влияние на ЭПС/ВБС» — фрагмент страницы сделки.
-     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
-     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
-     data-state — состояние данных: loading | data | partial | empty | error | updating
-     data-mode  — режим прав:       edit | view
-     Сейчас компонент в состоянии empty: состав полей не согласован (см. паспорт).
-     Пока состав не согласован — строка по центру тела, без EmptyState:
-     помещается в минимальную высоту тайла и не растягивает ряд (EpsVbsImpactTile.css). -->
-<section data-state="empty" data-mode="view" class="tile lc-eps-vbs-impact col-6 colw-12">
-  <header class="tile__header">
-    <div class="tile__header-main">
-      <div class="tile__title-row"><h3 class="tile__title">Влияние на ЭПС/ВБС</h3></div>
-    </div>
-  </header>
-  <div class="tile__body">
-    <p class="lc-eps-vbs-impact__stub">Данные ещё не заведены</p>
-  </div>
-</section>
           <!-- Локальный компонент «Финансовые метрики» — фрагмент страницы сделки.
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
@@ -2308,7 +2383,7 @@
   </div>
 </div>
 <!-- Окно тайла «Финансовые метрики сделки»: только просмотр — ОСЗ, резервы
-     по ФИ и переоценка по PE, которых в тайле нет. -->
+     по ФИ и переоценка по Equity инструментам, которых в тайле нет. -->
 <!-- Связанный артефакт тайла «Финансовые метрики сделки»: окно просмотра
      метрик целиком. Фрагмент вшивается ассемблером отдельной меткой
      ds-include — скрим должен лежать в конце body, а не внутри тайла.
@@ -2325,8 +2400,8 @@
           иконка-предупреждение о просрочке с тултипом;
        2. раздел «Резервы на …» — сводка тремя карточками всегда видна,
           таблица по ФИ раскрывается;
-       3. раздел «Переоценка по PE» — сводка четырьмя полями, таблица по ФИ
-          раскрывается. Только у сделки с PE (data-pe на .modal): без PE
+       3. раздел «Переоценка по Equity инструментам» — сводка четырьмя полями, таблица по ФИ
+          раскрывается. Только у сделки с ФИ типа С (data-pe на .modal): без ФИ типа С
           раздела нет совсем (решение человека 25.09.2026).
      Разделы — Tile Accordion ДС (частичный коллапс: .tile__body — сводка,
      .tile__collapsible — таблица), сворачивает их рантайм ds-tile.js. При
@@ -2474,11 +2549,11 @@
         </div>
       </section>
 
-      <!-- ── Переоценка по PE ─────────────────────────────────────────── -->
+      <!-- ── Переоценка по Equity инструментам ─────────────────────────────────────────── -->
       <section class="tile tile--accordion tile--collapsed lc-deal-metrics-modal__section lc-deal-metrics-modal__pe" data-fin-section="pe">
         <header class="tile__header">
           <div class="tile__header-main">
-            <div class="tile__title-row"><h3 class="tile__title">Переоценка по PE</h3></div>
+            <div class="tile__title-row"><h3 class="tile__title">Переоценка по Equity инструментам</h3></div>
           </div>
           <div class="tile__actions">
             <button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="dfm-pe-table" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button>
@@ -2487,7 +2562,7 @@
         <div class="tile__body">
           <div class="tile__grid lc-deal-metrics-modal__pe-grid">
             <div class="rof" data-fin-field="revaluationAmount">
-              <span class="ds-label"><span class="ds-label__text">Сумма переоценки по PE</span></span>
+              <span class="ds-label"><span class="ds-label__text">Суммарная оценка Equity инструментов</span></span>
               <div class="rof__row"><span class="rof__value">1 234 567,89</span><span class="rof__affix">RUB</span></div>
             </div>
             <div class="rof" data-fin-field="revaluationDelta">
@@ -2514,6 +2589,7 @@
                     <div class="th"><span class="th__label">Финансовый инструмент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Дата оценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Периодичность</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                    <div class="th th--right"><span class="th__label">Стоимость покупки акции</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th th--right"><span class="th__label">Оценка на дату</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th th--right"><span class="th__label">Δ переоценки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                     <div class="th"><span class="th__label">Кем определена</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -2524,6 +2600,7 @@
                     <div class="tc"><span class="tc__row"><a class="link link--accent link--s tc__text tc__text--truncate" href="#">1025-Акции-01</a></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text">21.12.2025</span></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Ежемесячно</span></span></div>
+                    <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 400 000,00</span><span class="tc__postfix">RUB</span></span></div>
                     <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text">123 456 789,00</span><span class="tc__postfix">RUB</span></span></div>
                     <div class="tc tc--numbers"><span class="tc__row"><span class="tc__text lc-deal-metrics-modal__delta">+56 789,00</span></span></div>
                     <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Независимый оценщик</span></span></div>
@@ -2764,7 +2841,7 @@
      FinInstrumentsStore.fieldsOf(<тип>):
        Кредит                     — наименование, контрагент, FV/AC, контрагенты для
                                     резервирования и аллокации, «Участие ДККК»;
-       Акции                      — то же + IRR, «Private Equity», «Связанный безусловный
+       Акции                      — то же + IRR, «ФИ типа С», «Связанный безусловный
                                     опцион»;
        Доп. доходность, РЕПО      — то же, что у кредита + номер связанного договора и
                                     опцион, включённый в расчёт МСФО;
@@ -2857,10 +2934,10 @@
         </div>
 
         <div class="cb-group">
-          <label class="cb" data-fi-field="isPE">
+          <label class="cb" data-fi-field="isTypeC">
             <input type="checkbox" class="cb__input" id="fi-edit-pe" checked>
             <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
-            <span class="cb__content"><span class="cb__label">Private Equity</span></span>
+            <span class="cb__content"><span class="cb__label">ФИ типа С</span></span>
           </label>
           <label class="cb" data-fi-field="isDkkk">
             <input type="checkbox" class="cb__input" id="fi-edit-dkkk" checked>
@@ -3296,8 +3373,288 @@
     </footer>
   </div>
 </div>
+<!-- Окна тайла «Заведение сделки» (Navigator): назначение ответственного ЦУП,
+     приём на мониторинг РМ/ПМ/ПМЗ, направление на передачу, погашение сделки,
+     причина ввода изменений. Открывает их тайл по полю modal перехода
+     статусной модели — через openModal, который даёт страница
+     (fillNavigator). -->
+<!-- NavigatorAppointmentOfResponsibleModal — окно «Назначение ответственного».
+     Артефакт тайла «Заведение сделки» (Navigator): открывается кнопкой
+     «Назначить ответственного» на вкладке «ЦУП» в статусе «Ожидает назначения
+     ответственного». Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Состав — макет screenflow дизайнера и пояснение к нему: «кроме выбора
+     ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные
+     с этим ГСЗ сделки и ответственные по этим сделкам».
+     – «Ответственный от ЦУП» — InputAutocomplete по справочнику сотрудников;
+     – «Группа связанных заемщиков» — ReadOnlyField, ГСЗ сделки;
+     – «Сделки ГСЗ» — Table: номер, наименование, ответственный ЦУП;
+     – «Назначить» — ответственный уходит в команду сделки (tsupEmployee).
+     Крестик и Esc — без назначения. Клик мимо окна не закрывает: в окне поле
+     ввода (Modal ДС).
+
+     Значения ставит NavigatorAppointmentOfResponsibleModal.js из записи
+     сделки и DealsStore; ниже — пример: сделка 1025, ГСЗ «СвязьКапитал». -->
+<div class="modal-scrim" id="nav-appoint-scrim" hidden>
+  <div class="modal modal--w5 lc-nav-appoint" role="dialog" aria-modal="true" aria-labelledby="nav-appoint-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-appoint-title">Назначение ответственного</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как в
+           окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-appoint-employee"><span class="ds-label__text">Ответственный от ЦУП</span></label>
+        <div class="inp__field" data-ddl="nav-appoint-employee-list">
+          <input class="inp__control" id="nav-appoint-employee" name="tsupEmployee" autocomplete="off" value="Щукин Щ.Щ. 100134">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-appoint-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value" data-nav-appoint-gsz>Группа «СвязьКапитал»</span></div>
+      </div>
+
+      <h3 class="ds-h6-strong">Сделки ГСЗ</h3>
+
+      <!-- Table ДС без тулбара: строки рисует скрипт окна. Наименование —
+           в одну строку с многоточием и тултипом (TableCell). Других сделок
+           у ГСЗ нет или ГСЗ не указана — пустое состояние тела таблицы. -->
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-nav-appoint-table>
+            <div class="tbl__row tbl__row--head lc-nav-appoint__cols">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">Номер сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Наименование сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Ответственный ЦУП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1035</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Реконструкция аэропортового комплекса</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Степанов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1045</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Приобретение пакета акций энергокомпании</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Смирнов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1055</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Финансирование модернизации нефтеперерабатывающего завода</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Баранов Б.Б.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1065</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Кредитование лесопромышленного комбината</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Захаров З.З.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+          <div class="dtable__empty" data-nav-appoint-empty hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title" data-nav-appoint-empty-text>Других сделок у этой ГСЗ нет</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-appoint-save><span class="btn__label">Назначить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorApprovalModal — окно «Подтвердите действие»: приём сделки на
+     мониторинг РМ, ПМ или ПМЗ. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопками «РМ принял», «ПМ принял», «ПМЗ принял» на вкладке
+     «Мониторинг» в статусах «Передана» и «Передача изменений». Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Три варианта (data-variant на .modal), макет screenflow дизайнера:
+     – rm, pm — «Согласующий» и «Дата согласования»;
+     – pmz — сверху Switch «С обеспечением», затем те же поля.
+     «Сохранить» отдаёт отметку тайлу и закрывает окно; крестик и Esc — без
+     отметки. Клик мимо окна не закрывает: в окне поля ввода (Modal ДС).
+
+     Список согласующих и значения ставит NavigatorApprovalModal.js; ниже —
+     пример с макета: ПМЗ, Switch включён, поля пусты. -->
+<div class="modal-scrim" id="nav-approval-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-approval" data-variant="pmz" role="dialog" aria-modal="true" aria-labelledby="nav-approval-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-approval-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- Switch ДС: только у ПМЗ — «для залоговиков сначала нужно поставить
+           флаг, что залог есть» (пояснение макета) -->
+      <label class="sw lc-nav-approval__collateral">
+        <input type="checkbox" class="sw__input" role="switch" name="withCollateral" checked>
+        <span class="sw__control"><span class="sw__thumb"></span></span>
+        <span class="sw__content"><span class="sw__label">С обеспечением</span></span>
+      </label>
+
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как
+           в окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-approver"><span class="ds-label__text">Согласующий</span></label>
+        <div class="inp__field" data-ddl="nav-approval-approver-list">
+          <input class="inp__control" id="nav-approval-approver" name="approver" autocomplete="off">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-approval-approver-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- InputDate ДС: маска и календарь — из коробки; крестик очистки рисует
+           рантайм поля по значению. Во всю ширину тела, как «Согласующий»
+           (решение человека 10.10.2026; на макете — полширины). -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-date"><span class="ds-label__text">Дата согласования</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-approval-date" name="approvalDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-approval-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorForwardToTransferModal — окно «Подтвердите действие» с датой
+     передачи на мониторинг. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопкой «Направить на передачу» на вкладке «Мониторинг» в
+     статусах «Ожидает передачи на мониторинг» и «Изменения ожидают передачи на
+     мониторинг». Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Состав — макет screenflow дизайнера: строка текста и InputDate «Дата
+     передачи». Текст и подпись кнопки на макете размыты — «Отправка на
+     передачу» и «Сохранить» взяты по очертаниям (допущение 10.10.2026, вопрос 1
+     паспорта). «Сохранить» отдаёт дату тайлу и закрывает окно; крестик и Esc —
+     без перехода. Дату ставит NavigatorForwardToTransferModal.js. -->
+<div class="modal-scrim" id="nav-forward-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-forward" role="dialog" aria-modal="true" aria-labelledby="nav-forward-title" aria-describedby="nav-forward-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-forward-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-nav-forward__text" id="nav-forward-text">Отправка на передачу</p>
+      <!-- InputDate ДС: маска и календарь — из коробки; во всю ширину тела
+           (решение человека 10.10.2026; на макете — полширины) -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-forward-date"><span class="ds-label__text">Дата передачи</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-forward-date" name="monitoringTransferDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-forward-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorDealCloseModal — окно погашения сделки. Артефакт тайла «Заведение
+     сделки» (Navigator): открывается пунктом кебаба «Погасить» у активной
+     сделки. Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макета окна нет. Из пояснения screenflow известно одно поле — дата
+     погашения («встаёт в „Сроки сделки“»). Остальное собрано по образцу окна
+     погашения инструмента (RepaymentModal): заголовок, строка «Погашение сделки
+     N. Имя», InputDate «Дата погашения» — по умолчанию сегодня, «Подтвердить»
+     (допущение 10.10.2026, вопрос 1 паспорта). Крестик и Esc — без перехода.
+
+     Текст и дату ставит NavigatorDealCloseModal.js; ниже — пример. -->
+<div class="modal-scrim" id="nav-deal-close-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-deal-close" role="dialog" aria-modal="true" aria-labelledby="nav-deal-close-title" aria-describedby="nav-deal-close-text">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-deal-close-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-nav-deal-close__text" id="nav-deal-close-text">Погашение сделки 1024. Финансирование строительства логистического хаба</p>
+      <!-- InputDate ДС: маска и календарь — из коробки; крестик очистки рисует
+           рантайм поля по значению, после заполнения кодом окно зовёт
+           DSInput.syncAll -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-deal-close-date"><span class="ds-label__text">Дата погашения</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-deal-close-date" name="repayDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off" value="10.10.2026">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-deal-close-save><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- NavigatorChangeReasonModal — окно причины ввода изменений. Артефакт тайла
+     «Заведение сделки» (Navigator): открывается пунктом кебаба «Ввести
+     изменения» у активной сделки. Фрагмент вшивается отдельной меткой
+     ds-include: скрим лежит в конце body.
+
+     Окно есть у фронтенда (features/modals/NavigatorChangeReasonModal), на
+     макетах его нет. Здесь — оболочка: заголовок, многострочное поле «Причина»
+     и «Сохранить» (задача RE0013, раздел 4). Заголовок — как у остальных окон
+     навигатора; состав не согласован (допущение 10.10.2026, вопрос 1
+     паспорта). Крестик и Esc — без перехода. -->
+<div class="modal-scrim" id="nav-change-reason-scrim" hidden>
+  <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="nav-change-reason-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-change-reason-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputText ДС, многострочный: textarea растёт по высоте сам -->
+      <div class="inp inp--m inp--fullwidth inp--multiline">
+        <label class="ds-label" for="nav-change-reason-text"><span class="ds-label__text">Причина</span></label>
+        <div class="inp__field">
+          <textarea class="inp__control" id="nav-change-reason-text" name="changeReason" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-change-reason-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
 
 <script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
 <script src="../data/deals-store.js"></script>
 <!-- справочник сотрудников для списков окна «Команда сделки»: сами назначения
      лежат в записи сделки, здесь только кандидаты -->
@@ -3359,6 +3716,17 @@
 <script src="../widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<!-- Тайл «Заведение сделки» — статусы по модели (data/deal-status-model.js);
+     переходы пишет в DealsStore страница (fillNavigator). Окна тайла
+     регистрируются в PostNavigatorModals; согласующего и ответственного они
+     показывают «ФИО номер» по контракту окна «Команда сделки», поэтому идут
+     после DealTeamModal.js. -->
+<script src="../widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
 <script>
 /* Экранный скрипт. Делает только то, чего рантаймы ДС не делают:
    меню по каталогу ролей, данные сделки (шапка и тайлы), переключение
@@ -3495,6 +3863,7 @@
     fillChips(deal);
     fillSubtitle(deal);
     applyMode(deal);
+    watchStatus(deal);
     fillKnr(deal);
     fillTerms(deal);
     fillTeam(deal);
@@ -3503,6 +3872,7 @@
     fillProjectInfo(deal);
     fillProducts(deal);
     fillFinInstruments(deal);
+    fillNavigator(deal);
   }
 
   /* Заголовок «номер. наименование», третья крошка и заголовок вкладки —
@@ -3554,14 +3924,101 @@
      (data-mode): его ставит страница, а свой вид в просмотре каждый компонент
      держит сам (действия правки не рисуются). Окно КНР — такой же компонент.
      Статус правку не закрыл — режимы остаются теми, что пришли с фрагментами.
-     Кнопка переименования — разметка самого экрана, её прячет экран. */
+     Кнопка переименования — разметка самого экрана, её прячет экран.
+
+     Статус меняется на самой странице (тайл «Заведение сделки»), поэтому
+     режим обратим: исходный режим компонента запоминается при первом проходе
+     (data-mode-own) и возвращается, когда статус снова допускает правку
+     («Ввод изменений», «Корректировка»). Навигатор режимом статуса не
+     выключается: его действия — процесс, их задаёт статусная модель (в
+     «Активной» сделку гасят и вводят изменения). Дерево продуктов и карточки
+     ФИ кладут режим в разметку при отрисовке — после смены их перерисовывают. */
   function applyMode(deal) {
-    if (window.DealsStore.isEditable(deal)) return;
+    var view = !window.DealsStore.isEditable(deal);
+    var changed = false;
     document.querySelectorAll('.screen__content .tile[data-mode], .lc-knrm[data-mode]').forEach(function (el) {
-      el.setAttribute('data-mode', 'view');
+      if (el.classList.contains('lc-navigator')) return;
+      if (!el.hasAttribute('data-mode-own')) el.setAttribute('data-mode-own', el.getAttribute('data-mode'));
+      var mode = view ? 'view' : el.getAttribute('data-mode-own');
+      if (el.getAttribute('data-mode') !== mode) { el.setAttribute('data-mode', mode); changed = true; }
     });
     var rename = document.querySelector('.phead__edit');
-    if (rename) rename.hidden = true;
+    if (rename) rename.hidden = view;
+    if (!changed) return;
+    var tree = document.getElementById('tile-deal-products');
+    if (tree && window.PostTileProductTree && window.ProductTreeStore && window.ProductTreeStore.dealId() != null) {
+      window.PostTileProductTree.render(tree, window.ProductTreeStore.view());
+    }
+    var fi = document.getElementById('tile-fin-instruments');
+    if (fi && fi.__fiPaint) fi.__fiPaint();
+  }
+
+  /* Статусы сделки меняет тайл «Заведение сделки» — чипы шапки, подзаголовок
+     погашенной сделки и режим правки следуют за записью в сторе. */
+  function watchStatus(deal) {
+    window.DealsStore.on('change', function (d) {
+      if (!d || d.deal !== deal) return;
+      fillChips(d.deal);
+      fillSubtitle(d.deal);
+      applyMode(d.deal);
+    });
+  }
+
+  /* Тайл «Заведение сделки» (Navigator) — путь сделки по четырём дорожкам и
+     действия текущего статуса, всё из статусной модели. Действие тайла
+     отдаёт patch статусов сюда, страница пишет его в стор; тайл, чипы и
+     режим перерисовываются по событию стора.
+
+     Отметки чек-листа «Сделки» до «Согласования» — заполненность разделов
+     (пояснение к «Черновику» в модели). Как мерить заполненность, макеты не
+     говорят — допущение 10.10.2026 (паспорт тайла): «Общая информация» —
+     есть дата заключения, «Продукты ДИД» — в дереве есть продукт ДИД,
+     «Финансовые инструменты» — есть карточка ФИ, «Расчёт метрик» — у сделки
+     есть метрики. Сторы дерева и ФИ открываются асинхронно — отметки
+     пересчитываются по их событиям.
+
+     Окна навигатора (назначение ответственного, отметки РМ/ПМ/ПМЗ, передача,
+     погашение, причина изменений) открывает openModal по имени из поля modal
+     перехода: окно берёт запись сделки и переход, по «Сохранить» отдаёт тайлу
+     extra — patch полей сделки или отметку, тайл применяет переход вместе с
+     ним. Крестик и Esc — перехода нет. Окна нет в реестре — переход сразу. */
+  function fillNavigator(deal) {
+    var tile = document.getElementById('tile-navigator');
+    if (!tile || !window.PostNavigator) return;
+    var trees = window.ProductTreeStore;
+    var cards = window.FinInstrumentsStore;
+    var metrics = window.MOCK_DEAL_FIN_METRICS || {};
+
+    function progress(d) {
+      var own = function (store) { return store && String(store.dealId()) === openedId; };
+      return [
+        !!String(d.signDate || '').trim(),
+        own(trees) ? trees.view().length > 0 : (d.productsDidNames || []).length > 0,
+        own(cards) ? cards.list().length > 0 : false,
+        !!metrics[openedId]
+      ];
+    }
+
+    function current() { return window.DealsStore.byId(deal.id) || deal; }
+
+    var nav = window.PostNavigator.bind(tile, {
+      get: current,
+      save: function (patch) { window.DealsStore.update(deal.id, patch); },
+      progress: progress,
+      openModal: function (name, transition, done) {
+        var modal = (window.PostNavigatorModals || {})[name];
+        if (!modal) return false;
+        modal.open({ deal: current(), transition: transition }, done);
+      }
+    });
+    window.DealsStore.on('change', function (d) {
+      if (d && d.deal === deal) nav.paint();
+    });
+    [trees, cards].forEach(function (store) {
+      if (!store) return;
+      store.on('change', function (e) { if (e && e.reason === 'use') nav.paint(); });
+      store.on('commit', nav.paint);
+    });
   }
 
   /* Тайл «КНР» — КНР этой сделки из CounterpartiesStore. Пока состав
@@ -3759,6 +4216,24 @@
         window.PostTileFinInstruments.bind(tile, store);
       });
   }
+
+  /* «→» в шапке карточки ФИ — переход на страницу финансового инструмента:
+     тайл только шлёт 'fiaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('fiaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.id) return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'FinInstrument.preview.html' : 'FinInstrument.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&fi=' + encodeURIComponent(d.id);
+  });
+
+  /* Название транша в дереве продуктов — переход на страницу транша: тайл шлёт
+     'ptreeaction' OPEN, куда идти, знает страница. */
+  document.addEventListener('ptreeaction', function (e) {
+    var d = e.detail || {};
+    if (d.action !== 'OPEN' || !d.node || d.node.kind !== 'TRANCHE') return;
+    var page = /\.preview\.html$/.test(window.location.pathname) ? 'Tranche.preview.html' : 'Tranche.html';
+    window.location.href = page + '?id=' + encodeURIComponent(openedId) + '&tr=' + encodeURIComponent(d.id);
+  });
 
   /* Ряд «Сведения о проекте» — только у деска «Недвижимость»: это проекты
      недвижимости (заказчик 23.09.2026). Ряд прячется целиком, а не пустым

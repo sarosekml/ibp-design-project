@@ -1,6 +1,7 @@
 /* =========================================================================
    DealsStore — единственная точка доступа к базе сделок ДИД (мок).
-   Источник — window.MOCK_DEALS (mock-deals.js), подключить ДО этого файла.
+   Источник — window.MOCK_DEALS (mock-deals.js), тоны и правка по статусу —
+   window.DEAL_STATUS_MODEL (deal-status-model.js); оба подключить ДО этого файла.
 
    Экспорт: window.DealsStore = {
      list() → запись[]                    — копия текущего состава (снимок)
@@ -43,52 +44,48 @@
 
   function norm(s) { return String(s == null ? '' : s).trim().toLowerCase(); }
 
-  /* Тон статусного чипа. Словарь живёт здесь, а не на экране: статусы одной
+  /* Тоны статусных чипов и статусы только для просмотра строятся из
+     статусной модели (deal-status-model.js, window.DEAL_STATUS_MODEL) — она
+     единственный источник: правка статуса — там, схема и таблицы —
+     генерат deal-status-model.md. Здесь они, а не на экране: статусы одной
      сделки показывают и реестр портфеля (колонки таблицы), и страница сделки
-     (чипы шапки) — две копии словаря разошлись бы на первой же новой строке.
-     scope: 'general' — общий, ЦУП и Operations; 'mon' — мониторинг (у него свой
-     набор значений). Незнакомое значение — нейтральный chip--dark, а не пусто:
-     чип без тона визуально неотличим от отсутствия статуса. */
-  var TONE_GENERAL = {
-    'Черновик': 'chip--dark',
-    'Ожидает подтверждения': 'chip--warning',
-    'Подтверждение изменений': 'chip--warning',
-    'Ожидает назначения ответственного': 'chip--warning',
-    'Корректировка': 'chip--info',
-    'Ввод изменений': 'chip--info',
-    'Корректировка изменений': 'chip--info',
-    'Активная': 'chip--success',
-    'Утверждена': 'chip--success',
-    'На сопровождении': 'chip--success',
-    'Погашена': 'chip--dpurple'
-  };
-  var TONE_MON = {
-    'На утверждении': 'chip--dark',
-    'Утверждена': 'chip--dark',
-    'Ожидает передачи на мониторинг': 'chip--warning',
-    'Направлена на передачу': 'chip--warning',
-    'Передана': 'chip--warning',
-    'Изменения ожидают передачи на мониторинг': 'chip--warning',
-    'Изменения направлены на передачу': 'chip--warning',
-    'Передача изменений': 'chip--warning',
-    'На мониторинге ГК СБИ': 'chip--success',
-    'На мониторинге ПАО Сбербанк': 'chip--success',
-    'Погашена': 'chip--dpurple'
-  };
+     (чипы шапки) — две копии разошлись бы на первой же новой строке.
+
+     Словарь тона выбирает дорожка модели (lanes[].toneScope): 'general' —
+     общий, ЦУП и Operations; 'mon' — мониторинг (у него свой набор значений).
+     Статус без тона в модели (tone: null) в словарь не попадает. Незнакомое
+     значение — нейтральный chip--dark, а не пусто: чип без тона визуально
+     неотличим от отсутствия статуса.
+
+     Статусы, в которых сущности сделки не правятся при любой роли, —
+     editable: false у дорожки общего статуса. Требования (refs/Текущий
+     портфель.md): «В активной сделке нельзя редактировать сущности»;
+     погашенная сделка и оба этапа утверждения — решение человека 21.09.2026.
+     Статус без запрета правку не закрывает — что можно роли, решают её права. */
+  var TONE_GENERAL = {};
+  var TONE_MON = {};
+  var READ_ONLY_STATUSES = [];
+
+  (function fromModel(model) {
+    if (!model) {
+      console.error('DealsStore: нет window.DEAL_STATUS_MODEL — подключите deal-status-model.js до deals-store.js');
+      return;
+    }
+    var scopeOf = {}, statusLane = null;
+    model.lanes.forEach(function (l) {
+      scopeOf[l.id] = l.toneScope;
+      if (l.field === 'status') statusLane = l.id;
+    });
+    model.statuses.forEach(function (s) {
+      if (s.tone) (scopeOf[s.lane] === 'mon' ? TONE_MON : TONE_GENERAL)[s.label] = s.tone;
+      if (s.lane === statusLane && s.editable === false) READ_ONLY_STATUSES.push(s.label);
+    });
+  })(window.DEAL_STATUS_MODEL);
 
   function statusTone(value, scope) {
     var map = (scope === 'mon') ? TONE_MON : TONE_GENERAL;
     return map[value] || 'chip--dark';
   }
-
-  /* Статусы сделки, в которых её сущности не правятся — при любой роли.
-     Требования (refs/Текущий портфель.md): «В активной сделке нельзя
-     редактировать сущности». Погашенная сделка и оба этапа утверждения —
-     решение человека 21.09.2026. Список живёт рядом со словарём тонов по той
-     же причине: страница сделки и реестр читают одно правило. Статус без
-     запрета (Черновик, Корректировка, Ввод изменений…) правку не закрывает —
-     что можно роли, решают её права. */
-  var READ_ONLY_STATUSES = ['Активная', 'Погашена', 'Ожидает подтверждения', 'Подтверждение изменений'];
 
   function isEditable(deal) {
     return !!deal && READ_ONLY_STATUSES.indexOf(deal.status) === -1;
@@ -133,9 +130,10 @@
       ceParticipation: false, ifDeskParticipation: false, restructured: false,
       riskCategory: null, relatedDeals: [],
       signDate: '', firstDisb: '', endDate: '', repayDate: '',
+      monitoringTransferDate: '', changeReason: '',
       monEntity: '',
       mainProductDid: '', productsDidNames: [], productsNames: [],
-      balances: [], currencies: [], isPE: false,
+      balances: [], currencies: [], isTypeC: false,
       projectInformation: null,
     }, partial);
     deals.unshift(deal);

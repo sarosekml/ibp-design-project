@@ -1,0 +1,29 @@
+{
+  "_": "Демо-данные витрины: срез записи сделки в статусе мониторинга «Передана» и переходы модели на каждое подразделение. Окно рисует себя само (PostNavigatorModals.NavigatorApprovalModal.use): РМ уже отметился — его поля заполнены, у ПМ и ПМЗ пусто.",
+
+  "data": {
+    "deal": {
+      "id": 1024,
+      "name": "Финансирование строительства логистического хаба",
+      "statusMon": "Передана",
+      "monitoringAcceptance": {
+        "rm": { "approver": "Титов Т.Т.", "approverTab": "100132", "approvalDate": "08.10.2026" }
+      }
+    },
+    "transitions": { "rm": "mon_rm_accept", "pm": "mon_pm_accept", "pmz": "mon_pmz_accept" }
+  },
+
+  "long": {
+    "deal": {
+      "id": 1024,
+      "name": "Финансирование строительства логистического хаба",
+      "statusMon": "Передана",
+      "monitoringAcceptance": {
+        "rm": { "approver": "Константинопольский-Ржевский В.В.", "approverTab": "100115", "approvalDate": "08.10.2026" },
+        "pm": { "approver": "Константинопольский-Ржевский В.В.", "approverTab": "100115", "approvalDate": "08.10.2026" },
+        "pmz": { "approver": "Константинопольский-Ржевский В.В.", "approverTab": "100115", "approvalDate": "08.10.2026", "withCollateral": true }
+      }
+    },
+    "transitions": { "rm": "mon_rm_accept", "pm": "mon_pm_accept", "pmz": "mon_pmz_accept" }
+  }
+}

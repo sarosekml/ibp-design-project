@@ -26,7 +26,7 @@
      PostTileDealFinMetrics.render(tile, metrics, opts)
        metrics — DealFinancialMetricsRsDto или null; opts.failed — запрос
        не выполнен. Ставит data-state и data-pe, перерисовывает бар, поля и
-       блок PE.
+       блок переоценки.
    ============================================================ */
 (function () {
   'use strict';

@@ -1,0 +1,8 @@
+/* Окно «Подтвердите действие» — приём на мониторинг (NavigatorApprovalModal).
+   Только показ Switch по варианту. Геометрия — Modal ДС (modal--w3), поля —
+   InputAutocomplete и InputDate ДС во всю ширину тела; своих
+   значений здесь нет. */
+
+/* Switch «С обеспечением» — только у ПМЗ. Скрытие через корень окна: у .sw
+   своя display той же специфичности. */
+.lc-nav-approval:not([data-variant="pmz"]) .lc-nav-approval__collateral { display: none; }

@@ -1,0 +1,101 @@
+<!-- NavigatorAppointmentOfResponsibleModal — окно «Назначение ответственного».
+     Артефакт тайла «Заведение сделки» (Navigator): открывается кнопкой
+     «Назначить ответственного» на вкладке «ЦУП» в статусе «Ожидает назначения
+     ответственного». Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Состав — макет screenflow дизайнера и пояснение к нему: «кроме выбора
+     ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные
+     с этим ГСЗ сделки и ответственные по этим сделкам».
+     – «Ответственный от ЦУП» — InputAutocomplete по справочнику сотрудников;
+     – «Группа связанных заемщиков» — ReadOnlyField, ГСЗ сделки;
+     – «Сделки ГСЗ» — Table: номер, наименование, ответственный ЦУП;
+     – «Назначить» — ответственный уходит в команду сделки (tsupEmployee).
+     Крестик и Esc — без назначения. Клик мимо окна не закрывает: в окне поле
+     ввода (Modal ДС).
+
+     Значения ставит NavigatorAppointmentOfResponsibleModal.js из записи
+     сделки и DealsStore; ниже — пример: сделка 1025, ГСЗ «СвязьКапитал». -->
+<div class="modal-scrim" id="nav-appoint-scrim" hidden>
+  <div class="modal modal--w5 lc-nav-appoint" role="dialog" aria-modal="true" aria-labelledby="nav-appoint-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-appoint-title">Назначение ответственного</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как в
+           окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-appoint-employee"><span class="ds-label__text">Ответственный от ЦУП</span></label>
+        <div class="inp__field" data-ddl="nav-appoint-employee-list">
+          <input class="inp__control" id="nav-appoint-employee" name="tsupEmployee" autocomplete="off" value="Щукин Щ.Щ. 100134">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-appoint-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value" data-nav-appoint-gsz>Группа «СвязьКапитал»</span></div>
+      </div>
+
+      <h3 class="ds-h6-strong">Сделки ГСЗ</h3>
+
+      <!-- Table ДС без тулбара: строки рисует скрипт окна. Наименование —
+           в одну строку с многоточием и тултипом (TableCell). Других сделок
+           у ГСЗ нет или ГСЗ не указана — пустое состояние тела таблицы. -->
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-nav-appoint-table>
+            <div class="tbl__row tbl__row--head lc-nav-appoint__cols">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">Номер сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Наименование сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Ответственный ЦУП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1035</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Реконструкция аэропортового комплекса</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Степанов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1045</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Приобретение пакета акций энергокомпании</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Смирнов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1055</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Финансирование модернизации нефтеперерабатывающего завода</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Баранов Б.Б.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1065</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Кредитование лесопромышленного комбината</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Захаров З.З.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+          <div class="dtable__empty" data-nav-appoint-empty hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title" data-nav-appoint-empty-text>Других сделок у этой ГСЗ нет</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-appoint-save><span class="btn__label">Назначить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

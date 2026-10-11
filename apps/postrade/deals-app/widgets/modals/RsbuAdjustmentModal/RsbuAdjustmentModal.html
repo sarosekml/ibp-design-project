@@ -1,0 +1,67 @@
+<!-- Связанный артефакт тайла «Корректировки процентов РСБУ»: окно внесения и правки
+     корректировки. Одна форма на оба случая — «Новая корректировка» (кнопка «Добавить»)
+     и «Редактирование корректировки» (кнопка «Сохранить»); заголовок и кнопку ставит
+     RsbuAdjustmentModal.js (PostModalRsbuAdjustment) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. Даты начала берутся из списка (выпадающий
+     список заполняет скрипт), конечная дата и сумма вводятся руками, комментарий
+     необязателен. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="rsbu-adj-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="rsbu-adj-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="rsbu-adj-title">Новая корректировка</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" id="rsbu-adj-alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text" id="rsbu-adj-alert-text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-rsbu-form" id="rsbu-adj-form" onsubmit="return false" novalidate>
+        <div class="lc-rsbu-form__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Начальная дата корректировки</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="rsbu-adj-start-list" data-ddl="rsbu-adj-start-list">
+                <input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left" data-helper="startDate">&nbsp;</span>
+            <div id="rsbu-adj-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Конечная дата корректировки</span></label>
+            <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
+            <span class="ds-helper ds-helper--left" data-helper="endDate">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-amt"><span class="ds-label__text">Сумма корректировки</span></label>
+          <div class="inp__field"><input class="inp__control" id="rsbu-adj-amt" name="adjustmentAmount" inputmode="decimal" data-amount><span class="inp__postfix" data-rsbu-currency>RUB</span></div>
+          <span class="ds-helper ds-helper--left" data-helper="adjustmentAmount">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="rsbu-adj-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="rsbu-adj-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left" data-helper="comment">&nbsp;</span>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-rsbu-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
