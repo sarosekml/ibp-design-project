@@ -57,6 +57,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
 import { dsFromConfig } from './project.mjs';
 
 const SNAP_DATE = '2026-10-08T09:00:00Z';
@@ -559,5 +560,8 @@ function main(args) {
   return 1;
 }
 
-const code = main(process.argv.slice(2));
-if (code !== null) process.exitCode = code;
+/* Запуск — только напрямую: заморозку (injectFreeze) импортирует dev-spec.mjs (RE0016). */
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
+  const code = main(process.argv.slice(2));
+  if (code !== null) process.exitCode = code;
+}

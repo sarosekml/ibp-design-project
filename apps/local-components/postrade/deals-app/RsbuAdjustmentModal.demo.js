@@ -43,7 +43,7 @@
     var alertBox = el.querySelector('.modal__alert');
     if (alertBox) alertBox.hidden = !err;
     var text = el.querySelector('.alert__text');
-    if (text && err) text.textContent = 'Выберите начальную дату, введите конечную дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.';
+    if (text && err) text.textContent = 'Выберите исходную дату, введите целевую дату в формате ДД.ММ.ГГГГ и сумму корректировки числом.';
   }
 
   window.IBPKitDemo.register('RsbuAdjustmentModal', {

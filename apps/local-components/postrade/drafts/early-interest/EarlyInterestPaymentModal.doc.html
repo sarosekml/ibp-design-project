@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Окно «Новые проценты» — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Окно «Новые проценты»">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- Связанный артефакт тайла «Досрочные проценты»: окно внесения и правки досрочного платежа
+     процентов. Одна форма на оба случая — «Новые проценты» (кнопка «Добавить») и
+     «Редактирование досрочных процентов» (кнопка «Сохранить»); заголовок и кнопку ставит
+     EarlyInterestPaymentModal.js (PostModalEarlyInterest) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. «Дата платежа» — выбор из дат погашения процентов
+     («Плановые платежи», список заполняет скрипт), «Сумма платежа» — больше нуля, «Тип платежа»
+     заполнен и не меняется, «Комментарий» необязателен. Подсказка внизу — порядок погашения,
+     в котором сумма гасит задолженность. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div id="ei-pay-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w4 lc-ei-pay" role="dialog" aria-modal="true" aria-labelledby="ei-pay-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ei-pay-title">Новые проценты</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-ei-pay__form" id="ei-pay-form" onsubmit="return false" novalidate>
+        <div class="lc-ei-pay__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-date"><span class="ds-label__text">Дата платежа</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="ei-pay-date-list" data-ddl="ei-pay-date-list">
+                <input class="inp__control" id="ei-pay-date" name="paymentDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left">Даты погашения процентов из «Плановых платежей»</span>
+            <div id="ei-pay-date-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-amt"><span class="ds-label__text">Сумма платежа</span></label>
+            <div class="inp__field"><input class="inp__control" id="ei-pay-amt" name="paymentAmount" inputmode="decimal" placeholder="0,00" data-amount><span class="inp__postfix" data-ei-currency>RUB</span></div>
+            <span class="ds-helper ds-helper--left">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m inp--disabled">
+          <label class="ds-label ds-label--wrap" for="ei-pay-type"><span class="ds-label__text">Тип платежа</span></label>
+          <div class="inp__field"><input class="inp__control" id="ei-pay-type" name="paymentType" value="Погашение процентов (досрочное)" disabled></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="ei-pay-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="ei-pay-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+      </form>
+      <p class="note note--s">
+        <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+        <span class="note__text" data-ei-order-note>Сумма гасит задолженность по порядку погашения: 1. Капитализированная задолженность, 2. Отложенная задолженность, 3. Капитализированная отложенная задолженность и далее.</span>
+      </p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-ei-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>12.10.2026</b></span><span>Категория: <b>Транш</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты Post</a> · postrade/drafts/early-interest</p>
+  <h1>Окно «Новые проценты»</h1>
+  <p class="lead">Внести или поправить досрочный платёж процентов — дату, сумму и комментарий</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/drafts/early-interest</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal">apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest/pages/EarlyInterestPayments.preview.html">apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="EarlyInterestPaymentsTile.doc.html">Досрочные проценты (EarlyInterestPaymentsTile)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Досрочные проценты» — кнопка «Новые проценты», карандаш и двойной клик по строке таблицы, кнопка «Новые проценты» в пустой таблице; открывается и по кнопке «Заполнить» тайла (?open=add)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (12.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">бизнес-требование RE0017 «Досрочные проценты»<br>12.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 12.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Артефакт тайла «Досрочные проценты». Заголовок окна — «Новые проценты» при внесении и «Редактирование досрочных процентов» при правке, форма одна.</p>
+<p class="desc">Досрочный платёж процентов — сумма, которая начиная с «Даты платежа» гасит процентную задолженность по типам в порядке погашения инструмента (окно «Порядок погашения»). Дата — одна из дат погашения процентов в «Плановых платежах». Платёж участвует в расчёте «Процентных платежей» и «Плановых платежей». Подсказка внизу окна напоминает порядок, в котором сумма погасит задолженность.</p>
+<p class="desc">Страницу и таблицу окно не знает: даты, валюту и порядок берёт у страницы, проверенную запись отдаёт ей же (<code class="tok">PostModalEarlyInterest.bind(scrim, { options, save })</code>, <code class="tok">EarlyInterestPaymentModal.js</code>). Страница добавляет или правит строку и показывает тост.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal w4 (заголовок «Новые проценты» / «Редактирование досрочных процентов», IconButton L «Закрыть»)
+├── modal__alert — Alert error (скрыт, пока ошибки нет)
+├── тело
+│   ├── форма в одну колонку
+│   │   ├── ряд из двух колонок: «Дата платежа» (Select + DropdownList) · «Сумма платежа» (InputAmount)
+│   │   ├── «Тип платежа» — InputText disabled, «Погашение процентов (досрочное)»
+│   │   └── «Комментарий» — InputText multiline
+│   └── Note — «Сумма гасит задолженность по порядку погашения: 1. …, 2. …, 3. … и далее.»
+└── подвал: «Отменить» (transparent) · «Добавить» / «Сохранить» (accent)</code></pre>
+<p class="desc">Ширина — <code class="tok">modal--w4</code>. Раскладку формы задаёт <code class="tok">EarlyInterestPaymentModal.css</code>, остальное — Modal.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Modal/Modal.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w4</code>, <code class="tok">modal__alert</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Alert/Alert.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">alert--error alert--m alert--flush</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Select + DropdownList</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/</code>, <code class="tok">…/DropdownList/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Дата платежа»: <code class="tok">inp--m</code>, <code class="tok">ddl--floating ddl--scroll</code>, только выбор из списка; хелпер — откуда даты</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAmount</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Сумма платежа»: <code class="tok">inp--m</code>, <code class="tok">inp__postfix</code> — код валюты инструмента</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputText</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/molecules/Inputs/InputText/InputText.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Тип платежа»: <code class="tok">inp--disabled</code>; «Комментарий»: <code class="tok">inp--multiline</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Note</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Note/Note.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">note--s</code>, глиф <code class="tok">info-circle</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/Buttons/Buttons.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">btn--transparent</code>, <code class="tok">btn--accent</code>, <code class="tok">btn--m</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.5fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Закрыть» <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · Select · <a class="inl" href="../../../../../design-system/components/molecules/DropdownList/DropdownList.html">DropdownList</a> · InputAmount · <a class="inl" href="../../../../../design-system/components/molecules/Inputs/InputText/InputText.html">InputText</a> · <a class="inl" href="../../../../../design-system/components/atoms/Note/Note.html">Note</a> · <a class="inl" href="../../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.css">EarlyInterestPaymentModal.css</a> · <a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.html">EarlyInterestPaymentModal.html</a> · <a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.js">EarlyInterestPaymentModal.js</a> · <a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md">EarlyInterestPaymentModal.md</a> · <a class="inl" href="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дата платежа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата, с которой сумма начинает гасить задолженность в порядке погашения</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата <code class="tok">ДД.ММ.ГГГГ</code>, выбор из списка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">plannedInterestPaymentDates</code> — даты погашения всех видов процентов из «Плановых платежей»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Сумма платежа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сумма досрочного платежа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число больше нуля, <code class="tok">1 000 000,00</code>; постфикс — валюта инструмента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тип платежа</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тип платежа, менять нельзя</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EARLY_INTEREST_PAYMENT_TYPE_LABELS.EARLY_INTEREST_REPAYMENT</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнено всегда</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,1.3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пояснение к платежу</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст, ручной ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ввод</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист СБИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роли, которые видят «Процентные схемы» и «Процентные периоды»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Без права редактирования на странице нет кнопок «Новые проценты», правки и удаления строки — окно не открывается.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (12.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">правка: поля заполнены значениями строки, кнопка «Сохранить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">комментарий пуст — поле пустое</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новый платёж: поля пусты, «Тип платежа» заполнен, кнопка «Добавить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert вверху окна, поля с ошибкой — <code class="tok">inp--error</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (12.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">форма</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно для роли просмотра не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Тип платежа» выключен</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">всегда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">inp--disabled</code>, значение «Погашение процентов (досрочное)» — тип менять нельзя по требованию</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: не применимо — окно.</li><li>Обязательные поля: «Дата платежа», «Сумма платежа».</li><li>Что показывает, когда обязательное не заполнено: по «Добавить» / «Сохранить» — Alert «Выберите дату платежа и введите сумму платежа.», поля подсвечены <code class="tok">inp--error</code>.</li><li>Что отдаёт наружу: запись <code class="tok">{ paymentDate, paymentAmount, comment }</code> через <code class="tok">save</code>.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Комментарий — многострочное поле, текст переносится</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Список дат — <code class="tok">ddl--scroll</code>, прокрутка внутри</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ширина окна фиксирована <code class="tok">modal--w4</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Без изменений</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ввод в «Сумму платежа»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">разряды неразрывным пробелом, запятая, два знака; знак «-» не вводится</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ручной ввод в «Дату платежа»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">совпал с датой списка — выбор; иначе возврат к выбранной</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить» / «Сохранить» с пустой датой или суммой</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert «Выберите дату платежа и введите сумму платежа.», поля подсвечены</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить» / «Сохранить» с суммой 0</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert «Сумма платежа должна быть больше нуля.»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Добавить» / «Сохранить» без ошибок</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается, страница добавляет или правит строку, тост</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,2.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Отменить», крестик, Esc</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно закрывается без изменений; клик по скриму окно не закрывает (форма)</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Две записи на одну дату допустимы (ответ человека 12.10.2026) — окно их не запрещает.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<p class="desc">Окно открывает страница «Досрочные проценты»; тайл <a class="inl" href="EarlyInterestPaymentsTile.doc.html">EarlyInterestPaymentsTile.md</a> ведёт на неё с <code class="tok">?open=add</code>. Подтверждение удаления строки — окно страницы, не этого компонента.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Даты погашения процентов из «Плановых платежей», валюта инструмента, порядок погашения; сохранение и правка досрочного платежа.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,3fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,3fr) minmax(0,2.8fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/early-interest-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_EARLY_INTEREST_PAYMENTS</code>, <code class="tok">INTEREST_DEBT_TYPE_LABELS</code>, <code class="tok">EARLY_INTEREST_PAYMENT_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EarlyInterestPaymentRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (12.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Метка без параметров: <code class="tok">&lt;ds-include src=&quot;../widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.html&quot;&gt;</code> в конце страницы. Скрим — <code class="tok">#ei-pay-scrim</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/features/EarlyInterestPaymentModal/EarlyInterestPaymentModal.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EarlyInterestPaymentModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">EarlyInterestPaymentModal.js</code> (<code class="tok">PostModalEarlyInterest.bind</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Пары во фронтенде нет — имя наше (12.10.2026).</li><li>Владелец компонента — <code class="tok">не решено (12.10.2026)</code>.</li><li>Допущение агента (12.10.2026): заголовок при правке — «Редактирование досрочных процентов».</li><li>Допущение агента (12.10.2026): «Тип платежа» — выключенное поле ввода (<code class="tok">inp--disabled</code>), а не ReadOnlyField: остаётся в ряду полей формы и читается как «не меняется».</li><li>Допущение агента (12.10.2026): подсказка Note с первыми тремя типами порядка погашения — чтобы при вводе суммы было видно, что она погасит.</li><li>Допущение агента (12.10.2026): хелпер у «Даты платежа» — «Даты погашения процентов из «Плановых платежей»».</li><li>Сумма без верхнего предела, валюта — валюта инструмента (ответ человека 12.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../postrade/drafts/early-interest/data/tranche-data.js"></script>
+<script src="../../../../postrade/drafts/early-interest/data/early-interest-data.js"></script>
+<script src="../../../../postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.js"></script>
+<script src="../../../../postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.js"></script>
+<script src="../../../../postrade/drafts/early-interest/widgets/modals/InterestRepaymentOrderModal/InterestRepaymentOrderModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"EarlyInterestPaymentModal","type":"modal","base":"../../..","hub":"../../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":false,"fixtures":{"_":"Демо-данные витрины. options — валюта, даты погашения процентов для списка «Дата платежа» (ISO) и подписи типов задолженности по приоритету; edit — платёж, с которым окно открыто на правку.","options":{"currencyCode":"RUB","dateOptions":["2025-01-31","2025-02-28","2025-03-31","2025-04-30","2025-05-31","2025-06-30","2025-07-31","2025-08-31","2025-09-30","2025-10-31","2025-11-30","2025-12-31"],"orderLabels":["Капитализированная задолженность","Отложенная задолженность","Капитализированная отложенная задолженность","Тип 4","Тип 5"]},"edit":{"paymentDate":"2025-03-31","paymentAmount":250000,"comment":"Досрочное погашение по письму контрагента от 25.03.2025"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Связанный артефакт тайла «Досрочные проценты»: окно внесения и правки досрочного платежа
+     процентов. Одна форма на оба случая — «Новые проценты» (кнопка «Добавить») и
+     «Редактирование досрочных процентов» (кнопка «Сохранить»); заголовок и кнопку ставит
+     EarlyInterestPaymentModal.js (PostModalEarlyInterest) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. «Дата платежа» — выбор из дат погашения процентов
+     («Плановые платежи», список заполняет скрипт), «Сумма платежа» — больше нуля, «Тип платежа»
+     заполнен и не меняется, «Комментарий» необязателен. Подсказка внизу — порядок погашения,
+     в котором сумма гасит задолженность. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="ei-pay-scrim" hidden>
+  <div class="modal modal--w4 lc-ei-pay" role="dialog" aria-modal="true" aria-labelledby="ei-pay-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ei-pay-title">Новые проценты</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-ei-pay__form" id="ei-pay-form" onsubmit="return false" novalidate>
+        <div class="lc-ei-pay__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-date"><span class="ds-label__text">Дата платежа</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="ei-pay-date-list" data-ddl="ei-pay-date-list">
+                <input class="inp__control" id="ei-pay-date" name="paymentDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left">Даты погашения процентов из «Плановых платежей»</span>
+            <div id="ei-pay-date-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-amt"><span class="ds-label__text">Сумма платежа</span></label>
+            <div class="inp__field"><input class="inp__control" id="ei-pay-amt" name="paymentAmount" inputmode="decimal" placeholder="0,00" data-amount><span class="inp__postfix" data-ei-currency>RUB</span></div>
+            <span class="ds-helper ds-helper--left">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m inp--disabled">
+          <label class="ds-label ds-label--wrap" for="ei-pay-type"><span class="ds-label__text">Тип платежа</span></label>
+          <div class="inp__field"><input class="inp__control" id="ei-pay-type" name="paymentType" value="Погашение процентов (досрочное)" disabled></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="ei-pay-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="ei-pay-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+      </form>
+      <p class="note note--s">
+        <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+        <span class="note__text" data-ei-order-note>Сумма гасит задолженность по порядку погашения: 1. Капитализированная задолженность, 2. Отложенная задолженность, 3. Капитализированная отложенная задолженность и далее.</span>
+      </p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-ei-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Новые проценты» — связанный артефакт тайла EarlyInterestPaymentsTile.
+   Только раскладка формы: одна колонка, дата и сумма — в одном ряду, подсказка под формой.
+   Цвета, шрифты и отступы тела окна даёт Modal; здесь токены ДС. */
+.lc-ei-pay .modal__body { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-ei-pay__form { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-ei-pay__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   EarlyInterestPaymentModal.js — поведение окна «Новые проценты».
+
+   Делает то, чего нет в рантаймах ДС, и только это:
+   1) разводит два режима одной формы: новый платёж (кнопка «Добавить») и правка
+      существующего («Сохранить») — заголовок, кнопка и значения полей;
+   2) собирает список «Дата платежа» из дат погашения процентов («Плановые платежи»)
+      и принимает набранную руками дату, если она совпала с датой списка;
+   3) форматирует сумму при вводе: только цифры, разряды неразрывным пробелом,
+      запятая, не более двух знаков; знака «-» нет — сумма больше нуля;
+   4) показывает в подсказке порядок погашения, в котором сумма гасит задолженность;
+   5) проверяет форму по «Добавить» / «Сохранить» и показывает ошибку в Alert
+      вверху окна с подсветкой полей; правка поля снимает его подсветку.
+
+   Открытие, фокус, Esc и крестик делают рантаймы ДС. Страницу и таблицу окно не
+   знает: даты, валюту и порядок берёт у страницы, проверенную запись отдаёт ей же.
+
+   API:
+     PostModalEarlyInterest.bind(scrim, { options, save }) → api
+       options()           → { currencyCode, dateOptions, orderLabels } — валюта,
+                             даты ISO, подписи типов задолженности по приоритету
+       save(rec, wasEdit)  — принять запись { paymentDate, paymentAmount, comment }
+                             (дата ISO); wasEdit — окно открыто на правку
+       api.open(rec|null)  — заполнить окно (null — новый платёж) и открыть
+       api.fill(rec|null)  — только заполнить (на витрине окно уже на экране)
+       api.validate()      → boolean — проверить форму и показать ошибку
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var NBSP = ' ';
+  var KEYS = ['paymentDate', 'paymentAmount'];
+  var TOP = 3;
+
+  /* ── Формат ─────────────────────────────────────────────────────── */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  /* «1 250 000,5» → число; пусто или мусор → NaN */
+  function parseMoney(str) {
+    var s = String(str).replace(/\s/g, '').replace(',', '.');
+    return s === '' || isNaN(Number(s)) ? NaN : Number(s);
+  }
+
+  function bind(scrim, opts) {
+    if (!scrim) return null;
+    if (scrim.__earlyInterest) return scrim.__earlyInterest;
+    opts = opts || {};
+
+    var form = scrim.querySelector('form');
+    var alertBox = scrim.querySelector('.modal__alert');
+    var alertText = scrim.querySelector('.alert__text');
+    var title = scrim.querySelector('.modal__title');
+    var submit = scrim.querySelector('[data-ei-submit]');
+    var currency = scrim.querySelector('[data-ei-currency]');
+    var orderNote = scrim.querySelector('[data-ei-order-note]');
+    var dateCtl = form.elements.paymentDate;
+    var dateList = scrim.querySelector('.ddl');
+    var dateIso = '';
+    var editing = false;
+
+    function params() { return (opts.options && opts.options()) || { currencyCode: 'RUB', dateOptions: [], orderLabels: [] }; }
+    function field(k) { return form.elements[k]; }
+    function boxOf(k) { return field(k).closest('.inp'); }
+    function isInline() { return scrim.classList.contains('modal-scrim--inline'); }
+
+    /* ── Ошибки ─────────────────────────────────────────────────────── */
+    function clearErrors() {
+      alertBox.hidden = true;
+      KEYS.forEach(function (k) { boxOf(k).classList.remove('inp--error'); });
+    }
+    function showError(text, keys) {
+      alertText.textContent = text;
+      alertBox.hidden = false;
+      (keys || []).forEach(function (k) { boxOf(k).classList.add('inp--error'); });
+    }
+
+    /* ── Сумма: только положительная ────────────────────────────────── */
+    function formatAmount(inp) {
+      var raw = inp.value, pos = inp.selectionStart == null ? raw.length : inp.selectionStart;
+      var left = raw.slice(0, pos).replace(/[^\d,.]/g, '').length;
+      var clean = raw.replace(/\./g, ',').replace(/[^\d,]/g, '');
+      var parts = clean.split(',');
+      var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+      var out = intPart + (parts.length > 1 ? ',' + parts.slice(1).join('').slice(0, 2) : '');
+      inp.value = out;
+      var n = 0, caret = 0;
+      while (caret < out.length && n < left) { if (/[\d,]/.test(out.charAt(caret))) n++; caret++; }
+      try { inp.setSelectionRange(caret, caret); } catch (e) { /* поле без выделения */ }
+    }
+    form.addEventListener('input', function (e) {
+      var inp = e.target;
+      if (inp.hasAttribute('data-amount')) formatAmount(inp);
+      inp.closest('.inp').classList.remove('inp--error');
+    });
+    form.addEventListener('focusout', function (e) {
+      var inp = e.target;
+      if (inp.hasAttribute && inp.hasAttribute('data-amount')) {
+        var n = parseMoney(inp.value);
+        if (!isNaN(n)) inp.value = money(n);
+      }
+    });
+
+    /* ── Дата платежа: даты погашения процентов ─────────────────────── */
+    function paintDates() {
+      dateList.innerHTML = params().dateOptions.map(function (iso) {
+        return '<button type="button" class="ddl__item" role="option" aria-selected="' + (iso === dateIso) + '" data-code="' + iso + '">'
+          + '<span class="ddl__item-body"><span class="ddl__item-label">' + date(iso) + '</span></span></button>';
+      }).join('');
+    }
+    function setDate(iso) {
+      dateIso = iso || '';
+      dateCtl.value = dateIso ? date(dateIso) : '';
+      paintDates();
+      boxOf('paymentDate').classList.remove('inp--error');
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+    /* Набранный руками текст: совпал с датой списка — выбор; пусто — сброс; иначе откат к выбранной */
+    dateCtl.addEventListener('change', function () {
+      var t = dateCtl.value.trim();
+      if (!t) { if (dateIso) setDate(''); return; }
+      var hit = params().dateOptions.filter(function (iso) { return date(iso) === t; })[0];
+      setDate(hit || dateIso);
+    });
+    dateCtl.closest('.inp').addEventListener('ds-input:clear', function () { setDate(''); });
+    if (window.DSDropdownList) {
+      window.DSDropdownList.bind(dateCtl.closest('.inp__field'), {
+        list: dateList,
+        onSelect: function (it) { setDate(it.getAttribute('data-code')); }
+      });
+    }
+
+    /* ── Подсказка: порядок погашения ───────────────────────────────── */
+    function paintOrder() {
+      if (!orderNote) return;
+      var labels = params().orderLabels || [];
+      var top = labels.slice(0, TOP).map(function (l, i) { return (i + 1) + '. ' + l; }).join(', ');
+      orderNote.textContent = labels.length
+        ? 'Сумма гасит задолженность по порядку погашения: ' + top + (labels.length > TOP ? ' и далее.' : '.')
+        : '';
+    }
+
+    /* ── Заполнение и проверка ──────────────────────────────────────── */
+    function fill(rec) {
+      editing = !!rec;
+      title.textContent = rec ? 'Редактирование досрочных процентов' : 'Новые проценты';
+      submit.querySelector('.btn__label').textContent = rec ? 'Сохранить' : 'Добавить';
+      if (currency) currency.textContent = params().currencyCode;
+      setDate(rec ? rec.paymentDate : '');
+      field('paymentAmount').value = rec ? money(rec.paymentAmount) : '';
+      field('comment').value = rec ? (rec.comment || '') : '';
+      paintOrder();
+      clearErrors();
+      if (window.DSInput) window.DSInput.syncAll(scrim);
+    }
+
+    function validate() {
+      clearErrors();
+      var amt = parseMoney(field('paymentAmount').value), bad = [];
+      if (!dateIso) bad.push('paymentDate');
+      if (isNaN(amt)) bad.push('paymentAmount');
+      if (bad.length) { showError('Выберите дату платежа и введите сумму платежа.', bad); return false; }
+      if (amt <= 0) { showError('Сумма платежа должна быть больше нуля.', ['paymentAmount']); return false; }
+      return true;
+    }
+
+    submit.addEventListener('click', function () {
+      if (!validate()) return;
+      var rec = { paymentDate: dateIso, paymentAmount: parseMoney(field('paymentAmount').value), comment: field('comment').value.trim() };
+      if (opts.save) opts.save(rec, editing);
+      if (!isInline() && window.DSModal) window.DSModal.closeTop();
+    });
+
+    function open(rec) {
+      fill(rec || null);
+      if (window.DSModal) window.DSModal.open(scrim);
+    }
+
+    fill(null);
+
+    var api = { open: open, fill: fill, validate: validate };
+    scrim.__earlyInterest = api;
+    return api;
+  }
+
+  window.PostModalEarlyInterest = { bind: bind };
+})();
+</script>
+</body>
+</html>

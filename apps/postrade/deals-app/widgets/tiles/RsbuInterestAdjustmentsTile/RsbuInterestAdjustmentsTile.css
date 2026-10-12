@@ -1,17 +1,20 @@
 /* Локальный компонент «Корректировки процентов РСБУ».
-   Только внутренняя раскладка и показ блоков по data-adjustments.
+   Только внутренняя раскладка и показ блоков по осям data-state, data-mode, data-calc.
    Цвета, шрифты, отступы — токены ДС. */
 
 .lc-rsbu-adj .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
 
 .lc-rsbu-adj__text { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
 
-/* База — все три текста скрыты, нужный открывает атрибут вида */
+/* База — все три текста скрыты, нужный открывают оси */
 .lc-rsbu-adj__text { display: none; }
-.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__text--locked,
-.lc-rsbu-adj[data-adjustments="none"]   .lc-rsbu-adj__text--none,
-.lc-rsbu-adj[data-adjustments="filled"] .lc-rsbu-adj__text--filled { display: block; }
+.lc-rsbu-adj[data-calc="done"][data-state="data"]  .lc-rsbu-adj__text--filled,
+.lc-rsbu-adj[data-calc="done"][data-state="empty"] .lc-rsbu-adj__text--none,
+.lc-rsbu-adj[data-calc="required"] .lc-rsbu-adj__text--locked { display: block; }
+
+/* Без права редактирования кнопки нет, стрелка на страницу корректировок остаётся */
+.lc-rsbu-adj[data-mode="view"] .lc-rsbu-adj__add { display: none; }
 
 /* «Требуется расчёт»: перехода на страницу корректировок и кнопки нет вовсе */
-.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__open,
-.lc-rsbu-adj[data-adjustments="locked"] .lc-rsbu-adj__add { display: none; }
+.lc-rsbu-adj[data-calc="required"] .lc-rsbu-adj__open,
+.lc-rsbu-adj[data-calc="required"] .lc-rsbu-adj__add { display: none; }

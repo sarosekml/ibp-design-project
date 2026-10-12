@@ -13,7 +13,7 @@
       "id": "deals-app",
       "title": "Post \u2014 \u0414\u0418\u0414",
       "track": "product",
-      "panel": false
+      "panel": true
     },
     {
       "dir": "postrade/post-reports-app",
@@ -137,6 +137,16 @@
           "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0432\u043d\u0435\u0441\u0435\u043d\u044b",
           "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled",
           "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled",
+          "note": null,
+          "issues": [],
+          "do": []
+        },
+        {
+          "id": "hards-view",
+          "kind": "do",
+          "title": "\u041a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438 \u0431\u0435\u0437 \u043f\u0440\u0430\u0432\u0430 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f",
+          "page": "Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view",
+          "href": "postrade/deals-app/pages/Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view",
           "note": null,
           "issues": [],
           "do": []

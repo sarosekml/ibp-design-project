@@ -536,8 +536,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RsbuAdjustmentModal.doc.html",
       "owner": "RsbuInterestAdjustmentsTile",
       "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
+      "version": "1.001",
+      "updated": "12.10.2026"
     },
     {
       "id": "RsbuInterestAdjustmentsTile",
@@ -550,8 +550,64 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RsbuInterestAdjustmentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.001",
-      "updated": "09.10.2026"
+      "version": "1.002",
+      "updated": "12.10.2026"
+    },
+    {
+      "id": "EarlyInterestPaymentModal",
+      "name": "Окно «Новые проценты»",
+      "category": "Транш",
+      "purpose": "Внести или поправить досрочный платёж процентов — дату, сумму и комментарий",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/drafts/early-interest",
+      "doc": "postrade/drafts/early-interest/EarlyInterestPaymentModal.doc.html",
+      "owner": "EarlyInterestPaymentsTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "12.10.2026"
+    },
+    {
+      "id": "EarlyInterestPaymentsTile",
+      "name": "Досрочные проценты",
+      "category": "Транш",
+      "purpose": "Сводка по досрочным платежам процентов инструмента — заполнена ли карточка, с переходом на страницу «Досрочные проценты» и входом в заполнение",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/drafts/early-interest",
+      "doc": "postrade/drafts/early-interest/EarlyInterestPaymentsTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.000",
+      "updated": "12.10.2026"
+    },
+    {
+      "id": "InterestRepaymentOrderModal",
+      "name": "Окно «Порядок погашения»",
+      "category": "Транш",
+      "purpose": "Задать порядок, в котором досрочный платёж гасит типы процентной задолженности инструмента",
+      "type": "modal",
+      "typeLabel": "модальное окно",
+      "module": "postrade/drafts/early-interest",
+      "doc": "postrade/drafts/early-interest/InterestRepaymentOrderModal.doc.html",
+      "owner": "InterestRepaymentOrderTile",
+      "stub": false,
+      "version": "1.000",
+      "updated": "12.10.2026"
+    },
+    {
+      "id": "InterestRepaymentOrderTile",
+      "name": "Порядок погашения",
+      "category": "Транш",
+      "purpose": "Первые три типа процентной задолженности, которые гасит досрочный платёж, — с входом в окно «Порядок погашения»",
+      "type": "tile",
+      "typeLabel": "тайл",
+      "module": "postrade/drafts/early-interest",
+      "doc": "postrade/drafts/early-interest/InterestRepaymentOrderTile.doc.html",
+      "owner": null,
+      "stub": false,
+      "version": "1.000",
+      "updated": "12.10.2026"
     },
     {
       "id": "CreateFairValueCalculationModal",

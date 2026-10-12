@@ -93,11 +93,11 @@ window.MOCK_TRANCHE = {
 };
 
 /**
- * Корректировка процентов РСБУ: сумма, которая прибавляется/вычитается начиная с начальной даты.
+ * Корректировка процентов РСБУ: сумма, которая прибавляется/вычитается начиная с исходной даты.
  * Source: invented (09.10.2026) — заменить на DTO, когда он появится.
  * @typedef {Object} RsbuInterestAdjustmentRsDto
- * @property {string} startDate          начальная дата корректировки — одна из дат процентных платежей (ISO)
- * @property {string} endDate            конечная дата корректировки — любая дата, вводится руками (ISO)
+ * @property {string} startDate          исходная дата — одна из дат процентных платежей (ISO)
+ * @property {string} endDate            целевая дата — любая дата, вводится руками (ISO)
  * @property {number} adjustmentAmount   сумма корректировки в валюте инструмента; может быть отрицательной
  * @property {string} comment            комментарий
  */
@@ -107,7 +107,7 @@ window.MOCK_TRANCHE = {
  * Source: invented (09.10.2026).
  * @typedef {Object} RsbuInterestAdjustmentsRsDto
  * @property {string} currencyCode                          валюта сумм, ISO 4217
- * @property {string[]} startDateOptions                    даты для списка «Начальная дата» — даты процентных платежей (ISO); в демо — рыба
+ * @property {string[]} startDateOptions                    даты для списка «Исходная дата» — даты процентных платежей (ISO); в демо — рыба
  * @property {RsbuInterestAdjustmentRsDto[]} adjustments    внесённые корректировки (демо для состояния filled)
  */
 

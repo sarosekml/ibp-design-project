@@ -1,0 +1,72 @@
+<!-- Связанный артефакт тайла «Досрочные проценты»: окно внесения и правки досрочного платежа
+     процентов. Одна форма на оба случая — «Новые проценты» (кнопка «Добавить») и
+     «Редактирование досрочных процентов» (кнопка «Сохранить»); заголовок и кнопку ставит
+     EarlyInterestPaymentModal.js (PostModalEarlyInterest) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. «Дата платежа» — выбор из дат погашения процентов
+     («Плановые платежи», список заполняет скрипт), «Сумма платежа» — больше нуля, «Тип платежа»
+     заполнен и не меняется, «Комментарий» необязателен. Подсказка внизу — порядок погашения,
+     в котором сумма гасит задолженность. Ошибка проверки — Alert вверху окна и красные поля. -->
+
+<div class="modal-scrim" id="ei-pay-scrim" hidden>
+  <div class="modal modal--w4 lc-ei-pay" role="dialog" aria-modal="true" aria-labelledby="ei-pay-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ei-pay-title">Новые проценты</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-ei-pay__form" id="ei-pay-form" onsubmit="return false" novalidate>
+        <div class="lc-ei-pay__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-date"><span class="ds-label__text">Дата платежа</span></label>
+            <div class="inp__box">
+              <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="ei-pay-date-list" data-ddl="ei-pay-date-list">
+                <input class="inp__control" id="ei-pay-date" name="paymentDate" placeholder="Выберите дату" autocomplete="off">
+                <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+              </div>
+            </div>
+            <span class="ds-helper ds-helper--left">Даты погашения процентов из «Плановых платежей»</span>
+            <div id="ei-pay-date-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-amt"><span class="ds-label__text">Сумма платежа</span></label>
+            <div class="inp__field"><input class="inp__control" id="ei-pay-amt" name="paymentAmount" inputmode="decimal" placeholder="0,00" data-amount><span class="inp__postfix" data-ei-currency>RUB</span></div>
+            <span class="ds-helper ds-helper--left">&nbsp;</span>
+          </div>
+        </div>
+        <div class="inp inp--m inp--disabled">
+          <label class="ds-label ds-label--wrap" for="ei-pay-type"><span class="ds-label__text">Тип платежа</span></label>
+          <div class="inp__field"><input class="inp__control" id="ei-pay-type" name="paymentType" value="Погашение процентов (досрочное)" disabled></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="ei-pay-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="ei-pay-cmt" name="comment" rows="3"></textarea></div>
+          <span class="ds-helper ds-helper--left">&nbsp;</span>
+        </div>
+      </form>
+      <p class="note note--s">
+        <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+        <span class="note__text" data-ei-order-note>Сумма гасит задолженность по порядку погашения: 1. Капитализированная задолженность, 2. Отложенная задолженность, 3. Капитализированная отложенная задолженность и далее.</span>
+      </p>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-ei-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 400.
+Документов: 421.
 
 ## Корень (4)
 
@@ -174,7 +174,7 @@
 |---|---|
 | [design-system/tools/ds-lint.md](../design-system/tools/ds-lint.md) | Линтер ДС: правила и проверки |
 
-## Агентная система (39)
+## Агентная система (42)
 
 | Документ | Аннотация |
 |---|---|
@@ -195,6 +195,7 @@
 | Документ | Аннотация |
 |---|---|
 | [.agents/commands/concepts.md](../.agents/commands/concepts.md) | — |
+| [.agents/commands/dev-spec.md](../.agents/commands/dev-spec.md) | — |
 | [.agents/commands/handoff.md](../.agents/commands/handoff.md) | — |
 | [.agents/commands/panel.md](../.agents/commands/panel.md) | — |
 | [.agents/commands/promote.md](../.agents/commands/promote.md) | — |
@@ -220,6 +221,8 @@
 |---|---|
 | [.agents/skills/composition-review/SKILL.md](../.agents/skills/composition-review/SKILL.md) | Приёмка композиции |
 | [.agents/skills/concept-design/SKILL.md](../.agents/skills/concept-design/SKILL.md) | Проектирование концептов |
+| [.agents/skills/dev-spec/SKILL.md](../.agents/skills/dev-spec/SKILL.md) | Спецификация на разработку |
+| [.agents/skills/dev-spec/references/template.md](../.agents/skills/dev-spec/references/template.md) | Название сценария по-русски |
 | [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка страниц документации ДС на docs-split |
 | [.agents/skills/docs-split/references/lessons.md](../.agents/skills/docs-split/references/lessons.md) | Уроки раскатки docs-split |
 | [.agents/skills/docs-split/references/pages-index.md](../.agents/skills/docs-split/references/pages-index.md) | Карта страниц документации |
@@ -243,7 +246,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (203)
+## Приложения (218)
 
 | Документ | Аннотация |
 |---|---|
@@ -444,6 +447,7 @@
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
 | [apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
 | [apps/postrade/deals-app/pages/Tranche.screen.md](../apps/postrade/deals-app/pages/Tranche.screen.md) | Страница транша |
+| [apps/postrade/deals-app/proto-panel/comments.md](../apps/postrade/deals-app/proto-panel/comments.md) | Комментарии к прототипу |
 | [apps/postrade/deals-app/refs/Текущий портфель.md](../apps/postrade/deals-app/refs/Текущий%20портфель.md) | Новая страница "Текущий портфель ДИД" |
 | [apps/postrade/deals-app/widgets/README.md](../apps/postrade/deals-app/widgets/README.md) | widgets — виджеты модуля deals-app |
 | [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md) | Модальное окно «Документы по сделке» (CounterpartiesEcmModal) — журнал изменений |
@@ -530,6 +534,30 @@
 | [apps/postrade/deals-app/DealNavigator.handoff.md](../apps/postrade/deals-app/DealNavigator.handoff.md) | DealNavigator — handoff |
 | [apps/postrade/deals-app/FinInstrumentsCard.handoff.md](../apps/postrade/deals-app/FinInstrumentsCard.handoff.md) | FinInstrumentsCard — handoff |
 | [apps/postrade/deals-app/PortfolioData.handoff.md](../apps/postrade/deals-app/PortfolioData.handoff.md) | PortfolioData — handoff |
+
+### apps/postrade/drafts/dev-specs
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/dev-specs/pages/index.screen.md](../apps/postrade/drafts/dev-specs/pages/index.screen.md) | Спецификации на разработку |
+| [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md) | Корректировки процентов РСБУ |
+
+### apps/postrade/drafts/early-interest
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.screen.md](../apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.screen.md) | Досрочные проценты |
+| [apps/postrade/drafts/early-interest/pages/Tranche.screen.md](../apps/postrade/drafts/early-interest/pages/Tranche.screen.md) | Страница транша (концепт «Досрочные проценты») |
+| [apps/postrade/drafts/early-interest/pages/index.screen.md](../apps/postrade/drafts/early-interest/pages/index.screen.md) | Главная концепта «Досрочные проценты» |
+| [apps/postrade/drafts/early-interest/proto-panel/comments.md](../apps/postrade/drafts/early-interest/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/CHANGELOG.md) | Новые проценты — журнал изменений |
+| [apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md](../apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md) | Окно «Новые проценты» |
+| [apps/postrade/drafts/early-interest/widgets/modals/InterestRepaymentOrderModal/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/modals/InterestRepaymentOrderModal/CHANGELOG.md) | Порядок погашения (окно) — журнал изменений |
+| [apps/postrade/drafts/early-interest/widgets/modals/InterestRepaymentOrderModal/InterestRepaymentOrderModal.md](../apps/postrade/drafts/early-interest/widgets/modals/InterestRepaymentOrderModal/InterestRepaymentOrderModal.md) | Окно «Порядок погашения» |
+| [apps/postrade/drafts/early-interest/widgets/tiles/EarlyInterestPaymentsTile/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/tiles/EarlyInterestPaymentsTile/CHANGELOG.md) | Досрочные проценты — журнал изменений |
+| [apps/postrade/drafts/early-interest/widgets/tiles/EarlyInterestPaymentsTile/EarlyInterestPaymentsTile.md](../apps/postrade/drafts/early-interest/widgets/tiles/EarlyInterestPaymentsTile/EarlyInterestPaymentsTile.md) | Досрочные проценты |
+| [apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/CHANGELOG.md) | Порядок погашения — журнал изменений |
+| [apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.md](../apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.md) | Порядок погашения |
 
 ### apps/postrade/drafts/tranche-page
 
@@ -646,7 +674,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (74)
+## Задачи и заметки (77)
 
 ### Архив/черновики
 
@@ -717,6 +745,8 @@
 | [docs/tasks/RE0013-deal-navigator.md](tasks/RE0013-deal-navigator.md) | Заведение сделки (Navigator): тайл, окна навигатора и статусная модель сделки |
 | [docs/tasks/RE0014-deal-status-model-page.md](tasks/RE0014-deal-status-model-page.md) | Страница «Статусная модель сделки» в витрине локальных компонентов Post |
 | [docs/tasks/RE0015-screen-map.md](tasks/RE0015-screen-map.md) | Карта экранов Post: майндмап страниц проекта, переход на любую страницу в один клик |
+| [docs/tasks/RE0016-dev-spec-template.md](tasks/RE0016-dev-spec-template.md) | Шаблон спецификации на разработку: md + автономный html со снимками состояний |
+| [docs/tasks/RE0017-early-interest.md](tasks/RE0017-early-interest.md) | Досрочные проценты: тайл транша, страница, окна «Новые проценты» и «Порядок погашения» |
 
 ### Снимки задач
 
@@ -736,6 +766,7 @@
 | [docs/tasks/RE0010-ds-scroll-dark-2.handoff.md](tasks/RE0010-ds-scroll-dark-2.handoff.md) | RE0010 — handoff |
 | [docs/tasks/RE0011-ds-illustrations-dark.handoff.md](tasks/RE0011-ds-illustrations-dark.handoff.md) | RE0011 — handoff |
 | [docs/tasks/RE0015-screen-map.handoff.md](tasks/RE0015-screen-map.handoff.md) | RE0015 — handoff |
+| [docs/tasks/RE0017-early-interest.handoff.md](tasks/RE0017-early-interest.handoff.md) | RE0017-early-interest — handoff |
 
 ## Служебное (1)
 

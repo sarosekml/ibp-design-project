@@ -127,6 +127,24 @@ window.IBPHub = [
     icon: 'ai-stars'
   },
   {
+    id: 'dev-specs',
+    group: 'concepts',
+    title: 'Post — Спецификации на разработку',
+    desc: 'Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний; выгрузка папкой md + html',
+    href: 'apps/postrade/drafts/dev-specs/pages/index.html',
+    root: 'apps/postrade/drafts/dev-specs',
+    icon: 'file-check'
+  },
+  {
+    id: 'early-interest',
+    group: 'concepts',
+    title: 'Post — Досрочные проценты',
+    desc: 'Транш: карточка «Досрочные проценты», страница досрочных платежей процентов, окна «Новые проценты» и «Порядок погашения» (RE0017)',
+    href: 'apps/postrade/drafts/early-interest/pages/index.html',
+    root: 'apps/postrade/drafts/early-interest',
+    icon: 'folder'
+  },
+  {
     id: 'new-dashboard-mvp',
     group: 'concepts',
     title: 'Главная — дашборд (MVP)',
