@@ -1,0 +1,8 @@
+/* Окно «Порядок погашения» — связанный артефакт тайла InterestRepaymentOrderTile.
+   Только раскладка тела и показ кнопок по оси data-mode. Токены ДС. */
+.lc-repay-order-modal .modal__body { display: flex; flex-direction: column; gap: var(--space-16); }
+
+/* Правка — стрелки в строках, «Отменить» и «Сохранить»; просмотр — только «Закрыть» */
+.lc-repay-order-modal[data-mode="view"] .entity__actions,
+.lc-repay-order-modal[data-mode="view"] .lc-repay-order-modal__edit,
+.lc-repay-order-modal[data-mode="edit"] .lc-repay-order-modal__view { display: none; }
