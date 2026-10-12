@@ -1,0 +1,16 @@
+/* V2DocumentsInfoTile — карточка документа и ссылка «Еще…» на токенах ДС. */
+.lc-documents-info { min-width: 0; }
+.lc-documents-info [hidden] { display: none; }
+.lc-documents-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-documents-info__error,
+.lc-documents-info__loading { display: none; }
+.lc-documents-info[data-state="error"] .lc-documents-info__error { display: flex; }
+.lc-documents-info[data-state="loading"] .lc-documents-info__loading { display: flex; }
+.lc-documents-info[data-state="loading"] .lc-documents-info__content,
+.lc-documents-info[data-state="error"] .lc-documents-info__content { display: none; }
+
+.lc-documents-info__content { gap: var(--space-12); }
+.lc-documents-info__content > .link { align-self: flex-start; }
+.lc-documents-info__empty { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }

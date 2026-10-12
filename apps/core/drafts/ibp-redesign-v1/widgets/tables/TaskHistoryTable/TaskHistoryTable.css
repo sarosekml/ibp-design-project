@@ -1,0 +1,9 @@
+/* Собственные состояния истории задачи; анатомия таблицы — ДС. */
+.lc-task-history { min-width: 0; }
+.lc-task-history__loading, .lc-task-history__error, .lc-task-history__empty { display: none; }
+.lc-task-history[data-state="loading"] .lc-task-history__loading { display: flex; }
+.lc-task-history[data-state="error"] .lc-task-history__error { display: flex; }
+.lc-task-history[data-state="empty"] .lc-task-history__empty { display: flex; }
+.lc-task-history[data-state="loading"] .lc-task-history__data,
+.lc-task-history[data-state="error"] .lc-task-history__data,
+.lc-task-history[data-state="empty"] .lc-task-history__data { display: none; }

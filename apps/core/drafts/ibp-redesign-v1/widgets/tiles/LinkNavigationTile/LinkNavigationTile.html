@@ -1,0 +1,31 @@
+<!-- Локальный компонент «Плитка со ссылками» — плитка раздела страницы
+     «Администрирование» (AdminPage). Пара во фронтенде — LinkNavigationTile
+     (core/host-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcLinkNavigationTile.render(host, { title, subtitle, groups, cols }).
+     Адреса ссылок задаёт страница через groups; начальная разметка
+     не содержит путей, зависящих от места вшивания виджета. -->
+<section class="tile lc-link-nav" data-state="data" data-mode="view" data-cols="1">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ln-title>Справочники</h3></div>
+      <p class="tile__subtitle" data-ln-subtitle>Бизнес-справочники, используемые в сделках</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-link-nav__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-link-nav__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-link-nav__content lc-link-nav__groups" data-ln-groups>
+      <div class="lc-link-nav__group">
+        <p class="lc-link-nav__label">Задачи</p>
+        <div class="lc-link-nav__links">
+          <a class="link link--accent link--m" href="#" data-inert>Объекты задач</a>
+          <a class="link link--accent link--m" href="#" data-inert>Статусы задач</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

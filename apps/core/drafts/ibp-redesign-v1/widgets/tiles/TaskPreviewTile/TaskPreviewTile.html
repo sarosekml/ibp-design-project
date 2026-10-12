@@ -1,0 +1,72 @@
+<!-- Локальный компонент «Предпросмотр задачи» — правая панель реестра задач
+     (TasksPage) и вкладки «Задачи» клиента. Пара во фронтенде — TaskPreviewTile
+     (core/tasks-app); таблица «История» вшивается виджетом TaskHistoryTable.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTaskPreviewTile.render(host, { task, onAction }). -->
+<section class="tile lc-task-preview" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-tp-title>169437. Подготовить финансовую модель</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-tp-status><span class="chip__label">Ожидает исполнения</span></span>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать задачу" data-tp-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-tp-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-task-preview__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить задачу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-task-preview__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+
+    <div class="lc-task-preview__content">
+      <!-- действия Р7 — у задачи в работе -->
+      <div class="lc-task-preview__acts" data-tp-acts>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-done><i data-icon="check"></i><span class="btn__label">Исполнить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-reassign><i data-icon="refresh"></i><span class="btn__label">Переназначить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+      </div>
+
+      <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-priority><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип задачи</span></span><div class="rof__row"><span class="rof__value" data-tp-type>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Категория</span></span><div class="rof__row"><span class="rof__value" data-tp-category>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Срок исполнения</span></span><div class="rof__row"><span class="rof__value" data-tp-due>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Исполнитель</span></span><div class="rof__row"><span class="rof__value" data-tp-executor>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Клиент</span></span><div class="rof__row"><span class="rof__value" data-tp-client>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата создания</span></span><div class="rof__row"><span class="rof__value" data-tp-created>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Инициатор</span></span><div class="rof__row"><span class="rof__value" data-tp-initiator>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Холдинг</span></span><div class="rof__row"><span class="rof__value" data-tp-holding>–</span></div></div>
+      </div>
+
+      <section class="tile tile--inset" data-tp-comment-sec hidden>
+        <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Комментарий</h4></div></div></header>
+        <div class="tile__body"><p class="lc-task-preview__text" data-tp-comment>–</p></div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Описание задачи</h4>
+        <p class="lc-task-preview__text" data-tp-description>–</p>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Связанный объект</h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип объекта</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-linked-type><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер объекта</span></span><div class="rof__row"><span class="rof__value" data-tp-linked-number>–</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование объекта</span></span><div class="rof__row"><a class="rof__value link link--accent link--m" href="#" data-tp-linked-link><span data-tp-linked-name>–</span><i data-icon="link-external"></i></a></div></div>
+        </div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">История</h4>
+        <div data-tp-history></div>
+      </section>
+    </div>
+  </div>
+</section>

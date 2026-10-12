@@ -1,0 +1,5 @@
+{
+  "_": "Демо-данные окна: задача 169437, действие reassign.",
+  "data": { "task": 169437, "action": "reassign", "employee": "Лебедев Олег Николаевич" },
+  "long": { "task": 169437, "action": "done", "employee": null }
+}

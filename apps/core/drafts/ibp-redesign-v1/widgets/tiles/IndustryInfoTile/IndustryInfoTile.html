@@ -1,0 +1,30 @@
+<!-- Локальный компонент «Отрасль» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пара во фронтенде — IndustryInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcIndustryInfoTile.render(host, { client }). -->
+<section class="tile lc-industry-info" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Отрасль</h3></div>
+      <p class="tile__subtitle">Источник: Платформа ДИД</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-industry-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-industry-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-industry-info__content">
+      <div class="entity-list">
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="factory-01"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Подотрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="sub">Цветоводство</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="building-02"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Отрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="industry">Сельское хозяйство</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="bar-chart"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Макроотрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="macro">Агропромышленный комплекс</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="pie-chart"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Сегмент</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="segment">Крупный бизнес</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="bank"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Территориальный банк</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="tb">ЦА</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="marker-pin"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">ГОСБ из ЕПК</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="gosb">8634</span></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>

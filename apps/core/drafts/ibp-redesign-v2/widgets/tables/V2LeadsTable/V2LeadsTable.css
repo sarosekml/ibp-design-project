@@ -1,0 +1,6 @@
+/* V2LeadsTable — реестр на общем рендере. Своя раскладка: только блок ошибки
+   по data-state; таблица — компоненты ДС (Table, TableCell, TableFilter,
+   Pagination), их состояния не переопределяются. */
+.lc-leads-table { min-width: 0; }
+.lc-leads-table__error { display: none; }
+.lc-leads-table[data-state="error"] .lc-leads-table__error { display: flex; }

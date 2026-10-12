@@ -1,0 +1,44 @@
+<!-- Локальный компонент «Клиент» — тайл клиента страницы сделки (Opportunity) и
+     лида (PotentialPage). Пары во фронтенде: OpportunityClientTile
+     (pretrade/opportunities-app) и ClientTile (pretrade/offersources-app,
+     вариант potential). Страница вшивает меткой <ds-include> и заполняет:
+     LcOpportunityClientTile.render(host, { client, variant }). -->
+<section class="tile lc-opp-client" data-state="data" data-mode="view" data-variant="opportunity">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Клиент</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-oc-edit><i data-icon="edit"></i></button>
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" aria-label="Перейти на страницу клиента" data-oc-link><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-opp-client__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-opp-client__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-opp-client__content">
+      <div class="tile__chiplist" data-oc-only="potential">
+        <span class="chip chip--xs" data-oc-chip-growth><span class="chip__icon"><i data-icon="trend-up"></i></span><span class="chip__label">Компания роста ДИД</span></span>
+        <span class="chip chip--xs" data-oc-chip-top><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Топ клиент</span></span>
+      </div>
+      <div class="tile__grid lc-opp-client__grid">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Клиент</span></span><div class="rof__row"><span class="badge badge--dot badge--success" aria-hidden="true"></span><span class="rof__value" data-oc-name>ООО «Ромашка»</span></div></div>
+        <div class="rof" data-oc-only="potential"><span class="ds-label"><span class="ds-label__text">Холдинг</span></span><div class="rof__row"><span class="rof__value" data-oc-holding>ГК «Цветы»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-oc-inn>7712345678</span></div></div>
+        <div class="rof" data-oc-only="opportunity"><span class="ds-label"><span class="ds-label__text">Отрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-industry>Сельское хозяйство</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Макроотрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-macro>Агропромышленный комплекс</span></div></div>
+        <div class="rof" data-oc-only="opportunity"><span class="ds-label"><span class="ds-label__text">Подотрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-sub>Цветоводство</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Сегмент</span></span><div class="rof__row"><span class="rof__value" data-oc-segment>Крупный бизнес</span></div></div>
+        <div class="rof" data-oc-only="potential"><span class="ds-label"><span class="ds-label__text">Клиентский менеджер</span></span><div class="rof__row"><span class="rof__value" data-oc-manager>Соколов Дмитрий Викторович</span></div></div>
+        <hr class="dvd dvd--h tile__grid-full" data-oc-only="potential">
+        <div class="tile__grid-full" data-oc-only="potential">
+          <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по клиенту</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

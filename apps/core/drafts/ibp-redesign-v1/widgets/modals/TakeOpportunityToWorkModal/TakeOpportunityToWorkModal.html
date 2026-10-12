@@ -1,0 +1,22 @@
+<!-- Локальный компонент «Взять сделку в работу» — окно подтверждения
+     действия «Взять в работу» в реестрах-источниках и на странице сделки.
+     Пара во фронтенде: TakeOpportunityToWorkModal (состав полей окна
+     фронтенда неизвестен — открытый вопрос 2 ТЗ MS0014; здесь окно
+     подтверждения по Р7). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="take-opp-scrim" hidden>
+  <div class="modal modal--w3 lc-take-opp" role="dialog" aria-modal="true" aria-labelledby="take-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="take-opp-title">Взять сделку в работу</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-take-opp__text">Сделка <b data-take-opp-id>–</b> будет перенесена в Pipeline, вкладка «Сделки моего деска», и исчезнет из текущего реестра.</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-take-opp-confirm><span class="btn__label">Взять в работу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

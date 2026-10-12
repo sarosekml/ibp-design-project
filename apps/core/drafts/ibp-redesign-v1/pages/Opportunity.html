@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!-- Сделка — страница фронтенда Opportunity (pretrade/opportunities-app, pages/Opportunity/Opportunity).
+     Один экран на все источники: ?source=binding|possible|cib|campaign|pipeline&id=&tab=.
+     Источник: открывается собранной Opportunity.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сделка — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* скрытые по данным тайлы и действия шапки: атрибут hidden сильнее
+     display компонентов ДС */
+  .tile-row > [hidden],
+  .phead__actions[hidden] { display: none; }
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Раздел</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Сделка</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Opportunity">
+      <!-- #sec:head ── Шапка страницы (во фронтенде — OpportunityPageBar) ── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="opp-title">166092. Развитие тепличного комплекса</h1></div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span><span id="opp-calendar">5</span></span>
+            <span class="phead__meta" id="opp-version">Версия 1 (05.10.2026)</span>
+          </div>
+        </div>
+        <div class="phead__actions" id="opp-actions">
+          <button type="button" class="btn btn--outline btn--m" id="act-refuse" data-modal="refuse-opp-scrim" data-opp="166092"><i data-icon="minus-circle"></i><span class="btn__label">Отказаться</span></button>
+          <button type="button" class="btn btn--accent btn--m" id="act-take" data-modal="take-opp-scrim" data-opp="166092"><i data-icon="folder-arrow-forward"></i><span class="btn__label">Взять в работу</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── состав по снимку системы, ширины — по объёму полей -->
+      <div class="tile-group">
+        <!-- ряд 1: клиент · общая информация; 6–8 полей требуют по 6 колонок -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/OpportunityClientTile/OpportunityClientTile.html" id="tile-client" class="col-6 colw-12" state="data" mode="edit"></ds-include>
+          <ds-include src="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.html" id="tile-general" class="col-6 colw-12" state="data" mode="edit"></ds-include>
+        </div>
+        <!-- ряд 2: статус · финансовые метрики -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/StateInformationTile/StateInformationTile.html" id="tile-state" class="col-4 colw-12" state="data" mode="edit"></ds-include>
+          <ds-include src="../widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.html" id="tile-fin" class="col-8 colw-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 3: описание · сроки -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/DescriptionTile/DescriptionTile.html" id="tile-description" class="col-8 colw-12" state="data" mode="edit"></ds-include>
+          <ds-include src="../widgets/tiles/TimingTile/TimingTile.html" id="tile-timing" class="col-4 colw-12" state="data" mode="edit"></ds-include>
+        </div>
+        <!-- ряд 4: комментарии; самостоятельный блок сопровождения -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/CommentsTile/CommentsTile.html" id="tile-comments" class="col-4 colw-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 5: продукты сделки -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/ProductsTile/ProductsTile.html" id="tile-products" class="col-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 6: дески · команда · связи -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/DesksTile/DesksTile.html" id="tile-desks" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.html" id="tile-team" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.html" id="tile-connections" class="col-4 colw-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 7: задачи · встречи и протоколы · протоколы проекта продаж
+             (задачи и протоколы — у CIB и кампаний, скрывает скрипт) -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/TasksTile/TasksTile.html" id="tile-tasks" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.html" id="tile-meetings" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/CallReportsTile/CallReportsTile.html" id="tile-call-reports" class="col-4 colw-12" state="data" mode="view"></ds-include>
+        </div>
+      </div>
+
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="opportunity-product-template" data-off-grid="Шаблон продукта: ширину задаёт список карточек"><ds-include src="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.html" state="data" mode="view"></ds-include></template></div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <ds-include src="../widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.html"></ds-include>
+      <ds-include src="../widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.html"></ds-include>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/OpportunityClientTile/OpportunityClientTile.js"></script>
+<script src="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.js"></script>
+<script src="../widgets/tiles/StateInformationTile/StateInformationTile.js"></script>
+<script src="../widgets/tiles/DescriptionTile/DescriptionTile.js"></script>
+<script src="../widgets/tiles/TimingTile/TimingTile.js"></script>
+<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.js"></script>
+<script src="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.js"></script>
+<script src="../widgets/tiles/ProductsTile/ProductsTile.js"></script>
+<script src="../widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.js"></script>
+<script src="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.js"></script>
+<script src="../widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.js"></script>
+<script src="../widgets/tiles/CallReportsTile/CallReportsTile.js"></script>
+<script src="../widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.js"></script>
+<script src="../widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.js"></script>
+<script>
+/* Экранный скрипт: один экран на все источники (?source=&id=&tab=, ТЗ
+   MS0014 §4.3). Меню — data/nav-links.js; тайлы — виджеты, ряды и ширины —
+   в разметке; скрипт только наполняет. После «Взять в работу» и
+   «Отказаться» страница перерисовывается по хранилищу: сделка в Pipeline —
+   без действий источника (ревью MS0014, С8). */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, F = window.DICT_FMT;
+  var q = new URLSearchParams(location.search);
+  var deal = S.opportunity(q.get('id')) || S.opportunity(166092);
+  N.mount({ active: N.itemOf(deal.source) });
+
+  function el(id) { return document.getElementById(id); }
+  var ACT_SOURCES = { binding: 1, possible: 1, cib: 1 };
+
+  function paintHeader() {
+    var cfg = S.registryConfig(deal.source);
+    var tab = cfg ? cfg.tabs.filter(function (t) { return t.id === deal.tab; })[0] : null;
+    var sec = document.querySelectorAll('.crumbs__item a')[1];
+    if (sec) {
+      sec.textContent = (cfg ? cfg.title : 'Pipeline') + (tab ? ': ' + tab.label : '');
+      sec.setAttribute('href', N.href(deal.source, tab ? { tab: tab.page } : null));
+    }
+    var cur = document.querySelector('.crumbs__current');
+    if (cur) cur.textContent = 'Сделка ' + deal.id + '.' + deal.project;
+    document.title = deal.id + '. ' + deal.project + ' — IBP Redesign v1';
+    el('opp-title').textContent = deal.id + '. ' + deal.project;
+    el('opp-calendar').textContent = deal.calendarDays;
+    el('opp-version').textContent = deal.version + ' (' + F.date(deal.versionDate) + ')';
+    el('opp-actions').hidden = !(ACT_SOURCES[deal.source] && deal.statusCode === 'WORK');
+    el('act-take').setAttribute('data-opp', deal.id);
+    el('act-refuse').setAttribute('data-opp', deal.id);
+  }
+
+  function paint() {
+    var c = S.client(deal.clientId);
+    paintHeader();
+    window.LcOpportunityClientTile.render(el('tile-client'), { client: c });
+    window.LcGeneralInformationTile.render(el('tile-general'), { opportunity: deal, client: c });
+    window.LcStateInformationTile.render(el('tile-state'), { opportunity: deal });
+    window.LcDescriptionTile.render(el('tile-description'), { opportunity: deal });
+    window.LcTimingTile.render(el('tile-timing'), { opportunity: deal });
+    window.LcCommentsTile.render(el('tile-comments'), {
+      title: 'Комментарии к стадии',
+      comments: (deal.comments || []).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+    window.LcFinancialMetricsTile.render(el('tile-fin'), { opportunity: deal });
+    window.LcProductsTile.render(el('tile-products'), { products: deal.products, dealId: deal.id, source: deal.source, tab: deal.tab });
+    window.LcDesksTile.render(el('tile-desks'), {
+      desks: (deal.desks || []).map(function (d) { return { deskName: S.lbl.desk(d.deskId), roleLabel: d.roleLabel }; })
+    });
+    window.LcOpportunityTeamMembersTile.render(el('tile-team'), { analysts: deal.team.analystIds, director: deal.team.directorId, vp: deal.team.vpId, regionalDirector: deal.team.regionalDirectorId });
+    window.LcOpportunityConnectionsTile.render(el('tile-connections'), {
+      links: (deal.relatedDeals || []).map(function (r) {
+        return { label: r.label === 'Проект продаж' ? 'Проект продаж ' + deal.id + '.' + deal.project : r.label, href: N.href(r.page) };
+      })
+    });
+    el('tile-tasks').hidden = !deal.showTasksTile;
+    window.LcTasksTile.render(el('tile-tasks'), {
+      tasks: S.tasks('ALL').filter(function (t) { return t.linkedObject && t.linkedObject.page === 'opportunity' && String(t.linkedObject.number) === String(deal.id); })
+    });
+    window.LcMeetingsProtocolsTile.render(el('tile-meetings'), { meetings: deal.meetings });
+    el('tile-call-reports').hidden = !deal.protocolsProjectSales;
+    window.LcCallReportsTile.render(el('tile-call-reports'), { protocols: deal.protocolsProjectSales });
+    if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+  }
+
+  /* Р7: окна переносят сделку в хранилище; страница перерисовывается и
+     меняет адрес и пункт меню под новый раздел */
+  function after(o) {
+    deal = o;
+    history.replaceState(null, '', N.href('opportunity', { source: o.source, id: o.id, tab: o.tab }));
+    N.select(o.source);
+    paint();
+  }
+  window.LcTakeOpportunityToWorkModal.bind({ onDone: after });
+  window.LcRefuseFromOpportunityModal.bind({ onDone: after });
+
+  paint();
+  S.markViewed(deal.id);
+  if (window.DSTooltip) window.DSTooltip.bindAll(document);
+})();
+</script>
+</body>
+</html>

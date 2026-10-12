@@ -1,0 +1,37 @@
+<!-- Локальный компонент «Мои клиенты» — реестр страницы MyClientsPage. Пара во
+     фронтенде — V2MyClientsTable (core/clients-app); фильтр MyClientsTableFilters
+     — часть виджета (модалка .tfm общего рендера). Таблицу рисует
+     data/registry-table.js; значения и ячейки — скрипт виджета.
+     Страница вшивает меткой <ds-include> и монтирует:
+     LcMyClientsTable.mount(host, { tab, onView }). -->
+<section class="tile tile--headless lc-my-clients-table" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-my-clients-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left"><div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter><button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button></div></div>
+      <div class="dtable__toolbar-right lc-my-clients-table__tools">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+        <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
+        <div class="segctrl" role="radiogroup" aria-label="Вид реестра" data-segctrl data-mc-view>
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="rows" aria-label="Таблица"><span class="segctrl__label"><i data-icon="layout-rows-01"></i></span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="tree" aria-label="Дерево холдингов"><span class="segctrl__label"><i data-icon="tree-view"></i></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Здесь пока ничего нет</p>
+        <p class="dtable__empty-text" data-rt-empty-only>Выберете клиента через поиск и добавте в список "Клиенты" с помощью кнопки</p>
+        <button type="button" class="btn btn--accent btn--m" data-rt-empty-only><i data-icon="client-search"></i><span class="btn__label">Добавить клиента</span></button>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>

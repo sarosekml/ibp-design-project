@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<!-- Клиент — страница фронтенда ClientInfoPage (core/clients-app, pages/ClientInfo/ClientInfoPage).
+     Вкладки с парой: «Сделки» — ClientInfoDealsPage, «Финансовые показатели» — ClientInfoFinancials,
+     «Цели» — ClientInfoGoalsPage; «Встречи», «Задачи», «Кредиты», «Финансовый анализ», «Новости» — пар нет.
+     Источник: открывается собранной ClientInfoPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Клиент — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* панели вкладок и их подвиды (SegmentControl) — показ атрибутом hidden;
+     он сильнее display компонентов ДС */
+  .cl-panel, .cl-view { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+  .cl-panel[hidden], .cl-view[hidden], .tile-row > [hidden] { display: none; }
+  /* действия вкладки «Встречи» / «Задачи» — справа над сплиттером */
+  .cl-panel__actions { display: flex; justify-content: flex-end; gap: var(--space-8); }
+  .cl-credits-toolbar { display: flex; align-items: center; gap: var(--space-16); flex-wrap: wrap; }
+  .cl-credits-toolbar > .segctrl:last-child { margin-left: auto; }
+  /* сплиттер: панели — колонки, правая со своей прокруткой */
+  .splitpane__a > *, .splitpane__b > * { flex: 1; min-width: 0; }
+  /* «Финансовый анализ»: переключатель разделов шире экрана — прокрутка ряда */
+  .cl-sections { overflow-x: auto; }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/StratDialogueCard/StratDialogueCard.css">
+<link rel="stylesheet" href="../widgets/tiles/GoalArchiveSection/GoalArchiveSection.css">
+<link rel="stylesheet" href="../widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.css">
+<link rel="stylesheet" href="../widgets/tiles/IndustryInfoTile/IndustryInfoTile.css">
+<link rel="stylesheet" href="../widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.css">
+<link rel="stylesheet" href="../widgets/tiles/CommentsTile/CommentsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.css">
+<link rel="stylesheet" href="../widgets/tiles/TeamInfoTile/TeamInfoTile.css">
+<link rel="stylesheet" href="../widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/DesksTile/DesksTile.css">
+<link rel="stylesheet" href="../widgets/tiles/ClientTimingsTile/ClientTimingsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/ClientNewsTile/ClientNewsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/GigaInfoTile/GigaInfoTile.css">
+<link rel="stylesheet" href="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.css">
+<link rel="stylesheet" href="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.css">
+<link rel="stylesheet" href="../widgets/tables/TasksTable/TasksTable.css">
+<link rel="stylesheet" href="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.css">
+<link rel="stylesheet" href="../widgets/tables/LeadsTable/LeadsTable.css">
+<link rel="stylesheet" href="../widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.css">
+<link rel="stylesheet" href="../widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.css">
+<link rel="stylesheet" href="../widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.css">
+<link rel="stylesheet" href="../widgets/tables/MaPipelineTable/MaPipelineTable.css">
+<link rel="stylesheet" href="../widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.css">
+<link rel="stylesheet" href="../widgets/tiles/FinancialsChart/FinancialsChart.css">
+<link rel="stylesheet" href="../widgets/tables/FinancialsTable/FinancialsTable.css">
+<link rel="stylesheet" href="../widgets/tiles/ClientCreditsList/ClientCreditsList.css">
+<link rel="stylesheet" href="../widgets/tables/TaskHistoryTable/TaskHistoryTable.css">
+<link rel="stylesheet" href="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="MyClientsPage.preview.html">Клиенты</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Клиент</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="ClientInfoPage">
+      <!-- #sec:head ── Шапка (во фронтенде — ClientInfoPageHeader) ────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <span class="phead__title-ico" aria-hidden="true"><i data-icon="factory-01"></i></span>
+              <h1 class="phead__title" id="cl-title">ООО «Ромашка»</h1>
+            </div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="building-01"></i></span><span id="cl-holding">ГК «Цветы»</span></span>
+          </div>
+          <!-- ряд чипов клиента; «Цели зафиксированы» — GoalsPopoverBadge -->
+          <div class="phead__extras" id="cl-chips">
+            <!-- Локальный компонент «Цели зафиксированы» — чип с информером в шапке
+     клиента (ClientInfoPage). Пара во фронтенде — GoalsPopoverBadge
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcGoalsPopoverBadge.render(host, { fixed }). -->
+<span class="chip chip--s lc-goals-badge" id="cl-goals-badge" data-state="data" data-mode="view">
+  <span class="chip__icon" aria-hidden="true"><i data-icon="target"></i></span>
+  <span class="chip__label">Цели зафиксированы</span>
+  <button type="button" class="chip__info" data-popover="client-goals-info" aria-haspopup="dialog" aria-controls="client-goals-info" aria-label="Подробнее о целях клиента"><i data-icon="info-circle"></i></button>
+</span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" data-menu="cl-profile-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="cl-profile-menu" class="menu" role="menu">
+              <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактирование профиля</span></button>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- вкладки клиента; «Новости» видна, но не переключается (Р3) -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="cl-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="general" data-page="ClientInfoPage"><span class="tab__label">Общая информация</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="meetings"><span class="tab__label">Встречи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="tasks"><span class="tab__label">Задачи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="deals" data-page="ClientInfoDealsPage"><span class="tab__label">Сделки</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="financials" data-page="ClientInfoFinancials"><span class="tab__label">Финансовые показатели</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="goals" data-page="ClientInfoGoalsPage"><span class="tab__label">Цели</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="credits"><span class="tab__label">Кредиты</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="analysis"><span class="tab__label">Финансовый анализ</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="news" aria-disabled="true"><span class="tab__label">Новости</span></button>
+      </div>
+
+      <!-- #sec:content ── панели вкладок ─────────────────────────────────── -->
+      <!-- ── Общая информация (ClientInfoPage): три колонки-стопки ────────── -->
+      <div class="cl-panel" data-panel="general">
+        <div class="tile-group">
+          <div class="tile-row">
+            <div class="tile-stack col-4 colw-6">
+              <!-- Локальный компонент «Отрасль» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пара во фронтенде — IndustryInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcIndustryInfoTile.render(host, { client }). -->
+<section class="tile lc-industry-info" id="cl-industry" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Отрасль</h3></div>
+      <p class="tile__subtitle">Источник: Платформа ДИД</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-industry-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-industry-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-industry-info__content">
+      <div class="entity-list">
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="factory-01"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Подотрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="sub">Цветоводство</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="building-02"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Отрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="industry">Сельское хозяйство</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="bar-chart"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Макроотрасль</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="macro">Агропромышленный комплекс</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="pie-chart"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Сегмент</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="segment">Крупный бизнес</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="bank"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">Территориальный банк</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="tb">ЦА</span></div></div></div></div>
+        <div class="entity"><div class="entity__lead"><span class="entity__icon" aria-hidden="true"><i data-icon="marker-pin"></i></span></div><div class="entity__main"><div class="entity__titles"><p class="entity__header">ГОСБ из ЕПК</p><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-ii="gosb">8634</span></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «Реквизиты» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пара во фронтенде — RequisitesInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcRequisitesInfoTile.render(host, { client }). -->
+<section class="tile lc-requisites-info" id="cl-requisites" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Реквизиты</h3></div>
+      <p class="tile__subtitle">Источник: Платформа ДИД</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-requisites-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-requisites-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-requisites-info__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-rq="inn">7712345678</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-rq="ogrn">1157746123456</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-rq="kpp">771201001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП КН</span></span><div class="rof__row"><span class="rof__value" data-rq="kppKn">771243001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-rq="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-rq="id">3000012345</span></div></div>
+        <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Юридический адрес</span></span><div class="rof__row"><span class="rof__value" data-rq="legalAddress">125212, г. Москва, Ленинградское шоссе, д. 39</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «Комментарии к стадии» — тайл комментариев страницы
+     сделки (§4.3) и страницы лида (§4.6). Вшивается меткой ds-include;
+     страница заполняет скриптом LcCommentsTile.render(host, {comments}).
+     Статическое содержимое — демо-состояние (комментарий сделки 166092). -->
+<section class="tile lc-comments" id="cl-comments" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Комментарии к стадии</h3></div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Показать все комментарии" href="#" data-inert><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body lc-comments__list" data-comments-body>
+    <div class="lc-comments__item">
+      <p class="lc-comments__meta"><span class="lc-comments__author">Соколов Дмитрий Викторович</span> · <span class="lc-comments__time">09:40</span> · <span class="lc-comments__date">06.10.2026</span></p>
+      <p class="lc-comments__text">Сделка передана в работу после маршрутизации. Назначить ответственного и согласовать состав команды.</p>
+      <div class="lc-comments__acts">
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Удалить комментарий"><i data-icon="trash"></i></button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Править комментарий"><i data-icon="edit"></i></button>
+      </div>
+    </div>
+    <button type="button" class="btn btn--transparent btn--s lc-comments__add"><i data-icon="add"></i><span class="btn__label">Добавить комментарий</span></button>
+  </div>
+</section>
+              <!-- Локальный компонент «Документы» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пара во фронтенде — DocumentsInfoTile
+     (core/clients-app). Документ — DocCard ДС. Страница вшивает меткой
+     <ds-include> и заполняет: LcDocumentsInfoTile.render(host, { documents }). -->
+<section class="tile lc-documents-info" id="cl-documents" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Документы</h3></div>
+      <p class="tile__subtitle">Источник: ЭКД</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-documents-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-documents-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-documents-info__content">
+      <div class="doccard" data-di-card>
+        <span class="doccard__icon" aria-hidden="true"><i data-icon="document-check"></i></span>
+        <div class="doccard__main">
+          <button type="button" class="doccard__title" data-di-name data-tooltip="Бухгалтерская отчётность за 2025 год.pdf" data-tooltip-truncated="only">Бухгалтерская отчётность за 2025 год.pdf</button>
+          <span class="doccard__meta" data-di-meta>Загружено: 12.03.2026</span>
+        </div>
+        <div class="doccard__actions">
+          <button type="button" class="btn btn--outline btn--s"><i data-icon="visibility-on"></i><span class="btn__label">Показать содержание</span></button>
+          <button type="button" class="btn btn--outline btn--s"><i data-icon="open-wide"></i><span class="btn__label">Открыть</span></button>
+        </div>
+      </div>
+      <a class="link link--accent link--m" href="#" data-inert data-di-more>Еще 2 документа…</a>
+      <p class="lc-documents-info__empty" data-di-empty hidden>Документов нет</p>
+    </div>
+  </div>
+</section>
+            </div>
+            <div class="tile-stack col-4 colw-6">
+              <!-- Локальный компонент «Команда клиента» — тайлы «Главный клиентский менеджер»
+     и «Команда клиента ДИД» страницы клиента (ClientInfoPage). Пара во
+     фронтенде — TeamInfoTile (core/clients-app), два экземпляра на странице;
+     строка сотрудника — InfoBadge фронтенда, в ДС — Entity с аватаром.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTeamInfoTile.render(host, { title, members, editable }). -->
+<section class="tile lc-team-info" id="cl-gcm" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ti-title>Главный клиентский менеджер</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-ti-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-team-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-team-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-team-info__content">
+      <div class="entity-list" data-ti-list>
+        <div class="entity"><div class="entity__lead"><span class="av av--circular av--m"><span class="av__text">ПЕ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Панова Елена Юрьевна</span></div></div><div class="entity__subs"><span class="entity__subs-list">Табельный номер: 04630 · Клиентский менеджер</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «Связанные физические лица» — тайл вкладки «Общая
+     информация» страницы клиента (ClientInfoPage). Пары во фронтенде нет.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcRelatedPersonsTile.render(host, { persons }). -->
+<section class="tile lc-related-persons" id="cl-persons" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Связанные физические лица</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-related-persons__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-related-persons__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-related-persons__content">
+      <div class="entity-list" data-rp-list>
+        <div class="entity"><div class="entity__lead"><span class="av av--circular av--m"><span class="av__text">ТВ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Титов Валерий Сергеевич</span></div></div><div class="entity__subs"><span class="entity__subs-list">Генеральный директор</span></div></div></div>
+      </div>
+      <p class="lc-related-persons__more" data-rp-more hidden>+2</p>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «Команда клиента» — тайлы «Главный клиентский менеджер»
+     и «Команда клиента ДИД» страницы клиента (ClientInfoPage). Пара во
+     фронтенде — TeamInfoTile (core/clients-app), два экземпляра на странице;
+     строка сотрудника — InfoBadge фронтенда, в ДС — Entity с аватаром.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTeamInfoTile.render(host, { title, members, editable }). -->
+<section class="tile lc-team-info" id="cl-team" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ti-title>Главный клиентский менеджер</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-ti-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-team-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-team-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-team-info__content">
+      <div class="entity-list" data-ti-list>
+        <div class="entity"><div class="entity__lead"><span class="av av--circular av--m"><span class="av__text">ПЕ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Панова Елена Юрьевна</span></div></div><div class="entity__subs"><span class="entity__subs-list">Табельный номер: 04630 · Клиентский менеджер</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «Дески» — тайл доступа десков страницы сделки
+     (§4.3), лида (§4.6) и клиента (§4.8). Вшивается меткой ds-include;
+     страница заполняет скриптом LcDesksTile.render(host, {desks, note}).
+     Статическое содержимое — демо-состояние сделки 166092. -->
+<section class="tile lc-desks" id="cl-desks" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Дески</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body" data-desks-body>
+    <p class="lc-desks__note">Сотрудники указанных ниже десков имеют доступ к этой сделке</p>
+    <ul class="lc-desks__list">
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">SMB Природные ресурсы +6</span>
+        <span class="chip chip--xs"><span class="chip__label">Ответственный</span></span>
+      </li>
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">ДИД Центральный</span>
+        <span class="chip chip--xs"><span class="chip__label">Инициатор</span></span>
+      </li>
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">CIB Москва</span>
+        <span class="chip chip--xs"><span class="chip__label">Приглашен</span></span>
+      </li>
+    </ul>
+  </div>
+</section>
+              <!-- Локальный компонент «Сроки» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пары во фронтенде нет (у сделки похожий
+     TimingTile — другого модуля). Страница вшивает меткой <ds-include> и
+     заполняет: LcClientTimingsTile.render(host, { client }). -->
+<section class="tile lc-client-timings" id="cl-timings" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Сроки</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-client-timings__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-client-timings__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-client-timings__content">
+      <div class="tile__rows">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата добавления</span></span><div class="rof__row"><span class="rof__value" data-ct="addedAt">14.06.2021</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата последней активности</span></span><div class="rof__row"><span class="rof__value" data-ct="lastActivityAt">09.10.2026</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+            </div>
+            <div class="tile-stack col-4 colw-12">
+              <!-- Локальный компонент «Новости» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пары во фронтенде нет. Страница вшивает меткой
+     <ds-include> и заполняет: LcClientNewsTile.render(host, { news }). -->
+<section class="tile lc-client-news" id="cl-news" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Новости</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-client-news__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-client-news__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-client-news__content">
+      <ul class="lc-client-news__list" data-cn-list>
+        <li class="lc-client-news__item">
+          <p class="lc-client-news__meta">04.10.2026 · Интерфакс</p>
+          <p class="lc-client-news__title">«Ромашка» начинает строительство второй очереди тепличного комплекса</p>
+          <p class="lc-client-news__teaser">Инвестиции в проект оцениваются в 2,4 млрд RUB</p>
+        </li>
+      </ul>
+      <a class="link link--accent link--m" href="#" data-inert>Смотреть все…</a>
+    </div>
+  </div>
+</section>
+              <!-- Локальный компонент «ГигаСправка» — тайл вкладки «Общая информация»
+     страницы клиента (ClientInfoPage). Пара во фронтенде — GigaInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcGigaInfoTile.render(host, { giga }). -->
+<section class="tile lc-giga-info" id="cl-giga" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">ГигаСправка</h3></div>
+      <p class="tile__subtitle">Источник: ДКК360, Gigachat</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-giga-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-giga-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-giga-info__content">
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">О клиенте</h4>
+        <div class="lc-giga-info__list" data-gg="about"><p class="lc-giga-info__text">Крупнейший в РФ производитель срезочных цветов.</p></div>
+      </section>
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">ЛПР</h4>
+        <div class="lc-giga-info__list" data-gg="lpr"><p class="lc-giga-info__text">Титов Валерий Сергеевич — Генеральный директор</p></div>
+      </section>
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">Сотрудничество</h4>
+        <div class="lc-giga-info__list" data-gg="cooperation"><p class="lc-giga-info__text">Клиент банка с 2016 года.</p></div>
+      </section>
+    </div>
+  </div>
+</section>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Встречи: реестр встреч клиента и предпросмотр (Splitter ДС) ──── -->
+      <div class="cl-panel" data-panel="meetings" hidden>
+        <div class="cl-panel__actions">
+          <button type="button" class="btn btn--outline btn--m"><i data-icon="add"></i><span class="btn__label">Новый протокол</span></button>
+          <button type="button" class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Новая встреча</span></button>
+        </div>
+        <div class="splitpane" id="cl-mt-split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+          <div class="splitpane__panel splitpane__a">
+            <!-- Локальный компонент «Реестр встреч» — таблица встреч с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcMeetingsProtocolsList.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-meetings-list" id="cl-mt-list" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-meetings-list__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div>
+          <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+            <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="splitpane__panel splitpane__b">
+            <div class="ds-scroll"><!-- Локальный компонент «Предпросмотр встречи» — правая панель реестра
+     встреч (MeetingsProtocolsPage) и вкладки «Встречи» клиента. Пара во
+     фронтенде — MeetingsProtocolsDetails (ib/ma-opportunities-app), кнопки
+     «Завершить» и «Отменить» — MeetingUpdateActions. Состав — снимок системы
+     (Встречи.png) и Pixso «Встречи – Предпросмотр». Страница вшивает меткой
+     <ds-include> и заполняет: LcMeetingsProtocolsDetails.render(host, { meeting, onAction }).
+     Статическое содержимое — демо M-8904. -->
+<section class="tile lc-meeting-details" id="cl-mt-details" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-md-title>Встреча M-8904 от 15.10.2026</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-md-status><span class="chip__label">Запланирована</span></span>
+      </div>
+      <p class="tile__subtitle" data-md-line>15.10.2026, 10:00–11:30 · Офис клиента, переговорная 2 · UTC+3</p>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать встречу" data-md-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-md-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meeting-details__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить встречу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-meeting-details__loading" aria-busy="true">
+      <span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span>
+    </div>
+
+    <div class="lc-meeting-details__content">
+      <!-- действия: «Создать лид» (система, Р6 — по клику ничего), «Завершить» /
+           «Отменить» у запланированной встречи (MeetingUpdateActions, Р7) -->
+      <div class="lc-meeting-details__acts">
+        <button type="button" class="btn btn--accent btn--s" data-md-create-lead><i data-icon="add"></i><span class="btn__label">Создать лид</span></button>
+        <span class="lc-meeting-details__update" data-md-update>
+          <button type="button" class="btn btn--outline btn--s" data-md-finish><i data-icon="check"></i><span class="btn__label">Завершить</span></button>
+          <button type="button" class="btn btn--outline btn--s" data-md-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+        </span>
+      </div>
+
+      <section class="lc-meeting-details__sec">
+        <h4 class="lc-meeting-details__sec-title">Источник встречи</h4>
+        <p class="lc-meeting-details__source">
+          <span class="lc-meeting-details__source-type" data-md-source-type>Потенциал</span>
+          <a class="link link--accent link--m" href="#" data-md-source-link><span data-md-source-label>L-118846</span><i data-icon="link-external"></i></a>
+        </p>
+      </section>
+
+      <div class="lc-meeting-details__cols">
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Общая информация</h4>
+          <div class="entity-list" data-md-info></div>
+        </section>
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Участники</h4>
+          <p class="lc-meeting-details__group">Со стороны клиента</p>
+          <div class="entity-list" data-md-people-client></div>
+          <p class="lc-meeting-details__group">Со стороны ДИД</p>
+          <div class="entity-list" data-md-people-did></div>
+        </section>
+      </div>
+
+      <div class="lc-meeting-details__checks">
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="stratDialog"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Проведен страт. диалог</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withKm"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием КМ</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withSponsor"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием спонсора</span></span></label>
+      </div>
+
+      <section class="lc-meeting-details__sec" data-md-agenda-sec>
+        <h4 class="lc-meeting-details__sec-title">Повестка встречи</h4>
+        <div class="lc-meeting-details__agenda" data-md-agenda></div>
+      </section>
+
+      <section class="lc-meeting-details__sec" data-md-links-sec>
+        <h4 class="lc-meeting-details__sec-title">Связи</h4>
+        <div class="lc-meeting-details__links" data-md-links></div>
+      </section>
+    </div>
+  </div>
+</section></div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Задачи: реестр задач клиента и предпросмотр (Splitter ДС) ────── -->
+      <div class="cl-panel" data-panel="tasks" hidden>
+        <div class="cl-panel__actions">
+          <button type="button" class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+        </div>
+        <div class="splitpane" id="cl-tk-split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+          <div class="splitpane__panel splitpane__a">
+            <!-- Локальный компонент «Реестр задач» — таблица задач с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcTasksTable.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-tasks-table" id="cl-tk-list" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-tasks-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div>
+          <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+            <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="splitpane__panel splitpane__b">
+            <div class="ds-scroll"><!-- Локальный компонент «Предпросмотр задачи» — правая панель реестра задач
+     (TasksPage) и вкладки «Задачи» клиента. Пара во фронтенде — TaskPreviewTile
+     (core/tasks-app); таблица «История» вшивается виджетом TaskHistoryTable.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTaskPreviewTile.render(host, { task, onAction }). -->
+<section class="tile lc-task-preview" id="cl-tk-preview" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-tp-title>169437. Подготовить финансовую модель</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-tp-status><span class="chip__label">Ожидает исполнения</span></span>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать задачу" data-tp-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-tp-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-task-preview__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить задачу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-task-preview__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+
+    <div class="lc-task-preview__content">
+      <!-- действия Р7 — у задачи в работе -->
+      <div class="lc-task-preview__acts" data-tp-acts>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-done><i data-icon="check"></i><span class="btn__label">Исполнить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-reassign><i data-icon="refresh"></i><span class="btn__label">Переназначить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+      </div>
+
+      <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-priority><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип задачи</span></span><div class="rof__row"><span class="rof__value" data-tp-type>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Категория</span></span><div class="rof__row"><span class="rof__value" data-tp-category>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Срок исполнения</span></span><div class="rof__row"><span class="rof__value" data-tp-due>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Исполнитель</span></span><div class="rof__row"><span class="rof__value" data-tp-executor>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Клиент</span></span><div class="rof__row"><span class="rof__value" data-tp-client>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата создания</span></span><div class="rof__row"><span class="rof__value" data-tp-created>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Инициатор</span></span><div class="rof__row"><span class="rof__value" data-tp-initiator>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Холдинг</span></span><div class="rof__row"><span class="rof__value" data-tp-holding>–</span></div></div>
+      </div>
+
+      <section class="tile tile--inset" data-tp-comment-sec hidden>
+        <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Комментарий</h4></div></div></header>
+        <div class="tile__body"><p class="lc-task-preview__text" data-tp-comment>–</p></div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Описание задачи</h4>
+        <p class="lc-task-preview__text" data-tp-description>–</p>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Связанный объект</h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип объекта</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-linked-type><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер объекта</span></span><div class="rof__row"><span class="rof__value" data-tp-linked-number>–</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование объекта</span></span><div class="rof__row"><a class="rof__value link link--accent link--m" href="#" data-tp-linked-link><span data-tp-linked-name>–</span><i data-icon="link-external"></i></a></div></div>
+        </div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">История</h4>
+        <div data-tp-history></div>
+      </section>
+    </div>
+  </div>
+</section></div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Сделки (ClientInfoDealsPage): Лиды · Pipeline · Портфель (Р3) ─ -->
+      <div class="cl-panel" data-panel="deals" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Раздел сделок" data-segctrl id="cl-deals-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="leads"><span class="segctrl__label">Лиды</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="pipeline"><span class="segctrl__label">Pipeline</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="portfolio" aria-disabled="true"><span class="segctrl__label">Портфель</span></button>
+        </div>
+        <div class="cl-view tile-group" data-deals-view="leads">
+          <div class="tile-row"><!-- Локальный компонент «Реестр лидов» — реестр лидов: «Лиды» и «Лиды для КМ», обязательные и возможные лиды.
+     Таблицу рисует общий рендер data/registry-table.js (LeadsTable.mount)
+     по конфигу реестра «leads» (data/dictionaries.js, LEAD_REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: LeadsTable.mount(host); data-registry задаёт метка:
+     leads | binding-leads | possible-leads.
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="leads" id="cl-leads-did" data-state="data" data-mode="view" class="tile tile--headless lc-leads-table col-12">
+  <div class="alert alert--error alert--m lc-leads-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section></div>
+          <div class="tile-row"><!-- Локальный компонент «Реестр лидов» — реестр лидов: «Лиды» и «Лиды для КМ», обязательные и возможные лиды.
+     Таблицу рисует общий рендер data/registry-table.js (LeadsTable.mount)
+     по конфигу реестра «leads» (data/dictionaries.js, LEAD_REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: LeadsTable.mount(host); data-registry задаёт метка:
+     leads | binding-leads | possible-leads.
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="leads" id="cl-leads-rd" data-state="data" data-mode="view" class="tile tile--headless lc-leads-table col-12">
+  <div class="alert alert--error alert--m lc-leads-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section></div>
+          <div class="tile-row">
+            <!-- Локальный компонент «Реестр лидов» — реестр лидов: «Лиды» и «Лиды для КМ», обязательные и возможные лиды.
+     Таблицу рисует общий рендер data/registry-table.js (LeadsTable.mount)
+     по конфигу реестра «leads» (data/dictionaries.js, LEAD_REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: LeadsTable.mount(host); data-registry задаёт метка:
+     leads | binding-leads | possible-leads.
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="leads" id="cl-leads-binding" data-state="data" data-mode="view" class="tile tile--headless lc-leads-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-leads-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+            <!-- Локальный компонент «Реестр лидов» — реестр лидов: «Лиды» и «Лиды для КМ», обязательные и возможные лиды.
+     Таблицу рисует общий рендер data/registry-table.js (LeadsTable.mount)
+     по конфигу реестра «leads» (data/dictionaries.js, LEAD_REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: LeadsTable.mount(host); data-registry задаёт метка:
+     leads | binding-leads | possible-leads.
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="leads" id="cl-leads-possible" data-state="data" data-mode="view" class="tile tile--headless lc-leads-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-leads-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div>
+        </div>
+        <div class="cl-view tile-group" data-deals-view="pipeline" hidden>
+          <div class="tile-row"><!-- Локальный компонент «Реестр Pipeline» — реестр Pipeline: сделки деска с вкладками-подфильтрами и фильтром «Статус: В работе» по умолчанию.
+     Таблицу рисует общий рендер data/registry-table.js (IBPR_TABLE.opportunities)
+     по конфигу реестра «pipeline» (data/dictionaries.js, REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="pipeline" id="cl-pipeline" data-state="data" data-mode="view" class="tile tile--headless lc-pipeline-opp-table col-12">
+  <div class="alert alert--error alert--m lc-pipeline-opp-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section></div>
+          <div class="tile-row">
+            <!-- Локальный компонент «Реестр обязательных сделок» — реестр обязательных сделок с вкладками-подфильтрами и действиями «Взять в работу» и «Отказаться».
+     Таблицу рисует общий рендер data/registry-table.js (IBPR_TABLE.opportunities)
+     по конфигу реестра «binding» (data/dictionaries.js, REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="binding" id="cl-binding" data-state="data" data-mode="view" class="tile tile--headless lc-binding-opp-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-binding-opp-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+            <!-- Локальный компонент «Реестр возможных сделок» — реестр возможных сделок банка с вкладками-подфильтрами и действиями «Взять в работу» и «Отказаться».
+     Таблицу рисует общий рендер data/registry-table.js (IBPR_TABLE.opportunities)
+     по конфигу реестра «possible» (data/dictionaries.js, REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="possible" id="cl-possible" data-state="data" data-mode="view" class="tile tile--headless lc-possible-opp-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-possible-opp-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div>
+          <div class="tile-row"><!-- Локальный компонент «M&A Pipeline клиента» — таблица вкладки «Сделки»
+     страницы клиента (ClientInfoPage). Пара во фронтенде — MaPipelineTable.
+     Таблицу рисует общий рендер data/registry-table.js в компактном режиме.
+     Страница вшивает меткой <ds-include> и монтирует:
+     LcMaPipelineTable.mount(host, { client, title }). -->
+<section id="cl-ma" data-state="data" data-mode="view" class="tile tile--headless lc-ma-pipeline-table col-12">
+  <div class="alert alert--error alert--m lc-ma-pipeline-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable">
+    <div class="dtable__toolbar"><div class="dtable__toolbar-left"></div><div class="dtable__toolbar-right"></div></div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden><p class="dtable__empty-title" data-rt-empty-title>Нет данных</p></div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section></div>
+          <div class="tile-row">
+            <!-- Локальный компонент «Pipeline DCM и ECM клиента» — таблица вкладки «Сделки»
+     страницы клиента (ClientInfoPage). Пара во фронтенде — DcmEcmPipelineTable.
+     Таблицу рисует общий рендер data/registry-table.js в компактном режиме.
+     Страница вшивает меткой <ds-include> и монтирует:
+     LcDcmEcmPipelineTable.mount(host, { client, kind, title }). -->
+<section id="cl-dcm" data-state="data" data-mode="view" class="tile tile--headless lc-dcm-ecm-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-dcm-ecm-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable">
+    <div class="dtable__toolbar"><div class="dtable__toolbar-left"></div><div class="dtable__toolbar-right"></div></div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden><p class="dtable__empty-title" data-rt-empty-title>Нет данных</p></div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+            <!-- Локальный компонент «Pipeline DCM и ECM клиента» — таблица вкладки «Сделки»
+     страницы клиента (ClientInfoPage). Пара во фронтенде — DcmEcmPipelineTable.
+     Таблицу рисует общий рендер data/registry-table.js в компактном режиме.
+     Страница вшивает меткой <ds-include> и монтирует:
+     LcDcmEcmPipelineTable.mount(host, { client, kind, title }). -->
+<section id="cl-ecm" data-state="data" data-mode="view" class="tile tile--headless lc-dcm-ecm-table col-6 colw-12">
+  <div class="alert alert--error alert--m lc-dcm-ecm-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable">
+    <div class="dtable__toolbar"><div class="dtable__toolbar-left"></div><div class="dtable__toolbar-right"></div></div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden><p class="dtable__empty-title" data-rt-empty-title>Нет данных</p></div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div>
+        </div>
+      </div>
+      <!-- ── Финансовые показатели (ClientInfoFinancials): ФОК · метрики ──── -->
+      <div class="cl-panel" data-panel="financials" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Раздел показателей" data-segctrl id="cl-fin-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="fok"><span class="segctrl__label">ФОК</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="custom"><span class="segctrl__label">Пользовательские метрики</span></button>
+        </div>
+        <div class="cl-view tile-group" data-fin-view="fok">
+          <div class="tile-row"><!-- Локальный компонент «График ФОК» — тайл «Выручка» вкладки «Финансовые
+     показатели» страницы клиента (ClientInfoFinancials). Пара во фронтенде —
+     FinancialsChart (core/clients-app); части — FinancialChartInfo
+     (значение и рост), FinancialChartFilters (период и метрика),
+     FinancialsChartLegend (легенда — легенда Chart ДС). График — Chart ДС
+     типа combo. Страница вшивает меткой <ds-include> и заполняет:
+     LcFinancialsChart.render(host, { fok }). -->
+<section id="cl-fin-chart" data-state="data" data-mode="view" class="tile lc-fin-chart col-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Выручка</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--s" aria-haspopup="listbox" aria-expanded="false"><span class="btn__label">Чистый долг/EBITDA</span><i class="btn__chevron" data-icon="chevron-down"></i></button>
+      <button type="button" class="btn btn--outline btn--s" aria-haspopup="listbox" aria-expanded="false"><span class="btn__label">36 месяцев</span><i class="btn__chevron" data-icon="chevron-down"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-chart__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить показатели</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-chart__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-chart__content">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Выручка</span></span><div class="rof__row"><span class="rof__value" data-fc-value>346,27 млн RUB</span><span class="badge badge--s badge--success" data-fc-growth>↑ 12.6% гг</span></div></div>
+      <div class="lc-fin-chart__plot" data-fc-plot></div>
+    </div>
+  </div>
+</section></div>
+          <div class="tile-row"><!-- Локальный компонент «Таблица ФОК» — таблица «Показатель × квартал» вкладки
+     «Финансовые показатели» страницы клиента (ClientInfoFinancials). Пара во
+     фронтенде — FinancialsTable. Ячейка — значение и подзначение (TableCell
+     ДС, вторая строка .tc__subtext). Страница вшивает меткой <ds-include> и
+     заполняет: LcFinancialsTable.render(host, { fok }). -->
+<section id="cl-fin-table" data-state="data" data-mode="view" class="tile tile--headless lc-fin-table col-12">
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-table__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить показатели</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-table__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-table__content">
+      <div class="dtable">
+        <div class="dtable__toolbar" data-ft-caption-bar hidden><div class="dtable__toolbar-right"><span class="lc-fin-table__caption" data-ft-caption></span></div></div>
+        <div class="dtable__body"><div class="tbl" data-table data-ft-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section></div>
+        </div>
+        <div class="cl-view tile-group" data-fin-view="custom" hidden>
+          <div class="tile-row">
+            <!-- «Пользовательские метрики» — часть страницы ClientInfoFinancials, своего виджета нет -->
+            <section class="tile col-12" id="cl-custom-metrics">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Пользовательские метрики</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button></div>
+              </header>
+              <div class="tile__body">
+                <div class="tile__grid" style="grid-template-columns:repeat(4,minmax(0,1fr))" data-custom-metrics></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <!-- ── Цели (ClientInfoGoalsPage): GoalSegmentFilter · сетка · архивы ── -->
+      <div class="cl-panel" data-panel="goals" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Сегмент целей" data-segctrl id="cl-goals-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="business"><span class="segctrl__label">Бизнес</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="personal"><span class="segctrl__label">Личные</span></button>
+        </div>
+        <div class="cl-view" id="cl-goals-current"></div>
+        <div class="cl-view" id="cl-goals-archive"></div>
+      </div>
+      <!-- ── Кредиты: Действующие · Pipeline (пары во фронтенде нет) ──────── -->
+      <div class="cl-panel" data-panel="credits" hidden>
+        <div class="cl-credits-toolbar">
+        <div class="segctrl" role="radiogroup" aria-label="Раздел кредитов" data-segctrl id="cl-cred-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="active"><span class="segctrl__label">Действующие</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="pipeline"><span class="segctrl__label">Pipeline</span></button>
+        </div>
+        <button type="button" class="btn btn--outline btn--s" data-inert><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        <div class="segctrl segctrl--s" role="radiogroup" aria-label="Вид кредитов" data-segctrl id="cl-cred-layout">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-layout="cards"><span class="segctrl__label">Карточки</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-layout="list"><span class="segctrl__label">Список</span></button>
+        </div>
+        </div>
+        <div class="cl-view tile-group" data-cred-view="active">
+          <!-- сводные плашки: цветной заливки тайла в ДС нет — пробел ДС (MS0014 §7) -->
+          <div class="tile-row">
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Общая сумма кредитов</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="total">1 200 000 000,00</span></div></div></div>
+            </section>
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Просроченная задолженность</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="overdue">0,00</span></div></div></div>
+            </section>
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Маржинальность общая</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="margin">13,8%</span></div></div></div>
+            </section>
+          </div>
+          <div class="tile-row"><div class="tile-stack col-12"><!-- Локальный компонент «Кредиты клиента» — карточки-аккордеоны вкладки
+     «Кредиты» страницы клиента (ClientInfoPage). Пары во фронтенде нет.
+     Карточек столько, сколько кредитов: разметку строит render; ниже —
+     демо-карточка действующего кредита. Сводка видна всегда (частичный
+     коллапс Tile ДС), таблицы «Сроки» и «Финансовые показатели» — в
+     раскрытой карточке. Страница вшивает меткой <ds-include> и заполняет:
+     LcClientCreditsList.render(host, { credits, variant }). -->
+<div class="lc-client-credits" data-cc-list id="cl-credits-active" data-state="data" data-mode="view">
+  <section class="tile tile--accordion tile--collapsed">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__chiplist">
+          <span class="chip chip--xs"><span class="chip__label">Невозобновляемая кредитная линия</span></span>
+          <span class="chip chip--xs"><span class="chip__icon" aria-hidden="true"><i data-icon="calendar"></i></span><span class="chip__label">2024–2029</span></span>
+        </div>
+        <div class="tile__title-row"><span class="tile__title-icon" aria-hidden="true"><i data-icon="document-signed"></i></span><h3 class="tile__title">Инвестиционная программа 2024 № 7701-24-0012</h3></div>
+      </div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="cc-demo" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div>
+    </header>
+    <div class="tile__body"><div class="tile__grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Фиксированная ставка</span></span><div class="rof__row"><span class="rof__value" >11,8%</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Маржинальный доход, RUB</span></span><div class="rof__row"><span class="rof__value" >41 200 000,00</span></div></div>
+    </div></div>
+    <div class="tile__collapsible" id="cc-demo"><div class="tile__body"></div></div>
+  </section>
+</div></div></div>
+        </div>
+        <div class="cl-view tile-group" data-cred-view="pipeline" hidden>
+          <div class="tile-row"><div class="tile-stack col-12"><!-- Локальный компонент «Кредиты клиента» — карточки-аккордеоны вкладки
+     «Кредиты» страницы клиента (ClientInfoPage). Пары во фронтенде нет.
+     Карточек столько, сколько кредитов: разметку строит render; ниже —
+     демо-карточка действующего кредита. Сводка видна всегда (частичный
+     коллапс Tile ДС), таблицы «Сроки» и «Финансовые показатели» — в
+     раскрытой карточке. Страница вшивает меткой <ds-include> и заполняет:
+     LcClientCreditsList.render(host, { credits, variant }). -->
+<div class="lc-client-credits" data-cc-list id="cl-credits-pipeline" data-state="data" data-mode="view">
+  <section class="tile tile--accordion tile--collapsed">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__chiplist">
+          <span class="chip chip--xs"><span class="chip__label">Невозобновляемая кредитная линия</span></span>
+          <span class="chip chip--xs"><span class="chip__icon" aria-hidden="true"><i data-icon="calendar"></i></span><span class="chip__label">2024–2029</span></span>
+        </div>
+        <div class="tile__title-row"><span class="tile__title-icon" aria-hidden="true"><i data-icon="document-signed"></i></span><h3 class="tile__title">Инвестиционная программа 2024 № 7701-24-0012</h3></div>
+      </div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="cc-demo" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div>
+    </header>
+    <div class="tile__body"><div class="tile__grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Фиксированная ставка</span></span><div class="rof__row"><span class="rof__value" >11,8%</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Маржинальный доход, RUB</span></span><div class="rof__row"><span class="rof__value" >41 200 000,00</span></div></div>
+    </div></div>
+    <div class="tile__collapsible" id="cc-demo"><div class="tile__body"></div></div>
+  </section>
+</div></div></div>
+        </div>
+      </div>
+      <!-- ── Финансовый анализ (пары нет): 7 разделов — SegmentControl ─────── -->
+      <div class="cl-panel" data-panel="analysis" hidden>
+        <div class="cl-sections">
+        <div class="segctrl" role="radiogroup" aria-label="Разделы анализа" data-segctrl id="cl-an-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="0"><span class="segctrl__label">P&amp;L</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="1"><span class="segctrl__label">Балансовые показатели</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="2"><span class="segctrl__label">ДДС и CAPEX</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="3"><span class="segctrl__label">Общий долг</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="4"><span class="segctrl__label">Долг перед Сбербанком</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="5"><span class="segctrl__label">Коэффициенты</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="6"><span class="segctrl__label">LTM показатели</span></button>
+        </div>
+        </div>
+        <div class="tile-row"><!-- Локальный компонент «Таблица ФОК» — таблица «Показатель × квартал» вкладки
+     «Финансовые показатели» страницы клиента (ClientInfoFinancials). Пара во
+     фронтенде — FinancialsTable. Ячейка — значение и подзначение (TableCell
+     ДС, вторая строка .tc__subtext). Страница вшивает меткой <ds-include> и
+     заполняет: LcFinancialsTable.render(host, { fok }). -->
+<section id="cl-analysis-table" data-state="data" data-mode="view" class="tile tile--headless lc-fin-table col-12">
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-table__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить показатели</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-table__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-table__content">
+      <div class="dtable">
+        <div class="dtable__toolbar" data-ft-caption-bar hidden><div class="dtable__toolbar-right"><span class="lc-fin-table__caption" data-ft-caption></span></div></div>
+        <div class="dtable__body"><div class="tbl" data-table data-ft-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section></div>
+      </div>
+
+      <!-- Шаблоны повторяемых карточек: сборка вшивает один источник разметки. -->
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="task-history-template" data-off-grid="Шаблон истории: ширину задаёт панель предпросмотра"><!-- История задачи: отдельная пара core/tasks-app TaskHistoryTable. -->
+<section class="tile tile--headless dtable lc-task-history" data-state="data" data-mode="view">
+  <div class="lc-task-history__loading sk-group" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span></div>
+  <div class="lc-task-history__error alert alert--error alert--m" role="alert"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Не удалось загрузить историю задачи</p></div></div>
+  <div class="lc-task-history__empty es es--m" role="status"><div class="es__body"><p class="es__title">История отсутствует</p><p class="es__text">По задаче пока нет событий.</p></div></div>
+  <div class="dtable__body lc-task-history__data"><div class="tbl" data-table data-history-rows>
+    <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 110px minmax(140px,1fr) minmax(160px,1.4fr) 170px minmax(180px,1.6fr) 130px minmax(8px,1fr)">
+      <div class="th th--separator"></div>
+      <div class="th"><span class="th__label">Дата</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Событие</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Название</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Описание задачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Приоритет</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th th--separator"></div>
+    </div>
+  </div></div>
+</section></template></div>
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="strat-dialogue-template" data-off-grid="Шаблон цели: ширину задаёт список карточек"><!-- Локальный компонент «Карточка цели» — карточка цели клиента на вкладке
+     «Цели» (ClientInfoGoalsPage) и в архивах (GoalArchiveSection). Пара во
+     фронтенде — StratDialogueCard (core/clients-app, features); части —
+     StratDialogueBadge (чип типа цели) и StratDialogueUser (участник).
+     Карточек столько, сколько целей: сетку строит list(goals), разметка
+     карточки — этот фрагмент в template страницы, без копии разметки в JS.
+     Одна карточка: render(host, { goal }). -->
+<article class="tile tile--card lc-strat-card" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__chiplist">
+        <span class="chip chip--xs" data-sc-type><span class="chip__label">Бизнес</span></span>
+        <span class="chip chip--xs"><span class="chip__icon" aria-hidden="true"><i data-icon="calendar"></i></span><span class="chip__label" data-sc-period>2026</span></span>
+      </div>
+      <div class="tile__title-row"><h3 class="tile__title" data-sc-title>Запуск второй очереди тепличного комплекса</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="lc-strat-card__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Метрика</span></span><div class="rof__row"><span class="rof__value" data-sc-metric>Выручка, млн RUB</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Значение</span></span><div class="rof__row"><span class="rof__value" data-sc-value>520</span></div></div>
+        <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value" data-sc-comment>Цель зафиксирована по итогам страт. диалога.</span></div></div>
+      </div>
+      <div class="entity-list" data-sc-people>
+        <div class="entity entity--s"><div class="entity__lead"><span class="av av--circular av--s"><span class="av__text">ПЕ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Панова Елена Юрьевна</span></div></div><div class="entity__subs"><span class="entity__subs-list">Клиентский менеджер</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</article></template></div>
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="goal-archive-template" data-off-grid="Шаблон архива: ширину задаёт вкладка целей"><!-- Локальный компонент «Архив целей» — аккордеон «Архив YYYY» вкладки «Цели»
+     страницы клиента (ClientInfoGoalsPage). Пара во фронтенде —
+     GoalArchiveSection (core/clients-app). Карточки — StratDialogueCard.
+     Архивов столько, сколько лет: list(archives, openYear) отдаёт разметку
+     всех секций из template страницы; одна секция — render(host, { year, goals, open }). -->
+<section class="tile tile--accordion lc-goal-archive" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" data-ga-title>Архив 2025</h3></div></div>
+    <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="ga-2025" aria-label="Свернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div>
+  </header>
+  <div class="tile__collapsible" id="ga-2025"><div class="tile__body" data-ga-cards></div></div>
+</section></template></div>
+      <div id="client-goals-info" class="pop pop--w-s pop--bottom pop--start pop--floating" role="dialog" aria-modal="false" aria-labelledby="client-goals-info-title">
+        <div class="pop__head"><div class="pop__head-main"><h3 class="pop__title" id="client-goals-info-title">Цели клиента</h3></div><span class="pop__close"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть"><i data-icon="close"></i></button></span></div>
+        <div class="pop__body">Цели клиента представлены на вкладке «Цели».</div>
+      </div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- подтверждение «Завершить» / «Отменить» встречу (Р7) — разметка страницы на Modal ДС -->
+      <div class="modal-scrim" id="meeting-confirm-scrim" hidden>
+        <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="meeting-confirm-title">
+          <header class="modal__head">
+            <h2 class="modal__title" id="meeting-confirm-title">Завершить встречу</h2>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+          </header>
+          <div class="modal__body"><p data-meeting-confirm-text>Встреча получит статус «Завершена».</p></div>
+          <footer class="modal__foot"><div class="modal__foot-right">
+            <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+            <button type="button" class="btn btn--accent btn--m" data-meeting-confirm><span class="btn__label">Завершить</span></button>
+          </div></footer>
+        </div>
+      </div>
+      <!-- Локальный компонент «Смена статуса задачи» — окно действий «Исполнить»,
+     «Переназначить», «Отменить» реестра задач (§4.10, Р7). Переназначение —
+     с полем сотрудника (DropdownList); исполнение/отмена — подтверждение.
+     Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
+     LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
+     задачу в хранилище и открывается слоем Modal ДС. -->
+<div class="modal-scrim" id="task-change-scrim" hidden>
+  <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-task-change__text">Задача <b data-tc-number>–</b> — <span data-tc-name>–</span>.</p>
+      <div class="inp inp--m" data-tc-employee hidden>
+        <label class="ds-label" for="tc-employee"><span class="ds-label__text">Исполнитель</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tc-employee" data-ddl="tc-employee-ddl" placeholder="Выберите сотрудника">
+        </div>
+      </div>
+      <!-- список сотрудников заполняет скрипт окна из employees.js -->
+      <div id="tc-employee-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-tc-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.js"></script>
+<script src="../widgets/tiles/IndustryInfoTile/IndustryInfoTile.js"></script>
+<script src="../widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.js"></script>
+<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.js"></script>
+<script src="../widgets/tiles/TeamInfoTile/TeamInfoTile.js"></script>
+<script src="../widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.js"></script>
+<script src="../widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../widgets/tiles/ClientTimingsTile/ClientTimingsTile.js"></script>
+<script src="../widgets/tiles/ClientNewsTile/ClientNewsTile.js"></script>
+<script src="../widgets/tiles/GigaInfoTile/GigaInfoTile.js"></script>
+<script src="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js"></script>
+<script src="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.js"></script>
+<script src="../widgets/tables/TasksTable/TasksTable.js"></script>
+<script src="../widgets/tables/TaskHistoryTable/TaskHistoryTable.js"></script>
+<script src="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.js"></script>
+<script src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
+<script src="../widgets/tables/LeadsTable/LeadsTable.js"></script>
+<script src="../widgets/tables/MaPipelineTable/MaPipelineTable.js"></script>
+<script src="../widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.js"></script>
+<script src="../widgets/tiles/FinancialsChart/FinancialsChart.js"></script>
+<script src="../widgets/tables/FinancialsTable/FinancialsTable.js"></script>
+<script src="../widgets/tiles/StratDialogueCard/StratDialogueCard.js"></script>
+<script src="../widgets/tiles/GoalArchiveSection/GoalArchiveSection.js"></script>
+<script src="../widgets/tiles/ClientCreditsList/ClientCreditsList.js"></script>
+<script>
+/* Экранный скрипт страницы клиента: клиент по ?id=, вкладка по ?tab= (имя
+   страницы фронтенда, где пара есть). Меню — data/nav-links.js; панели и
+   ряды — в разметке, тайлы и таблицы — виджеты; скрипт только наполняет.
+   Панель наполняется при первом показе. */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, T = window.IBPR_TABLE;
+  var q = new URLSearchParams(location.search);
+  var c = S.client(q.get('id')) || S.client('3000012345');
+  N.mount({ active: 'clients' });
+
+  function el(id) { return document.getElementById(id); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  /* ── шапка ──────────────────────────────────────────────────────────── */
+  var cur = document.querySelector('.crumbs__current');
+  if (cur) cur.textContent = c.name;
+  document.title = c.name + ' — IBP Redesign v1';
+  el('cl-title').textContent = c.name;
+  el('cl-holding').textContent = c.holdingName;
+  /* статус — скруглённый чип; признаки клиента — чипы-флаги (Chip ДС) */
+  var before = [T.chip('Активен', { tone: 'info', rounded: true }), T.chip(c.quarterPlan, { icon: 'calendar' })];
+  if (c.didGrowthCompany) before.push(T.chip('Компания роста ДИД', { icon: 'trend-up' }));
+  if (c.topClient) before.push(T.chip('Топ клиент', { icon: 'star' }));
+  if (c.growthCompany) before.push(T.chip('Компания роста', { icon: 'trend-up' }));
+  var after = [];
+  if (c.keyClient) after.push(T.chip('Ключевой клиент'));
+  if (c.residentRf) after.push(T.chip('Резидент РФ', { icon: 'resident-rf' }));
+  /* счётчик с ⓘ — смысл неизвестен (вопрос 8 MS0014): Chip + .chip__info */
+  if (c.headerCounter != null) {
+    after.push('<span class="chip chip--s chip--rounded chip--outline"><span class="chip__label">' + c.headerCounter + '</span>'
+      + '<button type="button" class="chip__info" aria-label="Подробнее"><i data-icon="info-circle"></i></button></span>');
+  }
+  var badge = el('cl-goals-badge');
+  badge.insertAdjacentHTML('beforebegin', before.join(''));
+  badge.insertAdjacentHTML('afterend', after.join(''));
+  window.LcGoalsPopoverBadge.render(badge, { fixed: c.goalsFixed });
+
+  /* ── SegmentControl → подвиды панели ────────────────────────────────── */
+  function segment(id, attr, onChange) {
+    var sw = el(id);
+    sw.addEventListener('click', function (e) {
+      var b = e.target.closest('.segctrl__item');
+      if (!b || b.getAttribute('aria-disabled') === 'true') return; /* Р3 */
+      var v = b.getAttribute('data-view');
+      if (attr) $all('[' + attr + ']', sw.closest('.cl-panel')).forEach(function (p) { p.hidden = p.getAttribute(attr) !== v; });
+      if (onChange) onChange(v);
+    });
+  }
+
+  /* ── сплиттер: правая панель показывается выбором строки ────────────── */
+  function splitter(root) {
+    var spl = root.querySelector('.spl'), a = root.querySelector('.splitpane__a'), b = root.querySelector('.splitpane__b');
+    var pct = 55;
+    if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+    return function (on) { b.hidden = !on; spl.hidden = !on; a.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto'; };
+  }
+
+  /* ── Общая информация ───────────────────────────────────────────────── */
+  function general() {
+    window.LcIndustryInfoTile.render(el('cl-industry'), { client: c });
+    window.LcRequisitesInfoTile.render(el('cl-requisites'), { client: c });
+    window.LcCommentsTile.render(el('cl-comments'), {
+      title: 'Комментарии', href: N.href('clientComments', { id: c.id }),
+      comments: S.clientComments(c.id).slice(0, 1).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+    window.LcDocumentsInfoTile.render(el('cl-documents'), { documents: c.documents });
+    window.LcTeamInfoTile.render(el('cl-gcm'), { title: 'Главный клиентский менеджер', members: [{ employeeId: c.gcmId, withNumber: true }] });
+    window.LcRelatedPersonsTile.render(el('cl-persons'), { persons: c.relatedPersons });
+    window.LcTeamInfoTile.render(el('cl-team'), {
+      title: 'Команда клиента ДИД', editable: true,
+      members: c.team.map(function (m) { return { employeeId: m.employeeId, roleLabel: S.lbl.employeeRole(m.roleCode) }; })
+    });
+    window.LcDesksTile.render(el('cl-desks'), {
+      note: 'Сотрудники указанных ниже десков входят в команду клиента ДИД',
+      desks: c.desks.map(function (d) { return { deskName: S.lbl.desk(d.deskId), roleLabel: S.lbl.employeeRole(d.roleCode) }; })
+    });
+    window.LcClientTimingsTile.render(el('cl-timings'), { client: c });
+    window.LcClientNewsTile.render(el('cl-news'), { news: c.news });
+    window.LcGigaInfoTile.render(el('cl-giga'), { giga: c.giga });
+  }
+
+  /* ── Встречи ────────────────────────────────────────────────────────── */
+  function meetings() {
+    var show = splitter(el('cl-mt-split'));
+    var details = el('cl-mt-details');
+    var pending = null, selected = null;
+    var list = window.LcMeetingsProtocolsList.mount(el('cl-mt-list'), { clientId: c.id, onSelect: function (m) { open(m); } });
+    function open(m) {
+      selected = m.id;
+      show(true);
+      window.LcMeetingsProtocolsDetails.render(details, { meeting: m, onAction: action });
+    }
+    function action(a, m) {
+      if (a === 'close') { show(false); list.select(null); return; }
+      if (a === 'doTask') { window.LcChangeTaskStatusModal.open({ task: m, action: 'done', onConfirm: function () { open(S.meeting(selected)); } }); return; }
+      pending = { action: a, id: m.id };
+      var finish = a === 'finish';
+      el('meeting-confirm-title').textContent = finish ? 'Завершить встречу' : 'Отменить встречу';
+      document.querySelector('[data-meeting-confirm-text]').textContent = 'Встреча ' + m.id + ' получит статус «' + (finish ? 'Завершена' : 'Отменена') + '».';
+      document.querySelector('[data-meeting-confirm] .btn__label').textContent = finish ? 'Завершить' : 'Отменить встречу';
+      window.DSModal.open(el('meeting-confirm-scrim'));
+    }
+    document.querySelector('[data-meeting-confirm]').addEventListener('click', function () {
+      if (!pending) return;
+      if (pending.action === 'finish') S.finishMeeting(pending.id); else S.cancelMeeting(pending.id);
+      window.DSModal.closeTop();
+      if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Встреча ' + pending.id + (pending.action === 'finish' ? ' завершена' : ' отменена') });
+      list.refresh();
+      open(S.meeting(pending.id));
+    });
+    show(false);
+  }
+
+  /* ── Задачи ─────────────────────────────────────────────────────────── */
+  function tasks() {
+    var show = splitter(el('cl-tk-split'));
+    var preview = el('cl-tk-preview');
+    var list = window.LcTasksTable.mount(el('cl-tk-list'), { clientId: c.id, onSelect: function (t) { open(t); } });
+    function open(t) {
+      show(true);
+      window.LcTaskPreviewTile.render(preview, { task: t, onAction: function (a, task) {
+        if (a === 'close') { show(false); list.select(null); return; }
+        window.LcChangeTaskStatusModal.open({ task: task, action: a, onConfirm: function (fresh) { list.refresh(); open(fresh); } });
+      } });
+    }
+    show(false);
+  }
+
+  /* ── Сделки: таблицы вкладки — те же виджеты-реестры в компактном режиме ─ */
+  function deals() {
+    var newLead = '<button type="button" class="btn btn--outline btn--xs"><i data-icon="add"></i><span class="btn__label">Новый лид</span></button>';
+    window.LeadsTable.mount(el('cl-leads-did'), 'leads', { clientId: c.id, kind: 'did', compact: { title: 'Лиды ДИД', actions: newLead } });
+    window.LeadsTable.mount(el('cl-leads-rd'), 'leads', { clientId: c.id, kind: 'rd', compact: { title: 'Потенциалы ДИД в ТБ. Потенциалы РД.' } });
+    window.LeadsTable.mount(el('cl-leads-binding'), 'binding-leads', { clientId: c.id, kind: 'binding', compact: { title: 'Обязательные лиды' } });
+    window.LeadsTable.mount(el('cl-leads-possible'), 'possible-leads', { clientId: c.id, kind: 'possible', compact: { title: 'Возможные лиды' } });
+    var pipelineDrawn = false;
+    segment('cl-deals-switch', 'data-deals-view', function (v) {
+      if (v !== 'pipeline' || pipelineDrawn) return;
+      pipelineDrawn = true;
+      T.opportunities(el('cl-pipeline'), { clientId: c.id, tab: null, compact: { title: 'Pipeline' } });
+      T.opportunities(el('cl-binding'), { clientId: c.id, tab: null, compact: { title: 'Обязательные сделки' } });
+      T.opportunities(el('cl-possible'), { clientId: c.id, tab: null, compact: { title: 'Возможные сделки' } });
+      window.LcMaPipelineTable.mount(el('cl-ma'), { client: c });
+      window.LcDcmEcmPipelineTable.mount(el('cl-dcm'), { client: c, kind: 'dcm' });
+      window.LcDcmEcmPipelineTable.mount(el('cl-ecm'), { client: c, kind: 'ecm' });
+    });
+  }
+
+  /* ── Финансовые показатели ──────────────────────────────────────────── */
+  function financials() {
+    var fok = c.financials.fok, custom = c.financials.custom;
+    window.LcFinancialsChart.render(el('cl-fin-chart'), { fok: fok });
+    window.LcFinancialsTable.render(el('cl-fin-table'), { fok: fok });
+    var grid = document.querySelector('[data-custom-metrics]');
+    grid.innerHTML = custom.metrics.map(function (m) {
+      return '<div class="rof"><span class="ds-label"><span class="ds-label__text">' + T.esc(m.label) + '</span></span><div class="rof__row"><span class="rof__value">' + T.esc(m.value) + '</span></div></div>';
+    }).join('') + '<div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value">' + T.esc(custom.comment) + '</span></div></div>';
+    segment('cl-fin-switch', 'data-fin-view');
+  }
+
+  /* ── Цели ───────────────────────────────────────────────────────────── */
+  function goals() {
+    function paint(seg) {
+      el('cl-goals-current').innerHTML = window.LcStratDialogueCard.list(c.goals[seg] || []);
+      if (window.dsIcons) window.dsIcons.apply(el('cl-goals-current'));
+    }
+    paint('business');
+    el('cl-goals-archive').innerHTML = window.LcGoalArchiveSection.list(c.goals.archives, '2025');
+    segment('cl-goals-switch', null, paint);
+  }
+
+  /* ── Кредиты ────────────────────────────────────────────────────────── */
+  function credits() {
+    var sum = c.credits.summary;
+    $all('[data-cs]').forEach(function (v) { v.textContent = sum[v.getAttribute('data-cs')] || '–'; });
+    window.LcClientCreditsList.render(el('cl-credits-active'), { credits: c.credits.active, variant: 'active' });
+    window.LcClientCreditsList.render(el('cl-credits-pipeline'), { credits: c.credits.pipeline, variant: 'pipeline' });
+    segment('cl-cred-switch', 'data-cred-view');
+    var layout = el('cl-cred-layout');
+    function creditLayout(mode) {
+      $all('.lc-client-credits .tile--accordion').forEach(function (card) { window.DSTile.toggle(card, mode === 'list'); });
+    }
+    layout.addEventListener('click', function (event) {
+      var target = event.target.closest('[data-layout]');
+      if (target) creditLayout(target.getAttribute('data-layout'));
+    });
+    layout.addEventListener('keydown', function () {
+      setTimeout(function () { creditLayout(layout.querySelector('[aria-checked="true"]').getAttribute('data-layout')); }, 0);
+    });
+  }
+
+  /* ── Финансовый анализ ──────────────────────────────────────────────── */
+  function analysis() {
+    var Q = ['1КВ', '2КВ', '3КВ', '4КВ', 'LTM'];
+    function paint(i) {
+      var s = c.analysis.sections[Number(i)] || c.analysis.sections[0];
+      window.LcFinancialsTable.render(el('cl-analysis-table'), {
+        firstLabel: 'Показатель, млн руб.', caption: 'Данные АС Cashflow рассчитанные 01.01.2026',
+        fok: { periods: Q, rows: s.rows.map(function (r) { return { label: r.label, values: r.values.slice(0, Q.length) }; }) }
+      });
+    }
+    paint(0);
+    segment('cl-an-switch', null, paint);
+  }
+
+  /* ── вкладки ────────────────────────────────────────────────────────── */
+  var painters = { general: general, meetings: meetings, tasks: tasks, deals: deals, financials: financials, goals: goals, credits: credits, analysis: analysis };
+  var painted = {};
+  function switchTab(id) {
+    $all('#cl-tabs .tab').forEach(function (b) {
+      var on = b.getAttribute('data-tab-id') === id;
+      b.classList.toggle('tab--selected', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    $all('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== id; });
+    if (!painted[id]) { painted[id] = true; painters[id](); }
+    var tab = document.querySelector('#cl-tabs [data-tab-id="' + id + '"]');
+    history.replaceState(null, '', N.href('client', { id: c.id, tab: (tab && tab.getAttribute('data-page')) || id }));
+    if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+    if (window.DSTabs) $all('[data-panel="' + id + '"] [data-segctrl]').forEach(function (s) { window.DSTabs.positionThumb(s); });
+  }
+  el('cl-tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (!b || b.getAttribute('aria-disabled') === 'true') return; /* Р3: «Новости» */
+    switchTab(b.getAttribute('data-tab-id'));
+  });
+  var want = q.get('tab');
+  var start = want ? $all('#cl-tabs .tab').filter(function (b) { return b.getAttribute('data-page') === want || b.getAttribute('data-tab-id') === want; })[0] : null;
+  switchTab(start && painters[start.getAttribute('data-tab-id')] ? start.getAttribute('data-tab-id') : 'general');
+  if (window.DSTooltip) window.DSTooltip.bindAll(document);
+})();
+</script>
+</body>
+</html>

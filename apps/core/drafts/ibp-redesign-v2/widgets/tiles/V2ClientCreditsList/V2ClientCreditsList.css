@@ -1,0 +1,5 @@
+/* V2ClientCreditsList — раскладка раскрытой карточки на токенах ДС. */
+.lc-client-credits { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+.lc-client-credits__pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+.lc-client-credits__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+.lc-client-credits__meta { font: var(--type-body-xs); color: var(--text-secondary); margin: var(--space-8) 0 0; }

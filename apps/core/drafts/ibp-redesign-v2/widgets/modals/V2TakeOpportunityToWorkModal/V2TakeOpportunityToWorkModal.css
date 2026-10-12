@@ -1,0 +1,9 @@
+/* «Взять сделку в работу» — внутренняя раскладка окна: только текст
+   подтверждения на токенах; вся механика окна — Modal ДС. */
+.lc-take-opp { min-width: 0; }
+
+.lc-take-opp__text {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  margin: 0;
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!-- Администрирование — страница фронтенда AdminPage (core/host-app, pages/AdminPage).
+     Плитки — LinkNavigationTile; живая ссылка одна — «Статусы задач».
+     Источник: открывается собранной AdminPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Администрирование — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/LinkNavigationTile/LinkNavigationTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Администрирование</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="AdminPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title">Администрирование</h1></div></div>
+        </div>
+      </div>
+
+      <!-- #sec:content ── группы плиток со ссылками (LinkNavigationTile) ──── -->
+      <div class="tile-group">
+        <!-- группа «Бизнес-справочники»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Бизнес-справочники</span></div>
+        <div class="tile-row">
+          <!-- Локальный компонент «Плитка со ссылками» — плитка раздела страницы
+     «Администрирование» (AdminPage). Пара во фронтенде — LinkNavigationTile
+     (core/host-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcLinkNavigationTile.render(host, { title, subtitle, groups, cols }).
+     Адреса ссылок задаёт страница через groups; начальная разметка
+     не содержит путей, зависящих от места вшивания виджета. -->
+<section data-cols="1" id="adm-dicts" data-state="data" data-mode="view" class="tile lc-link-nav col-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ln-title>Справочники</h3></div>
+      <p class="tile__subtitle" data-ln-subtitle>Бизнес-справочники, используемые в сделках</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-link-nav__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-link-nav__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-link-nav__content lc-link-nav__groups" data-ln-groups>
+      <div class="lc-link-nav__group">
+        <p class="lc-link-nav__label">Задачи</p>
+        <div class="lc-link-nav__links">
+          <a class="link link--accent link--m" href="#" data-inert>Объекты задач</a>
+          <a class="link link--accent link--m" href="#" data-inert>Статусы задач</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- группа «Бизнес-данные»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Бизнес-данные</span></div>
+        <div class="tile-row">
+          <!-- Локальный компонент «Плитка со ссылками» — плитка раздела страницы
+     «Администрирование» (AdminPage). Пара во фронтенде — LinkNavigationTile
+     (core/host-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcLinkNavigationTile.render(host, { title, subtitle, groups, cols }).
+     Адреса ссылок задаёт страница через groups; начальная разметка
+     не содержит путей, зависящих от места вшивания виджета. -->
+<section data-cols="1" id="adm-employees" data-state="data" data-mode="view" class="tile lc-link-nav col-6 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ln-title>Справочники</h3></div>
+      <p class="tile__subtitle" data-ln-subtitle>Бизнес-справочники, используемые в сделках</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-link-nav__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-link-nav__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-link-nav__content lc-link-nav__groups" data-ln-groups>
+      <div class="lc-link-nav__group">
+        <p class="lc-link-nav__label">Задачи</p>
+        <div class="lc-link-nav__links">
+          <a class="link link--accent link--m" href="#" data-inert>Объекты задач</a>
+          <a class="link link--accent link--m" href="#" data-inert>Статусы задач</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Плитка со ссылками» — плитка раздела страницы
+     «Администрирование» (AdminPage). Пара во фронтенде — LinkNavigationTile
+     (core/host-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcLinkNavigationTile.render(host, { title, subtitle, groups, cols }).
+     Адреса ссылок задаёт страница через groups; начальная разметка
+     не содержит путей, зависящих от места вшивания виджета. -->
+<section data-cols="1" id="adm-clients" data-state="data" data-mode="view" class="tile lc-link-nav col-6 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ln-title>Справочники</h3></div>
+      <p class="tile__subtitle" data-ln-subtitle>Бизнес-справочники, используемые в сделках</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-link-nav__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-link-nav__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-link-nav__content lc-link-nav__groups" data-ln-groups>
+      <div class="lc-link-nav__group">
+        <p class="lc-link-nav__label">Задачи</p>
+        <div class="lc-link-nav__links">
+          <a class="link link--accent link--m" href="#" data-inert>Объекты задач</a>
+          <a class="link link--accent link--m" href="#" data-inert>Статусы задач</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- группа «Настройки процессов»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Настройки процессов</span></div>
+        <div class="tile-row">
+          <!-- Локальный компонент «Плитка со ссылками» — плитка раздела страницы
+     «Администрирование» (AdminPage). Пара во фронтенде — LinkNavigationTile
+     (core/host-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcLinkNavigationTile.render(host, { title, subtitle, groups, cols }).
+     Адреса ссылок задаёт страница через groups; начальная разметка
+     не содержит путей, зависящих от места вшивания виджета. -->
+<section data-cols="1" id="adm-settings" data-state="data" data-mode="view" class="tile lc-link-nav col-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ln-title>Справочники</h3></div>
+      <p class="tile__subtitle" data-ln-subtitle>Бизнес-справочники, используемые в сделках</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-link-nav__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-link-nav__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-link-nav__content lc-link-nav__groups" data-ln-groups>
+      <div class="lc-link-nav__group">
+        <p class="lc-link-nav__label">Задачи</p>
+        <div class="lc-link-nav__links">
+          <a class="link link--accent link--m" href="#" data-inert>Объекты задач</a>
+          <a class="link link--accent link--m" href="#" data-inert>Статусы задач</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/LinkNavigationTile/LinkNavigationTile.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; плитки — LinkNavigationTile.
+   Живая ссылка одна — «Статусы задач»; остальные вне объёма (Р5): вид как у
+   живых, клик гасится (ревью MS0014, З1). */
+(function () {
+  'use strict';
+  var N = window.IBPR_NAV;
+  N.mount({ active: 'admin' });
+  function links(list) { return list.map(function (l) { return typeof l === 'string' ? { label: l } : l; }); }
+  var tiles = {
+    'adm-dicts': { title: 'Справочники', subtitle: 'Бизнес-справочники, используемые в сделках', cols: 4, groups: [
+      { links: links(['Риск-сегмент']) },
+      { label: 'Сотрудники', links: links(['Департаменты', 'Макроотрасли', 'Дески']) },
+      { label: 'Задачи', links: links(['Объекты задач', 'Типы задач', 'Группы типов задач', { label: 'Статусы задач', href: N.href('taskStates') }, 'Категории задач']) },
+      { label: 'География', links: links(['Города', 'Регионы']) }
+    ] },
+    'adm-employees': { title: 'Сотрудники', subtitle: 'Список и детальная информация о сотрудниках', groups: [{ links: links(['Сотрудники', 'Дески', 'Департаменты']) }] },
+    'adm-clients': { title: 'Клиенты', subtitle: 'Список контрагентов из всех сделок', groups: [{ links: links(['Клиенты', 'Связанные физические лица']) }] },
+    'adm-settings': { title: 'Системные настройки', subtitle: 'Настройки и администрирование системы', cols: 3, groups: [
+      { links: links(['Группы настроек']) }, { links: links(['Микросервисы']) }, { links: links(['Настройки']) }
+    ] }
+  };
+  Object.keys(tiles).forEach(function (id) { window.LcLinkNavigationTile.render(document.getElementById(id), tiles[id]); });
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

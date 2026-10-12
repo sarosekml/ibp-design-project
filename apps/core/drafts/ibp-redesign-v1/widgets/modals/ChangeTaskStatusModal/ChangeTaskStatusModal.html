@@ -1,0 +1,31 @@
+<!-- Локальный компонент «Смена статуса задачи» — окно действий «Исполнить»,
+     «Переназначить», «Отменить» реестра задач (§4.10, Р7). Переназначение —
+     с полем сотрудника (DropdownList); исполнение/отмена — подтверждение.
+     Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
+     LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
+     задачу в хранилище и открывается слоем Modal ДС. -->
+<div class="modal-scrim" id="task-change-scrim" hidden>
+  <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-task-change__text">Задача <b data-tc-number>–</b> — <span data-tc-name>–</span>.</p>
+      <div class="inp inp--m" data-tc-employee hidden>
+        <label class="ds-label" for="tc-employee"><span class="ds-label__text">Исполнитель</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tc-employee" data-ddl="tc-employee-ddl" placeholder="Выберите сотрудника">
+        </div>
+      </div>
+      <!-- список сотрудников заполняет скрипт окна из employees.js -->
+      <div id="tc-employee-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-tc-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

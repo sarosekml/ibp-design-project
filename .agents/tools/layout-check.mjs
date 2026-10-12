@@ -970,14 +970,24 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   /* Ветка .tile__actions читает только статическую разметку: `tagRange` ищет
      парный тег, а в погашенном окружении границы блока недостоверны. Действия
      в шапке тайла, собранные JS-склейкой, остаются непроверенными. */
+  const tileActionOwners = ['article', 'section', 'div'].flatMap((tag) =>
+    tagRanges(html, new RegExp('<' + tag + '[^>]*class="[^"]*\\btile\\b[^"]*"[^>]*>', 'g'), tag))
+    .filter((r) => /class="([^"]*)"/.exec(r.open)[1].split(/\s+/).includes('tile'));
   for (const acts of html.matchAll(/<div[^>]*class="[^"]*\btile__actions\b[^"]*"[^>]*>/g)) {
     const inner = tagRange(html, acts.index, 'div').inner;
+    /* S — контракт карточки Kanban (.kbcard), а не всех Card.
+       У обычного Tile и Card в списке/модалке действия M (Tile.md).
+       Вложенный Tile читает свой контекст, а не внешний контейнер. */
+    const owner = tileActionOwners.filter((r) => acts.index >= r.idx && acts.index < r.idx + r.html.length)
+      .reduce((nearest, r) => !nearest || r.idx > nearest.idx ? r : nearest, null);
+    const inKanbanCard = owner && /class="([^"]*)"/.exec(owner.open)[1].split(/\s+/).includes('kbcard');
+    const required = inKanbanCard ? /\bibtn--s\b/ : /\bibtn--m\b/;
     for (const b of inner.matchAll(/<button[^>]*class="([^"]*\bibtn\b[^"]*)"/g)) {
-      if (!/\bibtn--m\b/.test(b[1])) sizedM.push(`кнопка в .tile__actions (строка ${lineOf(html, acts.index)})`);
+      if (!required.test(b[1])) sizedM.push(`кнопка в .tile__actions (строка ${lineOf(html, acts.index)}, нужен ibtn--${inKanbanCard ? 's' : 'm'})`);
     }
   }
   if (sizedM.length) {
-    ok(false, `Б15 размер не по спеке (положен ibtn--m): ${[...new Set(sizedM)].slice(0, 6).join(', ')}`);
+    ok(false, `Б15 размер не по спеке: ${[...new Set(sizedM)].slice(0, 6).join(', ')}`);
   }
 
   /* З11 — ЦЕНА ВЕРДИКТА: сколько разметки сенсор не прочитал.
@@ -1029,9 +1039,79 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     }
   }
 
+  /* Б36 — слоты сортировки/закрепления TableCell используют IconButton S.
+     Одного th__sort недостаточно: без ibtn остаётся браузерная серая рамка.
+     Проверяются статическая разметка и подключённые JS-шаблоны. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*class="([^"]*)"[^>]*>/g)) {
+      if (!isLiteralAttr(m[1])) continue;
+      const classes = m[1].split(/\s+/);
+      if (!classes.some((c) => c === 'th__sort' || c === 'th__pin')) continue;
+      const missing = ['ibtn', 'ibtn--neutral', 'ibtn--s'].filter((c) => !classes.includes(c));
+      ok(!missing.length, missing.length
+        ? `Б36 ${kind}: кнопка TableCell без ${missing.join(', ')} (строка ${lineOf(visibleSource, m.index)}) — слот сортировки/закрепления требует IconButton S neutral`
+        : 'Б36 кнопка TableCell: IconButton S neutral ✓');
+    }
+  }
+
+  /* Б37 — data-kb-collapse принадлежит пункту Menu, а не IconButton
+     шапки. Kanban восстанавливает колонку по триггеру открытия меню. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*\bdata-kb-collapse(?=[\s=>])[^>]*>/g)) {
+      const classes = /class="([^"]*)"/.exec(m[0]);
+      if (classes && !isLiteralAttr(classes[1])) continue;
+      const menuItem = classes && classes[1].split(/\s+/).includes('menu__item') && /role="menuitem"/.test(m[0]);
+      ok(menuItem, menuItem ? 'Б37 Kanban collapse: пункт Menu ✓'
+        : `Б37 ${kind}: data-kb-collapse вне button.menu__item[role="menuitem"] (строка ${lineOf(visibleSource, m.index)}) — колонка определяется триггером открытия Menu`);
+    }
+  }
+
+  /* Б38 — значение TableSettings является CSS-селектором, не id.
+     Проверяем разрешимые статикой случаи; сложные/динамические селекторы
+     требуют прогона DOM. Пустой атрибут — штатный автопоиск таблицы. */
+  const tableSettingsMarkup = html + '\n' + markupInScripts;
+  for (const m of tableSettingsMarkup.matchAll(/<button\b[^>]*\bdata-table-settings="([^"]*)"[^>]*>/g)) {
+    const selector = m[1];
+    if (!selector || !isLiteralAttr(selector)) continue;
+    if (/^[A-Za-z_][\w-]*$/.test(selector)) {
+      const found = new RegExp('<' + selector + '(?=[\\s>])', 'i').test(tableSettingsMarkup);
+      ok(found, found ? 'Б38 TableSettings: селектор тега разрешается ✓'
+        : `Б38 data-table-settings="${selector}" не находит элемент: для id нужен #; рантайм вызывает querySelector`);
+    } else if (/^#[A-Za-z_][\w-]*$/.test(selector)) {
+      const found = new RegExp('<[A-Za-z][\\w:-]*\\b[^>]*\\sid="' + selector.slice(1) + '"').test(tableSettingsMarkup);
+      ok(found, found ? 'Б38 TableSettings: селектор id разрешается ✓'
+        : `Б38 data-table-settings="${selector}": целевой id отсутствует в разметке и JS-шаблонах`);
+    }
+  }
+
+  /* Б39 — текстовый слот SegmentControl не содержит ведущую иконку:
+     внутри label глиф display:block оказывается над текстом. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<span\b[^>]*class="[^"]*\bsegctrl__label\b[^"]*"[^>]*>([\s\S]*?)<\/span>/g)) {
+      const nestedIcon = /<i\b[^>]*\bdata-icon\s*=/.test(m[1]);
+      const labelText = m[1].replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+      if (!nestedIcon || !labelText) continue;
+      ok(false, `Б39 ${kind}: иконка внутри текстового segctrl__label (строка ${lineOf(visibleSource, m.index)}) — поставить i и span соседями внутри segctrl__item`);
+    }
+  }
+
   /* З2 — сортировка: активна не больше чем у одной колонки, и у кнопки
      сортировки есть непустой ключ. Пустой `data-sort` уходит в событие
      `sort`, и бэкенд получает запрос без поля сортировки. */
+  /* Б40 — TableCell поворачивает раскрытый twisty на 90°: базовый глиф вправо. */
+  for (const [kind, source] of [['HTML', html], ['JS', markupInScripts]]) {
+    const visibleSource = source.replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of visibleSource.matchAll(/<button\b[^>]*class="[^"]*\btc__twisty\b[^"]*"[^>]*>([\s\S]*?)<\/button>/g)) {
+      const icon = m[1].match(/\bdata-icon="([^"]+)"/);
+      if (!icon || !isLiteralAttr(icon[1])) continue;
+      ok(icon[1] === 'chevron-right', icon[1] === 'chevron-right'
+        ? `Б40 ${kind} TableCell tree: базовый глиф chevron-right ✓`
+        : `Б40 ${kind} tc__twisty: ${icon[1]} вместо chevron-right (строка ${lineOf(visibleSource, m.index)}) — CSS раскрытого узла поворачивает кнопку на 90°`);
+    }
+  }
   const sorted = [...html.matchAll(/aria-sort="(ascending|descending)"/g)];
   if (sorted.length > 1) {
     warn(`З2 сортировка активна у ${sorted.length} колонок (строки ${sorted.map((m) => lineOf(html, m.index)).join(', ')}) — одновременно активной может быть одна`);

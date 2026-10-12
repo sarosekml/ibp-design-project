@@ -11,7 +11,7 @@ version: "1.000"
 created: "09.10.2026"
 design_system: IBP DS
 components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Avatar, Badge, SegmentControl, Chip, Buttons, IconButton, Link, ContextMenu, Divider, Skeleton, Spinner, Alert, SnackBar, Tooltip, Modal, InputText, InputDate, DropdownList, Note]
-widgets: [tiles/HomeProfileTile, tiles/MyDayTile, tiles/MeetingsTile, tiles/TasksTile, tiles/NewsTile, tiles/StatCard, tiles/DateBadge, modals/MeetingCreateModal, modals/TaskCreateModal]
+widgets: [tiles/HomeProfileTile, tiles/MyDayTile, tiles/MeetingsTile, tiles/HomeTasksTile, tiles/NewsTile, tiles/StatCard, tiles/DateBadge, modals/MeetingCreateModal, modals/TaskCreateModal]
 ---
 
 # Page: HomePage — Главная — дашборд
@@ -53,7 +53,7 @@ Page (Layout, nav--rail)
     ├── HomeProfileTile (4)  — профиль, быстрые действия
     ├── MyDayTile (8)        — встречи сегодня и сроки задач
     ├── MeetingsTile (4)     — встречи: мои / деска, счётчики-фильтры, список
-    ├── TasksTile (4)        — задачи: мои / деска, счётчики-фильтры, список
+    ├── HomeTasksTile (4)        — задачи: мои / деска, счётчики-фильтры, список
     └── NewsTile (4)         — новости по клиентам
 ```
 
@@ -62,7 +62,7 @@ Page (Layout, nav--rail)
 | 1 | Профиль | `widgets/tiles/HomeProfileTile` | 4 / 12 / 12 | Entity L: фото, приветствие, ФИО, должность и деск, связь; «Новая встреча», «Новая задача» |
 | 2 | Мой день | `widgets/tiles/MyDayTile` | 8 / 12 / 12 | встречи сегодня по времени, строки «Срок сегодня» и «Просрочено» |
 | 3 | Встречи | `widgets/tiles/MeetingsTile` | 4 / 6 / 12 | переключатель, 3 счётчика, до 6 встреч, подвал |
-| 4 | Задачи | `widgets/tiles/TasksTile` | 4 / 6 / 12 | переключатель, 3 счётчика, до 5 задач, подвал |
+| 4 | Задачи | `widgets/tiles/HomeTasksTile` | 4 / 6 / 12 | переключатель, 3 счётчика, до 5 задач, подвал |
 | 5 | Новости | `widgets/tiles/NewsTile` | 4 / 12 / 12 | переключатель, до 5 новостей, «Смотреть все» |
 
 Перестроение — от ширины рабочей области (`@container screen`): ≤ 1300px —
@@ -83,7 +83,7 @@ Page (Layout, nav--rail)
 | `HomeProfileTile` | виджет — `../widgets/tiles/HomeProfileTile/HomeProfileTile.md` | ряд 1 | `class="col-4 colw-12"`, `mode="edit"` |
 | `MyDayTile` | виджет — `../widgets/tiles/MyDayTile/MyDayTile.md` | ряд 1 | `class="col-8 colw-12"`, `mode="view"` |
 | `MeetingsTile` | виджет — `../widgets/tiles/MeetingsTile/MeetingsTile.md` | ряд 2 | `class="col-4 colw-6"`, `mode="edit"` |
-| `TasksTile` | виджет — `../widgets/tiles/TasksTile/TasksTile.md` | ряд 2 | `class="col-4 colw-6"`, `mode="edit"` |
+| `HomeTasksTile` | виджет — `../widgets/tiles/HomeTasksTile/HomeTasksTile.md` | ряд 2 | `class="col-4 colw-6"`, `mode="edit"` |
 | `NewsTile` | виджет — `../widgets/tiles/NewsTile/NewsTile.md` | ряд 2 | `class="col-4 colw-12"`, `mode="view"` |
 | `StatCard` | подчасть — `../widgets/tiles/StatCard/StatCard.md` | счётчики встреч и задач | шаблон `#lc-stat-card-tpl`, кандидат в ДС |
 | `DateBadge` | подчасть — `../widgets/tiles/DateBadge/DateBadge.md` | дата в строке встречи | шаблон `#lc-date-badge-tpl`, кандидат в ДС |
@@ -191,7 +191,7 @@ Page (Layout, nav--rail)
 |---|---|---|
 | профиль сотрудника | `EmployeeProfileRsDto` | `HomeProfileTile`, футер меню |
 | встречи сотрудника и деска | `MeetingRsDto[]` | `MeetingsTile`, `MyDayTile` |
-| задачи сотрудника и деска | `TaskRsDto[]` | `TasksTile`, `MyDayTile` |
+| задачи сотрудника и деска | `TaskRsDto[]` | `HomeTasksTile`, `MyDayTile` |
 | новости по клиентам | `ClientNewsRsDto[]` | `NewsTile` |
 
 Имена методов API не придумываются: их выбирает разработка.
@@ -237,7 +237,7 @@ Page (Layout, nav--rail)
 | Профиль | `widgets/tiles/HomeProfileTile/` | `src/widgets/tiles/HomeProfileTile/HomeProfileTile.tsx` |
 | Мой день | `widgets/tiles/MyDayTile/` | `src/widgets/tiles/MyDayTile/MyDayTile.tsx` |
 | Встречи | `widgets/tiles/MeetingsTile/` | `src/widgets/tiles/MeetingsTile/MeetingsTile.tsx` |
-| Задачи | `widgets/tiles/TasksTile/` | `src/widgets/tiles/TasksTile/TasksTile.tsx` |
+| Задачи | `widgets/tiles/HomeTasksTile/` | `src/widgets/tiles/HomeTasksTile/HomeTasksTile.tsx` |
 | Новости | `widgets/tiles/NewsTile/` | `src/widgets/tiles/NewsTile/NewsTile.tsx` |
 | Окна | `widgets/modals/MeetingCreateModal/`, `TaskCreateModal/` | `src/features/modals/…` |
 | Счётчик, дата | `widgets/tiles/StatCard/`, `DateBadge/` | кандидаты в ДС — раздел 15 |

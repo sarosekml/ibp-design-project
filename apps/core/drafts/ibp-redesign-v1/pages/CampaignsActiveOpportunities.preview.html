@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- Кампании продаж — страница фронтенда CampaignsActiveOpportunities (pretrade/opportunities-app). вкладки — CampaignsActiveOpportunities, CampaignsArchiveOpportunities.
+     Источник: открывается собранной CampaignsActiveOpportunities.preview.html (node .agents/tools/assemble.mjs). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кампании продаж — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+<link rel="stylesheet" href="../widgets/tables/SalesCampaignsTable/SalesCampaignsTable.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" data-crumb-current>Кампании продаж: Активные кампании</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="CampaignsActiveOpportunities">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Кампании продаж</h1></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- вкладки — подфильтры одной таблицы (Р4); ?tab= — страница фронтенда вкладки -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="active"><span class="tab__label">Активные кампании</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="archive"><span class="tab__label">В архиве</span></button>
+      </div>
+
+      <!-- #sec:content ── Реестр ─────────────────────────────────────────── -->
+      <!-- Локальный компонент «Реестр кампаний продаж» — реестр кампаний продаж: активные и архив с причиной выбытия.
+     Таблицу рисует общий рендер data/registry-table.js (IBPR_TABLE.opportunities)
+     по конфигу реестра «campaign» (data/dictionaries.js, REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="campaign" id="reg-table" data-state="data" data-mode="view" class="tile tile--headless lc-campaigns-opp-table col-12">
+  <div class="alert alert--error alert--m lc-campaigns-opp-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; реестр — виджет SalesCampaignsTable
+   на общем рендере data/registry-table.js; вкладки — подфильтры (?tab=). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'sales-company' });
+  var reg = window.IBPR_TABLE.opportunities(document.getElementById('reg-table'));
+  var crumb = document.querySelector('.crumbs__current');
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), reg, reg.config.tabs, function (id, t) {
+    if (crumb && t) crumb.textContent = 'Кампании продаж: ' + t.label;
+  });
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

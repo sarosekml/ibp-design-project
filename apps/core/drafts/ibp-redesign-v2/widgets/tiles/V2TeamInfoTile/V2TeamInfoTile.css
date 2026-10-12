@@ -1,0 +1,13 @@
+/* V2TeamInfoTile — строки Entity с аватаром на токенах ДС. */
+.lc-team-info { min-width: 0; }
+.lc-team-info [hidden] { display: none; }
+.lc-team-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-team-info__error,
+.lc-team-info__loading { display: none; }
+.lc-team-info[data-state="error"] .lc-team-info__error { display: flex; }
+.lc-team-info[data-state="loading"] .lc-team-info__loading { display: flex; }
+.lc-team-info[data-state="loading"] .lc-team-info__content,
+.lc-team-info[data-state="error"] .lc-team-info__content { display: none; }
+.lc-team-info[data-editable="no"] [data-ti-edit] { display: none; }

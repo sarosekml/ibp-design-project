@@ -1,0 +1,13 @@
+/* RelatedPersonsTile — строки Entity и счётчик остальных на токенах ДС. */
+.lc-related-persons { min-width: 0; }
+.lc-related-persons [hidden] { display: none; }
+.lc-related-persons__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-related-persons__error,
+.lc-related-persons__loading { display: none; }
+.lc-related-persons[data-state="error"] .lc-related-persons__error { display: flex; }
+.lc-related-persons[data-state="loading"] .lc-related-persons__loading { display: flex; }
+.lc-related-persons[data-state="loading"] .lc-related-persons__content,
+.lc-related-persons[data-state="error"] .lc-related-persons__content { display: none; }
+.lc-related-persons__more { font: var(--type-body-s); color: var(--text-secondary); margin: 0; }

@@ -1,0 +1,19 @@
+/* V2ClientNewsTile — лента новостей на токенах ДС. */
+.lc-client-news { min-width: 0; }
+.lc-client-news [hidden] { display: none; }
+.lc-client-news__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-client-news__error,
+.lc-client-news__loading { display: none; }
+.lc-client-news[data-state="error"] .lc-client-news__error { display: flex; }
+.lc-client-news[data-state="loading"] .lc-client-news__loading { display: flex; }
+.lc-client-news[data-state="loading"] .lc-client-news__content,
+.lc-client-news[data-state="error"] .lc-client-news__content { display: none; }
+
+.lc-client-news__content > .link { align-self: flex-start; }
+.lc-client-news__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-client-news__item { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.lc-client-news__meta { font: var(--type-body-xs); color: var(--text-secondary); margin: 0; }
+.lc-client-news__title { font: var(--type-body-m-strong); color: var(--text-primary); margin: 0; }
+.lc-client-news__teaser { font: var(--type-body-s); color: var(--text-secondary); margin: 0; }

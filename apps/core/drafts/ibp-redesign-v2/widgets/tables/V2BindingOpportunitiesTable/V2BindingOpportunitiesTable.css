@@ -1,0 +1,6 @@
+/* V2BindingOpportunitiesTable — реестр на общем рендере. Своя раскладка: только блок ошибки
+   по data-state; таблица — компоненты ДС (Table, TableCell, TableFilter,
+   Pagination), их состояния не переопределяются. */
+.lc-binding-opp-table { min-width: 0; }
+.lc-binding-opp-table__error { display: none; }
+.lc-binding-opp-table[data-state="error"] .lc-binding-opp-table__error { display: flex; }

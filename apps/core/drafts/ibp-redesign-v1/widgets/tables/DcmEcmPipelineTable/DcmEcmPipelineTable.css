@@ -1,0 +1,5 @@
+/* dcm-ecm-table — таблица на общем рендере; своя раскладка — только блок
+   ошибки по data-state. */
+.lc-dcm-ecm-table { min-width: 0; }
+.lc-dcm-ecm-table__error { display: none; }
+.lc-dcm-ecm-table[data-state="error"] .lc-dcm-ecm-table__error { display: flex; }

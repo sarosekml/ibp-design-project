@@ -1,0 +1,20 @@
+/* GeneralInformationTile — раскладка внутри тайла на токенах ДС; показ
+   варианта по data-variant (сделка / лид), состояний — по data-state. */
+.lc-gen-info { min-width: 0; }
+.lc-gen-info [hidden] { display: none; }
+.lc-gen-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-gen-info__error,
+.lc-gen-info__loading { display: none; }
+.lc-gen-info[data-state="error"] .lc-gen-info__error { display: flex; }
+.lc-gen-info[data-state="loading"] .lc-gen-info__loading { display: flex; }
+.lc-gen-info[data-state="loading"] .lc-gen-info__content,
+.lc-gen-info[data-state="error"] .lc-gen-info__content { display: none; }
+/* режим просмотра: точки входа в правку не рисуются */
+.lc-gen-info[data-mode="view"] [data-gi-edit] { display: none; }
+
+.lc-gen-info[data-variant="opportunity"] .lc-gen-info__pot,
+.lc-gen-info[data-variant="potential"] .lc-gen-info__opp { display: none; }
+.lc-gen-info__checks { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-gen-info__docs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-12); }

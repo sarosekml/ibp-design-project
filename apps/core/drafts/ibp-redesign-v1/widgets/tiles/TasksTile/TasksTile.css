@@ -1,0 +1,16 @@
+/* TasksTile — список задач сделки на токенах ДС. */
+.lc-tasks-tile { min-width: 0; }
+.lc-tasks-tile [hidden] { display: none; }
+.lc-tasks-tile__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-tasks-tile__error,
+.lc-tasks-tile__loading { display: none; }
+.lc-tasks-tile[data-state="error"] .lc-tasks-tile__error { display: flex; }
+.lc-tasks-tile[data-state="loading"] .lc-tasks-tile__loading { display: flex; }
+.lc-tasks-tile[data-state="loading"] .lc-tasks-tile__content,
+.lc-tasks-tile[data-state="error"] .lc-tasks-tile__content { display: none; }
+
+.lc-tasks-tile__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-tasks-tile__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); min-width: 0; }
+.lc-tasks-tile__empty { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }

@@ -1,0 +1,17 @@
+/* V2TaskPreviewTile — внутренняя раскладка предпросмотра задачи на токенах ДС;
+   показ своих блоков по data-state и data-mode. */
+.lc-task-preview { container-type: inline-size; min-width: 0; }
+.lc-task-preview__content { display: flex; flex-direction: column; gap: var(--space-24); }
+.lc-task-preview__acts { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+.lc-task-preview__acts[hidden] { display: none; }
+.lc-task-preview__sec { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
+.lc-task-preview__sec-title { font: var(--type-h6-strong); color: var(--text-primary); margin: 0; }
+.lc-task-preview__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+
+.lc-task-preview__error,
+.lc-task-preview__loading { display: none; }
+.lc-task-preview[data-state="error"] .lc-task-preview__error { display: flex; }
+.lc-task-preview[data-state="loading"] .lc-task-preview__loading { display: flex; flex-direction: column; gap: var(--space-12); }
+.lc-task-preview[data-state="loading"] .lc-task-preview__content,
+.lc-task-preview[data-state="error"] .lc-task-preview__content { display: none; }
+.lc-task-preview[data-mode="view"] [data-tp-edit] { display: none; }

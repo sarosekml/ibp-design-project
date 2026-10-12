@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!-- Возможные лиды — страница фронтенда PossibleAllLeadsPage (pretrade/offersources-app). Снимка нет: колонки по Pixso, допущение (Р4).
+     Источник: открывается собранной PossibleAllLeadsPage.preview.html (node .agents/tools/assemble.mjs). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Возможные лиды — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+<link rel="stylesheet" href="../widgets/tables/V2LeadsTable/V2LeadsTable.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Возможные лиды</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="PossibleAllLeadsPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Возможные лиды</h1></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Реестр ─────────────────────────────────────────── -->
+      <!-- Локальный компонент «Реестр лидов» — реестр лидов: «Лиды» и «Лиды для КМ», обязательные и возможные лиды.
+     Таблицу рисует общий рендер data/registry-table.js (V2LeadsTable.mount)
+     по конфигу реестра «leads» (data/dictionaries.js, LEAD_REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: V2LeadsTable.mount(host); data-registry задаёт метка:
+     leads | binding-leads | possible-leads.
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="leads" id="reg-table" data-state="data" data-mode="view" class="tile tile--headless lc-leads-table col-12">
+  <div class="alert alert--error alert--m lc-leads-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/V2LeadsTable/V2LeadsTable.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; реестр — виджет V2LeadsTable
+   на общем рендере data/registry-table.js (реестр «possible-leads»). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'possible-leads' });
+  var reg = window.V2LeadsTable.mount(document.getElementById('reg-table'), 'possible-leads');
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

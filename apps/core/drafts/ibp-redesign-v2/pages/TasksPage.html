@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- Задачи — страница фронтенда TasksPage (core/tasks-app); вкладка «Задачи моего деска» — TasksOfMyDeskPage.
+     Реестр слева, предпросмотр справа — Splitter ДС, как на снимке системы (Задачи.png).
+     Источник: открывается собранной TasksPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задачи — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* раскладка: сплиттер на всю оставшуюся высоту .screen--app; правая
+     панель прокручивается своей областью .ds-scroll */
+  .split-fill { flex: 1; min-height: 0; }
+  .split-fill > .splitpane__a > * { flex: 1; min-width: 0; }
+  .split-scroll { flex: 1; min-width: 0; }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Задачи</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="TasksPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Задачи</h1></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- вкладки — подфильтры одной таблицы (Р4) -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="MY"><span class="tab__label">Мои задачи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="DESK"><span class="tab__label">Задачи моего деска</span></button>
+      </div>
+
+      <!-- #sec:content ── реестр и предпросмотр: Splitter ДС -->
+      <div class="splitpane split-fill" id="split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <ds-include src="../widgets/tables/V2TasksTable/V2TasksTable.html" id="tk-list" state="data" mode="view"></ds-include>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b">
+          <div class="ds-scroll split-scroll">
+            <ds-include src="../widgets/tiles/V2TaskPreviewTile/V2TaskPreviewTile.html" id="tk-preview" state="data" mode="view"></ds-include>
+          </div>
+        </div>
+      </div>
+
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="task-history-template" data-off-grid="Шаблон истории: ширину задаёт панель предпросмотра"><ds-include src="../widgets/tables/V2TaskHistoryTable/V2TaskHistoryTable.html" state="data" mode="view"></ds-include></template></div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <ds-include src="../widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.html"></ds-include>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/V2TasksTable/V2TasksTable.js"></script>
+<script src="../widgets/tables/V2TaskHistoryTable/V2TaskHistoryTable.js"></script>
+<script src="../widgets/tiles/V2TaskPreviewTile/V2TaskPreviewTile.js"></script>
+<script src="../widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; слева — V2TasksTable, справа —
+   V2TaskPreviewTile выбранной задачи (Splitter ДС); действия — V2ChangeTaskStatusModal. */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'tasks' });
+  var S = window.IBPR;
+  /* правая панель: выбор строки показывает, крестик прячет; при скрытой
+     панели реестр занимает всю ширину (ширину панелей ведёт Splitter ДС) */
+  var split = document.getElementById('split');
+  var spl = split.querySelector('.spl');
+  var paneA = split.querySelector('.splitpane__a');
+  var paneB = split.querySelector('.splitpane__b');
+  var pct = 55;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showPane(on) {
+    paneB.hidden = !on;
+    spl.hidden = !on;
+    paneA.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto';
+  }
+  var preview = document.getElementById('tk-preview');
+  var list = window.LcTasksTable.mount(document.getElementById('tk-list'), {
+    scope: 'MY',
+    onSelect: function (t) { show(t); }
+  });
+  function show(t) {
+    showPane(true);
+    window.LcTaskPreviewTile.render(preview, { task: t, onAction: function (action, task) {
+      if (action === 'close') { showPane(false); list.select(null); return; }
+      window.LcChangeTaskStatusModal.open({ task: task, action: action, onConfirm: function (fresh) { list.refresh(); show(fresh); } });
+    } });
+  }
+  var crumb = document.querySelector('.crumbs__current');
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), list,
+    [{ id: 'MY', label: 'Мои задачи', page: 'TasksPage' }, { id: 'DESK', label: 'Задачи моего деска', page: 'TasksOfMyDeskPage' }]);
+  var want = Number(new URLSearchParams(location.search).get('id'));
+  var first = want ? S.task(want) : null;
+  if (first) { list.select(first.id); show(first); } else showPane(false);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заёмщик и КНР — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Заёмщик и КНР">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Стороны продукта» — тайлы «Заёмщик» и «КНР» страницы
+     продукта (OpportunityProduct). Пара во фронтенде — ProductClientTiles
+     (pretrade/opportunities-app; у лида похожий PotentialProductClientTiles).
+     Корень — контейнер тайлов; место в ряду задаёт .tile-stack страницы.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcProductClientTiles.render(host, { product, onDelete }). -->
+<div class="lc-product-clients" data-state="data" data-mode="view" id="product-clients">
+  <section class="tile" data-pc-tile="borrower">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Заёмщик</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: Заёмщик" data-pc-delete="borrower"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="name">ООО «Ромашка»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="inn">7712345678</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="crmId">3000012345</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kpp">771201001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="ogrn">1157746123456</span></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="tile" data-pc-tile="knr">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">КНР</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: КНР" data-pc-delete="knr"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="name">ООО «Ландыш»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="inn">7712345701</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="crmId">3000012346</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kpp">771201002</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="ogrn">1167746222201</span></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.001</b></span><span>Обновлено: <b>12.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты Core</a> · core/drafts/ibp-redesign-v1</p>
+  <h1>Заёмщик и КНР</h1>
+  <p class="lead">Реквизиты сторон продукта сделки: заёмщика и КНР</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/drafts/ibp-redesign-v1</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles">apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">pretrade/opportunities-app widgets/tiles/opportunityTiles/ProductClientTiles (у лида похожий PotentialProductClientTiles — offersources-app)</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">pages/OpportunityProduct.html — ряд 1, 4 колонки (стопка)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/pages/OpportunityProduct.preview.html">apps/core/drafts/ibp-redesign-v1/pages/OpportunityProduct.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подтверждение удаления — окно страницы OpportunityProduct</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заёмщик и КНР<br>только заёмщик — тайл КНР скрыт</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">агент (ibp-redesign-v1)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">docs/tasks/MS0014-ibp-redesign-context-pages.md<br>docs/tasks/MS0014a-ibp-redesign-frontend-names.md</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.001 · обновлено 12.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайлы «Заёмщик» и «КНР» страницы продукта по ТЗ MS0014 §4.4: наименование, ИНН, CRM ID, КПП, КИО, ОГРН; у каждого — корзина. Во фронтенде это один компонент ProductClientTiles; в концепте — контейнер двух тайлов ДС. Стопка <code class="tok">.tile-stack</code> с шириной в колонках находится на странице вокруг метки виджета; внутри виджета — flex-колонка с зазором <code class="tok">--space-16</code>.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>.tile-stack страницы → .lc-product-clients (flex-колонка)
+├── Tile «Заёмщик» · корзина — tile__rows: ReadOnlyField × 6
+└── Tile «КНР» · корзина — tile__rows: ReadOnlyField × 6 (если есть)</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный ×2 в <code class="tok">.tile-stack</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в <code class="tok">.tile__rows</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M neutral, trash</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.css">ProductClientTiles.css</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.html">ProductClientTiles.html</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.js">ProductClientTiles.js</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md">ProductClientTiles.md</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Наименование</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ИНН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">CRM ID</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КПП</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">КИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,2.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ОГРН</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js (products[].borrower, products[].knr)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имя поля — как в описании типа демо-данных. Незаполненное поле — прочерк на своём месте, с места не уходит.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Аналитик ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не воссоздаётся в части 1 (Р6)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас тайла и скелетоны строк (<code class="tok">.lc-product-clients__loading</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">базовый вид</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">незаполненное поле — прочерк на своём месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка причины без иллюстрации (<code class="tok">.lc-product-clients__empty</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert внутри компонента с повтором (<code class="tok">.lc-product-clients__error</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прежние значения видны; локальной индикации в прототипе нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в части 1 правка не воссоздаётся (Р6): точки входа видны, по клику ничего</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;view&quot;</code>: действия правки не рисуются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент не ставится экраном</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.9fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Без КНР</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у продукта нет КНР</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл «КНР» скрыт, «Заёмщик» один</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — это просмотр.</li><li>Обязательные поля внутри: не решено (10.10.2026).</li><li>Что показывает, когда обязательное не заполнено: прочерк.</li><li>Что отдаёт наружу: ничего.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">перенос по словам; заголовки и подписи — усечение с тултипом компонента ДС</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сетка полей в одну колонку по ширине самого компонента (container query)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сетка полей по паспорту, лишнего воздуха нет</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<ul class="bullets"><li>Корзина → <code class="tok">onDelete(key)</code>: страница открывает подтверждение удаления (Р7).</li></ul>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.8fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корзина «Заёмщик» / «КНР»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно страницы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подтверждение удаления продукта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">продукт удаляется из сделки, возврат на страницу сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка «Удалить» шапки OpportunityProduct</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Поля — раздел «Поля». Имена методов API выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2fr) minmax(0,2.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/opportunities.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">MOCK_OPPORTUNITIES</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">OpportunityProductDto</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-N</code> / <code class="tok">colw-N</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">partial</code> · <code class="tok">empty</code> · <code class="tok">error</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2fr) minmax(0,2.5fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2fr) minmax(0,2.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайлы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">widgets/tiles/ProductClientTiles/</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">pretrade/opportunities-app widgets/tiles/opportunityTiles/ProductClientTiles</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">корзина у стороны удаляет продукт целиком</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же окно, что «Удалить» в шапке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">удаление стороны в системе не описано; допущение части 1 (Р7)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Что удаляет корзина «Заёмщика» и «КНР» — сторону или продукт — не решено (10.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/drafts/ibp-redesign-v1/pages/OpportunityProduct.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/dictionaries.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/employees.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/clients.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/opportunities.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/potentials.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/meetings.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/tasks.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/store.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/nav-links.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/registry-table.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.js"></script>
+<script>
+window.IBPKitPage = {"id":"ProductClientTiles","type":"tile","base":"../../..","hub":"../../../../../index.html","states":["data","loading","error"],"modes":["view"],"state":"data","mode":"view","width":400,"scenario":false,"fixtures":{"_":"Демо-данные витрины: компонент наполняет скрипт страницы из data/store.js; ключи — состояния данных.","data":{"product":"P9001"},"partial":{"product":"P9002"},"empty":{},"error":{"message":"Не удалось загрузить данные"},"long":{}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Стороны продукта» — тайлы «Заёмщик» и «КНР» страницы
+     продукта (OpportunityProduct). Пара во фронтенде — ProductClientTiles
+     (pretrade/opportunities-app; у лида похожий PotentialProductClientTiles).
+     Корень — контейнер тайлов; место в ряду задаёт .tile-stack страницы.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcProductClientTiles.render(host, { product, onDelete }). -->
+<div class="lc-product-clients" data-state="data" data-mode="view">
+  <section class="tile" data-pc-tile="borrower">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Заёмщик</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: Заёмщик" data-pc-delete="borrower"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="name">ООО «Ромашка»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="inn">7712345678</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="crmId">3000012345</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kpp">771201001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="ogrn">1157746123456</span></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="tile" data-pc-tile="knr">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">КНР</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: КНР" data-pc-delete="knr"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="name">ООО «Ландыш»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="inn">7712345701</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="crmId">3000012346</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kpp">771201002</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="ogrn">1167746222201</span></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* ProductClientTiles — стопка «Заёмщик» и «КНР»; показ своих блоков по
+   data-state и data-mode. */
+.lc-product-clients { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+.lc-product-clients [hidden] { display: none; }
+.lc-product-clients__error,
+.lc-product-clients__loading { display: none; }
+.lc-product-clients[data-state="error"] .lc-product-clients__error { display: flex; }
+.lc-product-clients[data-state="loading"] .lc-product-clients__loading { display: flex; }
+.lc-product-clients[data-state="loading"] .lc-product-clients__content,
+.lc-product-clients[data-state="error"] .lc-product-clients__content { display: none; }
+.lc-product-clients[data-mode="view"] [data-pc-delete] { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ProductClientTiles — заполнение тайлов «Заёмщик» и «КНР».
+   render(host, { product, onDelete }) — продукт (OpportunityProductDto):
+   borrower и knr ({name, inn, crmId, kpp, kio, ogrn}); КНР нет — тайл
+   скрыт. Корзина зовёт onDelete(key) — страница спрашивает подтверждение
+   (Р7). */
+(function () {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function set(host, sel, text) { var el = host.querySelector(sel); if (el) el.textContent = text == null || text === '' ? '–' : text; }
+  function show(host, sel, on) { var el = host.querySelector(sel); if (el) el.hidden = !on; }
+  function check(host, sel, on) { var el = host.querySelector(sel); if (el) el.checked = !!on; }
+
+  function fill(root, key, party) {
+    show(root, '[data-pc-tile="' + key + '"]', !!party);
+    if (!party) return;
+    root.querySelectorAll('[data-pc-' + key + ']').forEach(function (el) {
+      var v = party[el.getAttribute('data-pc-' + key)];
+      el.textContent = v == null || v === '' ? '–' : v;
+    });
+  }
+
+  function render(host, opts) {
+    var p = opts && opts.product;
+    if (!host || !p) return;
+    var root = host.classList.contains('lc-product-clients') ? host : host.querySelector('.lc-product-clients') || host;
+    fill(root, 'borrower', p.borrower);
+    fill(root, 'knr', p.knr);
+    root.querySelectorAll('[data-pc-delete]').forEach(function (b) {
+      b.onclick = function () { if (opts.onDelete) opts.onDelete(b.getAttribute('data-pc-delete')); };
+    });
+  }
+
+  window.LcProductClientTiles = { render: render };
+})();
+</script>
+</body>
+</html>

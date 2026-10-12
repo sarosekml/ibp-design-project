@@ -1,0 +1,18 @@
+<!-- История задачи: отдельная пара core/tasks-app V2TaskHistoryTable. -->
+<section class="tile tile--headless dtable lc-task-history" data-state="data" data-mode="view">
+  <div class="lc-task-history__loading sk-group" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span></div>
+  <div class="lc-task-history__error alert alert--error alert--m" role="alert"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Не удалось загрузить историю задачи</p></div></div>
+  <div class="lc-task-history__empty es es--m" role="status"><div class="es__body"><p class="es__title">История отсутствует</p><p class="es__text">По задаче пока нет событий.</p></div></div>
+  <div class="dtable__body lc-task-history__data"><div class="tbl" data-table data-history-rows>
+    <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 110px minmax(140px,1fr) minmax(160px,1.4fr) 170px minmax(180px,1.6fr) 130px minmax(8px,1fr)">
+      <div class="th th--separator"></div>
+      <div class="th"><span class="th__label">Дата</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Событие</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Название</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Описание задачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Приоритет</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th th--separator"></div>
+    </div>
+  </div></div>
+</section>

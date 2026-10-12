@@ -1,0 +1,9 @@
+<!-- Локальный компонент «Цели зафиксированы» — чип с информером в шапке
+     клиента (ClientInfoPage). Пара во фронтенде — GoalsPopoverBadge
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcGoalsPopoverBadge.render(host, { fixed }). -->
+<span class="chip chip--s lc-goals-badge" data-state="data" data-mode="view">
+  <span class="chip__icon" aria-hidden="true"><i data-icon="target"></i></span>
+  <span class="chip__label">Цели зафиксированы</span>
+  <button type="button" class="chip__info" data-popover="client-goals-info" aria-haspopup="dialog" aria-controls="client-goals-info" aria-label="Подробнее о целях клиента"><i data-icon="info-circle"></i></button>
+</span>

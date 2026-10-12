@@ -1,0 +1,41 @@
+<!-- Локальный компонент «Статус» — тайл статуса страницы сделки (Opportunity).
+     Пара во фронтенде — StateInformationTile (pretrade/opportunities-app); у
+     лида похожий StateTile (offersources-app), на странице лида не ставится.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcStateInformationTile.render(host, { opportunity }). -->
+<section class="tile lc-state-info" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Статус</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-si-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-state-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-state-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-state-info__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Статус</span></span><div class="rof__row"><span class="rof__value" data-si-status>В работе</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Стадия</span></span><div class="rof__row"><span class="rof__value" data-si-stage>Назначение ответственного</span></div></div>
+        <div class="rof" data-si-drop-reason-row hidden><span class="ds-label"><span class="ds-label__text">Причина выбытия</span></span><div class="rof__row"><span class="rof__value" data-si-drop-reason>–</span></div></div>
+        <div class="rof" data-si-drop-comment-row hidden><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value" data-si-drop-comment>–</span></div></div>
+        <div class="tile__grid-full">
+          <div class="pbar pbar--accent" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Вероятность сделки" data-si-prob>
+            <div class="pbar__head"><span class="pbar__label">Вероятность сделки</span><span class="pbar__value" data-si-prob-value>0%</span></div>
+            <div class="pbar__track"><div class="pbar__fill" style="width:0%" data-si-prob-fill></div></div>
+          </div>
+        </div>
+        <div class="tile__grid-full lc-state-info__checks">
+          <label class="cb"><input type="checkbox" class="cb__input" disabled data-si-onepager><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Согласован One Pager</span></span></label>
+          <label class="cb"><input type="checkbox" class="cb__input" disabled data-si-pik><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Пройден ПИК / ИК</span></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

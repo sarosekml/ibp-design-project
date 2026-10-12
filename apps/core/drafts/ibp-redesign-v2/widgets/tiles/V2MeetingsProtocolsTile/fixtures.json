@@ -1,0 +1,28 @@
+{
+  "_": "Демо-данные витрины: компонент наполняет скрипт страницы из data/store.js; ключи — состояния данных.",
+  "data": {
+    "meetings": {
+      "planned": 2,
+      "completed": 3,
+      "attention": 1
+    }
+  },
+  "partial": {
+    "meetings": {
+      "planned": 1,
+      "completed": 0,
+      "attention": 0
+    }
+  },
+  "empty": {
+    "meetings": {
+      "planned": 0,
+      "completed": 0,
+      "attention": 0
+    }
+  },
+  "error": {
+    "message": "Не удалось загрузить данные"
+  },
+  "long": {}
+}

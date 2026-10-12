@@ -1,0 +1,35 @@
+<!-- Локальный компонент «Встречи и протоколы» — тайл счётчиков встреч страницы
+     сделки (Opportunity) и тайл «Встречи» лида (PotentialPage). Пары во
+     фронтенде: V2MeetingsProtocolsTile в pretrade/opportunities-app и в
+     pretrade/offersources-app. Страница вшивает меткой <ds-include> и
+     заполняет: LcMeetingsProtocolsTile.render(host, { meetings, variant }). -->
+<section class="tile lc-meetings-prot" data-state="data" data-mode="view" data-variant="opportunity">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-mp-title>Встречи и протоколы</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-mp-add-head><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" data-inert aria-label="Все встречи" data-mp-arrow><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meetings-prot__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-meetings-prot__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-meetings-prot__content">
+      <p class="lc-meetings-prot__hint" data-mp-hint>Планируйте встречи с клиентами и формируйте протоколы встреч</p>
+      <div class="lc-meetings-prot__counters" data-mp-counters hidden>
+        <span class="lc-meetings-prot__counter"><span class="lc-meetings-prot__num" data-mp-planned>2</span>Запланированные</span>
+        <span class="lc-meetings-prot__counter"><span class="lc-meetings-prot__num" data-mp-completed>3</span>Завершенные</span>
+        <span class="lc-meetings-prot__counter lc-meetings-prot__counter--warn"><span class="lc-meetings-prot__num" data-mp-attention>1</span>Требуют внимания</span>
+      </div>
+      <div data-mp-add-body>
+        <button type="button" class="btn btn--outline btn--s"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </div>
+  </div>
+</section>

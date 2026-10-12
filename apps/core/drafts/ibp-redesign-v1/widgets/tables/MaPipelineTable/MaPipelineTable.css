@@ -1,0 +1,5 @@
+/* ma-pipeline-table — таблица на общем рендере; своя раскладка — только блок
+   ошибки по data-state. */
+.lc-ma-pipeline-table { min-width: 0; }
+.lc-ma-pipeline-table__error { display: none; }
+.lc-ma-pipeline-table[data-state="error"] .lc-ma-pipeline-table__error { display: flex; }

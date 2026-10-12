@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!-- Комментарии клиента — пары во фронтенде нет (у сделки и лида свои страницы: OpportunityComments, PotentialCommentsPage).
+     Список — CommentsTile. Источник: открывается собранной ClientComments.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Комментарии клиента — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* «Новый комментарий»: поле и кнопка отправки в строку */
+  .cc-compose { display: flex; align-items: flex-end; gap: var(--space-12); }
+  .cc-compose > .inp { flex: 1; min-width: 0; }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/CommentsTile/CommentsTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="MyClientsPage.preview.html">Клиенты</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="ClientInfoPage.preview.html">Клиент</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Комментарии</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="ClientComments">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title" id="cc-title">Комментарии — ООО «Ромашка»</h1></div></div>
+        </div>
+        <div class="phead__actions">
+          <a class="btn btn--outline btn--m" id="cc-back" href="ClientInfoPage.preview.html"><i data-icon="flip-backward"></i><span class="btn__label">На страницу клиента</span></a>
+        </div>
+      </div>
+
+      <!-- #sec:content ── список комментариев (CommentsTile) и новый комментарий -->
+      <div class="tile-row">
+        <!-- Локальный компонент «Комментарии к стадии» — тайл комментариев страницы
+     сделки (§4.3) и страницы лида (§4.6). Вшивается меткой ds-include;
+     страница заполняет скриптом LcCommentsTile.render(host, {comments}).
+     Статическое содержимое — демо-состояние (комментарий сделки 166092). -->
+<section id="cc-list" data-state="data" data-mode="view" class="tile lc-comments col-8 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Комментарии к стадии</h3></div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Показать все комментарии" href="#" data-inert><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body lc-comments__list" data-comments-body>
+    <div class="lc-comments__item">
+      <p class="lc-comments__meta"><span class="lc-comments__author">Соколов Дмитрий Викторович</span> · <span class="lc-comments__time">09:40</span> · <span class="lc-comments__date">06.10.2026</span></p>
+      <p class="lc-comments__text">Сделка передана в работу после маршрутизации. Назначить ответственного и согласовать состав команды.</p>
+      <div class="lc-comments__acts">
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Удалить комментарий"><i data-icon="trash"></i></button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Править комментарий"><i data-icon="edit"></i></button>
+      </div>
+    </div>
+    <button type="button" class="btn btn--transparent btn--s lc-comments__add"><i data-icon="add"></i><span class="btn__label">Добавить комментарий</span></button>
+  </div>
+</section>
+        <section class="tile col-4 colw-12">
+          <header class="tile__header">
+            <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Новый комментарий</h3></div></div>
+          </header>
+          <div class="tile__body">
+            <div class="cc-compose">
+              <div class="inp inp--m">
+                <label class="ds-label" for="cc-input"><span class="ds-label__text">Комментарий</span></label>
+                <div class="inp__field"><input class="inp__control" id="cc-input" placeholder="Текст комментария"></div>
+              </div>
+              <button type="button" class="ibtn ibtn--neutral ibtn--l" id="cc-send" aria-label="Отправить комментарий"><i data-icon="send"></i></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script>
+/* Экранный скрипт: комментарии клиента по ?id=. Список — CommentsTile;
+   «Новый комментарий» — поле ДС и IconButton send: комментарий попадает в
+   хранилище и виден в тайле «Комментарии» страницы клиента. */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV;
+  var q = new URLSearchParams(location.search);
+  var c = S.client(q.get('id')) || S.client('3000012345');
+  N.mount({ active: 'clients' });
+  var clientHref = N.href('client', { id: c.id });
+  var links = document.querySelectorAll('.crumbs__item a');
+  if (links[2]) { links[2].textContent = c.name; links[2].setAttribute('href', clientHref); }
+  document.getElementById('cc-back').setAttribute('href', clientHref);
+  document.title = 'Комментарии — ' + c.name + ' — IBP Redesign v1';
+  document.getElementById('cc-title').textContent = 'Комментарии — ' + c.name;
+
+  function paint() {
+    window.LcCommentsTile.render(document.getElementById('cc-list'), {
+      title: 'Комментарии',
+      comments: S.clientComments(c.id).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+  }
+  document.getElementById('cc-send').addEventListener('click', function () {
+    var input = document.getElementById('cc-input');
+    var text = input.value.trim();
+    if (!text) return;
+    S.addClientComment(c.id, text);
+    input.value = '';
+    if (window.DSInput && window.DSInput.syncAll) window.DSInput.syncAll(input.closest('.inp'));
+    if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Комментарий добавлен', text: 'Виден в тайле «Комментарии» клиента' });
+    paint();
+  });
+  paint();
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

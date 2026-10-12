@@ -1,0 +1,9 @@
+/* «Отказаться от сделки» — внутренняя раскладка окна: текст подтверждения
+   и зазор полей; механика окна и полей — Modal и Inputs ДС. */
+.lc-refuse-opp { min-width: 0; }
+
+.lc-refuse-opp__text {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  margin: 0;
+}

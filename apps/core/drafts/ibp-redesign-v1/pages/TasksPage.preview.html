@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<!-- Задачи — страница фронтенда TasksPage (core/tasks-app); вкладка «Задачи моего деска» — TasksOfMyDeskPage.
+     Реестр слева, предпросмотр справа — Splitter ДС, как на снимке системы (Задачи.png).
+     Источник: открывается собранной TasksPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задачи — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* раскладка: сплиттер на всю оставшуюся высоту .screen--app; правая
+     панель прокручивается своей областью .ds-scroll */
+  .split-fill { flex: 1; min-height: 0; }
+  .split-fill > .splitpane__a > * { flex: 1; min-width: 0; }
+  .split-scroll { flex: 1; min-width: 0; }
+</style>
+<link rel="stylesheet" href="../widgets/tables/TasksTable/TasksTable.css">
+<link rel="stylesheet" href="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.css">
+<link rel="stylesheet" href="../widgets/tables/TaskHistoryTable/TaskHistoryTable.css">
+<link rel="stylesheet" href="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Задачи</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="TasksPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Задачи</h1></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- вкладки — подфильтры одной таблицы (Р4) -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="MY"><span class="tab__label">Мои задачи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="DESK"><span class="tab__label">Задачи моего деска</span></button>
+      </div>
+
+      <!-- #sec:content ── реестр и предпросмотр: Splitter ДС -->
+      <div class="splitpane split-fill" id="split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <!-- Локальный компонент «Реестр задач» — таблица задач с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcTasksTable.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-tasks-table" id="tk-list" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-tasks-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b">
+          <div class="ds-scroll split-scroll">
+            <!-- Локальный компонент «Предпросмотр задачи» — правая панель реестра задач
+     (TasksPage) и вкладки «Задачи» клиента. Пара во фронтенде — TaskPreviewTile
+     (core/tasks-app); таблица «История» вшивается виджетом TaskHistoryTable.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTaskPreviewTile.render(host, { task, onAction }). -->
+<section class="tile lc-task-preview" id="tk-preview" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-tp-title>169437. Подготовить финансовую модель</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-tp-status><span class="chip__label">Ожидает исполнения</span></span>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать задачу" data-tp-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-tp-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-task-preview__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить задачу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-task-preview__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+
+    <div class="lc-task-preview__content">
+      <!-- действия Р7 — у задачи в работе -->
+      <div class="lc-task-preview__acts" data-tp-acts>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-done><i data-icon="check"></i><span class="btn__label">Исполнить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-reassign><i data-icon="refresh"></i><span class="btn__label">Переназначить</span></button>
+        <button type="button" class="btn btn--outline btn--xs" data-tp-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+      </div>
+
+      <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-priority><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип задачи</span></span><div class="rof__row"><span class="rof__value" data-tp-type>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Категория</span></span><div class="rof__row"><span class="rof__value" data-tp-category>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Срок исполнения</span></span><div class="rof__row"><span class="rof__value" data-tp-due>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Исполнитель</span></span><div class="rof__row"><span class="rof__value" data-tp-executor>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Клиент</span></span><div class="rof__row"><span class="rof__value" data-tp-client>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата создания</span></span><div class="rof__row"><span class="rof__value" data-tp-created>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Инициатор</span></span><div class="rof__row"><span class="rof__value" data-tp-initiator>–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Холдинг</span></span><div class="rof__row"><span class="rof__value" data-tp-holding>–</span></div></div>
+      </div>
+
+      <section class="tile tile--inset" data-tp-comment-sec hidden>
+        <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h4 class="tile__title">Комментарий</h4></div></div></header>
+        <div class="tile__body"><p class="lc-task-preview__text" data-tp-comment>–</p></div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Описание задачи</h4>
+        <p class="lc-task-preview__text" data-tp-description>–</p>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">Связанный объект</h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип объекта</span></span><div class="rof__row"><span class="chip chip--s chip--fit" data-tp-linked-type><span class="chip__label">–</span></span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер объекта</span></span><div class="rof__row"><span class="rof__value" data-tp-linked-number>–</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование объекта</span></span><div class="rof__row"><a class="rof__value link link--accent link--m" href="#" data-tp-linked-link><span data-tp-linked-name>–</span><i data-icon="link-external"></i></a></div></div>
+        </div>
+      </section>
+
+      <section class="lc-task-preview__sec">
+        <h4 class="lc-task-preview__sec-title">История</h4>
+        <div data-tp-history></div>
+      </section>
+    </div>
+  </div>
+</section>
+          </div>
+        </div>
+      </div>
+
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="task-history-template" data-off-grid="Шаблон истории: ширину задаёт панель предпросмотра"><!-- История задачи: отдельная пара core/tasks-app TaskHistoryTable. -->
+<section class="tile tile--headless dtable lc-task-history" data-state="data" data-mode="view">
+  <div class="lc-task-history__loading sk-group" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span></div>
+  <div class="lc-task-history__error alert alert--error alert--m" role="alert"><span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span><div class="alert__body"><p class="alert__text">Не удалось загрузить историю задачи</p></div></div>
+  <div class="lc-task-history__empty es es--m" role="status"><div class="es__body"><p class="es__title">История отсутствует</p><p class="es__text">По задаче пока нет событий.</p></div></div>
+  <div class="dtable__body lc-task-history__data"><div class="tbl" data-table data-history-rows>
+    <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 110px minmax(140px,1fr) minmax(160px,1.4fr) 170px minmax(180px,1.6fr) 130px minmax(8px,1fr)">
+      <div class="th th--separator"></div>
+      <div class="th"><span class="th__label">Дата</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Событие</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Название</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Описание задачи</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th"><span class="th__label">Приоритет</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+      <div class="th th--separator"></div>
+    </div>
+  </div></div>
+</section></template></div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- Локальный компонент «Смена статуса задачи» — окно действий «Исполнить»,
+     «Переназначить», «Отменить» реестра задач (§4.10, Р7). Переназначение —
+     с полем сотрудника (DropdownList); исполнение/отмена — подтверждение.
+     Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
+     LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
+     задачу в хранилище и открывается слоем Modal ДС. -->
+<div class="modal-scrim" id="task-change-scrim" hidden>
+  <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-task-change__text">Задача <b data-tc-number>–</b> — <span data-tc-name>–</span>.</p>
+      <div class="inp inp--m" data-tc-employee hidden>
+        <label class="ds-label" for="tc-employee"><span class="ds-label__text">Исполнитель</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tc-employee" data-ddl="tc-employee-ddl" placeholder="Выберите сотрудника">
+        </div>
+      </div>
+      <!-- список сотрудников заполняет скрипт окна из employees.js -->
+      <div id="tc-employee-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-tc-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/TasksTable/TasksTable.js"></script>
+<script src="../widgets/tables/TaskHistoryTable/TaskHistoryTable.js"></script>
+<script src="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.js"></script>
+<script src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; слева — TasksTable, справа —
+   TaskPreviewTile выбранной задачи (Splitter ДС); действия — ChangeTaskStatusModal. */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'tasks' });
+  var S = window.IBPR;
+  /* правая панель: выбор строки показывает, крестик прячет; при скрытой
+     панели реестр занимает всю ширину (ширину панелей ведёт Splitter ДС) */
+  var split = document.getElementById('split');
+  var spl = split.querySelector('.spl');
+  var paneA = split.querySelector('.splitpane__a');
+  var paneB = split.querySelector('.splitpane__b');
+  var pct = 55;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showPane(on) {
+    paneB.hidden = !on;
+    spl.hidden = !on;
+    paneA.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto';
+  }
+  var preview = document.getElementById('tk-preview');
+  var list = window.LcTasksTable.mount(document.getElementById('tk-list'), {
+    scope: 'MY',
+    onSelect: function (t) { show(t); }
+  });
+  function show(t) {
+    showPane(true);
+    window.LcTaskPreviewTile.render(preview, { task: t, onAction: function (action, task) {
+      if (action === 'close') { showPane(false); list.select(null); return; }
+      window.LcChangeTaskStatusModal.open({ task: task, action: action, onConfirm: function (fresh) { list.refresh(); show(fresh); } });
+    } });
+  }
+  var crumb = document.querySelector('.crumbs__current');
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), list,
+    [{ id: 'MY', label: 'Мои задачи', page: 'TasksPage' }, { id: 'DESK', label: 'Задачи моего деска', page: 'TasksOfMyDeskPage' }]);
+  var want = Number(new URLSearchParams(location.search).get('id'));
+  var first = want ? S.task(want) : null;
+  if (first) { list.select(first.id); show(first); } else showPane(false);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

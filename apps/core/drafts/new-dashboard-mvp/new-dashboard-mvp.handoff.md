@@ -28,7 +28,7 @@
 
 ## Что сделано
 - `pages/HomePage.html` (+ `.preview.html`, `.screen.md`) — стартовая страница: `.grid12`, 5 тайлов, 2 окна, меню из `ibp-home.js`, демо `?state=loading|empty|error`.
-- `widgets/tiles/` — `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `TasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge`; у каждого паспорт, `fixtures.json`, `CHANGELOG.md`.
+- `widgets/tiles/` — `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `HomeTasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge`; у каждого паспорт, `fixtures.json`, `CHANGELOG.md`.
 - `widgets/modals/` — `MeetingCreateModal` (+ общий слой форм `LcHomeForm`), `TaskCreateModal`.
 - `data/` — `mock-profile|meetings|tasks|news.js` с typedef, `home-store.js` (выборки, счётчики, «Мой день», события).
 - `proto-panel/flows.yaml` — «Утро аналитика», State 01–04, прогнан в браузере до State 04.

@@ -1,0 +1,35 @@
+<!-- Локальный компонент «Продукты сделки» — тайл страницы сделки (Opportunity)
+     и лида (PotentialPage). Пары во фронтенде: V2ProductsTile
+     (pretrade/opportunities-app; карточка — V2OpportunityProductTile) и
+     PotentialProductsTile (offersources-app; карточка —
+     PotentialDetailedProductTile). Карточки строит render разметкой виджета
+     V2OpportunityProductTile (число карточек — по данным). Страница вшивает
+     меткой <ds-include> и заполняет: LcProductsTile.render(host, { products,
+     dealId, source, tab, variant }). -->
+<section class="tile lc-products" data-state="data" data-mode="view" data-variant="opportunity">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-pt-title>Продукты сделки</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-pt-add-head><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-products__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-products__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-products__content">
+      <div class="lc-products__grid" data-pt-grid>
+        <!-- карточки V2OpportunityProductTile -->
+      </div>
+      <p class="lc-products__empty" data-pt-empty hidden>В сделке пока нет продуктов</p>
+      <div data-pt-add-body hidden>
+        <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </div>
+  </div>
+</section>

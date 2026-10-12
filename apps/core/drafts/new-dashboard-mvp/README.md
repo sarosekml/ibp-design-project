@@ -18,7 +18,7 @@
 | Путь | Что |
 |---|---|
 | `pages/HomePage.*` | страница, собранное превью, спека `HomePage.screen.md` |
-| `widgets/tiles/` | тайлы `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `TasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge` |
+| `widgets/tiles/` | тайлы `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `HomeTasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge` |
 | `widgets/modals/` | окна `MeetingCreateModal`, `TaskCreateModal` |
 | `data/` | демо-данные с typedef и хранилище `home-store.js` |
 | `refs/` | фото профиля (участвует в прототипе) |

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- Главная Аналитика ДИД — страница фронтенда HomePage (core/host-app), вариант стенда ift (Р2).
+     Плитки — NavTile из каталога ДС (patterns/HomeRoles/ibp-home.js, роль «Аналитик ДИД», Р1). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Главная — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* ---------- главная: только раскладка на токенах (как главная deals-app) ---------- */
+  /* фоновая иллюстрация — только на главной (background-illustration, cover) */
+  .home-wrap { position: relative; min-height: calc(100vh - var(--layout-crumbs-h)); }
+  .home-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--boot-bg-illustration, none) center/cover no-repeat;
+    opacity: .6;
+    pointer-events: none;
+  }
+  /* Сетка групп — штатная .grid12 ДС; ширину группы дают .col-3 / .colw-6. */
+  .home-groups { position: relative; }
+  .home-group { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+  .home-group .ntile { width: auto; min-width: 0; }
+  .home-group__head { font: var(--type-h5-strong); color: var(--text-primary); margin: 0; }
+  @container screen (max-width: 1700px) { .grid12 > [class*="colw-"] { grid-column: span var(--colw); } }
+  @container screen (max-width: 900px)  { .grid12 > .home-group { grid-column: span 12; } }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Главная</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="HomePage">
+      <div class="home-wrap">
+        <!-- плитки строятся из каталога роли «Аналитик ДИД» (ibp-home.js);
+             плитки вне объёма части 1 (Р5) выглядят как в системе, клик гасится -->
+        <div class="grid12 home-groups" id="home-groups"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/nav-links.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; плитки — IBPHome.tileHTML по
+   каталогу роли, ссылки — карта страниц концепта (IBPR_NAV). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'home' });
+  var role = window.IBPR_NAV.role;
+  var host = document.getElementById('home-groups');
+  var html = '';
+  window.IBPHome.itemsFor(role).forEach(function (g) {
+    var tiles = g.items.filter(function (it) { return it.tile; });
+    if (!tiles.length) return;
+    html += '<section class="home-group col-3 colw-6"><h2 class="home-group__head">' + g.label + '</h2>';
+    html += tiles.map(function (it) {
+      /* иллюстрации «Лиды» и «Встречи» в ДС нет (illu: ''): слот без имени
+         остаётся штриховым плейсхолдером и не запрашивает файл «.svg» */
+      var h = window.IBPHome.tileHTML(it).replace(' data-illu=""', '');
+      var url = window.IBPR_NAV.pageHref(it.id);
+      /* есть страница — переход; нет — href="#" и data-inert: клик гасится (Р5) */
+      return url ? h.replace(/ href="#"/g, ' href="' + url + '"') : h.replace(/ href="#"/g, ' href="#" data-inert');
+    }).join('');
+    html += '</section>';
+  });
+  host.innerHTML = html;
+  if (window.dsIcons) window.dsIcons.apply(document);
+  if (window.DSIllustrations) window.DSIllustrations.render();
+  if (window.DSTooltip && window.DSTooltip.bindAll) window.DSTooltip.bindAll(document);
+})();
+</script>
+</body>
+</html>

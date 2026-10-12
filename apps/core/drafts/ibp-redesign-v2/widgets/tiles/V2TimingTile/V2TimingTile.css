@@ -1,0 +1,14 @@
+/* V2TimingTile — даты столбцом (`.tile__rows` ДС). */
+.lc-timing { min-width: 0; }
+.lc-timing [hidden] { display: none; }
+.lc-timing__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-timing__error,
+.lc-timing__loading { display: none; }
+.lc-timing[data-state="error"] .lc-timing__error { display: flex; }
+.lc-timing[data-state="loading"] .lc-timing__loading { display: flex; }
+.lc-timing[data-state="loading"] .lc-timing__content,
+.lc-timing[data-state="error"] .lc-timing__content { display: none; }
+/* режим просмотра: точки входа в правку не рисуются */
+.lc-timing[data-mode="view"] [data-tm-edit] { display: none; }

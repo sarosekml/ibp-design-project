@@ -1,0 +1,166 @@
+# Сценарии показа прототипа IBP Redesign v2 — часть 1 (MS0014, имена страниц — MS0014a).
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# Сценарии 1–2 из раздела 9 задачи MS0014 (решение Р8); остальные — позже.
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 22
+flows:
+  - id: analyst-week
+    title: Неделя аналитика сегодня
+    desc: Базовая линия «как сейчас» для сравнения с MS0015 — сколько разделов открывает аналитик, чтобы охватить одного клиента
+    steps:
+      - state: 1
+        id: home
+        title: Главная
+        page: HomePage.html
+        note: 'Плитки роли «Аналитик ДИД». Дальше по пути: обязательная сделка → Pipeline → проекты CIB → лиды → клиент. Разделов открыто: 1.'
+      - state: 2
+        id: binding
+        title: Обязательные сделки → сделка
+        page: BindingActiveNewOpportunities.preview.html?tab=BindingActiveNewOpportunities
+        note: 'Непросмотренные строки подсвечены. Переход по ID ведёт на страницу сделки. Разделов открыто: 2.'
+        do:
+          - click: '#nav .nav__item[href="BindingActiveNewOpportunities.preview.html"]'
+      - state: 3
+        id: deal
+        title: Сделка 166092 — взять в работу
+        page: Opportunity.preview.html?source=binding&id=166092&tab=active-new
+        note: '«Взять в работу» (Р7): подтверждение → сделка уходит в Pipeline «Сделки моего деска». Разделов открыто: 3.'
+      - state: 4
+        id: pipeline
+        title: Pipeline — сделка появилась
+        page: MyDeskOpportunities.preview.html?tab=MyDeskOpportunities
+        note: 'Взятая сделка видна в реестре Pipeline. Тот же клиент в CIB — дубль намеренный. Разделов открыто: 4.'
+        do:
+          - click: '#nav .nav__item[href="MyDeskOpportunities.preview.html"]'
+      - state: 5
+        id: cib
+        title: Проекты продаж CIB — тот же клиент
+        page: OpportunityActiveSalesProjects.preview.html?tab=OpportunityActiveSalesProjects
+        note: 'Клиент второй раз в другом реестре — боль, с которой работает часть 2. Разделов открыто: 5.'
+        do:
+          - click: '#nav .nav__item[href="OpportunityActiveSalesProjects.preview.html"]'
+      - state: 6
+        id: leads
+        title: Лиды → лид → Переместить в Pipeline
+        page: LeadsPage.preview.html?tab=LeadsPage
+        note: 'L-44: «Переместить в Pipeline» (Р7) создаёт сделку в Pipeline; лид уходит из реестра. Разделов открыто: 6.'
+        do:
+          - click: '#nav .nav__item[href="LeadsPage.preview.html"]'
+      - state: 7
+        id: client
+        title: Клиент → Сделки — четыре таблицы лидов
+        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage
+        note: 'Вкладка «Сделки → Лиды»: лиды клиента разложены по четырём таблицам — то, что часть 2 заменяет единым разделом. Разделов открыто: 7.'
+        do:
+          - click: '#nav .nav__item[href="MyClientsPage.preview.html"]'
+
+  - id: meeting-born-lead
+    title: Встреча родила лид
+    desc: Встречи → предпросмотр → источник встречи L-… → лид (сценарий 2 раздела 9 ТЗ)
+    steps:
+      - state: 8
+        id: meetings
+        title: Встречи — предпросмотр M-8904
+        page: MeetingsProtocolsPage.preview.html?id=M-8904
+        note: 'Выбор строки показывает карточку: источник встречи — Потенциал, чип-ссылка L-118846.'
+      - state: 9
+        id: lead
+        title: Лид L-118846
+        page: PotentialPage.preview.html?id=L-118846
+        note: Переход по источнику открывает страницу лида — встреча и лид связаны.
+
+  - id: new-week-picks
+    title: Стало — канбан и принятие лида
+    desc: На главной канбан; рассмотрение кандидатов доступно в разделе Лиды
+    steps:
+      - state: 10
+        id: board
+        title: Мои проекты — канбан
+        page: HomeBoard.preview.html?mode=after
+        note: Новое демо — четырнадцать лидов из девяти источников, пять рабочих колонок и два исхода. Меню колонки сворачивает / разворачивает её; внизу итог объёма. Сводка и подборка отложены, кандидаты доступны в разделе Лиды.
+      - state: 11
+        id: accepted
+        title: Беру — лид перешёл в Идею
+        page: Lead.preview.html?id=L-O166092&mode=after
+        do:
+          - click: '#lead-page-actions [data-lead-action="primary"]'
+
+  - id: idea-to-meeting
+    title: От идеи до встречи
+    steps:
+      - state: 12
+        id: idea
+        title: Идея — единый лид
+        page: Lead.preview.html?id=L-O165105&mode=after
+        note: Описать идею → Путь лида → В проработку. Назначить встречу с участником и повесткой; подтверждение создаёт встречу и переводит лид.
+
+  - id: meeting-result
+    title: Встреча прошла
+    steps:
+      - state: 13
+        id: planned
+        title: Встреча назначена — итоги
+        page: Lead.preview.html?id=L-2214&mode=after
+        note: Зафиксировать итоги → Встреча проведена. Дальше К документам или Повторная встреча; внешний статус встречи сам лид не перемещает.
+      - state: 14
+        id: branch
+        title: Развилка после встречи
+        page: Lead.preview.html?id=L-O166100&mode=after
+        note: К документам или Повторная встреча. Повторную назначают внутри этой стадии; её итоги разблокируют переход к документам, отдельной колонки нет.
+
+  - id: transfer-to-pipeline
+    title: Передать в Pipeline
+    steps:
+      - state: 15
+        id: preparation
+        title: Документы и проверка готовности
+        page: Lead.preview.html?id=L-O165108&mode=after
+        note: Передать в Pipeline → заполнить готовность документов → Передать. Создаётся одна сделка со ссылкой на лид; Отменить восстанавливает состояние и убирает создание.
+      - state: 16
+        id: pipeline
+        title: Сделка видна в Pipeline
+        page: MyDeskOpportunities.preview.html?mode=after
+        note: Новая строка наверху, в названии «из лида L-…»; поля и ID берутся из единого хранилища.
+
+  - id: client-declined
+    title: Клиент отказался
+    steps:
+      - state: 17
+        id: reason
+        title: Причина и возврат
+        page: Lead.preview.html?id=L-O140105&mode=after
+        note: Клиент отказался → причина → отдельный исход. Отменить или Вернуть в работу. Не беру в Рассмотрении — другой исход.
+
+  - id: all-unified-leads
+    title: Все лиды — основания и клиент
+    steps:
+      - state: 18
+        id: registry
+        title: Единый реестр и предпросмотр
+        page: LeadsNew.preview.html?tab=all&mode=after
+        note: Источник выбирается сегментом справа от фильтра. Иконки Список / По холдингам переключают режим; группы раскрываются. Настройки колонок штатные, сохраняются после фильтра. Предпросмотр строки и открытие лида; массовые решения в Рассмотрении.
+      - state: 19
+        id: client
+        title: Клиент — одна таблица лидов
+        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage&mode=after
+        note: В режиме Стало четыре таблицы источников заменены одним списком; каждый лид открывается общей страницей.
+      - state: 20
+        id: from-meeting
+        title: Создать лид из встречи
+        page: MeetingsProtocolsPage.preview.html?id=M-8904&mode=after
+        note: Создать лид открывает единую карточку с основанием Из встречи. Повторное действие открывает существующий лид.
+
+  - id: before-after
+    title: Было и стало
+    steps:
+      - state: 21
+        id: before
+        title: Было — обход семи разделов
+        page: HomePage.html?mode=before
+        note: Базовая линия — сценарий Неделя аналитика сегодня, семь показанных разделов. Не считать это результатом пользовательского исследования.
+      - state: 22
+        id: after
+        title: Стало — единая доска
+        page: HomeBoard.preview.html?mode=after
+        note: Единый рабочий процесс на доске. Кандидатов разбираем в разделе Лиды; сводка и подборка над доской отложены. Для независимого показа применить Сбросить демо v2 в меню.

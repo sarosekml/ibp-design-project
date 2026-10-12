@@ -1,0 +1,29 @@
+/* Дески — внутренняя раскладка: пояснение и список «деск + чип роли». */
+.lc-desks { min-width: 0; }
+
+.lc-desks__note {
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-12);
+}
+
+.lc-desks__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.lc-desks__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.lc-desks__name {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+}

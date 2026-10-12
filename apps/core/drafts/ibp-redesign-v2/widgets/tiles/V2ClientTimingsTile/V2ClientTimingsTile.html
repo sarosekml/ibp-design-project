@@ -1,0 +1,25 @@
+<!-- Локальный компонент «Сроки» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пары во фронтенде нет (у сделки похожий
+     V2TimingTile — другого модуля). Страница вшивает меткой <ds-include> и
+     заполняет: LcClientTimingsTile.render(host, { client }). -->
+<section class="tile lc-client-timings" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Сроки</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-client-timings__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-client-timings__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-client-timings__content">
+      <div class="tile__rows">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата добавления</span></span><div class="rof__row"><span class="rof__value" data-ct="addedAt">14.06.2021</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата последней активности</span></span><div class="rof__row"><span class="rof__value" data-ct="lastActivityAt">09.10.2026</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>

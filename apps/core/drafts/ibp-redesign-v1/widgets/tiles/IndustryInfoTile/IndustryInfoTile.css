@@ -1,0 +1,12 @@
+/* IndustryInfoTile — строки Entity на токенах ДС. */
+.lc-industry-info { min-width: 0; }
+.lc-industry-info [hidden] { display: none; }
+.lc-industry-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-industry-info__error,
+.lc-industry-info__loading { display: none; }
+.lc-industry-info[data-state="error"] .lc-industry-info__error { display: flex; }
+.lc-industry-info[data-state="loading"] .lc-industry-info__loading { display: flex; }
+.lc-industry-info[data-state="loading"] .lc-industry-info__content,
+.lc-industry-info[data-state="error"] .lc-industry-info__content { display: none; }

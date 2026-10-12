@@ -1,0 +1,21 @@
+<!-- Локальный компонент «Таблица ФОК» — таблица «Показатель × квартал» вкладки
+     «Финансовые показатели» страницы клиента (ClientInfoFinancials). Пара во
+     фронтенде — V2FinancialsTable. Ячейка — значение и подзначение (TableCell
+     ДС, вторая строка .tc__subtext). Страница вшивает меткой <ds-include> и
+     заполняет: LcFinancialsTable.render(host, { fok }). -->
+<section class="tile tile--headless lc-fin-table" data-state="data" data-mode="view">
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-table__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить показатели</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-table__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-table__content">
+      <div class="dtable">
+        <div class="dtable__toolbar" data-ft-caption-bar hidden><div class="dtable__toolbar-right"><span class="lc-fin-table__caption" data-ft-caption></span></div></div>
+        <div class="dtable__body"><div class="tbl" data-table data-ft-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>

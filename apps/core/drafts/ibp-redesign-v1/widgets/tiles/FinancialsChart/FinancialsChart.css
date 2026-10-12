@@ -1,0 +1,13 @@
+/* FinancialsChart — раскладка тайла на токенах ДС. */
+.lc-fin-chart { min-width: 0; }
+.lc-fin-chart [hidden] { display: none; }
+.lc-fin-chart__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-fin-chart__error,
+.lc-fin-chart__loading { display: none; }
+.lc-fin-chart[data-state="error"] .lc-fin-chart__error { display: flex; }
+.lc-fin-chart[data-state="loading"] .lc-fin-chart__loading { display: flex; }
+.lc-fin-chart[data-state="loading"] .lc-fin-chart__content,
+.lc-fin-chart[data-state="error"] .lc-fin-chart__content { display: none; }
+.lc-fin-chart__plot { min-width: 0; }

@@ -1,0 +1,29 @@
+<!-- Локальный компонент «Команда клиента» — тайлы «Главный клиентский менеджер»
+     и «Команда клиента ДИД» страницы клиента (ClientInfoPage). Пара во
+     фронтенде — TeamInfoTile (core/clients-app), два экземпляра на странице;
+     строка сотрудника — InfoBadge фронтенда, в ДС — Entity с аватаром.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcTeamInfoTile.render(host, { title, members, editable }). -->
+<section class="tile lc-team-info" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ti-title>Главный клиентский менеджер</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-ti-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-team-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-team-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-team-info__content">
+      <div class="entity-list" data-ti-list>
+        <div class="entity"><div class="entity__lead"><span class="av av--circular av--m"><span class="av__text">ПЕ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Панова Елена Юрьевна</span></div></div><div class="entity__subs"><span class="entity__subs-list">Табельный номер: 04630 · Клиентский менеджер</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,5 @@
+/* MeetingsProtocolsList — таблица на общем рендере; своя раскладка — только блок ошибки
+   по data-state. Table, TableCell, TableFilter, Pagination — ДС. */
+.lc-meetings-list { min-width: 0; height: 100%; }
+.lc-meetings-list__error { display: none; }
+.lc-meetings-list[data-state="error"] .lc-meetings-list__error { display: flex; }

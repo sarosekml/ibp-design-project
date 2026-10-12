@@ -13,7 +13,7 @@ ds: [Modal, InputText, InputDate, DropdownList, SegmentControl, Buttons, IconBut
 uses: []
 usedOn: [Главная — дашборд, конец страницы]
 opens: []
-artifactOf: TasksTile
+artifactOf: HomeTasksTile
 opensFrom: [«Добавить» в подвале тайла «Задачи», меню тайла → «Новая задача», «Новая задача» пустого тайла, быстрое действие «Новая задача» тайла профиля]
 dependsOn: [MeetingCreateModal — общий слой форм LcHomeForm; HomeStore — сохранение задачи]
 variants: []

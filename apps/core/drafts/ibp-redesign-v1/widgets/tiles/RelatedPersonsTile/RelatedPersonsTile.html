@@ -1,0 +1,25 @@
+<!-- Локальный компонент «Связанные физические лица» — тайл вкладки «Общая
+     информация» страницы клиента (ClientInfoPage). Пары во фронтенде нет.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcRelatedPersonsTile.render(host, { persons }). -->
+<section class="tile lc-related-persons" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Связанные физические лица</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-related-persons__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-related-persons__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-related-persons__content">
+      <div class="entity-list" data-rp-list>
+        <div class="entity"><div class="entity__lead"><span class="av av--circular av--m"><span class="av__text">ТВ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Титов Валерий Сергеевич</span></div></div><div class="entity__subs"><span class="entity__subs-list">Генеральный директор</span></div></div></div>
+      </div>
+      <p class="lc-related-persons__more" data-rp-more hidden>+2</p>
+    </div>
+  </div>
+</section>

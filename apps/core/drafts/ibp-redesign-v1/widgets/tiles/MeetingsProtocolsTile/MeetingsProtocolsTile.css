@@ -1,0 +1,22 @@
+/* MeetingsProtocolsTile — подсказка и счётчики встреч на токенах ДС;
+   вариант лида: «Добавить» в теле, стрелка в шапке. */
+.lc-meetings-prot { min-width: 0; }
+.lc-meetings-prot [hidden] { display: none; }
+.lc-meetings-prot__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-meetings-prot__error,
+.lc-meetings-prot__loading { display: none; }
+.lc-meetings-prot[data-state="error"] .lc-meetings-prot__error { display: flex; }
+.lc-meetings-prot[data-state="loading"] .lc-meetings-prot__loading { display: flex; }
+.lc-meetings-prot[data-state="loading"] .lc-meetings-prot__content,
+.lc-meetings-prot[data-state="error"] .lc-meetings-prot__content { display: none; }
+
+.lc-meetings-prot__hint { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }
+.lc-meetings-prot__counters { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-meetings-prot__counter { font: var(--type-body-m); color: var(--text-primary); }
+.lc-meetings-prot__num { font: var(--type-body-m-strong); margin-right: var(--space-4); }
+.lc-meetings-prot__counter--warn .lc-meetings-prot__num { color: var(--warning); }
+.lc-meetings-prot[data-variant="opportunity"] [data-mp-add-body],
+.lc-meetings-prot[data-variant="opportunity"] [data-mp-arrow],
+.lc-meetings-prot[data-variant="potential"] [data-mp-add-head] { display: none; }

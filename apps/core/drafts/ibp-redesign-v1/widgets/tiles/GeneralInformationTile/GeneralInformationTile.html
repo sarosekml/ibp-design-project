@@ -1,0 +1,57 @@
+<!-- Локальный компонент «Общая информация» — тайл сделки (Opportunity) и лида
+     (PotentialPage). Пары во фронтенде: GeneralInformationTile в
+     pretrade/opportunities-app (вариант opportunity) и в pretrade/offersources-app
+     (вариант potential). Страница вшивает меткой <ds-include> и заполняет:
+     LcGeneralInformationTile.render(host, { opportunity, client }) или
+     render(host, { potential }); вариант ставит render в data-variant. -->
+<section class="tile lc-gen-info" data-state="data" data-mode="view" data-variant="opportunity">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Общая информация</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-gi-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-gen-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-gen-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-gen-info__content">
+      <div class="tile__chiplist" data-gi-chips>
+        <span class="chip chip--xs" data-gi-chip-growth><span class="chip__icon"><i data-icon="trend-up"></i></span><span class="chip__label">Компания роста ДИД</span></span>
+        <span class="chip chip--xs" data-gi-chip-top><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Топ клиент</span></span>
+        <span class="chip chip--xs chip--rounded chip--info" data-gi-chip-status hidden><span class="chip__label">В работе</span></span>
+      </div>
+      <div class="lc-gen-info__opp">
+        <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Проект</span></span><div class="rof__row"><span class="rof__value" data-gi-project>Развитие тепличного комплекса</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет</span></span><div class="rof__row"><span class="chip chip--xs chip--fit" data-gi-priority><span class="chip__label">Средний</span></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Территориальный банк</span></span><div class="rof__row"><span class="rof__value" data-gi-tb>ЦА</span><span class="rof__icon" data-gi-tb-warn hidden><i data-icon="alert-triangle"></i></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">ГОСБ</span></span><div class="rof__row"><span class="rof__value" data-gi-gosb>8634</span><span class="rof__icon" data-gi-gosb-warn hidden><i data-icon="alert-triangle"></i></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип недвижимости</span></span><div class="rof__row"><span class="rof__value" data-gi-realty>Производственный комплекс</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Источник сделки</span></span><div class="rof__row"><span class="chip chip--xs" data-gi-routing><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Маршрутизация</span></span><span class="rof__value" data-gi-routing-none hidden>–</span></div></div>
+          <div class="tile__grid-full lc-gen-info__checks">
+            <label class="cb"><input type="checkbox" class="cb__input" disabled data-gi-terms><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Изменение условий / Реструктуризация</span></span></label>
+            <label class="cb"><input type="checkbox" class="cb__input" disabled data-gi-key checked><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Ключевая сделка</span></span></label>
+          </div>
+          <hr class="dvd dvd--h tile__grid-full">
+          <div class="tile__grid-full lc-gen-info__docs">
+            <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по сделке</span></button>
+            <a class="link link--accent link--m link--with-icon" href="#" data-inert><span class="link__icon"><i data-icon="download"></i></span>Презентация для ПИК</a>
+          </div>
+        </div>
+      </div>
+      <div class="lc-gen-info__pot">
+        <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Идея сделки</span></span><div class="rof__row"><span class="rof__value" data-gi-idea>Вторая очередь тепличного комплекса</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата создания</span></span><div class="rof__row"><span class="rof__value" data-gi-created>21.09.2026</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата последней активности</span></span><div class="rof__row"><span class="rof__value" data-gi-activity>09.10.2026</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

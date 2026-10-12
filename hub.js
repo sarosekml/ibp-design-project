@@ -145,6 +145,24 @@ window.IBPHub = [
     icon: 'folder'
   },
   {
+    id: 'ibp-redesign-v1',
+    group: 'concepts',
+    title: 'Текущая система - Аналитик ДИД',
+    desc: 'Страницы системы под роль «Аналитик ДИД» на компонентах ДС — контекст для редизайна (MS0014, часть 1)',
+    href: 'apps/core/drafts/ibp-redesign-v1/pages/HomePage.html',
+    root: 'apps/core/drafts/ibp-redesign-v1',
+    icon: 'layout-grid-01'
+  },
+  {
+    id: 'ibp-redesign-v2',
+    group: 'concepts',
+    title: 'IBP Redesign v2 — Лиды и мои проекты',
+    desc: 'Единые лиды, главная «Мои проекты» и путь лида (MS0015). Отдельная версия на базе контекстных страниц MS0014.',
+    href: 'apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.preview.html',
+    root: 'apps/core/drafts/ibp-redesign-v2',
+    icon: 'layout-grid-01'
+  },
+  {
     id: 'new-dashboard-mvp',
     group: 'concepts',
     title: 'Главная — дашборд (MVP)',
