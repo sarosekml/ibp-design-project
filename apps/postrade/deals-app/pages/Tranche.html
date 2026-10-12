@@ -384,12 +384,14 @@
   }
 
   /* Тайл «Корректировки процентов РСБУ»: locked | none | filled.
-     Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа). */
+     Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа),
+     ?hardsMode=view — без права редактирования (нет кнопки «Внести корректировку»). */
   function rsbuState() {
     var m = /[?&]hardsState=(locked|none|filled)/.exec(location.search);
     var st = m ? m[1] : window.MOCK_TRANCHE.rsbuInterestAdjustmentsState;
+    var mode = /[?&]hardsMode=view/.test(location.search) ? 'view' : 'edit';
     window.PostTileRsbuAdjustments.render(document.getElementById('tile-rsbu-adjustments'), {
-      state: st, count: window.MOCK_RSBU_ADJUSTMENTS.adjustments.length, query: PARAMS
+      state: st, mode: mode, count: window.MOCK_RSBU_ADJUSTMENTS.adjustments.length, query: PARAMS
     });
   }
 

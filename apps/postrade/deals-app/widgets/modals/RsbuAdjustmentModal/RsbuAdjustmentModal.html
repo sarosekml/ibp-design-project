@@ -6,8 +6,8 @@
      Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
      в конце body, а не внутри тайла.
 
-     Значения в разметке — пустая форма. Даты начала берутся из списка (выпадающий
-     список заполняет скрипт), конечная дата и сумма вводятся руками, комментарий
+     Значения в разметке — пустая форма. Исходная дата берётся из списка (выпадающий
+     список заполняет скрипт), целевая дата и сумма вводятся руками, комментарий
      необязателен. Ошибка проверки — Alert вверху окна и красные поля. -->
 
 <div class="modal-scrim" id="rsbu-adj-scrim" hidden>
@@ -28,7 +28,7 @@
       <form class="lc-rsbu-form" id="rsbu-adj-form" onsubmit="return false" novalidate>
         <div class="lc-rsbu-form__row">
           <div class="inp inp--m">
-            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Начальная дата корректировки</span></label>
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-start"><span class="ds-label__text">Исходная дата</span></label>
             <div class="inp__box">
               <div class="inp__field" role="combobox" aria-expanded="false" aria-controls="rsbu-adj-start-list" data-ddl="rsbu-adj-start-list">
                 <input class="inp__control" id="rsbu-adj-start" name="startDate" placeholder="Выберите дату" autocomplete="off">
@@ -39,7 +39,7 @@
             <div id="rsbu-adj-start-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
           </div>
           <div class="inp inp--m">
-            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Конечная дата корректировки</span></label>
+            <label class="ds-label ds-label--wrap" for="rsbu-adj-end"><span class="ds-label__text">Целевая дата</span></label>
             <div class="inp__field"><input class="inp__control" id="rsbu-adj-end" name="endDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric"><span class="inp__acts"><button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button></span></div>
             <span class="ds-helper ds-helper--left" data-helper="endDate">&nbsp;</span>
           </div>

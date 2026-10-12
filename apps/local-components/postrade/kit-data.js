@@ -536,8 +536,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RsbuAdjustmentModal.doc.html",
       "owner": "RsbuInterestAdjustmentsTile",
       "stub": false,
-      "version": "1.000",
-      "updated": "09.10.2026"
+      "version": "1.001",
+      "updated": "12.10.2026"
     },
     {
       "id": "RsbuInterestAdjustmentsTile",
@@ -550,8 +550,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/RsbuInterestAdjustmentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.001",
-      "updated": "09.10.2026"
+      "version": "1.002",
+      "updated": "12.10.2026"
     },
     {
       "id": "CreateFairValueCalculationModal",

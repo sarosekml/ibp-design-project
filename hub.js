@@ -127,6 +127,15 @@ window.IBPHub = [
     icon: 'ai-stars'
   },
   {
+    id: 'dev-specs',
+    group: 'concepts',
+    title: 'Post — Спецификации на разработку',
+    desc: 'Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний; выгрузка папкой md + html',
+    href: 'apps/postrade/drafts/dev-specs/pages/index.html',
+    root: 'apps/postrade/drafts/dev-specs',
+    icon: 'file-check'
+  },
+  {
     id: 'new-dashboard-mvp',
     group: 'concepts',
     title: 'Главная — дашборд (MVP)',

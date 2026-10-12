@@ -52,7 +52,7 @@ history: docs/agent-imp.md (обвязка, 21.09.2026), docs/restructure-3-repo
 | Карта всей документации проекта — для человека; агенту целиком не читать | [docs/index.md](../docs/index.md) |
 | Правила процесса — читаются целиком в начале задачи | `rules/process.md` |
 | Роли: `ai-designer`, `screen-builder`, `screen-reviewer`, `ux-researcher` (выключен) | `agents/` |
-| Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume` | `commands/` |
+| Команды `/screen`, `/screen-check`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume`, `/dev-spec` | `commands/` |
 | Скиллы — пошаговые инструкции, грузятся на своём шаге | `skills/<id>/SKILL.md` + `references/` |
 | Оснастка: сенсор, гейт, сторожа, генераторы, фикстуры | `tools/` |
 | Панель прототипа: рантайм (сценарии показа и комментарии) и её README — владелец описания | `proto-panel/` |

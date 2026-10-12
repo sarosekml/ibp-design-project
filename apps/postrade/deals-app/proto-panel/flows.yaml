@@ -1,0 +1,74 @@
+# Сценарии показа прототипа Post — ДИД — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 10
+flows:
+  - id: main
+    title: Основной путь
+    steps:
+      - state: 1
+        id: start
+        title: Стартовая страница
+        page: MainPage.html
+
+  - id: rsbu-tile
+    title: Тайл «Корректировки процентов РСБУ»
+    desc: Страница транша — вид тайла по условиям, данным и правам
+    steps:
+      - state: 2
+        id: rsbu-tile-locked
+        title: Требуется расчёт
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=locked
+        note: Условия не выполнены — процентные платежи не рассчитаны. «Требуется расчёт процентных платежей», стрелки и кнопки нет.
+      - state: 3
+        id: rsbu-tile-none
+        title: Корректировок нет
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=none
+        note: «Корректировки отсутствуют»; кнопка «Внести корректировку» ведёт на страницу корректировок с поднятым окном.
+      - state: 4
+        id: rsbu-tile-filled
+        title: Корректировки внесены
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled
+        note: '«Внесено корректировок: N»; стрелка и кнопка остаются.'
+      - state: 5
+        id: rsbu-tile-view
+        title: Без права редактирования
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view
+        note: Кнопки «Внести корректировку» нет, стрелка на страницу корректировок остаётся — смотреть можно.
+
+  - id: rsbu-page
+    title: Страница «Корректировки процентов РСБУ»
+    desc: Таблица корректировок, добавление, правка, удаление, возврат в транш
+    steps:
+      - state: 6
+        id: rsbu-page-empty
+        title: Корректировок нет
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+        note: Пустая таблица — только колонки; «В транш» и «Внести корректировку» в шапке страницы.
+      - state: 7
+        id: rsbu-page-modal
+        title: Новая корректировка
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add
+        note: Так страница открывается с кнопки на тайле. Исходная дата — выпадающий список, целевая — ручной ввод; сумма может быть отрицательной.
+        do:
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+      - state: 8
+        id: rsbu-page-filled
+        title: Корректировки внесены
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
+        note: После сохранения в окне строка появляется в таблице. Отрицательная сумма — со знаком минус.
+      - state: 9
+        id: rsbu-page-edit
+        title: Правка корректировки
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=edit
+        note: Правка — карандашом в колонке «Действия» или двойным кликом по строке.
+        do:
+          - waitFor: '#rsbu-adj-scrim:not([hidden])'
+      - state: 10
+        id: rsbu-page-delete
+        title: Подтверждение удаления
+        page: RsbuInterestAdjustments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=delete
+        note: Удаление — корзина в колонке «Действия» и окно подтверждения.
+        do:
+          - waitFor: '#rh-delete-scrim:not([hidden])'

@@ -30,7 +30,7 @@
 `screen-reviewer` (приёмка); `ux-researcher` выключен, пока нет базы знаний.
 Команды — `.agents/commands/`: `/screen`, `/screen-check`, `/concepts`,
 `/promote <концепт> <модуль>`, `/panel <приложение> [on|flows|states|comments|off]`,
-`/handoff`, `/resume <Задача>`.
+`/handoff`, `/resume <Задача>`, `/dev-spec <сценарий>`.
 
 **Если инструмент не подхватывает роли, команды и скиллы сам — роль, команда
 и скилл берутся чтением файла из `.agents/`, и работа идёт по нему в той же
