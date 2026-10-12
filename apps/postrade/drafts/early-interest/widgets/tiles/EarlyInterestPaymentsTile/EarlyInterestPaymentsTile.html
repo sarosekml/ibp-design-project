@@ -1,0 +1,26 @@
+<!-- Локальный компонент «Досрочные проценты» — фрагмент страницы транша.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     Три оси, разметка держит все блоки сразу, нужный показывает EarlyInterestPaymentsTile.css:
+     data-calc  — условия: done (процентные платежи рассчитаны) | required (не рассчитаны —
+                  «Недоступна к заполнению»: только строка причины, ни стрелки, ни кнопки);
+     data-state — данные: data (заполнена — сводка по платежам) | empty (не заполнена);
+     data-mode  — права: edit (есть «Заполнить») | view (только стрелка на страницу).
+     Оси, ссылки и сводку ставит EarlyInterestPaymentsTile.js; значения сводки в разметке — демо. -->
+<section class="tile lc-early-int" data-state="empty" data-mode="edit" data-calc="done">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Досрочные проценты</h3></div></div>
+    <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m lc-early-int__open" href="#" aria-label="Открыть: Досрочные проценты"><i data-icon="arrow-right"></i></a></div>
+  </header>
+  <div class="tile__body">
+    <p class="lc-early-int__text lc-early-int__text--locked">Заполнить можно после расчёта процентных платежей</p>
+    <p class="lc-early-int__text lc-early-int__text--empty">Досрочные платежи не внесены</p>
+    <div class="tile__grid lc-early-int__summary" style="grid-template-columns:repeat(2,1fr);">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Внесено платежей</span></span><div class="rof__row"><span class="rof__value" data-ei-count>3</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Последний платёж</span></span><div class="rof__row"><span class="rof__value" data-ei-last>30.06.2025</span></div></div>
+      <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Общая сумма</span></span><div class="rof__row"><span class="rof__value" data-ei-total>505 500,50</span><span class="rof__affix" data-ei-currency>RUB</span></div></div>
+    </div>
+    <a class="btn btn--outline btn--s lc-early-int__fill" href="#"><span class="btn__label">Заполнить</span></a>
+  </div>
+</section>

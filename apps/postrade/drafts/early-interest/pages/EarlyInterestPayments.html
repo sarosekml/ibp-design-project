@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!--
+  Двойным кликом открывают НЕ этот файл, а собранный EarlyInterestPayments.preview.html:
+  тайл и окна стоят здесь метками <ds-include>, а рантайм-инклуд ДС тянет фрагменты
+  через fetch, который по file:// не работает. Собрать: node .agents/tools/assemble.mjs
+-->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Досрочные проценты — IBP</title>
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+
+  .screen__content { gap: var(--space-16); }
+  .ei-delete-text { margin: 0; font: var(--type-body-m); }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Tranche.preview.html" id="ei-crumb-tranche">Транш</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Досрочные проценты</span>
+      </li>
+    </nav>
+
+    <main class="screen__content">
+
+      <!-- #sec:head ── Шапка страницы -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Досрочные проценты</h1></div>
+            <span class="phead__return">
+              <a class="btn btn--outline btn--xs" href="Tranche.preview.html" id="ei-return">
+                <i data-icon="flip-backward"></i><span class="btn__label">В транш</span></a>
+            </span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--accent btn--m" id="ei-add"><i data-icon="add"></i><span class="btn__label">Новые проценты</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── Порядок погашения (первые три типа) и таблица досрочных платежей -->
+      <div class="grid12">
+        <ds-include src="../widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.html" class="col-12" id="tile-repay-order"></ds-include>
+      </div>
+
+      <div class="dtable dtable--fill">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-sort-rows id="ei-tbl">
+              <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 200px 240px 560px 128px minmax(8px,1fr);">
+                <div class="th th--separator"></div>
+                <div class="th" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="paymentDate" data-sort-type="date"><span class="th__label">Дата платежа</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="paymentDate" aria-label="Сортировать: Дата платежа"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--right" data-col="paymentAmount" data-sort-type="number"><span class="th__label">Сумма платежа</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="paymentAmount" aria-label="Сортировать: Сумма платежа"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="comment"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th th--separator"></div>
+              </div>
+          </div>
+          <div class="dtable__empty" id="ei-empty" hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title">Досрочных платежей нет</p>
+            <p class="dtable__empty-text" id="ei-empty-text">Внесите досрочный платёж процентов — сумма погасит задолженность в порядке погашения.</p>
+            <button type="button" class="btn btn--outline btn--s" id="ei-empty-add"><i data-icon="add"></i><span class="btn__label">Новые проценты</span></button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- #sec:modals ── «Новые проценты» / «Редактирование досрочных процентов» и «Порядок погашения» — виджеты -->
+<ds-include src="../widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.html"></ds-include>
+<ds-include src="../widgets/modals/InterestRepaymentOrderModal/InterestRepaymentOrderModal.html"></ds-include>
+
+<!-- Подтверждение удаления досрочного платежа -->
+<div class="modal-scrim" id="ei-delete-scrim" hidden>
+  <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="ei-delete-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ei-delete-title">Удалить досрочный платёж</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body"><p class="ei-delete-text" id="ei-delete-text"></p></div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m btn--danger" id="ei-delete-confirm"><span class="btn__label">Удалить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/tranche-data.js"></script>
+<script src="../data/early-interest-data.js"></script>
+<script src="../widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.js"></script>
+<script src="../widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.js"></script>
+<script src="../widgets/modals/InterestRepaymentOrderModal/InterestRepaymentOrderModal.js"></script>
+<script>
+/* Экранный скрипт: меню по каталогу ролей, порядок погашения, таблица досрочных платежей,
+   окна «Новые проценты» и «Порядок погашения», удаление с подтверждением.
+   Форматирование — только при выводе: суммы «1 000 000,00», даты ДД.ММ.ГГГГ.
+   Данные живут в памяти страницы: после перезагрузки таблица возвращается к состоянию из адреса. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../../index.html" aria-label="Хаб проектов"';
+  var NBSP = ' ';
+
+  function ic(name) { return '<i data-icon="' + name + '"></i>'; }
+
+  function itemHTML(it) {
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    var href = (it.id === SELECTED_ID) ? 'Tranche.preview.html' : '#';
+    return '<a class="nav__item' + sel + '" href="' + href + '"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span></a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div><div class="nav__list">'
+      + '<a class="nav__item" href="index.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>' + (window.IBPHome && window.IBPHome.footerHTML
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text"><span class="nav__user-name">Александров Пётр</span>'
+        + '<span class="nav__user-role">' + role + '</span></span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>');
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  /* ---------- формат ---------- */
+  function money(n) {
+    var p = Number(n).toFixed(2).split('.');
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) + ',' + p[1];
+  }
+  function date(iso) { var p = String(iso).split('-'); return p[2] + '.' + p[1] + '.' + p[0]; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* ---------- адрес ----------
+     ?mode=view — без права редактирования: нет «Новые проценты», правки и удаления, порядок — на чтение;
+     ?demo=filled — платежи уже внесены; edit — открыта правка первой строки; delete — подтверждение
+     удаления последней; error — окно «Новые проценты» с ошибкой проверки; order — окно «Порядок погашения»;
+     ?open=add — страница открыта кнопкой «Заполнить» с тайла: окно «Новые проценты» поднято сразу. */
+  function param(k) { var m = new RegExp('[?&]' + k + '=([^&]*)').exec(location.search); return m ? m[1] : ''; }
+  function demoHas(name) { return param('demo').split(',').indexOf(name) >= 0; }
+  var MODE = param('mode') === 'view' ? 'view' : 'edit';
+  var IDS = ['id', 'tr'].filter(param).map(function (k) { return k + '=' + param(k); });
+
+  /* ---------- данные ---------- */
+  var data = window.MOCK_EARLY_INTEREST_PAYMENTS;
+  var LABELS = window.INTEREST_DEBT_TYPE_LABELS;
+  var withRows = demoHas('filled') || demoHas('edit') || demoHas('delete');
+  var rows = withRows ? data.payments.map(function (r) { return Object.assign({}, r); }) : [];
+  var order = data.repaymentOrder.debtTypeCodes.slice();
+  var changed = false;   // платежи или порядок менялись — «Процентным платежам» нужен пересчёт
+  var nextId = 100;
+
+  /* ---------- таблица ---------- */
+  var GRID_EDIT = '8px 64px 200px 240px 560px 128px minmax(8px,1fr)';
+  var GRID_VIEW = '8px 64px 200px 240px 560px minmax(8px,1fr)';
+  var GRID = MODE === 'view' ? GRID_VIEW : GRID_EDIT;
+  var tbl = document.getElementById('ei-tbl');
+  var empty = document.getElementById('ei-empty');
+
+  function cell(key, text, num, sortValue, postfix) {
+    return '<div class="tc' + (num ? ' tc--numbers' : '') + '" data-col="' + key + '"' + (sortValue != null ? ' data-sort-value="' + sortValue + '"' : '') + '>'
+      + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(text) + '</span>'
+      + (postfix ? '<span class="tc__postfix">' + esc(postfix) + '</span>' : '') + '</span></div>';
+  }
+  var ROW_ACTIONS = '<div class="tc" data-col="actions"><span class="tc__controls">'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-edit aria-label="Редактировать досрочный платёж"><i data-icon="edit"></i></button>'
+    + '<button type="button" class="ibtn ibtn--neutral ibtn--s" data-delete aria-label="Удалить досрочный платёж"><i data-icon="trash"></i></button>'
+    + '</span></div>';
+
+  function rowHTML(r, i) {
+    return '<div class="tbl__row" data-idx="' + i + '" style="grid-template-columns:' + GRID + ';"><div class="tc tc--separator"></div>'
+      + cell('num', String(i + 1), true)
+      + cell('paymentDate', date(r.paymentDate), false, r.paymentDate)
+      + cell('paymentAmount', money(r.paymentAmount), true, r.paymentAmount, data.currencyCode)
+      + cell('comment', r.comment || '—', false)
+      + (MODE === 'view' ? '' : ROW_ACTIONS) + '<div class="tc tc--separator"></div></div>';
+  }
+
+  /* шапка — в разметке; без права редактирования колонки «Действия» нет */
+  if (MODE === 'view') {
+    var head = tbl.querySelector('.tbl__row--head');
+    head.querySelector('[data-col="actions"]').remove();
+    head.style.gridTemplateColumns = GRID_VIEW;
+  }
+
+  function render() {
+    tbl.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
+    tbl.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
+    tbl.hidden = !rows.length;
+    empty.hidden = !!rows.length;
+    if (window.dsIcons) window.dsIcons.apply(tbl.parentNode);
+    if (window.DSIllustrations) window.DSIllustrations.render();
+    if (window.DSTable) {
+      window.DSTable.wireAll(tbl.parentNode);
+      var api = window.DSTable.wire(tbl);
+      if (api && api.rowsChanged) api.rowsChanged();
+    }
+    returnLinks();
+  }
+
+  /* ---------- уведомления: фоновый тост ДС, зелёный, уходит сам ---------- */
+  function toast(message) {
+    if (window.DSToast) window.DSToast.show({ message: message, kind: 'bar', tone: 'success' });
+  }
+
+  /* ---------- порядок погашения: тайл и окно ---------- */
+  var orderModal = window.PostModalRepaymentOrder.bind(document.getElementById('repay-order-scrim'), {
+    labels: function () { return LABELS; },
+    save: function (next) {
+      order = next;
+      changed = true;
+      paintOrder();
+      returnLinks();
+      toast('Порядок погашения сохранён');
+    }
+  });
+  function paintOrder() {
+    window.PostTileRepaymentOrder.render(document.getElementById('tile-repay-order'), {
+      order: order, labels: LABELS, mode: MODE,
+      onOpen: function () { orderModal.open(order, MODE); }
+    });
+    if (window.dsIcons) window.dsIcons.apply(document.getElementById('tile-repay-order'));
+  }
+
+  /* ---------- окно «Новые проценты»: виджет EarlyInterestPaymentModal ----------
+     Форму, проверку и тексты ошибок ведёт окно; страница даёт ему даты, валюту и порядок
+     и принимает проверенную запись. */
+  var editIdx = -1;   // индекс строки в rows; -1 — новый платёж
+  var payModal = window.PostModalEarlyInterest.bind(document.getElementById('ei-pay-scrim'), {
+    options: function () {
+      return {
+        currencyCode: data.currencyCode,
+        dateOptions: data.plannedInterestPaymentDates,
+        orderLabels: order.map(function (c) { return LABELS[c] || c; })
+      };
+    },
+    save: function (rec, wasEdit) {
+      rec.paymentTypeCode = 'EARLY_INTEREST_REPAYMENT';
+      if (wasEdit) { rec.id = rows[editIdx].id; rows[editIdx] = rec; } else { rec.id = 'eip-' + (nextId++); rows.push(rec); }
+      changed = true;
+      render();
+      toast(wasEdit ? 'Досрочный платёж изменён' : 'Досрочный платёж добавлен');
+    }
+  });
+  function openModal(idx) {
+    if (MODE === 'view') return;
+    editIdx = idx;
+    payModal.open(idx >= 0 ? rows[idx] : null);
+  }
+  document.getElementById('ei-add').addEventListener('click', function () { openModal(-1); });
+  document.getElementById('ei-empty-add').addEventListener('click', function () { openModal(-1); });
+
+  /* ---------- удаление с подтверждением ---------- */
+  var deleteIdx = -1;
+  function openDelete(idx) {
+    if (idx < 0 || MODE === 'view') return;
+    deleteIdx = idx;
+    var r = rows[idx];
+    document.getElementById('ei-delete-text').textContent = 'Удалить досрочный платёж от ' + date(r.paymentDate)
+      + ' на сумму ' + money(r.paymentAmount) + NBSP + data.currencyCode + '? Действие нельзя отменить.';
+    if (window.DSModal) window.DSModal.open(document.getElementById('ei-delete-scrim'));
+  }
+  document.getElementById('ei-delete-confirm').addEventListener('click', function () {
+    var had = deleteIdx >= 0;
+    if (had) { rows.splice(deleteIdx, 1); changed = true; }
+    deleteIdx = -1;
+    render();
+    if (window.DSModal) window.DSModal.closeTop();
+    if (had) toast('Досрочный платёж удалён');
+  });
+
+  /* индекс строки в rows — по data-idx (после сортировки порядок в DOM другой) */
+  function idxOfRow(row) { return row ? parseInt(row.getAttribute('data-idx'), 10) : -1; }
+  tbl.addEventListener('dblclick', function (e) {
+    var row = e.target.closest('.tbl__row:not(.tbl__row--head)');
+    if (row) openModal(idxOfRow(row));
+  });
+  tbl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-edit]');
+    if (b) { openModal(idxOfRow(b.closest('.tbl__row'))); return; }
+    var d = e.target.closest('[data-delete]');
+    if (d) openDelete(idxOfRow(d.closest('.tbl__row')));
+  });
+
+  /* ---------- возврат на транш: вид карточки и пометка о пересчёте едут параметрами ----------
+     Крошки после привязки рантайм Breadcrumbs рисует заново из своего списка звеньев (id в них
+     не остаётся) — ссылку звена «Транш» меняем в этом списке и перерисовываем (DSBreadcrumbs API). */
+  function returnLinks() {
+    var q = IDS.slice();
+    q.push('eiState=' + (rows.length ? 'filled' : 'none'));
+    if (changed) q.push('recalc=1');
+    if (MODE === 'view') q.push('mode=view');
+    var href = 'Tranche.preview.html?' + q.join('&');
+    document.getElementById('ei-return').setAttribute('href', href);
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var crumbs = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (crumbs) { crumbs.items[crumbs.items.length - 2].href = href; crumbs.refresh(); }
+  }
+
+  /* ---------- режим просмотра и поля с data-f из данных транша ---------- */
+  function fill() {
+    var t = window.MOCK_TRANCHE;
+    var values = { dealName: t.dealName, parentContractName: t.parentContractName };
+    document.querySelectorAll('[data-f]').forEach(function (el) {
+      var k = el.getAttribute('data-f');
+      if (k in values) el.textContent = values[k];
+    });
+    document.getElementById('ei-crumb-tranche').textContent = t.trancheNumber + ' Транш';
+    if (MODE === 'view') {
+      document.getElementById('ei-add').hidden = true;
+      document.getElementById('ei-empty-add').hidden = true;
+      document.getElementById('ei-empty-text').textContent = 'Досрочные платежи процентов по инструменту не вносились.';
+    }
+  }
+
+  buildNav(); fill(); paintOrder(); render();
+  if (param('open') === 'add' || demoHas('error')) openModal(-1);
+  if (demoHas('error')) payModal.validate();
+  if (demoHas('edit')) openModal(0);
+  if (demoHas('delete')) openDelete(rows.length - 1);
+  if (demoHas('order')) orderModal.open(order, MODE);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

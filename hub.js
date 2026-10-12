@@ -136,6 +136,15 @@ window.IBPHub = [
     icon: 'file-check'
   },
   {
+    id: 'early-interest',
+    group: 'concepts',
+    title: 'Post — Досрочные проценты',
+    desc: 'Транш: карточка «Досрочные проценты», страница досрочных платежей процентов, окна «Новые проценты» и «Порядок погашения» (RE0017)',
+    href: 'apps/postrade/drafts/early-interest/pages/index.html',
+    root: 'apps/postrade/drafts/early-interest',
+    icon: 'folder'
+  },
+  {
     id: 'new-dashboard-mvp',
     group: 'concepts',
     title: 'Главная — дашборд (MVP)',

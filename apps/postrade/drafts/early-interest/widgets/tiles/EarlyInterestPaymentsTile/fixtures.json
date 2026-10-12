@@ -1,0 +1,15 @@
+{
+  "_": "Демо-данные витрины: по объекту на вид тайла (аргумент PostTileEarlyInterest.render). state — locked | none | filled; payments — внесённые платежи для сводки; long — проверка переполнения (много платежей, крупная сумма).",
+
+  "none":   { "state": "none",   "payments": [], "currencyCode": "RUB" },
+  "filled": { "state": "filled", "currencyCode": "RUB", "payments": [
+    { "paymentDate": "2025-03-31", "paymentAmount": 250000.00 },
+    { "paymentDate": "2025-06-30", "paymentAmount": 180500.50 },
+    { "paymentDate": "2025-06-30", "paymentAmount": 75000.00 }
+  ] },
+  "locked": { "state": "locked", "payments": [], "currencyCode": "RUB" },
+  "long":   { "state": "filled", "currencyCode": "RUB", "payments": [
+    { "paymentDate": "2025-01-31", "paymentAmount": 98765432109.99 },
+    { "paymentDate": "2025-12-31", "paymentAmount": 12345678901.01 }
+  ] }
+}

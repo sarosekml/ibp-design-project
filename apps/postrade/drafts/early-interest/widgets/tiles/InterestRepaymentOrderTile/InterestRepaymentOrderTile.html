@@ -1,0 +1,28 @@
+<!-- Локальный компонент «Порядок погашения» — фрагмент страницы «Досрочные проценты».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Показывает первые три типа задолженности по приоритету и открывает окно «Порядок погашения».
+
+     Ось data-mode — права: edit (карандаш «Изменить порядок погашения») | view (кнопка
+     «Посмотреть порядок погашения» — окно открывается только для чтения). Порядок есть всегда
+     (по умолчанию — исходный порядок типов), поэтому data-state — только data.
+     Значения в разметке — демо; поля, подсказку и обработчик кнопки ставит InterestRepaymentOrderTile.js. -->
+<section class="tile lc-repay-order" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Порядок погашения</h3></div></div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-repay-order__edit" data-repay-open aria-label="Изменить порядок погашения"><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-repay-order__view" data-repay-open aria-label="Посмотреть порядок погашения"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="tile__grid" style="grid-template-columns:repeat(3,1fr);" data-repay-top>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет 1</span></span><div class="rof__row"><span class="rof__value">Капитализированная задолженность</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет 2</span></span><div class="rof__row"><span class="rof__value">Отложенная задолженность</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет 3</span></span><div class="rof__row"><span class="rof__value">Капитализированная отложенная задолженность</span></div></div>
+    </div>
+    <p class="note note--s">
+      <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+      <span class="note__text" data-repay-note>Досрочный платёж сначала гасит задолженность с приоритетом 1, остаток — следующую по порядку. Ещё 2 типа задолженности — в окне «Порядок погашения».</span>
+    </p>
+  </div>
+</section>

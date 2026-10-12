@@ -1,0 +1,8 @@
+/* Локальный компонент «Порядок погашения».
+   Только внутренняя раскладка и показ кнопки шапки по оси data-mode. Токены ДС. */
+
+.lc-repay-order .tile__body { display: flex; flex-direction: column; gap: var(--space-16); }
+
+/* Право редактирования — карандаш; только просмотр — окно на чтение */
+.lc-repay-order[data-mode="edit"] .lc-repay-order__view,
+.lc-repay-order[data-mode="view"] .lc-repay-order__edit { display: none; }

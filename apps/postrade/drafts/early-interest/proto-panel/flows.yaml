@@ -1,0 +1,125 @@
+# Сценарии показа прототипа Post — Досрочные проценты — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 17
+flows:
+  - id: main
+    title: Основной путь
+    steps:
+      - state: 1
+        id: start
+        title: Стартовая страница
+        page: index.html
+
+  - id: ei-tile
+    title: Карточка «Досрочные проценты» на странице транша
+    desc: Три вида карточки по требованию, режим просмотра и пометки о пересчёте на «Процентных» и «Плановых платежах»
+    steps:
+      - state: 2
+        id: ei-tile-locked
+        title: Недоступна к заполнению
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=locked
+        note: Процентные платежи не рассчитаны — карточка без стрелки и кнопки; у «Процентных платежей» — «Рассчитать».
+      - state: 3
+        id: ei-tile-calc
+        title: Процентные платежи рассчитаны
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=locked
+        note: «Рассчитать» открывает карточку — она становится «Не заполнена».
+        do:
+          - click: '#tr-interest-calc'
+      - state: 4
+        id: ei-tile-none
+        title: Не заполнена
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=none
+        note: Стрелка — на страницу «Досрочные проценты», «Заполнить» — туда же с поднятым окном «Новые проценты».
+      - state: 5
+        id: ei-tile-filled
+        title: Заполнена
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=filled
+        note: Сводка — число платежей, последний платёж и общая сумма в валюте инструмента.
+      - state: 6
+        id: ei-tile-view
+        title: Только просмотр
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=none&mode=view
+        note: Без права редактирования «Заполнить» нет, стрелка на страницу остаётся.
+      - state: 7
+        id: ei-tile-recalc
+        title: Нужен пересчёт
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=filled&recalc=1
+        note: Досрочные проценты изменены — пометки Note на «Процентных» и «Плановых платежах»; «Пересчитать» их снимает.
+
+  - id: ei-page
+    title: Страница «Досрочные проценты»
+    desc: Таблица досрочных платежей, окно «Новые проценты», правка, удаление, режим просмотра
+    steps:
+      - state: 8
+        id: ei-page-empty
+        title: Платежей нет
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+        note: Пустая таблица с кнопкой «Новые проценты»; над ней — первые три типа порядка погашения.
+      - state: 9
+        id: ei-page-add
+        title: Новые проценты
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add
+        note: Так страница открывается с кнопки «Заполнить» карточки. Дата — из дат погашения процентов, тип платежа не меняется.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 10
+        id: ei-page-error
+        title: Ошибка проверки
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=error
+        note: Без даты и суммы окно не сохраняется — Alert вверху и подсвеченные поля.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 11
+        id: ei-page-filled
+        title: Платежи внесены
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
+        note: Шесть платежей, два из них — на одну дату; сортировка по дате и сумме.
+      - state: 12
+        id: ei-page-edit
+        title: Правка платежа
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=edit
+        note: Правка — карандашом в колонке «Действия» или двойным кликом по строке.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 13
+        id: ei-page-delete
+        title: Подтверждение удаления
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=delete
+        note: Удаление — корзина в строке и окно подтверждения с датой и суммой.
+        do:
+          - waitFor: '#ei-delete-scrim:not([hidden])'
+      - state: 14
+        id: ei-page-view
+        title: Только просмотр
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled&mode=view
+        note: Без права редактирования нет «Новые проценты» и колонки «Действия»; порядок погашения — «Посмотреть».
+
+  - id: repay-order
+    title: Порядок погашения
+    desc: Окно с перестановкой стрелками и окно на чтение
+    steps:
+      - state: 15
+        id: repay-order-open
+        title: Окно «Порядок погашения»
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order
+        note: Все типы задолженности, приоритет 1 сверху; стрелки двигают тип на одно место.
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+      - state: 16
+        id: repay-order-move
+        title: Тип опущен ниже
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order
+        note: Первый тип стал вторым, номера пересчитались; «Сохранить» обновит тайл над таблицей.
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+          - click: '[data-move="down"]'
+      - state: 17
+        id: repay-order-view
+        title: Порядок на чтение
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order&mode=view
+        note: Роль просмотра видит порядок без стрелок, в подвале только «Закрыть».
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
