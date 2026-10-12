@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реестр встреч — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.css">
+<link rel="stylesheet" href="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.css">
+<link rel="stylesheet" href="../../../../core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Реестр встреч">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--table" id="pg-stage">
+<!-- Локальный компонент «Реестр встреч» — таблица встреч с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcMeetingsProtocolsList.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-meetings-list" data-state="data" data-mode="view" id="cl-mt-list">
+  <div class="alert alert--error alert--m lc-meetings-list__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>таблица</b></span><span>Версия: <b>1.001</b></span><span>Обновлено: <b>10.10.2026</b></span><span>Категория: <b>Общие</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты Core</a> · core/drafts/ibp-redesign-v1</p>
+  <h1>Реестр встреч</h1>
+  <p class="lead">Реестр встреч с выбором строки для предпросмотра: «Мои встречи» и «Встречи моего деска»</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/drafts/ibp-redesign-v1</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList">apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">ib/ma-opportunities-app widgets/MeetingsProtocolsList</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">pages/MeetingsProtocolsPage.html — левая панель сплиттера, pages/ClientInfoPage.html — вкладка «Встречи», левая панель</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/pages/ClientInfoPage.preview.html">apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.html</a><br><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.preview.html">apps/core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="MeetingsProtocolsDetails.doc.html">Предпросмотр встречи (MeetingsProtocolsDetails)</a><br>PotentialPage, ClientInfoPage, Opportunity — ID источника</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/registry-table.js<br>data/dictionaries.js (MEETING_COLUMNS)<br>data/store.js (IBPR.meetings)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Варианты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">реестр — колонки снимка системы<br>клиент — колонки Pixso, только встречи клиента</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">агент (ibp-redesign-v1)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">docs/tasks/MS0014-ibp-redesign-context-pages.md<br>docs/tasks/MS0014a-ibp-redesign-frontend-names.md</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.001 · обновлено 10.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Левая панель раздела «Встречи». Колонки — снимок системы: ID встречи, Статус, Клиент, Отраслевой деск, Дески, Источник встречи, ID источника встречи; на вкладке клиента — колонки Pixso. Клик по строке выбирает встречу, её карточку показывает MeetingsProtocolsDetails справа. Чип статуса: «Запланирована» — info, у просроченной (needsAttention) — error, «Завершена» — success, «Отменена» — grey.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile headless
+└── Table (.dtable--fill): TableFilter · «Краткий отчет» · строки (выбор — tbl__row--selected) · Pagination</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">.dtable--fill</code> в левой панели сплиттера</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст, чипы статуса, ссылки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">TableFilter</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка + <code class="tok">.tfm</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Pagination</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">из кода</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.9fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/registry-table.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">общий рендер концепта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пары нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../../design-system/components/organisms/TableFilter/TableFilter.html">TableFilter</a> · <a class="inl" href="../../../../../design-system/components/molecules/Pagination/Pagination.html">Pagination</a> · <a class="inl" href="../../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../../design-system/components/atoms/Link/Link.html">Link</a> · <a class="inl" href="../../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../../design-system/components/molecules/EmptyState/EmptyState.html">EmptyState</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.css">MeetingsProtocolsList.css</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.html">MeetingsProtocolsList.html</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js">MeetingsProtocolsList.js</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md">MeetingsProtocolsList.md</a> · <a class="inl" href="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ID встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Статус</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клиент</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Отраслевой деск</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Дески</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Источник встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.8fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ID источника встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">колонка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка / чип / ссылка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Порядок строк — порядок отображения. Имя поля — как в описании типа демо-данных. Незаполненное поле — прочерк на своём месте, с места не уходит.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Аналитик ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не воссоздаётся в части 1 (Р6)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">каркас тайла и скелетоны строк (<code class="tok">.lc-meetings-list__loading</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">базовый вид</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">незаполненное поле — прочерк на своём месте</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка причины без иллюстрации (<code class="tok">.lc-meetings-list__empty</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert внутри компонента с повтором (<code class="tok">.lc-meetings-list__error</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прежние значения видны; локальной индикации в прототипе нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в части 1 правка не воссоздаётся (Р6): точки входа видны, по клику ничего</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;view&quot;</code>: действия правки не рисуются</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">компонент не ставится экраном</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<p class="desc">Своих состояний нет.</p>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — это просмотр.</li><li>Обязательные поля внутри: не решено (10.10.2026).</li><li>Что показывает, когда обязательное не заполнено: прочерк.</li><li>Что отдаёт наружу: ничего.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">усечение с тултипом Table</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пагинация по 50 строк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный скролл тела внутри левой панели</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">резиновые колонки</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<ul class="bullets"><li>клик по строке → выбор и <code class="tok">onSelect(meeting)</code>;</li><li>ID источника → страница лида, клиента или сделки;</li><li>«Фильтр» → <code class="tok">.tfm</code>, чип «Применено: N»;</li><li>«Краткий отчет» → Toast «Файл выгружен»;</li><li>вкладки «Мои встречи» / «Встречи моего деска» — подфильтр (<code class="tok">setTab</code>).</li></ul>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.4fr) minmax(0,2.7fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">панель предпросмотра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">MeetingsProtocolsDetails</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">карточка выбранной встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вкладка «Встречи» клиента</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Поля — раздел «Поля». Имена методов API выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/meetings.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">MOCK_MEETINGS</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">MeetingRsDto</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-N</code> / <code class="tok">colw-N</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">partial</code> · <code class="tok">empty</code> · <code class="tok">error</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code> · <code class="tok">view</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">режим прав</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">таблица</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">widgets/tables/MeetingsProtocolsList/</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ib/ma-opportunities-app widgets/MeetingsProtocolsList</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">общий рендер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">data/registry-table.js</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">базовая таблица uikit</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<p class="desc">Отклонений нет.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Пары страниц для вкладок «Мои встречи» и «Встречи моего деска» в дереве нет — не решено (10.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.html): окна и подчасти, которые открывает виджет. -->
+<!-- Локальный компонент «Предпросмотр встречи» — правая панель реестра
+     встреч (MeetingsProtocolsPage) и вкладки «Встречи» клиента. Пара во
+     фронтенде — MeetingsProtocolsDetails (ib/ma-opportunities-app), кнопки
+     «Завершить» и «Отменить» — MeetingUpdateActions. Состав — снимок системы
+     (Встречи.png) и Pixso «Встречи – Предпросмотр». Страница вшивает меткой
+     <ds-include> и заполняет: LcMeetingsProtocolsDetails.render(host, { meeting, onAction }).
+     Статическое содержимое — демо M-8904. -->
+<section class="tile lc-meeting-details" id="cl-mt-details" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-md-title>Встреча M-8904 от 15.10.2026</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-md-status><span class="chip__label">Запланирована</span></span>
+      </div>
+      <p class="tile__subtitle" data-md-line>15.10.2026, 10:00–11:30 · Офис клиента, переговорная 2 · UTC+3</p>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать встречу" data-md-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-md-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meeting-details__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить встречу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-meeting-details__loading" aria-busy="true">
+      <span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span>
+    </div>
+
+    <div class="lc-meeting-details__content">
+      <!-- действия: «Создать лид» (система, Р6 — по клику ничего), «Завершить» /
+           «Отменить» у запланированной встречи (MeetingUpdateActions, Р7) -->
+      <div class="lc-meeting-details__acts">
+        <button type="button" class="btn btn--accent btn--s" data-md-create-lead><i data-icon="add"></i><span class="btn__label">Создать лид</span></button>
+        <span class="lc-meeting-details__update" data-md-update>
+          <button type="button" class="btn btn--outline btn--s" data-md-finish><i data-icon="check"></i><span class="btn__label">Завершить</span></button>
+          <button type="button" class="btn btn--outline btn--s" data-md-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+        </span>
+      </div>
+
+      <section class="lc-meeting-details__sec">
+        <h4 class="lc-meeting-details__sec-title">Источник встречи</h4>
+        <p class="lc-meeting-details__source">
+          <span class="lc-meeting-details__source-type" data-md-source-type>Потенциал</span>
+          <a class="link link--accent link--m" href="#" data-md-source-link><span data-md-source-label>L-118846</span><i data-icon="link-external"></i></a>
+        </p>
+      </section>
+
+      <div class="lc-meeting-details__cols">
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Общая информация</h4>
+          <div class="entity-list" data-md-info></div>
+        </section>
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Участники</h4>
+          <p class="lc-meeting-details__group">Со стороны клиента</p>
+          <div class="entity-list" data-md-people-client></div>
+          <p class="lc-meeting-details__group">Со стороны ДИД</p>
+          <div class="entity-list" data-md-people-did></div>
+        </section>
+      </div>
+
+      <div class="lc-meeting-details__checks">
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="stratDialog"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Проведен страт. диалог</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withKm"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием КМ</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withSponsor"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием спонсора</span></span></label>
+      </div>
+
+      <section class="lc-meeting-details__sec" data-md-agenda-sec>
+        <h4 class="lc-meeting-details__sec-title">Повестка встречи</h4>
+        <div class="lc-meeting-details__agenda" data-md-agenda></div>
+      </section>
+
+      <section class="lc-meeting-details__sec" data-md-links-sec>
+        <h4 class="lc-meeting-details__sec-title">Связи</h4>
+        <div class="lc-meeting-details__links" data-md-links></div>
+      </section>
+    </div>
+  </div>
+</section>
+<!-- Локальный компонент «Смена статуса задачи» — окно действий «Исполнить»,
+     «Переназначить», «Отменить» реестра задач (§4.10, Р7). Переназначение —
+     с полем сотрудника (DropdownList); исполнение/отмена — подтверждение.
+     Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
+     LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
+     задачу в хранилище и открывается слоем Modal ДС. -->
+<div class="modal-scrim" id="task-change-scrim" hidden>
+  <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-task-change__text">Задача <b data-tc-number>–</b> — <span data-tc-name>–</span>.</p>
+      <div class="inp inp--m" data-tc-employee hidden>
+        <label class="ds-label" for="tc-employee"><span class="ds-label__text">Исполнитель</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tc-employee" data-ddl="tc-employee-ddl" placeholder="Выберите сотрудника">
+        </div>
+      </div>
+      <!-- список сотрудников заполняет скрипт окна из employees.js -->
+      <div id="tc-employee-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-tc-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/dictionaries.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/employees.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/clients.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/opportunities.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/potentials.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/meetings.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/tasks.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/store.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/nav-links.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/data/registry-table.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/IndustryInfoTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/TeamInfoTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/ClientTimingsTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/ClientNewsTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/GigaInfoTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/TasksTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/TaskHistoryTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/TaskPreviewTile.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/LeadsTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/MaPipelineTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/FinancialsChart.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/FinancialsTable.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/StratDialogueCard.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/GoalArchiveSection.js"></script>
+<script src="../../../../core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/ClientCreditsList.js"></script>
+<script>
+window.IBPKitPage = {"id":"MeetingsProtocolsList","type":"table","base":"../../..","hub":"../../../../../index.html","states":["data","error"],"modes":["view"],"state":"data","mode":"view","width":1200,"scenario":false,"fixtures":{"_":"Демо-данные витрины: компонент наполняет скрипт страницы из data/store.js; ключи — состояния данных.","data":{"scope":"MY"},"empty":{"rows":[]},"error":{"message":"Не удалось загрузить реестр"},"long":{"clientName":"ООО «Агропромышленный комплекс Юго-Западной Сибири»"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Реестр встреч» — таблица встреч с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcMeetingsProtocolsList.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-meetings-list" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-meetings-list__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* MeetingsProtocolsList — таблица на общем рендере; своя раскладка — только блок ошибки
+   по data-state. Table, TableCell, TableFilter, Pagination — ДС. */
+.lc-meetings-list { min-width: 0; height: 100%; }
+.lc-meetings-list__error { display: none; }
+.lc-meetings-list[data-state="error"] .lc-meetings-list__error { display: flex; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* MeetingsProtocolsList — реестр встреч на общем рендере data/registry-table.js.
+   mount(host, { scope, onSelect, clientId }) — scope: 'MY' | 'DESK' (вкладки),
+   clientId — только встречи клиента (вкладка «Встречи» клиента). Строка
+   выбирается кликом — onSelect(meeting); ID источника ведёт на его страницу. */
+(function () {
+  'use strict';
+
+  var TONE = { SCHEDULED: 'info', COMPLETED: 'success', CANCELLED: 'grey' };
+  var SOURCE = { POTENTIAL: 'Потенциал', CLIENT: 'Клиент', DEAL: 'Сделка ДИД' };
+
+  function sourceHref(m) {
+    var N = window.IBPR_NAV;
+    if (m.sourceType === 'POTENTIAL') return N.href('potential', { id: m.sourceId });
+    if (m.sourceType === 'CLIENT') return N.href('client', { id: m.clientId });
+    var o = window.IBPR.opportunity(m.sourceId);
+    return o ? N.href('opportunity', { source: o.source, id: o.id, tab: o.tab }) : null;
+  }
+
+  function columnsFor(clientMode) {
+    if (!clientMode) return window.MEETING_COLUMNS;
+    /* вкладка клиента (Pixso): ID · Дата · Статус · Начало · Окончание · Временная зона · Способ коммуникации */
+    return [
+      { key: 'id', label: 'ID встречи', type: 'text', width: '120px' },
+      { key: 'dateLabel', label: 'Дата встречи', type: 'text', width: '130px' },
+      { key: 'statusLabel', label: 'Статус', type: 'chip', width: '160px' },
+      { key: 'timeStart', label: 'Начало', type: 'text', width: '100px' },
+      { key: 'timeEnd', label: 'Окончание', type: 'text', width: '110px' },
+      { key: 'timezone', label: 'Временная зона', type: 'text', width: '130px' },
+      { key: 'commMethod', label: 'Способ коммуникации', type: 'text' }
+    ];
+  }
+
+  function mount(host, opts) {
+    opts = opts || {};
+    var S = window.IBPR, T = window.IBPR_TABLE;
+    var cols = columnsFor(!!opts.clientId).map(function (c) {
+      var w = { statusLabel: '160px', deskChips: '250px', desks: '220px', sourceId: '170px' }[c.key];
+      return Object.assign({}, c, w ? { width: w } : {}, c.key === 'id' ? { type: 'text' } : {});
+    });
+    return T.mount(host, {
+      id: opts.clientId ? 'client-meetings' : 'meetings',
+      tab: opts.scope || 'MY',
+      columns: cols,
+      rows: function (scope) {
+        return S.meetings(opts.clientId ? null : scope).filter(function (m) { return !opts.clientId || m.clientId === opts.clientId; });
+      },
+      value: function (m, col) {
+        if (col.key === 'statusLabel') return S.lbl.meetingStatus(m.statusCode);
+        if (col.key === 'sourceTypeLabel') return SOURCE[m.sourceType];
+        if (col.key === 'dateLabel') return window.DICT_FMT.date(m.date);
+        return m[col.key];
+      },
+      filter: cols.filter(function (c) { return c.type !== 'chips'; }).map(function (c) { return { label: c.label, key: c.key }; }),
+      onRowClick: opts.onSelect ? function (m) { opts.onSelect(m); } : null,
+      cell: function (m, col, v) {
+        if (col.key === 'statusLabel') {
+          var tone = m.needsAttention && m.statusCode === 'SCHEDULED' ? 'error' : TONE[m.statusCode];
+          return '<div class="tc" data-col="statusLabel"><span class="tc__row">' + T.chip(v, { tone: tone, rounded: true }) + '</span></div>';
+        }
+        if (col.key === 'sourceId') {
+          var url = sourceHref(m);
+          var label = m.sourceType === 'CLIENT' ? m.clientName : m.sourceId;
+          return '<div class="tc" data-col="sourceId"><span class="tc__row">' + (url ? '<a class="link link--accent link--m" href="' + url + '">' + T.esc(label) + '</a>' : '<span class="tc__text">' + T.esc(label) + '</span>') + '</span></div>';
+        }
+        return null;
+      }
+    });
+  }
+
+  window.LcMeetingsProtocolsList = { mount: mount };
+})();
+</script>
+</body>
+</html>

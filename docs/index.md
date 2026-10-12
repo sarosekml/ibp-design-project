@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 421.
+Документов: 694.
 
 ## Корень (4)
 
@@ -246,7 +246,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (218)
+## Приложения (485)
 
 | Документ | Аннотация |
 |---|---|
@@ -264,11 +264,293 @@
 |---|---|
 | [apps/core/documents-app/README.md](../apps/core/documents-app/README.md) | documents-app — модуль раздела core |
 
+### apps/core/drafts/ibp-redesign-v1
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/ibp-redesign-v1/README.md](../apps/core/drafts/ibp-redesign-v1/README.md) | ibp-redesign-v1 — IBP Redesign v1, Аналитик ДИД |
+| [apps/core/drafts/ibp-redesign-v1/pages/AdminPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/AdminPage.screen.md) | Администрирование |
+| [apps/core/drafts/ibp-redesign-v1/pages/BindingActiveNewOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/BindingActiveNewOpportunities.screen.md) | Обязательные сделки |
+| [apps/core/drafts/ibp-redesign-v1/pages/BindingAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/BindingAllLeadsPage.screen.md) | Обязательные лиды |
+| [apps/core/drafts/ibp-redesign-v1/pages/CampaignsActiveOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/CampaignsActiveOpportunities.screen.md) | Кампании продаж |
+| [apps/core/drafts/ibp-redesign-v1/pages/ClientComments.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/ClientComments.screen.md) | Комментарии клиента |
+| [apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/ClientInfoPage.screen.md) | Клиент |
+| [apps/core/drafts/ibp-redesign-v1/pages/HomePage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/HomePage.screen.md) | Главная — Аналитик ДИД |
+| [apps/core/drafts/ibp-redesign-v1/pages/LeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/LeadsPage.screen.md) | Лиды |
+| [apps/core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MeetingsProtocolsPage.screen.md) | Встречи |
+| [apps/core/drafts/ibp-redesign-v1/pages/MyClientsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MyClientsPage.screen.md) | Клиенты |
+| [apps/core/drafts/ibp-redesign-v1/pages/MyDeskOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/MyDeskOpportunities.screen.md) | Pipeline |
+| [apps/core/drafts/ibp-redesign-v1/pages/Opportunity.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/Opportunity.screen.md) | Сделка |
+| [apps/core/drafts/ibp-redesign-v1/pages/OpportunityActiveSalesProjects.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/OpportunityActiveSalesProjects.screen.md) | Проекты продаж |
+| [apps/core/drafts/ibp-redesign-v1/pages/OpportunityProduct.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/OpportunityProduct.screen.md) | Продукт сделки |
+| [apps/core/drafts/ibp-redesign-v1/pages/PossibleActiveNewOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/PossibleActiveNewOpportunities.screen.md) | Возможные сделки |
+| [apps/core/drafts/ibp-redesign-v1/pages/PossibleAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/PossibleAllLeadsPage.screen.md) | Возможные лиды |
+| [apps/core/drafts/ibp-redesign-v1/pages/PotentialPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/PotentialPage.screen.md) | Лид |
+| [apps/core/drafts/ibp-redesign-v1/pages/TaskStatesPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/TaskStatesPage.screen.md) | Статусы задач |
+| [apps/core/drafts/ibp-redesign-v1/pages/TasksPage.screen.md](../apps/core/drafts/ibp-redesign-v1/pages/TasksPage.screen.md) | Задачи |
+| [apps/core/drafts/ibp-redesign-v1/proto-panel/comments.md](../apps/core/drafts/ibp-redesign-v1/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/CHANGELOG.md) | ChangeTaskStatusModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.md) | ChangeTaskStatusModal |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/CHANGELOG.md) | RefuseFromOpportunityModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/RefuseFromOpportunityModal/RefuseFromOpportunityModal.md) | RefuseFromOpportunityModal |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/CHANGELOG.md) | TakeOpportunityToWorkModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.md](../apps/core/drafts/ibp-redesign-v1/widgets/modals/TakeOpportunityToWorkModal/TakeOpportunityToWorkModal.md) | TakeOpportunityToWorkModal |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.md) | BindingOpportunitiesTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/BindingOpportunitiesTable/CHANGELOG.md) | BindingOpportunitiesTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/CHANGELOG.md) | DcmEcmPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.md) | DcmEcmPipelineTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/CHANGELOG.md) | FinancialsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/FinancialsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/FinancialsTable/FinancialsTable.md) | FinancialsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/CHANGELOG.md) | LeadsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/LeadsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/LeadsTable/LeadsTable.md) | LeadsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/CHANGELOG.md) | MaPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/MaPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MaPipelineTable/MaPipelineTable.md) | MaPipelineTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/CHANGELOG.md) | MeetingsProtocolsList — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.md) | MeetingsProtocolsList |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/CHANGELOG.md) | MyClientsHierarchicalTree — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsHierarchicalTree/MyClientsHierarchicalTree.md) | MyClientsHierarchicalTree |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/CHANGELOG.md) | MyClientsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/MyClientsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/MyClientsTable/MyClientsTable.md) | MyClientsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/CHANGELOG.md) | OpportunitiesPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.md) | OpportunitiesPipelineTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/CHANGELOG.md) | OpportunitySalesProjectsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/OpportunitySalesProjectsTable/OpportunitySalesProjectsTable.md) | OpportunitySalesProjectsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/CHANGELOG.md) | PossibleOpportunitiesTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.md) | PossibleOpportunitiesTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/CHANGELOG.md) | SalesCampaignsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/SalesCampaignsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SalesCampaignsTable/SalesCampaignsTable.md) | SalesCampaignsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/CHANGELOG.md) | SimpleSettingsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/SimpleSettingsTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/SimpleSettingsTable/SimpleSettingsTable.md) | SimpleSettingsTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/CHANGELOG.md) | TaskHistoryTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/TaskHistoryTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TaskHistoryTable/TaskHistoryTable.md) | TaskHistoryTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/CHANGELOG.md) | TasksTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/TasksTable.md](../apps/core/drafts/ibp-redesign-v1/widgets/tables/TasksTable/TasksTable.md) | TasksTable |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CHANGELOG.md) | CallReportsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CallReportsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CallReportsTile/CallReportsTile.md) | CallReportsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/CHANGELOG.md) | ClientCreditsList — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/ClientCreditsList.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientCreditsList/ClientCreditsList.md) | ClientCreditsList |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/CHANGELOG.md) | ClientNewsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/ClientNewsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientNewsTile/ClientNewsTile.md) | ClientNewsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/CHANGELOG.md) | ClientTimingsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ClientTimingsTile/ClientTimingsTile.md) | ClientTimingsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CHANGELOG.md) | CommentsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CommentsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/CommentsTile/CommentsTile.md) | CommentsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/CHANGELOG.md) | DescriptionTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/DescriptionTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DescriptionTile/DescriptionTile.md) | DescriptionTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/CHANGELOG.md) | DesksTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/DesksTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DesksTile/DesksTile.md) | DesksTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/CHANGELOG.md) | DocumentsInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.md) | DocumentsInfoTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/CHANGELOG.md) | FinancialMetricsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialMetricsTile/FinancialMetricsTile.md) | FinancialMetricsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/CHANGELOG.md) | FinancialsChart — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/FinancialsChart.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/FinancialsChart/FinancialsChart.md) | FinancialsChart |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/CHANGELOG.md) | GeneralInformationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/GeneralInformationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GeneralInformationTile/GeneralInformationTile.md) | GeneralInformationTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/CHANGELOG.md) | GigaInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/GigaInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GigaInfoTile/GigaInfoTile.md) | GigaInfoTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/CHANGELOG.md) | GoalArchiveSection — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalArchiveSection/GoalArchiveSection.md) | GoalArchiveSection |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/CHANGELOG.md) | GoalsPopoverBadge — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.md) | GoalsPopoverBadge |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/CHANGELOG.md) | IndustryInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/IndustryInfoTile/IndustryInfoTile.md) | IndustryInfoTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/CHANGELOG.md) | LinkNavigationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/LinkNavigationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/LinkNavigationTile/LinkNavigationTile.md) | LinkNavigationTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/CHANGELOG.md) | MeetingsProtocolsDetails — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.md) | MeetingsProtocolsDetails |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/CHANGELOG.md) | MeetingsProtocolsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.md) | MeetingsProtocolsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/CHANGELOG.md) | OpportunityClientTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/OpportunityClientTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityClientTile/OpportunityClientTile.md) | OpportunityClientTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityConnectionsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityConnectionsTile/CHANGELOG.md) | OpportunityConnectionsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.md) | OpportunityConnectionsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityProductTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityProductTile/CHANGELOG.md) | OpportunityProductTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityProductTile/OpportunityProductTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityProductTile/OpportunityProductTile.md) | OpportunityProductTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityTeamMembersTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityTeamMembersTile/CHANGELOG.md) | OpportunityTeamMembersTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.md) | OpportunityTeamMembersTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/CHANGELOG.md) | ProductClientTiles — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductClientTiles/ProductClientTiles.md) | ProductClientTiles |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/CHANGELOG.md) | ProductsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/ProductsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/ProductsTile/ProductsTile.md) | ProductsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/CHANGELOG.md) | RelatedPersonsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.md) | RelatedPersonsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/CHANGELOG.md) | RequisitesInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.md) | RequisitesInfoTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/CHANGELOG.md) | SimpleSettingsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.md) | SimpleSettingsTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/CHANGELOG.md) | StateInformationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/StateInformationTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StateInformationTile/StateInformationTile.md) | StateInformationTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/CHANGELOG.md) | StratDialogueCard — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/StratDialogueCard.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/StratDialogueCard/StratDialogueCard.md) | StratDialogueCard |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/CHANGELOG.md) | TaskPreviewTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TaskPreviewTile/TaskPreviewTile.md) | TaskPreviewTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/CHANGELOG.md) | TasksTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/TasksTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TasksTile/TasksTile.md) | TasksTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/CHANGELOG.md) | TeamInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/TeamInfoTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TeamInfoTile/TeamInfoTile.md) | TeamInfoTile |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/CHANGELOG.md) | TimingTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/TimingTile.md](../apps/core/drafts/ibp-redesign-v1/widgets/tiles/TimingTile/TimingTile.md) | TimingTile |
+
 ### apps/core/drafts/ibp-redesign-v1 — снимки задач
 
 | Документ | Аннотация |
 |---|---|
+| [apps/core/drafts/ibp-redesign-v1/HubProjectRename.handoff.md](../apps/core/drafts/ibp-redesign-v1/HubProjectRename.handoff.md) | HubProjectRename — handoff |
 | [apps/core/drafts/ibp-redesign-v1/ibp-redesign-v1.handoff.md](../apps/core/drafts/ibp-redesign-v1/ibp-redesign-v1.handoff.md) | ibp-redesign-v1 — handoff |
+
+### apps/core/drafts/ibp-redesign-v2
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-A.md](../apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-A.md) | LeadsWorkflow — концепт A (Консервативный) |
+| [apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-B.md](../apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-B.md) | LeadsWorkflow — концепт B (Сбалансированный) |
+| [apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-C.md](../apps/core/drafts/ibp-redesign-v2/LeadsWorkflow.concept-C.md) | LeadsWorkflow — концепт C (Концептуальный) |
+| [apps/core/drafts/ibp-redesign-v2/README.md](../apps/core/drafts/ibp-redesign-v2/README.md) | ibp-redesign-v2 — IBP Redesign v2, Аналитик ДИД |
+| [apps/core/drafts/ibp-redesign-v2/pages/AdminPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/AdminPage.screen.md) | Администрирование |
+| [apps/core/drafts/ibp-redesign-v2/pages/BindingActiveNewOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/BindingActiveNewOpportunities.screen.md) | Обязательные сделки |
+| [apps/core/drafts/ibp-redesign-v2/pages/BindingAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/BindingAllLeadsPage.screen.md) | Обязательные лиды |
+| [apps/core/drafts/ibp-redesign-v2/pages/CampaignsActiveOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/CampaignsActiveOpportunities.screen.md) | Кампании продаж |
+| [apps/core/drafts/ibp-redesign-v2/pages/ClientComments.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/ClientComments.screen.md) | Комментарии клиента |
+| [apps/core/drafts/ibp-redesign-v2/pages/ClientInfoPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/ClientInfoPage.screen.md) | Клиент |
+| [apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.screen.md) | Мои проекты |
+| [apps/core/drafts/ibp-redesign-v2/pages/HomePage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/HomePage.screen.md) | Главная — Аналитик ДИД |
+| [apps/core/drafts/ibp-redesign-v2/pages/Lead.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/Lead.screen.md) | Единый лид |
+| [apps/core/drafts/ibp-redesign-v2/pages/LeadsNew.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/LeadsNew.screen.md) | Лиды |
+| [apps/core/drafts/ibp-redesign-v2/pages/LeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/LeadsPage.screen.md) | Лиды |
+| [apps/core/drafts/ibp-redesign-v2/pages/MeetingsProtocolsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MeetingsProtocolsPage.screen.md) | Встречи |
+| [apps/core/drafts/ibp-redesign-v2/pages/MyClientsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MyClientsPage.screen.md) | Клиенты |
+| [apps/core/drafts/ibp-redesign-v2/pages/MyDeskOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/MyDeskOpportunities.screen.md) | Pipeline |
+| [apps/core/drafts/ibp-redesign-v2/pages/Opportunity.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/Opportunity.screen.md) | Сделка |
+| [apps/core/drafts/ibp-redesign-v2/pages/OpportunityActiveSalesProjects.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/OpportunityActiveSalesProjects.screen.md) | Проекты продаж |
+| [apps/core/drafts/ibp-redesign-v2/pages/OpportunityProduct.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/OpportunityProduct.screen.md) | Продукт сделки |
+| [apps/core/drafts/ibp-redesign-v2/pages/PossibleActiveNewOpportunities.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/PossibleActiveNewOpportunities.screen.md) | Возможные сделки |
+| [apps/core/drafts/ibp-redesign-v2/pages/PossibleAllLeadsPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/PossibleAllLeadsPage.screen.md) | Возможные лиды |
+| [apps/core/drafts/ibp-redesign-v2/pages/PotentialPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/PotentialPage.screen.md) | Лид |
+| [apps/core/drafts/ibp-redesign-v2/pages/TaskStatesPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/TaskStatesPage.screen.md) | Статусы задач |
+| [apps/core/drafts/ibp-redesign-v2/pages/TasksPage.screen.md](../apps/core/drafts/ibp-redesign-v2/pages/TasksPage.screen.md) | Задачи |
+| [apps/core/drafts/ibp-redesign-v2/proto-panel/comments.md](../apps/core/drafts/ibp-redesign-v2/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/core/drafts/ibp-redesign-v2/refs/README.md](../apps/core/drafts/ibp-redesign-v2/refs/README.md) | Проверка демонстрационного процесса |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/LeadActionsModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/LeadActionsModal/CHANGELOG.md) | LeadActionsModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/LeadActionsModal/LeadActionsModal.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/LeadActionsModal/LeadActionsModal.md) | LeadActionsModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/TransferToPipelineModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/TransferToPipelineModal/CHANGELOG.md) | TransferToPipelineModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/TransferToPipelineModal/TransferToPipelineModal.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/TransferToPipelineModal/TransferToPipelineModal.md) | TransferToPipelineModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2ChangeTaskStatusModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2ChangeTaskStatusModal/CHANGELOG.md) | V2ChangeTaskStatusModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.md) | V2ChangeTaskStatusModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2RefuseFromOpportunityModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2RefuseFromOpportunityModal/CHANGELOG.md) | V2RefuseFromOpportunityModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.md) | V2RefuseFromOpportunityModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2TakeOpportunityToWorkModal/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2TakeOpportunityToWorkModal/CHANGELOG.md) | V2TakeOpportunityToWorkModal — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.md](../apps/core/drafts/ibp-redesign-v2/widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.md) | V2TakeOpportunityToWorkModal |
+| [apps/core/drafts/ibp-redesign-v2/widgets/popovers/LeadPathWidget/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/popovers/LeadPathWidget/CHANGELOG.md) | LeadPathWidget |
+| [apps/core/drafts/ibp-redesign-v2/widgets/popovers/LeadPathWidget/LeadPathWidget.md](../apps/core/drafts/ibp-redesign-v2/widgets/popovers/LeadPathWidget/LeadPathWidget.md) | LeadPathWidget |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/LeadHistoryTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/LeadHistoryTable/CHANGELOG.md) | LeadHistoryTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/LeadHistoryTable/LeadHistoryTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/LeadHistoryTable/LeadHistoryTable.md) | LeadHistoryTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2BindingOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2BindingOpportunitiesTable/CHANGELOG.md) | V2BindingOpportunitiesTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2BindingOpportunitiesTable/V2BindingOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2BindingOpportunitiesTable/V2BindingOpportunitiesTable.md) | V2BindingOpportunitiesTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2DcmEcmPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2DcmEcmPipelineTable/CHANGELOG.md) | V2DcmEcmPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2DcmEcmPipelineTable/V2DcmEcmPipelineTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2DcmEcmPipelineTable/V2DcmEcmPipelineTable.md) | V2DcmEcmPipelineTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2FinancialsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2FinancialsTable/CHANGELOG.md) | V2FinancialsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2FinancialsTable/V2FinancialsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2FinancialsTable/V2FinancialsTable.md) | V2FinancialsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2LeadsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2LeadsTable/CHANGELOG.md) | V2LeadsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2LeadsTable/V2LeadsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2LeadsTable/V2LeadsTable.md) | V2LeadsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MaPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MaPipelineTable/CHANGELOG.md) | V2MaPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MaPipelineTable/V2MaPipelineTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MaPipelineTable/V2MaPipelineTable.md) | V2MaPipelineTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MeetingsProtocolsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MeetingsProtocolsList/CHANGELOG.md) | V2MeetingsProtocolsList — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MeetingsProtocolsList/V2MeetingsProtocolsList.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MeetingsProtocolsList/V2MeetingsProtocolsList.md) | V2MeetingsProtocolsList |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsHierarchicalTree/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsHierarchicalTree/CHANGELOG.md) | V2MyClientsHierarchicalTree — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.md) | V2MyClientsHierarchicalTree |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsTable/CHANGELOG.md) | V2MyClientsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsTable/V2MyClientsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2MyClientsTable/V2MyClientsTable.md) | V2MyClientsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitiesPipelineTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitiesPipelineTable/CHANGELOG.md) | V2OpportunitiesPipelineTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitiesPipelineTable/V2OpportunitiesPipelineTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitiesPipelineTable/V2OpportunitiesPipelineTable.md) | V2OpportunitiesPipelineTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitySalesProjectsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitySalesProjectsTable/CHANGELOG.md) | V2OpportunitySalesProjectsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitySalesProjectsTable/V2OpportunitySalesProjectsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2OpportunitySalesProjectsTable/V2OpportunitySalesProjectsTable.md) | V2OpportunitySalesProjectsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2PossibleOpportunitiesTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2PossibleOpportunitiesTable/CHANGELOG.md) | V2PossibleOpportunitiesTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2PossibleOpportunitiesTable/V2PossibleOpportunitiesTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2PossibleOpportunitiesTable/V2PossibleOpportunitiesTable.md) | V2PossibleOpportunitiesTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SalesCampaignsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SalesCampaignsTable/CHANGELOG.md) | V2SalesCampaignsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SalesCampaignsTable/V2SalesCampaignsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SalesCampaignsTable/V2SalesCampaignsTable.md) | V2SalesCampaignsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SimpleSettingsTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SimpleSettingsTable/CHANGELOG.md) | V2SimpleSettingsTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SimpleSettingsTable/V2SimpleSettingsTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2SimpleSettingsTable/V2SimpleSettingsTable.md) | V2SimpleSettingsTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TaskHistoryTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TaskHistoryTable/CHANGELOG.md) | V2TaskHistoryTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TaskHistoryTable/V2TaskHistoryTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TaskHistoryTable/V2TaskHistoryTable.md) | V2TaskHistoryTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TasksTable/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TasksTable/CHANGELOG.md) | V2TasksTable — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TasksTable/V2TasksTable.md](../apps/core/drafts/ibp-redesign-v2/widgets/tables/V2TasksTable/V2TasksTable.md) | V2TasksTable |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadBasisTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadBasisTile/CHANGELOG.md) | LeadBasisTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadBasisTile/LeadBasisTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadBasisTile/LeadBasisTile.md) | LeadBasisTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadStageTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadStageTile/CHANGELOG.md) | LeadStageTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadStageTile/LeadStageTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/LeadStageTile/LeadStageTile.md) | LeadStageTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CallReportsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CallReportsTile/CHANGELOG.md) | V2CallReportsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CallReportsTile/V2CallReportsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CallReportsTile/V2CallReportsTile.md) | V2CallReportsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientCreditsList/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientCreditsList/CHANGELOG.md) | V2ClientCreditsList — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientCreditsList/V2ClientCreditsList.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientCreditsList/V2ClientCreditsList.md) | V2ClientCreditsList |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientNewsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientNewsTile/CHANGELOG.md) | V2ClientNewsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientNewsTile/V2ClientNewsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientNewsTile/V2ClientNewsTile.md) | V2ClientNewsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientTimingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientTimingsTile/CHANGELOG.md) | V2ClientTimingsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientTimingsTile/V2ClientTimingsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ClientTimingsTile/V2ClientTimingsTile.md) | V2ClientTimingsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CommentsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CommentsTile/CHANGELOG.md) | V2CommentsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CommentsTile/V2CommentsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2CommentsTile/V2CommentsTile.md) | V2CommentsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DescriptionTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DescriptionTile/CHANGELOG.md) | V2DescriptionTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DescriptionTile/V2DescriptionTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DescriptionTile/V2DescriptionTile.md) | V2DescriptionTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/CHANGELOG.md) | V2DesksTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/V2DesksTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DesksTile/V2DesksTile.md) | V2DesksTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/CHANGELOG.md) | V2DocumentsInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/V2DocumentsInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2DocumentsInfoTile/V2DocumentsInfoTile.md) | V2DocumentsInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/CHANGELOG.md) | V2FinancialMetricsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.md) | V2FinancialMetricsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/CHANGELOG.md) | V2FinancialsChart — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/V2FinancialsChart.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2FinancialsChart/V2FinancialsChart.md) | V2FinancialsChart |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GeneralInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GeneralInformationTile/CHANGELOG.md) | V2GeneralInformationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GeneralInformationTile/V2GeneralInformationTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GeneralInformationTile/V2GeneralInformationTile.md) | V2GeneralInformationTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GigaInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GigaInfoTile/CHANGELOG.md) | V2GigaInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GigaInfoTile/V2GigaInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GigaInfoTile/V2GigaInfoTile.md) | V2GigaInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalArchiveSection/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalArchiveSection/CHANGELOG.md) | V2GoalArchiveSection — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalArchiveSection/V2GoalArchiveSection.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalArchiveSection/V2GoalArchiveSection.md) | V2GoalArchiveSection |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalsPopoverBadge/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalsPopoverBadge/CHANGELOG.md) | V2GoalsPopoverBadge — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalsPopoverBadge/V2GoalsPopoverBadge.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2GoalsPopoverBadge/V2GoalsPopoverBadge.md) | V2GoalsPopoverBadge |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2IndustryInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2IndustryInfoTile/CHANGELOG.md) | V2IndustryInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2IndustryInfoTile/V2IndustryInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2IndustryInfoTile/V2IndustryInfoTile.md) | V2IndustryInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2LinkNavigationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2LinkNavigationTile/CHANGELOG.md) | V2LinkNavigationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.md) | V2LinkNavigationTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/CHANGELOG.md) | V2MeetingsProtocolsDetails — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.md) | V2MeetingsProtocolsDetails |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/CHANGELOG.md) | V2MeetingsProtocolsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.md) | V2MeetingsProtocolsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/CHANGELOG.md) | V2OpportunityClientTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.md) | V2OpportunityClientTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/CHANGELOG.md) | V2OpportunityConnectionsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/V2OpportunityConnectionsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityConnectionsTile/V2OpportunityConnectionsTile.md) | V2OpportunityConnectionsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityProductTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityProductTile/CHANGELOG.md) | V2OpportunityProductTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityProductTile/V2OpportunityProductTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityProductTile/V2OpportunityProductTile.md) | V2OpportunityProductTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityTeamMembersTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityTeamMembersTile/CHANGELOG.md) | V2OpportunityTeamMembersTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityTeamMembersTile/V2OpportunityTeamMembersTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2OpportunityTeamMembersTile/V2OpportunityTeamMembersTile.md) | V2OpportunityTeamMembersTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductClientTiles/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductClientTiles/CHANGELOG.md) | V2ProductClientTiles — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductClientTiles/V2ProductClientTiles.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductClientTiles/V2ProductClientTiles.md) | V2ProductClientTiles |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductsTile/CHANGELOG.md) | V2ProductsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductsTile/V2ProductsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2ProductsTile/V2ProductsTile.md) | V2ProductsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RelatedPersonsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RelatedPersonsTile/CHANGELOG.md) | V2RelatedPersonsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RelatedPersonsTile/V2RelatedPersonsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RelatedPersonsTile/V2RelatedPersonsTile.md) | V2RelatedPersonsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RequisitesInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RequisitesInfoTile/CHANGELOG.md) | V2RequisitesInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RequisitesInfoTile/V2RequisitesInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2RequisitesInfoTile/V2RequisitesInfoTile.md) | V2RequisitesInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2SimpleSettingsTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2SimpleSettingsTile/CHANGELOG.md) | V2SimpleSettingsTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2SimpleSettingsTile/V2SimpleSettingsTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2SimpleSettingsTile/V2SimpleSettingsTile.md) | V2SimpleSettingsTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StateInformationTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StateInformationTile/CHANGELOG.md) | V2StateInformationTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StateInformationTile/V2StateInformationTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StateInformationTile/V2StateInformationTile.md) | V2StateInformationTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StratDialogueCard/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StratDialogueCard/CHANGELOG.md) | V2StratDialogueCard — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StratDialogueCard/V2StratDialogueCard.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2StratDialogueCard/V2StratDialogueCard.md) | V2StratDialogueCard |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TaskPreviewTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TaskPreviewTile/CHANGELOG.md) | V2TaskPreviewTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TaskPreviewTile/V2TaskPreviewTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TaskPreviewTile/V2TaskPreviewTile.md) | V2TaskPreviewTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TasksTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TasksTile/CHANGELOG.md) | V2TasksTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TasksTile/V2TasksTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TasksTile/V2TasksTile.md) | V2TasksTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TeamInfoTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TeamInfoTile/CHANGELOG.md) | V2TeamInfoTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TeamInfoTile/V2TeamInfoTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TeamInfoTile/V2TeamInfoTile.md) | V2TeamInfoTile |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TimingTile/CHANGELOG.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TimingTile/CHANGELOG.md) | V2TimingTile — журнал изменений |
+| [apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TimingTile/V2TimingTile.md](../apps/core/drafts/ibp-redesign-v2/widgets/tiles/V2TimingTile/V2TimingTile.md) | V2TimingTile |
+
+### apps/core/drafts/ibp-redesign-v2 — снимки задач
+
+| Документ | Аннотация |
+|---|---|
+| [apps/core/drafts/ibp-redesign-v2/ibp-redesign-v2.handoff.md](../apps/core/drafts/ibp-redesign-v2/ibp-redesign-v2.handoff.md) | ibp-redesign-v2 — handoff |
 
 ### apps/core/drafts/new-dashboard-mvp
 
@@ -285,6 +567,8 @@
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/DateBadge/DateBadge.md) | DateBadge |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/CHANGELOG.md) | HomeProfileTile — журнал изменений |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeProfileTile/HomeProfileTile.md) | HomeProfileTile |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeTasksTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeTasksTile/CHANGELOG.md) | HomeTasksTile — журнал изменений |
+| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeTasksTile/HomeTasksTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/HomeTasksTile/HomeTasksTile.md) | HomeTasksTile |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/CHANGELOG.md) | MeetingsTile — журнал изменений |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MeetingsTile/MeetingsTile.md) | MeetingsTile |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/MyDayTile/CHANGELOG.md) | MyDayTile — журнал изменений |
@@ -293,8 +577,6 @@
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/NewsTile/NewsTile.md) | NewsTile |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/CHANGELOG.md) | StatCard — журнал изменений |
 | [apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/StatCard/StatCard.md) | StatCard |
-| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/CHANGELOG.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/CHANGELOG.md) | TasksTile — журнал изменений |
-| [apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.md](../apps/core/drafts/new-dashboard-mvp/widgets/tiles/TasksTile/TasksTile.md) | TasksTile |
 
 ### apps/core/drafts/new-dashboard-mvp — снимки задач
 
@@ -674,7 +956,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (77)
+## Задачи и заметки (83)
 
 ### Архив/черновики
 
@@ -730,7 +1012,13 @@
 | [docs/tasks/MS0013-ds-theme-generator.review-2.md](tasks/MS0013-ds-theme-generator.review-2.md) | MS0013 — ревью реализации и задание на доработку |
 | [docs/tasks/MS0013-ds-theme-generator.review.md](tasks/MS0013-ds-theme-generator.review.md) | MS0013 — приёмка и сохранность |
 | [docs/tasks/MS0014-ibp-redesign-context-pages.md](tasks/MS0014-ibp-redesign-context-pages.md) | IBP Redesign v1, часть 1: страницы системы Аналитика ДИД на компонентах ДС (контекст прототипа) |
-| [docs/tasks/MS0015-ibp-redesign-leads-concept.md](tasks/MS0015-ibp-redesign-leads-concept.md) | IBP Redesign v1, часть 2 (R&amp;D): единая сущность «Лид», раздел «Лиды (New)», главная-канбан «Мои проекты» и плавающий «Путь лида» |
+| [docs/tasks/MS0014-ibp-redesign-context-pages.review.md](tasks/MS0014-ibp-redesign-context-pages.review.md) | MS0014 — ревью реализации |
+| [docs/tasks/MS0014a-K4-layout.review.md](tasks/MS0014a-K4-layout.review.md) | Повторная приёмка раскладки Opportunity и PotentialPage |
+| [docs/tasks/MS0014a-ibp-redesign-frontend-names.md](tasks/MS0014a-ibp-redesign-frontend-names.md) | IBP Redesign v1: имена фронтенда для страниц и подкомпонентов, доработка части 1 по ревью |
+| [docs/tasks/MS0014a-ibp-redesign-frontend-names.review.md](tasks/MS0014a-ibp-redesign-frontend-names.review.md) | MS0014 / MS0014a — итоговая приёмка |
+| [docs/tasks/MS0015-ibp-redesign-leads-concept.md](tasks/MS0015-ibp-redesign-leads-concept.md) | IBP Redesign v2, часть 2 (R&amp;D): единая сущность «Лид», раздел «Лиды (New)», главная-канбан «Мои проекты» и плавающий «Путь лида» |
+| [docs/tasks/MS0015-ibp-redesign-leads-concept.review.md](tasks/MS0015-ibp-redesign-leads-concept.review.md) | IBP Redesign v2 — приёмка концепта B |
+| [docs/tasks/MS0015-ibp-redesign-merge.review.md](tasks/MS0015-ibp-redesign-merge.review.md) | Проверка MS0014 / MS0015 перед PR в main |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |

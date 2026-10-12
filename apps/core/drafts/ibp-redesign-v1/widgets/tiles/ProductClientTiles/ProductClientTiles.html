@@ -1,0 +1,52 @@
+<!-- Локальный компонент «Стороны продукта» — тайлы «Заёмщик» и «КНР» страницы
+     продукта (OpportunityProduct). Пара во фронтенде — ProductClientTiles
+     (pretrade/opportunities-app; у лида похожий PotentialProductClientTiles).
+     Корень — контейнер тайлов; место в ряду задаёт .tile-stack страницы.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcProductClientTiles.render(host, { product, onDelete }). -->
+<div class="lc-product-clients" data-state="data" data-mode="view">
+  <section class="tile" data-pc-tile="borrower">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Заёмщик</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: Заёмщик" data-pc-delete="borrower"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="name">ООО «Ромашка»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="inn">7712345678</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="crmId">3000012345</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kpp">771201001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-borrower="ogrn">1157746123456</span></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="tile" data-pc-tile="knr">
+    <header class="tile__header">
+      <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">КНР</h3></div></div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Удалить: КНР" data-pc-delete="knr"><i data-icon="trash"></i></button></div>
+    </header>
+    <div class="tile__body">
+      <div class="alert alert--error alert--m lc-product-clients__error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+          <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+      </div>
+      <div class="sk-group lc-product-clients__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+      <div class="tile__rows lc-product-clients__content">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="name">ООО «Ландыш»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="inn">7712345701</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="crmId">3000012346</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kpp">771201002</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-pc-knr="ogrn">1167746222201</span></div></div>
+      </div>
+    </div>
+  </section>
+</div>

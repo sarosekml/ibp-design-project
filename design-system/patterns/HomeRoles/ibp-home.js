@@ -21,24 +21,40 @@
 
   var GROUPS = [
     { id: 'origination', label: 'Origination', items: [
-      { id: 'obligatory-deals', label: 'Обязательные сделки', icon: 'Important-deals' },
-      { id: 'possible-deals',   label: 'Возможные сделки',    icon: 'deals-possible-deals' },
+      /* tile у пунктов Origination — роль «Аналитик ДИД» (добавлена
+         10.10.2026); у ролей без этой группы тайлов нет. illu:'' — иллюстрации
+         в ДС нет, остаётся штриховая заглушка (.illu:empty) */
+      { id: 'obligatory-deals', label: 'Обязательные сделки', icon: 'Important-deals',
+        tile: { title: 'Обязательные сделки', desc: 'Сделки с продуктами ДИД, и/или А-риском', illu: 'important-deals' } },
+      { id: 'possible-deals',   label: 'Возможные сделки',    icon: 'deals-possible-deals',
+        tile: { title: 'Возможные сделки', desc: 'Прочие сделки в Банке от 500 млн руб.', illu: 'possible-deals' } },
+      { id: 'leads',            label: 'Лиды',                icon: 'file-basic',
+        tile: { title: 'Лиды', desc: 'Драфты будущих сделок ДИД, в т.ч. лиды для КМ', illu: '' } },
       { id: 'potentials-rd',    label: 'Потенциалы РД',       icon: 'potentials-rd' },
-      { id: 'obligatory-leads', label: 'Обязательные лиды',   icon: 'important-leads' },
-      { id: 'possible-leads',   label: 'Возможные лиды',      icon: 'possible-leads' },
-      { id: 'sales-projects',   label: 'Проекты продаж CIB',  icon: 'sales-projects' },
-      { id: 'sales-company',    label: 'Кампании продаж',     icon: 'sales-company' },
+      { id: 'obligatory-leads', label: 'Обязательные лиды',   icon: 'important-leads',
+        tile: { title: 'Обязательные лиды', desc: 'Компании роста, Топ-клиенты, продукты ДИД и ИК/ПФ от 3 млрд руб.', illu: 'important-leads' } },
+      { id: 'possible-leads',   label: 'Возможные лиды',      icon: 'possible-leads',
+        tile: { title: 'Возможные лиды', desc: 'ИК/ПФ от 1 до 3 млрд руб.', illu: 'possible-leads' } },
+      { id: 'sales-projects',   label: 'Проекты продаж CIB',  icon: 'sales-projects',
+        tile: { title: 'Проекты продаж CIB', desc: 'Продуктовые предложения ДКК, ДККК, ДГР и ДИД', illu: 'sales-projects' } },
+      { id: 'sales-company',    label: 'Кампании продаж',     icon: 'sales-company',
+        tile: { title: 'Кампании продаж', desc: 'Потенциалы ДИД, отправленные на проработку в рабочее место КМ', illu: 'sales-company' } },
       { id: 'dcm-potentials',   label: 'Потенциалы DCM',      icon: 'dcm-potentials' },
       { id: 'calculator',       label: 'Калькулятор',         icon: 'calc' },
       { id: 'funds',            label: 'Фонды',               icon: 'funds' }
     ] },
     { id: 'pipeline', label: 'Pipeline', items: [
-      { id: 'pipeline',            label: 'Pipeline',             icon: 'pipeline' },
-      { id: 'pipeline-ckp',        label: 'Pipeline ЦКП',         icon: 'ckp-pipeline' },
-      { id: 'pipeline-mna',        label: 'M&A Pipeline',         icon: 'mna-pipeline' },
+      /* tile у пунктов Pipeline — роль «Аналитик ДИД» */
+      { id: 'pipeline',            label: 'Pipeline',             icon: 'pipeline',
+        tile: { title: 'Pipeline', desc: 'Все сделки моего деска', illu: 'pipeline' } },
+      { id: 'pipeline-ckp',        label: 'Pipeline ЦКП',         icon: 'ckp-pipeline',
+        tile: { title: 'Pipeline ЦКП', desc: 'Все сделки моего деска ЦКП', illu: 'ckp-pipeline' } },
+      { id: 'pipeline-mna',        label: 'M&A Pipeline',         icon: 'mna-pipeline',
+        tile: { title: 'M&A Pipeline', desc: 'Все сделки M&A', illu: 'mna-pipeline' } },
       { id: 'pipeline-dcm',        label: 'DCM Pipeline',         icon: 'dcm-pipeline' },
       { id: 'pipeline-ecm',        label: 'ECM Pipeline',         icon: 'ecm-pipeline' },
-      { id: 'kpki-calendar',       label: 'Календарь КПКИ',       icon: 'kpki-cal' },
+      { id: 'kpki-calendar',       label: 'Календарь КПКИ',       icon: 'kpki-cal',
+        tile: { title: 'Календарь КПКИ', desc: 'Перечень сделок, обсуждаемых на Комитете', illu: 'kpki-cal' } },
       { id: 'pipeline-dashboards', label: 'Дашборды по Pipeline', icon: 'pmc-dashboard' },
       { id: 'payments-ib',         label: 'Реестр платежей IB',   icon: 'payments-ib' }
     ] },
@@ -67,10 +83,18 @@
         tile: { title: 'Клиенты', desc: 'Работа с моими клиентами', illu: 'clients' } },
       /* исключение: пункт меню без тайла на главной */
       { id: 'client-search-epk', label: 'Поиск клиентов в ЕПК', icon: 'client-search', tile: null },
+      /* «Встречи» — роль «Аналитик ДИД»; иллюстрации в ДС нет —
+         штриховая заглушка. В «Финансист ДИД» не входит: его состав ниже —
+         явный список, чтобы главная deals-app не изменилась */
+      { id: 'meetings', label: 'Встречи', icon: 'calendar',
+        tile: { title: 'Встречи', desc: 'Встречи и протоколы моего деска', illu: '' } },
       { id: 'tasks', label: 'Задачи', icon: 'tasks', badge: 7,
         tile: { title: 'Задачи', desc: 'Все задачи моего деска', illu: 'tasks' } }
     ] },
     { id: 'admin', label: 'Администрирование', items: [
+      /* «Отчеты Qliksense» — роль «Аналитик ДИД» */
+      { id: 'qliksense-reports', label: 'Отчеты Qliksense', icon: 'qliksense-reports',
+        tile: { title: 'Отчеты Qliksense', desc: 'Сводная информация по сделкам', illu: 'qliksense-reports' } },
       { id: 'admin', label: 'Администрирование', icon: 'admin-panel-settings',
         tile: { title: 'Администрирование', desc: 'Справочники и другая информация', illu: 'settings' } },
       /* в мастер-каталоге есть, но в роль «Финансист ДИД» не входит (partial) */
@@ -79,14 +103,28 @@
   ];
 
   /* Роль → состав групп: 'full' (все пункты) или список id пунктов (частичная).
-     Пункт с tile:null («Поиск клиентов в ЕПК») есть в меню, но не в тайлах. */
+     Пункт с tile:null («Поиск клиентов в ЕПК») есть в меню, но не в тайлах.
+     «Аналитик ДИД» (добавлена 10.10.2026): состав повторяет стенд ift.
+     У «Финансист ДИД» clients-tasks переведён со 'full' на явный список без
+     «Встреч»: пункт появился в мастер-каталоге, а главная deals-app меняться
+     не должна. */
   var ROLES = {
     'Финансист ДИД': {
       groups: {
         'current-portfolio': 'full',
         'reports': 'full',
-        'clients-tasks': 'full',
+        'clients-tasks': ['clients', 'client-search-epk', 'tasks'],
         'admin': ['admin']
+      }
+    },
+    'Аналитик ДИД': {
+      groups: {
+        'origination': ['obligatory-deals', 'possible-deals', 'leads', 'obligatory-leads', 'possible-leads', 'sales-projects', 'sales-company'],
+        'pipeline': ['pipeline', 'pipeline-ckp', 'pipeline-mna', 'kpki-calendar'],
+        'current-portfolio': 'full',
+        'reports': ['reports-for-risks'],
+        'clients-tasks': ['clients', 'meetings', 'tasks'],
+        'admin': ['qliksense-reports', 'admin']
       }
     }
   };

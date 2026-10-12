@@ -1,0 +1,7 @@
+/* my-clients-tree — таблица на общем рендере; своя раскладка — только блок
+   ошибки по data-state. */
+.lc-my-clients-tree { min-width: 0; }
+.lc-my-clients-tree__error { display: none; }
+.lc-my-clients-tree[data-state="error"] .lc-my-clients-tree__error { display: flex; }
+.lc-my-clients-tree { height: 100%; }
+.lc-my-clients-tree__tools { display: flex; align-items: center; gap: var(--space-12); }

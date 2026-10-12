@@ -1,0 +1,6 @@
+/* PossibleOpportunitiesTable — реестр на общем рендере. Своя раскладка: только блок ошибки
+   по data-state; таблица — компоненты ДС (Table, TableCell, TableFilter,
+   Pagination), их состояния не переопределяются. */
+.lc-possible-opp-table { min-width: 0; }
+.lc-possible-opp-table__error { display: none; }
+.lc-possible-opp-table[data-state="error"] .lc-possible-opp-table__error { display: flex; }

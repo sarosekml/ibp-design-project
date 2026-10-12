@@ -1,0 +1,20 @@
+/* ProductsTile — сетка карточек продуктов (12 колонок, карточка — 4) на
+   токенах ДС; узкий шаг — пара col-N/colw-N по ширине самого тайла. */
+.lc-products { min-width: 0; }
+.lc-products [hidden] { display: none; }
+.lc-products__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-products__error,
+.lc-products__loading { display: none; }
+.lc-products[data-state="error"] .lc-products__error { display: flex; }
+.lc-products[data-state="loading"] .lc-products__loading { display: flex; }
+.lc-products[data-state="loading"] .lc-products__content,
+.lc-products[data-state="error"] .lc-products__content { display: none; }
+
+.lc-products { container-type: inline-size; }
+.lc-products__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-16); }
+.lc-products__grid:empty { display: none; }
+.lc-products__empty { font: var(--type-body-m); color: var(--text-secondary); margin: 0; }
+.lc-products[data-variant="potential"] [data-pt-add-head] { display: none; }
+@container (max-width: 900px) { .lc-products__grid > [class*="colw-"] { grid-column: span var(--colw); } }

@@ -1,0 +1,31 @@
+<!-- Локальный компонент «Карточка продукта» — карточка в ряду «Продукты
+     сделки» страницы сделки (§4.3), странице лида (§4.6) и в основе страницы
+     продукта (§4.4). Вшивается меткой ds-include; страница заполняет скриптом
+     LcOpportunityProductTile.render(host, {product, dealId, source, tab}).
+     Статическое содержимое — демо-карточка (продукт P9001 сделки 166092).
+     Для списка страница вшивает этот фрагмент в template; html() клонирует его. -->
+<article class="tile tile--card lc-opp-product" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title lc-opp-product__name">Инвестиционный кредит</h3>
+        <span class="chip chip--xs lc-opp-product__group"><span class="chip__label">Кредиты</span></span>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Перейти к продукту" href="#"><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Объем по продукту, млн ед.</span></span>
+        <div class="rof__row"><span class="rof__value">1 600</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">ВМ, %</span></span>
+        <div class="rof__row"><span class="rof__value">14,0</span></div>
+      </div>
+    </div>
+  </div>
+</article>

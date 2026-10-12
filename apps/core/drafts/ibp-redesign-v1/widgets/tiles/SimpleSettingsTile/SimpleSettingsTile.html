@@ -1,0 +1,29 @@
+<!-- Локальный компонент «Запись справочника» — предпросмотр записи страницы
+     «Статусы задач» (TaskStatesPage), правая панель сплиттера. Пара во
+     фронтенде — SimpleSettingsTile (core/settings-app) — допущение В6.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcSimpleSettingsTile.render(host, { row, onClose }). -->
+<section class="tile lc-simple-setting" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-ss-title>Ожидает исполнения</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-ss-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-simple-setting__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-simple-setting__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-simple-setting__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Код</span></span><div class="rof__row"><span class="rof__value" data-ss-code>PENDING_EXECUTION</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Наименование</span></span><div class="rof__row"><span class="rof__value" data-ss-label>Ожидает исполнения</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>

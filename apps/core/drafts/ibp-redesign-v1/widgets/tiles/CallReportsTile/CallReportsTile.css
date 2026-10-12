@@ -1,0 +1,17 @@
+/* CallReportsTile — пояснение и счётчик на токенах ДС. */
+.lc-call-reports { min-width: 0; }
+.lc-call-reports [hidden] { display: none; }
+.lc-call-reports__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-call-reports__error,
+.lc-call-reports__loading { display: none; }
+.lc-call-reports[data-state="error"] .lc-call-reports__error { display: flex; }
+.lc-call-reports[data-state="loading"] .lc-call-reports__loading { display: flex; }
+.lc-call-reports[data-state="loading"] .lc-call-reports__content,
+.lc-call-reports[data-state="error"] .lc-call-reports__content { display: none; }
+
+.lc-call-reports__note,
+.lc-call-reports__count { font: var(--type-body-m); color: var(--text-primary); margin: 0; }
+.lc-call-reports__note { color: var(--text-secondary); }
+.lc-call-reports__num { font: var(--type-body-m-strong); }

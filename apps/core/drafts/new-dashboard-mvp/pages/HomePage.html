@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!-- Главная — дашборд (концепт new-dashboard-mvp). Источник модульной страницы:
      тайлы и окна стоят метками <ds-include>, открывается собранная
-     HomePage.preview.html (node .agents/tools/assemble.mjs). Макет дизайнера —
-     refs/home-mockup-09102026.jpg; решения человека 09.10.2026 — спека
+     HomePage.preview.html (node .agents/tools/assemble.mjs). Макет дизайнера
+     «Главная» 1920 от 09.10.2026 в репозитории не хранится; решения человека 09.10.2026 — спека
      HomePage.screen.md. -->
 <html lang="ru">
 <head>
@@ -59,7 +59,7 @@
         <ds-include src="../widgets/tiles/HomeProfileTile/HomeProfileTile.html" class="col-4 colw-12" id="tile-profile" state="loading" mode="edit"></ds-include>
         <ds-include src="../widgets/tiles/MyDayTile/MyDayTile.html" class="col-8 colw-12" id="tile-day" state="loading" mode="view"></ds-include>
         <ds-include src="../widgets/tiles/MeetingsTile/MeetingsTile.html" class="col-4 colw-6" id="tile-meetings" state="loading" mode="edit"></ds-include>
-        <ds-include src="../widgets/tiles/TasksTile/TasksTile.html" class="col-4 colw-6" id="tile-tasks" state="loading" mode="edit"></ds-include>
+        <ds-include src="../widgets/tiles/HomeTasksTile/HomeTasksTile.html" class="col-4 colw-6" id="tile-tasks" state="loading" mode="edit"></ds-include>
         <ds-include src="../widgets/tiles/NewsTile/NewsTile.html" class="col-4 colw-12" id="tile-news" state="loading" mode="view"></ds-include>
       </div>
 
@@ -88,7 +88,7 @@
 <script src="../widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
 <script src="../widgets/tiles/MyDayTile/MyDayTile.js"></script>
 <script src="../widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
-<script src="../widgets/tiles/TasksTile/TasksTile.js"></script>
+<script src="../widgets/tiles/HomeTasksTile/HomeTasksTile.js"></script>
 <script src="../widgets/tiles/NewsTile/NewsTile.js"></script>
 <script src="../widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
 <script src="../widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>

@@ -1,0 +1,8 @@
+{
+  "id": "ibp-redesign-v2",
+  "track": "rnd",
+  "title": "IBP Redesign v2 — Лиды и мои проекты",
+  "desc": "Единые лиды, главная «Мои проекты» и путь лида (MS0015). Отдельная версия на базе контекстных страниц MS0014.",
+  "home": "pages/HomeBoard.preview.html",
+  "icon": "layout-grid-01"
+}

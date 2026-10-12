@@ -1658,6 +1658,16 @@ function gate() {
     for (const rel of changed) for (const id of gateStepsFor(rel, false)) want(id, rel);
     for (const rel of deleted) for (const id of gateStepsFor(rel, true)) want(id, rel);
   }
+  /* Изменённый сенсор меняет результат на прежних экранах. Фикстуры не
+     заменяют живой корпус: после правки layout-check старый красный экран
+     нельзя переносить в долг только потому, что его HTML не менялся. */
+  if (!isFull && changed.includes(toRel(SENSOR))) {
+    for (const rel of Object.keys(now).filter((p) => p.endsWith('.html'))) {
+      for (const id of gateStepsFor(rel, false)) {
+        if (id.startsWith('sensor:')) want(id, rel);
+      }
+    }
+  }
   /* Упавшее в прошлый раз. Пофайловый шаг, чей файл не менялся, НЕ
      перезапускается: результат не может измениться, а изменённый файл и так
      попал в набор выше. Такой долг переносится в снимок и печатается одной

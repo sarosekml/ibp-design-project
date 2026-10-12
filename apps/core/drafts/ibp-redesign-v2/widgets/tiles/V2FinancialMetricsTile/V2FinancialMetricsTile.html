@@ -1,0 +1,44 @@
+<!-- Локальный компонент «Финансовые метрики» — тайл страницы сделки
+     (Opportunity). Пара во фронтенде — V2FinancialMetricsTile
+     (pretrade/opportunities-app); блоки «Всего по сделке» и «Продукты УСИ» —
+     его часть ValuesBlock. Поля — ReadOnlyField: подпись над значением, ⓘ —
+     в слоте иконок Label. Страница вшивает меткой <ds-include> и заполняет:
+     LcFinancialMetricsTile.render(host, { opportunity }). -->
+<section class="tile lc-fin-metrics" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Финансовые метрики</h3></div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" data-inert aria-label="Показать все метрики" data-fm-all><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-metrics__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-metrics__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-metrics__content">
+      <section class="lc-fin-metrics__block" data-fm-block="total">
+        <h4 class="lc-fin-metrics__title"><span>Всего по сделке</span><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Всего по сделке" data-tooltip="Сумма всех продуктов сделки"><i data-icon="info-circle"></i></button></h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Общий объем, млн ед.</span></span><div class="rof__row"><span class="rof__value" data-fm-total>2 400,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюты сделки</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s" data-fm-currencies><span class="chip chip--xs chip--fit"><span class="chip__label">RUB</span></span></div></div></div></div>
+        </div>
+      </section>
+      <section class="lc-fin-metrics__block" data-fm-block="usi">
+        <h4 class="lc-fin-metrics__title"><span>Продукты УСИ</span><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Продукты УСИ" data-tooltip="Метрики инвестиционных продуктов УСИ"><i data-icon="info-circle"></i></button></h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Объём инвестиций, млн ед.</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Объём инвестиций, млн ед." data-tooltip="Инвестиции по продуктам УСИ"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-invest>1 800,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">ВМ Мезонин, %</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: ВМ Мезонин, %" data-tooltip="Валовая маржа мезонинного финансирования"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-vm>16,0</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Итоговый доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Итоговый доход" data-tooltip="Сумма всех доходов по сделке"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-total-income>396,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Процентный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Процентный доход" data-tooltip="Доход по процентным ставкам"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-interest>252,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Комиссионный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Комиссионный доход" data-tooltip="Доход по комиссиям"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-commission>96,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Дополнительный доход" data-tooltip="Прочие доходы по сделке"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-additional>48,00</span></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,11 @@
+/* Карточка продукта — только контейнер; раскладку полей ведёт Tile (ROF). */
+.lc-opp-product { min-width: 0; }
+
+.lc-opp-product__group { flex: none; }
+
+.lc-opp-product__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

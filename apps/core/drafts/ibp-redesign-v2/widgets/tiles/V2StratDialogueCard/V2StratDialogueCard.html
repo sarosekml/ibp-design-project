@@ -1,0 +1,30 @@
+<!-- Локальный компонент «Карточка цели» — карточка цели клиента на вкладке
+     «Цели» (ClientInfoGoalsPage) и в архивах (V2GoalArchiveSection). Пара во
+     фронтенде — V2StratDialogueCard (core/clients-app, features); части —
+     StratDialogueBadge (чип типа цели) и StratDialogueUser (участник).
+     Карточек столько, сколько целей: сетку строит list(goals), разметка
+     карточки — этот фрагмент в template страницы, без копии разметки в JS.
+     Одна карточка: render(host, { goal }). -->
+<article class="tile tile--card lc-strat-card" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__chiplist">
+        <span class="chip chip--xs" data-sc-type><span class="chip__label">Бизнес</span></span>
+        <span class="chip chip--xs"><span class="chip__icon" aria-hidden="true"><i data-icon="calendar"></i></span><span class="chip__label" data-sc-period>2026</span></span>
+      </div>
+      <div class="tile__title-row"><h3 class="tile__title" data-sc-title>Запуск второй очереди тепличного комплекса</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="lc-strat-card__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Метрика</span></span><div class="rof__row"><span class="rof__value" data-sc-metric>Выручка, млн RUB</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Значение</span></span><div class="rof__row"><span class="rof__value" data-sc-value>520</span></div></div>
+        <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value" data-sc-comment>Цель зафиксирована по итогам страт. диалога.</span></div></div>
+      </div>
+      <div class="entity-list" data-sc-people>
+        <div class="entity entity--s"><div class="entity__lead"><span class="av av--circular av--s"><span class="av__text">ПЕ</span></span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate">Панова Елена Юрьевна</span></div></div><div class="entity__subs"><span class="entity__subs-list">Клиентский менеджер</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,26 @@
+<!-- Локальный компонент «Кредиты клиента» — карточки-аккордеоны вкладки
+     «Кредиты» страницы клиента (ClientInfoPage). Пары во фронтенде нет.
+     Карточек столько, сколько кредитов: разметку строит render; ниже —
+     демо-карточка действующего кредита. Сводка видна всегда (частичный
+     коллапс Tile ДС), таблицы «Сроки» и «Финансовые показатели» — в
+     раскрытой карточке. Страница вшивает меткой <ds-include> и заполняет:
+     LcClientCreditsList.render(host, { credits, variant }). -->
+<div class="lc-client-credits" data-state="data" data-mode="view" data-cc-list>
+  <section class="tile tile--accordion tile--collapsed">
+    <header class="tile__header">
+      <div class="tile__header-main">
+        <div class="tile__chiplist">
+          <span class="chip chip--xs"><span class="chip__label">Невозобновляемая кредитная линия</span></span>
+          <span class="chip chip--xs"><span class="chip__icon" aria-hidden="true"><i data-icon="calendar"></i></span><span class="chip__label">2024–2029</span></span>
+        </div>
+        <div class="tile__title-row"><span class="tile__title-icon" aria-hidden="true"><i data-icon="document-signed"></i></span><h3 class="tile__title">Инвестиционная программа 2024 № 7701-24-0012</h3></div>
+      </div>
+      <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="false" aria-controls="cc-demo" aria-label="Развернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div>
+    </header>
+    <div class="tile__body"><div class="tile__grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Фиксированная ставка</span></span><div class="rof__row"><span class="rof__value" >11,8%</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Маржинальный доход, RUB</span></span><div class="rof__row"><span class="rof__value" >41 200 000,00</span></div></div>
+    </div></div>
+    <div class="tile__collapsible" id="cc-demo"><div class="tile__body"></div></div>
+  </section>
+</div>

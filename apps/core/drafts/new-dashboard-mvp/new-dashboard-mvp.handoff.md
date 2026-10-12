@@ -4,7 +4,7 @@
 - **Статус:** закрыта (ждёт обратной связи пользователя по концепту)
 
 ## Цель
-Концепт редизайна главной по макету дизайнера (`refs/home-mockup-09102026.jpg`):
+Концепт редизайна главной по макету дизайнера «Главная» 1920 от 09.10.2026 (в репозитории не хранится):
 дашборд сотрудника на компонентах ДС — профиль, «Мой день», встречи, задачи,
 новости; живые сценарии и панель прототипа.
 
@@ -28,7 +28,7 @@
 
 ## Что сделано
 - `pages/HomePage.html` (+ `.preview.html`, `.screen.md`) — стартовая страница: `.grid12`, 5 тайлов, 2 окна, меню из `ibp-home.js`, демо `?state=loading|empty|error`.
-- `widgets/tiles/` — `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `TasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge`; у каждого паспорт, `fixtures.json`, `CHANGELOG.md`.
+- `widgets/tiles/` — `HomeProfileTile`, `MyDayTile`, `MeetingsTile`, `HomeTasksTile`, `NewsTile`; подчасти-кандидаты в ДС `StatCard`, `DateBadge`; у каждого паспорт, `fixtures.json`, `CHANGELOG.md`.
 - `widgets/modals/` — `MeetingCreateModal` (+ общий слой форм `LcHomeForm`), `TaskCreateModal`.
 - `data/` — `mock-profile|meetings|tasks|news.js` с typedef, `home-store.js` (выборки, счётчики, «Мой день», события).
 - `proto-panel/flows.yaml` — «Утро аналитика», State 01–04, прогнан в браузере до State 04.

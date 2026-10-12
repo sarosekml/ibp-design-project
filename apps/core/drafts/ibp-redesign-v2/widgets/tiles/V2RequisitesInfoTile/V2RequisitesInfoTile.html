@@ -1,0 +1,31 @@
+<!-- Локальный компонент «Реквизиты» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пара во фронтенде — V2RequisitesInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcRequisitesInfoTile.render(host, { client }). -->
+<section class="tile lc-requisites-info" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Реквизиты</h3></div>
+      <p class="tile__subtitle">Источник: Платформа ДИД</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-requisites-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-requisites-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-requisites-info__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-rq="inn">7712345678</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ОГРН</span></span><div class="rof__row"><span class="rof__value" data-rq="ogrn">1157746123456</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП</span></span><div class="rof__row"><span class="rof__value" data-rq="kpp">771201001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КПП КН</span></span><div class="rof__row"><span class="rof__value" data-rq="kppKn">771243001</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">КИО</span></span><div class="rof__row"><span class="rof__value" data-rq="kio">–</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">CRM ID</span></span><div class="rof__row"><span class="rof__value" data-rq="id">3000012345</span></div></div>
+        <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Юридический адрес</span></span><div class="rof__row"><span class="rof__value" data-rq="legalAddress">125212, г. Москва, Ленинградское шоссе, д. 39</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>

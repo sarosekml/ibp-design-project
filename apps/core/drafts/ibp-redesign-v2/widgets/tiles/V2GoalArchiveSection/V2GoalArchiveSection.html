@@ -1,0 +1,12 @@
+<!-- Локальный компонент «Архив целей» — аккордеон «Архив YYYY» вкладки «Цели»
+     страницы клиента (ClientInfoGoalsPage). Пара во фронтенде —
+     V2GoalArchiveSection (core/clients-app). Карточки — V2StratDialogueCard.
+     Архивов столько, сколько лет: list(archives, openYear) отдаёт разметку
+     всех секций из template страницы; одна секция — render(host, { year, goals, open }). -->
+<section class="tile tile--accordion lc-goal-archive" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title" data-ga-title>Архив 2025</h3></div></div>
+    <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m tile__toggle" aria-expanded="true" aria-controls="ga-2025" aria-label="Свернуть"><span class="tile__chevron"><i data-icon="chevron-up"></i></span></button></div>
+  </header>
+  <div class="tile__collapsible" id="ga-2025"><div class="tile__body" data-ga-cards></div></div>
+</section>

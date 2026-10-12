@@ -1,0 +1,34 @@
+<!-- Локальный компонент «ГигаСправка» — тайл вкладки «Общая информация»
+     страницы клиента (ClientInfoPage). Пара во фронтенде — V2GigaInfoTile
+     (core/clients-app). Страница вшивает меткой <ds-include> и заполняет:
+     LcGigaInfoTile.render(host, { giga }). -->
+<section class="tile lc-giga-info" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">ГигаСправка</h3></div>
+      <p class="tile__subtitle">Источник: ДКК360, Gigachat</p>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-giga-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-giga-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-giga-info__content">
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">О клиенте</h4>
+        <div class="lc-giga-info__list" data-gg="about"><p class="lc-giga-info__text">Крупнейший в РФ производитель срезочных цветов.</p></div>
+      </section>
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">ЛПР</h4>
+        <div class="lc-giga-info__list" data-gg="lpr"><p class="lc-giga-info__text">Титов Валерий Сергеевич — Генеральный директор</p></div>
+      </section>
+      <section class="lc-giga-info__sec">
+        <h4 class="lc-giga-info__title">Сотрудничество</h4>
+        <div class="lc-giga-info__list" data-gg="cooperation"><p class="lc-giga-info__text">Клиент банка с 2016 года.</p></div>
+      </section>
+    </div>
+  </div>
+</section>

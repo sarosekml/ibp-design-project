@@ -1,0 +1,6 @@
+/* SimpleSettingsTable — таблица на общем рендере; свои правила — блок
+   ошибки и тон значка действующей записи (токен ДС --success). */
+.lc-simple-settings { min-width: 0; height: 100%; }
+.lc-simple-settings__error { display: none; }
+.lc-simple-settings[data-state="error"] .lc-simple-settings__error { display: flex; }
+.lc-simple-settings__on { color: var(--success); }

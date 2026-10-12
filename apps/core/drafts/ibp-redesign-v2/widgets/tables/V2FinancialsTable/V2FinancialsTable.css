@@ -1,0 +1,13 @@
+/* V2FinancialsTable — показ состояний и примечание над таблицей на токенах ДС. */
+.lc-fin-table { min-width: 0; }
+.lc-fin-table [hidden] { display: none; }
+.lc-fin-table__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-fin-table__error,
+.lc-fin-table__loading { display: none; }
+.lc-fin-table[data-state="error"] .lc-fin-table__error { display: flex; }
+.lc-fin-table[data-state="loading"] .lc-fin-table__loading { display: flex; }
+.lc-fin-table[data-state="loading"] .lc-fin-table__content,
+.lc-fin-table[data-state="error"] .lc-fin-table__content { display: none; }
+.lc-fin-table__caption { font: var(--type-body-s); color: var(--text-secondary); }

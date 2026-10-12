@@ -1,0 +1,7 @@
+/* B4: согласованный закреплённый вариант Popover. */
+.lc-lead-path { position:fixed; right:var(--space-24); bottom:var(--space-24); z-index:var(--pop-z); max-width:calc(100vw - var(--space-24) * 2); }
+.lc-lead-path[data-path-state="collapsed"] { width:auto; }
+.lc-lead-path__pill { display:flex; }
+.lc-lead-path .pop__body { display:flex; flex-direction:column; gap:var(--space-16); }
+.lc-lead-path__step { display:flex; align-items:flex-start; gap:var(--space-8); }
+@media (max-width:800px) { .lc-lead-path { right:var(--space-16); bottom:var(--space-16); max-width:calc(100vw - var(--space-16) * 2); } }

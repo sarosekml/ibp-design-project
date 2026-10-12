@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!-- Продукт сделки — страница фронтенда OpportunityProduct (pretrade/opportunities-app, pages/Opportunity/OpportunityProduct).
+     «Информация по продукту» — часть страницы; «Заёмщик» и «КНР» — ProductClientTiles.
+     Источник: открывается собранной OpportunityProduct.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Продукт сделки — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Раздел</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Продукт</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="OpportunityProduct">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="product-title">Инвестиционный кредит</h1></div>
+            <span class="phead__return"><a class="btn btn--outline btn--xs" id="back-to-deal" href="Opportunity.preview.html"><i data-icon="flip-backward"></i><span class="btn__label">Вернуться в сделку</span></a></span>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <button type="button" class="btn btn--outline btn--m" data-modal="del-product-scrim"><i data-icon="trash"></i><span class="btn__label">Удалить</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── информация по продукту · заёмщик и КНР ─────────── -->
+      <div class="tile-row">
+        <!-- «Информация по продукту» — часть страницы OpportunityProduct, своего виджета во фронтенде нет -->
+        <section class="tile col-8 colw-12" id="tile-product-info">
+          <header class="tile__header">
+            <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Информация по продукту</h3></div></div>
+            <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button></div>
+          </header>
+          <div class="tile__body">
+            <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Группа продукта</span></span><div class="rof__row"><span class="rof__value" id="p-group">Кредиты</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Продукт</span></span><div class="rof__row"><span class="rof__value" id="p-name">Инвестиционный кредит</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Объем по продукту, млн ед.</span></span><div class="rof__row"><span class="rof__value" id="p-volume">1 600,00</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Объем до конца года, млн ед.</span></span><div class="rof__row"><span class="rof__value" id="p-volume-end">640,00</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">ВМ, %</span></span><div class="rof__row"><span class="rof__value" id="p-vm">14,0</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">EL, %</span></span><div class="rof__row"><span class="rof__value" id="p-el">1,2</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Срок, мес.</span></span><div class="rof__row"><span class="rof__value" id="p-term">84</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Доход, млн ед.</span></span><div class="rof__row"><span class="rof__value" id="p-income">224,00</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Доход до конца текущего года, млн ед.</span></span><div class="rof__row"><span class="rof__value" id="p-income-end">90,00</span></div></div>
+              <div class="tile__grid-full"><label class="cb"><input type="checkbox" class="cb__input" id="p-spv" disabled><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">SPV</span></span></label></div>
+            </div>
+          </div>
+        </section>
+        <div class="tile-stack col-4 colw-12"><ds-include src="../widgets/tiles/ProductClientTiles/ProductClientTiles.html" id="product-clients" state="data" mode="edit"></ds-include></div>
+      </div>
+
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- подтверждение удаления продукта (Р7) — разметка страницы на Modal ДС -->
+      <div class="modal-scrim" id="del-product-scrim" hidden>
+        <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="del-product-title">
+          <header class="modal__head">
+            <h2 class="modal__title" id="del-product-title">Удалить продукт?</h2>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+          </header>
+          <div class="modal__body"><p data-del-product-text>Продукт будет удалён из сделки. Действие нельзя отменить.</p></div>
+          <footer class="modal__foot"><div class="modal__foot-right">
+            <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+            <button type="button" class="btn btn--accent btn--m btn--danger" id="del-product-confirm"><span class="btn__label">Удалить</span></button>
+          </div></footer>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/ProductClientTiles/ProductClientTiles.js"></script>
+<script>
+/* Экранный скрипт: продукт по ?product= (сделка — его владелец). Меню —
+   data/nav-links.js; «Заёмщик» и «КНР» — ProductClientTiles. «Удалить» —
+   подтверждение, продукт уходит из сделки, возврат на страницу сделки (Р7). */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, F = window.DICT_FMT;
+  var q = new URLSearchParams(location.search);
+  var found = S.product(q.get('product')) || S.product('P9001');
+  var deal = found.deal, p = found.product;
+  N.mount({ active: N.itemOf(deal.source) });
+
+  function el(id) { return document.getElementById(id); }
+  function num(v, money) { return v == null ? '–' : money ? F.money(v) + ',00' : String(v).replace('.', ','); }
+  var dealHref = N.href('opportunity', { source: deal.source, id: deal.id, tab: deal.tab });
+
+  var cfg = S.registryConfig(deal.source);
+  var tab = cfg ? cfg.tabs.filter(function (t) { return t.id === deal.tab; })[0] : null;
+  var links = document.querySelectorAll('.crumbs__item a');
+  if (links[1]) { links[1].textContent = (cfg ? cfg.title : 'Pipeline') + (tab ? ': ' + tab.label : ''); links[1].setAttribute('href', N.href(deal.source, tab ? { tab: tab.page } : null)); }
+  if (links[2]) { links[2].textContent = 'Сделка ' + deal.id + '.' + deal.project; links[2].setAttribute('href', dealHref); }
+  var cur = document.querySelector('.crumbs__current');
+  if (cur) cur.textContent = 'Продукт: ' + p.name;
+  document.title = p.name + ' — IBP Redesign v1';
+  el('product-title').textContent = p.name;
+  el('back-to-deal').setAttribute('href', dealHref);
+  el('p-group').textContent = S.lbl.productGroup(p.group);
+  el('p-name').textContent = p.name;
+  el('p-volume').textContent = num(p.volume, true);
+  el('p-volume-end').textContent = num(p.volumeEndYear, true);
+  el('p-vm').textContent = num(p.vm);
+  el('p-el').textContent = num(p.el);
+  el('p-term').textContent = num(p.termMonths);
+  el('p-income').textContent = num(p.income, true);
+  el('p-income-end').textContent = num(p.incomeEndYear, true);
+  el('p-spv').checked = !!p.spv;
+  document.querySelector('[data-del-product-text]').textContent = 'Продукт «' + p.name + '» будет удалён из сделки ' + deal.id + '. Действие нельзя отменить.';
+
+  var scrim = el('del-product-scrim');
+  window.LcProductClientTiles.render(el('product-clients'), { product: p, onDelete: function () { window.DSModal.open(scrim); } });
+  el('del-product-confirm').addEventListener('click', function () {
+    S.removeProduct(p.id);
+    window.DSModal.closeTop();
+    if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Продукт удалён', text: 'Возврат на страницу сделки' });
+    setTimeout(function () { location.href = dealHref; }, 900);
+  });
+  if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+})();
+</script>
+</body>
+</html>

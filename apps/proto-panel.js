@@ -8,6 +8,8 @@
    картой экранов — ещё и её данные (map-data.js) для инструмента «Карта». */
 (function () {
   var APPS = [
+    "core/drafts/ibp-redesign-v1",
+    "core/drafts/ibp-redesign-v2",
     "core/drafts/new-dashboard-mvp",
     "ib/drafts/ai-bankster-prototype-v02",
     "postrade/deals-app",

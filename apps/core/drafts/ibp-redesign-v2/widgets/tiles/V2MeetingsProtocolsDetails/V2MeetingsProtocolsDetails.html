@@ -1,0 +1,82 @@
+<!-- Локальный компонент «Предпросмотр встречи» — правая панель реестра
+     встреч (MeetingsProtocolsPage) и вкладки «Встречи» клиента. Пара во
+     фронтенде — V2MeetingsProtocolsDetails (ib/ma-opportunities-app), кнопки
+     «Завершить» и «Отменить» — MeetingUpdateActions. Состав — снимок системы
+     (Встречи.png) и Pixso «Встречи – Предпросмотр». Страница вшивает меткой
+     <ds-include> и заполняет: LcMeetingsProtocolsDetails.render(host, { meeting, onAction }).
+     Статическое содержимое — демо M-8904. -->
+<section class="tile lc-meeting-details" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-md-title>Встреча M-8904 от 15.10.2026</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-md-status><span class="chip__label">Запланирована</span></span>
+      </div>
+      <p class="tile__subtitle" data-md-line>15.10.2026, 10:00–11:30 · Офис клиента, переговорная 2 · UTC+3</p>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать встречу" data-md-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-md-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meeting-details__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить встречу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-meeting-details__loading" aria-busy="true">
+      <span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span>
+    </div>
+
+    <div class="lc-meeting-details__content">
+      <!-- действия: «Создать лид» (система, Р6 — по клику ничего), «Завершить» /
+           «Отменить» у запланированной встречи (MeetingUpdateActions, Р7) -->
+      <div class="lc-meeting-details__acts">
+        <button type="button" class="btn btn--accent btn--s" data-md-create-lead><i data-icon="add"></i><span class="btn__label">Создать лид</span></button>
+        <span class="lc-meeting-details__update" data-md-update>
+          <button type="button" class="btn btn--outline btn--s" data-md-finish><i data-icon="check"></i><span class="btn__label">Завершить</span></button>
+          <button type="button" class="btn btn--outline btn--s" data-md-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+        </span>
+      </div>
+
+      <section class="lc-meeting-details__sec">
+        <h4 class="lc-meeting-details__sec-title">Источник встречи</h4>
+        <p class="lc-meeting-details__source">
+          <span class="lc-meeting-details__source-type" data-md-source-type>Потенциал</span>
+          <a class="link link--accent link--m" href="#" data-md-source-link><span data-md-source-label>L-118846</span><i data-icon="link-external"></i></a>
+        </p>
+      </section>
+
+      <div class="lc-meeting-details__cols">
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Общая информация</h4>
+          <div class="entity-list" data-md-info></div>
+        </section>
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Участники</h4>
+          <p class="lc-meeting-details__group">Со стороны клиента</p>
+          <div class="entity-list" data-md-people-client></div>
+          <p class="lc-meeting-details__group">Со стороны ДИД</p>
+          <div class="entity-list" data-md-people-did></div>
+        </section>
+      </div>
+
+      <div class="lc-meeting-details__checks">
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="stratDialog"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Проведен страт. диалог</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withKm"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием КМ</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withSponsor"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием спонсора</span></span></label>
+      </div>
+
+      <section class="lc-meeting-details__sec" data-md-agenda-sec>
+        <h4 class="lc-meeting-details__sec-title">Повестка встречи</h4>
+        <div class="lc-meeting-details__agenda" data-md-agenda></div>
+      </section>
+
+      <section class="lc-meeting-details__sec" data-md-links-sec>
+        <h4 class="lc-meeting-details__sec-title">Связи</h4>
+        <div class="lc-meeting-details__links" data-md-links></div>
+      </section>
+    </div>
+  </div>
+</section>

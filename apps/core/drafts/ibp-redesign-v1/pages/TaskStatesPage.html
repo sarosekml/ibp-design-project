@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!-- Статусы задач — страница фронтенда TaskStatesPage (core/settings-app, pages/TaskStatesPage).
+     Таблица — SimpleSettingsTable, предпросмотр — SimpleSettingsTile (допущение В6), Splitter ДС.
+     Источник: открывается собранной TaskStatesPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Статусы задач — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* раскладка: сплиттер на всю оставшуюся высоту .screen--app; правая
+     панель прокручивается своей областью .ds-scroll */
+  .split-fill { flex: 1; min-height: 0; }
+  .split-fill > .splitpane__a > * { flex: 1; min-width: 0; }
+  .split-scroll { flex: 1; min-width: 0; }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="AdminPage.preview.html">Администрирование</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Статусы задач</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="TaskStatesPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title">Статусы задач</h1></div></div>
+        </div>
+      </div>
+
+      <!-- #sec:content ── справочник и предпросмотр: Splitter ДС -->
+      <div class="splitpane split-fill" id="split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <ds-include src="../widgets/tables/SimpleSettingsTable/SimpleSettingsTable.html" id="ts-table" state="data" mode="view"></ds-include>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="60" aria-label="Изменить ширину панелей" tabindex="0">
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b">
+          <div class="ds-scroll split-scroll">
+            <ds-include src="../widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.html" id="ts-preview" state="data" mode="view"></ds-include>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/SimpleSettingsTable/SimpleSettingsTable.js"></script>
+<script src="../widgets/tiles/SimpleSettingsTile/SimpleSettingsTile.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; слева — SimpleSettingsTable,
+   справа — SimpleSettingsTile выбранной записи (Splitter ДС), как в системе. */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'admin' });
+  var split = document.getElementById('split');
+  var spl = split.querySelector('.spl'), paneA = split.querySelector('.splitpane__a'), paneB = split.querySelector('.splitpane__b');
+  var pct = 60;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showPane(on) { paneB.hidden = !on; spl.hidden = !on; paneA.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto'; }
+
+  var preview = document.getElementById('ts-preview');
+  var table = window.LcSimpleSettingsTable.mount(document.getElementById('ts-table'), {
+    id: 'task-states', rows: window.DICT_TASK_STATES, onSelect: function (r) { show(r); }
+  });
+  function show(r) {
+    showPane(true);
+    window.LcSimpleSettingsTile.render(preview, { row: r, onClose: function () { showPane(false); table.select(null); } });
+  }
+  showPane(false);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

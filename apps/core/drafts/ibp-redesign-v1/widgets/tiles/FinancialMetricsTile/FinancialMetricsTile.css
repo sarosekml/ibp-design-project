@@ -1,0 +1,22 @@
+/* FinancialMetricsTile — блоки ValuesBlock на токенах ДС. */
+.lc-fin-metrics { min-width: 0; }
+.lc-fin-metrics [hidden] { display: none; }
+.lc-fin-metrics__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-fin-metrics__error,
+.lc-fin-metrics__loading { display: none; }
+.lc-fin-metrics[data-state="error"] .lc-fin-metrics__error { display: flex; }
+.lc-fin-metrics[data-state="loading"] .lc-fin-metrics__loading { display: flex; }
+.lc-fin-metrics[data-state="loading"] .lc-fin-metrics__content,
+.lc-fin-metrics[data-state="error"] .lc-fin-metrics__content { display: none; }
+
+.lc-fin-metrics__block { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+.lc-fin-metrics__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  font: var(--type-body-s-strong);
+  color: var(--text-primary);
+}

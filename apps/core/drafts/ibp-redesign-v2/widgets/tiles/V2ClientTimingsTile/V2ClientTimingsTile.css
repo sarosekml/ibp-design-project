@@ -1,0 +1,12 @@
+/* V2ClientTimingsTile — даты столбцом (`.tile__rows` ДС). */
+.lc-client-timings { min-width: 0; }
+.lc-client-timings [hidden] { display: none; }
+.lc-client-timings__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-client-timings__error,
+.lc-client-timings__loading { display: none; }
+.lc-client-timings[data-state="error"] .lc-client-timings__error { display: flex; }
+.lc-client-timings[data-state="loading"] .lc-client-timings__loading { display: flex; }
+.lc-client-timings[data-state="loading"] .lc-client-timings__content,
+.lc-client-timings[data-state="error"] .lc-client-timings__content { display: none; }

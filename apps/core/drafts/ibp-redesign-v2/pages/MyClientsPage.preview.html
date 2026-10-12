@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!-- Клиенты — страница фронтенда MyClientsPage (core/clients-app, pages/MyClients/MyClientsPage).
+     Реестр — V2MyClientsTable, вид «дерево» — V2MyClientsHierarchicalTree.
+     Источник: открывается собранной MyClientsPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Клиенты — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* вид реестра: таблица или дерево — один из двух виджетов; hidden
+     сильнее display компонентов ДС */
+  .screen__content > [hidden] { display: none; }
+</style>
+<link rel="stylesheet" href="../widgets/tables/V2MyClientsTable/V2MyClientsTable.css">
+<link rel="stylesheet" href="../widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Клиенты</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="MyClientsPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title">Клиенты</h1></div></div>
+        </div>
+      </div>
+
+      <!-- вкладки: «Клиенты моего деска» и «Избранные клиенты» видны, но не
+           переключаются (Р3); «Клиенты ДИД» — пустое состояние -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="my" data-page="MyClientsPage"><span class="tab__label">Мои клиенты</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="desk" aria-disabled="true"><span class="tab__label">Клиенты моего деска</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="fav" aria-disabled="true"><span class="tab__label">Избранные клиенты</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="did"><span class="tab__label">Клиенты ДИД</span></button>
+      </div>
+
+      <!-- #sec:content ── реестр: таблица (V2MyClientsTable) или дерево холдингов
+           (V2MyClientsHierarchicalTree) — выбор в SegmentControl тулбара -->
+      <!-- Локальный компонент «Мои клиенты» — реестр страницы MyClientsPage. Пара во
+     фронтенде — V2MyClientsTable (core/clients-app); фильтр MyClientsTableFilters
+     — часть виджета (модалка .tfm общего рендера). Таблицу рисует
+     data/registry-table.js; значения и ячейки — скрипт виджета.
+     Страница вшивает меткой <ds-include> и монтирует:
+     LcMyClientsTable.mount(host, { tab, onView }). -->
+<section id="mc-table" data-state="data" data-mode="view" class="tile tile--headless lc-my-clients-table col-12">
+  <div class="alert alert--error alert--m lc-my-clients-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left"><div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter><button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button></div></div>
+      <div class="dtable__toolbar-right lc-my-clients-table__tools">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+        <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
+        <div class="segctrl" role="radiogroup" aria-label="Вид реестра" data-segctrl data-mc-view>
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="rows" aria-label="Таблица"><span class="segctrl__label"><i data-icon="layout-rows-01"></i></span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="tree" aria-label="Дерево холдингов"><span class="segctrl__label"><i data-icon="tree-view"></i></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Здесь пока ничего нет</p>
+        <p class="dtable__empty-text" data-rt-empty-only>Выберете клиента через поиск и добавте в список "Клиенты" с помощью кнопки</p>
+        <button type="button" class="btn btn--accent btn--m" data-rt-empty-only><i data-icon="client-search"></i><span class="btn__label">Добавить клиента</span></button>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+      <!-- Локальный компонент «Мои клиенты по холдингам» — вид «дерево» реестра
+     страницы MyClientsPage. Пара во фронтенде — V2MyClientsHierarchicalTree
+     (core/clients-app). Строки дерева строит скрипт виджета на TableCell ДС.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcMyClientsHierarchicalTree.render(host, { onView }). -->
+<section id="mc-tree" data-state="data" data-mode="view" class="tile tile--headless lc-my-clients-tree col-12">
+  <div class="alert alert--error alert--m lc-my-clients-tree__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body"><p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left"></div>
+      <div class="dtable__toolbar-right lc-my-clients-tree__tools">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+        <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить клиента</span></button>
+        <div class="segctrl" role="radiogroup" aria-label="Вид реестра" data-segctrl data-mc-view>
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="rows" aria-label="Таблица"><span class="segctrl__label"><i data-icon="layout-rows-01"></i></span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="tree" aria-label="Дерево холдингов"><span class="segctrl__label"><i data-icon="tree-view"></i></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-mt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+    </div>
+      </div>
+</section>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/V2MyClientsTable/V2MyClientsTable.js"></script>
+<script src="../widgets/tables/V2MyClientsHierarchicalTree/V2MyClientsHierarchicalTree.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; реестр — V2MyClientsTable на
+   общем рендере, вид «дерево» — V2MyClientsHierarchicalTree. Вкладки «Клиенты
+   моего деска» и «Избранные клиенты» не переключаются (Р3). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'clients' });
+  var tableHost = document.getElementById('mc-table');
+  var treeHost = document.getElementById('mc-tree');
+  var treeDrawn = false;
+
+  function setView(view) {
+    var tree = view === 'tree';
+    tableHost.hidden = tree;
+    treeHost.hidden = !tree;
+    if (tree && !treeDrawn) { window.LcMyClientsHierarchicalTree.render(treeHost, { onView: setView }); treeDrawn = true; }
+    window.LcMyClientsTable.setView(tree ? treeHost : tableHost, view);
+  }
+
+  var reg = window.LcMyClientsTable.mount(tableHost, { tab: 'my', onView: setView });
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), reg,
+    [{ id: 'my', label: 'Мои клиенты', page: 'MyClientsPage' }, { id: 'did', label: 'Клиенты ДИД' }],
+    function () { setView('rows'); });
+  treeHost.hidden = true;
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

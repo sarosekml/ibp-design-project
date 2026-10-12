@@ -1,0 +1,8 @@
+/* Смена статуса задачи — текст подтверждения; механика — Modal и Inputs ДС. */
+.lc-task-change { min-width: 0; }
+
+.lc-task-change__text {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  margin: 0;
+}

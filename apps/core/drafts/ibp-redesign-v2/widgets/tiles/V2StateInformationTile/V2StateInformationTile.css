@@ -1,0 +1,16 @@
+/* V2StateInformationTile — раскладка внутри тайла на токенах ДС. */
+.lc-state-info { min-width: 0; }
+.lc-state-info [hidden] { display: none; }
+.lc-state-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-state-info__error,
+.lc-state-info__loading { display: none; }
+.lc-state-info[data-state="error"] .lc-state-info__error { display: flex; }
+.lc-state-info[data-state="loading"] .lc-state-info__loading { display: flex; }
+.lc-state-info[data-state="loading"] .lc-state-info__content,
+.lc-state-info[data-state="error"] .lc-state-info__content { display: none; }
+/* режим просмотра: точки входа в правку не рисуются */
+.lc-state-info[data-mode="view"] [data-si-edit] { display: none; }
+
+.lc-state-info__checks { display: flex; flex-direction: column; gap: var(--space-8); }

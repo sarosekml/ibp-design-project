@@ -1,0 +1,39 @@
+/* Комментарии — внутренняя раскладка списка: мета-строка, текст и действия
+   комментария; зазоры на токенах ДС. */
+.lc-comments { min-width: 0; }
+
+.lc-comments__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lc-comments__item { position: relative; }
+
+.lc-comments__meta {
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4);
+}
+
+.lc-comments__author { color: var(--text-primary); }
+
+.lc-comments__time,
+.lc-comments__date { color: var(--text-secondary); }
+
+.lc-comments__text {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  margin: 0;
+  padding-right: calc(var(--space-48) + var(--space-8));
+}
+
+.lc-comments__acts {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: var(--space-4);
+}
+
+.lc-comments__add { align-self: flex-start; }

@@ -1,0 +1,37 @@
+<!-- Локальный компонент «Отказаться от сделки» — окно с полем причины
+     (Р7 ТЗ MS0014: у «Отказаться» — поле причины). Известна одна причина —
+     «Срок ожидания истек» (открытый вопрос 3 ТЗ): справочник из одного
+     значения. Пара во фронтенде: V2RefuseFromOpportunityModal (состав полей
+     неизвестен). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="refuse-opp-scrim" hidden>
+  <div class="modal modal--w4 lc-refuse-opp" role="dialog" aria-modal="true" aria-labelledby="refuse-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="refuse-opp-title">Отказаться от сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-refuse-opp__text">Сделка <b data-refuse-opp-id>–</b> будет перенесена во вкладку «В архиве» текущего реестра.</p>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-reason"><span class="ds-label__text">Причина отказа</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-reason" data-ddl="refuse-opp-reason-ddl" placeholder="Выберите причину" value="Срок ожидания истек">
+        </div>
+      </div>
+      <div id="refuse-opp-reason-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden>
+        <button type="button" class="ddl__item" role="option" aria-selected="true"><span class="ddl__item-body"><span class="ddl__item-label">Срок ожидания истек</span></span></button>
+      </div>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-comment" placeholder="Необязательно">
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-refuse-opp-confirm><span class="btn__label">Отказаться</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

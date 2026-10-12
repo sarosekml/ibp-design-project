@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<!-- Обязательные сделки — страница фронтенда BindingActiveNewOpportunities (pretrade/opportunities-app). вкладки — BindingActiveNewOpportunities, BindingActiveModifiedOpportunities, BindingArchiveOpportunities.
+     Источник: открывается собранной BindingActiveNewOpportunities.preview.html (node .agents/tools/assemble.mjs). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обязательные сделки — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+<link rel="stylesheet" href="../widgets/tables/V2BindingOpportunitiesTable/V2BindingOpportunitiesTable.css">
+<link rel="stylesheet" href="../widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.css">
+<link rel="stylesheet" href="../widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" data-crumb-current>Обязательные сделки: Активные новые сделки</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="BindingActiveNewOpportunities">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Обязательные сделки</h1></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- вкладки — подфильтры одной таблицы (Р4); ?tab= — страница фронтенда вкладки -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="active-new"><span class="tab__label">Активные новые сделки</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="active-modified"><span class="tab__label">Активные сделки с изменениями</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="archive"><span class="tab__label">В архиве</span></button>
+      </div>
+
+      <!-- #sec:content ── Реестр ─────────────────────────────────────────── -->
+      <!-- Локальный компонент «Реестр обязательных сделок» — реестр обязательных сделок с вкладками-подфильтрами и действиями «Взять в работу» и «Отказаться».
+     Таблицу рисует общий рендер data/registry-table.js (IBPR_TABLE.opportunities)
+     по конфигу реестра «binding» (data/dictionaries.js, REGISTRY_CONFIGS):
+     колонки, вкладки-подфильтры, действия строк, разделы фильтра. Страница
+     вшивает меткой <ds-include> и монтирует: IBPR_TABLE.opportunities(host).
+     Пустое тело — .dtable__empty, ошибка — Alert блока __error. -->
+<section data-registry="binding" id="reg-table" data-state="data" data-mode="view" class="tile tile--headless lc-binding-opp-table col-12">
+  <div class="alert alert--error alert--m lc-binding-opp-table__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- Локальный компонент «Взять сделку в работу» — окно подтверждения
+     действия «Взять в работу» в реестрах-источниках и на странице сделки.
+     Пара во фронтенде: V2TakeOpportunityToWorkModal (состав полей окна
+     фронтенда неизвестен — открытый вопрос 2 ТЗ MS0014; здесь окно
+     подтверждения по Р7). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="take-opp-scrim" hidden>
+  <div class="modal modal--w3 lc-take-opp" role="dialog" aria-modal="true" aria-labelledby="take-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="take-opp-title">Взять сделку в работу</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-take-opp__text">Сделка <b data-take-opp-id>–</b> будет перенесена в Pipeline, вкладка «Сделки моего деска», и исчезнет из текущего реестра.</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-take-opp-confirm><span class="btn__label">Взять в работу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+      <!-- Локальный компонент «Отказаться от сделки» — окно с полем причины
+     (Р7 ТЗ MS0014: у «Отказаться» — поле причины). Известна одна причина —
+     «Срок ожидания истек» (открытый вопрос 3 ТЗ): справочник из одного
+     значения. Пара во фронтенде: V2RefuseFromOpportunityModal (состав полей
+     неизвестен). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="refuse-opp-scrim" hidden>
+  <div class="modal modal--w4 lc-refuse-opp" role="dialog" aria-modal="true" aria-labelledby="refuse-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="refuse-opp-title">Отказаться от сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-refuse-opp__text">Сделка <b data-refuse-opp-id>–</b> будет перенесена во вкладку «В архиве» текущего реестра.</p>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-reason"><span class="ds-label__text">Причина отказа</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-reason" data-ddl="refuse-opp-reason-ddl" placeholder="Выберите причину" value="Срок ожидания истек">
+        </div>
+      </div>
+      <div id="refuse-opp-reason-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden>
+        <button type="button" class="ddl__item" role="option" aria-selected="true"><span class="ddl__item-body"><span class="ddl__item-label">Срок ожидания истек</span></span></button>
+      </div>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-comment" placeholder="Необязательно">
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-refuse-opp-confirm><span class="btn__label">Отказаться</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.js"></script>
+<script src="../widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; реестр — виджет V2BindingOpportunitiesTable
+   на общем рендере data/registry-table.js; вкладки — подфильтры (?tab=). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'obligatory-deals' });
+  var reg = window.IBPR_TABLE.opportunities(document.getElementById('reg-table'));
+  var crumb = document.querySelector('.crumbs__current');
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), reg, reg.config.tabs, function (id, t) {
+    if (crumb && t) crumb.textContent = 'Обязательные сделки: ' + t.label;
+  });
+  window.LcTakeOpportunityToWorkModal.bind({ onDone: function () { reg.refresh(); } });
+  window.LcRefuseFromOpportunityModal.bind({ onDone: function () { reg.refresh(); } });
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

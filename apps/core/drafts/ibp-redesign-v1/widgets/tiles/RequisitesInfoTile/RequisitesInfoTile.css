@@ -1,0 +1,12 @@
+/* RequisitesInfoTile — сетка ReadOnlyField ДС. */
+.lc-requisites-info { min-width: 0; }
+.lc-requisites-info [hidden] { display: none; }
+.lc-requisites-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-requisites-info__error,
+.lc-requisites-info__loading { display: none; }
+.lc-requisites-info[data-state="error"] .lc-requisites-info__error { display: flex; }
+.lc-requisites-info[data-state="loading"] .lc-requisites-info__loading { display: flex; }
+.lc-requisites-info[data-state="loading"] .lc-requisites-info__content,
+.lc-requisites-info[data-state="error"] .lc-requisites-info__content { display: none; }

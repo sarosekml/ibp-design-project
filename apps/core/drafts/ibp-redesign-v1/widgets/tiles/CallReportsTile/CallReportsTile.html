@@ -1,0 +1,24 @@
+<!-- Локальный компонент «Протоколы встреч в рамках проекта продаж» — тайл
+     страницы сделки (Opportunity) у CIB и кампаний. Пара во фронтенде —
+     CallReportsTile (pretrade/opportunities-app) — допущение, вопрос В5
+     MS0014a. Страница вшивает меткой <ds-include> и заполняет:
+     LcCallReportsTile.render(host, { protocols }). -->
+<section class="tile lc-call-reports" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Протоколы встреч в рамках проекта продаж</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-call-reports__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-call-reports__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-call-reports__content">
+      <p class="lc-call-reports__note" data-cr-note>Просмотр протоколов встреч доступен только команде сделки</p>
+      <p class="lc-call-reports__count">Протоколов встреч: <span class="lc-call-reports__num" data-cr-count>1</span></p>
+    </div>
+  </div>
+</section>

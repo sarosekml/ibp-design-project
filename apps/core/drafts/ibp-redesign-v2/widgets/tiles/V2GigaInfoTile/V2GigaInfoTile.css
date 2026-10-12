@@ -1,0 +1,17 @@
+/* V2GigaInfoTile — разделы справки на токенах ДС. */
+.lc-giga-info { min-width: 0; }
+.lc-giga-info [hidden] { display: none; }
+.lc-giga-info__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-giga-info__error,
+.lc-giga-info__loading { display: none; }
+.lc-giga-info[data-state="error"] .lc-giga-info__error { display: flex; }
+.lc-giga-info[data-state="loading"] .lc-giga-info__loading { display: flex; }
+.lc-giga-info[data-state="loading"] .lc-giga-info__content,
+.lc-giga-info[data-state="error"] .lc-giga-info__content { display: none; }
+
+.lc-giga-info__sec { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+.lc-giga-info__title { font: var(--type-body-m-strong); color: var(--text-primary); margin: 0; }
+.lc-giga-info__list { display: flex; flex-direction: column; gap: var(--space-4); }
+.lc-giga-info__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; }

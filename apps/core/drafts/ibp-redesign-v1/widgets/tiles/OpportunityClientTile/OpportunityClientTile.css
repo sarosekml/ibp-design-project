@@ -1,0 +1,20 @@
+/* OpportunityClientTile — раскладка полей по варианту (сделка — 2 колонки
+   в тайле на 4, лид — 3 колонки в тайле на 8) на токенах ДС. */
+.lc-opp-client { min-width: 0; }
+.lc-opp-client [hidden] { display: none; }
+.lc-opp-client__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-opp-client__error,
+.lc-opp-client__loading { display: none; }
+.lc-opp-client[data-state="error"] .lc-opp-client__error { display: flex; }
+.lc-opp-client[data-state="loading"] .lc-opp-client__loading { display: flex; }
+.lc-opp-client[data-state="loading"] .lc-opp-client__content,
+.lc-opp-client[data-state="error"] .lc-opp-client__content { display: none; }
+/* режим просмотра: точки входа в правку не рисуются */
+.lc-opp-client[data-mode="view"] [data-oc-edit] { display: none; }
+
+.lc-opp-client__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lc-opp-client[data-variant="potential"] .lc-opp-client__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lc-opp-client[data-variant="opportunity"] [data-oc-only="potential"],
+.lc-opp-client[data-variant="potential"] [data-oc-only="opportunity"] { display: none; }

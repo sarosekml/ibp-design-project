@@ -1,0 +1,16 @@
+/* DescriptionTile — текст описания на токенах ДС. */
+.lc-desc { min-width: 0; }
+.lc-desc [hidden] { display: none; }
+.lc-desc__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-desc__error,
+.lc-desc__loading { display: none; }
+.lc-desc[data-state="error"] .lc-desc__error { display: flex; }
+.lc-desc[data-state="loading"] .lc-desc__loading { display: flex; }
+.lc-desc[data-state="loading"] .lc-desc__content,
+.lc-desc[data-state="error"] .lc-desc__content { display: none; }
+/* режим просмотра: точки входа в правку не рисуются */
+.lc-desc[data-mode="view"] [data-dt-edit] { display: none; }
+
+.lc-desc__text { font: var(--type-body-m); color: var(--text-primary); margin: 0; overflow-wrap: anywhere; }

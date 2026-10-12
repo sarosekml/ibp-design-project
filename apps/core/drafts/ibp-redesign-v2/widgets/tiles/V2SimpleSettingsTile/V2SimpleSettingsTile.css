@@ -1,0 +1,12 @@
+/* V2SimpleSettingsTile — показ состояний на токенах ДС. */
+.lc-simple-setting { min-width: 0; }
+.lc-simple-setting [hidden] { display: none; }
+.lc-simple-setting__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+
+/* состояния данных: ошибка и загрузка — свои блоки, содержимое скрыто */
+.lc-simple-setting__error,
+.lc-simple-setting__loading { display: none; }
+.lc-simple-setting[data-state="error"] .lc-simple-setting__error { display: flex; }
+.lc-simple-setting[data-state="loading"] .lc-simple-setting__loading { display: flex; }
+.lc-simple-setting[data-state="loading"] .lc-simple-setting__content,
+.lc-simple-setting[data-state="error"] .lc-simple-setting__content { display: none; }

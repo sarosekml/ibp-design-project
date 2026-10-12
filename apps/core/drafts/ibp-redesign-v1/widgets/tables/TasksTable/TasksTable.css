@@ -1,0 +1,5 @@
+/* TasksTable — таблица на общем рендере; своя раскладка — только блок ошибки
+   по data-state. Table, TableCell, TableFilter, Pagination — ДС. */
+.lc-tasks-table { min-width: 0; height: 100%; }
+.lc-tasks-table__error { display: none; }
+.lc-tasks-table[data-state="error"] .lc-tasks-table__error { display: flex; }

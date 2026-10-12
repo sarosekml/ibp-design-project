@@ -1,0 +1,28 @@
+<!-- Локальный компонент «Новости» — тайл вкладки «Общая информация» страницы
+     клиента (ClientInfoPage). Пары во фронтенде нет. Страница вшивает меткой
+     <ds-include> и заполняет: LcClientNewsTile.render(host, { news }). -->
+<section class="tile lc-client-news" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Новости</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-client-news__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-client-news__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-client-news__content">
+      <ul class="lc-client-news__list" data-cn-list>
+        <li class="lc-client-news__item">
+          <p class="lc-client-news__meta">04.10.2026 · Интерфакс</p>
+          <p class="lc-client-news__title">«Ромашка» начинает строительство второй очереди тепличного комплекса</p>
+          <p class="lc-client-news__teaser">Инвестиции в проект оцениваются в 2,4 млрд RUB</p>
+        </li>
+      </ul>
+      <a class="link link--accent link--m" href="#" data-inert>Смотреть все…</a>
+    </div>
+  </div>
+</section>

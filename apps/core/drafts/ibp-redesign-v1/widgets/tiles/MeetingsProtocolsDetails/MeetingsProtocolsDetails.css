@@ -1,0 +1,34 @@
+/* MeetingsProtocolsDetails — внутренняя раскладка предпросмотра встречи на
+   токенах ДС; показ своих блоков по data-state. Компоненты ДС (Tile, Entity,
+   Chip, Checkbox, Link, Buttons, Tile Inset) не переопределяются. */
+.lc-meeting-details { container-type: inline-size; min-width: 0; }
+.lc-meeting-details__content { display: flex; flex-direction: column; gap: var(--space-24); }
+.lc-meeting-details__acts { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+.lc-meeting-details__update { display: inline-flex; gap: var(--space-8); }
+.lc-meeting-details__update[hidden] { display: none; }
+.lc-meeting-details__sec { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
+.lc-meeting-details__sec[hidden] { display: none; }
+.lc-meeting-details__sec-title { font: var(--type-h6-strong); color: var(--text-primary); margin: 0; }
+.lc-meeting-details__source { display: flex; align-items: center; gap: var(--space-8); margin: 0; font: var(--type-body-m); }
+.lc-meeting-details__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24); }
+.lc-meeting-details__group { font: var(--type-body-xs); color: var(--text-secondary); margin: 0; }
+.lc-meeting-details__checks { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-meeting-details__agenda { display: flex; flex-direction: column; gap: var(--space-12); }
+.lc-meeting-details__tasks { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-meeting-details__links { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-meeting-details__link-row { display: flex; align-items: center; gap: var(--space-8); font: var(--type-body-m); margin: 0; }
+
+/* состояния данных: база — «данные есть»; блоки ошибки и загрузки — свои */
+.lc-meeting-details__error,
+.lc-meeting-details__loading { display: none; }
+.lc-meeting-details[data-state="error"] .lc-meeting-details__error { display: flex; }
+.lc-meeting-details[data-state="loading"] .lc-meeting-details__loading { display: flex; flex-direction: column; gap: var(--space-12); }
+.lc-meeting-details[data-state="loading"] .lc-meeting-details__content,
+.lc-meeting-details[data-state="error"] .lc-meeting-details__content { display: none; }
+/* режим просмотра: действия правки не рисуются */
+.lc-meeting-details[data-mode="view"] [data-md-edit] { display: none; }
+
+@container (max-width: 560px) {
+  .lc-meeting-details__cols { grid-template-columns: minmax(0, 1fr); }
+}
+.lc-meeting-details__source-type { font: var(--type-body-m); color: var(--text-primary); }

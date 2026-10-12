@@ -1,0 +1,36 @@
+/* Команда сделки — внутренняя раскладка строк «аватар + ФИО + роль». */
+.lc-opp-team { min-width: 0; }
+
+.lc-opp-team [data-team-body] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lc-opp-team__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-width: 0;
+}
+
+.lc-opp-team__fio {
+  font: var(--type-body-m);
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lc-opp-team__plus {
+  color: var(--text-secondary);
+  margin-left: var(--space-4);
+}
+
+.lc-opp-team__role {
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+  flex: none;
+}

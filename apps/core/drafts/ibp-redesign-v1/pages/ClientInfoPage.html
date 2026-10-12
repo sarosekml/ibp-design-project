@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<!-- Клиент — страница фронтенда ClientInfoPage (core/clients-app, pages/ClientInfo/ClientInfoPage).
+     Вкладки с парой: «Сделки» — ClientInfoDealsPage, «Финансовые показатели» — ClientInfoFinancials,
+     «Цели» — ClientInfoGoalsPage; «Встречи», «Задачи», «Кредиты», «Финансовый анализ», «Новости» — пар нет.
+     Источник: открывается собранной ClientInfoPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Клиент — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* панели вкладок и их подвиды (SegmentControl) — показ атрибутом hidden;
+     он сильнее display компонентов ДС */
+  .cl-panel, .cl-view { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+  .cl-panel[hidden], .cl-view[hidden], .tile-row > [hidden] { display: none; }
+  /* действия вкладки «Встречи» / «Задачи» — справа над сплиттером */
+  .cl-panel__actions { display: flex; justify-content: flex-end; gap: var(--space-8); }
+  .cl-credits-toolbar { display: flex; align-items: center; gap: var(--space-16); flex-wrap: wrap; }
+  .cl-credits-toolbar > .segctrl:last-child { margin-left: auto; }
+  /* сплиттер: панели — колонки, правая со своей прокруткой */
+  .splitpane__a > *, .splitpane__b > * { flex: 1; min-width: 0; }
+  /* «Финансовый анализ»: переключатель разделов шире экрана — прокрутка ряда */
+  .cl-sections { overflow-x: auto; }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/StratDialogueCard/StratDialogueCard.css">
+<link rel="stylesheet" href="../widgets/tiles/GoalArchiveSection/GoalArchiveSection.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="MyClientsPage.preview.html">Клиенты</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Клиент</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="ClientInfoPage">
+      <!-- #sec:head ── Шапка (во фронтенде — ClientInfoPageHeader) ────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <span class="phead__title-ico" aria-hidden="true"><i data-icon="factory-01"></i></span>
+              <h1 class="phead__title" id="cl-title">ООО «Ромашка»</h1>
+            </div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="building-01"></i></span><span id="cl-holding">ГК «Цветы»</span></span>
+          </div>
+          <!-- ряд чипов клиента; «Цели зафиксированы» — GoalsPopoverBadge -->
+          <div class="phead__extras" id="cl-chips">
+            <ds-include src="../widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.html" id="cl-goals-badge" state="data" mode="view"></ds-include>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <span class="menu-anchor">
+            <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия" data-menu="cl-profile-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+            <div id="cl-profile-menu" class="menu" role="menu">
+              <button type="button" class="menu__item" role="menuitem"><span class="menu__item-label">Редактирование профиля</span></button>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- вкладки клиента; «Новости» видна, но не переключается (Р3) -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="cl-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="general" data-page="ClientInfoPage"><span class="tab__label">Общая информация</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="meetings"><span class="tab__label">Встречи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="tasks"><span class="tab__label">Задачи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="deals" data-page="ClientInfoDealsPage"><span class="tab__label">Сделки</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="financials" data-page="ClientInfoFinancials"><span class="tab__label">Финансовые показатели</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="goals" data-page="ClientInfoGoalsPage"><span class="tab__label">Цели</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="credits"><span class="tab__label">Кредиты</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="analysis"><span class="tab__label">Финансовый анализ</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="news" aria-disabled="true"><span class="tab__label">Новости</span></button>
+      </div>
+
+      <!-- #sec:content ── панели вкладок ─────────────────────────────────── -->
+      <!-- ── Общая информация (ClientInfoPage): три колонки-стопки ────────── -->
+      <div class="cl-panel" data-panel="general">
+        <div class="tile-group">
+          <div class="tile-row">
+            <div class="tile-stack col-4 colw-6">
+              <ds-include src="../widgets/tiles/IndustryInfoTile/IndustryInfoTile.html" id="cl-industry" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.html" id="cl-requisites" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/CommentsTile/CommentsTile.html" id="cl-comments" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.html" id="cl-documents" state="data" mode="view"></ds-include>
+            </div>
+            <div class="tile-stack col-4 colw-6">
+              <ds-include src="../widgets/tiles/TeamInfoTile/TeamInfoTile.html" id="cl-gcm" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.html" id="cl-persons" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/TeamInfoTile/TeamInfoTile.html" id="cl-team" state="data" mode="edit"></ds-include>
+              <ds-include src="../widgets/tiles/DesksTile/DesksTile.html" id="cl-desks" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/ClientTimingsTile/ClientTimingsTile.html" id="cl-timings" state="data" mode="view"></ds-include>
+            </div>
+            <div class="tile-stack col-4 colw-12">
+              <ds-include src="../widgets/tiles/ClientNewsTile/ClientNewsTile.html" id="cl-news" state="data" mode="view"></ds-include>
+              <ds-include src="../widgets/tiles/GigaInfoTile/GigaInfoTile.html" id="cl-giga" state="data" mode="view"></ds-include>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Встречи: реестр встреч клиента и предпросмотр (Splitter ДС) ──── -->
+      <div class="cl-panel" data-panel="meetings" hidden>
+        <div class="cl-panel__actions">
+          <button type="button" class="btn btn--outline btn--m"><i data-icon="add"></i><span class="btn__label">Новый протокол</span></button>
+          <button type="button" class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Новая встреча</span></button>
+        </div>
+        <div class="splitpane" id="cl-mt-split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+          <div class="splitpane__panel splitpane__a">
+            <ds-include src="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.html" id="cl-mt-list" state="data" mode="view"></ds-include>
+          </div>
+          <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+            <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="splitpane__panel splitpane__b">
+            <div class="ds-scroll"><ds-include src="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.html" id="cl-mt-details" state="data" mode="view"></ds-include></div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Задачи: реестр задач клиента и предпросмотр (Splitter ДС) ────── -->
+      <div class="cl-panel" data-panel="tasks" hidden>
+        <div class="cl-panel__actions">
+          <button type="button" class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Новая задача</span></button>
+        </div>
+        <div class="splitpane" id="cl-tk-split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+          <div class="splitpane__panel splitpane__a">
+            <ds-include src="../widgets/tables/TasksTable/TasksTable.html" id="cl-tk-list" state="data" mode="view"></ds-include>
+          </div>
+          <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+            <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="splitpane__panel splitpane__b">
+            <div class="ds-scroll"><ds-include src="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.html" id="cl-tk-preview" state="data" mode="view"></ds-include></div>
+          </div>
+        </div>
+      </div>
+      <!-- ── Сделки (ClientInfoDealsPage): Лиды · Pipeline · Портфель (Р3) ─ -->
+      <div class="cl-panel" data-panel="deals" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Раздел сделок" data-segctrl id="cl-deals-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="leads"><span class="segctrl__label">Лиды</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="pipeline"><span class="segctrl__label">Pipeline</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="portfolio" aria-disabled="true"><span class="segctrl__label">Портфель</span></button>
+        </div>
+        <div class="cl-view tile-group" data-deals-view="leads">
+          <div class="tile-row"><ds-include src="../widgets/tables/LeadsTable/LeadsTable.html" id="cl-leads-did" class="col-12" state="data" mode="view"></ds-include></div>
+          <div class="tile-row"><ds-include src="../widgets/tables/LeadsTable/LeadsTable.html" id="cl-leads-rd" class="col-12" state="data" mode="view"></ds-include></div>
+          <div class="tile-row">
+            <ds-include src="../widgets/tables/LeadsTable/LeadsTable.html" id="cl-leads-binding" class="col-6 colw-12" state="data" mode="view"></ds-include>
+            <ds-include src="../widgets/tables/LeadsTable/LeadsTable.html" id="cl-leads-possible" class="col-6 colw-12" state="data" mode="view"></ds-include>
+          </div>
+        </div>
+        <div class="cl-view tile-group" data-deals-view="pipeline" hidden>
+          <div class="tile-row"><ds-include src="../widgets/tables/OpportunitiesPipelineTable/OpportunitiesPipelineTable.html" id="cl-pipeline" class="col-12" state="data" mode="view"></ds-include></div>
+          <div class="tile-row">
+            <ds-include src="../widgets/tables/BindingOpportunitiesTable/BindingOpportunitiesTable.html" id="cl-binding" class="col-6 colw-12" state="data" mode="view"></ds-include>
+            <ds-include src="../widgets/tables/PossibleOpportunitiesTable/PossibleOpportunitiesTable.html" id="cl-possible" class="col-6 colw-12" state="data" mode="view"></ds-include>
+          </div>
+          <div class="tile-row"><ds-include src="../widgets/tables/MaPipelineTable/MaPipelineTable.html" id="cl-ma" class="col-12" state="data" mode="view"></ds-include></div>
+          <div class="tile-row">
+            <ds-include src="../widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.html" id="cl-dcm" class="col-6 colw-12" state="data" mode="view"></ds-include>
+            <ds-include src="../widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.html" id="cl-ecm" class="col-6 colw-12" state="data" mode="view"></ds-include>
+          </div>
+        </div>
+      </div>
+      <!-- ── Финансовые показатели (ClientInfoFinancials): ФОК · метрики ──── -->
+      <div class="cl-panel" data-panel="financials" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Раздел показателей" data-segctrl id="cl-fin-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="fok"><span class="segctrl__label">ФОК</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="custom"><span class="segctrl__label">Пользовательские метрики</span></button>
+        </div>
+        <div class="cl-view tile-group" data-fin-view="fok">
+          <div class="tile-row"><ds-include src="../widgets/tiles/FinancialsChart/FinancialsChart.html" id="cl-fin-chart" class="col-12" state="data" mode="view"></ds-include></div>
+          <div class="tile-row"><ds-include src="../widgets/tables/FinancialsTable/FinancialsTable.html" id="cl-fin-table" class="col-12" state="data" mode="view"></ds-include></div>
+        </div>
+        <div class="cl-view tile-group" data-fin-view="custom" hidden>
+          <div class="tile-row">
+            <!-- «Пользовательские метрики» — часть страницы ClientInfoFinancials, своего виджета нет -->
+            <section class="tile col-12" id="cl-custom-metrics">
+              <header class="tile__header">
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Пользовательские метрики</h3></div></div>
+                <div class="tile__actions"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button></div>
+              </header>
+              <div class="tile__body">
+                <div class="tile__grid" style="grid-template-columns:repeat(4,minmax(0,1fr))" data-custom-metrics></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <!-- ── Цели (ClientInfoGoalsPage): GoalSegmentFilter · сетка · архивы ── -->
+      <div class="cl-panel" data-panel="goals" hidden>
+        <div class="segctrl" role="radiogroup" aria-label="Сегмент целей" data-segctrl id="cl-goals-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="business"><span class="segctrl__label">Бизнес</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="personal"><span class="segctrl__label">Личные</span></button>
+        </div>
+        <div class="cl-view" id="cl-goals-current"></div>
+        <div class="cl-view" id="cl-goals-archive"></div>
+      </div>
+      <!-- ── Кредиты: Действующие · Pipeline (пары во фронтенде нет) ──────── -->
+      <div class="cl-panel" data-panel="credits" hidden>
+        <div class="cl-credits-toolbar">
+        <div class="segctrl" role="radiogroup" aria-label="Раздел кредитов" data-segctrl id="cl-cred-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="active"><span class="segctrl__label">Действующие</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="pipeline"><span class="segctrl__label">Pipeline</span></button>
+        </div>
+        <button type="button" class="btn btn--outline btn--s" data-inert><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        <div class="segctrl segctrl--s" role="radiogroup" aria-label="Вид кредитов" data-segctrl id="cl-cred-layout">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-layout="cards"><span class="segctrl__label">Карточки</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-layout="list"><span class="segctrl__label">Список</span></button>
+        </div>
+        </div>
+        <div class="cl-view tile-group" data-cred-view="active">
+          <!-- сводные плашки: цветной заливки тайла в ДС нет — пробел ДС (MS0014 §7) -->
+          <div class="tile-row">
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Общая сумма кредитов</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="total">1 200 000 000,00</span></div></div></div>
+            </section>
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Просроченная задолженность</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="overdue">0,00</span></div></div></div>
+            </section>
+            <section class="tile col-4 colw-12">
+              <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Маржинальность общая</h3></div></div></header>
+              <div class="tile__body"><div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value" data-cs="margin">13,8%</span></div></div></div>
+            </section>
+          </div>
+          <div class="tile-row"><div class="tile-stack col-12"><ds-include src="../widgets/tiles/ClientCreditsList/ClientCreditsList.html" id="cl-credits-active" state="data" mode="view"></ds-include></div></div>
+        </div>
+        <div class="cl-view tile-group" data-cred-view="pipeline" hidden>
+          <div class="tile-row"><div class="tile-stack col-12"><ds-include src="../widgets/tiles/ClientCreditsList/ClientCreditsList.html" id="cl-credits-pipeline" state="data" mode="view"></ds-include></div></div>
+        </div>
+      </div>
+      <!-- ── Финансовый анализ (пары нет): 7 разделов — SegmentControl ─────── -->
+      <div class="cl-panel" data-panel="analysis" hidden>
+        <div class="cl-sections">
+        <div class="segctrl" role="radiogroup" aria-label="Разделы анализа" data-segctrl id="cl-an-switch">
+          <div class="segctrl__thumb"></div>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="true" tabindex="0" data-view="0"><span class="segctrl__label">P&amp;L</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="1"><span class="segctrl__label">Балансовые показатели</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="2"><span class="segctrl__label">ДДС и CAPEX</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="3"><span class="segctrl__label">Общий долг</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="4"><span class="segctrl__label">Долг перед Сбербанком</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="5"><span class="segctrl__label">Коэффициенты</span></button>
+          <button type="button" class="segctrl__item" role="radio" aria-checked="false" tabindex="-1" data-view="6"><span class="segctrl__label">LTM показатели</span></button>
+        </div>
+        </div>
+        <div class="tile-row"><ds-include src="../widgets/tables/FinancialsTable/FinancialsTable.html" id="cl-analysis-table" class="col-12" state="data" mode="view"></ds-include></div>
+      </div>
+
+      <!-- Шаблоны повторяемых карточек: сборка вшивает один источник разметки. -->
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="task-history-template" data-off-grid="Шаблон истории: ширину задаёт панель предпросмотра"><ds-include src="../widgets/tables/TaskHistoryTable/TaskHistoryTable.html" state="data" mode="view"></ds-include></template></div>
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="strat-dialogue-template" data-off-grid="Шаблон цели: ширину задаёт список карточек"><ds-include src="../widgets/tiles/StratDialogueCard/StratDialogueCard.html" state="data" mode="view"></ds-include></template></div>
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="goal-archive-template" data-off-grid="Шаблон архива: ширину задаёт вкладка целей"><ds-include src="../widgets/tiles/GoalArchiveSection/GoalArchiveSection.html" state="data" mode="view"></ds-include></template></div>
+      <div id="client-goals-info" class="pop pop--w-s pop--bottom pop--start pop--floating" role="dialog" aria-modal="false" aria-labelledby="client-goals-info-title">
+        <div class="pop__head"><div class="pop__head-main"><h3 class="pop__title" id="client-goals-info-title">Цели клиента</h3></div><span class="pop__close"><button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Закрыть"><i data-icon="close"></i></button></span></div>
+        <div class="pop__body">Цели клиента представлены на вкладке «Цели».</div>
+      </div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- подтверждение «Завершить» / «Отменить» встречу (Р7) — разметка страницы на Modal ДС -->
+      <div class="modal-scrim" id="meeting-confirm-scrim" hidden>
+        <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="meeting-confirm-title">
+          <header class="modal__head">
+            <h2 class="modal__title" id="meeting-confirm-title">Завершить встречу</h2>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+          </header>
+          <div class="modal__body"><p data-meeting-confirm-text>Встреча получит статус «Завершена».</p></div>
+          <footer class="modal__foot"><div class="modal__foot-right">
+            <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+            <button type="button" class="btn btn--accent btn--m" data-meeting-confirm><span class="btn__label">Завершить</span></button>
+          </div></footer>
+        </div>
+      </div>
+      <ds-include src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.html"></ds-include>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/GoalsPopoverBadge/GoalsPopoverBadge.js"></script>
+<script src="../widgets/tiles/IndustryInfoTile/IndustryInfoTile.js"></script>
+<script src="../widgets/tiles/RequisitesInfoTile/RequisitesInfoTile.js"></script>
+<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../widgets/tiles/DocumentsInfoTile/DocumentsInfoTile.js"></script>
+<script src="../widgets/tiles/TeamInfoTile/TeamInfoTile.js"></script>
+<script src="../widgets/tiles/RelatedPersonsTile/RelatedPersonsTile.js"></script>
+<script src="../widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../widgets/tiles/ClientTimingsTile/ClientTimingsTile.js"></script>
+<script src="../widgets/tiles/ClientNewsTile/ClientNewsTile.js"></script>
+<script src="../widgets/tiles/GigaInfoTile/GigaInfoTile.js"></script>
+<script src="../widgets/tables/MeetingsProtocolsList/MeetingsProtocolsList.js"></script>
+<script src="../widgets/tiles/MeetingsProtocolsDetails/MeetingsProtocolsDetails.js"></script>
+<script src="../widgets/tables/TasksTable/TasksTable.js"></script>
+<script src="../widgets/tables/TaskHistoryTable/TaskHistoryTable.js"></script>
+<script src="../widgets/tiles/TaskPreviewTile/TaskPreviewTile.js"></script>
+<script src="../widgets/modals/ChangeTaskStatusModal/ChangeTaskStatusModal.js"></script>
+<script src="../widgets/tables/LeadsTable/LeadsTable.js"></script>
+<script src="../widgets/tables/MaPipelineTable/MaPipelineTable.js"></script>
+<script src="../widgets/tables/DcmEcmPipelineTable/DcmEcmPipelineTable.js"></script>
+<script src="../widgets/tiles/FinancialsChart/FinancialsChart.js"></script>
+<script src="../widgets/tables/FinancialsTable/FinancialsTable.js"></script>
+<script src="../widgets/tiles/StratDialogueCard/StratDialogueCard.js"></script>
+<script src="../widgets/tiles/GoalArchiveSection/GoalArchiveSection.js"></script>
+<script src="../widgets/tiles/ClientCreditsList/ClientCreditsList.js"></script>
+<script>
+/* Экранный скрипт страницы клиента: клиент по ?id=, вкладка по ?tab= (имя
+   страницы фронтенда, где пара есть). Меню — data/nav-links.js; панели и
+   ряды — в разметке, тайлы и таблицы — виджеты; скрипт только наполняет.
+   Панель наполняется при первом показе. */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, T = window.IBPR_TABLE;
+  var q = new URLSearchParams(location.search);
+  var c = S.client(q.get('id')) || S.client('3000012345');
+  N.mount({ active: 'clients' });
+
+  function el(id) { return document.getElementById(id); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  /* ── шапка ──────────────────────────────────────────────────────────── */
+  var cur = document.querySelector('.crumbs__current');
+  if (cur) cur.textContent = c.name;
+  document.title = c.name + ' — IBP Redesign v1';
+  el('cl-title').textContent = c.name;
+  el('cl-holding').textContent = c.holdingName;
+  /* статус — скруглённый чип; признаки клиента — чипы-флаги (Chip ДС) */
+  var before = [T.chip('Активен', { tone: 'info', rounded: true }), T.chip(c.quarterPlan, { icon: 'calendar' })];
+  if (c.didGrowthCompany) before.push(T.chip('Компания роста ДИД', { icon: 'trend-up' }));
+  if (c.topClient) before.push(T.chip('Топ клиент', { icon: 'star' }));
+  if (c.growthCompany) before.push(T.chip('Компания роста', { icon: 'trend-up' }));
+  var after = [];
+  if (c.keyClient) after.push(T.chip('Ключевой клиент'));
+  if (c.residentRf) after.push(T.chip('Резидент РФ', { icon: 'resident-rf' }));
+  /* счётчик с ⓘ — смысл неизвестен (вопрос 8 MS0014): Chip + .chip__info */
+  if (c.headerCounter != null) {
+    after.push('<span class="chip chip--s chip--rounded chip--outline"><span class="chip__label">' + c.headerCounter + '</span>'
+      + '<button type="button" class="chip__info" aria-label="Подробнее"><i data-icon="info-circle"></i></button></span>');
+  }
+  var badge = el('cl-goals-badge');
+  badge.insertAdjacentHTML('beforebegin', before.join(''));
+  badge.insertAdjacentHTML('afterend', after.join(''));
+  window.LcGoalsPopoverBadge.render(badge, { fixed: c.goalsFixed });
+
+  /* ── SegmentControl → подвиды панели ────────────────────────────────── */
+  function segment(id, attr, onChange) {
+    var sw = el(id);
+    sw.addEventListener('click', function (e) {
+      var b = e.target.closest('.segctrl__item');
+      if (!b || b.getAttribute('aria-disabled') === 'true') return; /* Р3 */
+      var v = b.getAttribute('data-view');
+      if (attr) $all('[' + attr + ']', sw.closest('.cl-panel')).forEach(function (p) { p.hidden = p.getAttribute(attr) !== v; });
+      if (onChange) onChange(v);
+    });
+  }
+
+  /* ── сплиттер: правая панель показывается выбором строки ────────────── */
+  function splitter(root) {
+    var spl = root.querySelector('.spl'), a = root.querySelector('.splitpane__a'), b = root.querySelector('.splitpane__b');
+    var pct = 55;
+    if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+    return function (on) { b.hidden = !on; spl.hidden = !on; a.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto'; };
+  }
+
+  /* ── Общая информация ───────────────────────────────────────────────── */
+  function general() {
+    window.LcIndustryInfoTile.render(el('cl-industry'), { client: c });
+    window.LcRequisitesInfoTile.render(el('cl-requisites'), { client: c });
+    window.LcCommentsTile.render(el('cl-comments'), {
+      title: 'Комментарии', href: N.href('clientComments', { id: c.id }),
+      comments: S.clientComments(c.id).slice(0, 1).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+    window.LcDocumentsInfoTile.render(el('cl-documents'), { documents: c.documents });
+    window.LcTeamInfoTile.render(el('cl-gcm'), { title: 'Главный клиентский менеджер', members: [{ employeeId: c.gcmId, withNumber: true }] });
+    window.LcRelatedPersonsTile.render(el('cl-persons'), { persons: c.relatedPersons });
+    window.LcTeamInfoTile.render(el('cl-team'), {
+      title: 'Команда клиента ДИД', editable: true,
+      members: c.team.map(function (m) { return { employeeId: m.employeeId, roleLabel: S.lbl.employeeRole(m.roleCode) }; })
+    });
+    window.LcDesksTile.render(el('cl-desks'), {
+      note: 'Сотрудники указанных ниже десков входят в команду клиента ДИД',
+      desks: c.desks.map(function (d) { return { deskName: S.lbl.desk(d.deskId), roleLabel: S.lbl.employeeRole(d.roleCode) }; })
+    });
+    window.LcClientTimingsTile.render(el('cl-timings'), { client: c });
+    window.LcClientNewsTile.render(el('cl-news'), { news: c.news });
+    window.LcGigaInfoTile.render(el('cl-giga'), { giga: c.giga });
+  }
+
+  /* ── Встречи ────────────────────────────────────────────────────────── */
+  function meetings() {
+    var show = splitter(el('cl-mt-split'));
+    var details = el('cl-mt-details');
+    var pending = null, selected = null;
+    var list = window.LcMeetingsProtocolsList.mount(el('cl-mt-list'), { clientId: c.id, onSelect: function (m) { open(m); } });
+    function open(m) {
+      selected = m.id;
+      show(true);
+      window.LcMeetingsProtocolsDetails.render(details, { meeting: m, onAction: action });
+    }
+    function action(a, m) {
+      if (a === 'close') { show(false); list.select(null); return; }
+      if (a === 'doTask') { window.LcChangeTaskStatusModal.open({ task: m, action: 'done', onConfirm: function () { open(S.meeting(selected)); } }); return; }
+      pending = { action: a, id: m.id };
+      var finish = a === 'finish';
+      el('meeting-confirm-title').textContent = finish ? 'Завершить встречу' : 'Отменить встречу';
+      document.querySelector('[data-meeting-confirm-text]').textContent = 'Встреча ' + m.id + ' получит статус «' + (finish ? 'Завершена' : 'Отменена') + '».';
+      document.querySelector('[data-meeting-confirm] .btn__label').textContent = finish ? 'Завершить' : 'Отменить встречу';
+      window.DSModal.open(el('meeting-confirm-scrim'));
+    }
+    document.querySelector('[data-meeting-confirm]').addEventListener('click', function () {
+      if (!pending) return;
+      if (pending.action === 'finish') S.finishMeeting(pending.id); else S.cancelMeeting(pending.id);
+      window.DSModal.closeTop();
+      if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Встреча ' + pending.id + (pending.action === 'finish' ? ' завершена' : ' отменена') });
+      list.refresh();
+      open(S.meeting(pending.id));
+    });
+    show(false);
+  }
+
+  /* ── Задачи ─────────────────────────────────────────────────────────── */
+  function tasks() {
+    var show = splitter(el('cl-tk-split'));
+    var preview = el('cl-tk-preview');
+    var list = window.LcTasksTable.mount(el('cl-tk-list'), { clientId: c.id, onSelect: function (t) { open(t); } });
+    function open(t) {
+      show(true);
+      window.LcTaskPreviewTile.render(preview, { task: t, onAction: function (a, task) {
+        if (a === 'close') { show(false); list.select(null); return; }
+        window.LcChangeTaskStatusModal.open({ task: task, action: a, onConfirm: function (fresh) { list.refresh(); open(fresh); } });
+      } });
+    }
+    show(false);
+  }
+
+  /* ── Сделки: таблицы вкладки — те же виджеты-реестры в компактном режиме ─ */
+  function deals() {
+    var newLead = '<button type="button" class="btn btn--outline btn--xs"><i data-icon="add"></i><span class="btn__label">Новый лид</span></button>';
+    window.LeadsTable.mount(el('cl-leads-did'), 'leads', { clientId: c.id, kind: 'did', compact: { title: 'Лиды ДИД', actions: newLead } });
+    window.LeadsTable.mount(el('cl-leads-rd'), 'leads', { clientId: c.id, kind: 'rd', compact: { title: 'Потенциалы ДИД в ТБ. Потенциалы РД.' } });
+    window.LeadsTable.mount(el('cl-leads-binding'), 'binding-leads', { clientId: c.id, kind: 'binding', compact: { title: 'Обязательные лиды' } });
+    window.LeadsTable.mount(el('cl-leads-possible'), 'possible-leads', { clientId: c.id, kind: 'possible', compact: { title: 'Возможные лиды' } });
+    var pipelineDrawn = false;
+    segment('cl-deals-switch', 'data-deals-view', function (v) {
+      if (v !== 'pipeline' || pipelineDrawn) return;
+      pipelineDrawn = true;
+      T.opportunities(el('cl-pipeline'), { clientId: c.id, tab: null, compact: { title: 'Pipeline' } });
+      T.opportunities(el('cl-binding'), { clientId: c.id, tab: null, compact: { title: 'Обязательные сделки' } });
+      T.opportunities(el('cl-possible'), { clientId: c.id, tab: null, compact: { title: 'Возможные сделки' } });
+      window.LcMaPipelineTable.mount(el('cl-ma'), { client: c });
+      window.LcDcmEcmPipelineTable.mount(el('cl-dcm'), { client: c, kind: 'dcm' });
+      window.LcDcmEcmPipelineTable.mount(el('cl-ecm'), { client: c, kind: 'ecm' });
+    });
+  }
+
+  /* ── Финансовые показатели ──────────────────────────────────────────── */
+  function financials() {
+    var fok = c.financials.fok, custom = c.financials.custom;
+    window.LcFinancialsChart.render(el('cl-fin-chart'), { fok: fok });
+    window.LcFinancialsTable.render(el('cl-fin-table'), { fok: fok });
+    var grid = document.querySelector('[data-custom-metrics]');
+    grid.innerHTML = custom.metrics.map(function (m) {
+      return '<div class="rof"><span class="ds-label"><span class="ds-label__text">' + T.esc(m.label) + '</span></span><div class="rof__row"><span class="rof__value">' + T.esc(m.value) + '</span></div></div>';
+    }).join('') + '<div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value">' + T.esc(custom.comment) + '</span></div></div>';
+    segment('cl-fin-switch', 'data-fin-view');
+  }
+
+  /* ── Цели ───────────────────────────────────────────────────────────── */
+  function goals() {
+    function paint(seg) {
+      el('cl-goals-current').innerHTML = window.LcStratDialogueCard.list(c.goals[seg] || []);
+      if (window.dsIcons) window.dsIcons.apply(el('cl-goals-current'));
+    }
+    paint('business');
+    el('cl-goals-archive').innerHTML = window.LcGoalArchiveSection.list(c.goals.archives, '2025');
+    segment('cl-goals-switch', null, paint);
+  }
+
+  /* ── Кредиты ────────────────────────────────────────────────────────── */
+  function credits() {
+    var sum = c.credits.summary;
+    $all('[data-cs]').forEach(function (v) { v.textContent = sum[v.getAttribute('data-cs')] || '–'; });
+    window.LcClientCreditsList.render(el('cl-credits-active'), { credits: c.credits.active, variant: 'active' });
+    window.LcClientCreditsList.render(el('cl-credits-pipeline'), { credits: c.credits.pipeline, variant: 'pipeline' });
+    segment('cl-cred-switch', 'data-cred-view');
+    var layout = el('cl-cred-layout');
+    function creditLayout(mode) {
+      $all('.lc-client-credits .tile--accordion').forEach(function (card) { window.DSTile.toggle(card, mode === 'list'); });
+    }
+    layout.addEventListener('click', function (event) {
+      var target = event.target.closest('[data-layout]');
+      if (target) creditLayout(target.getAttribute('data-layout'));
+    });
+    layout.addEventListener('keydown', function () {
+      setTimeout(function () { creditLayout(layout.querySelector('[aria-checked="true"]').getAttribute('data-layout')); }, 0);
+    });
+  }
+
+  /* ── Финансовый анализ ──────────────────────────────────────────────── */
+  function analysis() {
+    var Q = ['1КВ', '2КВ', '3КВ', '4КВ', 'LTM'];
+    function paint(i) {
+      var s = c.analysis.sections[Number(i)] || c.analysis.sections[0];
+      window.LcFinancialsTable.render(el('cl-analysis-table'), {
+        firstLabel: 'Показатель, млн руб.', caption: 'Данные АС Cashflow рассчитанные 01.01.2026',
+        fok: { periods: Q, rows: s.rows.map(function (r) { return { label: r.label, values: r.values.slice(0, Q.length) }; }) }
+      });
+    }
+    paint(0);
+    segment('cl-an-switch', null, paint);
+  }
+
+  /* ── вкладки ────────────────────────────────────────────────────────── */
+  var painters = { general: general, meetings: meetings, tasks: tasks, deals: deals, financials: financials, goals: goals, credits: credits, analysis: analysis };
+  var painted = {};
+  function switchTab(id) {
+    $all('#cl-tabs .tab').forEach(function (b) {
+      var on = b.getAttribute('data-tab-id') === id;
+      b.classList.toggle('tab--selected', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    $all('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== id; });
+    if (!painted[id]) { painted[id] = true; painters[id](); }
+    var tab = document.querySelector('#cl-tabs [data-tab-id="' + id + '"]');
+    history.replaceState(null, '', N.href('client', { id: c.id, tab: (tab && tab.getAttribute('data-page')) || id }));
+    if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+    if (window.DSTabs) $all('[data-panel="' + id + '"] [data-segctrl]').forEach(function (s) { window.DSTabs.positionThumb(s); });
+  }
+  el('cl-tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (!b || b.getAttribute('aria-disabled') === 'true') return; /* Р3: «Новости» */
+    switchTab(b.getAttribute('data-tab-id'));
+  });
+  var want = q.get('tab');
+  var start = want ? $all('#cl-tabs .tab').filter(function (b) { return b.getAttribute('data-page') === want || b.getAttribute('data-tab-id') === want; })[0] : null;
+  switchTab(start && painters[start.getAttribute('data-tab-id')] ? start.getAttribute('data-tab-id') : 'general');
+  if (window.DSTooltip) window.DSTooltip.bindAll(document);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<!-- Сделка — страница фронтенда Opportunity (pretrade/opportunities-app, pages/Opportunity/Opportunity).
+     Один экран на все источники: ?source=binding|possible|cib|campaign|pipeline&id=&tab=.
+     Источник: открывается собранной Opportunity.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сделка — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* скрытые по данным тайлы и действия шапки: атрибут hidden сильнее
+     display компонентов ДС */
+  .tile-row > [hidden],
+  .phead__actions[hidden] { display: none; }
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/V2OpportunityProductTile/V2OpportunityProductTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2GeneralInformationTile/V2GeneralInformationTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2StateInformationTile/V2StateInformationTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2DescriptionTile/V2DescriptionTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2TimingTile/V2TimingTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2CommentsTile/V2CommentsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2ProductsTile/V2ProductsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2DesksTile/V2DesksTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2OpportunityTeamMembersTile/V2OpportunityTeamMembersTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2OpportunityConnectionsTile/V2OpportunityConnectionsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2TasksTile/V2TasksTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.css">
+<link rel="stylesheet" href="../widgets/tiles/V2CallReportsTile/V2CallReportsTile.css">
+<link rel="stylesheet" href="../widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.css">
+<link rel="stylesheet" href="../widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Раздел</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Сделка</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="Opportunity">
+      <!-- #sec:head ── Шапка страницы (во фронтенде — OpportunityPageBar) ── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="opp-title">166092. Развитие тепличного комплекса</h1></div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span><span id="opp-calendar">5</span></span>
+            <span class="phead__meta" id="opp-version">Версия 1 (05.10.2026)</span>
+          </div>
+        </div>
+        <div class="phead__actions" id="opp-actions">
+          <button type="button" class="btn btn--outline btn--m" id="act-refuse" data-modal="refuse-opp-scrim" data-opp="166092"><i data-icon="minus-circle"></i><span class="btn__label">Отказаться</span></button>
+          <button type="button" class="btn btn--accent btn--m" id="act-take" data-modal="take-opp-scrim" data-opp="166092"><i data-icon="folder-arrow-forward"></i><span class="btn__label">Взять в работу</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── состав по снимку системы, ширины — по объёму полей -->
+      <div class="tile-group">
+        <!-- ряд 1: клиент · общая информация; 6–8 полей требуют по 6 колонок -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Клиент» — тайл клиента страницы сделки (Opportunity) и
+     лида (PotentialPage). Пары во фронтенде: V2OpportunityClientTile
+     (pretrade/opportunities-app) и ClientTile (pretrade/offersources-app,
+     вариант potential). Страница вшивает меткой <ds-include> и заполняет:
+     LcOpportunityClientTile.render(host, { client, variant }). -->
+<section data-variant="opportunity" id="tile-client" data-state="data" data-mode="edit" class="tile lc-opp-client col-6 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Клиент</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-oc-edit><i data-icon="edit"></i></button>
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" aria-label="Перейти на страницу клиента" data-oc-link><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-opp-client__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-opp-client__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-opp-client__content">
+      <div class="tile__chiplist" data-oc-only="potential">
+        <span class="chip chip--xs" data-oc-chip-growth><span class="chip__icon"><i data-icon="trend-up"></i></span><span class="chip__label">Компания роста ДИД</span></span>
+        <span class="chip chip--xs" data-oc-chip-top><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Топ клиент</span></span>
+      </div>
+      <div class="tile__grid lc-opp-client__grid">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Клиент</span></span><div class="rof__row"><span class="badge badge--dot badge--success" aria-hidden="true"></span><span class="rof__value" data-oc-name>ООО «Ромашка»</span></div></div>
+        <div class="rof" data-oc-only="potential"><span class="ds-label"><span class="ds-label__text">Холдинг</span></span><div class="rof__row"><span class="rof__value" data-oc-holding>ГК «Цветы»</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">ИНН</span></span><div class="rof__row"><span class="rof__value" data-oc-inn>7712345678</span></div></div>
+        <div class="rof" data-oc-only="opportunity"><span class="ds-label"><span class="ds-label__text">Отрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-industry>Сельское хозяйство</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Макроотрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-macro>Агропромышленный комплекс</span></div></div>
+        <div class="rof" data-oc-only="opportunity"><span class="ds-label"><span class="ds-label__text">Подотрасль</span></span><div class="rof__row"><span class="rof__value" data-oc-sub>Цветоводство</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Сегмент</span></span><div class="rof__row"><span class="rof__value" data-oc-segment>Крупный бизнес</span></div></div>
+        <div class="rof" data-oc-only="potential"><span class="ds-label"><span class="ds-label__text">Клиентский менеджер</span></span><div class="rof__row"><span class="rof__value" data-oc-manager>Соколов Дмитрий Викторович</span></div></div>
+        <hr class="dvd dvd--h tile__grid-full" data-oc-only="potential">
+        <div class="tile__grid-full" data-oc-only="potential">
+          <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по клиенту</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Общая информация» — тайл сделки (Opportunity) и лида
+     (PotentialPage). Пары во фронтенде: V2GeneralInformationTile в
+     pretrade/opportunities-app (вариант opportunity) и в pretrade/offersources-app
+     (вариант potential). Страница вшивает меткой <ds-include> и заполняет:
+     LcGeneralInformationTile.render(host, { opportunity, client }) или
+     render(host, { potential }); вариант ставит render в data-variant. -->
+<section data-variant="opportunity" id="tile-general" data-state="data" data-mode="edit" class="tile lc-gen-info col-6 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Общая информация</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-gi-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-gen-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-gen-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-gen-info__content">
+      <div class="tile__chiplist" data-gi-chips>
+        <span class="chip chip--xs" data-gi-chip-growth><span class="chip__icon"><i data-icon="trend-up"></i></span><span class="chip__label">Компания роста ДИД</span></span>
+        <span class="chip chip--xs" data-gi-chip-top><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Топ клиент</span></span>
+        <span class="chip chip--xs chip--rounded chip--info" data-gi-chip-status hidden><span class="chip__label">В работе</span></span>
+      </div>
+      <div class="lc-gen-info__opp">
+        <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Проект</span></span><div class="rof__row"><span class="rof__value" data-gi-project>Развитие тепличного комплекса</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Приоритет</span></span><div class="rof__row"><span class="chip chip--xs chip--fit" data-gi-priority><span class="chip__label">Средний</span></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Территориальный банк</span></span><div class="rof__row"><span class="rof__value" data-gi-tb>ЦА</span><span class="rof__icon" data-gi-tb-warn hidden><i data-icon="alert-triangle"></i></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">ГОСБ</span></span><div class="rof__row"><span class="rof__value" data-gi-gosb>8634</span><span class="rof__icon" data-gi-gosb-warn hidden><i data-icon="alert-triangle"></i></span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Тип недвижимости</span></span><div class="rof__row"><span class="rof__value" data-gi-realty>Производственный комплекс</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Источник сделки</span></span><div class="rof__row"><span class="chip chip--xs" data-gi-routing><span class="chip__icon"><i data-icon="star"></i></span><span class="chip__label">Маршрутизация</span></span><span class="rof__value" data-gi-routing-none hidden>–</span></div></div>
+          <div class="tile__grid-full lc-gen-info__checks">
+            <label class="cb"><input type="checkbox" class="cb__input" disabled data-gi-terms><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Изменение условий / Реструктуризация</span></span></label>
+            <label class="cb"><input type="checkbox" class="cb__input" disabled data-gi-key checked><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Ключевая сделка</span></span></label>
+          </div>
+          <hr class="dvd dvd--h tile__grid-full">
+          <div class="tile__grid-full lc-gen-info__docs">
+            <button type="button" class="btn btn--outline btn--s"><i data-icon="attach"></i><span class="btn__label">Документы по сделке</span></button>
+            <a class="link link--accent link--m link--with-icon" href="#" data-inert><span class="link__icon"><i data-icon="download"></i></span>Презентация для ПИК</a>
+          </div>
+        </div>
+      </div>
+      <div class="lc-gen-info__pot">
+        <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="rof tile__grid-full"><span class="ds-label"><span class="ds-label__text">Идея сделки</span></span><div class="rof__row"><span class="rof__value" data-gi-idea>Вторая очередь тепличного комплекса</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата создания</span></span><div class="rof__row"><span class="rof__value" data-gi-created>21.09.2026</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата последней активности</span></span><div class="rof__row"><span class="rof__value" data-gi-activity>09.10.2026</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- ряд 2: статус · финансовые метрики -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Статус» — тайл статуса страницы сделки (Opportunity).
+     Пара во фронтенде — V2StateInformationTile (pretrade/opportunities-app); у
+     лида похожий StateTile (offersources-app), на странице лида не ставится.
+     Страница вшивает меткой <ds-include> и заполняет:
+     LcStateInformationTile.render(host, { opportunity }). -->
+<section id="tile-state" data-state="data" data-mode="edit" class="tile lc-state-info col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Статус</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-si-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-state-info__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-state-info__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-state-info__content">
+      <div class="tile__grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Статус</span></span><div class="rof__row"><span class="rof__value" data-si-status>В работе</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Стадия</span></span><div class="rof__row"><span class="rof__value" data-si-stage>Назначение ответственного</span></div></div>
+        <div class="rof" data-si-drop-reason-row hidden><span class="ds-label"><span class="ds-label__text">Причина выбытия</span></span><div class="rof__row"><span class="rof__value" data-si-drop-reason>–</span></div></div>
+        <div class="rof" data-si-drop-comment-row hidden><span class="ds-label"><span class="ds-label__text">Комментарий</span></span><div class="rof__row"><span class="rof__value" data-si-drop-comment>–</span></div></div>
+        <div class="tile__grid-full">
+          <div class="pbar pbar--accent" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Вероятность сделки" data-si-prob>
+            <div class="pbar__head"><span class="pbar__label">Вероятность сделки</span><span class="pbar__value" data-si-prob-value>0%</span></div>
+            <div class="pbar__track"><div class="pbar__fill" style="width:0%" data-si-prob-fill></div></div>
+          </div>
+        </div>
+        <div class="tile__grid-full lc-state-info__checks">
+          <label class="cb"><input type="checkbox" class="cb__input" disabled data-si-onepager><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Согласован One Pager</span></span></label>
+          <label class="cb"><input type="checkbox" class="cb__input" disabled data-si-pik><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Пройден ПИК / ИК</span></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Финансовые метрики» — тайл страницы сделки
+     (Opportunity). Пара во фронтенде — V2FinancialMetricsTile
+     (pretrade/opportunities-app); блоки «Всего по сделке» и «Продукты УСИ» —
+     его часть ValuesBlock. Поля — ReadOnlyField: подпись над значением, ⓘ —
+     в слоте иконок Label. Страница вшивает меткой <ds-include> и заполняет:
+     LcFinancialMetricsTile.render(host, { opportunity }). -->
+<section id="tile-fin" data-state="data" data-mode="view" class="tile lc-fin-metrics col-8 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Финансовые метрики</h3></div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" data-inert aria-label="Показать все метрики" data-fm-all><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-fin-metrics__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-fin-metrics__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-fin-metrics__content">
+      <section class="lc-fin-metrics__block" data-fm-block="total">
+        <h4 class="lc-fin-metrics__title"><span>Всего по сделке</span><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Всего по сделке" data-tooltip="Сумма всех продуктов сделки"><i data-icon="info-circle"></i></button></h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Общий объем, млн ед.</span></span><div class="rof__row"><span class="rof__value" data-fm-total>2 400,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Валюты сделки</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s" data-fm-currencies><span class="chip chip--xs chip--fit"><span class="chip__label">RUB</span></span></div></div></div></div>
+        </div>
+      </section>
+      <section class="lc-fin-metrics__block" data-fm-block="usi">
+        <h4 class="lc-fin-metrics__title"><span>Продукты УСИ</span><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Продукты УСИ" data-tooltip="Метрики инвестиционных продуктов УСИ"><i data-icon="info-circle"></i></button></h4>
+        <div class="tile__grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Объём инвестиций, млн ед.</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Объём инвестиций, млн ед." data-tooltip="Инвестиции по продуктам УСИ"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-invest>1 800,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">ВМ Мезонин, %</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: ВМ Мезонин, %" data-tooltip="Валовая маржа мезонинного финансирования"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-vm>16,0</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Итоговый доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Итоговый доход" data-tooltip="Сумма всех доходов по сделке"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-total-income>396,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Процентный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Процентный доход" data-tooltip="Доход по процентным ставкам"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-interest>252,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Комиссионный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Комиссионный доход" data-tooltip="Доход по комиссиям"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-commission>96,00</span></div></div>
+          <div class="rof"><span class="ds-label ds-label--wrap"><span class="ds-label__text">Дополнительный доход</span><span class="ds-label__icons"><button type="button" class="ibtn ibtn--s ibtn--neutral" aria-label="Справка: Дополнительный доход" data-tooltip="Прочие доходы по сделке"><i data-icon="info-circle"></i></button></span></span><div class="rof__row"><span class="rof__value" data-fm-additional>48,00</span></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- ряд 3: описание · сроки -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Описание сделки» — тайл страницы сделки (Opportunity).
+     Пара во фронтенде — V2DescriptionTile (pretrade/opportunities-app; у лида
+     одноимённый в offersources-app). Страница вшивает меткой <ds-include> и
+     заполняет: LcDescriptionTile.render(host, { opportunity }). -->
+<section id="tile-description" data-state="data" data-mode="edit" class="tile lc-desc col-8 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Описание сделки</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-dt-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__alert" data-dt-k1 hidden>
+    <div class="alert alert--warning alert--m" role="status">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Данные К1 в описании сделки не отображены. Для просмотра актуальной информации перейдите в проект продаж</p></div>
+    </div>
+  </div>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-desc__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-desc__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-desc__content">
+      <p class="lc-desc__text" data-dt-text>Финансирование строительства второй очереди тепличного комплекса: инвестиционный кредит и мезонинное финансирование.</p>
+      <div data-dt-empty hidden>
+        <button type="button" class="btn btn--outline btn--s"><i data-icon="edit"></i><span class="btn__label">Заполнить</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Сроки» — тайл страницы сделки (Opportunity). Пара во
+     фронтенде — V2TimingTile (pretrade/opportunities-app); у лида похожий
+     TimingsTile (offersources-app). Страница вшивает меткой <ds-include> и
+     заполняет: LcTimingTile.render(host, { opportunity }). -->
+<section id="tile-timing" data-state="data" data-mode="edit" class="tile lc-timing col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Сроки</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать" data-tm-edit><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-timing__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-timing__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-timing__content">
+      <div class="tile__rows">
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата начала работы</span></span><div class="rof__row"><span class="rof__value" data-tm-start>05.10.2026</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Планируемая дата КПКИ</span></span><div class="rof__row"><span class="rof__value" data-tm-kpki>10.12.2026</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Плановая дата подписания</span></span><div class="rof__row"><span class="rof__value" data-tm-sign>25.01.2027</span></div></div>
+        <div class="rof"><span class="ds-label"><span class="ds-label__text">Планируемая дата выдачи</span></span><div class="rof__row"><span class="rof__value" data-tm-issue>15.02.2027</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- ряд 4: комментарии; самостоятельный блок сопровождения -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Комментарии к стадии» — тайл комментариев страницы
+     сделки (§4.3) и страницы лида (§4.6). Вшивается меткой ds-include;
+     страница заполняет скриптом LcCommentsTile.render(host, {comments}).
+     Статическое содержимое — демо-состояние (комментарий сделки 166092). -->
+<section id="tile-comments" data-state="data" data-mode="view" class="tile lc-comments col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Комментарии к стадии</h3></div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Показать все комментарии" href="#" data-inert><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body lc-comments__list" data-comments-body>
+    <div class="lc-comments__item">
+      <p class="lc-comments__meta"><span class="lc-comments__author">Соколов Дмитрий Викторович</span> · <span class="lc-comments__time">09:40</span> · <span class="lc-comments__date">06.10.2026</span></p>
+      <p class="lc-comments__text">Сделка передана в работу после маршрутизации. Назначить ответственного и согласовать состав команды.</p>
+      <div class="lc-comments__acts">
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Удалить комментарий"><i data-icon="trash"></i></button>
+        <button type="button" class="ibtn ibtn--neutral ibtn--s" aria-label="Править комментарий"><i data-icon="edit"></i></button>
+      </div>
+    </div>
+    <button type="button" class="btn btn--transparent btn--s lc-comments__add"><i data-icon="add"></i><span class="btn__label">Добавить комментарий</span></button>
+  </div>
+</section>
+        </div>
+        <!-- ряд 5: продукты сделки -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Продукты сделки» — тайл страницы сделки (Opportunity)
+     и лида (PotentialPage). Пары во фронтенде: V2ProductsTile
+     (pretrade/opportunities-app; карточка — V2OpportunityProductTile) и
+     PotentialProductsTile (offersources-app; карточка —
+     PotentialDetailedProductTile). Карточки строит render разметкой виджета
+     V2OpportunityProductTile (число карточек — по данным). Страница вшивает
+     меткой <ds-include> и заполняет: LcProductsTile.render(host, { products,
+     dealId, source, tab, variant }). -->
+<section data-variant="opportunity" id="tile-products" data-state="data" data-mode="view" class="tile lc-products col-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-pt-title>Продукты сделки</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-pt-add-head><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-products__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-products__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-products__content">
+      <div class="lc-products__grid" data-pt-grid>
+        <!-- карточки V2OpportunityProductTile -->
+      </div>
+      <p class="lc-products__empty" data-pt-empty hidden>В сделке пока нет продуктов</p>
+      <div data-pt-add-body hidden>
+        <button type="button" class="btn btn--accent btn--s"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+        <!-- ряд 6: дески · команда · связи -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Дески» — тайл доступа десков страницы сделки
+     (§4.3), лида (§4.6) и клиента (§4.8). Вшивается меткой ds-include;
+     страница заполняет скриптом LcDesksTile.render(host, {desks, note}).
+     Статическое содержимое — демо-состояние сделки 166092. -->
+<section id="tile-desks" data-state="data" data-mode="view" class="tile lc-desks col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Дески</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body" data-desks-body>
+    <p class="lc-desks__note">Сотрудники указанных ниже десков имеют доступ к этой сделке</p>
+    <ul class="lc-desks__list">
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">SMB Природные ресурсы +6</span>
+        <span class="chip chip--xs"><span class="chip__label">Ответственный</span></span>
+      </li>
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">ДИД Центральный</span>
+        <span class="chip chip--xs"><span class="chip__label">Инициатор</span></span>
+      </li>
+      <li class="lc-desks__row">
+        <span class="lc-desks__name">CIB Москва</span>
+        <span class="chip chip--xs"><span class="chip__label">Приглашен</span></span>
+      </li>
+    </ul>
+  </div>
+</section>
+          <!-- Локальный компонент «Команда сделки» — тайл команды страницы сделки
+     (§4.3) и «Команда потенциала» страницы лида (§4.6). Вшивается меткой
+     ds-include; страница заполняет скриптом LcOpportunityTeamMembersTile.
+     render(host, {analysts, director, vp, regionalDirector, note}).
+     Статическое содержимое — демо-состояние сделки 166092. -->
+<section id="tile-team" data-state="data" data-mode="view" class="tile lc-opp-team col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Команда сделки</h3></div>
+      <p class="tile__subtitle">Сделка отображается во вкладке «Мои сделки» у указанных ниже сотрудников</p>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Показать команду целиком" href="#" data-inert><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body" data-team-body>
+    <div class="lc-opp-team__row">
+      <span class="av av--circular av--m"><span class="av__text">КС</span></span>
+      <span class="lc-opp-team__fio">Ким Александр Сергеевич <span class="lc-opp-team__plus">+2</span></span>
+      <span class="lc-opp-team__role">Аналитик</span>
+    </div>
+    <div class="lc-opp-team__row">
+      <span class="av av--circular av--m"><span class="av__text">ДВ</span></span>
+      <span class="lc-opp-team__fio">Соколов Дмитрий Викторович</span>
+      <span class="lc-opp-team__role">Директор</span>
+    </div>
+    <div class="lc-opp-team__row">
+      <span class="av av--circular av--m"><span class="av__text">МИ</span></span>
+      <span class="lc-opp-team__fio">Ветрова Марина Игоревна</span>
+      <span class="lc-opp-team__role">VP</span>
+    </div>
+    <div class="lc-opp-team__row">
+      <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+      <span class="lc-opp-team__fio">Гурьев Аркадий Петрович</span>
+      <span class="lc-opp-team__role">Региональный директор</span>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Связанные сделки» — тайл связей страницы сделки
+     (§4.3, «Связанные сделки») и «Связи» страницы лида (§4.6).
+     Вшивается меткой ds-include; страница заполняет скриптом
+     LcOpportunityConnectionsTile.render(host, {links, emptyText, title}).
+     Статическое содержимое — демо-состояние сделки 129451. -->
+<section id="tile-connections" data-state="data" data-mode="view" class="tile lc-opp-connections col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Связанные сделки</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Развернуть связи"><i data-icon="maximize"></i></button>
+    </div>
+  </header>
+  <div class="tile__body" data-connections-body>
+    <p class="lc-opp-connections__empty">Нет связанных сделок</p>
+  </div>
+</section>
+        </div>
+        <!-- ряд 7: задачи · встречи и протоколы · протоколы проекта продаж
+             (задачи и протоколы — у CIB и кампаний, скрывает скрипт) -->
+        <div class="tile-row">
+          <!-- Локальный компонент «Задачи» — тайл страницы сделки (Opportunity) у
+     проектов продаж CIB и кампаний. Пара во фронтенде — V2TasksTile
+     (pretrade/opportunities-app); у лида похожий PotentialTasksTile. Страница
+     вшивает меткой <ds-include> и заполняет:
+     LcTasksTile.render(host, { tasks }). -->
+<section id="tile-tasks" data-state="data" data-mode="view" class="tile lc-tasks-tile col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Задачи</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-tasks-tile__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-tasks-tile__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-tasks-tile__content">
+      <ul class="lc-tasks-tile__list" data-tt-list hidden></ul>
+      <p class="lc-tasks-tile__empty" data-tt-empty>В сделке нет задач</p>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Встречи и протоколы» — тайл счётчиков встреч страницы
+     сделки (Opportunity) и тайл «Встречи» лида (PotentialPage). Пары во
+     фронтенде: V2MeetingsProtocolsTile в pretrade/opportunities-app и в
+     pretrade/offersources-app. Страница вшивает меткой <ds-include> и
+     заполняет: LcMeetingsProtocolsTile.render(host, { meetings, variant }). -->
+<section data-variant="opportunity" id="tile-meetings" data-state="data" data-mode="view" class="tile lc-meetings-prot col-4 colw-6">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title" data-mp-title>Встречи и протоколы</h3></div>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="btn btn--outline btn--xs" data-mp-add-head><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      <a class="ibtn ibtn--neutral ibtn--m" href="#" data-inert aria-label="Все встречи" data-mp-arrow><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meetings-prot__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-meetings-prot__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-meetings-prot__content">
+      <p class="lc-meetings-prot__hint" data-mp-hint>Планируйте встречи с клиентами и формируйте протоколы встреч</p>
+      <div class="lc-meetings-prot__counters" data-mp-counters hidden>
+        <span class="lc-meetings-prot__counter"><span class="lc-meetings-prot__num" data-mp-planned>2</span>Запланированные</span>
+        <span class="lc-meetings-prot__counter"><span class="lc-meetings-prot__num" data-mp-completed>3</span>Завершенные</span>
+        <span class="lc-meetings-prot__counter lc-meetings-prot__counter--warn"><span class="lc-meetings-prot__num" data-mp-attention>1</span>Требуют внимания</span>
+      </div>
+      <div data-mp-add-body>
+        <button type="button" class="btn btn--outline btn--s"><i data-icon="add"></i><span class="btn__label">Добавить</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Локальный компонент «Протоколы встреч в рамках проекта продаж» — тайл
+     страницы сделки (Opportunity) у CIB и кампаний. Пара во фронтенде —
+     V2CallReportsTile (pretrade/opportunities-app) — допущение, вопрос В5
+     MS0014a. Страница вшивает меткой <ds-include> и заполняет:
+     LcCallReportsTile.render(host, { protocols }). -->
+<section id="tile-call-reports" data-state="data" data-mode="view" class="tile lc-call-reports col-4 colw-12">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Протоколы встреч в рамках проекта продаж</h3></div>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-call-reports__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить данные</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="sk-group lc-call-reports__loading" aria-busy="true"><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span></div>
+    <div class="lc-call-reports__content">
+      <p class="lc-call-reports__note" data-cr-note>Просмотр протоколов встреч доступен только команде сделки</p>
+      <p class="lc-call-reports__count">Протоколов встреч: <span class="lc-call-reports__num" data-cr-count>1</span></p>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="opportunity-product-template" data-off-grid="Шаблон продукта: ширину задаёт список карточек"><!-- Локальный компонент «Карточка продукта» — карточка в ряду «Продукты
+     сделки» страницы сделки (§4.3), странице лида (§4.6) и в основе страницы
+     продукта (§4.4). Вшивается меткой ds-include; страница заполняет скриптом
+     LcOpportunityProductTile.render(host, {product, dealId, source, tab}).
+     Статическое содержимое — демо-карточка (продукт P9001 сделки 166092).
+     Для списка страница вшивает этот фрагмент в template; html() клонирует его. -->
+<article class="tile tile--card lc-opp-product" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title lc-opp-product__name">Инвестиционный кредит</h3>
+        <span class="chip chip--xs lc-opp-product__group"><span class="chip__label">Кредиты</span></span>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <a class="ibtn ibtn--neutral ibtn--m" aria-label="Перейти к продукту" href="#"><i data-icon="arrow-right"></i></a>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="tile__grid" style="grid-template-columns:1fr 1fr;">
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Объем по продукту, млн ед.</span></span>
+        <div class="rof__row"><span class="rof__value">1 600</span></div>
+      </div>
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">ВМ, %</span></span>
+        <div class="rof__row"><span class="rof__value">14,0</span></div>
+      </div>
+    </div>
+  </div>
+</article></template></div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- Локальный компонент «Взять сделку в работу» — окно подтверждения
+     действия «Взять в работу» в реестрах-источниках и на странице сделки.
+     Пара во фронтенде: V2TakeOpportunityToWorkModal (состав полей окна
+     фронтенда неизвестен — открытый вопрос 2 ТЗ MS0014; здесь окно
+     подтверждения по Р7). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="take-opp-scrim" hidden>
+  <div class="modal modal--w3 lc-take-opp" role="dialog" aria-modal="true" aria-labelledby="take-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="take-opp-title">Взять сделку в работу</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-take-opp__text">Сделка <b data-take-opp-id>–</b> будет перенесена в Pipeline, вкладка «Сделки моего деска», и исчезнет из текущего реестра.</p>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-take-opp-confirm><span class="btn__label">Взять в работу</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+      <!-- Локальный компонент «Отказаться от сделки» — окно с полем причины
+     (Р7 ТЗ MS0014: у «Отказаться» — поле причины). Известна одна причина —
+     «Срок ожидания истек» (открытый вопрос 3 ТЗ): справочник из одного
+     значения. Пара во фронтенде: V2RefuseFromOpportunityModal (состав полей
+     неизвестен). Вшивается в конец страницы меткой ds-include. -->
+<div class="modal-scrim" id="refuse-opp-scrim" hidden>
+  <div class="modal modal--w4 lc-refuse-opp" role="dialog" aria-modal="true" aria-labelledby="refuse-opp-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="refuse-opp-title">Отказаться от сделки</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-refuse-opp__text">Сделка <b data-refuse-opp-id>–</b> будет перенесена во вкладку «В архиве» текущего реестра.</p>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-reason"><span class="ds-label__text">Причина отказа</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-reason" data-ddl="refuse-opp-reason-ddl" placeholder="Выберите причину" value="Срок ожидания истек">
+        </div>
+      </div>
+      <div id="refuse-opp-reason-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden>
+        <button type="button" class="ddl__item" role="option" aria-selected="true"><span class="ddl__item-body"><span class="ddl__item-label">Срок ожидания истек</span></span></button>
+      </div>
+      <div class="inp inp--m">
+        <label class="ds-label" for="refuse-opp-comment"><span class="ds-label__text">Комментарий</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="refuse-opp-comment" placeholder="Необязательно">
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-refuse-opp-confirm><span class="btn__label">Отказаться</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/V2OpportunityClientTile/V2OpportunityClientTile.js"></script>
+<script src="../widgets/tiles/V2GeneralInformationTile/V2GeneralInformationTile.js"></script>
+<script src="../widgets/tiles/V2StateInformationTile/V2StateInformationTile.js"></script>
+<script src="../widgets/tiles/V2DescriptionTile/V2DescriptionTile.js"></script>
+<script src="../widgets/tiles/V2TimingTile/V2TimingTile.js"></script>
+<script src="../widgets/tiles/V2CommentsTile/V2CommentsTile.js"></script>
+<script src="../widgets/tiles/V2FinancialMetricsTile/V2FinancialMetricsTile.js"></script>
+<script src="../widgets/tiles/V2OpportunityProductTile/V2OpportunityProductTile.js"></script>
+<script src="../widgets/tiles/V2ProductsTile/V2ProductsTile.js"></script>
+<script src="../widgets/tiles/V2DesksTile/V2DesksTile.js"></script>
+<script src="../widgets/tiles/V2OpportunityTeamMembersTile/V2OpportunityTeamMembersTile.js"></script>
+<script src="../widgets/tiles/V2OpportunityConnectionsTile/V2OpportunityConnectionsTile.js"></script>
+<script src="../widgets/tiles/V2TasksTile/V2TasksTile.js"></script>
+<script src="../widgets/tiles/V2MeetingsProtocolsTile/V2MeetingsProtocolsTile.js"></script>
+<script src="../widgets/tiles/V2CallReportsTile/V2CallReportsTile.js"></script>
+<script src="../widgets/modals/V2TakeOpportunityToWorkModal/V2TakeOpportunityToWorkModal.js"></script>
+<script src="../widgets/modals/V2RefuseFromOpportunityModal/V2RefuseFromOpportunityModal.js"></script>
+<script>
+/* Экранный скрипт: один экран на все источники (?source=&id=&tab=, ТЗ
+   MS0014 §4.3). Меню — data/nav-links.js; тайлы — виджеты, ряды и ширины —
+   в разметке; скрипт только наполняет. После «Взять в работу» и
+   «Отказаться» страница перерисовывается по хранилищу: сделка в Pipeline —
+   без действий источника (ревью MS0014, С8). */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, F = window.DICT_FMT;
+  var q = new URLSearchParams(location.search);
+  var deal = S.opportunity(q.get('id')) || S.opportunity(166092);
+  N.mount({ active: N.itemOf(deal.source) });
+
+  function el(id) { return document.getElementById(id); }
+  var ACT_SOURCES = { binding: 1, possible: 1, cib: 1 };
+
+  function paintHeader() {
+    var cfg = S.registryConfig(deal.source);
+    var tab = cfg ? cfg.tabs.filter(function (t) { return t.id === deal.tab; })[0] : null;
+    var sec = document.querySelectorAll('.crumbs__item a')[1];
+    if (sec) {
+      sec.textContent = (cfg ? cfg.title : 'Pipeline') + (tab ? ': ' + tab.label : '');
+      sec.setAttribute('href', N.href(deal.source, tab ? { tab: tab.page } : null));
+    }
+    var cur = document.querySelector('.crumbs__current');
+    if (cur) cur.textContent = 'Сделка ' + deal.id + '.' + deal.project;
+    document.title = deal.id + '. ' + deal.project + ' — IBP Redesign v2';
+    el('opp-title').textContent = deal.id + '. ' + deal.project;
+    el('opp-calendar').textContent = deal.calendarDays;
+    el('opp-version').textContent = deal.version + ' (' + F.date(deal.versionDate) + ')';
+    el('opp-actions').hidden = !(ACT_SOURCES[deal.source] && deal.statusCode === 'WORK');
+    el('act-take').setAttribute('data-opp', deal.id);
+    el('act-refuse').setAttribute('data-opp', deal.id);
+  }
+
+  function paint() {
+    var c = S.client(deal.clientId);
+    paintHeader();
+    window.LcOpportunityClientTile.render(el('tile-client'), { client: c });
+    window.LcGeneralInformationTile.render(el('tile-general'), { opportunity: deal, client: c });
+    window.LcStateInformationTile.render(el('tile-state'), { opportunity: deal });
+    window.LcDescriptionTile.render(el('tile-description'), { opportunity: deal });
+    window.LcTimingTile.render(el('tile-timing'), { opportunity: deal });
+    window.LcCommentsTile.render(el('tile-comments'), {
+      title: 'Комментарии к стадии',
+      comments: (deal.comments || []).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+    window.LcFinancialMetricsTile.render(el('tile-fin'), { opportunity: deal });
+    window.LcProductsTile.render(el('tile-products'), { products: deal.products, dealId: deal.id, source: deal.source, tab: deal.tab });
+    window.LcDesksTile.render(el('tile-desks'), {
+      desks: (deal.desks || []).map(function (d) { return { deskName: S.lbl.desk(d.deskId), roleLabel: d.roleLabel }; })
+    });
+    window.LcOpportunityTeamMembersTile.render(el('tile-team'), { analysts: deal.team.analystIds, director: deal.team.directorId, vp: deal.team.vpId, regionalDirector: deal.team.regionalDirectorId });
+    window.LcOpportunityConnectionsTile.render(el('tile-connections'), {
+      links: (deal.relatedDeals || []).map(function (r) {
+        return { label: r.label === 'Проект продаж' ? 'Проект продаж ' + deal.id + '.' + deal.project : r.label, href: N.href(r.page) };
+      })
+    });
+    el('tile-tasks').hidden = !deal.showTasksTile;
+    window.LcTasksTile.render(el('tile-tasks'), {
+      tasks: S.tasks('ALL').filter(function (t) { return t.linkedObject && t.linkedObject.page === 'opportunity' && String(t.linkedObject.number) === String(deal.id); })
+    });
+    window.LcMeetingsProtocolsTile.render(el('tile-meetings'), { meetings: deal.meetings });
+    el('tile-call-reports').hidden = !deal.protocolsProjectSales;
+    window.LcCallReportsTile.render(el('tile-call-reports'), { protocols: deal.protocolsProjectSales });
+    if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+  }
+
+  /* Р7: окна переносят сделку в хранилище; страница перерисовывается и
+     меняет адрес и пункт меню под новый раздел */
+  function after(o) {
+    deal = o;
+    history.replaceState(null, '', N.href('opportunity', { source: o.source, id: o.id, tab: o.tab }));
+    N.select(o.source);
+    paint();
+  }
+  window.LcTakeOpportunityToWorkModal.bind({ onDone: after });
+  window.LcRefuseFromOpportunityModal.bind({ onDone: after });
+
+  paint();
+  S.markViewed(deal.id);
+  if (window.DSTooltip) window.DSTooltip.bindAll(document);
+})();
+</script>
+</body>
+</html>

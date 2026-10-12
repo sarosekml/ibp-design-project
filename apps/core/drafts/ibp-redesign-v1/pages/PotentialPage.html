@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- Лид — страница фронтенда PotentialPage (pretrade/offersources-app, pages/PotentialPage).
+     Тайлы — общие виджеты сделки в варианте лида (MS0014a, правило 6).
+     Источник: открывается собранной PotentialPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лид — IBP Redesign v1</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* скрытые по данным тайлы и действия шапки: атрибут hidden сильнее
+     display компонентов ДС */
+  .tile-row > [hidden],
+  .phead__actions[hidden] { display: none; }
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+<link rel="stylesheet" href="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="LeadsPage.preview.html">Лиды: Лиды</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Лид</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="PotentialPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title" id="pot-title">L-44. ООО «Ромашка»</h1></div>
+          </div>
+          <div class="phead__subtitle">
+            <span class="phead__meta"><span class="phead__meta-ico"><i data-icon="calendar"></i></span><span id="pot-created">21.09.2026</span></span>
+          </div>
+        </div>
+        <div class="phead__actions" id="pot-actions">
+          <button type="button" class="btn btn--accent btn--m" data-modal="move-pipeline-scrim"><i data-icon="folder-arrow-forward"></i><span class="btn__label">Переместить в Pipeline</span></button>
+        </div>
+      </div>
+
+      <!-- #sec:content ── ряды тайлов (ТЗ MS0014 §4.6) -->
+      <div class="tile-group">
+        <!-- ряд 1: клиент · общая информация -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/OpportunityClientTile/OpportunityClientTile.html" id="tile-client" class="col-6 colw-12" state="data" mode="edit"></ds-include>
+          <ds-include src="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.html" id="tile-general" class="col-6 colw-12" state="data" mode="edit"></ds-include>
+        </div>
+        <!-- ряд 2: продукт -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/ProductsTile/ProductsTile.html" id="tile-products" class="col-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 3: комментарии · встречи · дески -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/CommentsTile/CommentsTile.html" id="tile-comments" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.html" id="tile-meetings" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/DesksTile/DesksTile.html" id="tile-desks" class="col-4 colw-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- ряд 4: команда потенциала · связи -->
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.html" id="tile-team" class="col-4 colw-6" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.html" id="tile-connections" class="col-4 colw-6" state="data" mode="view"></ds-include>
+        </div>
+      </div>
+
+      <div hidden data-off-grid="Шаблоны карточек: ширину задаёт место вставки"><template id="opportunity-product-template" data-off-grid="Шаблон продукта: ширину задаёт список карточек"><ds-include src="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.html" state="data" mode="view"></ds-include></template></div>
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- подтверждение «Переместить в Pipeline» (Р7) — разметка страницы на Modal ДС -->
+      <div class="modal-scrim" id="move-pipeline-scrim" hidden>
+        <div class="modal modal--w3" role="dialog" aria-modal="true" aria-labelledby="move-pipeline-title">
+          <header class="modal__head">
+            <h2 class="modal__title" id="move-pipeline-title">Переместить в Pipeline</h2>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+          </header>
+          <div class="modal__body"><p data-move-pipeline-text>По лиду будет создана сделка в Pipeline, вкладка «Сделки моего деска». Лид покинет реестр «Лиды».</p></div>
+          <footer class="modal__foot"><div class="modal__foot-right">
+            <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+            <button type="button" class="btn btn--accent btn--m" id="move-pipeline-confirm"><span class="btn__label">Переместить</span></button>
+          </div></footer>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/OpportunityClientTile/OpportunityClientTile.js"></script>
+<script src="../widgets/tiles/GeneralInformationTile/GeneralInformationTile.js"></script>
+<script src="../widgets/tiles/OpportunityProductTile/OpportunityProductTile.js"></script>
+<script src="../widgets/tiles/ProductsTile/ProductsTile.js"></script>
+<script src="../widgets/tiles/CommentsTile/CommentsTile.js"></script>
+<script src="../widgets/tiles/MeetingsProtocolsTile/MeetingsProtocolsTile.js"></script>
+<script src="../widgets/tiles/DesksTile/DesksTile.js"></script>
+<script src="../widgets/tiles/OpportunityTeamMembersTile/OpportunityTeamMembersTile.js"></script>
+<script src="../widgets/tiles/OpportunityConnectionsTile/OpportunityConnectionsTile.js"></script>
+<script>
+/* Экранный скрипт: лид по ?id= (по умолчанию L-44 — снимок ТЗ MS0014 §4.6).
+   Во фронтенде лид — «потенциал» (PotentialPage). Меню — data/nav-links.js;
+   тайлы — виджеты в варианте лида, ряды и ширины — в разметке.
+   «Переместить в Pipeline» — подтверждение, сделка в Pipeline, снекбар (Р7). */
+(function () {
+  'use strict';
+  var S = window.IBPR, N = window.IBPR_NAV, F = window.DICT_FMT;
+  var q = new URLSearchParams(location.search);
+  var lead = S.potential(q.get('id')) || S.potential('L-44');
+  /* раздел лида по виду: реестр в крошках и пункт меню */
+  var KIND = {
+    did: ['leads', 'Лиды: Лиды', { tab: 'LeadsPage' }],
+    cm: ['leads', 'Лиды: Лиды для КМ', { tab: 'LeadsForCmPage' }],
+    binding: ['bindingLeads', 'Обязательные лиды'],
+    possible: ['possibleLeads', 'Возможные лиды']
+  };
+  var kind = KIND[lead.kind] || KIND.did;
+  N.mount({ active: N.itemOf(kind[0]) });
+  var sec = document.querySelectorAll('.crumbs__item a')[1];
+  if (sec) { sec.textContent = kind[1]; sec.setAttribute('href', N.href(kind[0], kind[2])); }
+
+  function el(id) { return document.getElementById(id); }
+
+  function paint() {
+    var c = S.client(lead.clientId);
+    var name = lead.id + '. ' + lead.clientName;
+    var cur = document.querySelector('.crumbs__current');
+    if (cur) cur.textContent = name;
+    document.title = name + ' — IBP Redesign v1';
+    el('pot-title').textContent = name;
+    el('pot-created').textContent = F.date(lead.createdAt);
+    el('pot-actions').hidden = lead.statusCode !== 'WORK';
+    document.querySelector('[data-move-pipeline-text]').textContent = 'По лиду ' + lead.id + ' будет создана сделка в Pipeline, вкладка «Сделки моего деска». Лид покинет реестр «Лиды».';
+    window.LcOpportunityClientTile.render(el('tile-client'), { client: c, variant: 'potential' });
+    window.LcGeneralInformationTile.render(el('tile-general'), { potential: lead });
+    window.LcProductsTile.render(el('tile-products'), { products: lead.products, dealId: lead.createdDealId || lead.id, source: 'pipeline', tab: 'my-desk', variant: 'potential' });
+    window.LcCommentsTile.render(el('tile-comments'), {
+      title: 'Комментарии',
+      comments: (lead.comments || []).map(function (cm) {
+        var e = S.employee(cm.authorId);
+        return { authorName: e ? e.fullName : '–', time: cm.time, date: cm.date, text: cm.text };
+      })
+    });
+    window.LcMeetingsProtocolsTile.render(el('tile-meetings'), { meetings: { planned: 0, completed: 0, attention: 0 }, variant: 'potential' });
+    window.LcDesksTile.render(el('tile-desks'), {
+      desks: (lead.desks || []).map(function (d) { return { deskName: S.lbl.desk(d.deskId), roleLabel: d.roleLabel }; })
+    });
+    window.LcOpportunityTeamMembersTile.render(el('tile-team'), {
+      title: 'Команда потенциала',
+      note: 'Потенциал отображается у указанных ниже сотрудников',
+      analysts: lead.team.analystIds, director: lead.team.directorId, vp: lead.team.vpId, regionalDirector: lead.team.regionalDirectorId
+    });
+    var links = [];
+    if (lead.createdDealId) links.push({ label: 'Сделка ' + lead.createdDealId, href: N.href('opportunity', { source: 'pipeline', id: lead.createdDealId, tab: 'my-desk' }) });
+    window.LcOpportunityConnectionsTile.render(el('tile-connections'), { title: 'Связи', links: links, emptyText: 'Нет связанных сущностей' });
+    if (window.dsIcons) window.dsIcons.apply(document.querySelector('.screen__content'));
+  }
+
+  el('move-pipeline-confirm').addEventListener('click', function () {
+    var res = S.moveLeadToPipeline(lead.id);
+    window.DSModal.closeTop();
+    if (res && window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Лид перемещён в Pipeline', text: 'Сделка ' + res.deal.id + ' — Pipeline, «Сделки моего деска»' });
+    lead = S.potential(lead.id);
+    paint();
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

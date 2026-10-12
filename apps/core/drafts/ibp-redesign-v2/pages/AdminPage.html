@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!-- Администрирование — страница фронтенда AdminPage (core/host-app, pages/AdminPage).
+     Плитки — V2LinkNavigationTile; живая ссылка одна — «Статусы задач».
+     Источник: открывается собранной AdminPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Администрирование — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+</style>
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Администрирование</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="AdminPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row"><div class="phead__title-group"><h1 class="phead__title">Администрирование</h1></div></div>
+        </div>
+      </div>
+
+      <!-- #sec:content ── группы плиток со ссылками (V2LinkNavigationTile) ──── -->
+      <div class="tile-group">
+        <!-- группа «Бизнес-справочники»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Бизнес-справочники</span></div>
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.html" id="adm-dicts" class="col-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- группа «Бизнес-данные»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Бизнес-данные</span></div>
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.html" id="adm-employees" class="col-6 colw-12" state="data" mode="view"></ds-include>
+          <ds-include src="../widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.html" id="adm-clients" class="col-6 colw-12" state="data" mode="view"></ds-include>
+        </div>
+        <!-- группа «Настройки процессов»: подпись-разделитель (Divider с текстом) и ряд плиток -->
+        <div class="dvd-text dvd-text--left" role="separator"><span class="dvd-text__label">Настройки процессов</span></div>
+        <div class="tile-row">
+          <ds-include src="../widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.html" id="adm-settings" class="col-12" state="data" mode="view"></ds-include>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tiles/V2LinkNavigationTile/V2LinkNavigationTile.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; плитки — V2LinkNavigationTile.
+   Живая ссылка одна — «Статусы задач»; остальные вне объёма (Р5): вид как у
+   живых, клик гасится (ревью MS0014, З1). */
+(function () {
+  'use strict';
+  var N = window.IBPR_NAV;
+  N.mount({ active: 'admin' });
+  function links(list) { return list.map(function (l) { return typeof l === 'string' ? { label: l } : l; }); }
+  var tiles = {
+    'adm-dicts': { title: 'Справочники', subtitle: 'Бизнес-справочники, используемые в сделках', cols: 4, groups: [
+      { links: links(['Риск-сегмент']) },
+      { label: 'Сотрудники', links: links(['Департаменты', 'Макроотрасли', 'Дески']) },
+      { label: 'Задачи', links: links(['Объекты задач', 'Типы задач', 'Группы типов задач', { label: 'Статусы задач', href: N.href('taskStates') }, 'Категории задач']) },
+      { label: 'География', links: links(['Города', 'Регионы']) }
+    ] },
+    'adm-employees': { title: 'Сотрудники', subtitle: 'Список и детальная информация о сотрудниках', groups: [{ links: links(['Сотрудники', 'Дески', 'Департаменты']) }] },
+    'adm-clients': { title: 'Клиенты', subtitle: 'Список контрагентов из всех сделок', groups: [{ links: links(['Клиенты', 'Связанные физические лица']) }] },
+    'adm-settings': { title: 'Системные настройки', subtitle: 'Настройки и администрирование системы', cols: 3, groups: [
+      { links: links(['Группы настроек']) }, { links: links(['Микросервисы']) }, { links: links(['Настройки']) }
+    ] }
+  };
+  Object.keys(tiles).forEach(function (id) { window.LcLinkNavigationTile.render(document.getElementById(id), tiles[id]); });
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

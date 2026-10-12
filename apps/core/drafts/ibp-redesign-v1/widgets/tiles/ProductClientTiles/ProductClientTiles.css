@@ -1,0 +1,11 @@
+/* ProductClientTiles — стопка «Заёмщик» и «КНР»; показ своих блоков по
+   data-state и data-mode. */
+.lc-product-clients { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+.lc-product-clients [hidden] { display: none; }
+.lc-product-clients__error,
+.lc-product-clients__loading { display: none; }
+.lc-product-clients[data-state="error"] .lc-product-clients__error { display: flex; }
+.lc-product-clients[data-state="loading"] .lc-product-clients__loading { display: flex; }
+.lc-product-clients[data-state="loading"] .lc-product-clients__content,
+.lc-product-clients[data-state="error"] .lc-product-clients__content { display: none; }
+.lc-product-clients[data-mode="view"] [data-pc-delete] { display: none; }

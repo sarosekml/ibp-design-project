@@ -1,0 +1,6 @@
+/* StratDialogueCard — содержимое карточки и сетка карточек (по три, на
+   узком экране — по две) на токенах ДС. */
+.lc-strat-card { min-width: 0; }
+.lc-strat-card__content { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; }
+.lc-strat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); }
+@container screen (max-width: 1240px) { .lc-strat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- Встречи — страница фронтенда MeetingsProtocolsPage (ib/ma-opportunities-app; модуля встреч стенда в дереве нет).
+     Реестр слева, предпросмотр справа — Splitter ДС, как на снимке системы (Встречи.png).
+     Источник: открывается собранной MeetingsProtocolsPage.preview.html. -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Встречи — IBP Redesign v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
+  /* раскладка: сплиттер на всю оставшуюся высоту .screen--app; правая
+     панель прокручивается своей областью .ds-scroll */
+  .split-fill { flex: 1; min-height: 0; }
+  .split-fill > .splitpane__a > * { flex: 1; min-width: 0; }
+  .split-scroll { flex: 1; min-width: 0; }
+</style>
+<link rel="stylesheet" href="../widgets/tables/V2MeetingsProtocolsList/V2MeetingsProtocolsList.css">
+<link rel="stylesheet" href="../widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.css">
+<link rel="stylesheet" href="../widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <!-- ── Боковое меню: анатомия NavPanel; пункты, имя и роль пользователя
+       заполняет data/nav-links.js (IBPR_NAV.mount) из каталога роли ── -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню" data-nav-auto="no">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Развернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list" data-nav-list></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text"></span></span>
+        <span class="nav__user-text"><span class="nav__user-name"></span><span class="nav__user-role"></span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen screen--app">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="HomePage.html">Главная</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Встречи: Мои встречи</span>
+      </li>
+    </nav>
+
+    <main class="screen__content" data-screen-label="MeetingsProtocolsPage">
+      <!-- #sec:head ── Шапка страницы ────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group"><h1 class="phead__title">Встречи</h1></div>
+          </div>
+        </div>
+        <div class="phead__actions">
+          <!-- Р6: формы без источника — по клику ничего -->
+          <button type="button" class="btn btn--outline btn--m"><i data-icon="add"></i><span class="btn__label">Новый протокол</span></button>
+          <button type="button" class="btn btn--accent btn--m"><i data-icon="add"></i><span class="btn__label">Новая встреча</span></button>
+        </div>
+      </div>
+
+      <!-- вкладки — подфильтры одной таблицы (Р4) -->
+      <div class="tabs tabs--horiz" role="tablist" data-tabs id="reg-tabs">
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="MY"><span class="tab__label">Мои встречи</span></button>
+        <button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-tab-id="DESK"><span class="tab__label">Встречи моего деска</span></button>
+      </div>
+
+      <!-- #sec:content ── реестр и предпросмотр: Splitter ДС -->
+      <div class="splitpane split-fill" id="split" data-off-grid="Панели Splitter: ширину задаёт сплиттер">
+        <div class="splitpane__panel splitpane__a">
+          <!-- Локальный компонент «Реестр встреч» — таблица встреч с выбором строки.
+     Таблицу рисует общий рендер data/registry-table.js; значения и ячейки —
+     скрипт виджета (LcMeetingsProtocolsList.mount). Выбор строки открывает предпросмотр в правой
+     панели сплиттера страницы. Вшивается меткой <ds-include>. -->
+<section class="tile tile--headless lc-meetings-list" id="mt-list" data-state="data" data-mode="view">
+  <div class="alert alert--error alert--m lc-meetings-list__error" role="alert">
+    <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+    <div class="alert__body">
+      <p class="alert__text">Не удалось загрузить реестр</p>
+      <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div>
+    </div>
+  </div>
+  <div class="dtable dtable--fill">
+    <div class="dtable__toolbar">
+      <div class="dtable__toolbar-left">
+        <div class="tfilter" role="group" aria-label="Фильтр таблицы" data-rt-filter>
+          <button class="btn btn--outline btn--s tfilter__open" aria-haspopup="dialog" aria-expanded="false"><i data-icon="filter"></i><span class="btn__label">Фильтр</span></button>
+        </div>
+      </div>
+      <div class="dtable__toolbar-right">
+        <button type="button" class="btn btn--transparent btn--s" data-rt-report><i data-icon="download-report"></i><span class="btn__label">Краткий отчет</span></button>
+      </div>
+    </div>
+    <div class="dtable__body">
+      <div class="tbl" data-table data-sort-rows data-rt-tbl><div class="tbl__row tbl__row--head" style="grid-template-columns:8px minmax(8px,1fr)"><div class="th th--separator"></div><div class="th th--separator"></div></div></div>
+      <div class="dtable__empty" data-rt-empty hidden>
+        <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+        <p class="dtable__empty-title" data-rt-empty-title>Записей нет</p>
+      </div>
+    </div>
+    <div class="dtable__footer" data-rt-footer></div>
+  </div>
+</section>
+        </div>
+        <div class="spl" role="separator" aria-orientation="vertical" aria-valuemin="35" aria-valuemax="75" aria-valuenow="55" aria-label="Изменить ширину панелей" tabindex="0">
+          <span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="splitpane__panel splitpane__b">
+          <div class="ds-scroll split-scroll">
+            <!-- Локальный компонент «Предпросмотр встречи» — правая панель реестра
+     встреч (MeetingsProtocolsPage) и вкладки «Встречи» клиента. Пара во
+     фронтенде — V2MeetingsProtocolsDetails (ib/ma-opportunities-app), кнопки
+     «Завершить» и «Отменить» — MeetingUpdateActions. Состав — снимок системы
+     (Встречи.png) и Pixso «Встречи – Предпросмотр». Страница вшивает меткой
+     <ds-include> и заполняет: LcMeetingsProtocolsDetails.render(host, { meeting, onAction }).
+     Статическое содержимое — демо M-8904. -->
+<section class="tile lc-meeting-details" id="mt-details" data-state="data" data-mode="view">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" data-md-title>Встреча M-8904 от 15.10.2026</h3>
+        <span class="chip chip--s chip--rounded chip--info" data-md-status><span class="chip__label">Запланирована</span></span>
+      </div>
+      <p class="tile__subtitle" data-md-line>15.10.2026, 10:00–11:30 · Офис клиента, переговорная 2 · UTC+3</p>
+    </div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать встречу" data-md-edit><i data-icon="edit"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Закрыть предпросмотр" data-md-close><i data-icon="close"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="alert alert--error alert--m lc-meeting-details__error" role="alert">
+      <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+      <div class="alert__body"><p class="alert__text">Не удалось загрузить встречу</p>
+        <div class="alert__buttons"><button type="button" class="btn btn--outline btn--xs btn--error"><span class="btn__label">Повторить</span></button></div></div>
+    </div>
+    <div class="lc-meeting-details__loading" aria-busy="true">
+      <span class="sk-line"></span><span class="sk-line"></span><span class="sk-line"></span>
+    </div>
+
+    <div class="lc-meeting-details__content">
+      <!-- действия: «Создать лид» (система, Р6 — по клику ничего), «Завершить» /
+           «Отменить» у запланированной встречи (MeetingUpdateActions, Р7) -->
+      <div class="lc-meeting-details__acts">
+        <button type="button" class="btn btn--accent btn--s" data-md-create-lead><i data-icon="add"></i><span class="btn__label">Создать лид</span></button>
+        <span class="lc-meeting-details__update" data-md-update>
+          <button type="button" class="btn btn--outline btn--s" data-md-finish><i data-icon="check"></i><span class="btn__label">Завершить</span></button>
+          <button type="button" class="btn btn--outline btn--s" data-md-cancel><i data-icon="close"></i><span class="btn__label">Отменить</span></button>
+        </span>
+      </div>
+
+      <section class="lc-meeting-details__sec">
+        <h4 class="lc-meeting-details__sec-title">Источник встречи</h4>
+        <p class="lc-meeting-details__source">
+          <span class="lc-meeting-details__source-type" data-md-source-type>Потенциал</span>
+          <a class="link link--accent link--m" href="#" data-md-source-link><span data-md-source-label>L-118846</span><i data-icon="link-external"></i></a>
+        </p>
+      </section>
+
+      <div class="lc-meeting-details__cols">
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Общая информация</h4>
+          <div class="entity-list" data-md-info></div>
+        </section>
+        <section class="lc-meeting-details__sec">
+          <h4 class="lc-meeting-details__sec-title">Участники</h4>
+          <p class="lc-meeting-details__group">Со стороны клиента</p>
+          <div class="entity-list" data-md-people-client></div>
+          <p class="lc-meeting-details__group">Со стороны ДИД</p>
+          <div class="entity-list" data-md-people-did></div>
+        </section>
+      </div>
+
+      <div class="lc-meeting-details__checks">
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="stratDialog"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Проведен страт. диалог</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withKm"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием КМ</span></span></label>
+        <label class="cb"><input type="checkbox" class="cb__input" disabled data-md-flag="withSponsor"><span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span><span class="cb__content"><span class="cb__label">Встреча с участием спонсора</span></span></label>
+      </div>
+
+      <section class="lc-meeting-details__sec" data-md-agenda-sec>
+        <h4 class="lc-meeting-details__sec-title">Повестка встречи</h4>
+        <div class="lc-meeting-details__agenda" data-md-agenda></div>
+      </section>
+
+      <section class="lc-meeting-details__sec" data-md-links-sec>
+        <h4 class="lc-meeting-details__sec-title">Связи</h4>
+        <div class="lc-meeting-details__links" data-md-links></div>
+      </section>
+    </div>
+  </div>
+</section>
+          </div>
+        </div>
+      </div>
+
+      <!-- #sec:modals ── окна: сборщик выносит в конец страницы -->
+      <!-- подтверждение «Завершить» / «Отменить» встречу (Р7) — разметка страницы на Modal ДС -->
+      <div class="modal-scrim" id="meeting-confirm-scrim" hidden>
+        <div class="modal modal--w3" role="alertdialog" aria-modal="true" aria-labelledby="meeting-confirm-title">
+          <header class="modal__head">
+            <h2 class="modal__title" id="meeting-confirm-title">Завершить встречу</h2>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+          </header>
+          <div class="modal__body"><p data-meeting-confirm-text>Встреча получит статус «Завершена».</p></div>
+          <footer class="modal__foot"><div class="modal__foot-right">
+            <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+            <button type="button" class="btn btn--accent btn--m" data-meeting-confirm><span class="btn__label">Завершить</span></button>
+          </div></footer>
+        </div>
+      </div>
+      <!-- Локальный компонент «Смена статуса задачи» — окно действий «Исполнить»,
+     «Переназначить», «Отменить» реестра задач (§4.10, Р7). Переназначение —
+     с полем сотрудника (DropdownList); исполнение/отмена — подтверждение.
+     Вшивается в конец страницы меткой ds-include; страницу связывает скрипт:
+     LcChangeTaskStatusModal.open({ task, action, onConfirm }); окно само меняет
+     задачу в хранилище и открывается слоем Modal ДС. -->
+<div class="modal-scrim" id="task-change-scrim" hidden>
+  <div class="modal modal--w4 lc-task-change" role="dialog" aria-modal="true" aria-labelledby="task-change-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="task-change-title">Смена статуса задачи</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" data-modal-close aria-label="Закрыть"><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <p class="lc-task-change__text">Задача <b data-tc-number>–</b> — <span data-tc-name>–</span>.</p>
+      <div class="inp inp--m" data-tc-employee hidden>
+        <label class="ds-label" for="tc-employee"><span class="ds-label__text">Исполнитель</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="tc-employee" data-ddl="tc-employee-ddl" placeholder="Выберите сотрудника">
+        </div>
+      </div>
+      <!-- список сотрудников заполняет скрипт окна из employees.js -->
+      <div id="tc-employee-ddl" class="ddl ddl--floating ddl--scroll" role="listbox" hidden></div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отмена</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-tc-confirm><span class="btn__label">Подтвердить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/dictionaries.js"></script>
+<script src="../data/employees.js"></script>
+<script src="../data/clients.js"></script>
+<script src="../data/opportunities.js"></script>
+<script src="../data/potentials.js"></script>
+<script src="../data/meetings.js"></script>
+<script src="../data/tasks.js"></script>
+<script src="../data/store.js"></script>
+<script src="../data/nav-links.js"></script>
+<script src="../data/lead-stages.js"></script>
+<script src="../data/weekly-picks.js"></script>
+<script src="../data/leads-store.js"></script>
+<script src="../data/leads-ui.js"></script>
+<script src="../data/registry-table.js"></script>
+<script src="../widgets/tables/V2MeetingsProtocolsList/V2MeetingsProtocolsList.js"></script>
+<script src="../widgets/tiles/V2MeetingsProtocolsDetails/V2MeetingsProtocolsDetails.js"></script>
+<script src="../widgets/modals/V2ChangeTaskStatusModal/V2ChangeTaskStatusModal.js"></script>
+<script>
+/* Экранный скрипт: меню — data/nav-links.js; слева — V2MeetingsProtocolsList,
+   справа — V2MeetingsProtocolsDetails выбранной встречи (Splitter ДС). */
+(function () {
+  'use strict';
+  window.IBPR_NAV.mount({ active: 'meetings' });
+  var S = window.IBPR;
+  /* правая панель: выбор строки показывает, крестик прячет; при скрытой
+     панели реестр занимает всю ширину (ширину панелей ведёт Splitter ДС) */
+  var split = document.getElementById('split');
+  var spl = split.querySelector('.spl');
+  var paneA = split.querySelector('.splitpane__a');
+  var paneB = split.querySelector('.splitpane__b');
+  var pct = 55;
+  if (window.DSSplitter) window.DSSplitter.wire(spl, { min: 35, max: 75, initial: pct, onChange: function (v) { pct = v; } });
+  function showPane(on) {
+    paneB.hidden = !on;
+    spl.hidden = !on;
+    paneA.style.flex = on ? '0 0 ' + pct + '%' : '1 1 auto';
+  }
+  var details = document.getElementById('mt-details');
+  var selected = null;
+  var list = window.LcMeetingsProtocolsList.mount(document.getElementById('mt-list'), {
+    scope: 'MY',
+    onSelect: function (m) { selected = m.id; show(m); }
+  });
+
+  var pending = null;
+  function show(m) {
+    showPane(true);
+    window.LcMeetingsProtocolsDetails.render(details, { meeting: m, onAction: onAction });
+  }
+  function onAction(action, m) {
+    if (action === 'close') { showPane(false); list.select(null); return; }
+    if (action === 'doTask') {
+      window.LcChangeTaskStatusModal.open({ task: m, action: 'done', onConfirm: function () { show(S.meeting(selected)); } });
+      return;
+    }
+    pending = { action: action, id: m.id };
+    var finish = action === 'finish';
+    document.getElementById('meeting-confirm-title').textContent = finish ? 'Завершить встречу' : 'Отменить встречу';
+    document.querySelector('[data-meeting-confirm-text]').textContent = 'Встреча ' + m.id + ' получит статус «' + (finish ? 'Завершена' : 'Отменена') + '».';
+    document.querySelector('[data-meeting-confirm] .btn__label').textContent = finish ? 'Завершить' : 'Отменить встречу';
+    window.DSModal.open(document.getElementById('meeting-confirm-scrim'));
+  }
+  document.querySelector('[data-meeting-confirm]').addEventListener('click', function () {
+    if (!pending) return;
+    if (pending.action === 'finish') S.finishMeeting(pending.id); else S.cancelMeeting(pending.id);
+    window.DSModal.closeTop();
+    if (window.DSSnack) window.DSSnack.show({ tone: 'success', title: 'Встреча ' + pending.id + (pending.action === 'finish' ? ' завершена' : ' отменена') });
+    list.refresh();
+    show(S.meeting(pending.id));
+  });
+
+  window.IBPR_TABLE.tabs(document.getElementById('reg-tabs'), list, [{ id: 'MY', label: 'Мои встречи' }, { id: 'DESK', label: 'Встречи моего деска' }]);
+  /* Явный адрес (?id=M-…) выбирает встречу; без выбора панель скрыта. */
+  var want = new URLSearchParams(location.search).get('id');
+  var first = want ? S.meeting(want) : null;
+  if (first) { selected = first.id; list.select(first.id); show(first); } else showPane(false);
+  if (window.dsIcons) window.dsIcons.apply(document);
+})();
+</script>
+</body>
+</html>

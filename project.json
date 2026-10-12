@@ -35,7 +35,7 @@
     "kits": [
       { "id": "local-kit-post", "section": "postrade", "title": "Локальные компоненты Post", "desc": "Тайлы, окна и поповеры модулей Post: как работают, из чего собраны, зачем", "icon": "layout-grid-01" },
       { "id": "local-kit-pre", "section": "pretrade", "title": "Локальные компоненты Pre", "desc": "Тайлы, окна и поповеры модулей Pre: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
-      { "id": "local-kit-core", "section": "core", "title": "Локальные компоненты Core", "desc": "Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
+      { "id": "local-kit-core", "section": "core", "title": "Локальные компоненты Core", "desc": "Тайлы, окна и поповеры модулей Core: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Сделка", "Инструменты", "Другое"] },
       { "id": "local-kit-ib", "section": "ib", "title": "Локальные компоненты IB", "desc": "Тайлы, окна и поповеры модулей IB: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] },
       { "id": "local-kit-common", "section": "common", "title": "Локальные компоненты Общие", "desc": "Тайлы, окна и поповеры, общие для разделов: как работают, из чего собраны, зачем", "icon": "layout-grid-01", "categories": ["Общие", "Другое"] }
     ]
