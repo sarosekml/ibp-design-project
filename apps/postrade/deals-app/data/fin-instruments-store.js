@@ -72,7 +72,7 @@
   var FIELDS_BY_TYPE = {
     LOAN: ['name', 'counterpartyId', 'fvAcCode', 'reserveCounterpartyId', 'allocationCounterpartyId', 'isDkkk'],
     SHARES: ['name', 'counterpartyId', 'fvAcCode', 'targetIrr', 'reserveCounterpartyId', 'allocationCounterpartyId',
-      'isPE', 'isDkkk', 'hasLinkedUnconditionalOption'],
+      'isTypeC', 'isDkkk', 'hasLinkedUnconditionalOption'],
     ADDITIONAL_YIELD: ['name', 'counterpartyId', 'fvAcCode', 'reserveCounterpartyId', 'allocationCounterpartyId',
       'linkedContractNumber', 'ifrsOptionNodeId', 'isDkkk'],
     REPO: ['name', 'counterpartyId', 'fvAcCode', 'reserveCounterpartyId', 'allocationCounterpartyId',
@@ -91,11 +91,11 @@
 
   var DEFAULTS = {
     counterpartyId: null, reserveCounterpartyId: null, allocationCounterpartyId: null,
-    fvAcCode: null, targetIrr: null, isDkkk: false, isPE: false,
+    fvAcCode: null, targetIrr: null, isDkkk: false, isTypeC: false,
     hasLinkedUnconditionalOption: false, linkedContractNumber: null, ifrsOptionNodeId: null,
     rwaCodes: [], errorText: null
   };
-  var FLAGS = { isDkkk: 1, isPE: 1, hasLinkedUnconditionalOption: 1 };
+  var FLAGS = { isDkkk: 1, isTypeC: 1, hasLinkedUnconditionalOption: 1 };
 
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
   function has(v) { return v !== null && v !== undefined && v !== ''; }
@@ -222,7 +222,7 @@
    * @property {string|null} fvAcCode · fvAcLabel
    * @property {number|null} targetIrr
    * @property {{id, name, risk}|null} counterparty · reserveCounterparty · allocationCounterparty
-   * @property {boolean} isDkkk · isPE · hasLinkedUnconditionalOption
+   * @property {boolean} isDkkk · isTypeC · hasLinkedUnconditionalOption
    * @property {string|null} linkedContractNumber · ifrsOptionNodeId
    * @property {string[]} rwaCodes
    * @property {string|null} errorText

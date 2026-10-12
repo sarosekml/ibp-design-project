@@ -52,7 +52,7 @@
  * @property {number} lastCounterpartyPaymentAmount последний платёж от контрагента
  * @property {string} lastCounterpartyPaymentCurrencyCode валюта платежа
  * @property {string} lastCounterpartyPaymentDate дата платежа (ISO)
- * @property {string} rsbuHardsState              состояние карточки «Харды в РСБУ»: locked | none | filled
+ * @property {string} rsbuInterestAdjustmentsState              состояние карточки «Корректировки процентов РСБУ»: locked | none | filled
  */
 
 /** @type {TrancheRsDto} */
@@ -89,33 +89,35 @@ window.MOCK_TRANCHE = {
   lastCounterpartyPaymentAmount: 1000000.00,
   lastCounterpartyPaymentCurrencyCode: 'RUB',
   lastCounterpartyPaymentDate: '2023-02-22',
-  rsbuHardsState: 'none'
+  rsbuInterestAdjustmentsState: 'none'
 };
 
 /**
- * Корректировка платежей РСБУ: перенос суммы с одной даты на другую.
- * Source: invented (09.10.2026) — заменить на DTO, когда он появится. Бизнес-смысл уточняется.
- * @typedef {Object} RsbuAdjustmentRsDto
- * @property {string} sourceDate         дата, с которой переносим (ISO)
- * @property {string} targetDate         дата, на которую переносим (ISO)
- * @property {number} adjustmentAmount   сумма добивки; может быть отрицательной
+ * Корректировка процентов РСБУ: сумма, которая прибавляется/вычитается начиная с начальной даты.
+ * Source: invented (09.10.2026) — заменить на DTO, когда он появится.
+ * @typedef {Object} RsbuInterestAdjustmentRsDto
+ * @property {string} startDate          начальная дата корректировки — одна из дат процентных платежей (ISO)
+ * @property {string} endDate            конечная дата корректировки — любая дата, вводится руками (ISO)
+ * @property {number} adjustmentAmount   сумма корректировки в валюте инструмента; может быть отрицательной
  * @property {string} comment            комментарий
  */
 
 /**
- * Харды в РСБУ транша: корректировки платежей.
+ * Корректировки процентов РСБУ транша.
  * Source: invented (09.10.2026).
- * @typedef {Object} RsbuAdjustmentsRsDto
- * @property {string} currencyCode                   валюта сумм, ISO 4217
- * @property {RsbuAdjustmentRsDto[]} adjustments     внесённые корректировки (демо для состояния filled)
+ * @typedef {Object} RsbuInterestAdjustmentsRsDto
+ * @property {string} currencyCode                          валюта сумм, ISO 4217
+ * @property {string[]} startDateOptions                    даты для списка «Начальная дата» — даты процентных платежей (ISO); в демо — рыба
+ * @property {RsbuInterestAdjustmentRsDto[]} adjustments    внесённые корректировки (демо для состояния filled)
  */
 
-/** @type {RsbuAdjustmentsRsDto} */
+/** @type {RsbuInterestAdjustmentsRsDto} */
 window.MOCK_RSBU_ADJUSTMENTS = {
   currencyCode: 'RUB',
+  startDateOptions: ['2025-01-31', '2025-02-28', '2025-03-31', '2025-04-30', '2025-05-31', '2025-06-30', '2025-07-31', '2025-08-31', '2025-09-30'],
   adjustments: [
-    { sourceDate: '2025-03-31', targetDate: '2025-04-10', adjustmentAmount: 150000.00,  comment: 'Перенос платежа по просьбе контрагента' },
-    { sourceDate: '2025-06-30', targetDate: '2025-06-27', adjustmentAmount: -42500.50,  comment: 'Корректировка после сверки с бухгалтерией' },
-    { sourceDate: '2025-09-30', targetDate: '2025-10-03', adjustmentAmount: 98000.00,   comment: '' }
+    { startDate: '2025-03-31', endDate: '2025-04-10', adjustmentAmount: 150000.00, comment: 'Корректировка по просьбе контрагента' },
+    { startDate: '2025-06-30', endDate: '2025-07-15', adjustmentAmount: -42500.50, comment: 'Корректировка после сверки с бухгалтерией' },
+    { startDate: '2025-09-30', endDate: '2025-10-03', adjustmentAmount: 98000.00,  comment: '' }
   ]
 };

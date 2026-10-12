@@ -36,13 +36,21 @@
      открывается двойным кликом (`file://`, без `fetch`). CSS и JS виджета
      подключены ссылками в `apps/` — их правка видна сразу;
    - необязательный `<Имя>.demo.js` рядом со страницей (пишется руками)
-     подключается последним: он добавляет демо данные из `fixtures.json`.
+     подключается последним: он добавляет демо данные из `fixtures.json`;
+   - статусные модели (задача RE0014): `data/*-status-model.js` приложения с
+     `meta.name`, `meta.category`, `meta.purpose` — запись реестра типа
+     `model` и страница `<имя>.doc.html`: схему рисует `kit-model.js`
+     витрины по самой модели (подключена ссылкой), описание (`meta.about`),
+     связи (`meta.related`, окна из `transitions[].modal`), таблицы статусов
+     и переходов с условиями, несостыковки (`analyse` из status-model.mjs) и
+     открытые вопросы собираются здесь.
 
    Коды КТ — «кит»:
      КТ1 манифест не объявляет витрину (`localKit`) или без загрузчика ДС
          (`boot`, каталог ДС) — собирать нечего и некуда;
      КТ2 паспорт не годится: нет `name`, `category`, `purpose`, категория не из
-         `localKit.categories`, у папки виджета нет паспорта;
+         `localKit.categories`, у папки виджета нет паспорта; у статусной
+         модели — то же о `meta`, или модель не читается;
      КТ3 витрина разошлась с виджетами — паспорт, фрагмент, CSS/JS или
          страница-хозяин правлены, а пересборки не было;
      КТ4 у компонента нет фрагмента `<Имя>.html`;
@@ -82,6 +90,7 @@ const oneCss = (name) => {
 // стили оболочки страницы витрины: сплиттер, переключатель, вкладки, docs-split
 const KIT_PAGE_CSS = [oneCss('Splitter'), oneCss('SegmentControl'), oneCss('Tab'), DS_HERE.at.docsSplitCss, DS_HERE.at.docsCss];
 import { assemble, includesOf } from './assemble.mjs';
+import { loadModel, loadRecords, analyse, KIND_LABEL, TRIGGER_LABEL, VIA_LABEL, kindKey, triggerKey } from './status-model.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
@@ -112,7 +121,7 @@ const filesOf = (abs) => {
 
 const TYPE_LABEL = {
   tile: 'тайл', table: 'таблица', modal: 'модальное окно', popover: 'поповер',
-  'context-menu': 'контекстное меню', part: 'подчасть',
+  'context-menu': 'контекстное меню', part: 'подчасть', model: 'статусная модель',
 };
 const TYPE_BY_WORD = {
   tile: 'tile', 'тайл': 'tile', table: 'table', 'таблица': 'table', modal: 'modal', 'модальное окно': 'modal',
@@ -131,12 +140,27 @@ export function kitConfig(P) {
   const k = P.manifest && P.manifest.localKit;
   if (!k || typeof k !== 'object') return null;
   const dir = (typeof k.dir === 'string' && k.dir.trim()) || 'kit';
+  const categories = Array.isArray(k.categories) ? k.categories.filter((c) => typeof c === 'string') : [];
+  /* kits — витрины по разделам (`localKit.kits`, 09.10.2026): у каждой свой реестр и
+     обзор в `<dir>/<раздел>/`, оболочка общая. Без kits — одна витрина на всё. */
+  const kits = (Array.isArray(k.kits) ? k.kits : []).filter((x) => x && typeof x.section === 'string').map((x) => ({
+    id: x.id, section: x.section, title: x.title, desc: x.desc, icon: x.icon,
+    categories: Array.isArray(x.categories) ? x.categories.filter((c) => typeof c === 'string') : categories,
+    registry: dir + '/' + x.section + '/kit-data.js', index: dir + '/' + x.section + '/index.html',
+  }));
   return {
     dir,
     registry: (typeof k.registry === 'string' && k.registry.trim()) || dir + '/kit-data.js',
     id: k.id, title: k.title, desc: k.desc, icon: k.icon,
-    categories: Array.isArray(k.categories) ? k.categories.filter((c) => typeof c === 'string') : [],
+    categories, kits,
   };
+}
+
+/** Витрина раздела компонента (по первому сегменту module) или null — одна общая. */
+function kitOf(cfg, c) {
+  if (!cfg.kits.length) return null;
+  const section = c.module.split('/')[0];
+  return cfg.kits.find((k) => k.section === section) || null;
 }
 
 /* ---------------- паспорт ---------------- */
@@ -505,10 +529,47 @@ export function collect(P) {
     });
     const miss = ['name', 'category', 'purpose'].filter((k) => !c[k]);
     if (miss.length) defects.push('КТ2 ' + P.rel(mdAbs) + ' — нет полей паспорта: ' + miss.join(', '));
-    else if (cfg.categories.length && !cfg.categories.includes(c.category)) {
-      defects.push('КТ2 ' + P.rel(mdAbs) + ' — категории «' + c.category + '» нет в project.json → localKit.categories (' + cfg.categories.join(', ') + ')');
+    else {
+      const kit = kitOf(cfg, c);
+      const cats = kit ? kit.categories : cfg.categories;
+      if (cfg.kits.length && !kit) {
+        defects.push('КТ2 ' + P.rel(mdAbs) + ' — у раздела «' + c.module.split('/')[0] + '» нет витрины в project.json → localKit.kits');
+      } else if (cats.length && !cats.includes(c.category)) {
+        defects.push('КТ2 ' + P.rel(mdAbs) + ' — категории «' + c.category + '» нет в project.json → localKit' + (kit ? '.kits[' + kit.section + ']' : '') + '.categories (' + cats.join(', ') + ')');
+      }
     }
     if (!c.htmlAbs) defects.push('КТ4 ' + P.rel(c.dir) + '/ — нет фрагмента ' + c.id + '.html');
+  }
+
+  /* Статусные модели (RE0014): data/*-status-model.js приложения. Запись витрины
+     со своим типом; в byId — чтобы паспорт виджета мог сослаться на модель
+     (dependsOn: data/deal-status-model.js) и получить ссылку на её страницу. */
+  const models = [];
+  for (const app of apps) {
+    const D = path.join(app.abs, P.appShape.data || 'data');
+    for (const f of filesOf(D).filter((n) => /-status-model\.js$/.test(n))) {
+      const modelAbs = path.join(D, f);
+      const id = f.replace(/\.js$/, '');
+      let loaded;
+      try { loaded = loadModel(modelAbs); } catch (e) { defects.push('КТ2 ' + P.rel(modelAbs) + ' — модель не читается: ' + e.message); continue; }
+      const meta = loaded.model.meta || {};
+      const m = {
+        id, dir: D, app, modelAbs, global: loaded.name, model: loaded.model, fm: {},
+        name: meta.name || '', category: meta.category || '', purpose: meta.purpose || '',
+        type: 'model', module: app.dir, opens: [], uses: [], owner: null, stub: false, hosts: [],
+      };
+      const miss = ['name', 'category', 'purpose'].filter((k) => !m[k]);
+      if (miss.length) defects.push('КТ2 ' + P.rel(modelAbs) + ' — нет полей meta статусной модели: ' + miss.join(', '));
+      else {
+        const kit = kitOf(cfg, m);
+        const cats = kit ? kit.categories : cfg.categories;
+        if (cfg.kits.length && !kit) defects.push('КТ2 ' + P.rel(modelAbs) + ' — у раздела «' + m.module.split('/')[0] + '» нет витрины в project.json → localKit.kits');
+        else if (cats.length && !cats.includes(m.category)) defects.push('КТ2 ' + P.rel(modelAbs) + ' — категории «' + m.category + '» нет в project.json → localKit' + (kit ? '.kits[' + kit.section + ']' : '') + '.categories (' + cats.join(', ') + ')');
+      }
+      if (byId.has(id)) defects.push('КТ6 ' + id + ' — два компонента с одним id: ' + P.rel(byId.get(id).dir) + '/ и ' + P.rel(modelAbs));
+      else byId.set(id, m);
+      models.push(m);
+    }
   }
 
   /* Канон разделов — из шаблона ДС; без него разделы паспорта не проверить.
@@ -571,7 +632,8 @@ export function collect(P) {
     c.stub = !!(c.htmlAbs && /class="[^"]*__stub\b/.test(read(c.htmlAbs)));
   }
   comps.sort((a, b) => (a.module < b.module ? -1 : a.module > b.module ? 1 : 0) || a.id.localeCompare(b.id, 'en'));
-  return { cfg, comps, byId, hosts, defects, warnings, canon: canonNames };
+  models.sort((a, b) => (a.module < b.module ? -1 : a.module > b.module ? 1 : 0) || a.id.localeCompare(b.id, 'en'));
+  return { cfg, comps, models, byId, hosts, defects, warnings, canon: canonNames };
 }
 
 /* ---------------- страница компонента ---------------- */
@@ -596,6 +658,7 @@ const joinLinks = (items) => items.join(' · ');
 
 function docPage(P, cfg, c, ctx) {
   const kitAbs = path.join(P.root, cfg.dir);
+  const kit = kitOf(cfg, c);
   const dir = path.join(kitAbs, c.module);
   const R = (abs) => rel(dir, abs);
   const H = (abs) => href(dir, abs);
@@ -726,7 +789,7 @@ function docPage(P, cfg, c, ctx) {
       + (c.fm.version ? '<span>Версия: <b>' + esc(c.fm.version) + '</b></span>' : '')
       + (c.fm.updated ? '<span>Обновлено: <b>' + esc(c.fm.updated) + '</b></span>' : '')
       + '<span>Категория: <b>' + esc(c.category) + '</b></span></div>',
-    '  <p class="eyebrow"><a class="inl" href="' + esc(R(path.join(kitAbs, 'index.html'))) + '">' + esc(cfg.title) + '</a> · ' + esc(c.module) + '</p>',
+    '  <p class="eyebrow"><a class="inl" href="' + esc(R(path.join(P.root, kit ? kit.index : cfg.dir + '/index.html'))) + '">' + esc(kit ? kit.title : cfg.title) + '</a> · ' + esc(c.module) + '</p>',
     '  <h1>' + esc(c.name) + '</h1>',
     '  <p class="lead">' + esc(c.purpose) + '</p>',
     '</header>',
@@ -842,7 +905,7 @@ function docPage(P, cfg, c, ctx) {
     '',
     ...scripts.pre.map(script),
     '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
-    '<script src="' + esc(R(path.join(P.root, cfg.registry))) + '"></script>',
+    '<script src="' + esc(R(path.join(P.root, kit ? kit.registry : cfg.registry))) + '"></script>',
     '<script src="' + esc(R(path.join(kitAbs, 'kit-nav.js'))) + '"></script>',
     '<script src="' + esc(R(path.join(kitAbs, 'kit-docpage.js'))) + '"></script>',
     ...scripts.post.map(script),
@@ -867,12 +930,268 @@ function docPage(P, cfg, c, ctx) {
     ].join('\n'));
 }
 
+/* ---------------- страница статусной модели (RE0014) ---------------- */
+
+/* Каркас — как у страницы компонента (NavPanel, docs-split, сплиттер); в
+   верхней панели вместо демо — стенд схемы, её рисует kit-model.js витрины по
+   самой модели (подключена ссылкой: правка модели видна на схеме сразу).
+   Остальное собирается здесь из модели: описание (meta.about), связи
+   (meta.related и окна переходов), таблицы статусов и переходов с условиями,
+   степперы, несостыковки (analyse из status-model.mjs — те же, что в
+   md-генерате) и открытые вопросы. */
+const plainCode = (id, text) => '<script type="text/plain" id="' + id + '">\n' + text.replace(/<\/script/gi, '<\\/script').replace(/\s+$/, '') + '\n</script>';
+/* CSS стенда схемы — раздел kit.css витрины от его заголовка до следующего. */
+function modelCss(kitAbs) {
+  const css = existsSync(path.join(kitAbs, 'kit.css')) ? read(path.join(kitAbs, 'kit.css')) : '';
+  const at = css.indexOf('/* ---------- страница статусной модели');
+  if (at < 0) return '/* Стили стенда схемы — в kit.css витрины. */';
+  const next = css.indexOf('\n/* ---------- ', at + 10);
+  return css.slice(at, next < 0 ? css.length : next);
+}
+
+function modelPage(P, cfg, m, ctx) {
+  const kitAbs = path.join(P.root, cfg.dir);
+  const kit = kitOf(cfg, m);
+  const dir = path.join(kitAbs, m.module);
+  const R = (abs) => rel(dir, abs);
+  const H = (abs) => href(dir, abs);
+  const dsAbs = path.join(P.root, P.ds);
+  const docOf = (o) => path.join(kitAbs, o.module, o.id + '.doc.html');
+  const model = m.model;
+  const meta = model.meta || {};
+  const hub = R(path.join(P.root, P.hubPage || 'index.html'));
+
+  const records = loadRecords(m.modelAbs, meta);
+  const { issues, counts, laneById, stById } = analyse(model, records);
+  const trById = new Map(model.transitions.map((t) => [t.id, t]));
+  const laneLabel = (id) => (laneById.get(id) || { label: id }).label;
+  const stLabel = (id) => { const s = stById.get(id); return s ? laneLabel(s.lane) + ' «' + s.label + '»' : id; };
+  const trLabel = (id) => {
+    const t = trById.get(id);
+    if (!t) return id;
+    const a = stById.get(t.from), b = stById.get(t.to);
+    const lane = a ? laneLabel(a.lane) : '';
+    return lane + ': ' + (t.action ? '«' + t.action + '»' : (a ? a.label : t.from) + ' → ' + (b ? b.label : t.to));
+  };
+  const refLabel = (id) => (stById.has(id) ? stLabel(id) : trById.has(id) ? trLabel(id) : id);
+
+  /* ссылки: компонент витрины — его страница; страница приложения — собранная
+     .preview.html, если есть; файл — сам файл. links — то же для kit-model.js. */
+  const links = {};
+  const compHref = (id) => (ctx.byId.has(id) && ctx.byId.get(id) !== m ? R(docOf(ctx.byId.get(id))) : null);
+  const fileHref = (ref) => {
+    let abs;
+    try { abs = path.resolve(m.dir, ref); } catch { return null; }
+    if (!existsSync(abs)) return null;
+    const preview = abs.replace(/\.html$/i, '.preview.html');
+    return H(/\.html$/i.test(abs) && !/\.preview\.html$/i.test(abs) && existsSync(preview) ? preview : abs);
+  };
+  const a = (h, text) => (h ? '<a class="inl" href="' + esc(h) + '">' + text + '</a>' : text);
+  const modals = [...new Set(model.transitions.map((t) => t.modal).filter(Boolean))];
+  for (const id of modals) { const h = compHref(id); if (h) links[id] = h; else ctx.warnings.push(P.rel(m.modelAbs) + ' → окно «' + id + '» — не нашёл компонент витрины, показываю текстом'); }
+  const related = (Array.isArray(meta.related) ? meta.related : []).map((r) => {
+    const h = compHref(r.ref) || fileHref(r.ref);
+    if (compHref(r.ref)) links[r.ref] = compHref(r.ref);
+    if (!h) ctx.warnings.push(P.rel(m.modelAbs) + ' → related: «' + r.ref + '» — не нашёл ни компонент, ни файл, показываю текстом');
+    return a(h, esc(r.label)) + ' <code class="tok">' + esc(r.ref) + '</code>';
+  });
+  const modalLink = (id) => (id ? a(links[id], '<code class="tok">' + esc(id) + '</code>') : '—');
+  const qLinks = (qs) => ((qs && qs.length) ? qs.map((n) => '<a class="inl" href="#q-' + n + '" data-q="' + n + '">' + n + '</a>').join(', ') : '—');
+  const chip = (s) => '<span class="chip chip--xs' + (s.tone ? ' ' + esc(s.tone) : '') + '"><span class="chip__label">' + esc(s.label) + '</span></span>';
+  const txt = (v) => (v == null || v === '' ? '—' : esc(v));
+  const condOf = (t) => {
+    const parts = [];
+    if (t.when) parts.push(esc(t.when));
+    if (t.after && t.after.all) parts.push('после всех: ' + t.after.all.map((id) => esc(trLabel(id))).join('; '));
+    if (t.after && t.after.any) parts.push('после любого: ' + t.after.any.map((id) => esc(trLabel(id))).join('; '));
+    if (t.requires && t.requires.length) parts.push('и статусы: ' + t.requires.map((id) => esc(stLabel(id))).join(', '));
+    return parts.length ? parts.join('<br>') : '—';
+  };
+
+  const section = (title, html) => '<section class="section kit-md" data-screen-label="' + esc(title) + '">\n<h2>' + esc(title) + '</h2>\n' + html + '\n</section>';
+  const p = (t) => '<p>' + esc(t) + '</p>';
+
+  /* Описание */
+  const legend = '<div class="kit-model-legend">'
+    + ['initial', 'intermediate', 'target', 'final', 'terminal', 'none'].map((k) => '<span class="kit-model-legend__item"><span class="kit-model-node kit-model-node--' + k + ' kit-model-legend__node"></span>' + esc(KIND_LABEL[k]) + '</span>').join('')
+    + '</div><div class="kit-model-legend">'
+    + [['manual', 'ручной переход — кнопка или пункт меню'], ['auto', 'автоматический — после переходов других дорожек'], ['none', 'тип не указан']].map(([k, l]) => '<span class="kit-model-legend__item"><svg class="kit-model-legend__line kit-model-edge kit-model-edge--' + k + '" width="36" height="10" aria-hidden="true"><line x1="2" y1="5" x2="34" y2="5"/></svg>' + esc(l) + '</span>').join('')
+    + '</div><p class="desc">Петля у статуса — действие без смены статуса (отметка внутри статуса). Клик по статусу на схеме — его входы и выходы с условиями, окна и связи с другими дорожками.</p>';
+  const about = (Array.isArray(meta.about) ? meta.about : []).map((x) => '<h3 class="kit-md__h3">' + esc(x.title) + '</h3>\n' + p(x.text)).join('\n');
+  const summary = kv([
+    ['Модуль', '<code class="tok">' + esc(P.appsDir + '/' + m.module) + '</code>'],
+    ['Источник', '<a class="inl" href="' + esc(H(m.modelAbs)) + '">' + esc(P.rel(m.modelAbs)) + '</a> (<code class="tok">window.' + esc(m.global) + '</code>)'],
+    ['Состав', 'дорожек: ' + model.lanes.length + ' · статусов: ' + model.statuses.length + ' · переходов: ' + model.transitions.length
+      + ' · несостыковок: ' + issues.length + ' · открытых вопросов: ' + model.openQuestions.length],
+    ['Дорожки', model.lanes.map((l) => esc(l.label) + ' — поле <code class="tok">' + esc(l.field) + '</code>').join('<br>')],
+  ]);
+  const ties = kv([
+    ['Окна переходов', modals.map(modalLink).join('<br>')],
+    ['Связанное', related.join('<br>')],
+  ]);
+
+  /* Статусы и переходы */
+  const lanesHtml = model.lanes.map((lane) => {
+    const own = model.statuses.filter((s) => s.lane === lane.id);
+    const sts = dsTable(['Статус', 'id', 'Вид', 'Правка сущностей', 'Записей', 'Пояснение', 'Вопросы'],
+      own.map((s) => [chip(s), '<code class="tok">' + esc(s.id) + '</code>', esc(KIND_LABEL[kindKey(s.kind)]),
+        s.editable === true ? 'да' : s.editable === false ? 'нет' : '—',
+        records && !records.missing ? String(counts.get(s.id)) : '—', txt(s.note), qLinks(s.questions)]),
+      'minmax(0,1.1fr) minmax(0,1fr) minmax(0,0.8fr) minmax(0,0.6fr) minmax(0,0.5fr) minmax(0,2.6fr) minmax(0,0.5fr)');
+    const trs = model.transitions.filter((t) => { const s = stById.get(t.from); return s && s.lane === lane.id; });
+    const trTable = trs.length ? dsTable(['Откуда → куда', 'Тип', 'Кто', 'Действие', 'Окно', 'Условие', 'Примечание', 'Вопросы'],
+      trs.map((t) => {
+        const from = stById.get(t.from), to = stById.get(t.to);
+        const route = t.from === t.to ? esc(from.label) + ' (без смены)' : esc(from.label) + ' → ' + esc(to ? to.label : t.to);
+        const act = t.action ? (VIA_LABEL[t.via] ? VIA_LABEL[t.via] + ' ' : '') + '«' + esc(t.action) + '»' : '—';
+        return [route + '<br><code class="tok">' + esc(t.id) + '</code>', esc(TRIGGER_LABEL[triggerKey(t.trigger)]), txt(t.actor), act,
+          modalLink(t.modal), condOf(t), txt(t.note), qLinks(t.questions)];
+      }),
+      'minmax(0,1.4fr) minmax(0,0.6fr) minmax(0,0.6fr) minmax(0,1fr) minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,1.6fr) minmax(0,0.5fr)') : '<p class="desc">Переходов нет.</p>';
+    return section('Дорожка «' + lane.label + '»', '<p class="desc">Поле записи <code class="tok">' + esc(lane.field) + '</code>'
+      + (lane.avatar ? ', аватарка «' + esc(lane.avatar) + '»' : '') + ', словарь тонов <code class="tok">' + esc(lane.toneScope) + '</code>.</p>\n'
+      + '<h3 class="kit-md__h3">Статусы</h3>\n' + sts + '\n<h3 class="kit-md__h3">Переходы</h3>\n' + trTable);
+  }).join('\n');
+  const steppers = model.steppers.length ? section('Степперы тайла', '<ul class="bullets">' + model.steppers.map((st) => {
+    const steps = (st.steps || []).map((s) => esc(s.label) + (s.group ? ' [' + esc(s.group.title) + ': ' + s.group.items.map(esc).join(' · ') + ']' : ''));
+    return '<li><b>' + esc(laneLabel(st.lane)) + ' — ' + esc(st.variant) + '</b> (' + (st.mode === 'checklist' ? 'чек-лист' : 'путь статусов') + '): '
+      + (steps.length ? steps.join(' → ') : 'не показан') + '.<br>Виден в: ' + (st.shownIn || []).map((id) => esc((stById.get(id) || { label: id }).label)).join(', ') + '.'
+      + (st.extraButtons || []).map((b) => '<br>Кнопка «' + esc(b.label) + '» — в: ' + b.shownIn.map((id) => esc((stById.get(id) || { label: id }).label)).join(', ') + (b.note ? '. ' + esc(b.note) : '.')).join('')
+      + (st.note ? '<br>' + esc(st.note) : '') + (st.questions && st.questions.length ? '<br>Вопросы: ' + qLinks(st.questions) + '.' : '') + '</li>';
+  }).join('') + '</ul>') : '';
+
+  /* Вопросы */
+  const issuesHtml = issues.length ? dsTable(['Где', 'Что'], issues.map((i) => [esc(i.code), inline(i.text, () => null)]), 'minmax(0,0.4fr) minmax(0,3fr)') : '<p>Нет.</p>';
+  const empty = records && !records.missing ? model.statuses.filter((s) => counts.get(s.id) === 0) : [];
+  const questionsHtml = model.openQuestions.length
+    ? dsTable(['№', 'О чём', 'Вопрос', 'С'], model.openQuestions.map((q) => ['<span id="q-' + q.n + '">' + q.n + '</span>',
+      (q.about || []).map((id) => esc(refLabel(id))).join('<br>'), txt(q.text), txt(q.since)]), 'minmax(0,0.25fr) minmax(0,1.4fr) minmax(0,3fr) minmax(0,0.6fr)')
+    : '<p>Нет.</p>';
+
+  const docs = [
+    '<header class="masthead">',
+    '  <div class="meta"><span>Тип: <b>' + esc(TYPE_LABEL.model) + '</b></span><span>Категория: <b>' + esc(m.category) + '</b></span></div>',
+    '  <p class="eyebrow"><a class="inl" href="' + esc(R(path.join(P.root, kit ? kit.index : cfg.dir + '/index.html'))) + '">' + esc(kit ? kit.title : cfg.title) + '</a> · ' + esc(m.module) + '</p>',
+    '  <h1>' + esc(m.name) + '</h1>',
+    '  <p class="lead">' + esc(m.purpose) + '</p>',
+    '</header>',
+    section('Коротко', summary),
+    section('Легенда', legend),
+    about ? section('Как работает', about) : '',
+    section('Связи', ties),
+    lanesHtml,
+    steppers,
+    section('Несостыковки', '<p class="desc">Находит генератор по структуре модели и демо-данным — те же, что в <code class="tok">' + esc(path.basename(m.modelAbs).replace(/\.js$/, '.md')) + '</code>. Смысловые расхождения макетов — в открытых вопросах.</p>\n' + issuesHtml
+      + (records && !records.missing ? '\n<h3 class="kit-md__h3">Нет в демо-данных</h3>\n' + p(empty.length ? empty.map((s) => '«' + s.label + '» (' + laneLabel(s.lane) + ')').join(', ') + '.' : 'Все статусы есть в записях.') : '')),
+    section('Открытые вопросы', '<p class="desc">Не закрываются догадкой: у статусов и переходов — номерами.</p>\n' + questionsHtml),
+    '<footer class="page-foot"><p class="desc">Страница собрана из модели <code class="tok">' + esc(P.rel(m.modelAbs)) + '</code>. Правится модель, затем <code class="tok">node ' + esc(P.tools) + '/' + GEN + '</code>; схема наверху читает модель сама.</p></footer>',
+  ].filter(Boolean).join('\n');
+
+  const pane = (id, tab, title, body, toc) => [
+    '          <div class="tabpane" id="' + id + '" role="tabpanel" aria-labelledby="' + tab + '"' + (id === 'pane-docs' ? '' : ' hidden') + '>',
+    '            <div class="docs-layout">',
+    '              <div class="docs-main">',
+    title ? '                <h2>' + esc(title) + '</h2>' : '',
+    body,
+    '              </div>',
+    toc ? '              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>' : '',
+    '            </div>',
+    '          </div>',
+  ].filter((l) => l !== '').join('\n');
+  const tab = (id, pane, label, sel) => '          <button type="button" class="tab tab--m' + (sel ? ' tab--selected' : '') + '" id="' + id + '" role="tab" aria-selected="' + sel + '" tabindex="' + (sel ? 0 : -1) + '" data-pane="' + pane + '" aria-controls="' + pane + '"><span class="tab__label">' + esc(label) + '</span></button>';
+
+  const page = { id: m.id, global: m.global, base: R(kitAbs), hub, links };
+  const script = (abs) => '<script src="' + esc(H(abs)) + '"></script>';
+  const source = [
+    '<!DOCTYPE html>',
+    '<!-- СГЕНЕРИРОВАН ' + GEN + ' из ' + P.rel(m.modelAbs) + ' — руками не править.',
+    '     Правка — в модели; пересобрать — node ' + P.tools + '/' + GEN + ' (гейт сверяет, шаг kit).',
+    '     Схему рисует kit-model.js витрины по модели, подключённой ссылкой. -->',
+    '<html lang="ru">',
+    '<head>',
+    '<script src="' + esc(R(path.join(P.root, P.boot.head))) + '"></script>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>' + esc(m.name) + ' — ' + esc(cfg.title) + '</title>',
+    ...KIT_PAGE_CSS.map((f) => '<link rel="stylesheet" href="' + esc(R(path.join(dsAbs, f))) + '">'),
+    '<link rel="stylesheet" href="' + esc(R(path.join(kitAbs, 'kit.css'))) + '">',
+    '</head>',
+    '<body>',
+    '<div class="nav-layout">',
+    '  <nav class="nav nav--fixed" id="nav" aria-label="' + esc(cfg.title) + '">',
+    '    <div class="nav__top">',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>',
+    '    </div>',
+    '    <div class="nav__list"></div>',
+    '    <div class="nav__footer">',
+    '      <a class="nav__user" href="' + esc(hub) + '" aria-label="Хаб проектов">',
+    '        <span class="av av--circular av--m"><span class="av__text">АП</span></span>',
+    '        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>',
+    '      </a>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>',
+    '    </div>',
+    '  </nav>',
+    '',
+    '  <main class="page ds-split" data-screen-label="' + esc(m.name) + '">',
+    '    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="85" data-initial="62">',
+    '      <div class="splitpane__panel splitpane__a app-pane-demo">',
+    '        <div class="kit-model" id="kit-model" aria-label="Схема: ' + esc(m.name) + '"></div>',
+    '      </div>',
+    '',
+    '      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту схемы" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>',
+    '',
+    '      <div class="splitpane__panel splitpane__b app-pane-docs">',
+    '        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">',
+    tab('tab-constructor', 'pane-constructor', 'Конструктор', false),
+    tab('tab-docs', 'pane-docs', 'Документация', true),
+    tab('tab-code', 'pane-code', 'Код', false),
+    '        </div>',
+    '',
+    '        <div class="tabs-body">',
+    pane('pane-constructor', 'tab-constructor', 'Конструктор', '                <p class="desc">Что показывает схема: дорожки, связи между дорожками (после каких переходов срабатывают автопереходы), масштаб. Выбор статуса — кликом по схеме.</p>\n                <div class="pg__controls" id="pg-controls"></div>', false),
+    pane('pane-docs', 'tab-docs', '', docs, true),
+    pane('pane-code', 'tab-code', 'Код', [
+      '                <p class="desc">JS — сама модель, <code class="tok">' + esc(P.rel(m.modelAbs)) + '</code>: её читают стор, тайл и эта страница. HTML и CSS — стенд схемы витрины.</p>',
+      '                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>',
+      '                  <div class="segctrl__thumb"></div>',
+      '                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="html"><span class="segctrl__label">HTML</span></button>',
+      '                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>',
+      '                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="js"><span class="segctrl__label">JS</span></button>',
+      '                </div>',
+      '                <div class="code-panel code-view" data-view="html" hidden><pre><code id="code-out-html"></code></pre></div>',
+      '                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>',
+      '                <div class="code-panel code-view" data-view="js"><pre><code id="code-out-js"></code></pre></div>',
+    ].join('\n'), false),
+    '        </div>',
+    '      </div>',
+    '    </div>',
+    '  </main>',
+    '</div>',
+    '',
+    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
+    '<script src="' + esc(R(path.join(P.root, kit ? kit.registry : cfg.registry))) + '"></script>',
+    '<script src="' + esc(R(path.join(kitAbs, 'kit-nav.js'))) + '"></script>',
+    script(m.modelAbs),
+    '<script src="' + esc(R(path.join(kitAbs, 'kit-model.js'))) + '"></script>',
+    '<script>\nwindow.IBPKitModelPage = ' + JSON.stringify(page).replace(/</g, '\\u003c') + ';\nwindow.IBPKitModel.page(window.IBPKitModelPage);\n</script>',
+    '<script src="' + esc(R(path.join(dsAbs, DS_HERE.at.docsSplitJs))) + '"></script>',
+    plainCode('src-code-html', '<!-- Стенд схемы: kit-model.js рисует в нём дорожки, статусы и переходы по window.' + m.global + ' -->\n<div class="kit-model" id="kit-model"></div>'),
+    plainCode('src-code-css', modelCss(kitAbs)),
+    plainCode('src-code-js', read(m.modelAbs)),
+    '</body>',
+    '</html>',
+    '',
+  ].filter((l) => l !== '').join('\n');
+  return source;
+}
+
 /* ---------------- реестр ---------------- */
 
-function registryText(P, cfg, comps) {
+function registryText(P, cfg, kit, comps) {
   const data = {
-    title: cfg.title,
-    categories: cfg.categories,
+    title: kit ? kit.title : cfg.title,
+    categories: kit ? kit.categories : cfg.categories,
     components: comps.map((c) => ({
       id: c.id, name: c.name, category: c.category, purpose: c.purpose,
       type: c.type, typeLabel: TYPE_LABEL[c.type], module: c.module,
@@ -881,7 +1200,7 @@ function registryText(P, cfg, comps) {
     })),
   };
   return [
-    '/* Реестр витрины локальных компонентов — меню и карточки страниц ' + cfg.dir + '/.',
+    '/* Реестр витрины локальных компонентов' + (kit ? ' (' + kit.title + ')' : '') + ' — меню и карточки страниц ' + cfg.dir + '/' + (kit ? kit.section + '/' : '') + '.',
     '',
     '   СГЕНЕРИРОВАН ' + GEN + ' из паспортов виджетов (' + P.appsDir + '/<раздел>/<модуль>/' + P.appShape.widgets + '/<группа>/<Имя>/<Имя>.md)',
     '   и project.json → localKit. Руками не править: пересобрать — node ' + P.tools + '/' + GEN,
@@ -890,10 +1209,96 @@ function registryText(P, cfg, comps) {
     '   Обычный <script>, а не JSON: страницы открываются по file://, где fetch не работает.',
     '',
     '   Поля компонента: id — папка виджета; name, category, purpose, version, updated —',
-    '   из паспорта; type — tile | table | modal | popover | context-menu | part (подчасть);',
+    '   из паспорта; type — tile | table | modal | popover | context-menu | part (подчасть)',
+    '   | model (статусная модель data/*-status-model.js: name, category, purpose — из meta);',
     '   module — <раздел>/<модуль>; doc — страница компонента от папки витрины; owner —',
     '   id компонента, чей это артефакт (окно, поповер), или null; stub — заглушка. */',
     'window.IBPKit = ' + JSON.stringify(data, null, 2) + ';',
+    '',
+  ].join('\n');
+}
+
+/* Обзор витрины раздела — тот же каркас, что у страниц: панель и карточки
+   рисует kit-nav.js из реестра раздела. Общая оболочка лежит в корне витрины. */
+function indexText(P, cfg, kit) {
+  const dir = path.join(P.root, cfg.dir, kit.section);
+  const R = (abs) => rel(dir, abs);
+  const shell = (f) => R(path.join(P.root, cfg.dir, f));
+  const hub = R(path.join(P.root, P.hubPage || 'index.html'));
+  const t = esc(kit.title);
+  return [
+    '<!DOCTYPE html>',
+    '<!--',
+    '  Обзор витрины «' + kit.title + '». Состав меню и карточек — из реестра kit-data.js рядом',
+    '  (СГЕНЕРИРОВАНО ' + GEN + ' из паспортов виджетов раздела ' + kit.section + '; руками не править).',
+    '-->',
+    '<html lang="ru">',
+    '<head>',
+    '<script src="' + esc(R(path.join(P.root, P.boot.head))) + '"></script>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>' + t + ' — IBP</title>',
+    '<link rel="stylesheet" href="' + esc(shell('kit.css')) + '">',
+    '</head>',
+    '<body>',
+    '<div class="nav-layout">',
+    '  <nav class="nav nav--fixed" id="nav" aria-label="' + t + '">',
+    '    <div class="nav__top">',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>',
+    '    </div>',
+    '    <div class="nav__list"></div>',
+    '    <div class="nav__footer">',
+    '      <a class="nav__user" href="' + esc(hub) + '" aria-label="Хаб проектов">',
+    '        <span class="av av--circular av--m"><span class="av__text">АП</span></span>',
+    '        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>',
+    '      </a>',
+    '      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>',
+    '    </div>',
+    '  </nav>',
+    '',
+    '  <div class="screen">',
+    '    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>',
+    '      <li class="crumbs__item"><a class="link link--muted" href="' + esc(hub) + '">Хаб проектов</a></li>',
+    '      <li class="crumbs__item crumbs__item--current">',
+    '        <span class="crumbs__current" aria-current="page">' + t + '</span>',
+    '      </li>',
+    '    </nav>',
+    '    <main class="screen__content">',
+    '',
+    '      <div class="phead">',
+    '        <div class="phead__main">',
+    '          <div class="phead__title-row">',
+    '            <div class="phead__title-group">',
+    '              <h1 class="phead__title">' + t + '</h1>',
+    '            </div>',
+    '          </div>',
+    '        </div>',
+    '      </div>',
+    '',
+    '      <div class="kit-groups" id="kit-groups"></div>',
+    '',
+    '    </main>',
+    '  </div>',
+    '</div>',
+    '',
+    '<script src="' + esc(R(path.join(P.root, P.boot.body))) + '" data-ds="' + esc(DS_HERE.at.homeCatalog) + '"></script>',
+    '<script src="kit-data.js"></script>',
+    '<script src="' + esc(shell('kit-nav.js')) + '"></script>',
+    '<script>',
+    '(function () {',
+    "  'use strict';",
+    '  window.IBPKitNav.render({',
+    "    nav: document.getElementById('nav'),",
+    "    groups: document.getElementById('kit-groups'),",
+    "    base: '" + R(path.join(P.root, cfg.dir)) + "',",
+    '    current: null,',
+    "    hub: '" + hub + "'",
+    '  });',
+    '})();',
+    '</script>',
+    '</body>',
+    '</html>',
     '',
   ].join('\n');
 }
@@ -906,7 +1311,7 @@ export function plan(P) {
   const out = new Map();
   if (!res.cfg || res.defects.some((d) => d.startsWith('КТ1'))) return { ...res, out };
   const ctx = {
-    comps: res.comps, byId: res.byId, defects: res.defects, dsPages: dsPages(P),
+    comps: res.comps, byId: res.byId, defects: res.defects, warnings: res.warnings, dsPages: dsPages(P),
     byMd: new Map(res.comps.map((c) => [c.mdAbs, c])),
     canon: res.canon,
   };
@@ -915,8 +1320,21 @@ export function plan(P) {
     const file = res.cfg.dir + '/' + c.module + '/' + c.id + '.doc.html';
     try { out.set(file, docPage(P, res.cfg, c, ctx)); } catch (e) { res.defects.push('КТ3 ' + file + ' — не собирается: ' + e.message); }
   }
-  out.set(res.cfg.registry, registryText(P, res.cfg, res.comps.filter((c) => res.byId.get(c.id) === c)));
-  return { ...res, out };
+  const models = (res.models || []).filter((m) => res.byId.get(m.id) === m && m.name && m.category && m.purpose);
+  for (const m of models) {
+    const file = res.cfg.dir + '/' + m.module + '/' + m.id + '.doc.html';
+    try { out.set(file, modelPage(P, res.cfg, m, ctx)); } catch (e) { res.defects.push('КТ3 ' + file + ' — не собирается: ' + e.message); }
+  }
+  const live = [...res.comps.filter((c) => res.byId.get(c.id) === c), ...models];
+  if (res.cfg.kits.length) {
+    for (const kit of res.cfg.kits) {
+      out.set(kit.registry, registryText(P, res.cfg, kit, live.filter((c) => kitOf(res.cfg, c) === kit)));
+      out.set(kit.index, indexText(P, res.cfg, kit));
+    }
+  } else {
+    out.set(res.cfg.registry, registryText(P, res.cfg, null, live));
+  }
+  return { ...res, out, docCount: [...out.keys()].filter((f) => /\.doc\.html$/i.test(f)).length };
 }
 
 /* Страницы компонентов, лежащие в витрине сейчас. */
@@ -947,12 +1365,14 @@ export function check(P, write = false) {
     if (write) { mkdirSync(path.dirname(abs), { recursive: true }); writeFileSync(abs, text, 'utf8'); written.push(file); }
     else defects.push('КТ3 ' + file + (existsSync(abs) ? ' разошёлся с виджетами' : ' нет') + ' — пересобрать: node ' + P.tools + '/' + GEN);
   }
-  for (const file of docsOnDisk(P, cfg)) {
+  /* Общие реестр и обзор корня остались от одной витрины — лишние при kits. */
+  const stale = cfg.kits.length ? [cfg.registry, cfg.dir + '/index.html'].filter((f) => existsSync(path.join(P.root, f))) : [];
+  for (const file of [...docsOnDisk(P, cfg), ...stale]) {
     if (out.has(file)) continue;
     if (write) { unlinkSync(path.join(P.root, file)); removed.push(file); }
-    else defects.push('КТ5 ' + file + ' — виджета больше нет, страница лишняя — пересобрать: node ' + P.tools + '/' + GEN);
+    else defects.push('КТ5 ' + file + ' — ' + (stale.includes(file) ? 'витрины по разделам заменили общую' : 'виджета больше нет') + ', страница лишняя — пересобрать: node ' + P.tools + '/' + GEN);
   }
-  return { defects, warnings, written, removed, count: out.size - 1 };
+  return { defects, warnings, written, removed, count: res.docCount };
 }
 
 function report(title, { defects, warnings, written, removed, count }) {
@@ -1012,6 +1432,20 @@ const DEAL = '<!DOCTYPE html>\n<html><head>\n<script src="../../../ds-config.js"
   + '<script src="../data/mock.js"></script>\n<script src="../../../ds-body.js"></script>\n'
   + '<script src="../widgets/modals/KnrModal/KnrModal.js"></script>\n<script src="../widgets/tiles/KnrTile/KnrTile.js"></script>\n</body></html>\n';
 
+/* Статусная модель стенда (RE0014): две дорожки, автопереход по after, окно КНР. */
+const MODEL_FILE = MOD + '/data/knr-status-model.js';
+const MODEL = (meta = "name: 'Модель КНР', category: 'Сделка', purpose: 'Статусы КНР'") => [
+  'window.KNR_STATUS_MODEL = {',
+  "  meta: { title: 'КНР', " + meta + ", related: [{ label: 'Тайл', ref: 'KnrTile' }] },",
+  "  lanes: [{ id: 'a', label: 'Сделка', field: 'status', toneScope: 'general' }, { id: 'b', label: 'ЦУП', field: 'statusB', toneScope: 'general' }],",
+  "  statuses: [{ id: 'a_draft', lane: 'a', label: 'Черновик', kind: 'initial', tone: 'chip--dark' }, { id: 'a_done', lane: 'a', label: 'Готово', kind: 'final', tone: 'chip--success' },",
+  "    { id: 'b_wait', lane: 'b', label: 'Ждёт', kind: 'initial', tone: 'chip--warning' }, { id: 'b_ok', lane: 'b', label: 'Утверждена', kind: 'target', tone: 'chip--success' }],",
+  "  transitions: [{ id: 'b_approve', from: 'b_wait', to: 'b_ok', trigger: 'manual', action: 'Утвердить', modal: 'KnrModal' },",
+  "    { id: 'a_finish', from: 'a_draft', to: 'a_done', trigger: 'auto', when: 'ЦУП утвердил', after: { any: ['b_approve'] } }],",
+  "  steppers: [], openQuestions: [{ n: 1, about: ['a_done'], text: 'Вопрос', since: '11.10.2026' }]",
+  '};', '',
+].join('\n');
+
 function tree(r) {
   put(r, 'project.json', JSON.stringify(MANIFEST));
   put(r, 'ds/components/atoms/Divider/Divider.html', '');      // ДС стенда: страниц без раскладки не бывает
@@ -1029,6 +1463,7 @@ function tree(r) {
   put(r, MODAL + '.html', '<div class="modal-scrim" id="knr-scrim" hidden><div class="modal lc-knrm" data-mode="edit"></div></div>\n');
   put(r, MODAL + '.js', 'window.KnrModal = {};\n');
   put(r, MOD + '/pages/Deal.html', DEAL);
+  put(r, MODEL_FILE, MODEL());
 }
 
 const CASES = [
@@ -1054,6 +1489,14 @@ const CASES = [
       put(r, 'apps/postrade/payments-app/widgets/tiles/KnrTile/KnrTile.md', MD_TILE());
       put(r, 'apps/postrade/payments-app/widgets/tiles/KnrTile/KnrTile.html', '<section class="tile"></section>\n');
     } },
+  { name: 'витрины по разделам: у раздела компонента нет витрины', expect: 'КТ2 ' + MOD + '/widgets/tiles/KnrTile/KnrTile.md — у раздела «postrade» нет витрины',
+    mutate: (r) => put(r, 'project.json', JSON.stringify({ ...MANIFEST, localKit: { ...MANIFEST.localKit, kits: [{ id: 'k-core', section: 'core', title: 'Core', desc: 'тест', icon: 'layout-grid-01' }] } })) },
+  { name: 'витрины по разделам: реестр и обзор раздела — в своей папке', expect: null, build: true,
+    mutate: (r) => {
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, localKit: { ...MANIFEST.localKit, kits: [{ id: 'k-post', section: 'postrade', title: 'Post', desc: 'тест', icon: 'layout-grid-01' }] } }));
+      check(project(r), true);
+      if (!existsSync(path.join(r, 'apps/local-components/postrade/kit-data.js')) || !existsSync(path.join(r, 'apps/local-components/postrade/index.html'))) throw new Error('нет kit-data.js или index.html раздела');
+    } },
   { name: 'манифест без localKit', expect: 'КТ1',
     mutate: (r) => { const { localKit, ...rest } = MANIFEST; put(r, 'project.json', JSON.stringify(rest)); } },
   { name: 'нет шаблона канона в ДС', expect: 'шаблона локального компонента ДС нет',
@@ -1066,6 +1509,10 @@ const CASES = [
     mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('## Описание (Purpose)', '## Описание (Purpose)\n\nдубль\n\n## Описание (Purpose)')) },
   { name: 'текст до первого ##', expect: 'текст до первого «##»',
     mutate: (r) => put(r, TILE + '.md', MD_TILE().replace('# КНР\n\n', '# КНР\n\nТекст без раздела.\n\n')) },
+  { name: 'статусная модель без meta.category', expect: 'КТ2 ' + MODEL_FILE + ' — нет полей meta статусной модели: category',
+    mutate: (r) => put(r, MODEL_FILE, MODEL("name: 'Модель КНР', purpose: 'Статусы КНР'")) },
+  { name: 'статусная модель правлена без пересборки', expect: 'КТ3 apps/local-components/postrade/deals-app/knr-status-model.doc.html разошёлся', build: true,
+    mutate: (r) => put(r, MODEL_FILE, MODEL().replace("label: 'Готово'", "label: 'Сделано'")) },
   { name: 'CRLF в собранной странице — не расхождение', expect: null, build: true,
     mutate: (r) => { const f = path.join(r, 'apps/local-components/postrade/deals-app/KnrTile.doc.html'); writeFileSync(f, readFileSync(f, 'utf8').replace(/\n/g, '\r\n')); } },
 ];
@@ -1094,7 +1541,7 @@ function selftest() {
     let got;
     try { vm.runInNewContext(readFileSync(path.join(root, 'apps/local-components/kit-data.js'), 'utf8'), ctx); got = ctx.window.IBPKit; } catch (e) { got = e.message; }
     const modal = got && got.components && got.components.find((x) => x.id === 'KnrModal');
-    ok(!!(modal && got.components.length === 2 && modal.owner === 'KnrTile'), 'реестр выполняется, окно под тайлом',
+    ok(!!(modal && got.components.filter((x) => x.type !== 'model').length === 2 && modal.owner === 'KnrTile'), 'реестр выполняется, окно под тайлом',
       got && got.components ? got.components.map((x) => x.id + '←' + x.owner).join(' ') : String(got));
   });
   /* Связь только через opens тайла, записанный путём до .md, — окно всё равно под тайлом. */
@@ -1136,7 +1583,28 @@ function selftest() {
     ok(modal.includes('class="modal-scrim modal-scrim--inline"'), 'окно на своей странице — встроено в стенд',
       modal.includes('modal-scrim--inline') ? 'класс есть' : 'класса нет');
   });
-  const total = CASES.length + 4;
+  /* Статусная модель: запись реестра, страница со схемой, связями и условием. */
+  withTree((root) => {
+    check(project(root), true);
+    const ctx = { window: {} };
+    vm.runInNewContext(readFileSync(path.join(root, 'apps/local-components/kit-data.js'), 'utf8'), ctx);
+    const rec = ctx.window.IBPKit.components.find((x) => x.id === 'knr-status-model');
+    const f = path.join(root, 'apps/local-components/postrade/deals-app/knr-status-model.doc.html');
+    const html = existsSync(f) ? readFileSync(f, 'utf8') : '';
+    const want = {
+      'запись реестра': !!(rec && rec.type === 'model' && rec.category === 'Сделка' && rec.doc === 'postrade/deals-app/knr-status-model.doc.html'),
+      'стенд схемы': html.includes('<div class="kit-model" id="kit-model"'),
+      'модель ссылкой': html.includes('<script src="../../../postrade/deals-app/data/knr-status-model.js"></script>'),
+      'запуск схемы': html.includes('window.IBPKitModel.page(') && html.includes('"global":"KNR_STATUS_MODEL"'),
+      'окно перехода — ссылкой': html.includes('"KnrModal":"KnrModal.doc.html"') && html.includes('<a class="inl" href="KnrModal.doc.html"><code class="tok">KnrModal</code></a>'),
+      'связанное — ссылкой': html.includes('<a class="inl" href="KnrTile.doc.html">Тайл</a>'),
+      'условие с переходом другой дорожки': html.includes('после любого: ЦУП: «Утвердить»'),
+      'вопрос с якорем': html.includes('<span id="q-1">1</span>'),
+    };
+    const bad = Object.keys(want).filter((k) => !want[k]);
+    ok(!bad.length, 'статусная модель — запись и страница', bad.length ? 'нет: ' + bad.join(', ') : 'всё на месте');
+  });
+  const total = CASES.length + 5;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);

@@ -72,7 +72,7 @@
               <div class="docs-main">
 <header class="masthead">
   <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>0.003</b></span><span>Обновлено: <b>02.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
-  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
   <h1>Связанные обеспечения</h1>
   <p class="lead">Реестр обеспечений сделки: залоги, поручительства, гарантии</p>
 </header>
@@ -190,6 +190,7 @@
 </div>
 <!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
 <script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
 <script src="../../../postrade/deals-app/data/deals-store.js"></script>
 <script src="../../../postrade/deals-app/data/mock-team.js"></script>
 <script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
@@ -202,7 +203,7 @@
 <script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
 <script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
-<script src="../../kit-data.js"></script>
+<script src="../kit-data.js"></script>
 <script src="../../kit-nav.js"></script>
 <script src="../../kit-docpage.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
@@ -232,6 +233,12 @@
 <script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
 <script>
 window.IBPKitPage = {"id":"DealRelatedCollateralsTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["empty"],"modes":["view"],"state":"empty","mode":"view","width":1600,"scenario":false,"fixtures":null};
 window.IBPKitDoc.page(window.IBPKitPage);

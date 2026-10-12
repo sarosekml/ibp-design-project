@@ -591,11 +591,14 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
    стрелок нет, скругление полное, цвет Secondary. В покое бегунок скрыт,
    появляется при прокрутке и плавно гаснет: класс .is-scrolling ставит и
    снимает рантайм foundations/Layout/Layout.js — делегированно, привязывать не нужно.
-   Место под бегунок: полоса оверлейная (`overflow-y: overlay` — Chromium кладёт
-   её поверх, места не занимает, поэтому контент не сдвигается при появлении
-   скролла). Браузер без `overlay` (Firefox) падает на `auto` и держит место
-   через `scrollbar-gutter: stable`. Одного `scrollbar-gutter` мало: при
-   стилизованном `::-webkit-scrollbar` Chromium место не резервирует (RE0009).
+   Место под бегунок: `scrollbar-gutter: stable` держит справа полосу
+   --scroll-w всегда, и когда прокрутки нет, — контент не сдвигается при
+   появлении скролла. `overflow-y: overlay` в текущем Chromium вычисляется в
+   auto и места не экономит (замер 10.10.2026; прежняя запись «полоса поверх,
+   места не занимает» из RE0009 не подтвердилась). Полоса — не паддинг:
+   DevTools показывает паддинг 0, а справа 8px. Где край контента должен
+   совпасть с соседями, отнимать --scroll-w из правого паддинга — так сделаны
+   тела Modal, Popover, Drawer.
    Как гаснет. Переход у псевдоэлемента скроллбара браузеры не поддерживают,
    поэтому бегунок берёт цвет из border-color самой области (рамки у неё нет:
    border-style не задан) и заливает себя им широкой правой рамкой, а переход
@@ -614,8 +617,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   --scroll-fade: .3s;  /* затухание после остановки */
   overflow-x: hidden;
   overflow-y: auto;
-  overflow-y: overlay;      /* Chromium: полоса поверх — места не занимает */
-  scrollbar-gutter: stable; /* Firefox и без overlay: резерв места */
+  overflow-y: overlay;      /* Chromium сейчас = auto; см. выше */
+  scrollbar-gutter: stable; /* резерв --scroll-w справа, всегда */
   border-color: transparent;
   transition: border-color var(--scroll-fade) ease;
 }

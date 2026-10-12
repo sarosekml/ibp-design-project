@@ -151,6 +151,15 @@ export function project(from = HERE) {
      сверяет её только kit-build. null — манифест витрину не объявляет. */
   const lk = m.localKit && typeof m.localKit === 'object' ? m.localKit : null;
   const showcase = lk ? norm(lk.dir) || 'kit' : null;
+  /* Карта экранов (`screenMap`, задача RE0015): каталог карт по разделам —
+     `<dir>/<раздел>/map.yaml` и её генерат `map-data.js`; `maps` — записи
+     хаба `{ id, section, title, desc, icon }`. Как и витрина, лежит в `apps/`,
+     но экраном не является. Форму блока и карты сверяет screen-map.mjs.
+     null — манифест карты не объявляет. */
+  const sm = m.screenMap && typeof m.screenMap === 'object' ? m.screenMap : null;
+  const screenMap = sm && norm(sm.dir)
+    ? { dir: norm(sm.dir), dirAbs: abs(norm(sm.dir)), maps: Array.isArray(sm.maps) ? sm.maps : [] }
+    : null;
   return {
     error: null, root, manifest: m,
     ds, dsAbs: abs(ds), dsFrom, dsError: dsConf && dsConf.error || null,
@@ -168,6 +177,8 @@ export function project(from = HERE) {
     hubPage, hubRegistry,
     /** Каталог витрины локальных компонентов от корня и абсолютный, или null. */
     showcase, showcaseAbs: abs(showcase),
+    /** Карта экранов: { dir, dirAbs, maps } или null. */
+    screenMap,
     /** Путь от корня проекта, слэшами вперёд. */
     rel: (p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'),
   };

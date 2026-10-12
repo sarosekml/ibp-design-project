@@ -1,0 +1,12 @@
+/* Окно «Назначение ответственного» (NavigatorAppointmentOfResponsibleModal).
+   Только колонки таблицы «Сделки ГСЗ». Геометрия — Modal ДС (modal--w5),
+   поля — InputAutocomplete и ReadOnlyField ДС, таблица — Table и TableCell ДС;
+   своих цветов и шрифтов здесь нет. */
+
+/* Колонки: разделитель · номер · наименование · ответственный · разделитель.
+   Наименование забирает остаток ширины тела окна; пропорции — с макета
+   screenflow. Минимумы колонок — порог ручки изменения ширины TableCell
+   (96px) и запас под номер сделки. */
+.lc-nav-appoint .lc-nav-appoint__cols {
+  grid-template-columns: 8px 120px minmax(160px, 1fr) 200px 8px;
+}

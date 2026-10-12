@@ -93,7 +93,11 @@
 
   function titleHTML(node) {
     var text = esc(node.number + ' ' + node.name);
-    /* адрес страницы инструмента — не решено (29.09.2026) */
+    /* страница транша есть (Tranche.html): ссылка шлёт 'ptreeaction' OPEN, куда
+       идти — знает страница. Адрес страницы инструмента — не решено (29.09.2026) */
+    if (node.hasPage === true && node.kind === 'TRANCHE') {
+      return '<a class="prow__title prow__title--link" href="#"' + actAttrs('OPEN', node) + '>' + text + '</a>';
+    }
     return node.hasPage === true
       ? '<a class="prow__title prow__title--link" href="#">' + text + '</a>'
       : '<span class="prow__title">' + text + '</span>';

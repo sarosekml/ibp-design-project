@@ -190,14 +190,14 @@
             </section>
             <section class="tile col-3 colw-6" id="tile-rsbu-hards" data-state="none">
               <header class="tile__header">
-                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Харды в РСБУ</h3></div></div>
-                <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m" id="rsbu-open" href="RsbuHards.html" aria-label="Открыть: Харды в РСБУ"><i data-icon="arrow-right"></i></a></div>
+                <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Корректировки процентов РСБУ</h3></div></div>
+                <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m" id="rsbu-open" href="RsbuInterestAdjustments.html" aria-label="Открыть: Корректировки процентов РСБУ"><i data-icon="arrow-right"></i></a></div>
               </header>
               <div class="tile__body">
-                <p class="tr-status" data-rsbu-state="locked" hidden>Требуется расчёт процентных схем</p>
+                <p class="tr-status" data-rsbu-state="locked" hidden>Требуется расчёт процентных платежей</p>
                 <p class="tr-status" data-rsbu-state="none">Корректировки отсутствуют</p>
                 <p class="tr-status" data-rsbu-state="filled" hidden>Внесено корректировок: <span id="rsbu-count"></span></p>
-                <a class="btn btn--outline btn--s" id="rsbu-add" href="RsbuHards.html?open=add" data-rsbu-state="none filled"><span class="btn__label">Внести корректировку</span></a>
+                <a class="btn btn--outline btn--s" id="rsbu-add" href="RsbuInterestAdjustments.html?open=add" data-rsbu-state="none filled"><span class="btn__label">Внести корректировку</span></a>
               </div>
             </section>
         </div>
@@ -372,11 +372,11 @@
     document.title = title + ' — IBP';
   }
 
-  /* Карточка «Харды в РСБУ»: locked | none | filled.
+  /* Карточка «Корректировки процентов РСБУ»: locked | none | filled.
      Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа). */
   function rsbuState() {
     var m = /[?&]hardsState=(locked|none|filled)/.exec(location.search);
-    var st = m ? m[1] : window.MOCK_TRANCHE.rsbuHardsState;
+    var st = m ? m[1] : window.MOCK_TRANCHE.rsbuInterestAdjustmentsState;
     document.getElementById('rsbu-count').textContent = window.MOCK_RSBU_ADJUSTMENTS.adjustments.length;
     var tile = document.getElementById('tile-rsbu-hards');
     tile.setAttribute('data-state', st);

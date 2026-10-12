@@ -204,7 +204,7 @@
               <div class="docs-main">
 <header class="masthead">
   <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.003</b></span><span>Обновлено: <b>02.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
-  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты</a> · postrade/deals-app</p>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
   <h1>Описание сделки</h1>
   <p class="lead">Суть сделки, комментарий Operations, признаки сделки и группа связанных заемщиков</p>
 </header>
@@ -669,6 +669,7 @@
   </div>
 </div>
 <script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
 <script src="../../../postrade/deals-app/data/deals-store.js"></script>
 <script src="../../../postrade/deals-app/data/mock-team.js"></script>
 <script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
@@ -681,7 +682,7 @@
 <script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
 <script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
-<script src="../../kit-data.js"></script>
+<script src="../kit-data.js"></script>
 <script src="../../kit-nav.js"></script>
 <script src="../../kit-docpage.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
@@ -711,6 +712,12 @@
 <script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
 <script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
 <script>
 window.IBPKitPage = {"id":"DealDescriptionTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty"],"modes":["edit","view"],"state":"data","mode":"edit","width":800,"scenario":false,"fixtures":{"_":"Демо-данные витрины: по объекту на состояние. Ключи — поля записи сделки (data/mock-deals.js, typedef DealDescriptionFields) плюс поля реестра gsz, jointness и finTpl («Да» / «Нет»). Отсутствующее поле читается как пустое. additionalIncome тайл не показывает — только окно.","data":{"_":"Всё заполнено — базовый вид. Значения признаков — с макета дизайнера (кадр «Заполнено»): категория C, Участие Деска ИФ, Реструктуризация, связанные сделки есть, совместность МБ, фин. расчёты в шаблоне.","description":"Финансирование строительства логистического хаба класса А площадью 120 тыс. кв. м в Московской области. Средства идут на строительно-монтажные работы и подключение к сетям, возврат — из арендного потока после ввода объекта в эксплуатацию.","operationsComment":"Выдача траншами под подтверждённые акты выполненных работ. Второй транш — после получения разрешения на ввод первой очереди.","additionalIncome":"Комиссия за организацию финансирования — 0,5 % от лимита","gsz":"Группа «СтройИнвест»","jointness":"МБ","finTpl":"Да","ceParticipation":false,"ifDeskParticipation":true,"restructured":true,"riskCategory":"C","relatedDeals":[{"name":"Финансирование складского комплекса «Север»","opportunityId":"2041187"},{"name":"Рефинансирование кредитного портфеля ООО «ЮгСтрой»","opportunityId":"2041203"}]},"partial":{"_":"Комментария и ГСЗ нет — поля на месте, значения прочерком. Категория «не определена», совместности нет, связанных сделок нет — строки «Связанные сделки» нет вовсе.","description":"Приобретение контрольного пакета горнодобывающей компании с последующей модернизацией обогатительной фабрики.","operationsComment":"","additionalIncome":"","gsz":"","jointness":"","finTpl":"Нет","ceParticipation":true,"ifDeskParticipation":false,"restructured":false,"riskCategory":"UNDEFINED","relatedDeals":[]},"long":{"_":"Переполнение: описание длиннее четырёх строк — многоточие и тултип; длинная ГСЗ — одна строка с многоточием; категория A (тон error).","description":"Проектное финансирование строительства жилого комплекса бизнес-класса из четырёх корпусов общей площадью 86 тыс. кв. м. Финансирование открывается по мере распродаж: лимит выдачи привязан к доле проданных квартир в каждом корпусе, а средства дольщиков поступают на эскроу-счета и раскрываются после ввода корпуса. Залоговое обеспечение — права на земельный участок и имущественные права на строящиеся помещения; поручительство материнской компании застройщика.","operationsComment":"Условия раскрытия эскроу пересматриваются по итогам аудита.","additionalIncome":"","gsz":"ООО «ГАЗПРОМ ДОБЫЧА ШЕЛЬФ ЮЖНО-САХАЛИНСК» и аффилированные лица","jointness":"ЦЧБ","finTpl":"Нет","ceParticipation":true,"ifDeskParticipation":false,"restructured":false,"riskCategory":"A","relatedDeals":[]},"empty":{"_":"Ничего не заполнено и не отмечено: в правке — «Заполнить», в просмотре — «Не заполнено».","description":"","operationsComment":"","additionalIncome":"","gsz":"","jointness":"","finTpl":"Нет","ceParticipation":false,"ifDeskParticipation":false,"restructured":false,"riskCategory":null,"relatedDeals":[]}}};
 window.IBPKitDoc.page(window.IBPKitPage);

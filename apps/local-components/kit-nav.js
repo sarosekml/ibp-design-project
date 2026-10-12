@@ -52,11 +52,35 @@
   /* Родитель аккордеона по контракту ДС не ведёт по ссылке — ds-nav-panel.js
      перехватывает клик. Поэтому страница самого тайла — первый под-пункт
      «Обзор», иначе на неё из панели не попасть. */
+  /* Категория — тоже аккордеон: заголовок-кнопка + сворачиваемое тело. Родной
+     аккордеон NavPanel переключает только .nav__item--acc, поэтому категории
+     переключает этот модуль (bindCats). Закрытые категории помнит браузер;
+     категория с текущим компонентом всегда раскрыта. */
+  var STORE_KEY = 'kit-nav-closed-cats';
+  function closedCats() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveClosed(list) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) { /* без хранилища — всё раскрыто */ }
+  }
+
   function listHTML(kit, groups, base, current) {
-    return groups.map(function (g) {
-      var s = '<div class="nav__block"><p class="nav__block-label">' + esc(g.category) + '</p>';
+    var closed = closedCats();
+    return groups.map(function (g, gi) {
+      var hasCurrent = g.items.some(function (it) {
+        return it.id === current || artifactsOf(kit, it.id).some(function (a) { return a.id === current; });
+      });
+      var open = hasCurrent || closed.indexOf(g.category) < 0;
+      var catId = 'kit-cat-' + gi;
+      var s = '<div class="nav__block">'
+        + '<button type="button" class="nav__block-label kit-nav__cat-head" data-cat="' + esc(g.category) + '"'
+        + ' aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="' + catId + '">'
+        + '<span class="kit-nav__cat-name">' + esc(g.category) + '</span>'
+        + '<span class="badge badge--xs badge--neutral" aria-label="Компонентов: ' + g.items.length + '">' + g.items.length + '</span>'
+        + '<span class="nav__caret"><i data-icon="chevron-down"></i></span></button>'
+        + '<div class="kit-nav__cat" id="' + catId + '"><div class="kit-nav__cat-in">';
       if (!g.items.length) {
-        return s + '<span class="nav__item nav__item--disabled" aria-disabled="true"><span class="nav__label">пока пусто</span></span></div>';
+        return s + '<span class="nav__item nav__item--disabled" aria-disabled="true"><span class="nav__label">пока пусто</span></span></div></div></div>';
       }
       g.items.forEach(function (it) {
         var arts = artifactsOf(kit, it.id);
@@ -72,8 +96,20 @@
           + arts.map(function (a) { return item(base + '/' + a.doc, a.name, a.id === current); }).join('')
           + '</div></div>';
       });
-      return s + '</div>';
+      return s + '</div></div></div>';
     }).join('');
+  }
+
+  function bindCats(list) {
+    list.addEventListener('click', function (e) {
+      var head = e.target.closest('.kit-nav__cat-head');
+      if (!head) return;
+      var open = head.getAttribute('aria-expanded') !== 'true';
+      head.setAttribute('aria-expanded', String(open));
+      var closed = closedCats().filter(function (c) { return c !== head.getAttribute('data-cat'); });
+      if (!open) closed.push(head.getAttribute('data-cat'));
+      saveClosed(closed);
+    });
   }
 
   function cardsHTML(kit, groups, base) {
@@ -91,7 +127,7 @@
           + '</div></a>';
       }).join('');
       return '<section class="kit-group">'
-        + '<h2 class="kit-group__head">' + esc(g.category) + '<span class="kit-group__count">' + g.items.length + '</span></h2>'
+        + '<h2 class="kit-group__head">' + esc(g.category) + '<span class="badge badge--xs badge--neutral" aria-label="Компонентов: ' + g.items.length + '">' + g.items.length + '</span></h2>'
         + (g.items.length ? '<div class="grid12">' + cards + '</div>' : '<p class="kit-card__empty">В этой категории пока нет компонентов</p>')
         + '</section>';
     }).join('');
@@ -117,7 +153,16 @@
     var groups = grouped(kit);
     var base = opts.base || '.';
     var list = opts.nav && opts.nav.querySelector('.nav__list');
-    if (list) list.innerHTML = listHTML(kit, groups, base, opts.current || null);
+    if (!kit.components.length) {
+      if (list) list.innerHTML = '<div class="nav__block"><span class="nav__item nav__item--disabled" aria-disabled="true"><span class="nav__label">пока пусто</span></span></div>';
+      if (opts.nav && opts.hub) refreshFooter(opts.nav, opts.hub);
+      if (opts.groups) opts.groups.innerHTML = '<p class="kit-card__empty">В этой витрине пока нет компонентов</p>';
+      return;
+    }
+    if (list) {
+      list.innerHTML = listHTML(kit, groups, base, opts.current || null);
+      bindCats(list);
+    }
     if (opts.nav && opts.hub) refreshFooter(opts.nav, opts.hub);
     if (opts.groups) opts.groups.innerHTML = cardsHTML(kit, groups, base);
     if (window.dsIcons) window.dsIcons.apply(document);

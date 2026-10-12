@@ -1,0 +1,113 @@
+<!-- Локальный компонент «Заведение сделки» (Navigator) — фрагмент страницы сделки.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+     data-state — состояние данных: loading | data | error
+     data-mode  — режим прав: edit | view. Действия процесса (кнопки подвала и
+                  пункты кебаба) задаёт статусная модель, а не режим: в «Активной»
+                  сделке, где сущности не правятся, её всё равно гасят и вводят
+                  изменения. Что из процесса видно роли без права правки — открытый
+                  вопрос паспорта (4); пока view у тайла ничего не прячет.
+
+     Вкладки — дорожки статусной модели (data/deal-status-model.js): Сделка · ЦУП ·
+     Operations · Мониторинг. На каждой — степпер и подвал: кнопки переходов из
+     текущего статуса дорожки или строка статуса, если действий нет.
+
+     Ниже — пример: черновик, вкладка «Сделка», «Согласование» ещё не нажато.
+     На странице сделки вкладки, степперы, подвал и кебаб перерисовывает
+     Navigator.js (PostNavigator.render) по модели и записи сделки. -->
+<section class="tile lc-navigator" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row"><h3 class="tile__title">Заведение сделки</h3></div>
+    </div>
+    <!-- Кебаб — переходы модели с via: 'menu' из текущих статусов дорожек.
+         Пунктов нет — кебаб не рисуется (data-menu-empty). -->
+    <div class="tile__actions lc-navigator__actions">
+      <span class="menu-anchor">
+        <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Действия со сделкой"
+                data-menu="lc-navigator-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>
+        <div id="lc-navigator-menu" class="menu menu--floating" role="menu" hidden>
+          <button type="button" class="menu__item" role="menuitem" data-nav-act="deal_delete"><span class="menu__item-label">Удалить</span></button>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <div class="tile__body lc-navigator__body">
+
+    <div class="lc-navigator__content">
+      <div class="tabs tabs--horiz" role="tablist" data-tabs data-nav-tabs aria-label="Статусы по подразделениям">
+        <button type="button" class="tab tab--s tab--selected" role="tab" aria-selected="true" tabindex="0" data-nav-lane="deal"><span class="tab__label">Сделка</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="tsup"><span class="tab__label">ЦУП</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="ops"><span class="tab__label">Operations</span></button>
+        <button type="button" class="tab tab--s" role="tab" aria-selected="false" tabindex="-1" data-nav-lane="mon"><span class="tab__label">Мониторинг</span></button>
+      </div>
+
+      <!-- Панель вкладки. Степпер: StepMarker S и подпись; шаги соединяет линия
+           (Navigator.css). Пройденные статусы вместе с текущим — галочка, следующий
+           шаг — «текущий» маркер (макет screenflow). На вкладке «Сделка» степпер —
+           чек-лист заполнения: отметки разделов даёт страница, «Согласование»
+           нажимается и включает «Передать на сопровождение». -->
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="deal">
+        <ol class="lc-navigator__steps">
+          <li class="lc-navigator__step" data-state="pending">
+            <span class="stepmark stepmark--s" aria-hidden="true"><span class="stepmark__num">1</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Общая информация</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">2</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Продукты ДИД</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">3</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Финансовые инструменты</span>
+          </li>
+          <li class="lc-navigator__step" data-state="done">
+            <span class="stepmark stepmark--s stepmark--done" aria-hidden="true"><span class="stepmark__num">4</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <span class="lc-navigator__label">Расчёт метрик</span>
+          </li>
+          <li class="lc-navigator__step lc-navigator__step--action" data-state="current" aria-current="step">
+            <span class="stepmark stepmark--s stepmark--current" aria-hidden="true"><span class="stepmark__num">5</span><i class="stepmark__icon" data-icon="check"></i></span>
+            <button type="button" class="btn btn--transparent btn--s" data-nav-agree><span class="btn__label">Согласование</span></button>
+          </li>
+        </ol>
+        <!-- Подвал: кнопки переходов дорожки, первая — Accent, остальные — Outline.
+             Выключенная кнопка — своё состояние тайла: «Передать на сопровождение»
+             ждёт нажатия «Согласования». Действий нет — строка статуса. -->
+        <div class="lc-navigator__foot">
+          <button type="button" class="btn btn--accent btn--s btn--fullwidth" disabled data-nav-act="deal_submit"><span class="btn__label">Передать на сопровождение</span></button>
+        </div>
+      </div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="tsup" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="ops" hidden></div>
+      <div class="lc-navigator__panel" role="tabpanel" data-nav-lane="mon" hidden></div>
+    </div>
+
+    <!-- Загрузка: каркас в габаритах вкладок и пяти шагов. -->
+    <div class="lc-navigator__loading" aria-busy="true">
+      <span class="sk-line sk-line--title" style="--sk-w:88%" aria-hidden="true"></span>
+      <div class="sk-group lc-navigator__loading-steps">
+        <span class="sk-line sk-line--title" style="--sk-w:62%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:54%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:76%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:48%" aria-hidden="true"></span>
+        <span class="sk-line sk-line--title" style="--sk-w:56%" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- Ошибка: статусы не пришли. Причина и повтор — внутри тайла, остальная
+         страница работает. «Повторить» шлёт navaction RETRY — повтор делает страница. -->
+    <div class="lc-navigator__error">
+      <div class="alert alert--error alert--m" role="alert" aria-live="assertive">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__text">Не удалось загрузить статусы сделки</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-nav-retry><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

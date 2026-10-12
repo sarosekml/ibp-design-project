@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- ФИКСТУРА <Б7>: база + ровно один дефект — сумма grid-column:span в ряду не равна 12.
+<!-- ФИКСТУРА <Б7>: база + ровно один дефект — сумма grid-column:span в ряду больше 12
+     (8 + 8 = 16: ряд переполнен). Недобор до 12 — норма Spacing, не дефект.
      Эталон без дефекта — _base.ok.html. Файл в браузере не открывается. -->
 <!-- ФИКСТУРА сенсора layout-check. Это НЕ экран продукта и не открывается в
      браузере: файл существует только как вход для проверки самого сторожа,
@@ -43,6 +44,19 @@
         </header>
 
         <div class="tile-row">
+          <section class="tile" style="grid-column:span 8">
+            <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Условия</h3></div></div></header>
+            <div class="tile__grid" style="grid-template-columns:repeat(4,1fr)">
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Номер сделки</span></span><div class="rof__row"><span class="rof__value">DL-2024-000481</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Сумма</span></span><div class="rof__row"><span class="rof__value">1 240 500,00</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Валюта</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><span class="chip chip--fit"><span class="chip__label">RUB</span></span></div></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Дата подписания</span></span><div class="rof__row"><span class="rof__value">20.04.2024</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Статус</span></span><div class="rof__row"><div class="rof__value rof__value--chips"><span class="chip"><span class="chip__label">Активна</span></span></div></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Менеджер</span></span><div class="rof__row"><span class="rof__value">Иванов И. И.</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Срок</span></span><div class="rof__row"><span class="rof__value">31.12.2025</span></div></div>
+              <div class="rof"><span class="ds-label"><span class="ds-label__text">Ставка</span></span><div class="rof__row"><span class="rof__value">12,50</span></div></div>
+            </div>
+          </section>
           <section class="tile" style="grid-column:span 8">
             <header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Условия</h3></div></div></header>
             <div class="tile__grid" style="grid-template-columns:repeat(4,1fr)">

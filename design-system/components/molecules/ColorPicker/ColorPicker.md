@@ -1,8 +1,8 @@
 ---
 component: ColorPicker
 title: "Выбор цвета"
-version: "1.002"
-updated: "08.10.2026"
+version: "1.003"
+updated: "10.10.2026"
 page: components/molecules/ColorPicker/ColorPicker.html
 page_js: components/molecules/ColorPicker/ColorPicker.page.js
 runtime: components/molecules/ColorPicker/ColorPicker.js

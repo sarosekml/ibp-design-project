@@ -14,7 +14,10 @@
    дизайн-системы — `project.json → hub.ds`, её href — `<ДС>/index.html`.
    Витрина локальных компонентов (с 25.09.2026) — `project.json → localKit`,
    вторая запись колонки ДС, href — `<localKit.dir>/index.html`: это второй
-   вход в документацию, а не экран продукта.
+   вход в документацию, а не экран продукта. Карта экранов проекта (с
+   11.10.2026, задача RE0015) — `project.json → screenMap.maps`: запись сразу
+   под записью приложения `after`, в его колонке, href —
+   `<screenMap.dir>/<раздел>/index.html`, root — папка карты.
    Сторожу хаба остаётся проверить, что генератор отработал, и что экраны
    ведут обратно в хаб.
 
@@ -57,6 +60,7 @@ const GEN = 'hub-build.mjs';
 const APP_FIELDS = ['id', 'track', 'title', 'desc', 'home', 'icon'];
 const DS_FIELDS = ['id', 'title', 'desc', 'icon'];
 const KIT_FIELDS = ['id', 'title', 'desc', 'icon'];
+const MAP_FIELDS = ['id', 'section', 'title', 'desc', 'icon', 'after'];
 
 const js = (v) => (v === null ? 'null' : "'" + String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n') + "'");
 
@@ -76,9 +80,14 @@ export function collect(P) {
   }
   const kit = P.manifest.localKit || null;
   if (kit) {
-    const miss = KIT_FIELDS.filter((k) => typeof kit[k] !== 'string' || !kit[k].trim());
-    if (miss.length) defects.push('ХБ4 project.json → localKit — нет полей: ' + miss.join(', '));
-    else entries.push({ id: kit.id, group: 'ds', title: kit.title, desc: kit.desc, href: (kit.dir || 'kit') + '/index.html', root: null, icon: kit.icon });
+    /* kits (09.10.2026) — по записи на раздел, href — обзор раздела; без kits — одна запись. */
+    const kits = Array.isArray(kit.kits) && kit.kits.length ? kit.kits : [kit];
+    for (const k of kits) {
+      const miss = KIT_FIELDS.filter((f) => typeof k[f] !== 'string' || !k[f].trim());
+      if (miss.length) { defects.push('ХБ4 project.json → localKit — нет полей: ' + miss.join(', ')); continue; }
+      const dir = kit.dir || 'kit';
+      entries.push({ id: k.id, group: 'ds', title: k.title, desc: k.desc, href: dir + (k.section ? '/' + k.section : '') + '/index.html', root: null, icon: k.icon });
+    }
   }
   const tracks = P.tracks.filter((t) => t.id && t.hubGroup);
   const byTrack = new Map(tracks.map((t) => [t.id, []]));
@@ -100,6 +109,23 @@ export function collect(P) {
     for (const app of byTrack.get(t.id).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
       const root = P.appsDir + '/' + app.dir;
       entries.push({ id: app.id, group: t.hubGroup, title: app.title, desc: app.desc, href: root + '/' + app.home.replace(/^\.\//, ''), root, icon: app.icon });
+    }
+  }
+  /* Карты экранов (задача RE0015, решение человека 11.10.2026): пункт карты —
+     сразу под записью приложения `after`, в его колонке («Карта Post» под
+     «Post — ДИД»); root — папка карты: это не приложение, сторож хаба знает. */
+  const sm = P.manifest.screenMap;
+  if (sm && Array.isArray(sm.maps)) {
+    const placed = new Map();   // несколько карт под одной записью — в порядке манифеста
+    for (const m of sm.maps) {
+      const miss = MAP_FIELDS.filter((f) => typeof (m && m[f]) !== 'string' || !m[f].trim());
+      if (!P.screenMap || miss.length) { defects.push('ХБ4 project.json → screenMap.maps — ' + (P.screenMap ? 'нет полей: ' + miss.join(', ') : 'нет dir — каталога карт')); continue; }
+      const i = entries.findIndex((e) => e.id === m.after);
+      if (i < 0) { defects.push('ХБ4 project.json → screenMap.maps «' + m.id + '» — after «' + m.after + '»: такой записи на хабе нет (нет приложения или у него hub: false)'); continue; }
+      const n = placed.get(m.after) || 0;
+      placed.set(m.after, n + 1);
+      const root = P.screenMap.dir + '/' + m.section;
+      entries.splice(i + 1 + n, 0, { id: m.id, group: entries[i].group, title: m.title, desc: m.desc, href: root + '/index.html', root, icon: m.icon });
     }
   }
   return { entries, defects };
@@ -124,6 +150,8 @@ export function render(P, entries) {
     '     ds       — дизайн-система (запись — project.json → hub.ds)' + (P.manifest.localKit ? ' и витрина локальных компонентов (project.json → localKit)' : '') + ';',
     ...groups,
     '   Группа приложения — hubGroup его трека (project.json → tracks).',
+    ...(P.manifest.screenMap ? ['   Карта экранов (project.json → screenMap.maps) — сразу под записью приложения',
+      '   after, в его колонке; root — папка карты, не приложения.'] : []),
     '',
     '   Поля:',
     '     id     — уникальный ключ, латиница; у приложения — его каталог;',
@@ -279,7 +307,29 @@ function selftest() {
       rmSync(r, { recursive: true, force: true });
     }
   }
-  const total = CASES.length + 4;
+  /* Карта экранов (RE0015) — сразу под записью after, в её колонке; after не найден — ХБ4. */
+  {
+    const r = mkdtempSync(path.join(os.tmpdir(), 'hub-build-'));
+    try {
+      const map = (after) => ({ screenMap: { dir: 'apps/screen-map', maps: [{ id: 'map-post', section: 'postrade', title: 'Карта', desc: 'тест', icon: 'tree-view', after }] } });
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, ...map('alpha') }));
+      put(r, 'apps/alpha/app.json', app('alpha', 'product'));
+      put(r, 'apps/gamma/app.json', app('gamma', 'product'));
+      put(r, 'apps/beta/app.json', app('beta', 'rnd'));
+      const got = collect(project(r)).entries.map((e) => e.id + ':' + e.group + ':' + (e.root || '-')).join(' ');
+      const pass = got === 'ds:ds:- alpha:projects:apps/alpha map-post:projects:apps/screen-map/postrade gamma:projects:apps/gamma beta:concepts:apps/beta';
+      if (!pass) failed++;
+      out.push((pass ? 'ok    ' : 'FAIL  ') + 'карта экранов — сразу под записью after, в её колонке — ' + got);
+      put(r, 'project.json', JSON.stringify({ ...MANIFEST, ...map('nope') }));
+      const { defects } = collect(project(r));
+      const pass2 = defects.some((d) => d.includes('ХБ4 project.json → screenMap.maps «map-post» — after «nope»'));
+      if (!pass2) failed++;
+      out.push((pass2 ? 'ok    ' : 'FAIL  ') + 'after карты не найден на хабе — ' + (defects.join(' | ') || 'дефектов нет'));
+    } finally {
+      rmSync(r, { recursive: true, force: true });
+    }
+  }
+  const total = CASES.length + 6;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);

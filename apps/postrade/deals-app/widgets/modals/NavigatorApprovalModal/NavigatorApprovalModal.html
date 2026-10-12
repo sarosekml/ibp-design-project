@@ -1,0 +1,62 @@
+<!-- NavigatorApprovalModal — окно «Подтвердите действие»: приём сделки на
+     мониторинг РМ, ПМ или ПМЗ. Артефакт тайла «Заведение сделки» (Navigator):
+     открывается кнопками «РМ принял», «ПМ принял», «ПМЗ принял» на вкладке
+     «Мониторинг» в статусах «Передана» и «Передача изменений». Фрагмент
+     вшивается отдельной меткой ds-include: скрим лежит в конце body.
+
+     Три варианта (data-variant на .modal), макет screenflow дизайнера:
+     – rm, pm — «Согласующий» и «Дата согласования»;
+     – pmz — сверху Switch «С обеспечением», затем те же поля.
+     «Сохранить» отдаёт отметку тайлу и закрывает окно; крестик и Esc — без
+     отметки. Клик мимо окна не закрывает: в окне поля ввода (Modal ДС).
+
+     Список согласующих и значения ставит NavigatorApprovalModal.js; ниже —
+     пример с макета: ПМЗ, Switch включён, поля пусты. -->
+<div class="modal-scrim" id="nav-approval-scrim" hidden>
+  <div class="modal modal--w3 lc-nav-approval" data-variant="pmz" role="dialog" aria-modal="true" aria-labelledby="nav-approval-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-approval-title">Подтвердите действие</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- Switch ДС: только у ПМЗ — «для залоговиков сначала нужно поставить
+           флаг, что залог есть» (пояснение макета) -->
+      <label class="sw lc-nav-approval__collateral">
+        <input type="checkbox" class="sw__input" role="switch" name="withCollateral" checked>
+        <span class="sw__control"><span class="sw__thumb"></span></span>
+        <span class="sw__content"><span class="sw__label">С обеспечением</span></span>
+      </label>
+
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как
+           в окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-approver"><span class="ds-label__text">Согласующий</span></label>
+        <div class="inp__field" data-ddl="nav-approval-approver-list">
+          <input class="inp__control" id="nav-approval-approver" name="approver" autocomplete="off">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-approval-approver-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <!-- InputDate ДС: маска и календарь — из коробки; крестик очистки рисует
+           рантайм поля по значению. Во всю ширину тела, как «Согласующий»
+           (решение человека 10.10.2026; на макете — полширины). -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-approval-date"><span class="ds-label__text">Дата согласования</span></label>
+        <div class="inp__field">
+          <input class="inp__control" id="nav-approval-date" name="approvalDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+          <span class="inp__acts">
+            <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-approval-save disabled><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

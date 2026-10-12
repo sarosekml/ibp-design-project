@@ -13,14 +13,14 @@ flows:
         page: Tranche.html
 
   - id: rsbu-tile
-    title: Тайл «Харды в РСБУ» на странице транша
-    desc: Три вида тайла — нужен расчёт процентных схем, корректировок нет, корректировки внесены
+    title: Тайл «Корректировки процентов РСБУ» на странице транша
+    desc: Три вида тайла — нужен расчёт процентных платежей, корректировок нет, корректировки внесены
     steps:
       - state: 2
         id: rsbu-tile-locked
         title: Требуется расчёт
         page: Tranche.html?hardsState=locked
-        note: «Требуется расчёт процентных схем»; кнопки и стрелки перехода нет.
+        note: «Требуется расчёт процентных платежей»; кнопки и стрелки перехода нет.
       - state: 3
         id: rsbu-tile-none
         title: Корректировок нет
@@ -33,37 +33,37 @@ flows:
         note: '«Внесено корректировок: N»; кнопка остаётся.'
 
   - id: rsbu-page
-    title: Страница «Харды в РСБУ»
+    title: Страница «Корректировки процентов РСБУ»
     desc: Таблица корректировок, добавление, правка, удаление
     steps:
       - state: 5
         id: rsbu-page-empty
         title: Корректировок нет
-        page: RsbuHards.html
+        page: RsbuInterestAdjustments.html
         note: Пустая таблица — только колонки; «Внести корректировку» в шапке страницы.
       - state: 6
         id: rsbu-page-modal
         title: Новая корректировка
-        page: RsbuHards.html?open=add
-        note: Так страница открывается с кнопки на тайле. Форма в одну колонку; сумма может быть отрицательной.
+        page: RsbuInterestAdjustments.html?open=add
+        note: Так страница открывается с кнопки на тайле. Начальная дата — выпадающий список, конечная — ручной ввод; сумма может быть отрицательной.
         do:
           - waitFor: '#rh-modal-scrim:not([hidden])'
       - state: 7
         id: rsbu-page-filled
         title: Корректировки внесены
-        page: RsbuHards.html?demo=filled
+        page: RsbuInterestAdjustments.html?demo=filled
         note: После сохранения в модалке строка появляется в таблице. Отрицательная сумма — со знаком минус.
       - state: 8
         id: rsbu-page-edit
         title: Правка корректировки
-        page: RsbuHards.html?demo=edit
+        page: RsbuInterestAdjustments.html?demo=edit
         note: Правка — карандашом в колонке «Действия» или двойным кликом по строке.
         do:
           - waitFor: '#rh-modal-scrim:not([hidden])'
       - state: 9
         id: rsbu-page-delete
         title: Подтверждение удаления
-        page: RsbuHards.html?demo=delete
+        page: RsbuInterestAdjustments.html?demo=delete
         note: Удаление — корзина в колонке «Действия» и модалка подтверждения.
         do:
           - waitFor: '#rh-delete-scrim:not([hidden])'

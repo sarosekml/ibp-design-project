@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Назначение ответственного — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Назначение ответственного">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--modal" id="pg-stage">
+<!-- NavigatorAppointmentOfResponsibleModal — окно «Назначение ответственного».
+     Артефакт тайла «Заведение сделки» (Navigator): открывается кнопкой
+     «Назначить ответственного» на вкладке «ЦУП» в статусе «Ожидает назначения
+     ответственного». Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Состав — макет screenflow дизайнера и пояснение к нему: «кроме выбора
+     ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные
+     с этим ГСЗ сделки и ответственные по этим сделкам».
+     – «Ответственный от ЦУП» — InputAutocomplete по справочнику сотрудников;
+     – «Группа связанных заемщиков» — ReadOnlyField, ГСЗ сделки;
+     – «Сделки ГСЗ» — Table: номер, наименование, ответственный ЦУП;
+     – «Назначить» — ответственный уходит в команду сделки (tsupEmployee).
+     Крестик и Esc — без назначения. Клик мимо окна не закрывает: в окне поле
+     ввода (Modal ДС).
+
+     Значения ставит NavigatorAppointmentOfResponsibleModal.js из записи
+     сделки и DealsStore; ниже — пример: сделка 1025, ГСЗ «СвязьКапитал». -->
+<div id="nav-appoint-scrim" hidden class="modal-scrim modal-scrim--inline">
+  <div class="modal modal--w5 lc-nav-appoint" role="dialog" aria-modal="true" aria-labelledby="nav-appoint-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-appoint-title">Назначение ответственного</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как в
+           окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-appoint-employee"><span class="ds-label__text">Ответственный от ЦУП</span></label>
+        <div class="inp__field" data-ddl="nav-appoint-employee-list">
+          <input class="inp__control" id="nav-appoint-employee" name="tsupEmployee" autocomplete="off" value="Щукин Щ.Щ. 100134">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-appoint-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value" data-nav-appoint-gsz>Группа «СвязьКапитал»</span></div>
+      </div>
+
+      <h3 class="ds-h6-strong">Сделки ГСЗ</h3>
+
+      <!-- Table ДС без тулбара: строки рисует скрипт окна. Наименование —
+           в одну строку с многоточием и тултипом (TableCell). Других сделок
+           у ГСЗ нет или ГСЗ не указана — пустое состояние тела таблицы. -->
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-nav-appoint-table>
+            <div class="tbl__row tbl__row--head lc-nav-appoint__cols">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">Номер сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Наименование сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Ответственный ЦУП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1035</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Реконструкция аэропортового комплекса</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Степанов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1045</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Приобретение пакета акций энергокомпании</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Смирнов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1055</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Финансирование модернизации нефтеперерабатывающего завода</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Баранов Б.Б.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1065</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Кредитование лесопромышленного комбината</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Захаров З.З.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+          <div class="dtable__empty" data-nav-appoint-empty hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title" data-nav-appoint-empty-text>Других сделок у этой ГСЗ нет</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-appoint-save><span class="btn__label">Назначить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>модальное окно</b></span><span>Версия: <b>1.000</b></span><span>Обновлено: <b>10.10.2026</b></span><span>Категория: <b>Сделка</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Post</a> · postrade/deals-app</p>
+  <h1>Назначение ответственного</h1>
+  <p class="lead">Назначить ответственного от ЦУП, видя другие сделки той же ГСЗ и их ответственных</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/deals-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal">apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/NavigatorAppointmentOfResponsibleModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница сделки — окно тайла «Заведение сделки»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/pages/Deal.preview.html">apps/postrade/deals-app/pages/Deal.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывается из</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="Navigator.doc.html">Заведение сделки (Navigator)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Как открывается</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл «Заведение сделки», вкладка «ЦУП» — кнопка «Назначить ответственного» в статусе «Ожидает назначения ответственного»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="Navigator.doc.html">Заведение сделки (../../tiles/Navigator/Navigator.md) — переход модели выполняется после «Назначить»</a><br><a class="inl" href="DealDescriptionTile.doc.html">Описание сделки (../../tiles/DealDescriptionTile/DealDescriptionTile.md) — ГСЗ сделки</a><br><a class="inl" href="DealTeamTile.doc.html">Команда сделки (../../tiles/DealTeamTile/DealTeamTile.md) — назначенный попадает в сотрудника ЦУП</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет дизайнера «screenflow» (статусы сделки) и пояснение к окну<br>задача docs/tasks/RE0013-deal-navigator.md</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.000 · обновлено 10.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Окно, в котором ЦУП назначает ответственного по сделке. Открывается кнопкой «Назначить ответственного» на вкладке «ЦУП» тайла «Заведение сделки», когда сделку передали на сопровождение и ЦУП «Ожидает назначения ответственного».</p>
+<p class="desc">По пояснению макета, «кроме выбора ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные с этим ГСЗ сделки и ответственные по этим сделкам»: по таблице видно, кто из ЦУП уже ведёт сделки этой группы заемщиков.</p>
+<p class="desc">По «Назначить» ЦУП переходит в «Ожидает подтверждения», выбранный сотрудник становится сотрудником ЦУП в команде сделки (<code class="tok">tsupEmployee</code>, тайл «Команда сделки»).</p>
+<p class="desc">Крестик и Esc закрывают окно без назначения. Клик мимо окна не закрывает — в окне поле ввода (правило Modal ДС).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Modal modal--w5 (747px)
+├── шапка: «Назначение ответственного» + крестик
+├── тело (прокручивается, Modal)
+│   ├── InputAutocomplete M «Ответственный от ЦУП» — во всю ширину
+│   ├── ReadOnlyField «Группа связанных заемщиков»
+│   ├── заголовок H6 Strong «Сделки ГСЗ»
+│   └── Table без тулбара: Номер сделки · Наименование сделки · Ответственный ЦУП
+│       └── или пустое состояние тела таблицы
+└── подвал справа: Button accent M «Назначить»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Modal</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">modal--w5</code> — окно на макете шире остальных окон навигатора</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">InputAutocomplete</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M, одиночный выбор, список — DropdownList <code class="tok">ddl--floating ddl--scroll</code>; строка — ФИО и под ним табельный номер (хелпер опции)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ReadOnlyField</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">текст; пустое значение — прочерк</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Typography</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок таблицы — <code class="tok">ds-h6-strong</code>, как подзаголовки окон «Продукты ДИД» и «КНР»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Table, TableCell</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">без тулбара, липкая шапка; колонки — разделитель 8px · 120px · остаток · 200px · разделитель 8px; значения — <code class="tok">tc__text--truncate</code> с тултипом усечения; пустое значение — <code class="tok">tc__empty</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">крестик шапки <code class="tok">ibtn--neutral ibtn--l</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.9fr) minmax(0,0.8fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Buttons</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Назначить» <code class="tok">btn--accent btn--m</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Modal/Modal.html">Modal</a> · <a class="inl" href="../../../../design-system/components/molecules/Inputs/InputAutocomplete/InputAutocomplete.html">InputAutocomplete</a> · <a class="inl" href="../../../../design-system/components/molecules/ReadOnlyField/ReadOnlyField.html">ReadOnlyField</a> · <a class="inl" href="../../../../design-system/components/organisms/Table/Table.html">Table</a> · <a class="inl" href="../../../../design-system/components/organisms/TableCell/TableCell.html">TableCell</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Buttons/Buttons.html">Buttons</a> · <a class="inl" href="../../../../design-system/foundations/Typography/Typography.html">Typography</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.css">NavigatorAppointmentOfResponsibleModal.css</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.html">NavigatorAppointmentOfResponsibleModal.html</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js">NavigatorAppointmentOfResponsibleModal.js</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md">NavigatorAppointmentOfResponsibleModal.md</a> · <a class="inl" href="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tsupEmployee</code>, <code class="tok">tsupEmployeeTab</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответственный от ЦУП: ФИО и табельный номер; в поле — «ФИО номер»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник сотрудников <code class="tok">MOCK_TEAM_ROSTER</code>; при открытии — нынешний сотрудник ЦУП сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да (допущение, вопрос 3)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">gsz</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">группа связанных заемщиков сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки (тайл «Описание сделки»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделки ГСЗ: <code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">номер сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealsStore.list()</code> — сделки с той же <code class="tok">gsz</code>, кроме текущей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделки ГСЗ: <code class="tok">name</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">наименование сделки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,1.9fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделки ГСЗ: <code class="tok">tsupEmployee</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ответственный ЦУП по сделке</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка, ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же; нет — прочерк</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,0.9fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ЦУП (директор, сотрудник)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно только для правки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026) — вопрос 5 паспорта тайла; в прототипе кнопка видна всем</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе сделки уже в <code class="tok">DealsStore</code>; в продукте таблица сделок ГСЗ, вероятно, грузится отдельно</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле, ГСЗ и таблица сделок ГСЗ</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у сделки таблицы нет ответственного ЦУП — прочерк в ячейке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">других сделок у ГСЗ нет — пустое состояние таблицы «Других сделок у этой ГСЗ нет»; ГСЗ не указана — прочерк в поле и «ГСЗ в описании сделки не указана»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе ошибок загрузки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (10.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в прототипе сохранение мгновенное</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">единственный режим</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">окно не открывается</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Назначить» недоступна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле «Ответственный от ЦУП» пустое</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">кнопка <code class="tok">disabled</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases kit-cases--wide" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Окно обязательно к заполнению целиком: да — без ответственного переход не выполняется.</li><li>Обязательное поле: ответственный от ЦУП (допущение 10.10.2026, вопрос 3).</li><li>Что показывает, когда обязательное не заполнено: «Назначить» недоступна.</li><li>Что отдаёт наружу: <code class="tok">{ patch: { tsupEmployee, tsupEmployeeTab } }</code>.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинное наименование сделки или ФИО</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одна строка с многоточием, полный текст — тултипом усечения (TableCell)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много сделок в ГСЗ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело окна прокручивается (Modal, до 80vh), шапка таблицы липкая</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинное ФИО в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">поле усекает значение, список — по правилам DropdownList</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ширина фиксирована шкалой Modal (<code class="tok">modal--w5</code>); наименование сжимается до 160px, дальше таблица прокручивается по горизонтали</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<h3 class="kit-md__h3">Открытие и заполнение</h3>
+<p class="desc">Кнопка тайла → <code class="tok">openModal</code> страницы → <code class="tok">open({ deal, transition }, done)</code>. В поле — нынешний сотрудник ЦУП сделки («ФИО номер»), ГСЗ — из записи, таблица — другие сделки той же ГСЗ из <code class="tok">DealsStore</code> в порядке реестра. Список сотрудников подставляется один раз на окно.</p>
+<h3 class="kit-md__h3">Назначение</h3>
+<p class="desc">«Назначить» → <code class="tok">done({ patch })</code> → тайл применяет переход <code class="tok">tsup_appoint</code> вместе с <code class="tok">tsupEmployee</code> и <code class="tok">tsupEmployeeTab</code>; тайл «Команда сделки» видит нового сотрудника ЦУП. Крестик и Esc — <code class="tok">done</code> не вызывается.</p>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,0.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,0.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Шеврон или ввод в поле «Ответственный от ЦУП»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">DropdownList ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">справочник сотрудников</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выбранный — в поле «ФИО номер»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Назначение ответственного ЦУП по сделке; список сделок той же ГСЗ с ответственными ЦУП; справочник сотрудников ЦУП. Имена методов выбирает разработка.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.7fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.7fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/deals-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DealsStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">list()</code> — сделки реестра</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модель представления</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.7fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-deals.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_DEALS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">запись сделки — <code class="tok">id</code>, <code class="tok">name</code>, <code class="tok">gsz</code>, <code class="tok">tsupEmployee</code>, <code class="tok">tsupEmployeeTab</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.7fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-team.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_TEAM_ROSTER</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">{ name, tab }</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (23.09.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,1.7fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code> (рядом)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">сделка-образец и сделки её ГСЗ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<p class="desc">Метка <code class="tok">&lt;ds-include&gt;</code> атрибутов не несёт.</p>
+<h3 class="kit-md__h3">Скрипт окна</h3>
+<p class="desc"><code class="tok">NavigatorAppointmentOfResponsibleModal.js</code> регистрирует окно в реестре окон навигатора <code class="tok">window.PostNavigatorModals.NavigatorAppointmentOfResponsibleModal</code>:</p>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Функция</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что делает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">open(ctx, done)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заполнить по <code class="tok">ctx = { deal, transition, deals? }</code> и открыть; <code class="tok">deals</code> — список для таблицы, по умолчанию <code class="tok">DealsStore.list()</code>; <code class="tok">done({ patch })</code> — после «Назначить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">use(ctx)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нарисовать без открытия — для витрины</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Окно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">postrade/deals-app/features/modals/NavigatorAppointmentOfResponsibleModal</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Колонки таблицы</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">NavigatorAppointmentOfResponsibleModal.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,3fr) minmax(0,3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поведение</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">NavigatorAppointmentOfResponsibleModal.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">в компоненте окна</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: наименование сделки в две строки с многоточием</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">одна строка с многоточием и тултипом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у TableCell усечение однострочное; перенос (<code class="tok">tc--wrap</code>) не обрезает текст</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: поле ответственного над разделителем, прокручивается только нижняя часть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прокручивается всё тело окна</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тело Modal ДС — одна прокручиваемая область</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<p class="desc">Решение человека 29.09.2026: вопросы не закрываются догадкой и не удаляются, пока человек не разберёт каждый.</p>
+<ol class="kit-md__ol"><li><b>Список ответственных</b> — взят весь справочник сотрудников команды сделки (<code class="tok">mock-team.js</code>); фильтруется ли он по подразделению ЦУП — не решено (23.09.2026, как в окне «Команда сделки»).</li><li><b>Состав таблицы «Сделки ГСЗ»</b> — текущая сделка в таблицу не входит, порядок — как в реестре; входят ли погашенные и удалённые сделки, нужна ли сортировка — допущение 10.10.2026.</li><li><b>Обязательность</b> — без ответственного «Назначить» недоступна — допущение 10.10.2026.</li><li><b>Номер сделки</b> — на макете номера вида «987179fh0q906…»; в прототипе номер — <code class="tok">id</code> записи сделки. Какой номер показывать — не решено (10.10.2026).</li><li><b>Повторное назначение</b> — после «Назначить» кнопки на вкладке ЦУП нет; как сменить ответственного позже (окно «Команда сделки»?) — не решено (10.10.2026).</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>. Данные демо — из <code class="tok">fixtures.json</code>, сценарий — <code class="tok">NavigatorAppointmentOfResponsibleModal.demo.js</code> рядом со страницей.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/deals-app/pages/Deal.html): окна и подчасти, которые открывает виджет. -->
+<script src="../../../postrade/deals-app/data/mock-deals.js"></script>
+<script src="../../../postrade/deals-app/data/deal-status-model.js"></script>
+<script src="../../../postrade/deals-app/data/deals-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-team.js"></script>
+<script src="../../../postrade/deals-app/data/mock-counterparties.js"></script>
+<script src="../../../postrade/deals-app/data/post-api.js"></script>
+<script src="../../../postrade/deals-app/data/counterparties-store.js"></script>
+<script src="../../../postrade/deals-app/data/mock-financial-metrics.js"></script>
+<script src="../../../postrade/deals-app/data/mock-product-catalog.js"></script>
+<script src="../../../postrade/deals-app/data/mock-fin-instruments.js"></script>
+<script src="../../../postrade/deals-app/data/mock-deal-trees.js"></script>
+<script src="../../../postrade/deals-app/data/product-tree-store.js"></script>
+<script src="../../../postrade/deals-app/data/fin-instruments-store.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTitleModal/DealTitleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/CounterpartyCard/CounterpartyCard.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsCounterpartiesModal/InstrumentsCounterpartiesModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/CounterpartiesTile/CounterpartiesTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealPeriodModal/DealPeriodModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealPeriodTile/DealPeriodTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealTeamModal/DealTeamModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealDescriptionModal/DealDescriptionModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CounterpartiesEcmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealDescriptionTile/DealDescriptionTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealFinancialMetricsTile/DealFinancialMetricsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialMetricsModal/DealFinancialMetricsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealProjectInformationModal/DealProjectInformationModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DidProductsModal/DidProductsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/InstrumentTransferModal/InstrumentTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/tiles/Navigator/Navigator.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.js"></script>
+<script src="../../../postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.js"></script>
+<script src="NavigatorAppointmentOfResponsibleModal.demo.js"></script>
+<script>
+window.IBPKitPage = {"id":"NavigatorAppointmentOfResponsibleModal","type":"modal","base":"../..","hub":"../../../../index.html","states":[],"modes":[],"state":null,"mode":null,"width":null,"scenario":true,"fixtures":{"_":"Демо-данные витрины: живое демо показывает фрагмент как есть — сделка 1025 из портфеля, ГСЗ «СвязьКапитал», в таблице четыре другие сделки этой ГСЗ (mock-deals.js). На странице окно берёт сделки из DealsStore.","data":{"deal":{"id":1025,"name":"Приобретение сети АЗС","gsz":"Группа «СвязьКапитал»","tsupEmployee":"Щукин Щ.Щ.","tsupEmployeeTab":"100134"}},"empty":{"deal":{"id":1028,"name":"Кредитование застройщика жилого квартала","gsz":"","tsupEmployee":"","tsupEmployeeTab":""}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- NavigatorAppointmentOfResponsibleModal — окно «Назначение ответственного».
+     Артефакт тайла «Заведение сделки» (Navigator): открывается кнопкой
+     «Назначить ответственного» на вкладке «ЦУП» в статусе «Ожидает назначения
+     ответственного». Фрагмент вшивается отдельной меткой ds-include: скрим
+     лежит в конце body.
+
+     Состав — макет screenflow дизайнера и пояснение к нему: «кроме выбора
+     ответственного, указан ГСЗ (тот, что выбран в описании сделки) и связанные
+     с этим ГСЗ сделки и ответственные по этим сделкам».
+     – «Ответственный от ЦУП» — InputAutocomplete по справочнику сотрудников;
+     – «Группа связанных заемщиков» — ReadOnlyField, ГСЗ сделки;
+     – «Сделки ГСЗ» — Table: номер, наименование, ответственный ЦУП;
+     – «Назначить» — ответственный уходит в команду сделки (tsupEmployee).
+     Крестик и Esc — без назначения. Клик мимо окна не закрывает: в окне поле
+     ввода (Modal ДС).
+
+     Значения ставит NavigatorAppointmentOfResponsibleModal.js из записи
+     сделки и DealsStore; ниже — пример: сделка 1025, ГСЗ «СвязьКапитал». -->
+<div class="modal-scrim" id="nav-appoint-scrim" hidden>
+  <div class="modal modal--w5 lc-nav-appoint" role="dialog" aria-modal="true" aria-labelledby="nav-appoint-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="nav-appoint-title">Назначение ответственного</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+    <div class="modal__body">
+      <!-- InputAutocomplete ДС, одиночный выбор: опции — справочник
+           сотрудников (mock-team.js), их подставляет скрипт окна; открытие,
+           фильтр и клавиатуру ведёт DSDropdownList. В поле — «ФИО номер», как в
+           окне «Команда сделки». -->
+      <div class="inp inp--m inp--fullwidth">
+        <label class="ds-label" for="nav-appoint-employee"><span class="ds-label__text">Ответственный от ЦУП</span></label>
+        <div class="inp__field" data-ddl="nav-appoint-employee-list">
+          <input class="inp__control" id="nav-appoint-employee" name="tsupEmployee" autocomplete="off" value="Щукин Щ.Щ. 100134">
+          <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+        </div>
+        <div id="nav-appoint-employee-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+      </div>
+
+      <div class="rof">
+        <span class="ds-label"><span class="ds-label__text">Группа связанных заемщиков</span></span>
+        <div class="rof__row"><span class="rof__value" data-nav-appoint-gsz>Группа «СвязьКапитал»</span></div>
+      </div>
+
+      <h3 class="ds-h6-strong">Сделки ГСЗ</h3>
+
+      <!-- Table ДС без тулбара: строки рисует скрипт окна. Наименование —
+           в одну строку с многоточием и тултипом (TableCell). Других сделок
+           у ГСЗ нет или ГСЗ не указана — пустое состояние тела таблицы. -->
+      <div class="dtable">
+        <div class="dtable__body">
+          <div class="tbl" data-table data-nav-appoint-table>
+            <div class="tbl__row tbl__row--head lc-nav-appoint__cols">
+              <div class="th th--separator"></div>
+              <div class="th"><span class="th__label">Номер сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Наименование сделки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th"><span class="th__label">Ответственный ЦУП</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+              <div class="th th--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1035</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Реконструкция аэропортового комплекса</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Степанов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1045</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Приобретение пакета акций энергокомпании</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Смирнов С.С.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1055</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Финансирование модернизации нефтеперерабатывающего завода</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Баранов Б.Б.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+            <div class="tbl__row lc-nav-appoint__cols">
+              <div class="tc tc--separator"></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">1065</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Кредитование лесопромышленного комбината</span></span></div>
+              <div class="tc"><span class="tc__row"><span class="tc__text tc__text--truncate">Захаров З.З.</span></span></div>
+              <div class="tc tc--separator"></div>
+            </div>
+          </div>
+          <div class="dtable__empty" data-nav-appoint-empty hidden>
+            <span class="illu" data-illu="empty-folder" aria-hidden="true"></span>
+            <p class="dtable__empty-title" data-nav-appoint-empty-text>Других сделок у этой ГСЗ нет</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-nav-appoint-save><span class="btn__label">Назначить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Окно «Назначение ответственного» (NavigatorAppointmentOfResponsibleModal).
+   Только колонки таблицы «Сделки ГСЗ». Геометрия — Modal ДС (modal--w5),
+   поля — InputAutocomplete и ReadOnlyField ДС, таблица — Table и TableCell ДС;
+   своих цветов и шрифтов здесь нет. */
+
+/* Колонки: разделитель · номер · наименование · ответственный · разделитель.
+   Наименование забирает остаток ширины тела окна; пропорции — с макета
+   screenflow. Минимумы колонок — порог ручки изменения ширины TableCell
+   (96px) и запас под номер сделки. */
+.lc-nav-appoint .lc-nav-appoint__cols {
+  grid-template-columns: 8px 120px minmax(160px, 1fr) 200px 8px;
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   NavigatorAppointmentOfResponsibleModal.js — окно «Назначение
+   ответственного» (макет screenflow дизайнера).
+
+   Открывает его тайл «Заведение сделки» (Navigator) по полю modal перехода
+   статусной модели: кнопка «Назначить ответственного» на вкладке «ЦУП»
+   (tsup_appoint).
+
+   Делает то, чего нет в рантаймах ДС:
+   1) подставляет в список «Ответственный от ЦУП» справочник сотрудников
+      (MOCK_TEAM_ROSTER): ФИО, под ним табельный номер; в поле — «ФИО номер»,
+      как в окне «Команда сделки» (PostDealTeamModal.personValue); при открытии
+      в поле — нынешний сотрудник ЦУП сделки (tsupEmployee), если он есть;
+   2) показывает ГСЗ сделки (gsz) и таблицу «Сделки ГСЗ» — другие сделки
+      DealsStore с той же ГСЗ: номер, наименование, сотрудник ЦУП. Текущая
+      сделка в таблицу не входит (допущение 10.10.2026, вопрос 2 паспорта).
+      ГСЗ не указана или других сделок нет — пустое состояние таблицы;
+   3) держит «Назначить» недоступной, пока ответственный не выбран (допущение
+      10.10.2026, вопрос 3 паспорта);
+   4) по «Назначить» отдаёт тайлу { patch: { tsupEmployee, tsupEmployeeTab } }
+      и закрывает окно: ответственный попадает в команду сделки. Крестик и
+      Esc — без назначения.
+
+   API — реестр окон навигатора (его читает страница в openModal тайла):
+     PostNavigatorModals.NavigatorAppointmentOfResponsibleModal.open(ctx, done)
+       ctx = { deal, transition, deals? } — запись сделки, переход модели и
+       (необязательно) список сделок для таблицы, по умолчанию
+       DealsStore.list(); done({ patch }) — после «Назначить»
+     PostNavigatorModals.NavigatorAppointmentOfResponsibleModal.use(ctx) —
+       нарисовать без открытия (витрина)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var NAME = 'NavigatorAppointmentOfResponsibleModal';
+  var scrim = document.getElementById('nav-appoint-scrim');
+  if (!scrim) return;
+  var employee = scrim.querySelector('#nav-appoint-employee');
+  var list = scrim.querySelector('#nav-appoint-employee-list');
+  var gsz = scrim.querySelector('[data-nav-appoint-gsz]');
+  var table = scrim.querySelector('[data-nav-appoint-table]');
+  var empty = scrim.querySelector('[data-nav-appoint-empty]');
+  var emptyText = scrim.querySelector('[data-nav-appoint-empty-text]');
+  var save = scrim.querySelector('[data-nav-appoint-save]');
+  var pending = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* «ФИО номер» ↔ { name, tab } — контракт окна «Команда сделки»; без него
+     (окно не подключено) — только ФИО. */
+  function team() { return window.PostDealTeamModal || null; }
+  function personValue(name, tab) { return team() ? team().personValue(name, tab) : (name || ''); }
+  function splitPerson(v) { return team() ? team().splitPerson(v) : { name: String(v || '').trim(), tab: '' }; }
+
+  /* Строка списка: ФИО, под ним табельный номер — как в окне «Команда сделки» */
+  function optionHTML(p) {
+    return '<button type="button" class="ddl__item" role="option" aria-selected="false" data-tab="' + esc(p.tab) + '">'
+      + '<span class="ddl__item-body"><span class="ddl__item-label">' + esc(p.name) + '</span>'
+      + '<span class="ds-helper"><span class="ds-helper__text">' + esc(p.tab) + '</span></span></span></button>';
+  }
+
+  var listReady = false;
+  function fillList() {
+    if (listReady || !list) return;
+    listReady = true;
+    list.innerHTML = (window.MOCK_TEAM_ROSTER || []).map(optionHTML).join('');
+    var field = scrim.querySelector('[data-ddl="nav-appoint-employee-list"]');
+    if (!field || !window.DSDropdownList) return;
+    window.DSDropdownList.bind(field, {
+      list: list,
+      onSelect: function (it) {
+        var label = it.querySelector('.ddl__item-label');
+        if (employee && label) employee.value = personValue(label.textContent.trim(), it.getAttribute('data-tab') || '');
+        sync();
+      }
+    });
+  }
+
+  function cell(value) {
+    var v = String(value == null ? '' : value).trim();
+    return '<div class="tc">' + (v
+      ? '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(v) + '</span></span>'
+      : '<span class="tc__empty">—</span>') + '</div>';
+  }
+
+  function rowHTML(d) {
+    return '<div class="tbl__row lc-nav-appoint__cols"><div class="tc tc--separator"></div>'
+      + cell(d.id) + cell(d.name) + cell(d.tsupEmployee)
+      + '<div class="tc tc--separator"></div></div>';
+  }
+
+  function paintTable(deal, deals) {
+    var group = String(deal.gsz || '').trim();
+    var rows = group
+      ? deals.filter(function (d) { return d && d.id !== deal.id && String(d.gsz || '').trim() === group; })
+      : [];
+    if (table) {
+      table.querySelectorAll('.tbl__row:not(.tbl__row--head)').forEach(function (r) { r.remove(); });
+      table.insertAdjacentHTML('beforeend', rows.map(rowHTML).join(''));
+      table.hidden = !rows.length;
+    }
+    if (empty) empty.hidden = !!rows.length;
+    if (emptyText) emptyText.textContent = group ? 'Других сделок у этой ГСЗ нет' : 'ГСЗ в описании сделки не указана';
+  }
+
+  function sync() { if (save) save.disabled = !splitPerson(employee && employee.value).name; }
+
+  function paint(ctx) {
+    ctx = ctx || {};
+    var deal = ctx.deal || {};
+    var store = window.DealsStore;
+    var deals = ctx.deals || (store ? store.list() : []);
+    fillList();
+    if (employee) employee.value = personValue(deal.tsupEmployee || '', deal.tsupEmployeeTab || '');
+    /* Прочерк — значение, а не подсказка (ReadOnlyField) */
+    if (gsz) gsz.textContent = String(deal.gsz || '').trim() || '—';
+    paintTable(deal, deals);
+    if (window.DSInput) window.DSInput.syncAll(scrim);
+    sync();
+  }
+
+  function inline() { return scrim.classList.contains('modal-scrim--inline'); }
+
+  function open(ctx, done) {
+    paint(ctx);
+    pending = done || null;
+    if (window.DSModal && !inline()) window.DSModal.open(scrim);
+  }
+
+  if (employee) ['input', 'change'].forEach(function (type) { employee.addEventListener(type, sync); });
+
+  if (save) {
+    save.addEventListener('click', function () {
+      if (save.disabled) return;
+      var done = pending;
+      pending = null;
+      var p = splitPerson(employee.value);
+      var extra = { patch: { tsupEmployee: p.name, tsupEmployeeTab: p.tab } };
+      if (window.DSModal && !inline()) window.DSModal.closeTop();
+      if (done) done(extra);
+    });
+  }
+
+  window.PostNavigatorModals = window.PostNavigatorModals || {};
+  window.PostNavigatorModals[NAME] = { open: open, use: paint };
+})();
+</script>
+</body>
+</html>

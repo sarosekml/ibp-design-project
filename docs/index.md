@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 378.
+Документов: 400.
 
 ## Корень (4)
 
@@ -243,7 +243,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (185)
+## Приложения (203)
 
 | Документ | Аннотация |
 |---|---|
@@ -437,9 +437,13 @@
 |---|---|
 | [apps/postrade/deals-app/README.md](../apps/postrade/deals-app/README.md) | deals-app — сделки ДИД (раздел postrade) |
 | [apps/postrade/deals-app/data/API.md](../apps/postrade/deals-app/data/API.md) | API данных направления Post |
+| [apps/postrade/deals-app/data/deal-status-model.md](../apps/postrade/deals-app/data/deal-status-model.md) | Статусная модель сделки ДИД |
 | [apps/postrade/deals-app/pages/Deal.screen.md](../apps/postrade/deals-app/pages/Deal.screen.md) | Сделка |
+| [apps/postrade/deals-app/pages/FinInstrument.screen.md](../apps/postrade/deals-app/pages/FinInstrument.screen.md) | Финансовый инструмент |
 | [apps/postrade/deals-app/pages/MainPage.screen.md](../apps/postrade/deals-app/pages/MainPage.screen.md) | Главная страница |
 | [apps/postrade/deals-app/pages/Portfolio.screen.md](../apps/postrade/deals-app/pages/Portfolio.screen.md) | Текущий портфель ДИД |
+| [apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/deals-app/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
+| [apps/postrade/deals-app/pages/Tranche.screen.md](../apps/postrade/deals-app/pages/Tranche.screen.md) | Страница транша |
 | [apps/postrade/deals-app/refs/Текущий портфель.md](../apps/postrade/deals-app/refs/Текущий%20портфель.md) | Новая страница "Текущий портфель ДИД" |
 | [apps/postrade/deals-app/widgets/README.md](../apps/postrade/deals-app/widgets/README.md) | widgets — виджеты модуля deals-app |
 | [apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/CounterpartiesEcmModal/CHANGELOG.md) | Модальное окно «Документы по сделке» (CounterpartiesEcmModal) — журнал изменений |
@@ -472,12 +476,24 @@
 | [apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md](../apps/postrade/deals-app/widgets/modals/InstrumentsModal/InstrumentsModal.md) | Окно «Инструменты» (InstrumentsModal) |
 | [apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/CHANGELOG.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md](../apps/postrade/deals-app/widgets/modals/LinkChangeModal/LinkChangeModal.md) | Окно «Изменить связь с ФИ» (LinkChangeModal) |
+| [apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/CHANGELOG.md) | Назначение ответственного (NavigatorAppointmentOfResponsibleModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorAppointmentOfResponsibleModal/NavigatorAppointmentOfResponsibleModal.md) | Назначение ответственного (NavigatorAppointmentOfResponsibleModal) |
+| [apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/CHANGELOG.md) | Подтверждение приёма на мониторинг (NavigatorApprovalModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorApprovalModal/NavigatorApprovalModal.md) | Подтверждение приёма на мониторинг (NavigatorApprovalModal) |
+| [apps/postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/CHANGELOG.md) | Причина ввода изменений (NavigatorChangeReasonModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorChangeReasonModal/NavigatorChangeReasonModal.md) | Причина ввода изменений (NavigatorChangeReasonModal) |
+| [apps/postrade/deals-app/widgets/modals/NavigatorDealCloseModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorDealCloseModal/CHANGELOG.md) | Погашение сделки (NavigatorDealCloseModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorDealCloseModal/NavigatorDealCloseModal.md) | Погашение сделки (NavigatorDealCloseModal) |
+| [apps/postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/CHANGELOG.md) | Направление на передачу (NavigatorForwardToTransferModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.md](../apps/postrade/deals-app/widgets/modals/NavigatorForwardToTransferModal/NavigatorForwardToTransferModal.md) | Направление на передачу (NavigatorForwardToTransferModal) |
 | [apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/CHANGELOG.md) | Подтверждение действия над деревом (ProductTreeConfirmModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md](../apps/postrade/deals-app/widgets/modals/ProductTreeConfirmModal/ProductTreeConfirmModal.md) | Подтверждение действия над деревом (ProductTreeConfirmModal) |
 | [apps/postrade/deals-app/widgets/modals/ProductsModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/CHANGELOG.md) | Окно «Продукты» (ProductsModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md](../apps/postrade/deals-app/widgets/modals/ProductsModal/ProductsModal.md) | Окно «Продукты» (ProductsModal) |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/CHANGELOG.md) | Окно погашения (RepaymentModal) — журнал изменений |
 | [apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md](../apps/postrade/deals-app/widgets/modals/RepaymentModal/RepaymentModal.md) | Окно погашения (RepaymentModal) |
+| [apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md](../apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/CHANGELOG.md) | Модальное окно внесения корректировки (RsbuAdjustmentModal) — журнал изменений |
+| [apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md](../apps/postrade/deals-app/widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.md) | Модальное окно внесения корректировки |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/CHANGELOG.md) | Поповер связанных сделок (RelatedDealsPopover) — журнал изменений |
 | [apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md](../apps/postrade/deals-app/widgets/popovers/RelatedDealsPopover/RelatedDealsPopover.md) | Widget: RelatedDealsPopover — Поповер связанных сделок |
 | [apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md](../apps/postrade/deals-app/widgets/tables/DealCounterpartiesTable/CHANGELOG.md) | Контрагенты сделки (DealCounterpartiesTable) — журнал изменений |
@@ -496,21 +512,22 @@
 | [apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md](../apps/postrade/deals-app/widgets/tiles/DealProductTreeTile/DealProductTreeTile.md) | Продукты сделки (DealProductTreeTile) |
 | [apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/CHANGELOG.md) | Связанные обеспечения (DealRelatedCollateralsTile) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md](../apps/postrade/deals-app/widgets/tiles/DealRelatedCollateralsTile/DealRelatedCollateralsTile.md) | Связанные обеспечения |
-| [apps/postrade/deals-app/widgets/tiles/DealSetupTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealSetupTile/CHANGELOG.md) | Заведение сделки (DealSetupTile) — журнал изменений |
-| [apps/postrade/deals-app/widgets/tiles/DealSetupTile/DealSetupTile.md](../apps/postrade/deals-app/widgets/tiles/DealSetupTile/DealSetupTile.md) | Заведение сделки |
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/CHANGELOG.md) | Команда сделки — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md](../apps/postrade/deals-app/widgets/tiles/DealTeamTile/DealTeamTile.md) | Команда сделки |
-| [apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/CHANGELOG.md) | Влияние на ЭПС/ВБС (EpsVbsImpactTile) — журнал изменений |
-| [apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md](../apps/postrade/deals-app/widgets/tiles/EpsVbsImpactTile/EpsVbsImpactTile.md) | Влияние на ЭПС/ВБС |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/CHANGELOG.md) | Финансовые инструменты (FinInstrumentsTile) — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md](../apps/postrade/deals-app/widgets/tiles/FinInstrumentsTile/FinInstrumentsTile.md) | Финансовые инструменты (FinInstrumentsTile) |
+| [apps/postrade/deals-app/widgets/tiles/Navigator/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/Navigator/CHANGELOG.md) | Заведение сделки (Navigator) — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md](../apps/postrade/deals-app/widgets/tiles/Navigator/Navigator.md) | Заведение сделки |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/CHANGELOG.md) | Сведения о проекте — журнал изменений |
 | [apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md](../apps/postrade/deals-app/widgets/tiles/ProjectInformationTile/ProjectInformationTile.md) | Widget: ProjectInformationTile — Сведения о проекте |
+| [apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md](../apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/CHANGELOG.md) | Корректировки процентов РСБУ — журнал изменений |
+| [apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md](../apps/postrade/deals-app/widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/deals-app — снимки задач
 
 | Документ | Аннотация |
 |---|---|
+| [apps/postrade/deals-app/DealNavigator.handoff.md](../apps/postrade/deals-app/DealNavigator.handoff.md) | DealNavigator — handoff |
 | [apps/postrade/deals-app/FinInstrumentsCard.handoff.md](../apps/postrade/deals-app/FinInstrumentsCard.handoff.md) | FinInstrumentsCard — handoff |
 | [apps/postrade/deals-app/PortfolioData.handoff.md](../apps/postrade/deals-app/PortfolioData.handoff.md) | PortfolioData — handoff |
 
@@ -527,7 +544,7 @@
 
 | Документ | Аннотация |
 |---|---|
-| [apps/postrade/drafts/tranche-page-v02/pages/RsbuHards.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/RsbuHards.screen.md) | Харды в РСБУ |
+| [apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
 | [apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md) | Страница транша |
 | [apps/postrade/drafts/tranche-page-v02/pages/index.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/index.screen.md) | Главная концепта «Страница транша v02» |
 | [apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md) | Комментарии к прототипу |
@@ -623,7 +640,13 @@
 |---|---|
 | [apps/pretrade/salesources-app/README.md](../apps/pretrade/salesources-app/README.md) | salesources-app — модуль раздела pretrade |
 
-## Задачи и заметки (70)
+### apps/screen-map
+
+| Документ | Аннотация |
+|---|---|
+| [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
+
+## Задачи и заметки (74)
 
 ### Архив/черновики
 
@@ -691,6 +714,9 @@
 | [docs/tasks/RE0010-ds-scroll-dark-2.md](tasks/RE0010-ds-scroll-dark-2.md) | Скролл без системной полосы, слои тёмной темы, фокус списка, тёмная иллюстрация |
 | [docs/tasks/RE0011-ds-illustrations-dark.md](tasks/RE0011-ds-illustrations-dark.md) | Тёмные варианты иллюстраций и фон главной |
 | [docs/tasks/RE0012-fv-calculation.md](tasks/RE0012-fv-calculation.md) | Расчет FV: реестр расчетов, страница расчета, окна ФИ и выгрузки |
+| [docs/tasks/RE0013-deal-navigator.md](tasks/RE0013-deal-navigator.md) | Заведение сделки (Navigator): тайл, окна навигатора и статусная модель сделки |
+| [docs/tasks/RE0014-deal-status-model-page.md](tasks/RE0014-deal-status-model-page.md) | Страница «Статусная модель сделки» в витрине локальных компонентов Post |
+| [docs/tasks/RE0015-screen-map.md](tasks/RE0015-screen-map.md) | Карта экранов Post: майндмап страниц проекта, переход на любую страницу в один клик |
 
 ### Снимки задач
 
@@ -709,6 +735,7 @@
 | [docs/tasks/RE0009-ds-scroll-dark.handoff.md](tasks/RE0009-ds-scroll-dark.handoff.md) | RE0009 — handoff |
 | [docs/tasks/RE0010-ds-scroll-dark-2.handoff.md](tasks/RE0010-ds-scroll-dark-2.handoff.md) | RE0010 — handoff |
 | [docs/tasks/RE0011-ds-illustrations-dark.handoff.md](tasks/RE0011-ds-illustrations-dark.handoff.md) | RE0011 — handoff |
+| [docs/tasks/RE0015-screen-map.handoff.md](tasks/RE0015-screen-map.handoff.md) | RE0015 — handoff |
 
 ## Служебное (1)
 

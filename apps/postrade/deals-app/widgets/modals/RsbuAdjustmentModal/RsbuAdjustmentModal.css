@@ -1,0 +1,5 @@
+/* Окно «Внесение корректировки» — связанный артефакт тайла RsbuInterestAdjustmentsTile.
+   Только раскладка формы: одна колонка, две даты — в одном ряду. Цвета, шрифты и
+   отступы тела окна даёт Modal; здесь токены ДС. */
+.lc-rsbu-form { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-rsbu-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }

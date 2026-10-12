@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+  Обзор витрины «Локальные компоненты Pre». Состав меню и карточек — из реестра kit-data.js рядом
+  (СГЕНЕРИРОВАНО kit-build.mjs из паспортов виджетов раздела pretrade; руками не править).
+-->
+<html lang="ru">
+<head>
+<script src="../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Локальные компоненты Pre — IBP</title>
+<link rel="stylesheet" href="../kit.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты Pre">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+
+  <div class="screen">
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="../../../index.html">Хаб проектов</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page">Локальные компоненты Pre</span>
+      </li>
+    </nav>
+    <main class="screen__content">
+
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title">Локальные компоненты Pre</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kit-groups" id="kit-groups"></div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="kit-data.js"></script>
+<script src="../kit-nav.js"></script>
+<script>
+(function () {
+  'use strict';
+  window.IBPKitNav.render({
+    nav: document.getElementById('nav'),
+    groups: document.getElementById('kit-groups'),
+    base: '..',
+    current: null,
+    hub: '../../../index.html'
+  });
+})();
+</script>
+</body>
+</html>

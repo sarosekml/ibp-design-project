@@ -174,9 +174,9 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `CounterpartiesTile` — «КНР» (наполнен) · `DealPeriodTile` (наполнен) · `DealTeamTile` (наполнен) | Общая информация, первый ряд (3 + 3 + 6) |
 | `DealDescriptionTile` (наполнен) · `DealFinancialMetricsTile` (наполнен) | Общая информация, второй ряд (6 + 6) |
 | `ProjectInformationTile` (наполнен) | Общая информация, третий ряд (12, опциональный; только деск «Недвижимость»; высота по содержимому) |
-| `DealSetupTile` | Общая информация, правая колонка 320px |
+| `Navigator` (наполнен; было `DealSetupTile`) | Общая информация, правая колонка 320px |
 | `DealProductTreeTile` (наполнен) · `FinInstrumentsTile` (наполнен) | таб «Финансовые данные», первый ряд (6 + 6, в стопках) |
-| `EpsVbsImpactTile` · `DealMetricsCalculationTile` | таб «Финансовые данные», второй ряд (6 + 6) |
+| `DealMetricsCalculationTile` | таб «Финансовые данные», второй ряд (6) |
 | `tables/DealCounterpartiesTable` | таб «Контрагенты» (12) |
 | `DealRelatedCollateralsTile` | таб «Обеспечения» (12) |
 | `modals/InstrumentsCounterpartiesModal` (+ `KNRConfirmModal.html`) | конец `body`; открывается из `CounterpartiesTile` |
@@ -191,3 +191,4 @@ EmptyState: его иллюстрация и отступы дают ≈324px, �
 | `modals/DidProductsModal` · `ProductsModal` · `InstrumentsModal` · `RepaymentModal` · `InstrumentTransferModal` · `LinkChangeModal` · `ProductTreeConfirmModal` (последним) | конец `body`; открываются событиями `ptreeaction` тайла `DealProductTreeTile` |
 | `modals/DealFinancialInstrumentCreateModal` · `DealFinancialInstrumentEditModal` | конец `body`; открываются событиями `fiaction` тайла `FinInstrumentsTile`; общий слой полей окон ФИ — в окне создания |
 | `modals/DealTitleModal` | конец `body`; открывается карандашом в шапке страницы сделки — номер и наименование («Редактирование сделки») |
+| `modals/NavigatorAppointmentOfResponsibleModal` · `NavigatorApprovalModal` · `NavigatorForwardToTransferModal` · `NavigatorDealCloseModal` · `NavigatorChangeReasonModal` | конец `body`; открывает тайл `Navigator` по полю `modal` перехода статусной модели — через `openModal` страницы и реестр `PostNavigatorModals` |

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<!--
+  ИСТОЧНИК страницы финансового инструмента (макет «Страница ФИ», 05.10.2026).
+  Двойным кликом открывают НЕ этот файл, а собранный FinInstrument.preview.html:
+  окна здесь стоят метками <ds-include>, а рантайм-инклуд ДС тянет фрагменты
+  через fetch, который по file:// не работает.
+
+    node .agents/tools/assemble.mjs        — пересобрать после правки любого модуля
+
+  Локальных компонентов у страницы пока нет (будут позже): тайлы собраны прямо
+  здесь из компонентов ДС и помечены Chip «Demo» в шапке. Исключение — окно
+  изменения ФИ: готовый виджет модуля.
+-->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Финансовый инструмент — IBP</title>
+<!-- @lc-css -->
+<link rel="stylesheet" href="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.css">
+<link rel="stylesheet" href="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.css"><!-- сюда ассемблер вставляет CSS подключённых локальных компонентов -->
+<style>
+  /* ---------- только раскладка экрана, на токенах ДС ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    margin: 0;
+    font-family: var(--font-text), system-ui, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+  }
+
+  /* Заголовок секции «Общая информация» — на фоне страницы, как у страницы
+     сделки (компонента «заголовок раздела» в ДС нет). */
+  .gen { display: flex; flex-direction: column; gap: var(--space-12); }
+  .gen__title { margin: 0; font: var(--type-h5-strong); color: var(--text-primary); }
+
+  /* Минимальная высота тайла — 200px, как на странице сделки (решение
+     человека 21.09.2026): параметр раскладки, его задаёт страница. */
+  .screen__content .tile { min-height: 200px; }
+
+  /* Чип «ФИ типа С» — тег-флаг, цвет задаёт кейс (правило Chip ДС): те же
+     токены, что у чипа реестра «Текущий портфель» и карточки ФИ сделки. */
+  .fi-typec {
+    background: var(--st-orange-mid);
+    border-color: var(--st-orange-mid);
+    color: var(--text-primary);
+  }
+
+  @container screen (max-width: 1240px) {
+    .tile-row > [class*="colw-"] { grid-column: span var(--colw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-layout">
+
+  <!-- Боковое меню строится экранным скриптом из ibp-home.js по роли -->
+  <nav class="nav nav--rail" id="nav" aria-label="Главное меню"></nav>
+
+  <div class="screen">
+    <!-- #sec:head -->
+    <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
+      <li class="crumbs__item"><a class="link link--muted" href="Portfolio.html">Текущий портфель ДИД</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Deal.html" id="fi-crumb-deal">Сделка</a></li>
+      <li class="crumbs__item crumbs__item--current">
+        <span class="crumbs__current" aria-current="page" id="fi-crumb">ФИ</span>
+      </li>
+    </nav>
+
+    <!-- #sec:content -->
+    <main class="screen__content">
+
+      <!-- ── Шапка страницы ─────────────────────────────────────────────── -->
+      <div class="phead">
+        <div class="phead__main">
+          <div class="phead__title-row">
+            <div class="phead__title-group">
+              <h1 class="phead__title" id="fi-title">ФИ</h1>
+            </div>
+            <span class="phead__return">
+              <a class="btn btn--outline btn--xs" href="Deal.html" id="fi-return">
+                <i data-icon="flip-backward"></i><span class="btn__label">В сделку</span></a>
+            </span>
+          </div>
+        </div>
+        <!-- Что в меню «Ещё действия», макет не говорит — меню пустое (вопрос 3). -->
+        <div class="phead__actions">
+          <button type="button" class="btn btn--outline btn--m btn--icon-only" aria-label="Ещё действия"><i data-icon="more-dots"></i></button>
+        </div>
+      </div>
+
+      <!-- ── Общая информация ───────────────────────────────────────────── -->
+      <section class="gen">
+        <h2 class="gen__title">Общая информация</h2>
+
+        <div class="tile-group">
+
+          <div class="tile-row">
+            <!-- Данные по ФИ. Demo: локального компонента нет. -->
+            <section class="tile col-6 colw-12" id="tile-fi-data" data-state="loading">
+              <header class="tile__header">
+                <div class="tile__header-main">
+                  <div class="tile__title-row">
+                    <h3 class="tile__title">Данные по ФИ</h3>
+                    <span class="tile__title-add" id="fi-typec-chip" hidden><span class="chip chip--s chip--fit fi-typec"><span class="chip__label">ФИ типа С</span></span></span>
+                    <span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Demo</span></span></span>
+                  </div>
+                </div>
+                <div class="tile__actions">
+                  <button type="button" class="ibtn ibtn--neutral ibtn--m" id="fi-edit" aria-label="Редактировать"><i data-icon="edit"></i></button>
+                </div>
+              </header>
+              <div class="tile__body" id="fi-data-body"></div>
+            </section>
+
+            <!-- Инструменты ФИ. Demo. -->
+            <section class="tile col-3 colw-6" id="tile-fi-nodes" data-state="loading">
+              <header class="tile__header">
+                <div class="tile__header-main">
+                  <div class="tile__title-row">
+                    <h3 class="tile__title">Инструменты ФИ</h3>
+                    <span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Demo</span></span></span>
+                  </div>
+                </div>
+              </header>
+              <div class="tile__body" id="fi-nodes-body"></div>
+            </section>
+
+            <!-- Корректировки KPI. Demo. -->
+            <section class="tile col-3 colw-6" id="tile-fi-kpi" data-section="KPI_ADJUSTMENTS"></section>
+          </div>
+
+          <div class="tile-row">
+            <!-- ID ФИ. Demo. -->
+            <section class="tile col-6 colw-12" id="tile-fi-ids" data-state="loading">
+              <header class="tile__header">
+                <div class="tile__header-main">
+                  <div class="tile__title-row">
+                    <h3 class="tile__title">ID ФИ</h3>
+                    <span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Demo</span></span></span>
+                  </div>
+                </div>
+                <div class="tile__actions">
+                  <button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Редактировать"><i data-icon="edit"></i></button>
+                </div>
+              </header>
+              <div class="tile__body" id="fi-ids-body"></div>
+            </section>
+
+            <!-- Дефолтные сделки. Demo. -->
+            <section class="tile col-3 colw-6" id="tile-fi-default" data-section="DEFAULT_DEALS"></section>
+
+            <!-- Счета для 1С. Demo. -->
+            <section class="tile col-3 colw-6" id="tile-fi-accounts" data-section="ACCOUNTS_1C"></section>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+    <!-- #sec:modals-anchor -->
+  </div>
+</div>
+
+<!-- #sec:modals -->
+<!-- Окно изменения ФИ — готовый виджет модуля; общий слой форм (списки, ошибки
+     полей) живёт в окне создания, поэтому оно подключается тоже. -->
+<!-- DealFinancialInstrumentCreateModal — окно «Создание финансового инструмента».
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается кнопками
+     «+ Фин. инструмент» в шапке, «+ Финансовый инструмент» под списком и «Заполнить
+     вручную» пустого тайла (событие fiaction, action CREATE). Фрагмент вшивается
+     отдельной меткой ds-include: скрим лежит в конце body.
+
+     Макет «Создание финансового инструмента (кнопка Заполнить вручную)» (02.10.2026):
+     два списка — «Тип инструмента» и «Тип отчетности», кнопка «Сохранить». Оба
+     обязательны: пустой список при «Сохранить» — ошибка поля (тултип при фокусе,
+     правило InputText). Опции подставляет DealFinancialInstrumentCreateModal.js из
+     FinInstrumentsStore (typeOptions, reportingOptions). Ниже — заполненный пример
+     макета: «Кредит», «МСФО». «Сохранить» без data-modal-close: окно закрывает скрипт. -->
+<div class="modal-scrim" id="fi-create-scrim" hidden>
+  <div class="modal modal--w4" role="dialog" aria-modal="true" aria-labelledby="fi-create-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-create-title">Создание финансового инструмента</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-create__fields">
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-type"><span class="ds-label__text">Тип инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-type-list">
+              <input class="inp__control" id="fi-create-type" autocomplete="off" value="Кредит">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-type-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth">
+          <label class="ds-label" for="fi-create-reporting"><span class="ds-label__text">Тип отчетности</span></label>
+          <div class="inp__box">
+            <div class="inp__field" data-ddl="fi-create-reporting-list">
+              <input class="inp__control" id="fi-create-reporting" autocomplete="off" value="МСФО">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+          </div>
+          <div id="fi-create-reporting-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-create-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- DealFinancialInstrumentEditModal — окно «ФИ: <номер>. <тип>», изменение карточки ФИ.
+     Артефакт тайла «Финансовые инструменты» (FinInstrumentsTile): открывается пунктом
+     «Изменить» меню карточки (событие fiaction, action EDIT; пункт временный — что в
+     меню, не решено). Фрагмент вшивается отдельной меткой ds-include: скрим лежит в
+     конце body.
+
+     Макет «Изменение ФИ» (02.10.2026): состав полей — по типу ФИ. В разметке все поля,
+     лишние типу DealFinancialInstrumentEditModal.js прячет атрибутом hidden по
+     FinInstrumentsStore.fieldsOf(<тип>):
+       Кредит                     — наименование, контрагент, FV/AC, контрагенты для
+                                    резервирования и аллокации, «Участие ДККК»;
+       Акции                      — то же + IRR, «ФИ типа С», «Связанный безусловный
+                                    опцион»;
+       Доп. доходность, РЕПО      — то же, что у кредита + номер связанного договора и
+                                    опцион, включённый в расчёт МСФО;
+       Дебиторская задолженность  — то же, что у кредита + IRR.
+     Обязательно только наименование. Опции списков подставляет скрипт окна из стора:
+     контрагенты — база контрагентов (участники сделки первыми), FV/AC — справочник,
+     опцион — «Пут: РЕПО» и «Колл: РЕПО» дерева продуктов сделки. Ниже — пример
+     заполненного окна акций с макета. «Сохранить» без data-modal-close: окно закрывает
+     скрипт. -->
+<div class="modal-scrim" id="fi-edit-scrim" hidden>
+  <div class="modal modal--w3 lc-fi-edit" role="dialog" aria-modal="true" aria-labelledby="fi-edit-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="fi-edit-title">ФИ: 3. Акции</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <div class="lc-fi-edit__fields">
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="name">
+          <label class="ds-label" for="fi-edit-name"><span class="ds-label__text">Наименование финансового инструмента</span></label>
+          <div class="inp__box">
+            <div class="inp__field">
+              <input class="inp__control" id="fi-edit-name" autocomplete="off" value="127-Акции-203">
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="counterpartyId">
+          <label class="ds-label" for="fi-edit-counterparty"><span class="ds-label__text">Контрагент</span></label>
+          <div class="inp__field" data-ddl="fi-edit-counterparty-list">
+            <input class="inp__control" id="fi-edit-counterparty" autocomplete="off" value="ООО «ГорноКапитал»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-counterparty-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <!-- FV/AC и IRR — в один ряд, как на макете; у типа без IRR FV/AC остаётся
+             в левой колонке. -->
+        <div class="lc-fi-edit__row">
+          <div class="inp inp--m inp--fullwidth" data-fi-field="fvAcCode">
+            <label class="ds-label" for="fi-edit-fvac"><span class="ds-label__text">FV/AC</span></label>
+            <div class="inp__field" data-ddl="fi-edit-fvac-list">
+              <input class="inp__control" id="fi-edit-fvac" autocomplete="off" value="FV">
+              <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+            </div>
+            <div id="fi-edit-fvac-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+          </div>
+          <div class="inp inp--m inp--fullwidth" data-fi-field="targetIrr">
+            <label class="ds-label" for="fi-edit-irr"><span class="ds-label__text">IRR</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="fi-edit-irr" inputmode="decimal" autocomplete="off" value="17,03">
+              <span class="inp__postfix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="reserveCounterpartyId">
+          <label class="ds-label" for="fi-edit-reserve"><span class="ds-label__text">Контрагент для целей резервирования</span></label>
+          <div class="inp__field" data-ddl="fi-edit-reserve-list">
+            <input class="inp__control" id="fi-edit-reserve" autocomplete="off" value="АО «МеталлИнвест»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-reserve-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="allocationCounterpartyId">
+          <label class="ds-label" for="fi-edit-allocation"><span class="ds-label__text">Контрагент для аллокации финансового результата</span></label>
+          <div class="inp__field" data-ddl="fi-edit-allocation-list">
+            <input class="inp__control" id="fi-edit-allocation" autocomplete="off" value="ООО «ЖилСтрой»">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-allocation-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="linkedContractNumber" hidden>
+          <label class="ds-label" for="fi-edit-contract"><span class="ds-label__text">Номер связанного договора</span></label>
+          <div class="inp__field">
+            <input class="inp__control" id="fi-edit-contract" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="inp inp--m inp--fullwidth" data-fi-field="ifrsOptionNodeId" hidden>
+          <label class="ds-label" for="fi-edit-option"><span class="ds-label__text">Опцион включенный в расчет МСФО</span></label>
+          <div class="inp__field" data-ddl="fi-edit-option-list">
+            <input class="inp__control" id="fi-edit-option" autocomplete="off">
+            <span class="inp__acts"><button type="button" class="inp__act inp__act--chev" aria-label="Показать список"><i data-icon="chevron-down"></i></button></span>
+          </div>
+          <div id="fi-edit-option-list" class="ddl ddl--floating ddl--scroll" role="listbox"></div>
+        </div>
+
+        <div class="cb-group">
+          <label class="cb" data-fi-field="isTypeC">
+            <input type="checkbox" class="cb__input" id="fi-edit-pe" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">ФИ типа С</span></span>
+          </label>
+          <label class="cb" data-fi-field="isDkkk">
+            <input type="checkbox" class="cb__input" id="fi-edit-dkkk" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Участие ДККК</span></span>
+          </label>
+          <label class="cb" data-fi-field="hasLinkedUnconditionalOption">
+            <input type="checkbox" class="cb__input" id="fi-edit-option-flag" checked>
+            <span class="cb__box"><span class="cb__mark"><i data-icon="check"></i></span></span>
+            <span class="cb__content"><span class="cb__label">Связанный безусловный опцион</span></span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--accent btn--m" data-fi-edit-save><span class="btn__label">Сохранить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/mock-counterparties.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/counterparties-store.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/fin-instruments-store.js"></script>
+<script src="../data/mock-fin-instrument-details.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentCreateModal/DealFinancialInstrumentCreateModal.js"></script>
+<script src="../widgets/modals/DealFinancialInstrumentEditModal/DealFinancialInstrumentEditModal.js"></script>
+<script>
+/* Экранный скрипт. Делает то, чего рантаймы ДС не делают: меню по каталогу
+   ролей и данные страницы. Карточку ФИ берёт из FinInstrumentsStore (тот же
+   стор, что у тайла «Финансовые инструменты» сделки), поэтому наименование,
+   признаки и контрагенты на двух страницах совпадают по построению.
+   Адрес: FinInstrument.html?id=<номер сделки>&fi=<id карточки>. Без параметров —
+   просмотр каркаса: первая сделка с карточками, первая карточка. */
+(function () {
+  'use strict';
+  var role = window.IBPHome.defaultRole;
+  var SELECTED_ID = 'current-portfolio';
+  var USER_LINK_FROM = ' href="#" aria-label="Открыть личный кабинет"';
+  var USER_LINK_TO = ' href="../../../../index.html" aria-label="Хаб проектов"';
+  var IS_PREVIEW = /\.preview\.html$/.test(window.location.pathname);
+  var DEAL_PAGE = IS_PREVIEW ? 'Deal.preview.html' : 'Deal.html';
+
+  function ic(name) { return '<i data-icon=\'' + name + '\'></i>'; }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function has(v) { return v !== null && v !== undefined && v !== ''; }
+
+  /* ── Меню ─────────────────────────────────────────────────────────── */
+  function itemHTML(it) {
+    if (it.tile && it.tile.links && it.tile.links.length) {
+      var sub = '<div class="nav__sub" id="nav-sub-' + it.id + '"><div class="nav__sub-in">'
+        + it.tile.links.map(function (l) { return '<a class="nav__item" href="#"><span class="nav__label">' + l + '</span></a>'; }).join('')
+        + '</div></div>';
+      return '<a class="nav__item nav__item--acc" href="#" aria-expanded="false" aria-controls="nav-sub-' + it.id + '">'
+        + '<span class="nav__ico">' + ic(it.icon) + '</span>'
+        + '<span class="nav__label">' + it.label + '</span>'
+        + '<span class="nav__caret">' + ic('chevron-down') + '</span></a>' + sub;
+    }
+    var badge = it.badge
+      ? '<span class="nav__badge"><span class="badge badge--xs badge--accent" aria-hidden="true">' + it.badge + '</span></span>'
+      : '';
+    var href = (it.id === SELECTED_ID) ? 'Portfolio.html' : '#';
+    var sel = (it.id === SELECTED_ID) ? ' nav__item--selected" aria-current="page' : '';
+    return '<a class="nav__item' + sel + '" href="' + href + '"><span class="nav__ico">' + ic(it.icon) + '</span>'
+      + '<span class="nav__label">' + it.label + '</span>' + badge + '</a>';
+  }
+
+  function buildNav() {
+    var nav = document.getElementById('nav');
+    var s = '<div class="nav__top">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
+      + '</div>';
+    s += '<div class="nav__list">';
+    s += '<a class="nav__item" href="MainPage.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+    IBPHome.itemsFor(role).forEach(function (g, i) {
+      s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '">';
+      s += '<div class="nav__block-label">' + g.label + '</div>';
+      g.items.forEach(function (it) { s += itemHTML(it); });
+      s += '</div>';
+    });
+    s += '</div>';
+    s += (window.IBPHome && window.IBPHome.footerHTML)
+      ? window.IBPHome.footerHTML(role).replace(USER_LINK_FROM, USER_LINK_TO)
+      : '<div class="nav__footer">'
+        + '<a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">'
+        + '<span class="av av--circular av--m"><span class="av__text">АП</span></span>'
+        + '<span class="nav__user-text">'
+        + '<span class="nav__user-name">Александров Петр Константинович</span>'
+        + '<span class="nav__user-role">' + role + '</span>'
+        + '</span></a>'
+        + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти">' + ic('logout') + '</button>'
+        + '</div>';
+    nav.innerHTML = s;
+    if (window.DSNavPanel) window.DSNavPanel.bind(nav);
+  }
+
+  /* ── Форматы ──────────────────────────────────────────────────────── */
+  function fmtDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? m[3] + '.' + m[2] + '.' + m[1] : '';
+  }
+  /* 800000 → «800 000,00», разряды — неразрывным пробелом */
+  function fmtAmount(n) {
+    var parts = Number(n).toFixed(2).split('.');
+    return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + parts[1];
+  }
+  function fmtNumber(n) { return String(n).replace('.', ','); }
+
+  /* ── Разметка полей ───────────────────────────────────────────────── */
+  function rofHTML(label, value, cls, affix) {
+    var empty = !has(value);
+    return '<div class="rof' + (cls ? ' ' + cls : '') + '">'
+      + '<span class="ds-label"><span class="ds-label__text">' + esc(label) + '</span></span>'
+      + '<div class="rof__row"><span class="rof__value">' + (empty ? '—' : esc(value)) + '</span>'
+      + (affix && !empty ? '<span class="rof__affix">' + esc(affix) + '</span>' : '') + '</div></div>';
+  }
+
+  function riskHTML(risk) {
+    if (!risk) return '';
+    var a = ' data-risk="' + esc(risk.rating) + '"';
+    if (risk.zone) a += ' data-zone="' + esc(risk.zone) + '"';
+    if (risk.ratingDate) a += ' data-rating-date="' + esc(risk.ratingDate) + '"';
+    if (risk.zoneDate) a += ' data-zone-date="' + esc(risk.zoneDate) + '"';
+    if (risk.segment) a += ' data-segment="' + esc(risk.segment) + '"';
+    if (risk.profile) a += ' data-profile="' + esc(risk.profile) + '"';
+    return '<span data-riskmetric' + a + '></span>';
+  }
+
+  function partyHTML(label, party) {
+    return '<div class="rof tile__grid-full">'
+      + '<span class="ds-label"><span class="ds-label__text">' + esc(label) + '</span></span>'
+      + '<div class="rof__row rof__row--top"><span class="rof__value rof__value--clamp-n">' + (party ? esc(party.name) : '—') + '</span>'
+      + (party ? riskHTML(party.risk) : '') + '</div></div>';
+  }
+
+  function flagHTML(text) {
+    return '<div class="rof__row"><span class="rof__icon"><i data-icon="check"></i></span>'
+      + '<span class="rof__value">' + esc(text) + '</span></div>';
+  }
+
+  function rwaHTML(codes) {
+    return '<div class="rof tile__grid-full">'
+      + '<span class="ds-label"><span class="ds-label__text">Код для RWA</span></span>'
+      + '<div class="rof__row"><div class="rof__value rof__value--chips"><div class="chiplist chiplist--s">'
+      + codes.map(function (c) { return '<span class="chip chip--s chip--grey"><span class="chip__label">' + esc(c) + '</span></span>'; }).join('')
+      + '</div></div>'
+      + '<span class="rof__icon rof__icon--interactive" role="button" tabindex="0" aria-label="Коды для RWA"><i data-icon="link-external"></i></span>'
+      + '</div></div>';
+  }
+
+  /* ── Тайлы ────────────────────────────────────────────────────────── */
+
+  /* Данные по ФИ: три колонки 2fr 1fr 1fr (макет), ниже — контрагенты на всю
+     ширину, признаки, у акций целевой IRR. */
+  function dataHTML(c) {
+    var shares = c.typeCode === 'SHARES';
+    var s = '<div class="tile__grid" style="grid-template-columns:2fr 1fr 1fr">'
+      + rofHTML('Наименование финансового инструмента', c.name)
+      + rofHTML('Баланс', c.balance)
+      + rofHTML('Валюта', c.currency)
+      + rofHTML('Тип отчетности', c.reportingLabel)
+      + rofHTML('FV/AC', c.fvAcLabel)
+      + (shares ? rofHTML('Целевой IRR', has(c.targetIrr) ? fmtNumber(c.targetIrr) : null, null, '%') : '<div></div>')
+      + rofHTML(c.amountLabel, has(c.amount) ? fmtAmount(c.amount) : null)
+      + rofHTML('Дата подписания', fmtDate(c.signedAt))
+      + rofHTML('Плановая дата погашения', fmtDate(c.plannedMaturityAt))
+      + partyHTML('Контрагент', c.counterparty)
+      + partyHTML('Контрагент для целей резервирования', c.reserveCounterparty)
+      + partyHTML('Контрагент для аллокации финансового результата', c.allocationCounterparty);
+    var flags = '';
+    if (c.isDkkk) flags += flagHTML('Участие ДККК');
+    if (c.hasLinkedUnconditionalOption) flags += flagHTML('Связанный безусловный опцион');
+    if (flags) s += '<div class="tile__grid-full" style="display:flex;gap:var(--space-16)">' + flags + '</div>';
+    return s + '</div>';
+  }
+
+  var DETAIL_LABELS = window.PRODUCT_DETAIL_LABELS || {};
+  function metaItemHTML(d) {
+    var date = d.field === 'signedAt';
+    var text;
+    if (!has(d.value)) text = '–';
+    else if (date) text = esc(fmtDate(d.value));
+    else text = esc(fmtAmount(d.value)) + (d.currency ? ' <span class="prow__meta-affix">' + esc(d.currency) + '</span>' : '');
+    return '<span class="prow__meta-item" data-tooltip="' + esc(DETAIL_LABELS[d.field] || '') + '">'
+      + '<i data-icon="' + (date ? 'calendar' : 'bar-chart-square') + '"></i>'
+      + '<span class="prow__meta-text">' + text + '</span></span>';
+  }
+
+  /* Инструменты ФИ: те же строки, что внутри карточки ФИ сделки, без действий. */
+  function nodesHTML(c) {
+    if (!(c.nodes || []).length) return '<p class="rof__value">Нет связанных инструментов</p>';
+    return c.nodes.map(function (n) {
+      var status = n.repaidAt
+        ? '<div class="prow__status prow__status--success"><i data-icon="check-circle-filled"></i>'
+          + '<span class="prow__status-text">' + esc((DETAIL_LABELS.repaidAt || 'Фактическая дата погашения') + ' ' + fmtDate(n.repaidAt)) + '</span></div>'
+        : '';
+      var meta = (n.details || []).length ? '<div class="prow__meta">' + n.details.map(metaItemHTML).join('') + '</div>' : '';
+      return '<div class="prow"><div class="prow__main"><div class="prow__head"><span class="prow__title">'
+        + esc(n.number + ' ' + n.name) + '</span></div>' + status + meta + '</div></div>';
+    }).join('');
+  }
+
+  var ID_FIELDS = [
+    ['№ договора 1С', 'contract1cNumber'], ['№ договора 1С для акций', 'contract1cSharesNumber'], ['№ договора 1С для резервов', 'contract1cReservesNumber'],
+    ['№ договора 1С:УХ', 'contract1cUhNumber'], ['№ договора 1С:УХ для акций', 'contract1cUhSharesNumber'], ['№ договора 1С:УХ для резервов', 'contract1cUhReservesNumber'],
+    ['ID связанного аккредитива', 'linkedLetterOfCreditId'], ['ID связанного счета эскроу', 'linkedEscrowAccountId'], ['Murex ID связанного ПФИ', 'linkedDerivativeMurexId']
+  ];
+  function idsHTML(c, ids) {
+    var s = '<div class="tile__grid" style="grid-template-columns:repeat(3,1fr)">'
+      + ID_FIELDS.map(function (f) { return rofHTML(f[0], ids[f[1]]); }).join('');
+    if ((c.rwaCodes || []).length) s += rwaHTML(c.rwaCodes);
+    return s + '</div>';
+  }
+
+  /* Подразделы-ссылки: заголовок, стрелка, одна строка состояния. */
+  function sectionHTML(code, sec) {
+    var label = (window.FIN_INSTRUMENT_SECTION_LABELS || {})[code] || code;
+    return '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row">'
+      + '<h3 class="tile__title">' + esc(label) + '</h3>'
+      + '<span class="tile__title-add"><span class="chip chip--s chip--grey"><span class="chip__label">Demo</span></span></span>'
+      + '</div></div><div class="tile__actions">'
+      + '<button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть: ' + esc(label) + '"><i data-icon="arrow-right"></i></button>'
+      + '</div></header>'
+      + '<div class="tile__body"><div class="rof"><div class="rof__row"><span class="rof__value">'
+      + (sec && sec.isFilled ? 'Заполнено' : 'Не заполнено') + '</span></div></div></div>';
+  }
+
+  /* ── Данные страницы ──────────────────────────────────────────────── */
+  function params() {
+    var p = {};
+    try {
+      var q = new URLSearchParams(window.location.search);
+      p.id = q.get('id'); p.fi = q.get('fi');
+    } catch (e) { p.id = null; p.fi = null; }
+    return p;
+  }
+
+  /* Сделка и карточка: из адреса; нет — первая сделка с карточками (каркас). */
+  function resolve() {
+    var p = params();
+    var store = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    /* баланс, валюту, суммы и инструменты карточки стор ФИ считает из дерева
+       продуктов сделки — дерево открывается первым */
+    function open(id) { if (trees) trees.use(id); store.use(id); }
+    var deal = (p.id != null && p.id !== '') ? window.DealsStore.byId(p.id) : null;
+    if (!deal) {
+      var list = window.DealsStore.list();
+      for (var i = 0; i < list.length && !deal; i++) {
+        open(list[i].id);
+        if (store.view().length) deal = list[i];
+      }
+    }
+    if (!deal) return null;
+    open(deal.id);
+    var card = (p.fi && store.card(p.fi)) || store.view()[0] || null;
+    return card ? { deal: deal, id: card.id } : null;
+  }
+
+  function paint(deal, id) {
+    var c = window.FinInstrumentsStore.card(id);
+    if (!c) return;
+    var details = window.MOCK_FIN_INSTRUMENT_DETAILS || { defaults: { ids: {}, sections: [] }, byFiId: {} };
+    var rec = details.byFiId[c.id] || details.defaults;
+
+    var title = 'ФИ: ' + c.name;
+    document.getElementById('fi-title').textContent = title;
+    document.getElementById('fi-crumb').textContent = title;
+    document.title = title + ' — IBP';
+    var dealUrl = DEAL_PAGE + '?id=' + encodeURIComponent(deal.id);
+    document.getElementById('fi-return').setAttribute('href', dealUrl);
+    var dc = document.getElementById('fi-crumb-deal');
+    if (dc) { dc.setAttribute('href', dealUrl); dc.textContent = deal.id + '. ' + (deal.name || ''); }
+
+    document.getElementById('fi-typec-chip').hidden = !c.isTypeC;
+    document.getElementById('fi-data-body').innerHTML = dataHTML(c);
+    document.getElementById('fi-nodes-body').innerHTML = '<div class="tile__grid" style="grid-template-columns:1fr">' + nodesHTML(c) + '</div>';
+    document.getElementById('fi-ids-body').innerHTML = idsHTML(c, rec.ids || {});
+    ['tile-fi-kpi', 'tile-fi-default', 'tile-fi-accounts'].forEach(function (tid) {
+      var t = document.getElementById(tid);
+      var code = t.getAttribute('data-section');
+      var sec = (rec.sections || []).filter(function (x) { return x.code === code; })[0];
+      t.innerHTML = sectionHTML(code, sec);
+    });
+    ['tile-fi-data', 'tile-fi-nodes', 'tile-fi-ids'].forEach(function (tid) {
+      document.getElementById(tid).setAttribute('data-state', 'data');
+    });
+
+    if (window.dsIcons) window.dsIcons.apply(document);
+    if (window.DSTooltip) window.DSTooltip.bindAll(document);
+    if (window.DSRiskMetric) window.DSRiskMetric.mount(document);
+  }
+
+  /* Крошка. До привязки рантайма крошек (DOMContentLoaded) звенья — разметка
+     экрана; после — рантайм читает их один раз, поэтому правится его список. */
+  function init() {
+    buildNav();
+    var store = window.FinInstrumentsStore;
+    var trees = window.ProductTreeStore;
+    Promise.all([store.ready, trees ? trees.ready : null, window.CounterpartiesStore ? window.CounterpartiesStore.ready : null])
+      .then(function () {
+        var r = resolve();
+        if (!r) return;
+        paint(r.deal, r.id);
+        document.getElementById('fi-edit').addEventListener('click', function () {
+          if (window.PostModalFinInstrumentEdit) window.PostModalFinInstrumentEdit.open(r.id);
+        });
+        store.on('commit', function () { paint(r.deal, r.id); });
+      });
+    if (window.dsIcons) window.dsIcons.apply(document);
+  }
+
+  init();
+})();
+</script>
+
+</body>
+</html>

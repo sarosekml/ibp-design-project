@@ -76,8 +76,8 @@
   text-align: center;
 }
 
-/* Private Equity — тег, а не статус: не rounded, не сжимается. Цвет — как
-   у чипа PE реестра «Текущий портфель» (Portfolio.html, .chip--pe):
+/* ФИ типа С — тег, а не статус: не rounded, не сжимается. Цвет — как
+   у чипа «ФИ типа С» реестра «Текущий портфель» (Portfolio.html, .chip--pe):
    правило Chip ДС — цвет флаг-категории задаёт кейс. */
 .lc-fin-card__pe {
   background: var(--st-orange-mid);
