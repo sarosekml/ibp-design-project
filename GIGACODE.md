@@ -50,7 +50,7 @@ HTML-прототипов. Это инструментарий, а не прод
 | `.agents/agents/screen-builder.md` | Сборка экрана `<Имя>.html` + `<Имя>.screen.md` |
 | `.agents/agents/screen-reviewer.md` | Приёмка экрана по чек-листу (PASS / NEEDS-WORK) |
 | `.agents/agents/ux-researcher.md` | Исследование по базе знаний продукта — выключено, пока база не подключена (`KB` в `knowledge-lookup`) |
-| `.agents/commands/*.md` | `/screen`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume`, `/screen-check` |
+| `.agents/commands/*.md` | `/screen`, `/concepts`, `/promote`, `/panel`, `/handoff`, `/resume`, `/screen-check`, `/dev-spec` |
 | `.agents/skills/screen-assembly/SKILL.md` | Пошаговая сборка экрана на ДС |
 | `.agents/skills/ds-lookup/SKILL.md` | Как найти компонент в ДС и достать разметку, не читая большие файлы |
 | `.agents/skills/screen-review/SKILL.md` | Полная приёмка экрана |

@@ -46,6 +46,9 @@ nodes:
       - id: hards-filled
         title: Корректировки внесены
         page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled
+      - id: hards-view
+        title: Корректировки без права редактирования
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&hardsState=filled&hardsMode=view
 
   - id: rsbu
     app: deals-app

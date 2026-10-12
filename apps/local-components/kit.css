@@ -66,6 +66,16 @@ body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: v
 .kit-case { min-width: 0; }
 .kit-case__label { margin: 0 0 8px; font: var(--type-body-s-strong); color: var(--text-primary); }
 
+/* «Все состояния» в зоне демо (gallery сценария, пробно): переключатель вида —
+   SegmentControl ДС в левом верхнем углу панели демо; копии шириной со слайдера
+   конструктора идут строками, по центру. */
+main.ds-split .app-pane-demo:has(> .kit-view) { position: relative; }
+.app-pane-demo:has(> .kit-view) > .demo-stage { padding-top: 64px; }
+.kit-view { position: absolute; top: 16px; left: 16px; z-index: 1; }
+.kit-gallery { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 24px 16px; width: 100%; margin: 0; }
+.kit-gallery[hidden], .pg__stage[hidden] { display: none; }
+.kit-gallery > .kit-case { flex: none; max-width: 100%; }
+
 /* ---------- текст паспорта ---------- */
 .kit-md > p.desc { font: var(--type-body-m); color: var(--text-secondary); margin: 0 0 16px; max-width: 82ch; text-wrap: pretty; }
 .kit-md__h3 { font: var(--type-h4-strong); color: var(--text-primary); margin: 32px 0 8px; }

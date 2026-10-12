@@ -3,7 +3,11 @@
 
    API:
      PostTileRsbuAdjustments.render(tile, opts)
-       opts.state  — 'locked' | 'none' | 'filled' (ставит data-adjustments)
+       opts.state  — 'locked' | 'none' | 'filled' — вид по данным; раскладывается
+                     на оси корня: locked → data-calc="required",
+                     none → data-state="empty", filled → data-state="data"
+       opts.mode   — 'edit' | 'view' (data-mode, по умолчанию edit): в view
+                     нет кнопки «Внести корректировку»
        opts.count  — число внесённых корректировок (для filled)
        opts.query  — строка адреса '?id=…&tr=…', которую страница передаёт
                      на страницу корректировок (необязательно)
@@ -18,7 +22,9 @@
     opts = opts || {};
     var st = STATES.indexOf(opts.state) >= 0 ? opts.state : 'none';
     var q = opts.query || '';
-    tile.setAttribute('data-adjustments', st);
+    tile.setAttribute('data-calc', st === 'locked' ? 'required' : 'done');
+    if (st !== 'locked') tile.setAttribute('data-state', st === 'filled' ? 'data' : 'empty');
+    tile.setAttribute('data-mode', opts.mode === 'view' ? 'view' : 'edit');
     var count = tile.querySelector('[data-rsbu-count]');
     if (count) count.textContent = opts.count == null ? '' : String(opts.count);
     /* страница корректировок вшивает окно меткой ds-include — по двойному клику её открывают собранной */

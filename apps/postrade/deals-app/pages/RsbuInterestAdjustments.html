@@ -43,6 +43,10 @@
         <div class="phead__main">
           <div class="phead__title-row">
             <div class="phead__title-group"><h1 class="phead__title">Корректировки процентов РСБУ</h1></div>
+            <span class="phead__return">
+              <a class="btn btn--outline btn--xs" href="Tranche.html" id="rh-return">
+                <i data-icon="flip-backward"></i><span class="btn__label">В транш</span></a>
+            </span>
           </div>
         </div>
         <div class="phead__actions">
@@ -57,8 +61,8 @@
               <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 64px 280px 280px 200px 400px 128px minmax(8px,1fr);">
                 <div class="th th--separator"></div>
                 <div class="th" data-col="num"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
-                <div class="th" data-col="startDate"><span class="th__label">Начальная дата корректировки значения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Начальная дата корректировки значения"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
-                <div class="th" data-col="endDate"><span class="th__label">Конечная дата корректировки значения</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Конечная дата корректировки значения"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="startDate"><span class="th__label">Исходная дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="startDate" aria-label="Сортировать: Исходная дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
+                <div class="th" data-col="endDate"><span class="th__label">Целевая дата</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="endDate" aria-label="Сортировать: Целевая дата"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th th--right" data-col="adjustmentAmount"><span class="th__label">Сумма корректировки</span><span class="th__tools"><button type="button" class="ibtn ibtn--neutral ibtn--s th__sort" data-sort="adjustmentAmount" aria-label="Сортировать: Сумма корректировки"><i data-icon="arrow-up-down"></i></button></span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="comment"><span class="th__label">Комментарий</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
                 <div class="th" data-col="actions"><span class="th__label">Действия</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div>
@@ -261,7 +265,9 @@
     if (crumbs[2]) crumbs[2].setAttribute('href', 'Deal.html' + dealQ);
     if (crumbs[3]) crumbs[3].setAttribute('href', 'Deal.html' + dealQ);
     var preview = /\.preview\.html$/.test(location.pathname);
-    document.getElementById('rh-crumb-tranche').setAttribute('href', (preview ? 'Tranche.preview.html' : 'Tranche.html') + q);
+    var tranche = (preview ? 'Tranche.preview.html' : 'Tranche.html') + q;
+    document.getElementById('rh-crumb-tranche').setAttribute('href', tranche);
+    document.getElementById('rh-return').setAttribute('href', tranche);
   }
 
   buildNav(); fill(); render();

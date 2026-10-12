@@ -2,11 +2,14 @@
      Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
      Здесь только разметка: внешние отступы и место в колонках задаёт экран.
 
-     data-adjustments — вид по данным: locked | none | filled. Разметка держит все три
-                        блока сразу, показывает нужный RsbuInterestAdjustmentsTile.css.
-     data-state       — состояние данных: data (единственное; загрузки у тайла нет).
-     Ссылки (href, по умолчанию «#») и число корректировок ставит RsbuInterestAdjustmentsTile.js. -->
-<section class="tile lc-rsbu-adj" data-state="data" data-adjustments="none">
+     Три оси, разметка держит все блоки сразу, нужный показывает RsbuInterestAdjustmentsTile.css:
+     data-state — данные: data (внесено N корректировок) | empty (корректировок нет);
+     data-mode  — права: edit (есть «Внести корректировку») | view (только стрелка);
+     data-calc  — условия: done (процентные платежи рассчитаны) | required (нужен расчёт —
+                  «Требуется расчёт процентных платежей», ни стрелки, ни кнопки; данные и
+                  права на вид не влияют).
+     Оси, ссылки (href, по умолчанию «#») и число корректировок ставит RsbuInterestAdjustmentsTile.js. -->
+<section class="tile lc-rsbu-adj" data-state="empty" data-mode="edit" data-calc="done">
   <header class="tile__header">
     <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Корректировки процентов РСБУ</h3></div></div>
     <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m lc-rsbu-adj__open" href="#" aria-label="Открыть: Корректировки процентов РСБУ"><i data-icon="arrow-right"></i></a></div>

@@ -21,11 +21,21 @@
         IBPKitDemo.register('<Имя>', {
           states: ['partial'],                  // состояния, которые различают
                                                 // данные, а не CSS виджета
+          labels: { data: 'Есть данные' },      // свои подписи состояний и режимов
           controls: function (defs) { return defs.concat([...]); },  // свои контролы
-          apply: function (el, st, ctx) { … }   // наполнить узел данными;
+          apply: function (el, st, ctx) { … },  // наполнить узел данными;
                                                 // ctx.fixtures — fixtures.json,
                                                 // ctx.live — живой фрагмент или копия
+          cases: function (defs, ctx) { … },    // свой набор копий «Все состояния»:
+                                                // [{ label, st }], st — поверх
+                                                // текущих значений конструктора
+          gallery: true                         // проба: переключатель вида в зоне
+                                                // демо «Одно состояние | Все состояния»
         });
+   5. «Все состояния» в зоне демо (gallery сценария, пробно). Над стендом —
+      SegmentControl ДС; во втором виде стенд скрыт, вместо него — те же
+      копии, что в разделе документации, шириной со слайдера конструктора.
+      Выбор вида помнит браузер зрителя (localStorage, без него — один вид).
 
    Вызов — из страницы: IBPKitDoc.page(window.IBPKitPage).
    ============================================================ */
@@ -241,46 +251,120 @@
       if (sc.apply) sc.apply(el, st, { fixtures: P.fixtures || {}, live: live });
     }
 
-    var state = controls(defs, function (st) {
-      if (st.width) stage.style.width = st.width + 'px';
-      applyTo(subject, st, true);
-      paint(stage);
-    });
-
-    /* все состояния рядом */
-    var host = document.getElementById('kit-cases');
-    if (!host) return;
+    /* Набор копий «Все состояния»: по умолчанию — каждая пара «состояние ×
+       режим», сценарий может задать свой (поле cases). */
     var states = P.states.length ? P.states : [P.state];
     var modes = P.modes.length ? P.modes : [P.mode];
     var cases = [];
     states.forEach(function (s) {
       modes.forEach(function (m) {
         var name = [s && label(stateLabels, s), modes.length > 1 && m && label(modeLabels, m)].filter(Boolean).join(' · ');
-        cases.push([name || 'Как во фрагменте', { state: s, mode: m }]);
+        cases.push({ label: name || 'Как во фрагменте', st: { state: s, mode: m } });
       });
     });
+    if (sc.cases) cases = sc.cases(cases, { fixtures: P.fixtures || {}, labels: stateLabels }) || cases;
+
+    /* Копии в host: исходный фрагмент поверх текущих значений конструктора. */
+    function fillCases(host, cur, sfx, width) {
+      host.innerHTML = '';
+      cases.forEach(function (c, i) {
+        var box = document.createElement('div');
+        box.className = 'kit-case';
+        if (width) box.style.width = width + 'px';
+        var cap = document.createElement('p');
+        cap.className = 'kit-case__label';
+        cap.textContent = c.label;
+        var el = pristine.cloneNode(true);
+        var st = {};
+        Object.keys(cur).forEach(function (k) { st[k] = cur[k]; });
+        Object.keys(c.st || {}).forEach(function (k) { st[k] = c.st[k]; });
+        applyTo(el, st, false);
+        suffixIds(el, sfx + (i + 1));
+        box.appendChild(cap);
+        box.appendChild(el);
+        host.appendChild(box);
+      });
+      paint(host);
+    }
+
+    var gallery = sc.gallery && cases.length > 1 ? galleryView(stage) : null;
+
+    var state = controls(defs, function (st) {
+      if (st.width) stage.style.width = st.width + 'px';
+      applyTo(subject, st, true);
+      paint(stage);
+      if (gallery && gallery.on()) fillCases(gallery.host, st, '-g', st.width);
+    });
+    if (gallery) gallery.onShow(function () { fillCases(gallery.host, state, '-g', state.width); });
+
+    /* все состояния рядом — раздел «Состояния» документации */
+    var host = document.getElementById('kit-cases');
+    if (!host) return;
     if (cases.length < 2) {
       host.insertAdjacentHTML('beforeend', '<p class="desc">У компонента одно состояние — оно в демо выше.</p>');
       return;
     }
-    cases.forEach(function (c, i) {
-      var box = document.createElement('div');
-      box.className = 'kit-case';
-      var cap = document.createElement('p');
-      cap.className = 'kit-case__label';
-      cap.textContent = c[0];
-      var el = pristine.cloneNode(true);
-      var st = {};
-      Object.keys(state).forEach(function (k) { st[k] = state[k]; });
-      st.state = c[1].state;
-      st.mode = c[1].mode;
-      applyTo(el, st, false);
-      suffixIds(el, '-case' + (i + 1));
-      box.appendChild(cap);
-      box.appendChild(el);
-      host.appendChild(box);
-    });
-    paint(host);
+    fillCases(host, state, '-case');
+  }
+
+  /* ---------- вид зоны демо: одно состояние | все состояния ---------- */
+  var VIEW_KEY = 'ibp-kit-demo-view';
+  function readView() { try { return window.localStorage.getItem(VIEW_KEY); } catch (e) { return null; } }
+  function saveView(v) { try { window.localStorage.setItem(VIEW_KEY, v); } catch (e) { /* без хранилища — один вид */ } }
+
+  /* Переключатель — SegmentControl ДС (рантайм DSTabs.segment) над стендом;
+     копии — в .kit-gallery рядом со стендом, стенд в этом виде скрыт. */
+  function galleryView(stage) {
+    var pane = stage.closest('.app-pane-demo');
+    var box = stage.closest('.pg__stage');
+    if (!pane || !box) return null;
+    var bar = document.createElement('div');
+    bar.className = 'kit-view';
+    bar.innerHTML = '<div class="segctrl segctrl--s" role="radiogroup" aria-label="Вид демо">'
+      + '<div class="segctrl__thumb"></div>'
+      + '<button type="button" class="segctrl__item" role="radio" aria-checked="true" data-view="one"><span class="segctrl__label">Одно состояние</span></button>'
+      + '<button type="button" class="segctrl__item" role="radio" aria-checked="false" data-view="all"><span class="segctrl__label">Все состояния</span></button>'
+      + '</div>';
+    pane.insertBefore(bar, pane.firstChild);
+    var host = document.createElement('div');
+    host.className = 'kit-cases kit-gallery';
+    host.hidden = true;
+    box.parentNode.insertBefore(host, box.nextSibling);
+    var shown = [];
+    var on = false;
+    function set(all) {
+      on = all;
+      box.hidden = all;
+      host.hidden = !all;
+      saveView(all ? 'all' : 'one');
+      if (all) shown.forEach(function (fn) { fn(); });
+    }
+    var seg = bar.querySelector('.segctrl');
+    var items = seg.querySelectorAll('.segctrl__item');
+    var pick = function (el) { set(el.getAttribute('data-view') === 'all'); };
+    var api = window.DSTabs ? window.DSTabs.segment(seg, { onChange: function (i, el) { pick(el); } }) : null;
+    if (!api) {
+      /* без рантайма ДС — тот же выбор кликом */
+      seg.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('.segctrl__item') : null;
+        if (!b) return;
+        items.forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+        pick(b);
+      });
+    }
+    var start = readView() === 'all';
+    return {
+      host: host,
+      on: function () { return on; },
+      onShow: function (fn) {
+        shown.push(fn);
+        if (!start) return;
+        start = false;
+        if (api) api.select(1, true);
+        else items.forEach(function (x, i) { x.setAttribute('aria-checked', String(i === 1)); });
+        set(true);
+      }
+    };
   }
 
   window.IBPKitDoc = { page: page, controls: controls, paint: paint };
