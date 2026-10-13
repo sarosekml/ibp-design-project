@@ -10,7 +10,7 @@ source: docs/tasks/MS0015-ibp-redesign-leads-concept.md
 version: "1.002"
 created: "12.10.2026"
 design_system: IBP DS
-components: [Layout, NavPanel, Breadcrumbs, PageHeader, Tile, Table, TableCell, TableFilter, Modal, Drawer, Chip, Buttons, Kanban, Popover, StepMarker]
+components: [Layout, NavPanel, Breadcrumbs, PageHeader, Tile, Table, TableCell, TableFilter, Modal, Drawer, Chip, Buttons, Kanban, Popover, StepMarker, Entity, Avatar, ContextMenu]
 widgets: [modals/LeadActionsModal, modals/TransferToPipelineModal, tiles/LeadBasisTile, tiles/LeadStageTile, tables/LeadHistoryTable, popovers/LeadPathWidget]
 ---
 
@@ -28,7 +28,7 @@ widgets: [modals/LeadActionsModal, modals/TransferToPipelineModal, tiles/LeadBas
 | HomeBoard.preview.html | Главная |
 | LeadsNew.preview.html | Реестр |
 
-Пункт меню: Лиды (New). mode=before / after — сравнение, исходные страницы доступны локально.
+Пункт меню: «Лиды» с числом новых лидов (состояние системы в табе System панели прототипа). mode=before / after — сравнение (переключатель «Подход» там же), исходные страницы доступны локально.
 
 ## 3. Раскладка (Layout)
 
@@ -65,6 +65,8 @@ Layout, NavPanel, Breadcrumbs, PageHeader, Tile, Table, TableCell, Pagination, T
 | Путь лида | Свёрнут / раскрыт / скрыт; критерии живые, Esc сворачивает; предпочтение отдельно от данных |
 
 ## 7. Модальные окна (Modals)
+
+Панель быстрого просмотра лида — общая с реестром «Лиды»: Drawer w5, Entity клиента и команда в банке, тулбар действий, табы «Обзор · Основание · Встречи · История»; полное описание — LeadsNew.screen.md, §7.
 
 LeadActionsModal: новая сущность, идея, встреча, итоги, документы, причина, комментарий, ответственный. TransferToPipelineModal: проверка готовности, ссылки заполнения. Фильтр: .tfm, клиент / холдинг / ответственный / стадия / продукт / отрасль / ТБ / объём / дата / план. Слой, focus trap и Esc — DSModal.
 
@@ -108,5 +110,7 @@ Source: invented (12.10.2026). API реального продукта не оп
 Tab и клавиатурный перенос Kanban, focus trap Drawer/Modal, сортировка кнопками, текстовые подписи состояний, aria-live стадии. Перенос не требует указателя. Путь можно свернуть / скрыть / вернуть; Esc возвращает фокус.
 
 ## 13. Открытые вопросы и допущения (Open questions)
+
+Быстрый просмотр лида использует общий рантайм `data/leads-ui.js` и `pages/LeadPreview.css`: таб «Задачи» только с явными связями с лидом или его основанием. [ПРЕДЛОЖЕНИЕ] Рабочий список с прогрессом текущей стадии и выделенным следующим действием, цвет иконки `--tertiary-dark`, заливка `--secondary-bg` согласованы пользователем для концепта. Полное описание — `LeadsNew.screen.md`, §7; основной экран карточки не меняется.
 
 B1–B4 одобрены для прототипа. КФЮЛ и потенциалы РД отсутствуют в адаптере до решения вопроса 10; ссылки не выдуманы. Механизм ранжирования — демонстрационный отбор по плану и зоне ответственности, без бизнес-скоринга. Документы отмечаются флагами, загрузок нет. Возврат из Pipeline сохраняет связь с созданной сделкой. Автодвижение по внешним событиям выключено. Объединение дублей и новый Проект не входят в выбранный первый вариант. Приёмка: статический сенсор и JS-DOM со всеми рантаймами ДС. Фактический overflow, CSS и геометрия требуют ручного браузерного просмотра. Исторические архивы сделок источников сохраняются в режиме Было; Архив единого реестра содержит решения нового процесса. Группы продуктов и их объёмы берутся из источника; неизвестное распределение не выдумывается.

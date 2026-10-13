@@ -506,12 +506,15 @@
       var twisty = t.closest('.tc__twisty:not(.tc__twisty--leaf)');
       if (twisty && tbl.contains(twisty)) { treeToggle(tbl, twisty); return; }
 
-      /* чекбокс шапки выделяет и снимает все строки разом */
+      /* чекбокс шапки выделяет и снимает все строки разом. Состояние читается
+         ПОСЛЕ нативного переключения, в отложенном вызове: клик по подписи или
+         глифу .cb даёт второй клик — по самому input, и чтение в момент клика
+         давало противоположные значения (выбрать всё → снять всё, 1.023). */
       var headBox = t.closest('.tbl__row--head .cb, .th .cb');
       if (headBox && tbl.contains(headBox)) {
         var input = headBox.querySelector('.cb__input');
-        var on = input ? !input.checked : true;
         setTimeout(function () {
+          var on = input ? input.checked : true;
           dataRows(tbl).forEach(function (r) { setRowSelected(r, on); });
           syncHeadCheckbox(tbl);
           emit(tbl, 'rowselect', { selected: selectedIds(tbl) });

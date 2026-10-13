@@ -1,8 +1,8 @@
 ---
 component: Table
 title: "Table"
-version: "1.022"
-updated: "07.10.2026"
+version: "1.023"
+updated: "13.10.2026"
 page: components/organisms/Table/Table.html
 runtime: components/organisms/Table/Table.js, components/organisms/Table/TableResize.js, components/organisms/Table/TableReorder.js, components/organisms/Table/TablePin.js, components/organisms/Table/TableSettings.js (+ components/molecules/Tooltip/Tooltip.js — тултип усечённой ячейки/шапки)
 css: components/organisms/Table/Table.css
@@ -31,6 +31,7 @@ status: curated
 - Порядок строк рантайм меняет только по опции `data-sort-rows` — это механизм макета (значения берутся из DOM). Реестр с пагинацией сортирует сервер: атрибут не ставится, экран слушает событие `sort` и запрашивает отсортированную страницу.
 
 ## Диагностика
+- «Чекбокс шапки ставит галочки и тут же снимает» → рантайм старше 1.023 читал состояние чекбокса в момент клика: клик по глифу или подписи `.cb` даёт второй клик по самому input, и два отложенных вызова получали противоположные значения. С 1.023 состояние читается после переключения
 - «Тень под шапкой видна без скролла» → нужен класс `.dtable--scrolled`, навешиваемый по факту scrollTop>0
 - «Таблица выглядит disabled целиком» → у Table такого состояния нет, приглушать нужно точечно (тулбар/инструменты)
 - «Тень/градиент у края таблицы при горизонтальном скролле, едет с колонками» → это остатки удалённого класса «dtable__edge»; убрать элемент из разметки, у Table таких теней больше нет

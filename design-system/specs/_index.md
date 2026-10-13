@@ -40,7 +40,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Keyboard | components/atoms/Keyboard/Keyboard.md | components/atoms/Keyboard/Keyboard.css | — | 1.000 |
 | LabelHelper | components/atoms/LabelHelper/LabelHelper.md | components/atoms/LabelHelper/LabelHelper.css | checkbox, radio, switch | 1.007 |
 | Link | components/atoms/Link/Link.md | components/atoms/Link/Link.css | breadcrumbs | 1.007 |
-| Modal | components/organisms/Modal/Modal.md | components/organisms/Modal/Modal.css | button, icon-button, label-helper, checkbox | 1.015 |
+| Modal | components/organisms/Modal/Modal.md | components/organisms/Modal/Modal.css | button, icon-button, label-helper, checkbox | 1.016 |
 | NavPanel | components/organisms/NavPanel/NavPanel.md | components/organisms/NavPanel/NavPanel.css | icon-button, badge, avatar | 1.024 |
 | NavTile | components/molecules/NavTile/NavTile.md | components/molecules/NavTile/NavTile.css | illustration, link | 1.011 |
 | Note | components/atoms/Note/Note.md | components/atoms/Note/Note.css | link | 1.000 |
@@ -64,7 +64,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | StepMarker | components/atoms/StepMarker/StepMarker.md | components/atoms/StepMarker/StepMarker.css | — | 1.000 |
 | SubTab | components/molecules/SubTab/SubTab.md | components/molecules/SubTab/SubTab.css | badge | 1.001 |
 | Switch | components/atoms/Switch/Switch.md | components/atoms/Switch/Switch.css | label-helper, spinner | 1.009 |
-| Table | components/organisms/Table/Table.md | components/organisms/Table/Table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.021 |
+| Table | components/organisms/Table/Table.md | components/organisms/Table/Table.css | table-cell, pagination, table-filter, button, button-group, icon-button, chip, checkbox, illustration, modal, context-menu | 1.023 |
 | TableCell | components/organisms/TableCell/TableCell.md | components/organisms/TableCell/TableCell.css | checkbox, chip, icon-button, button, tooltip, chart | 2.023 |
 | TableFilter | components/organisms/TableFilter/TableFilter.md | components/organisms/TableFilter/TableFilter.css | button, icon-button, chip, badge, modal, tab, input, checkbox | 1.010 |
 | Tab | components/molecules/Tab/Tab.md | components/molecules/Tab/Tab.css | — | 1.012 |

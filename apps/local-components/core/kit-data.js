@@ -115,7 +115,7 @@ window.IBPKit = {
       "doc": "core/drafts/ibp-redesign-v1/CommentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.002",
+      "version": "1.003",
       "updated": "10.10.2026"
     },
     {
@@ -913,7 +913,7 @@ window.IBPKit = {
       "doc": "core/drafts/ibp-redesign-v2/V2CommentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.002",
+      "version": "1.003",
       "updated": "10.10.2026"
     },
     {

@@ -6,8 +6,12 @@
   var page, currentId, previewId, tab = 'picks', view = 'board', listMode = 'list';
   var collapsedColumns = new Set(['PIPELINE', 'DECLINED']);
   var collapsedHoldings = new Set();
-  var filters = {}, basisFilter = '', pageNumber = 1, pageSize = 20, selected = new Set(), formState, transferLeadId;
-  var grid = '8px 40px 140px 240px 240px 280px 160px 240px 320px 180px 240px 120px 160px 8px';
+  var filters = {}, basisFilter = '', pageNumber = 1, pageSize = 50, selected = new Set(), formState, transferLeadId;
+  // «Статус клиента» (c11, MS0016) хранится последним в values(), а стоит сразу после «Клиента»:
+  // ORDER задаёт порядок ячеек, индексы остальных колонок не меняются.
+  var ORDER = [0,1,11,2,3,4,5,6,7,8,9,10];
+  // Колонка выбора — порог ДС 124px (.th--select/.tc--select); хвост — гибкий разделитель ДС.
+  var grid = '8px 124px 140px 224px 160px 224px 232px 112px 208px 240px 160px 208px 140px 160px minmax(8px,1fr)';
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
   function el(id) { return document.getElementById(id); }
   function put(id, html) { var node = el(id); if (node) node.innerHTML = html; }
@@ -16,9 +20,10 @@
   function days(l) { return Math.max(0, Math.floor((Date.parse('2026-10-12') - Date.parse(l.stageEnteredAt)) / 86400000)); }
   function chip(text, tone) { return '<span class="chip chip--rounded chip--s chip--' + (tone || 'grey') + '"><span class="chip__label">' + esc(text) + '</span></span>'; }
   // Основание — категория, а не статус: квадратный Chip с цветами через слоты ДС.
-  function basisChip(type) {
+  // withIcon — глиф раздела системы, откуда пришёл лид (таблица, предпросмотр); на карточке доски чип без иконки.
+  function basisChip(type, withIcon) {
     var b = stages.basis[type], c = b.colors;
-    return '<span class="chip chip--s chip--fit" data-lead-basis-chip="' + type + '" style="--chip-fill:var(' + c[0] + ');--chip-border:var(' + c[0] + ');--chip-text:var(' + c[1] + ');--chip-icon-color:var(' + c[2] + ')"><span class="chip__label">' + esc(b.title) + '</span></span>';
+    return '<span class="chip chip--s chip--fit" data-lead-basis-chip="' + type + '" style="--chip-fill:var(' + c[0] + ');--chip-border:var(' + c[0] + ');--chip-text:var(' + c[1] + ');--chip-icon-color:var(' + c[2] + ')">' + (withIcon && b.icon ? '<span class="chip__icon" aria-hidden="true"><i data-icon="' + b.icon + '"></i></span>' : '') + '<span class="chip__label">' + esc(b.title) + '</span></span>';
   }
   function btn(text, action, id, tone, small) { return '<button type="button" class="btn btn--' + (tone || 'outline') + ' btn--' + (small ? 's' : 'm') + '" data-lead-action="' + action + '"' + (id ? ' data-lead-id="' + esc(id) + '"' : '') + (action==='reasons'?' data-popover="lead-reasons" data-reasons-for="'+esc(id)+'"':'') + '><span class="btn__label">' + esc(text) + '</span></button>'; }
   function link(text, url) { return '<a class="link" href="' + esc(url) + '">' + esc(text) + '</a>'; }
@@ -72,7 +77,7 @@
     window.DSSnack.show({ tone: 'success', title: title, dedup:!snapshot, buttons: snapshot ? [{ label: 'Отменить', onClick: function () { if(JSON.stringify(store.snapshot())!==after){error('После этого действия данные уже изменились');return;}store.restore(snapshot); } }] : null });
   }
   function error(message) { if (window.DSSnack) window.DSSnack.show({ tone: 'warning', title: message }); }
-  function basisHtml(l) { return l.basis.map(function (b) { return basisChip(b.type); }).join(' '); }
+  function basisHtml(l) { return l.basis.map(function (b) { return basisChip(b.type,true); }).join(' '); }
   function renderBasisPicker() {
     var root = el('lead-basis-filter'); if (!root) return;
     // Не заменяем сегменты при выборе: сохраняются фокус и клавиатурная навигация.
@@ -80,21 +85,41 @@
       return '<button type="button" class="segctrl__item" role="radio" data-basis="' + code + '"><span class="segctrl__label">' + esc(code ? stages.basis[code].title : 'Все основания') + '</span>' + (code ? '<span class="badge badge--text badge--s" data-basis-count="' + code + '"></span>' : '') + '</button>';
     }).join('');
     root.querySelectorAll('[data-basis]').forEach(function (b) { var active = b.dataset.basis === basisFilter; b.setAttribute('aria-checked', String(active)); b.tabIndex = active ? 0 : -1; });
-    root.querySelectorAll('[data-basis-count]').forEach(function (b) { b.textContent = store.all().filter(function (l) { return l.basis.some(function (x) { return x.type === b.dataset.basisCount; }); }).length; });
+    var scope = filtered(true);
+    root.querySelectorAll('[data-basis-count]').forEach(function (b) { b.textContent = scope.filter(function (l) { return l.basis.some(function (x) { return x.type === b.dataset.basisCount; }); }).length; });
+  }
+  // Сводка недели в подзаголовке PageHeader: мета-элементы ДС, числа из данных (MS0016 §2.1).
+  function meta(icon, text) { return '<span class="phead__meta"><span class="phead__meta-ico" aria-hidden="true"><i data-icon="' + icon + '"></i></span>' + esc(text) + '</span>'; }
+  function weekSummary() {
+    var all = store.all(), me = window.IBPR.user.id;
+    var mine = all.filter(function (l) { return l.owner === me && !stages.get(l.stage).final; });
+    var work = mine.filter(function (l) { return l.stage !== 'REVIEW'; });
+    var meetings = new Set();
+    mine.forEach(function (l) { l.meetings.forEach(function (m) { if (m.statusCode !== 'CANCELLED' && m.date >= '2026-10-12' && m.date <= '2026-10-18') meetings.add(m.id); }); });
+    var passed = all.filter(function (l) { return l.owner === me && l.stage === 'PIPELINE' && l.stageEnteredAt >= '2026-10-01'; });
+    var passedSum = passed.reduce(function (acc,l) { return acc + (Number(l.amountMln) || 0); },0);
+    return meta('calendar',window.WEEKLY_PICKS.title)
+      + meta('star','В подборке: ' + all.filter(function (l) { return l.picked && l.stage === 'REVIEW'; }).length)
+      + meta('tasks','В работе: ' + work.length)
+      + meta('calendar-check-01','Встречи на неделе: ' + meetings.size)
+      + meta('pipeline','В Pipeline за Q4: ' + passed.length + ' · ' + money(passedSum) + ' млн RUB')
+      + meta('clock-timer','Без движения > 14 дн.: ' + work.filter(function (l) { return days(l) > 14; }).length);
   }
   function owner(l) { var p = window.IBPR.employee(l.owner); return p ? p.fullName : l.owner; }
   function leadHref(id) { return nav.href('lead', { id: id, mode: 'after' }); }
-  function values(l) { return [l.id,l.clientName,l.basis.map(function (b) { return stages.basis[b.type].title + ' ' + b.sourceId; }).join('; '),l.idea,money(l.amountMln),stages.get(l.stage).title,l.reasons.join('; '),l.client.quarterPlan || '—',owner(l),date(l.createdAt),date(l.lastActivityAt)]; }
-  function filtered() {
+  function values(l) { return [l.id,l.clientName,l.basis.map(function (b) { return stages.basis[b.type].title + ' ' + b.sourceId; }).join('; '),l.idea,money(l.amountMln),stages.get(l.stage).title,l.reasons.join('; '),l.client.quarterPlan || '—',owner(l),date(l.createdAt),date(l.lastActivityAt),clientStatus(l).title]; }
+  function clientStatus(l) { return stages.clientStatus[l.clientStatus] || stages.clientStatus.ACTIVE; }
+  // skipBasis — без выбранного основания: так считаются счётчики сегментов текущей вкладки.
+  function filtered(skipBasis) {
     var rows = store.all().filter(function (l) {
       if (page === 'HomeBoard') return l.picked || l.stage !== 'REVIEW' && l.stage !== 'NOT_TAKEN' && l.owner === '04127';
       if (tab === 'picks') return l.picked && l.stage === 'REVIEW';
       if (tab === 'work') return !stages.get(l.stage).final && l.stage !== 'REVIEW' && l.owner === '04127';
       if (tab === 'archive') return stages.get(l.stage).final;
-      return true;
+      return !stages.get(l.stage).final;
     });
     rows = rows.filter(function (l) {
-      if (basisFilter && !l.basis.some(function (b) { return b.type === basisFilter; })) return false;
+      if (basisFilter && !skipBasis && !l.basis.some(function (b) { return b.type === basisFilter; })) return false;
       return Object.keys(filters).every(function (key) {
         var v = filters[key]; if (!v) return true;
         if (key === 'plan') return l.client.inQuarterPlan;
@@ -121,11 +146,11 @@
       if (r.querySelector('[aria-expanded]').getAttribute('aria-expanded') === 'false') collapsedHoldings.add(r.dataset.node);
       else collapsedHoldings.delete(r.dataset.node);
     });
-    var headers = ['ID','Клиент','Основание','Идея / продукт','Объём, млн RUB','Стадия','Почему рекомендован','Приоритет на квартал РД','Ответственный','Появился','Последняя активность'];
+    var headers = ['ID','Клиент','Основание','Идея / продукт','Объём, млн RUB','Стадия','Почему рекомендован','Приоритет на квартал РД','Ответственный','Появился','Последняя активность','Статус клиента'];
     var countPages = Math.max(1,Math.ceil(rows.length/pageSize)); pageNumber = Math.min(pageNumber,countPages);
     var slice = rows.slice((pageNumber-1)*pageSize,pageNumber*pageSize);
-    var html = '<div class="tbl__row tbl__row--head" style="grid-template-columns:' + grid + '"><div class="th th--separator"></div><div class="th th--select">' + checkbox('all','',false,'data-lead-select-all aria-label="Выбрать страницу"') + '</div>' + headers.map(function (h,i) {
-      return window.IBPR_TABLE.headCell({ key:'c' + i,label:h,align:i === 4 ? 'right' : 'left',sortType:i === 4 ? 'number' : i > 8 ? 'date' : 'text' },false);
+    var html = '<div class="tbl__row tbl__row--head" style="grid-template-columns:' + grid + '"><div class="th th--separator"></div><div class="th th--select">' + checkbox('all','',false,'data-lead-select-all aria-label="Выбрать страницу"') + '</div>' + ORDER.map(function (i) {
+      return window.IBPR_TABLE.headCell({ key:'c' + i,label:headers[i],align:i === 4 ? 'right' : 'left',sortType:i === 4 ? 'number' : i === 9 || i === 10 ? 'date' : 'text' },false);
     }).join('') + '<div class="th th--separator"></div></div>';
     if (page === 'LeadsNew' && listMode === 'holdings') {
       var groups = new Map();
@@ -133,7 +158,7 @@
       groups.forEach(function (leads, name) {
         var key = 'lead-holding-' + encodeURIComponent(name), closed = collapsedHoldings.has(key);
         var volume = leads.reduce(function (sum,l) { return sum + (Number(l.amountMln) || 0); },0);
-        html += '<div class="tbl__row" data-lead-holding data-node="' + key + '" data-holding-name="' + esc(name) + '" data-holding-count="' + leads.length + '" data-holding-volume="' + volume + '" style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div><div class="tc tc--select"></div>' + headers.map(function (h,i) {
+        html += '<div class="tbl__row" data-lead-holding data-node="' + key + '" data-holding-name="' + esc(name) + '" data-holding-count="' + leads.length + '" data-holding-volume="' + volume + '" style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div><div class="tc tc--select"></div>' + ORDER.map(function (i) {
           var value = i === 1 ? name : i === 4 ? volume : '';
           return '<div class="tc' + (i === 1 ? ' tc--tree' : i === 4 ? ' tc--numbers' : '') + '" data-col="c' + i + '" data-sort-value="' + esc(value) + '">' + (i === 1 ? '<button type="button" class="tc__twisty" aria-expanded="' + !closed + '" aria-label="' + (closed ? 'Развернуть' : 'Свернуть') + '"><i data-icon="chevron-right"></i></button>' : '') + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + esc(i === 4 ? money(value) : value) + '</span>' + (i === 1 ? '<span class="badge badge--text badge--s">' + leads.length + '</span>' : '') + '</span></div>';
         }).join('') + '<div class="tc tc--separator"></div></div>';
@@ -147,13 +172,43 @@
     if (window.DSTable) window.DSTable.wire(table).rowsChanged();
     if (window.DSTableSettings) window.DSTableSettings.restore(table);
     layoutHoldingRows(table);
+    stretchClient(table);
     el('lead-table-empty').hidden = rows.length > 0;
     put('lead-table-empty',empty('Лиды не найдены','Измените фильтр или выберите другую вкладку.'));
     if (window.DSPagination) {
-      var holder = el('lead-pagination'); holder.replaceChildren(window.DSPagination.footer({ total:rows.length,page:pageNumber,pageSize:pageSize,
-        onChange:function (n) { pageNumber=n; render(); }, onPageSizeChange:function (n) { pageSize=n;pageNumber=1;render(); } }));
+      // Итоги — по всем строкам вкладки с учётом фильтра, не по текущей странице (MS0016 §2.3).
+      var known = rows.filter(function (l) { return Number(l.amountMln) > 0; });
+      var sum = known.reduce(function (acc,l) { return acc + Number(l.amountMln); },0);
+      var info = [['Всего лидов',String(rows.length)],['На сумму',money(sum) + ' млн RUB']];
+      if (rows.length > known.length) info.push(['Без оценки',String(rows.length - known.length)]);
+      var holder = el('lead-pagination'); holder.replaceChildren(window.DSPagination.footer({
+        info:{ items:info, warn:'' },
+        pager:{ total:rows.length,page:pageNumber,pageSize:pageSize,
+          onChange:function (n) { pageNumber=n; render(); }, onPageSizeChange:function (n) { pageSize=n;pageNumber=1;render(); } } }));
     }
     updateBulk();
+  }
+  /* [ПРЕДЛОЖЕНИЕ] Резиновая колонка «Клиент» (MS0016, решение человека 13.10.2026 —
+     только в этом прототипе). Пока таблица уже области, «Клиент» забирает свободную
+     ширину; шире — остаётся базовой (CLIENT_BASE) и появляется горизонтальный скролл.
+     Рантайм Table ДС держит треки в px (выравнивание, ресайз, настройки), поэтому
+     ширина считается здесь в px и пишется всем строкам. Ручной ресайз «Клиента»
+     меняет базу. Кандидат в ДС — свойство колонки «фиксированная / тянется до упора». */
+  var CLIENT_BASE = 224, clientBase = CLIENT_BASE;
+  function trackPx(t) { var m = /^minmax\((\d+(?:\.\d+)?)px/.exec(t); return m ? Number(m[1]) : parseFloat(t) || 0; }
+  function stretchClient(table) {
+    if (!table || !table.clientWidth) return;
+    var head = table.querySelector('.tbl__row--head'); if (!head) return;
+    var cells = Array.prototype.slice.call(head.children);
+    var idx = cells.findIndex(function (c) { return c.dataset.col === 'c1'; });
+    var tracks = (head.style.gridTemplateColumns || '').match(/minmax\([^)]*\)|\S+/g);
+    if (idx < 0 || !tracks || tracks.length !== cells.length) return;   // «Клиент» скрыт в настройках
+    var others = tracks.reduce(function (sum, t, i) { return i === idx ? sum : sum + trackPx(t); }, 0);
+    var next = Math.max(clientBase, Math.floor(table.clientWidth - others)) + 'px';
+    if (tracks[idx] === next) return;
+    tracks[idx] = next;
+    var gtc = tracks.join(' ');
+    table.querySelectorAll('.tbl__row').forEach(function (row) { row.style.gridTemplateColumns = gtc; });
   }
   function layoutHoldingRows(table) {
     // Заголовок группы занимает левую часть строки, до колонки объёма.
@@ -179,12 +234,14 @@
     });
   }
   function tableRow(l,parent,closed) {
-    return '<div class="tbl__row' + (selected.has(l.id) ? ' tbl__row--selected' : '') + '" data-lead-row="' + esc(l.id) + '"' + (parent ? ' data-parent="' + parent + '"' : '') + (closed ? ' hidden' : '') + ' style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div><div class="tc tc--select">' + checkbox('select','',selected.has(l.id),'data-lead-check="' + esc(l.id) + '" aria-label="Выбрать ' + esc(l.id) + '"') + '</div>' + values(l).map(function (v,i) {
-      var inside = i === 0 ? link(v,leadHref(l.id)) : i === 2 ? basisHtml(l) : i === 5 ? chip(v,stages.get(l.stage).tone) : esc(v);
+    var vals = values(l);
+    return '<div class="tbl__row' + (selected.has(l.id) ? ' tbl__row--selected' : '') + '" data-lead-row="' + esc(l.id) + '"' + (parent ? ' data-parent="' + parent + '"' : '') + (closed ? ' hidden' : '') + ' style="grid-template-columns:' + grid + '"><div class="tc tc--separator"></div><div class="tc tc--select">' + checkbox('select','',selected.has(l.id),'data-lead-check="' + esc(l.id) + '" aria-label="Выбрать ' + esc(l.id) + '"') + '</div>' + ORDER.map(function (i) {
+      var v = vals[i];
+      var inside = i === 0 ? link(v,leadHref(l.id)) : i === 2 ? basisHtml(l) : i === 5 ? chip(v,stages.get(l.stage).tone) : i === 11 ? chip(v,clientStatus(l).tone) : esc(v || '—');
       return '<div class="tc' + (i === 4 ? ' tc--numbers' : parent && i === 1 ? ' tc--tree' : '') + '"' + (parent && i === 1 ? ' style="--tc-level:1"' : '') + ' data-col="c' + i + '" data-sort-value="' + esc(i === 4 ? l.amountMln : i === 9 ? l.createdAt : i === 10 ? l.lastActivityAt : v) + '">' + (parent && i === 1 ? '<span class="tc__twisty tc__twisty--leaf" aria-hidden="true"></span>' : '') + '<span class="tc__row"><span class="tc__text tc__text--truncate">' + inside + '</span></span></div>';
     }).join('') + '<div class="tc tc--separator"></div></div>';
   }
-  function updateBulk() { if (!el('lead-bulk')) return; el('lead-bulk').hidden = !selected.size; put('lead-bulk-count','Выбрано: ' + selected.size); }
+  function updateBulk() { if (!el('lead-bulk')) return; el('lead-bulk').hidden = !selected.size; if (el('lead-bulk-divider')) el('lead-bulk-divider').hidden = !selected.size; put('lead-bulk-count','Выбрано строк: <b>' + selected.size + '</b>'); }
   function renderBoard(rows) {
     // Штатное меню Kanban меняет DOM: сохраняем выбор пользователя перед перерисовкой.
     el('lead-board').querySelectorAll('[data-kb-col]').forEach(function (col) {
@@ -215,11 +272,15 @@
     */
     if (window.DSKanban) { window.DSKanban.bind(el('lead-board')); window.DSKanban.sync(el('lead-board')); }
   }
-  function renderBasis(l) {
-    return fields(l.basis.map(function (b) { var src = b.type === 'MEETING' ? window.IBPR.meeting(b.sourceId) : stages.basis[b.type].page === 'opportunity' ? window.IBPR.opportunity(b.sourceId) : window.IBPR.potential(b.sourceId);
-      return rof(stages.basis[b.type].title,link(String(b.sourceId),store.basisHref(b)),true) + rof('Создан',date(src.createdAt)) + rof('Автор',esc((window.IBPR.employee(src.createdBy) || {}).fullName || 'Система'));
-    }).concat([rof('ТБ / ГОСБ',esc(window.IBPR.lbl.terBank(l.client.terBank) + ' / ' + l.client.gosb),true),rof('Продукты источника',esc((l.source.productLabels || l.products).join(', ') || '—'),true)]),2);
+  // Основание лида — строки [подпись, значение, на всю ширину]: их рисуют и тайл страницы лида, и панель просмотра.
+  function basisRows(l) {
+    var rows = [];
+    l.basis.forEach(function (b) { var src = b.type === 'MEETING' ? window.IBPR.meeting(b.sourceId) : stages.basis[b.type].page === 'opportunity' ? window.IBPR.opportunity(b.sourceId) : window.IBPR.potential(b.sourceId);
+      rows.push([stages.basis[b.type].title, basisChip(b.type,true) + ' ' + link(String(b.sourceId),store.basisHref(b)), true], ['Создан', date(src.createdAt)], ['Автор', esc((window.IBPR.employee(src.createdBy) || {}).fullName || 'Система')]);
+    });
+    return rows.concat([['ТБ / ГОСБ', esc(window.IBPR.lbl.terBank(l.client.terBank) + ' / ' + l.client.gosb), true], ['Продукты источника', esc((l.source.productLabels || l.products).join(', ') || '—'), true]]);
   }
+  function renderBasis(l) { return fields(basisRows(l).map(function (r) { return rof(r[0], r[1], r[2]); }), 2); }
   function stageIndex(l) { var code=l.stage;if(code==='DECLINED'||code==='NOT_TAKEN')code=l.history.length?l.history[l.history.length-1].from:'REVIEW';return stages.all.findIndex(function(s){return s.code===code;}); }
   function stageMark(s,i,current,failed) { var status = i<current ? 'done' : i===current ? failed?'error':'current' : ''; return '<span class="stepmark stepmark--s' + (status ? ' stepmark--'+status : '') + '" aria-hidden="true"><span class="stepmark__num">'+(i+1)+'</span><i class="stepmark__icon" data-icon="check"></i><i class="stepmark__icon stepmark__icon--error" data-icon="alert-circle"></i></span>'; }
   function renderLead(l) {
@@ -236,7 +297,7 @@
     put('lead-idea-body',fields([rof('Идея сделки',esc(l.idea||'—'),true),rof('Продукты',l.products.map(function (p) { return chip(p,'lblue'); }).join(' ') || '—',true),rof('Объём, млн RUB',money(l.amountMln)),rof('Валюта',chip('RUB','grey'))],4));
     put('lead-timing-body',fields([rof('Появился',date(l.createdAt)),rof('Последняя активность',date(l.lastActivityAt)),rof('Срок следующего шага',date(l.nextStep.dueDate),true)]));
     put('lead-meetings-body',(l.meetings.length ? simpleTable(['Встреча','Дата','Статус','Повестка'],l.meetings.map(function (m) { return [link(m.id,nav.href('meetings',{id:m.id,mode:'after'})),date(m.date),esc(window.IBPR.lbl.meetingStatus(m.statusCode)),esc(m.agenda.map(function (x) { return x.title; }).join('; '))]; })) : empty('Встреч пока нет','Назначьте встречу из карточки лида.')) + (l.protocol ? '<p class="ds-body-s">Итоги: '+esc(l.protocol)+'</p>' : '') + (l.stage==='MEETING_DONE' ? btn('Повторная встреча','repeat',l.id) : ''));
-    put('lead-tasks-body',simpleTable(['Задача клиента','Статус'],l.tasks.map(function (t) { return [link(t.title||t.name||String(t.id),nav.href('tasks',{id:t.id,mode:'after'})),esc(window.IBPR.lbl.taskStatus(t.statusCode))]; }))+(l.comments.length ? l.comments.map(function (c) { return '<p class="ds-body-s">'+esc(c)+'</p>'; }).join('') : '<p class="note note--s"><span class="note__text">Комментариев по лиду пока нет. Задачи выше показаны в контексте клиента.</span></p>'));
+    put('lead-tasks-body',simpleTable(['Задача клиента','Статус'],l.tasks.map(function (t) { return [link(t.title||t.name||String(t.id),nav.href('tasks',{id:t.id,mode:'after'})),esc(window.IBPR.lbl.taskStatus(t.statusCode))]; }))+(l.comments.length ? l.comments.map(function (c) { return '<p class="ds-body-s">'+esc(typeof c === 'string' ? c : c.text)+'</p>'; }).join('') : '<p class="note note--s"><span class="note__text">Комментариев по лиду пока нет. Задачи выше показаны в контексте клиента.</span></p>'));
     var f = l.source.financials;
     put('lead-finance-body',f ? fields([rof('Общий объём, млн RUB',money(f.totalVolume)),rof('Итоговый доход, млн RUB',money(f.totalIncome)),rof('Процентный доход, млн RUB',money(f.interestIncome)),rof('Комиссионный доход, млн RUB',money(f.commissionIncome))],2) : '<p class="note note--s"><span class="note__text">В источнике нет финансовых метрик. '+link('Открыть финпоказатели клиента',nav.href('client',{id:l.clientId,tab:'ClientInfoFinancials',mode:'after'}))+'</span></p>');
     put('lead-team-body',fields([rof('Ответственный',esc(owner(l)),true),rof('Дески',esc((l.source.desks||[]).map(function (d) { return window.IBPR.lbl.desk(d.deskId); }).join('; ') || 'SMB Природные ресурсы +6'),true),rof('Связи',l.opportunityId ? link('Сделка '+l.opportunityId,nav.href('opportunity',{id:l.opportunityId,source:'pipeline',mode:'after'})) : 'Передачи в Pipeline пока нет',true)]));
@@ -267,12 +328,166 @@
     if(l.stage==='MEETING_DONE') document.querySelector('[data-path-body]').insertAdjacentHTML('beforeend',btn('Назначить повторную встречу','repeat',l.id));
     pathState();
   }
+  /* Быстрый просмотр лида — Drawer ДС w5 (MS0016 §5.6, по примеру человека 13.10.2026).
+     Шапка: путь «Лиды › номер», название лида, «Открыть лид», крестик. Тело: Entity L
+     клиента (холдинг, чипы признаков) и команда клиента в банке (Avatar group, список в
+     тултипе), тулбар действий, Tab с панелями. Подвала нет: по ДС он только для подтверждения. */
+  var pvTab = 'overview';
+  function drof(label, value, full) { return '<div class="rof' + (full ? ' drawer__grid-full' : '') + '"><span class="ds-label"><span class="ds-label__text">' + esc(label) + '</span></span><div class="rof__row"><span class="rof__value">' + value + '</span></div></div>'; }
+  function dgrid(items) { return '<div class="drawer__grid">' + items.join('') + '</div>'; }
+  function dsec(title, html) { return '<section class="drawer__sec">' + (title ? '<div class="drawer__sechead"><h3 class="drawer__sectitle">' + esc(title) + '</h3></div>' : '') + html + '</section>'; }
+  function tbtn(text, action, id, icon, tone) {
+    return '<button type="button" class="btn btn--' + (tone || 'outline') + ' btn--s" data-lead-action="' + action + '" data-lead-id="' + esc(id) + '">'
+      + (icon ? '<i data-icon="' + icon + '"></i>' : '') + '<span class="btn__label">' + esc(text) + '</span></button>';
+  }
+  function pvEntity(l) {
+    var c = l.client, T = window.IBPR_TABLE, cs = clientStatus(l), chips = [chip(cs.title, cs.tone)];
+    if (c.quarterPlan) chips.push(T.chip(c.quarterPlan, { icon: 'calendar' }));
+    if (c.didGrowthCompany) chips.push(T.chip('Компания роста ДИД', { icon: 'trend-up' }));
+    if (c.topClient) chips.push(T.chip('Топ клиент', { icon: 'star' }));
+    if (c.keyClient) chips.push(T.chip('Ключевой клиент'));
+    return '<a class="entity entity--l entity--interactive" href="' + esc(nav.href('client', { id: l.clientId, mode: 'after' })) + '" aria-label="Карточка клиента ' + esc(l.clientName) + '">'
+      + '<div class="entity__lead"><span class="entity__icon lead-pv-client-icon" aria-hidden="true"><i data-icon="factory-01"></i></span></div>'
+      + '<div class="entity__main"><div class="entity__titles"><p class="entity__header">' + esc(l.holdingName) + '</p>'
+      + '<div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="' + esc(l.clientName) + '" data-tooltip-truncated="only">' + esc(l.clientName) + '</span></div></div>'
+      + '<div class="entity__chips">' + chips.join('') + '</div></div></a>';
+  }
+  // Команда клиента в банке — менеджеры без фото (инициалы), как получатели доступа в AI Pitcher v02.
+  function pvTeam(l) {
+    var roles = window.EMPLOYEE_ROLE_LABELS || {};
+    var team = (l.client.team || []).map(function (m) {
+      var e = window.IBPR.employee(m.employeeId) || {};
+      return { name: e.fullName || m.employeeId, initials: e.initials || '—', role: roles[m.roleCode] || '' };
+    });
+    if (!team.length) return '';
+    var names = team.map(function (p) { return p.name + (p.role ? ' — ' + p.role : ''); }).join(', ');
+    return '<span class="av-group av-group--m" role="group" tabindex="0" aria-label="Команда клиента в банке: ' + esc(names) + '" data-tooltip="' + esc('Команда клиента: ' + names) + '" data-tooltip-multiline="yes">'
+      + team.slice(0, 4).map(function (p) { return '<span class="av av--circular av--m" aria-hidden="true"><span class="av__text">' + esc(p.initials) + '</span></span>'; }).join('')
+      + (team.length > 4 ? '<span class="av-group__more" aria-hidden="true">+' + (team.length - 4) + '</span>' : '') + '</span>';
+  }
+  function pvToolbar(l) {
+    var s = stages.get(l.stage), open = !s.final && l.stage !== 'REVIEW';
+    var repeat = l.stage === 'MEETING_DONE' && l.repeatNeeded && l.meetings.some(function (m) { return m.statusCode === 'SCHEDULED'; });
+    var b = [tbtn(repeat ? 'Итоги повторной встречи' : s.action, 'primary', l.id, null, 'accent')];
+    if (open) b.push(tbtn('Идея и продукты', 'edit', l.id, 'edit'), tbtn('Встреча', 'meeting', l.id, 'calendar-plus'));
+    b.push(tbtn('Комментарий', 'comment', l.id, 'message-text'));
+    // Редкие и необратимые исходы — в меню «Ещё действия» (ContextMenu ДС): ряд не переносится на вторую строку.
+    var more = l.stage === 'REVIEW' ? [['Не беру', 'not-taken']] : open ? [['Клиент отказался', 'decline']] : [];
+    if (more.length) b.push('<span class="menu-anchor"><button type="button" class="btn btn--outline btn--s btn--icon-only" aria-label="Ещё действия" data-menu="lead-pv-menu" data-menu-align="end"><i data-icon="more-dots"></i></button>'
+      + '<div class="menu" id="lead-pv-menu" role="menu">' + more.map(function (m) { return '<button type="button" class="menu__item menu__item--danger" role="menuitem" data-lead-action="' + m[1] + '" data-lead-id="' + esc(l.id) + '"><span class="menu__item-label">' + m[0] + '</span></button>'; }).join('') + '</div></span>');
+    return '<div class="lead-toolbar__group" role="toolbar" aria-label="Действия с лидом">' + b.join('') + '</div>';
+  }
+  // [ПРЕДЛОЖЕНИЕ] Рабочий список стадии: ближайшее действие, прогресс обязательных пунктов, затем выполненное.
+  function pvPath(l) {
+    var s = stages.get(l.stage), checks = stages.checks(l);
+    if (!checks.length) return '<section class="lead-worklist"><h3 class="ds-body-m-strong">Путь лида</h3><p class="ds-body-s">' + esc(s.goal) + '</p>' + btn(s.action, 'primary', l.id, 'outline', true) + '</section>';
+    var required = checks.filter(function (c) { return !c.optional; });
+    var done = required.filter(function (c) { return c.done; }).length;
+    var pending = checks.filter(function (c) { return !c.done && !c.optional; });
+    var optional = checks.filter(function (c) { return !c.done && c.optional; });
+    var completed = checks.filter(function (c) { return c.done; });
+    var next = pending[0] || optional[0];
+    function item(c) {
+      var state = c.done ? 'done' : c === next ? 'next' : 'pending';
+      return '<li class="lead-worklist__item" data-work-state="' + state + '"><span class="lead-worklist__mark" aria-hidden="true"><i data-icon="' + (c.done ? 'check' : c === next ? 'arrow-right' : 'circle') + '"></i></span>'
+        + '<div class="lead-worklist__copy"><span class="ds-body-s-strong">' + esc(c.title) + '</span><span class="lead-worklist__hint">' + (c.done ? 'Выполнено' : c.optional ? 'Необязательно' : c === next ? 'Следующее действие' : 'Осталось сделать') + '</span></div>'
+        + (!c.done && !s.final ? btn(c.action === 'basis' ? 'Открыть' : 'Заполнить', c.action, l.id, c === next ? 'accent' : 'transparent', true) : '') + '</li>';
+    }
+    var meter = required.length ? '<div class="pbar pbar--accent" role="progressbar" aria-label="Готовность текущей стадии" aria-valuemin="0" aria-valuemax="' + required.length + '" aria-valuenow="' + done + '" aria-valuetext="Выполнено ' + done + ' из ' + required.length + '"><div class="pbar__head"><span class="pbar__label">Готовность стадии</span><span class="pbar__value">' + done + ' из ' + required.length + '</span></div><div class="pbar__track"><div class="pbar__fill" style="width:' + Math.round(done / required.length * 100) + '%"></div></div></div>' : '';
+    var body = pending.concat(optional).length ? '<ul class="lead-worklist__items">' + pending.concat(optional).map(item).join('') + '</ul>' : '';
+    if (completed.length) body += '<div class="lead-worklist__completed"><p class="lead-worklist__hint">Сделано · ' + completed.length + '</p><ul class="lead-worklist__items">' + completed.map(item).join('') + '</ul></div>';
+    if (required.length && !pending.length && !s.final) body += '<div class="lead-worklist__ready"><span class="ds-body-s">Всё готово к следующему шагу</span>' + btn(s.action, 'primary', l.id, 'accent', true) + '</div>';
+    return '<section class="lead-worklist" aria-label="Путь лида"><div class="lead-worklist__head"><h3 class="ds-body-m-strong">Путь лида</h3><span class="lead-worklist__hint">Текущая стадия</span></div><p class="ds-body-s">' + esc(s.goal) + '</p>' + meter + body + '</section>';
+  }
+  // Связь только по объекту, без подмешивания остальных задач клиента.
+  function pvRelatedTasks(l) {
+    return window.IBPR.tasks().filter(function (t) {
+      if (t.sourceType === 'UNIFIED_LEAD' && String(t.sourceId) === String(l.id)) return true;
+      var o = t.linkedObject || {};
+      if ((o.typeCode === 'UNIFIED_LEAD' || o.typeCode === 'LEADS') && String(o.number) === String(l.id)) return true;
+      return l.basis.some(function (b) {
+        var meta = stages.basis[b.type];
+        var type = b.type === 'MEETING' ? 'MEETINGS' : meta.page === 'opportunity' ? 'DEALS' : 'POTENTIALS';
+        var source = new URLSearchParams(o.params || '').get('source');
+        return o.typeCode === type && String(o.number) === String(b.sourceId) && (!source || !meta.source || source === meta.source);
+      });
+    });
+  }
+  function pvTasks(items, l) {
+    if (!items.length) return empty('Связанных задач пока нет', 'Здесь появятся задачи, связанные с этим лидом или его основанием.');
+    return '<div class="lead-pv-task-list">' + items.map(function (t) {
+      var o = t.linkedObject || {}, employee = window.IBPR.employee(t.executorId) || {};
+      return '<article class="lead-pv-task"><div class="ds-body-s-strong">' + link(t.title || t.name || String(t.id), nav.href('tasks', { id: t.id, mode: 'after' })) + '</div>'
+        + '<div class="lead-pv-task__meta"><span class="ds-body-xs">№ ' + esc(t.id) + '</span><span class="ds-body-xs">До ' + date(t.dueDate) + '</span><span class="ds-body-xs">' + esc(window.IBPR.lbl.taskStatus(t.statusCode)) + '</span></div>'
+        + '<p class="ds-body-xs">' + esc(employee.fullName || 'Исполнитель не указан') + '</p><p class="lead-worklist__hint">' + esc(o.number ? 'Основание: ' + (o.name || o.number) : 'Лид: ' + l.id) + '</p></article>';
+    }).join('') + '</div>';
+  }
+  function pvComments(l) {
+    var entries = l.comments.map(function (c) { return typeof c === 'string' ? { text: c } : c; });
+    var groups = [];
+    entries.slice().sort(function (a, b) { return (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0); }).forEach(function (c) {
+      var day = c.createdAt ? new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(c.createdAt)) : 'Ранее';
+      var group = groups.find(function (g) { return g.day === day; });
+      if (!group) { group = { day: day, entries: [] }; groups.push(group); }
+      group.entries.push(c);
+    });
+    var header = '<div class="lead-comments__head"><div><h3 class="ds-body-m-strong">Обсуждение лида</h3><p class="ds-body-xs">Договорённости, вопросы и контекст команды</p></div>' + tbtn('Добавить', 'comment', l.id, 'add') + '</div>';
+    if (!entries.length) return header + empty('Комментариев пока нет', 'Добавьте вопрос или договорённость для команды.');
+    return '<div class="lead-comments">' + header + groups.map(function (g) {
+      return '<section class="lead-comments__day"><h4 class="lead-comments__date">' + esc(g.day) + '</h4><div class="lead-comments__feed">' + g.entries.map(function (c) {
+        var author = c.authorId ? window.IBPR.employee(c.authorId) : null;
+        var name = c.system ? 'Система' : author ? author.fullName : 'Автор не указан';
+        var time = c.createdAt ? new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit' }).format(new Date(c.createdAt)) : '';
+        var avatar = c.system ? '<span class="lead-comments__system-icon" aria-hidden="true"><i data-icon="file-basic"></i></span>' : '<span class="av av--circular av--s" aria-hidden="true"><span class="av__text">' + esc(author ? author.initials : '—') + '</span></span>';
+        return '<article class="lead-comments__entry"' + (c.system ? ' data-comment-system' : '') + '>' + avatar + '<div class="lead-comments__message"><header class="lead-comments__meta"><span class="ds-body-s-strong">' + esc(name) + '</span>'
+          + (time ? '<time class="ds-body-xs" datetime="' + esc(c.createdAt) + '">' + time + '</time>' : '') + '</header>'
+          + (author ? '<p class="lead-comments__role">' + esc(author.position) + '</p>' : '') + '<p class="lead-comments__text ds-body-s">' + esc(c.text) + '</p></div></article>';
+      }).join('') + '</div></section>';
+    }).join('') + '</div>';
+  }
+  function pvPanels(l) {
+    var s = stages.get(l.stage);
+    var overview = pvPath(l) + dsec('', dgrid([drof('Стадия', chip(s.title, s.tone)), drof('Дней на стадии', String(days(l))),
+      drof('Срок', date(l.nextStep.dueDate)), drof('Объём, млн RUB', money(l.amountMln)),
+      drof('Продукты', l.products.map(function (p) { return chip(p, 'lblue'); }).join(' ') || '—', true),
+      drof('Ответственный', esc(owner(l))), drof('Подборка', l.picked ? 'Неделя 42' : 'Все лиды'),
+      drof('Появился', date(l.createdAt)), drof('Последняя активность', date(l.lastActivityAt))]));
+    var basis = dsec('', dgrid(basisRows(l).map(function (r) { return drof(r[0], r[1], r[2]); })));
+    var meetings = dsec('', l.meetings.length ? simpleTable(['Встреча', 'Дата', 'Статус'], l.meetings.map(function (m) {
+      return [link(m.id, nav.href('meetings', { id: m.id, mode: 'after' })), date(m.date), esc(window.IBPR.lbl.meetingStatus(m.statusCode))];
+    })) : empty('Встреч пока нет', 'Назначьте встречу из тулбара панели.')) + (l.protocol ? dsec('Итоги', '<p class="ds-body-s">' + esc(l.protocol) + '</p>') : '');
+    var history = dsec('', l.history.length ? simpleTable(['Дата', 'Событие'], l.history.map(function (h) { return [date(h.date), esc(h.title)]; }))
+      : empty('Нет событий', 'История появится после первого решения по лиду.'));
+    var tasks = pvRelatedTasks(l);
+    var tabs = [['overview', 'Обзор', overview], ['basis', 'Основание', basis], ['tasks', 'Задачи', dsec('', pvTasks(tasks, l)), tasks.length], ['meetings', 'Встречи', meetings, l.meetings.length], ['comments', 'Комментарии', pvComments(l), l.comments.length], ['history', 'История', history, l.history.length]];
+    if (!tabs.some(function (x) { return x[0] === pvTab; })) pvTab = 'overview';
+    return '<div class="tabs tabs--horiz" role="tablist" aria-label="Разделы лида" id="lead-pv-tabs">' + tabs.map(function (x) {
+      var on = x[0] === pvTab;
+      return '<button type="button" class="tab tab--m' + (on ? ' tab--selected' : '') + '" role="tab" id="lead-pv-tab-' + x[0] + '" aria-controls="lead-pv-panel-' + x[0] + '" aria-selected="' + on + '" tabindex="' + (on ? 0 : -1) + '" data-lead-pv-tab="' + x[0] + '">'
+        + '<span class="tab__label">' + x[1] + '</span>' + (x[3] != null ? '<span class="tab__badge">' + x[3] + '</span>' : '') + '</button>';
+    }).join('') + '</div>' + tabs.map(function (x) {
+      return '<div class="lead-pv-panel" role="tabpanel" id="lead-pv-panel-' + x[0] + '" aria-labelledby="lead-pv-tab-' + x[0] + '"' + (x[0] === pvTab ? '' : ' hidden') + '>' + x[2] + '</div>';
+    }).join('');
+  }
+  function renderPreview(l) {
+    put('lead-preview-path', esc('Лиды › ' + l.id));
+    put('lead-preview-title', esc(l.idea || 'Лид ' + l.id));
+    var acts = document.querySelector('#lead-preview .drawer__acts');
+    if (acts && !acts.querySelector('[data-lead-action="open-lead"]')) acts.insertAdjacentHTML('afterbegin', '<span class="lead-pv-act"><button type="button" class="ibtn ibtn--neutral ibtn--m" aria-label="Открыть страницу лида" data-tooltip="Открыть страницу лида" data-lead-action="open-lead"><i data-icon="link-external"></i></button></span>');
+    put('lead-preview-body', '<div class="lead-pv-head">' + pvEntity(l) + pvTeam(l) + '</div>' + pvToolbar(l) + pvPanels(l));
+    var tabsEl = el('lead-pv-tabs');
+    if (tabsEl && window.DSTabs) window.DSTabs.tabs(tabsEl, { onChange: function (i, b) {
+      pvTab = b.dataset.leadPvTab;
+      el('lead-preview').querySelectorAll('.lead-pv-panel').forEach(function (p) { p.hidden = p.id !== 'lead-pv-panel-' + pvTab; });
+    } });
+    bind(el('lead-preview'));
+    if (window.DSTooltip && window.DSTooltip.bindAll) window.DSTooltip.bindAll(el('lead-preview'));
+  }
   function preview(id) {
-    var l=store.get(id); if(!l) return; previewId=id;
-    put('lead-preview-title',esc(l.clientName)); put('lead-preview-path',esc(l.id+' · '+stages.get(l.stage).title));
-    put('lead-preview-body','<section class="drawer__sec"><div class="drawer__grid">'+rof('Идея',esc(l.idea),true)+rof('Объём, млн RUB',money(l.amountMln))+rof('Следующий шаг',esc(l.nextStep.title),true)+'</div></section><section class="drawer__sec"><h3 class="drawer__sectitle">Основания</h3>'+renderBasis(l)+'</section><section class="drawer__sec"><h3 class="drawer__sectitle">Путь лида</h3><p class="ds-body-s">'+esc(stages.get(l.stage).goal)+'</p>'+stages.checks(l).map(function (c) {return '<p class="ds-body-s">'+(c.done?'✓ ':'○ ')+esc(c.title)+'</p>';}).join('')+'</section>');
-    put('lead-preview-actions',btn(stages.get(l.stage).action,'primary',id,'accent')+link('Открыть лид',leadHref(id)));
-    bind(el('lead-preview')); if(window.DSDrawer) window.DSDrawer.open(el('lead-preview'));
+    var l = store.get(id); if (!l) return;
+    if (previewId !== id) pvTab = 'overview';
+    previewId = id; renderPreview(l);
+    if (window.DSDrawer) window.DSDrawer.open(el('lead-preview'));
   }
   function renderFilter() {
     var defs = [['filter-client','Клиент',window.IBPR.clients().map(function(c){return c.name;}),'client'],['filter-holding','Холдинг',window.IBPR.clients().map(function(c){return c.holdingName;}),'holding'],['filter-owner','Ответственный',window.IBPR.employees().map(function(e){return {value:e.id,label:e.fullName};}),'owner'],['filter-stage','Стадия',stages.all.map(function(s){return {value:s.code,label:s.title};}),'stage']];
@@ -318,6 +533,7 @@
     if(action==='take') return move(id,'IDEA');
     if(action==='primary') return primary(id);
     if(action==='preview') return preview(id);
+    if(action==='open-lead') { window.location.href=leadHref(id); return; }
     if(action==='transfer') return transfer(id);
     if(action==='transfer-confirm') { var targetId=formState.id; move(targetId,'PIPELINE'); window.DSModal.closeTop(); return; }
     if(action==='advance') {
@@ -363,7 +579,7 @@
       } else if(f.action==='documents') {
         var flags={};['onePager','termSheet','clientDocs'].forEach(function(k){flags[k]=el('lead-actions-modal').querySelector('[name="form-'+k+'"]').checked;});store.documents(f.id,flags);
       } else if(f.action==='comment') {
-        if(!fieldValue('form-comment'))throw new Error('Введите комментарий');store.comment(f.id,fieldValue('form-comment'));
+        if(!fieldValue('form-comment'))throw new Error('Введите комментарий');if(previewId===f.id)pvTab='comments';store.comment(f.id,fieldValue('form-comment'));
       } else if(f.action==='bulk-owner') {
         var employeeId=fieldValue('form-owner');if(!window.IBPR.employee(employeeId))throw new Error('Выберите сотрудника');f.ids.forEach(function(id){store.patch(id,{owner:employeeId});});selected.clear();
       } else {
@@ -379,6 +595,8 @@
       el('lead-transfer-confirm').disabled=store.missing(transferLeadId,'PIPELINE').length>0;
       put('lead-transfer-body','<p class="ds-body-m">'+esc(transferLead.id+' · '+transferLead.clientName)+'</p>'+stages.checks(Object.assign({},transferLead,{stage:'DOCUMENTS'})).map(function(c){return '<p class="ds-body-s">'+(c.done?'✓ ':'○ ')+esc(c.title)+(c.done?'':' '+btn('Заполнить',c.action,transferLeadId,'transparent',true))+'</p>';}).join(''));
     }
+    // Открытая панель просмотра перерисовывается вместе с данными: действие из её тулбара сразу видно в ней.
+    if(previewId && el('lead-preview') && !el('lead-preview').hidden){var pl=store.get(previewId);if(pl)renderPreview(pl);}
     if(page==='Lead'){renderLead(store.get(currentId));bind();return;}
     var rows=filtered();
     if(page==='HomeBoard') { renderBoard(rows);el('lead-board').hidden=view!=='board';el('lead-table-wrap').hidden=view==='board'; }
@@ -386,6 +604,7 @@
     renderTable(rows);
     put('lead-filter-chips',Object.keys(filters).length||basisFilter?'<span class="chip chip--edit chip--m tfilter__applied" tabindex="0"><span class="chip__label">Применено: '+(Object.keys(filters).length+(basisFilter?1:0))+'</span><span class="chip__remove" role="button" tabindex="0" aria-label="Сбросить все фильтры" data-lead-action="filter-reset"><i data-icon="close"></i></span></span>':'');
     if(page==='LeadsNew') {
+      put('lead-page-subtitle',weekSummary());
       renderBasisPicker();
       document.querySelectorAll('[data-lead-tab]').forEach(function(b){var active=b.dataset.leadTab===tab;b.classList.toggle('tab--selected',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
     }
@@ -402,9 +621,19 @@
       if(e.detail.open) collapsedHoldings.delete(e.detail.node); else collapsedHoldings.add(e.detail.node);
     });
     ['columnsettings','columnreorder'].forEach(function(type){document.addEventListener(type,function(e){
-      if(!e.target.matches('#lead-table') || page!=='LeadsNew' || listMode!=='holdings') return;
-      layoutHoldingRows(e.target);if(window.dsIcons)window.dsIcons.apply(e.target);
+      if(!e.target.matches('#lead-table')) return;
+      if(page==='LeadsNew' && listMode==='holdings'){layoutHoldingRows(e.target);if(window.dsIcons)window.dsIcons.apply(e.target);}
+      stretchClient(e.target);
     });});
+    // Резиновый «Клиент»: ручной ресайз самой колонки задаёт базу, любой другой — пересчёт остатка.
+    document.addEventListener('columnresize',function(e){
+      if(!e.target.matches('#lead-table')) return;
+      var head=e.target.querySelector('.tbl__row--head'),cell=head&&head.children[e.detail.column];
+      if(cell&&cell.dataset.col==='c1')clientBase=Math.max(CLIENT_BASE/2,Math.round(e.detail.width));
+      stretchClient(e.target);
+    });
+    var wrap=el('lead-table-wrap');
+    if(wrap&&window.ResizeObserver){var lastW=0;new ResizeObserver(function(es){var w=Math.round(es[0].contentRect.width);if(w===lastW)return;lastW=w;stretchClient(el('lead-table'));}).observe(wrap);}
     if(window.DSTabs){
       var tabs=el('lead-list-tabs');
       if(tabs)window.DSTabs.tabs(tabs,{onChange:function(i,b){tab=b.dataset.leadTab;pageNumber=1;selected.clear();render();}});

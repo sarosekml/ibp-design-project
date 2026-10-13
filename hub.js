@@ -103,7 +103,7 @@ window.IBPHub = [
     id: 'ai-bankster-prototype-mvp',
     group: 'concepts',
     title: 'AI Pitcher — MVP',
-    desc: 'Состав MVP: чат, конструктор отчёта, история, журнал; без просмотра материала',
+    desc: 'Состав MVP: чат, история, журнал; без конструктора и просмотра материала',
     href: 'apps/ib/drafts/ai-bankster-prototype-mvp/pages/index.html',
     root: 'apps/ib/drafts/ai-bankster-prototype-mvp',
     icon: 'ai-stars'

@@ -326,6 +326,13 @@
 
 /* окно настроек */
 .pp-subtitle { margin: 0; color: var(--text-primary); }
+
+/* таб «System» (MS0016): переключатели состояния системы и служебные действия */
+.pp-sys { display: flex; flex-direction: column; gap: var(--space-12); }
+.pp-sys__item { display: flex; flex-direction: column; gap: var(--space-8); }
+.pp-sys__head { display: flex; flex-direction: column; gap: var(--space-4); }
+.pp-sys__head > p { margin: 0; }
+.pp-sys__ctrl { display: flex; min-width: 0; }
 .pp-keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
 
 /* ---------------- подсветка цели действия (только показ) ---------------- */

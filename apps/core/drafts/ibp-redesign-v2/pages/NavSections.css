@@ -1,0 +1,13 @@
+/* [ПРЕДЛОЖЕНИЕ] Сворачивание целых групп в меню нового подхода.
+   Только ibp-redesign-v2; NavPanel ДС не меняется. */
+[data-nav-section-header] { align-items: center; padding-bottom: 0; }
+[data-nav-group-toggle] {
+  min-width: 0; min-height: var(--space-24); padding: 0; border: 0;
+  background: transparent; color: inherit; font: inherit; text-align: left;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  cursor: pointer; border-radius: var(--radius-xs);
+}
+[data-nav-group-toggle]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+[data-nav-section-body] { display: contents; }
+[data-nav-section-body][hidden] { display: none; }
+.nav--rail [data-nav-group-toggle] { display: none; }

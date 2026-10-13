@@ -31,8 +31,8 @@
      средствами ДС»). Здесь только подъём над абсолютной иллюстрацией. */
   .hub-groups { position: relative; }
 
-  /* табы разделов внутри колонки «Концепты»: отступ между табами и списком */
-  .hub-tabs { margin-bottom: var(--space-8); }
+  /* Отступ между сегмент-контролом фильтра разделов и списком. */
+  .hub-segments { margin-bottom: var(--space-8); }
 
   /* Перестроение по рецепту стартовой страницы (Layout): первый шаг — штатная
      пара .col-N / .colw-N, второй парой не выражается и обязан иметь ту же
@@ -77,13 +77,13 @@
     { key: 'projects', label: 'Проекты' },
     { key: 'concepts', label: 'Концепты', bySection: true }
   ];
-  /* подзаголовки колонки по разделу apps/<раздел>/ (порядок — как в apps/README.md) */
+  /* Разделы фильтра концептов: PreTrade первым, Core последним. */
   var SECTIONS = [
-    { key: 'core', label: 'Core' },
-    { key: 'pretrade', label: 'Pre' },
-    { key: 'postrade', label: 'Post' },
+    { key: 'pretrade', label: 'PreTrade' },
+    { key: 'postrade', label: 'PostTrade' },
     { key: 'ib', label: 'IB' },
-    { key: 'common', label: 'Common' }
+    { key: 'common', label: 'Common' },
+    { key: 'core', label: 'Core' }
   ];
 
   function esc(s) {
@@ -152,8 +152,8 @@
   }
 
   function listHTML(items) { return '<div class="entity-list">' + items.map(rowHTML).join('') + '</div>'; }
-  /* концепты по разделам — табы с каунтерами, под каждым свой .entity-list;
-     раздел вне SECTIONS — отдельным табом в конце, подписью папки */
+  /* Фильтр концептов по разделу — сегменты со счётчиками;
+     раздел вне SECTIONS — отдельным сегментом в конце, подписью папки. */
   function sectionsHTML(items) {
     var keys = SECTIONS.map(function (x) { return x.key; });
     items.forEach(function (p) { if (keys.indexOf(sectionOf(p)) < 0) keys.push(sectionOf(p)); });
@@ -161,25 +161,27 @@
       var sec = SECTIONS.filter(function (x) { return x.key === k; })[0];
       return { key: k, label: sec ? sec.label : k, list: items.filter(function (p) { return sectionOf(p) === k; }) };
     }).filter(function (x) { return x.list.length; });
-    var tabs = secs.map(function (x, i) {
-      return '<button type="button" class="tab tab--m' + (i ? '' : ' tab--selected') + '" role="tab" aria-selected="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(x.key) + '">'
-        + '<span class="tab__label">' + esc(x.label) + '</span><span class="tab__badge">' + x.list.length + '</span></button>';
+    var segments = secs.map(function (x, i) {
+      return '<button type="button" class="segctrl__item" role="radio" aria-checked="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-pane="' + esc(x.key) + '">'
+        + '<span class="segctrl__label">' + esc(x.label) + '</span><span class="badge badge--text badge--s">' + x.list.length + '</span></button>';
     }).join('');
     var panes = secs.map(function (x, i) {
-      return '<div role="tabpanel" data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + listHTML(x.list) + '</div>';
+      return '<div data-pane-of="' + esc(x.key) + '"' + (i ? ' hidden' : '') + '>' + listHTML(x.list) + '</div>';
     }).join('');
-    return '<div class="tabs tabs--horiz hub-tabs" role="tablist" aria-label="Разделы концептов" data-tabs>' + tabs + '</div>' + panes;
+    return '<div class="segctrl segctrl--fullwidth hub-segments" role="radiogroup" aria-label="Раздел концептов" data-segctrl><div class="segctrl__thumb"></div>' + segments + '</div>' + panes;
   }
 
-  /* переключение панелей; выделение табов ведёт Tab.js */
-  function bindTabs(host) {
-    host.addEventListener('click', function (e) {
-      var tab = e.target.closest('.hub-tabs .tab');
-      if (!tab) return;
-      var key = tab.getAttribute('data-pane');
-      Array.prototype.forEach.call(host.querySelectorAll('[data-pane-of]'), function (p) {
-        p.hidden = p.getAttribute('data-pane-of') !== key;
-      });
+  /* Выбор и клавиатуру ведёт рантайм ДС; список следует за aria-checked. */
+  function bindSegments(host) {
+    host.querySelectorAll('.hub-segments').forEach(function (control) {
+      new MutationObserver(function () {
+        var selected = control.querySelector('[aria-checked="true"]');
+        if (!selected) return;
+        var key = selected.getAttribute('data-pane');
+        control.parentNode.querySelectorAll('[data-pane-of]').forEach(function (p) {
+          p.hidden = p.getAttribute('data-pane-of') !== key;
+        });
+      }).observe(control, { subtree: true, attributes: true, attributeFilter: ['aria-checked'] });
     });
   }
 
@@ -197,7 +199,7 @@
       html += '</section>';
     });
     host.innerHTML = html;
-    bindTabs(host);
+    bindSegments(host);
   }
 
   buildNav();

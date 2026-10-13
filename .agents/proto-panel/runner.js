@@ -255,8 +255,22 @@
   }
 
   /* Выполнить действие. → элемент-цель (для записи и подписи) или null. */
+  /* Переключатель состояния системы (таб «System», MS0016) по id: прототип
+     объявляет их сам в window.PP_SYSTEM. → определение или null. */
+  function systemSwitch(id) {
+    var list = window.PP_SYSTEM || [];
+    for (var i = 0; i < list.length; i++) if (list[i] && list[i].id === id) return list[i];
+    return null;
+  }
+
   function exec(a, show) {
     if (a.verb === 'wait') return sleep(a.ms).then(function () { return null; });
+    if (a.verb === 'system') {
+      var sw = systemSwitch(a.target);
+      if (!sw || typeof sw.set !== 'function' || !sw.options) return Promise.reject(new Error(t('system.missing', { id: a.target })));
+      if (sw.reload) return Promise.reject(new Error(t('system.reload', { id: a.target })));
+      return Promise.resolve(sw.set(a.value)).then(function () { bus.emit('system', { id: a.target, value: a.value }); return null; });
+    }
     if (a.verb === 'waitFor') return find(a.target, a.index, a.timeout, a.state || 'visible', false, a.text);
     var need = a.verb === 'click' || a.verb === 'fill';
     var target = a.target ? find(a.target, a.index, a.timeout, 'visible', need, a.text) : Promise.resolve(document.activeElement || document.body);
@@ -550,6 +564,6 @@
     flows: flows, flowById: flowById, stepIdx: stepIdx, entryIdx: entryIdx, entryUrl: entryUrl, stepUrl: stepUrl, byState: byState, stepName: stepName,
     state: state, current: current, busy: function () { return busy || playing; }, setAt: setAt, play: play, mapFromHash: mapFromHash, mapData: mapData,
     goTo: goTo, goToState: goToState, next: next, prev: prev, stop: stop, start: start, resume: resume,
-    here: here, lastRun: function () { return last; }, textOf: textOf, isOwn: isOwn, matches: matches, PANEL_SEL: PANEL_SEL
+    here: here, lastRun: function () { return last; }, textOf: textOf, isOwn: isOwn, matches: matches, PANEL_SEL: PANEL_SEL, systemSwitch: systemSwitch
   };
 })();

@@ -1,0 +1,49 @@
+/* [ПРЕДЛОЖЕНИЕ] Рабочий список менеджера в быстром просмотре лида.
+   Локальное оформление концепта согласовано пользователем 13.10.2026;
+   цвета, ритм и типографика — токены IBP DS. */
+.lead-pv-client-icon { background: var(--secondary-bg); color: var(--tertiary-dark); }
+.lead-worklist {
+  display: flex; flex-direction: column; gap: var(--space-16);
+  padding: var(--space-20); border-radius: var(--radius-l);
+  background: var(--bg-page);
+}
+.lead-worklist p, .lead-worklist h3, .lead-pv-task p { margin: 0; }
+.lead-worklist__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
+.lead-worklist__hint { font: var(--type-body-xs); color: var(--text-secondary); }
+.lead-worklist__items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-8); }
+.lead-worklist__item { display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border-radius: var(--radius-m); }
+.lead-worklist__item[data-work-state="next"] { background: var(--bg-tile); box-shadow: var(--shadow-card-hover); }
+.lead-worklist__mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: var(--space-24); height: var(--space-24); color: var(--text-secondary); }
+.lead-worklist__mark [data-icon] { width: var(--space-16); height: var(--space-16); }
+.lead-worklist__item[data-work-state="next"] .lead-worklist__mark { color: var(--primary); }
+.lead-worklist__item[data-work-state="done"] .lead-worklist__mark { color: var(--success); }
+.lead-worklist__copy { display: flex; flex-direction: column; gap: var(--space-4); flex: 1; min-width: 0; }
+.lead-worklist__item > .btn { flex: none; }
+.lead-worklist__completed { display: flex; flex-direction: column; gap: var(--space-8); border-top: 1px solid var(--border-light); padding-top: var(--space-12); }
+.lead-worklist__ready { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
+.lead-pv-task-list { display: flex; flex-direction: column; gap: var(--space-16); }
+.lead-pv-task { display: flex; flex-direction: column; gap: var(--space-8); padding-bottom: var(--space-16); border-bottom: 1px solid var(--border-light); }
+.lead-pv-task:last-child { border-bottom: 0; padding-bottom: 0; }
+.lead-pv-task__meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-12); color: var(--text-secondary); }
+.lead-comments { display: flex; flex-direction: column; gap: var(--space-24); }
+.lead-comments p, .lead-comments h3, .lead-comments h4 { margin: 0; }
+.lead-comments__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap; }
+.lead-comments__head > div { display: flex; flex-direction: column; gap: var(--space-4); }
+.lead-comments__head .ds-body-xs { color: var(--text-secondary); }
+.lead-comments__day, .lead-comments__feed { display: flex; flex-direction: column; gap: var(--space-16); }
+.lead-comments__date { font: var(--type-body-xs); color: var(--text-secondary); padding-bottom: var(--space-8); border-bottom: 1px solid var(--border-light); }
+.lead-comments__entry { display: flex; align-items: flex-start; gap: var(--space-12); }
+.lead-comments__entry > .av { flex: none; }
+.lead-comments__message { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: var(--space-4); }
+.lead-comments__meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
+.lead-comments__meta time, .lead-comments__role { font: var(--type-body-xs); color: var(--text-secondary); }
+.lead-comments__text { padding-top: var(--space-4); white-space: pre-wrap; overflow-wrap: anywhere; }
+.lead-comments__entry[data-comment-system] { padding: var(--space-12); border-radius: var(--radius-m); background: var(--bg-page); }
+.lead-comments__system-icon { display: flex; align-items: center; justify-content: center; flex: none; width: var(--space-24); height: var(--space-24); color: var(--tertiary-dark); }
+.lead-comments__system-icon [data-icon] { width: var(--space-16); height: var(--space-16); }
+@media (max-width: 600px) {
+  .lead-worklist { padding: var(--space-16); }
+  .lead-worklist__item { flex-wrap: wrap; }
+  .lead-worklist__copy { flex-basis: calc(100% - var(--space-24) - var(--space-12)); }
+  .lead-worklist__item > .btn { margin-left: calc(var(--space-24) + var(--space-12)); }
+}

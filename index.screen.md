@@ -7,7 +7,7 @@ version: "1.001"
 created: "15.09.2026"
 updated: "15.09.2026"
 design_system: IBP DS
-components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconButton, Avatar]
+components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconButton, Avatar, SegmentControl, Badge]
 ---
 
 # Хаб проектов
@@ -67,11 +67,13 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 |---|---|---|---|---|
 | 1 | Дизайн-система | Tile (заголовок M, без действий) | 3 (`col-3`), ≤1700px — 6, ≤900px — 12 | `.entity-list` со строками Entity M `--interactive` из записей `group: 'ds'` |
 | 2 | Проекты | то же | то же | записи `group: 'projects'` |
-| 3 | Концепты | то же | то же | записи `group: 'concepts'`, разбитые по разделу `apps/<раздел>/`: подзаголовок H6 Strong (`.hub-sub.ds-h6-strong`, Core · IB · Pretrade · Postrade · Common) и под ним свой `.entity-list` |
+| 3 | Концепты | то же | то же | фильтр SegmentControl M по разделу `apps/<раздел>/`, счётчик концептов Badge `--text --s` в каждом сегменте; под ним `.entity-list` выбранного раздела |
 
-Группа без записей не выводится; раздел без записей — тоже. Подзаголовок
-`.hub-sub` — локальный класс на токенах (отступы `--space-16`/`--space-8`,
-цвет `--text-secondary`): в ДС нет подзаголовка внутри тела Tile. Вертикальный скролл — у контентной области,
+Группа без записей не выводится; раздел без записей — тоже. Сегмент-контрол
+занимает всю ширину тела карточки (`segctrl--fullwidth`): сегменты равной ширины,
+подписи со счётчиками центрированы. Отступ до списка — `--space-8`. Изначально выбран первый
+непустой раздел. Порядок сегментов: PreTrade → PostTrade → IB → Common → Core;
+при текущем составе изначально выбран PreTrade. Вертикальный скролл — у контентной области,
 крошки залипают. Горизонтального скролла нет.
 
 **Строка (Entity M):**
@@ -91,6 +93,7 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 |---|---|
 | Клик по строке | переход на стартовую страницу записи |
 | Клик по пункту меню записи | то же |
+| Выбор сегмента раздела кликом, стрелками, Home / End | показ концептов выбранного раздела; выбор, фокус и индикатор ведёт рантайм ДС |
 | Наведение на строку | фон `--bgtable-row-hover`; подложка стыкуется с соседней строкой, не накрывая её (`.entity-list`) |
 | Бургер / пин панели | rail ↔ drawer ↔ fixed (рантайм NavPanel) |
 | Рабочая область ≤ 1700px | колонки 3+3+3 → 6+6 / 6 |
@@ -140,6 +143,8 @@ components: [Layout, NavPanel, Breadcrumbs, Tile, Entity, Illustrations, IconBut
 | Breadcrumbs | зона крошек | одна текущая | `design-system/components/molecules/Breadcrumbs/Breadcrumbs.md` |
 | Tile | колонки | обычный, `col-3 colw-6` | `design-system/components/organisms/Tile/Tile.md` |
 | Entity | строки | M, `--interactive`, корень `<a>`, контейнер `.entity-list` (1.008) | `design-system/components/organisms/Entity/Entity.md` |
+| SegmentControl | фильтр раздела концептов | M, `data-segctrl`, `segctrl--fullwidth` | `design-system/components/molecules/SegmentControl/SegmentControl.md` |
+| Badge | число концептов в сегменте | `badge--text badge--s` | `design-system/components/atoms/Badge/Badge.md` |
 | Illustrations | фон | `background-illustration` | `design-system/foundations/Illustrations/Illustrations.md` |
 
 ## 9. Доступность

@@ -33,7 +33,8 @@
   top: 0;
   right: 0;
   display: flex;
-  gap: var(--space-4);
+  /* IconButton S: 16px в потоке, подложка 24px — между иконками 12px, между подложками 4px (сенсор Б44) */
+  gap: var(--space-12);
 }
 
 .lc-comments__add { align-self: flex-start; }
