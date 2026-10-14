@@ -3,7 +3,7 @@ name: Комментарии
 type: tile
 category: Сделка
 purpose: Комментарии к стадии сделки или к лиду: автор, время, дата, текст
-version: 1.002
+version: 1.003
 updated: 10.10.2026
 rulesVersion: 2.000
 owner: "не решено (10.10.2026)"

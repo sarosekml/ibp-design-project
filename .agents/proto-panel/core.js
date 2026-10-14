@@ -360,7 +360,10 @@
 
   /* ---------------- flows.yaml: схема и модель ---------------- */
 
-  var VERBS = ['click', 'fill', 'press', 'hover', 'focus', 'scroll', 'waitFor', 'wait'];
+  /* system — состояние системы прототипа (MS0016): target — id переключателя таба
+     «System», value — значение варианта. Переключатели объявляет сам прототип
+     (window.PP_SYSTEM), проигрыватель зовёт их set(value). */
+  var VERBS = ['click', 'fill', 'press', 'hover', 'focus', 'scroll', 'waitFor', 'wait', 'system'];
   var PARAMS = {
     click: ['target', 'text', 'index', 'timeout'],
     fill: ['target', 'value', 'index', 'timeout'],
@@ -369,9 +372,10 @@
     focus: ['target', 'text', 'index', 'timeout'],
     scroll: ['target', 'text', 'block', 'index'],
     waitFor: ['target', 'text', 'state', 'timeout'],
-    wait: []
+    wait: [],
+    system: ['target', 'value']
   };
-  var NEEDS_TARGET = { click: 1, fill: 1, hover: 1, focus: 1, scroll: 1, waitFor: 1 };
+  var NEEDS_TARGET = { click: 1, fill: 1, hover: 1, focus: 1, scroll: 1, waitFor: 1, system: 1 };
   var STATES = ['visible', 'hidden', 'present', 'absent'];
   var BLOCKS = ['start', 'center', 'end'];
   /* Пометки записи (задача 0005a, §5.6): подсказка агенту, не дефект. */
@@ -416,6 +420,7 @@
   function describeAction(a) {
     if (a.verb === 'wait') return 'wait ' + a.ms;
     if (a.verb === 'press') return 'press ' + a.key + (a.target ? ' → \'' + a.target + '\'' : '');
+    if (a.verb === 'system') return 'system \'' + a.target + '\' = ' + (a.value == null ? '' : a.value);
     return a.verb + ' \'' + a.target + '\'' + (a.text ? ' “' + a.text + '”' : '');
   }
 
@@ -501,6 +506,7 @@
       if (v.kind === 'scalar') {
         if (v.value === null) { err(v, at + ': нет значения — ' + (verb === 'wait' ? 'пауза в мс' : verb === 'press' ? 'клавиша' : 'селектор цели'), ve.line); return null; }
         if (verb === 'fill') { err(v, at + ': у fill нет короткой формы — нужны target и value (полная форма)', ve.line); return null; }
+        if (verb === 'system') { err(v, at + ': у system нет короткой формы — нужны target (id переключателя) и value (значение)', ve.line); return null; }
         if (verb === 'wait') {
           var ms = int(ve, at);
           if (ms === null) return null;
@@ -539,6 +545,7 @@
       ['alt', 'shift', 'ctrl', 'meta'].forEach(function (k) { if (f[k]) a.mods[k] = bool(f[k], at + ', ' + k); });
       if (NEEDS_TARGET[verb] && !f.target) err(v, at + ': нет target — селектора цели', ve.line);
       if (verb === 'fill' && !f.value) err(v, at + ': нет value — что ввести', ve.line);
+      if (verb === 'system' && !f.value) err(v, at + ': нет value — какое значение переключателя поставить', ve.line);
       if (verb === 'press' && !f.key) err(v, at + ': нет key — какую клавишу нажать', ve.line);
       return a;
     }
@@ -729,7 +736,7 @@
   function isDefaultParam(a, p) {
     if (p === 'target') return a.target == null;
     if (p === 'text') return a.text == null || a.text === '';
-    if (p === 'value') return a.verb !== 'fill';   // у fill значение пишется всегда, даже пустое
+    if (p === 'value') return a.verb !== 'fill' && a.verb !== 'system';   // у fill и system значение пишется всегда
     if (p === 'key') return a.key == null;
     if (p === 'index') return !a.index;
     if (p === 'state') return a.state == null || a.state === 'visible';
@@ -745,7 +752,7 @@
     var allowed = PARAMS[a.verb] || [];
     var set = PARAM_ORDER.filter(function (p) { return allowed.indexOf(p) >= 0 && !isDefaultParam(a, p); });
     var main = a.verb === 'press' ? 'key' : 'target';
-    if (a.verb !== 'fill' && set.length === 1 && set[0] === main) {
+    if (a.verb !== 'fill' && a.verb !== 'system' && set.length === 1 && set[0] === main) {
       return [pad + '- ' + a.verb + ': ' + (main === 'target' ? ySingle(a.target) : yStr(a.key))];
     }
     var out = [pad + '- ' + a.verb + ':'], inner = spaces(ind + 4);
@@ -959,7 +966,7 @@
     if (!pool.length) pool = acts;
     if (pool.length) {
       var e = pool[pool.length - 1].e, a = e.action;
-      if (a.verb === 'fill') return cut((e.label ? e.label + ': ' : '') + (a.value == null ? '' : a.value), 40) || null;
+      if (a.verb === 'fill' || a.verb === 'system') return cut((e.label ? e.label + ': ' : '') + (a.value == null ? '' : a.value), 40) || null;
       if (e.label) return cut(e.label, 40);
       if (a.verb === 'press' && a.key) return cut(a.key, 40);
       return null;

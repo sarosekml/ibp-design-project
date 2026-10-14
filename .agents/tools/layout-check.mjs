@@ -64,6 +64,58 @@ const isDsScript = (abs) => {
 
 /* ---------------- токены ДС (источник истины — CSS основ и компонентов ДС) ---------------- */
 
+/* Порог ширины колонки выбора таблицы — min-width .th--select/.tc--select из
+   CSS TableCell (вход правила Б42). Нет правила в CSS — null, Б42 молчит. */
+const SELECT_MIN = (() => {
+  const css = L.cssOf('TableCell');
+  if (css.length !== 1) return null;
+  const m = /\.th--select\s*,\s*\.tc--select\s*\{\s*min-width\s*:\s*(\d+)px/.exec(readFileSync(L.abs(css[0]), 'utf8'));
+  return m ? Number(m[1]) : null;
+})();
+
+/* Геометрия IconButton для Б44: размер в потоке и подложка (::before) по
+   размерам S/M/L — из CSS IconButton. Нет данных — null, Б44 молчит. */
+const IBTN_GEOM = (() => {
+  const css = L.cssOf('IconButton');
+  if (css.length !== 1) return null;
+  const text = readFileSync(L.abs(css[0]), 'utf8');
+  const out = {};
+  for (const s of ['s', 'm', 'l']) {
+    const icon = new RegExp('\\.ibtn--' + s + '\\s*\\{\\s*width\\s*:\\s*(\\d+)px').exec(text);
+    const layer = new RegExp('\\.ibtn--' + s + '::before\\s*\\{\\s*width\\s*:\\s*(\\d+)px').exec(text);
+    if (icon && layer) out[s] = { icon: Number(icon[1]), layer: Number(layer[1]) };
+  }
+  return Object.keys(out).length === 3 ? out : null;
+})();
+
+/* Весь CSS ДС одной строкой — вход Б44 (gap контейнеров компонентов). */
+const DS_CSS_ALL = (() => { try { return L.styles().map((f) => readFileSync(L.abs(f), 'utf8')).join('\n'); } catch (e) { return ''; } })();
+
+/* Длина из CSS: «8px» или «var(--space-8)» (через токены ДС); остальное — 0. */
+function lenPx(v) {
+  const m = /^(\d+(?:\.\d+)?)px$/.exec(v);
+  if (m) return Number(m[1]);
+  const t = /^var\((--[a-z0-9-]+)/.exec(v);
+  if (t) { const r = T.get(t[1]); const n = r && /(\d+(?:\.\d+)?)px/.exec(r); return n ? Number(n[1]) : 0; }
+  return 0;
+}
+
+/* Открывающий тег ближайшего незакрытого предка позиции `at` (обход тегов с
+   конца со стеком закрытий). Пустые элементы не считаются. */
+function parentOpenTag(src, at) {
+  const VOID = /^(?:area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i;
+  const tags = [...src.slice(0, at).matchAll(/<(\/?)([a-zA-Z][\w-]*)\b[^>]*?(\/?)>/g)];
+  let depth = 0;
+  for (let i = tags.length - 1; i >= 0; i--) {
+    const [whole, close, name, self] = tags[i];
+    if (self || VOID.test(name)) continue;
+    if (close) { depth++; continue; }
+    if (depth === 0) return whole;
+    depth--;
+  }
+  return '';
+}
+
 const TOKEN_FILES = ['Spacing', 'Layout', 'Tile', 'NavPanel'].map((name) => {
   const css = L.cssOf(name);
   if (css.length !== 1) throw new Error('layout-check: у ' + name + ' в спеке ДС не один файл стилей (css: ' + (css.join(', ') || '—') + ') — токены сенсора взять неоткуда');
@@ -82,14 +134,18 @@ function loadTokens() {
       if (!(name in raw)) raw[name] = val; // первое определение побеждает
     }
   }
+  /* имя принимается и с префиксом «--», и без: таблица хранит его без префикса,
+     а вызовы и ссылки var(--…) пишут с ним (до MS0016 поиск с префиксом молча
+     промахивался, и константы сенсора брали запасные значения) */
+  const key = (n) => String(n).replace(/^--/, '');
   const get = (name) => {
-    let v = raw[name];
+    let v = raw[key(name)];
     const seen = new Set();
     while (v && v.startsWith('var(') && !seen.has(v)) {
       seen.add(v);
       const inner = v.match(/^var\((--[a-z0-9-]+)/);
       if (!inner) break;
-      v = raw[inner[1]];
+      v = raw[key(inner[1])];
     }
     return v;
   };
@@ -1353,6 +1409,140 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       : 'К12 таблица реестра растянута по высоте (.screen--app + .dtable--fill)');
   }
 
+  /* К13 — ритм экрана-реестра (Layout ДС, инвариант «Вертикальный ритм
+     экрана-реестра — 12px»): шапка → табы/тулбар → таблица стоят через 12px,
+     и задаёт это сам экран строкой ритма для .screen__content в своём <style>.
+     Без неё каркас даёт 24px, и реестр рассыпается на отдельные блоки
+     (MS0016, «Лиды»: две пометки человека на скриншоте). Вход — тот же, что у
+     К12: таблица без тайлов на каркасе приложения (.screen--app). */
+  if (!isDocument && /class="[^"]*\bdtable\b/.test(html) && !/class="[^"]*\btile\b/.test(html)
+      && /class="[^"]*\bscreen--app\b/.test(html)) {
+    const ownCss = (html.match(/<style[\s>][\s\S]*?<\/style>/g) || []).join('\n');
+    const rhythm = /\.screen__content\s*\{[^}]*\bgap\s*:\s*var\(--space-12\)/.test(ownCss);
+    /* Замечание, а не блокер (решение человека 13.10.2026): на момент введения
+       правило находило ещё три реестра postrade с зазором 16px, которые в этом
+       заходе не правятся. Поднять до блокера — когда их приведут к ритму ДС. */
+    if (rhythm) ok(true, 'К13 ритм реестра 12px (.screen__content gap: --space-12)');
+    else warn('К13 реестр без ритма 12px: в <style> экрана нет .screen__content { gap: var(--space-12) } — шапка, тулбар и таблица стоят не через 12px, как требует Layout ДС');
+  }
+
+  /* Б42 — колонка выбора (`.th--select` / `.tc--select`) получает трек не уже
+     порога ДС: у её ячеек min-width из TableCell (124px — значение читается из
+     CSS компонента, не зашито здесь). Трек уже порога ячейку не сужает: она
+     вылезает в соседнюю колонку, следующая ячейка рисуется поверх и закрывает
+     чекбоксы, а вид зависит от того, успел ли рантайм пересчитать треки (MS0016,
+     «Лиды»: трек 40px, «после перезагрузки колонки с чекбоксами нет»). Вход —
+     статические строки .tbl__row со своим grid-template-columns. */
+  if (SELECT_MIN) {
+    const narrow = [];
+    let rows = 0;
+    for (const m of html.matchAll(/<div class="tbl__row\b[^"]*"[^>]*\bstyle="[^"]*grid-template-columns:\s*([^;"]+)/g)) {
+      const after = html.slice(m.index + m[0].length);
+      const next = after.search(/<div class="tbl__row\b/);
+      const body = next < 0 ? after : after.slice(0, next);
+      const cells = [...body.matchAll(/<div class="(?:th|tc)(?:\s[^"]*)?"/g)].map((c) => c[0]);
+      const at = cells.findIndex((c) => /\b(?:th|tc)--select\b/.test(c));
+      if (at < 0) continue;
+      rows++;
+      const track = (m[1].match(/minmax\([^)]*\)|\S+/g) || [])[at] || '';
+      const px = /^(\d+(?:\.\d+)?)px$/.exec(track);
+      if (px && Number(px[1]) < SELECT_MIN) narrow.push(track);
+    }
+    /* Замечание, а не блокер (решение человека 13.10.2026, как у К13): правило
+       нашло тот же трек 44–48px на экранах pretrade и postrade, которые в этом
+       заходе не правятся. Поднять до блокера, когда их приведут к порогу. */
+    if (rows && !narrow.length) ok(true, `Б42 колонка выбора не уже порога ДС (${SELECT_MIN}px)`);
+    else if (rows) warn(`Б42 колонка выбора уже порога ДС: трек ${[...new Set(narrow)].join(', ')} при min-width ${SELECT_MIN}px у .th--select/.tc--select (строк: ${narrow.length}) — ячейка вылезет на соседнюю колонку и чекбоксы закроются`);
+  }
+
+  /* Б43 — панель массовых действий Pagination (`.pgn-bulk`) стоит внутри строки
+     колонтитула `.pgn-row.pgn-row--bulk`: поля 20px, высоту 56px и белую подложку
+     даёт строка, а не панель. Без неё панель прилипает к краям футера таблицы
+     (MS0016, «Лиды»). Вход — статическая разметка: ближайший открытый блок. */
+  {
+    const loose = [];
+    for (const m of html.matchAll(/<div class="pgn-bulk"/g)) {
+      const open = html.lastIndexOf('<div', m.index - 1);
+      const parent = open < 0 ? '' : html.slice(open, html.indexOf('>', open) + 1);
+      if (!/class="[^"]*\bpgn-row--bulk\b/.test(parent)) loose.push(lineOf(html, m.index));
+    }
+    if (/class="pgn-bulk"/.test(html)) ok(loose.length === 0, loose.length
+      ? `Б43 панель массовых действий .pgn-bulk вне строки .pgn-row.pgn-row--bulk — нет полей 20px и высоты строки колонтитула`
+      : 'Б43 панель массовых действий стоит в строке .pgn-row--bulk', loose[0]);
+  }
+
+  /* Б44 — подложки соседних IconButton не наезжают друг на друга. Кнопка
+     занимает в потоке размер иконки, а подложка (::before) больше и выступает
+     по бокам (IconButton.md: иконка 24/20/16, подложка 40/32/24 — значения
+     читаются из IconButton.css). Расстояние между иконками соседей (gap
+     контейнера + отступы обёрток) обязано вместить оба выступа; зазор между
+     подложками сверх этого — 0 или чётный, по ситуации (правило человека
+     14.10.2026; MS0016: «Открыть лид» и крестик в шапке Drawer, gap 4px,
+     подложки перекрывались). Вход — соседние кнопки в статической разметке и
+     в одном JS-шаблоне; кнопка, вставленная скриптом в чужой контейнер,
+     статикой не видна — пункт чек-листа composition-review K14. */
+  if (IBTN_GEOM) {
+    const near = [];
+    /* ряд, чей зазор задаёт только CSS ДС, — геометрия компонента (решение человека
+       14.10.2026: зазоры рядов ДС не меняются); правило судит ряды, собранные экраном */
+    const dsOwned = (cls) => !new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(screenCss)
+      && new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(DS_CSS_ALL);
+    const cssGap = (cls) => {
+      for (const src of [screenCss, DS_CSS_ALL]) {
+        const m = new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:\\s*([^;}]+)').exec(src);
+        if (m) { const parts = m[1].trim().split(/\s+(?![^(]*\))/); return lenPx(parts[parts.length - 1]); }
+      }
+      return 0;
+    };
+    /* отступ по классу из CSS экрана и ДС; auto — кнопка отодвинута до упора (булавка NavPanel) */
+    const cssMargin = (cls, side) => {
+      if (/^(?:ibtn|ibtn--[a-z-]+)$/.test(cls)) return 0;
+      for (const src of [screenCss, DS_CSS_ALL]) {
+        const m = new RegExp('(?:^|[\\s,}])\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\bmargin-' + side + '\\s*:\\s*([^;}]+)').exec(src);
+        if (m) return m[1].trim() === 'auto' ? Infinity : lenPx(m[1].trim());
+      }
+      return 0;
+    };
+    const classesOf = (tag) => ((tag.match(/class="([^"]*)"/) || [])[1] || '').split(/\s+/).filter(Boolean);
+    for (const src of [html, markupInScripts]) {
+      for (const m of src.matchAll(/<(button|a)\b[^>]*\bclass="[^"]*\bibtn\b[^"]*"[^>]*>/g)) {
+        const end = src.indexOf('</' + m[1] + '>', m.index);
+        if (end < 0) continue;
+        const rest = src.slice(end + m[1].length + 3, end + m[1].length + 3 + 400);
+        const nx = /^\s*(<\/span>\s*)?(<span\b[^>]*>\s*)?<(?:button|a)\b[^>]*\bclass="([^"]*\bibtn\b[^"]*)"/.exec(rest);
+        if (!nx) continue;
+        const size = (c) => ((c.match(/\bibtn--(s|m|l)\b/) || [])[1] || 'm');
+        const s1 = size(m[0]), s2 = size(nx[3]);
+        const g1 = IBTN_GEOM[s1], g2 = IBTN_GEOM[s2];
+        if (!g1 || !g2) continue;
+        /* обёртка первой кнопки — открывающий span прямо перед ней, если за кнопкой он закрыт */
+        let containerAt = m.index, w1 = [];
+        if (nx[1]) {
+          const before = src.slice(Math.max(0, m.index - 300), m.index);
+          const sp = /<span\b[^>]*>\s*$/.exec(before);
+          if (sp) { w1 = classesOf(sp[0]); containerAt = m.index - (before.length - sp.index); }
+        }
+        const w2 = nx[2] ? classesOf(nx[2]) : [];
+        const parent = parentOpenTag(src, containerAt);
+        if (!w1.length && !w2.length && classesOf(parent).some(dsOwned)) continue;
+        const gap = classesOf(parent).reduce((a, c) => Math.max(a, cssGap(c)), 0);
+        /* отступ пары внутри ряда: `.ряд > .ibtn--s + .ibtn--s { margin-left }` (TableCell 2.026) */
+        const pair = classesOf(parent).reduce((a, c) => {
+          for (const css of [screenCss, DS_CSS_ALL]) {
+            const r = new RegExp('\\.' + c.replace(/[-]/g, '\\-') + '\\s*>\\s*\\.ibtn--' + s1 + '\\s*\\+\\s*\\.ibtn--' + s2 + '\\s*\\{[^}]*?\\bmargin-left\\s*:\\s*([^;}]+)').exec(css);
+            if (r) return Math.max(a, lenPx(r[1].trim()));
+          }
+          return a;
+        }, 0);
+        const b1 = classesOf(m[0]), b2 = classesOf(nx[0].slice(nx[0].lastIndexOf('<')));
+        const margins = w1.concat(b1).reduce((a, c) => a + cssMargin(c, 'right'), 0) + w2.concat(b2).reduce((a, c) => a + cssMargin(c, 'left'), 0);
+        const need = (g1.layer - g1.icon) / 2 + (g2.layer - g2.icon) / 2;   // подложки не наезжают; свой зазор между ними — 0 или чётный, по ситуации
+        if (gap + margins + (w1.length || w2.length ? 0 : pair) < need) near.push({ line: lineOf(src, m.index), have: gap + margins + (w1.length || w2.length ? 0 : pair), need, sizes: s1 + '/' + s2, box: classesOf(parent).slice(0, 2).join('.') || '?' });
+      }
+    }
+    if (near.length) warn(`Б44 подложки соседних IconButton наезжают друг на друга: между иконками ${near[0].have}px при нужных ≥${near[0].need}px (${near[0].sizes.toUpperCase()} в .${near[0].box}; выступ подложки с обеих сторон)${near.length > 1 ? `, мест: ${near.length}` : ''} — дать ряду gap или обёртке отступ: подложки не должны наезжать, зазор между ними — 0 или чётный`, near[0].line);
+  }
+
   /* K12 — адаптивное правило, перебитое инлайн-стилем на том же элементе,
      не сработает никогда: инлайн выигрывает у любого селектора без
      !important. Узкая раскладка тихо не отрабатывает. */
@@ -1475,6 +1665,31 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
     if (missed.size) {
       warn(`З12 скрипт страницы собирает и вставляет разметку с хуками ${[...missed.keys()].join(', ')}, а вызова ${[...missed.values()].join(', ')} на странице нет — если разметка рисуется после загрузки, рантайм её не свяжет (Л93)`);
     }
+
+    /* Б41 — строка колонтитула и колонтитул Pagination (`DSPagination.row` /
+       `.footer`, старые имена `PGN_buildRow` / `PGN_buildFooter`) принимают
+       ВЛОЖЕННЫЕ опции: `{ pager:{ total, page, pageSize, … }, info, … }`.
+       Плоский объект `{ total, page, pageSize }` ошибки не даёт: пагинатор
+       берёт значения по умолчанию ДС (800 строк по 50) и рисует «1 из 16» при
+       девяти строках (MS0016, «Лиды»). Ключи читаются только верхнего уровня
+       объекта: вложенные тела скобок вырезаются до разбора. Вход — те же
+       скрипты страницы, что у З12: инлайновые и подключённые локальные. */
+    const PAGER_KEYS = new Set(['total', 'page', 'pageSize', 'pageSizeOptions', 'showPageSize', 'compact', 'onChange', 'onPageSizeChange']);
+    const flatCalls = [];
+    let pagerCalls = 0;
+    for (const src of parts) {
+      for (const m of src.matchAll(/\b(DSPagination\.(?:row|footer)|PGN_build(?:Row|Footer))\s*\(\s*\{/g)) {
+        pagerCalls++;
+        let body = braceBody(src, m.index + m[0].length - 1);
+        for (let prev = ''; prev !== body;) { prev = body; body = body.replace(/\{[^{}]*\}|\[[^[\]]*\]|\([^()]*\)/g, ''); }
+        const keys = [...body.matchAll(/(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:/g)].map((k) => k[1]);
+        const flat = keys.filter((k) => PAGER_KEYS.has(k));
+        if (flat.length) flatCalls.push(`${m[1]}({ ${flat.join(', ')} })`);
+      }
+    }
+    if (pagerCalls) ok(flatCalls.length === 0, flatCalls.length
+      ? `Б41 опции пагинатора переданы плоско: ${flatCalls.join('; ')} — row/footer читают их из pager:{…}, иначе рисуются значения по умолчанию ДС (800 строк по 50)`
+      : 'Б41 вызовы row/footer Pagination передают опции пагинатора в pager:{…}');
   }
 
   return res;

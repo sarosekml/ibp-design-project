@@ -1,7 +1,7 @@
 # Панель прототипа
 
 Служебная шторка поверх прототипов: **сценарии показа** (рельс → «протопанель», табы
-«Flows» и «Comments»), **цветовая тема** (вторая кнопка рельса) и **карта экранов**
+«Flows», «Comments» и «System» — состояние системы прототипа), **цветовая тема** (вторая кнопка рельса) и **карта экранов**
 проекта (третья кнопка — на страницах модулей раздела с картой). На любой странице
 проекта `Alt+Shift+P` — справа выезжает шторка. У приложения с папкой `proto-panel/`
 это сценарии и комментарии; на хабе, странице ДС и у концепта без папки панель тоже
@@ -328,7 +328,7 @@ Option. **На Windows `Alt+Shift` переключает раскладку** �
   └─ страница ДС: тег <script …/apps/proto-panel.js> последним в <body>
        ├─ приложение с папкой proto-panel/ → panel.css, <приложение>/proto-panel/panel-data.js,
        │  core.js · strings.js · store.js · runner.js · recorder.js · ui.js ·
-       │  tab-flows.js · tab-comments.js · map-view.js · panel.js
+       │  tab-flows.js · tab-comments.js · tab-system.js · map-view.js · panel.js
        ├─ страница модуля раздела с картой экранов → ещё apps/screen-map/<раздел>/map-data.js
        │  (и без папки proto-panel/)
        ├─ хаб, приложение/концепт без папки, страница ДС → тот же рантайм с заглушкой;
@@ -345,6 +345,7 @@ Option. **На Windows `Alt+Shift` переключает раскладку** �
 | `recorder.js` | запись действий человека, селекторы, автоназвание, пометки, Fix State |
 | `ui.js` | горячие клавиши, шторка с ручкой ширины, рельс инструментов (протопанель / тема / карта), Fix State в шапке, Alert, реестр табов, мини-плеер, кнопка, настройки, подтверждение |
 | `tab-flows.js`, `tab-comments.js` | табы «Flows» и «Comments» |
+| `tab-system.js` | таб «System»: переключатели состояния системы, объявленные прототипом (`window.PP_SYSTEM`), и служебные действия; API `ProtoPanel.system` |
 | `map-view.js` | отрисовщик карты экранов `window.ProtoPanelMap`: майндмап страницы карты и дерево в шторке, только классы ДС и `pp-map` |
 | `panel.js` | старт по `DOMContentLoaded` и публичный API `window.ProtoPanel` |
 | `panel.css` | свои блоки: только токены ДС и только селекторы `pp-` |
@@ -387,7 +388,8 @@ window.ProtoPanel = {
   comments: { list({ status?, page? }?), add(text, { page?, step? }?), edit(n, text),   // step — номер состояния
               setStatus(n, status, resolution?), remove(n) },
   store: { status(), link(), unlink(), linkHandle(dirHandle), refresh() },  // mirror | needs-permission | linked | unsupported
-  on(event, fn),   // step | error | saved | flows-saved | states-saved | fixed | open | close
+  system: { list(), set(id, value) },   // переключатели таба «System» — тот же путь, что у глагола system
+  on(event, fn),   // step | error | saved | flows-saved | states-saved | fixed | open | close | system
 };
 ```
 
@@ -412,6 +414,45 @@ title, render(pane, ctx) })`, где `ctx` даёт `esc`, `wire` (оживит�
 
 Формат, правка, покрытие, проверка человеком —
 [`apps/screen-map/README.md`](../../apps/screen-map/README.md).
+
+## System — состояние системы прототипа
+
+Таб «System» (MS0016) — место служебных переключателей: вариантов данных
+(«сделка заполнена / пустая», «новых лидов 7 / 0»), режимов сравнения
+(«Было / Стало») и действий вроде «Сбросить демо». В интерфейс прототипа они не
+ставятся — правило агента: скилл `proto-panel`, §9.
+
+Переключатели объявляет **сам прототип** — в своём скрипте, до или после
+загрузки панели, глобальной очередью:
+
+```js
+(window.PP_SYSTEM = window.PP_SYSTEM || []).push(
+  { id: 'new-leads', title: 'Новые лиды с прошлого входа', desc: 'Счётчик у пункта меню «Лиды».',
+    options: [{ value: '7', label: '7 новых' }, { value: '0', label: 'Нет новых' }],
+    value: function () { return current; },          // текущее значение — строкой
+    set: function (v) { save(v); redraw(); } },       // применить на этой странице
+  { id: 'mode', title: 'Подход', reload: true,       // set уводит на другую страницу
+    options: [{ value: 'before', label: 'Было' }, { value: 'after', label: 'Стало' }],
+    value: function () { return mode; }, set: function (v) { location.href = …; } },
+  { id: 'reset-demo', title: 'Демо-данные', action: 'Сбросить демо', run: function () { … } }
+);
+```
+
+| Поле | Что |
+|---|---|
+| `id` | латиница в нижнем регистре, цифры, дефис; уникален на странице — его пишет сценарий в `target` |
+| `title`, `desc` | на русском: подпись и пояснение в табе |
+| `options` | варианты `{ value, label }` — SegmentControl S; 2–6 штук, как у ДС |
+| `value()` | текущее значение строкой: по нему отмечен вариант |
+| `set(v)` | применить значение; может вернуть Promise |
+| `reload` | `true` — `set` перезагружает или уводит со страницы: смена не пишется в Fix State, глагол `system` на нём — ошибка; в сценарии вместо него — `page` шага с параметрами |
+| `action`, `run()` | служебное действие (кнопка): в сценарии не участвует |
+
+Смена варианта человеком — шаг пути: рекордер пишет действие
+`system { target: id, value }`, и Fix State кладёт его в состояние. Без
+объявлений таб показывает пустое состояние с подсказкой. Хранить выбранное
+значение (sessionStorage, данные демо) — дело прототипа: панель только зовёт
+`value()` и `set()`.
 
 ## flows.yaml — сценарии показа
 
@@ -509,6 +550,7 @@ flows:
 | `scroll` | `scroll: '<селектор>'` | `target`, `text?`, `block?` (`start` \| `center` \| `end`, по умолчанию `center`), `index?` | `scrollIntoView` |
 | `waitFor` | `waitFor: '<селектор>'` | `target`, `text?`, `state?` (`visible` \| `hidden` \| `present` \| `absent`), `timeout?` | ждёт состояния элемента |
 | `wait` | `wait: 300` | — | пауза, мс, не больше 5000 — только там, где нечего ждать селектором |
+| `system` | — | `target`, `value` | ставит состояние системы: зовёт `set(value)` переключателя таба «System» с id `target` (раздел «System»); переключатель с `reload: true` и необъявленный — ошибка проигрывания |
 
 Полная форма пишется под глаголом:
 

@@ -247,6 +247,22 @@
     if (e.target === t.scrim && !t.config.guarded) closeTop();
   });
 
+  /* Esc при открытом меню (ContextMenu) закрывает меню, а не слой под ним (1.016).
+     Слой и меню слушают Esc на document в фазе всплытия, и порядок между ними
+     случаен: слой закрывал панель, а меню оставалось висеть. Здесь — фаза захвата,
+     раньше обоих: меню закрывается с возвратом фокуса на триггер, событие дальше
+     не идёт; следующий Esc закрывает слой. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || !top()) return;
+    var menu = window.DSMenu && window.DSMenu.current ? window.DSMenu.current() : null;
+    if (!menu) return;
+    /* открытое подменю закрывает себя само, на один уровень (ContextMenu) */
+    var host = e.target && e.target.closest ? e.target.closest('.menu__sub.is-open, .menu__item--sub') : null;
+    if (host && (host.classList.contains('menu__sub') || host.querySelector('.menu__sub.is-open'))) return;
+    e.stopImmediatePropagation();
+    menu.close(true);
+  }, true);
+
   document.addEventListener('keydown', function (e) {
     var t = top();
     if (!t) return;

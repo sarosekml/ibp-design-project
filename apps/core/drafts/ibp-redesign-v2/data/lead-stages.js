@@ -23,16 +23,29 @@
     { code: 'DECLINED', title: 'Клиент отказался', tone: 'red', goal: 'Сохранить причину отказа', next: [], action: 'Вернуть в работу', final: true },
     { code: 'NOT_TAKEN', title: 'Не беру', tone: 'grey', goal: 'Сохранить решение аналитика', next: [], action: 'Вернуть в подборку', final: true }
   ];
+  /** @typedef {Object} LeadClientStatusRsDto
+   * @property {'ACTIVE'|'IN_PLAN'|'INACTIVE'|'REFUSED'} code Код статуса клиента.
+   * @property {string} title Подпись.
+   * @property {string} tone Тон Chip ДС.
+   * Source: invented (13.10.2026, MS0016 §2.5; смысл для продукта — открытый вопрос). */
+  /** @type {Object<string, LeadClientStatusRsDto>} */
+  var clientStatus = {
+    ACTIVE: { code: 'ACTIVE', title: 'Активен', tone: 'green' },
+    IN_PLAN: { code: 'IN_PLAN', title: 'В плане', tone: 'lblue' },
+    INACTIVE: { code: 'INACTIVE', title: 'Не активен', tone: 'grey' },
+    REFUSED: { code: 'REFUSED', title: 'Отказался', tone: 'red' }
+  };
+  // icon — глиф одноимённого раздела системы (каталог ibp-home.js; лиды ДИД и КМ — раздел «Лиды»), MS0016.
   var basis = {
-    BINDING_OPPORTUNITY: { title: 'Обязательная сделка', tone: 'red', colors: ['--st-red-light','--st-red-dark','--st-red'], page: 'opportunity', source: 'binding' },
-    POSSIBLE_OPPORTUNITY: { title: 'Возможная сделка', tone: 'lblue', colors: ['--st-blue-light','--st-blue-dark','--st-blue'], page: 'opportunity', source: 'possible' },
-    DID_LEAD: { title: 'Лид ДИД', tone: 'primary', colors: ['--st-primary-light','--st-primary-dark','--st-primary'], page: 'potential' },
-    CM_LEAD: { title: 'Лид для КМ', tone: 'green', colors: ['--st-green-light','--st-green-dark','--st-green'], page: 'potential' },
-    BINDING_LEAD: { title: 'Обязательный лид', tone: 'orange', colors: ['--st-orange-light','--st-orange-dark','--st-orange'], page: 'bindingLeads' },
-    POSSIBLE_LEAD: { title: 'Возможный лид', tone: 'grey', colors: ['--pink-50','--pink-800','--pink-500'], page: 'possibleLeads' },
-    CIB_SALES_PROJECT: { title: 'Проект продаж CIB', tone: 'dpurple', colors: ['--st-dpurple-light','--st-dpurple-dark','--st-dpurple'], page: 'opportunity', source: 'cib' },
-    SALES_CAMPAIGN: { title: 'Кампания продаж', tone: 'dpurple', colors: ['--indigo-50','--indigo-800','--indigo-500'], page: 'opportunity', source: 'campaign' },
-    MEETING: { title: 'Из встречи', tone: 'orange', colors: ['--cyan-50','--cyan-800','--cyan-500'], page: 'meetings' }
+    BINDING_OPPORTUNITY: { icon: 'Important-deals', title: 'Обязательная сделка', tone: 'red', colors: ['--st-red-light','--st-red-dark','--st-red'], page: 'opportunity', source: 'binding' },
+    POSSIBLE_OPPORTUNITY: { icon: 'deals-possible-deals', title: 'Возможная сделка', tone: 'lblue', colors: ['--st-blue-light','--st-blue-dark','--st-blue'], page: 'opportunity', source: 'possible' },
+    DID_LEAD: { icon: 'file-basic', title: 'Лид ДИД', tone: 'primary', colors: ['--st-primary-light','--st-primary-dark','--st-primary'], page: 'potential' },
+    CM_LEAD: { icon: 'file-basic', title: 'Лид для КМ', tone: 'green', colors: ['--st-green-light','--st-green-dark','--st-green'], page: 'potential' },
+    BINDING_LEAD: { icon: 'important-leads', title: 'Обязательный лид', tone: 'orange', colors: ['--st-orange-light','--st-orange-dark','--st-orange'], page: 'bindingLeads' },
+    POSSIBLE_LEAD: { icon: 'possible-leads', title: 'Возможный лид', tone: 'grey', colors: ['--pink-50','--pink-800','--pink-500'], page: 'possibleLeads' },
+    CIB_SALES_PROJECT: { icon: 'sales-projects', title: 'Проект продаж CIB', tone: 'dpurple', colors: ['--st-dpurple-light','--st-dpurple-dark','--st-dpurple'], page: 'opportunity', source: 'cib' },
+    SALES_CAMPAIGN: { icon: 'sales-company', title: 'Кампания продаж', tone: 'dpurple', colors: ['--indigo-50','--indigo-800','--indigo-500'], page: 'opportunity', source: 'campaign' },
+    MEETING: { icon: 'calendar', title: 'Из встречи', tone: 'orange', colors: ['--cyan-50','--cyan-800','--cyan-500'], page: 'meetings' }
   };
   function checks(lead) {
     var m = (lead.meetings || []).filter(function (item) { return item.statusCode !== 'CANCELLED'; });
@@ -72,6 +85,7 @@
     get: function (code) { return stages.find(function (s) { return s.code === code; }); },
     checks: checks,
     next: function (lead) { var stage = stages.find(function (s) { return s.code === lead.stage; }); return stage.defaultNext || stage.next[0]; },
-    reasons: { NOT_TAKEN: ['Не соответствует фокусу работы', 'Уже есть лид по этому предложению', 'Недостаточно данных', 'Вернуться позже'], DECLINED: ['Нет потребности', 'Не подходят условия', 'Выбран другой банк', 'Другая причина'] }
+    reasons: { NOT_TAKEN: ['Не соответствует фокусу работы', 'Уже есть лид по этому предложению', 'Недостаточно данных', 'Вернуться позже'], DECLINED: ['Нет потребности', 'Не подходят условия', 'Выбран другой банк', 'Другая причина'] },
+    clientStatus: clientStatus
   };
 })();

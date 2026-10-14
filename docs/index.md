@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 694.
+Документов: 689.
 
 ## Корень (4)
 
@@ -246,7 +246,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (485)
+## Приложения (479)
 
 | Документ | Аннотация |
 |---|---|
@@ -631,13 +631,7 @@
 | Документ | Аннотация |
 |---|---|
 | [apps/ib/drafts/ai-bankster-prototype-mvp/README.md](../apps/ib/drafts/ai-bankster-prototype-mvp/README.md) | AI Pitcher — прототип на дизайн-системе IBP |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/ActivityLog.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/ActivityLog.screen.md) | Журнал действий |
 | [apps/ib/drafts/ai-bankster-prototype-mvp/pages/HomePage.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/HomePage.screen.md) | Главная страница IBP |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/MaterialDocument.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/MaterialDocument.screen.md) | Материал с идеями |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/MaterialReport.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/MaterialReport.screen.md) | Материал с идеями — бриф перед встречей |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestBuilder.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestBuilder.screen.md) | Новый отчёт — режим конструктора |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestBuilderCompact.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestBuilderCompact.screen.md) | Новый отчёт — режим конструктора, компактный вариант |
-| [apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestHistory.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestHistory.screen.md) | История и материалы |
 | [apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestThread.screen.md](../apps/ib/drafts/ai-bankster-prototype-mvp/pages/RequestThread.screen.md) | Новый отчёт (нить запроса) |
 
 ### apps/ib/drafts/ai-bankster-prototype-mvp — снимки задач
@@ -956,7 +950,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (83)
+## Задачи и заметки (84)
 
 ### Архив/черновики
 
@@ -1019,6 +1013,7 @@
 | [docs/tasks/MS0015-ibp-redesign-leads-concept.md](tasks/MS0015-ibp-redesign-leads-concept.md) | IBP Redesign v2, часть 2 (R&amp;D): единая сущность «Лид», раздел «Лиды (New)», главная-канбан «Мои проекты» и плавающий «Путь лида» |
 | [docs/tasks/MS0015-ibp-redesign-leads-concept.review.md](tasks/MS0015-ibp-redesign-leads-concept.review.md) | IBP Redesign v2 — приёмка концепта B |
 | [docs/tasks/MS0015-ibp-redesign-merge.review.md](tasks/MS0015-ibp-redesign-merge.review.md) | Проверка MS0014 / MS0015 перед PR в main |
+| [docs/tasks/MS0016-ibp-redesign-leads-polish.md](tasks/MS0016-ibp-redesign-leads-polish.md) | IBP Redesign v2: доводка реестра «Лиды» после MS0015 — ритм 12px, метрики в шапке, пагинация с итогами, демо на две страницы, «Статус клиента» |
 | [docs/tasks/RE0001-product-row-tree.md](tasks/RE0001-product-row-tree.md) | Дерево продуктов сделки: компонент ДС ProductRow, тайл «Продукты сделки» и окна выбора продуктов |
 | [docs/tasks/RE0002-ds-component-folders.md](tasks/RE0002-ds-component-folders.md) | ДС: компонент в своей папке со всеми файлами — структура как в ibp-ui-kit |
 | [docs/tasks/RE0004-local-components-template.md](tasks/RE0004-local-components-template.md) | Локальные компоненты: единый шаблон паспорта, страницы документации и конструктора |

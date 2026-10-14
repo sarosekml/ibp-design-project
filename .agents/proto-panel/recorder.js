@@ -361,6 +361,13 @@
     if (trail.log.length >= LIMIT) { flag('truncated'); return; }
     trail.log.push({ action: core.makeAction(x.action), replayed: true, at: now(), label: label, fragile: false });
   });
+  /* Переключатель таба «System» поставлен человеком — это шаг пути, как клик:
+     Fix State запишет его действием system (MS0016). Проигрыватель шлёт свой
+     replay-action, поэтому здесь — только ручная смена. */
+  bus.on('system-set', function (x) {
+    if (!x || runner.busy()) return;
+    push({ verb: 'system', target: x.id, value: x.value }, { label: x.label || null });
+  });
   bus.on('step', function (x) { trail.base = { flow: x.flow, step: x.step, at: trail.log.length, flags: trail.flags.length }; });
   /* после записи черновые номера и id могли смениться — ссылки журнала идут следом */
   bus.on('flows-saved', function (x) {

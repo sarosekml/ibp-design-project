@@ -2,7 +2,7 @@
   "id": "ai-bankster-prototype-mvp",
   "track": "rnd",
   "title": "AI Pitcher — MVP",
-  "desc": "Состав MVP: чат, конструктор отчёта, история, журнал; без просмотра материала",
+  "desc": "Состав MVP: чат, история, журнал; без конструктора и просмотра материала",
   "home": "pages/index.html",
   "icon": "ai-stars"
 }

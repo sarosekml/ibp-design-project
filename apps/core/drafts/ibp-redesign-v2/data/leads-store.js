@@ -12,15 +12,34 @@
    * @property {Object} fields Рабочие изменения исходных полей.
    * @property {{date:string,title:string,from:string,to:string}[]} history История стадий.
    * @property {string[]} meetingIds Связанные встречи.
-   * @property {string[]} comments Комментарии.
+   * @property {(string|LeadCommentRsDto)[]} comments Комментарии; строки старых сессий также поддерживаются.
    * @property {Object} documents Выполнение подготовки документов.
    * @property {number|null} opportunityId Сделка после передачи.
+   * @property {'ACTIVE'|'IN_PLAN'|'INACTIVE'|'REFUSED'} [clientStatus] Статус клиента (LEAD_STAGES.clientStatus), invented 13.10.2026.
+   * @property {boolean} [outOfScope] Запись источника вне демо-выборки MS0016.
    * Source: invented (12.10.2026). */
   var base = window.IBPR;
   var model = window.LEAD_STAGES;
   function copy(v) { return JSON.parse(JSON.stringify(v)); }
   var state = base.extension('leads');
   var listeners = [];
+  /** @typedef {Object} LeadCommentRsDto
+   * @property {string} id Идентификатор комментария.
+   * @property {string|null} authorId Автор из employees.js; null — система.
+   * @property {string} createdAt Дата и время ISO с часовым поясом.
+   * @property {string} text Текст сообщения.
+   * @property {boolean} [system] Системная запись.
+   * Source: invented (13.10.2026), примеры обсуждения для концепта. */
+  function seedComments(r) {
+    var entries = [
+      ['04127', '2026-10-13T10:20:00+03:00', 'Посмотрел основание лида. Для следующего разговора нужно уточнить ожидаемый эффект проекта и запросить актуальную управленческую отчётность.'],
+      ['04630', '2026-10-13T09:10:00+03:00', 'Связалась с финансовым директором клиента. Интерес к предложению есть; на встречу пригласят также руководителя проекта. Время подтвердят после согласования повестки.'],
+      ['02940', '2026-10-12T16:40:00+03:00', 'На первой встрече предлагаю начать с задачи клиента, а затем обсудить структуру финансирования. Не фиксируем окончательные условия до проверки исходных данных.'],
+      ['04127', '2026-10-12T11:30:00+03:00', 'Подготовил вопросы к клиенту:\n• Какие инвестиции планируются и в какие сроки?\n• Какой объём собственных средств предусмотрен?\n• Кто со стороны клиента принимает решение?'],
+      [null, '2026-10-11T09:00:00+03:00', 'Лид включён в рабочее пространство. Основание: ' + model.basis[r.basis[0].type].title + '.', true]
+    ];
+    return entries.map(function (c, i) { return { id: r.id + '-demo-comment-' + i, authorId: c[0], createdAt: c[1], text: c[2], system: !!c[3] }; });
+  }
   function save() { base.setExtension('leads', state); listeners.slice().forEach(function (fn) { fn(); }); }
   function sources() {
     var items = [];
@@ -73,34 +92,56 @@
           if (row.stage !== 'MEETING_PLANNED') { base.finishMeeting(meeting.id); row.protocol = 'Предложение обсуждено. Подготовить условия и согласовать документы (демо).'; }
       }
   }
-  function initialize() {
-    state = { rows: sources().map(initial), week: window.WEEKLY_PICKS.week, demoDiversity: 1 };
-    var available = diverse(state.rows.filter(eligible));
-    available.slice(0, 10).forEach(function (r) { r.picked = true; });
-    available.slice(10, 24).forEach(seedWork);
-    save();
+  // Лиды коллег: рабочие стадии без встреч — видны только во «Всех лидах».
+  var COLLEAGUES = ['03882', '05204'];
+  function seedColleague(row, i) {
+    row.stage = model.working[(i + 2) % model.working.length].code;
+    row.owner = COLLEAGUES[i % COLLEAGUES.length];
+    row.stageEnteredAt = ['2026-10-09', '2026-10-01', '2026-09-22'][i % 3];
+    row.history.push({ date: row.stageEnteredAt, title: 'Лид взят в работу (демо)', from: 'REVIEW', to: row.stage });
   }
-  // В старом демо добавляем отсутствующие основания, не переписывая рабочие решения.
-  function diversifySavedDemo() {
-    if (state.demoDiversity) return false;
-    function untouched(r) { return r.stage === 'REVIEW' && !r.mergedInto && !r.history.length && !Object.keys(r.fields).length && !r.comments.length && !r.meetingIds.length && !Object.keys(r.documents).length && !r.protocol && !r.repeatNeeded && !r.opportunityId; }
-    var candidates = diverse(state.rows.filter(function (r) { return eligible(r) && untouched(r); }));
-    var picks = state.rows.filter(function (r) { return r.picked && r.stage === 'REVIEW'; });
-    Object.keys(model.basis).forEach(function (code) {
-      if (picks.some(function (r) { return r.basis[0].type === code; })) return;
-      var addition = candidates.find(function (r) { return !r.picked && r.basis[0].type === code; });
-      var redundant = picks.find(function (r) { return untouched(r) && picks.filter(function (x) { return x.basis[0].type === r.basis[0].type; }).length > 1; });
-      if (!addition || !redundant) return;
-      redundant.picked = false; picks.splice(picks.indexOf(redundant),1); addition.picked = true; picks.push(addition);
-    });
-    var workTypes = new Set(state.rows.filter(function (r) { return r.owner === '04127' && r.stage !== 'REVIEW' && !model.get(r.stage).final; }).map(function (r) { return r.basis[0].type; }));
-    var n = 0;
-    Object.keys(model.basis).forEach(function (code) {
-      if (workTypes.has(code)) return;
-      var addition = candidates.find(function (r) { return !r.picked && r.stage === 'REVIEW' && r.basis[0].type === code; });
-      if (addition) seedWork(addition,n++);
-    });
-    state.demoDiversity = 1; return true;
+  // Архив: три передачи в Pipeline, четыре отказа клиента, три «Не беру».
+  var ARCHIVE = [
+    ['PIPELINE', '2026-10-06', 'ACTIVE'], ['PIPELINE', '2026-10-02', 'IN_PLAN'], ['PIPELINE', '2026-09-18', 'ACTIVE'],
+    ['DECLINED', '2026-10-07', 'REFUSED'], ['DECLINED', '2026-10-01', 'REFUSED'], ['DECLINED', '2026-09-25', 'REFUSED'], ['DECLINED', '2026-09-11', 'REFUSED'],
+    ['NOT_TAKEN', '2026-10-09', 'INACTIVE'], ['NOT_TAKEN', '2026-10-05', 'IN_PLAN'], ['NOT_TAKEN', '2026-09-29', 'INACTIVE']
+  ];
+  function seedArchive(row, i) {
+    var a = ARCHIVE[i], reasons = model.reasons[a[0]] || [];
+    row.owner = '04127'; row.clientStatus = a[2];
+    if (a[0] === 'PIPELINE') {
+      row.documents = { onePager: true, termSheet: true, clientDocs: true };
+      row.opportunityId = base.createLeadDeal(lead(row.id)).id;
+    }
+    row.stage = a[0]; row.stageEnteredAt = a[1]; row.reason = reasons[i % (reasons.length || 1)] || '';
+    row.history.push({ date: a[1], title: model.get(a[0]).title + (row.reason ? ': ' + row.reason : '') + ' (демо)', from: 'REVIEW', to: a[0] });
+  }
+  // Демо MS0016 (решение человека 13.10.2026): 70 лидов во «Всех лидах»
+  // (подборка 10, мои в работе 15, в работе у коллег 10, Рассмотрение 35) и 10 в архиве.
+  // Остальные записи источников лидами не показываются (outOfScope).
+  var DEMO_VERSION = 2;
+  var STATUS_CYCLE = { picks: ['ACTIVE', 'IN_PLAN', 'ACTIVE'], rest: ['ACTIVE', 'IN_PLAN', 'INACTIVE'] };
+  function initialize() {
+    state = { rows: sources().map(initial), week: window.WEEKLY_PICKS.week, demoVersion: DEMO_VERSION };
+    state.rows.forEach(function (r) { r.comments = seedComments(r); });
+    state.commentsDemoVersion = 1;
+    var mine = diverse(state.rows.filter(eligible)), others = diverse(state.rows.filter(function (r) { return !eligible(r); }));
+    var used = new Set();
+    function take(list, n) {
+      var out = [];
+      for (var i = 0; i < list.length && out.length < n; i++) if (!used.has(list[i].id)) { used.add(list[i].id); out.push(list[i]); }
+      return out;
+    }
+    var picks = take(mine, 10), work = take(mine, 15);
+    if (work.length < 15) work = work.concat(take(others, 15 - work.length));
+    var archive = take(others, 10), colleagues = take(others, 10), review = take(others.concat(mine), 35);
+    state.rows.forEach(function (r) { if (!used.has(r.id)) r.outOfScope = true; });
+    picks.forEach(function (r, i) { r.picked = true; r.clientStatus = STATUS_CYCLE.picks[i % 3]; });
+    work.forEach(function (r, i) { seedWork(r, i); r.clientStatus = 'ACTIVE'; });
+    colleagues.forEach(function (r, i) { seedColleague(r, i); r.clientStatus = STATUS_CYCLE.rest[i % 3]; });
+    review.forEach(function (r, i) { r.clientStatus = STATUS_CYCLE.rest[i % 3]; });
+    archive.forEach(seedArchive);
+    save();
   }
   // Старая стадия объединена с «Встреча проведена» без потери лидов и встреч.
   function migrateStages() {
@@ -115,8 +156,15 @@
     });
     return changed;
   }
+  // Старая сессия (другая версия демо) пересобирается целиком: встречи и сделки прежней засевки сбрасываются.
+  if (state && state.demoVersion !== DEMO_VERSION) { base.reset(); state = null; }
   if (!state) initialize();
-  else { var migrated = migrateStages(); if (diversifySavedDemo() || migrated) save(); }
+  else if (migrateStages()) save();
+  // Дозаполняем существующее демо без сброса встреч, стадий и комментариев пользователя.
+  if (state.commentsDemoVersion !== 1) {
+    state.rows.forEach(function (r) { r.comments = (r.comments || []).concat(seedComments(r)); });
+    state.commentsDemoVersion = 1; save();
+  }
   function row(id) { return state.rows.find(function (x) { return x.id === id; }); }
   function lead(id) {
     var r = row(id);
@@ -138,7 +186,7 @@
       source: src
     }, r.fields);
   }
-  function all() { return state.rows.filter(function (r) { return !r.mergedInto; }).map(function (r) { return lead(r.id); }); }
+  function all() { return state.rows.filter(function (r) { return !r.mergedInto && !r.outOfScope; }).map(function (r) { return lead(r.id); }); }
   function patch(id, fields) {
     var r = row(id); if (!r) throw new Error('Лид не найден');
     Object.assign(r.fields, fields); save(); return lead(id);
@@ -181,7 +229,7 @@
   function create(rq, meetingId) {
     if (meetingId) {
       var existing = state.rows.find(function (r) { return r.basis.some(function (b) { return b.type === 'MEETING' && b.sourceId === meetingId; }); });
-      if (existing) return lead(existing.id);
+      if (existing) { if (existing.outOfScope) { delete existing.outOfScope; save(); } return lead(existing.id); }
       var m = base.meeting(meetingId);
       var r = initial({ id: 'L-M' + meetingId.slice(2), basis: [{ type: 'MEETING', sourceId: meetingId }] });
       r.meetingIds = [m.id]; state.rows.unshift(r); save(); return lead(r.id);
@@ -203,7 +251,11 @@
     r.protocol = text; save();
   }
   function documents(id, flags) { row(id).documents = flags; save(); }
-  function comment(id, text) { row(id).comments.unshift(text); save(); }
+  function comment(id, text) {
+    var now = new Date();
+    row(id).comments.unshift({ id: id + '-comment-' + now.getTime(), authorId: (window.MOCK_CURRENT_USER || {}).id || null, createdAt: now.toISOString(), text: text });
+    save();
+  }
   function markBasis(id) { row(id).basisViewed = true; save(); }
   function basisHref(b) {
     var def = model.basis[b.type];
@@ -218,7 +270,9 @@
     if (e.kind === 'restore') return;
     if (e.kind !== 'extension') { ensure(); listeners.slice().forEach(function (fn) { fn(); }); }
   });
-  window.LEADS = { all: all, get: lead, patch: patch, move: move, missing: missing,
+  // Записи вне демо-выборки лидами не считаются: ссылки ведут на исходную страницу.
+  function visible(id) { var r = row(id); return r && !r.outOfScope ? lead(id) : null; }
+  window.LEADS = { all: all, get: visible, patch: patch, move: move, missing: missing,
     revive: revive, create: create, schedule: schedule, outcome: outcome, documents: documents,
     comment: comment, markBasis: markBasis, basisHref: basisHref, snapshot: snapshot, restore: restore,
     on: function (fn) { listeners.push(fn); return function () { listeners = listeners.filter(function (x) { return x !== fn; }); }; }

@@ -87,7 +87,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SELF = path.resolve(fileURLToPath(import.meta.url));
 const GEN = 'proto-panel.mjs';
 /** Файлы рантайма в порядке подключения: его пишет включатель, его же сверяет ПН10. */
-export const FILES = ['core.js', 'strings.js', 'store.js', 'runner.js', 'recorder.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'map-view.js', 'panel.js'];
+export const FILES = ['core.js', 'strings.js', 'store.js', 'runner.js', 'recorder.js', 'ui.js', 'tab-flows.js', 'tab-comments.js', 'tab-system.js', 'map-view.js', 'panel.js'];
 /* Файлы рантайма, где кириллица в строках допустима (ПН10): ядро — диагностика
    форматов для гейта и агента, strings.js — единственный словарь интерфейса. */
 const CYRILLIC_OK = ['core.js', 'strings.js'];
@@ -2206,6 +2206,23 @@ async function selftest() {
     for (const code of core.ISSUES) if (!S.has('issue.' + code)) missing.push('issue.' + code);
     for (const code of ['no-flow', 'no-state', 'entry-required', 'dependents', 'empty-title']) if (!S.has('err.ops.' + code)) missing.push('err.ops.' + code);
     pass(!missing.length, '20.13 словарь: каждый ключ t(…) рантайма есть в strings.js (и пометки issue.*, ошибки err.ops.*)', missing.join(', '));
+  }
+  {
+    /* 21.1 глагол system (таб «System», MS0016): полная форма читается и
+       пишется канонически, значение пишется всегда; короткая форма и форма
+       без value — ошибки схемы ПН2. */
+    const core = req(path.join(runtime, 'core.js'));
+    const head = 'version: 1\nlastState: 1\nflows:\n  - id: a\n    title: A\n    steps:\n      - state: 1\n        id: s1\n        title: S\n        page: X.html\n        do:\n';
+    const good = head + "          - system:\n              target: 'new-leads'\n              value: '0'\n";
+    const fr = core.readFlows(good);
+    const act = fr.flows[0] && fr.flows[0].steps[0].do[0];
+    const round = fr.doc ? core.serializeFlows(fr.doc, { header: [] }) : '';
+    const short = core.readFlows(head + "          - system: 'new-leads'\n").errors;
+    const novalue = core.readFlows(head + "          - system:\n              target: 'new-leads'\n").errors;
+    pass(!fr.errors.length && act && act.verb === 'system' && act.target === 'new-leads' && act.value === '0'
+      && round.includes("value: '0'") && short.length === 1 && novalue.length === 1 && core.describeAction(act) === "system 'new-leads' = 0",
+      '21.1 глагол system: полная форма, каноническая запись со значением, короткая форма и пропуск value — ошибки',
+      [fr.errors.map((e) => e.text).join('; '), round.split('\n').filter((l) => /system|target|value/.test(l)).join(' / '), short.map((e) => e.text).join('; '), novalue.map((e) => e.text).join('; ')].filter(Boolean).join(' | '));
   }
 
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
