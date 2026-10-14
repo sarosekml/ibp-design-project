@@ -1471,17 +1471,22 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
       : 'Б43 панель массовых действий стоит в строке .pgn-row--bulk', loose[0]);
   }
 
-  /* Б44 — соседние IconButton в одном ряду не слипаются подложками. Кнопка
+  /* Б44 — подложки соседних IconButton не наезжают друг на друга. Кнопка
      занимает в потоке размер иконки, а подложка (::before) больше и выступает
      по бокам (IconButton.md: иконка 24/20/16, подложка 40/32/24 — значения
      читаются из IconButton.css). Расстояние между иконками соседей (gap
-     контейнера + отступы обёрток) обязано вместить оба выступа и ещё 4px между
-     подложками; норма человека — 4–8px (MS0016: «Открыть лид» и крестик в шапке
-     Drawer, gap 4px, подложки перекрывались). Вход — соседние кнопки в статической
-     разметке и в одном JS-шаблоне; кнопка, вставленная скриптом в чужой
-     контейнер, статикой не видна — пункт чек-листа composition-review. */
+     контейнера + отступы обёрток) обязано вместить оба выступа; зазор между
+     подложками сверх этого — 0 или чётный, по ситуации (правило человека
+     14.10.2026; MS0016: «Открыть лид» и крестик в шапке Drawer, gap 4px,
+     подложки перекрывались). Вход — соседние кнопки в статической разметке и
+     в одном JS-шаблоне; кнопка, вставленная скриптом в чужой контейнер,
+     статикой не видна — пункт чек-листа composition-review K14. */
   if (IBTN_GEOM) {
     const near = [];
+    /* ряд, чей зазор задаёт только CSS ДС, — геометрия компонента (решение человека
+       14.10.2026: зазоры рядов ДС не меняются); правило судит ряды, собранные экраном */
+    const dsOwned = (cls) => !new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(screenCss)
+      && new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:').test(DS_CSS_ALL);
     const cssGap = (cls) => {
       for (const src of [screenCss, DS_CSS_ALL]) {
         const m = new RegExp('\\.' + cls.replace(/[-]/g, '\\-') + '\\s*\\{[^}]*?\\b(?:column-)?gap\\s*:\\s*([^;}]+)').exec(src);
@@ -1519,14 +1524,23 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
         }
         const w2 = nx[2] ? classesOf(nx[2]) : [];
         const parent = parentOpenTag(src, containerAt);
+        if (!w1.length && !w2.length && classesOf(parent).some(dsOwned)) continue;
         const gap = classesOf(parent).reduce((a, c) => Math.max(a, cssGap(c)), 0);
+        /* отступ пары внутри ряда: `.ряд > .ibtn--s + .ibtn--s { margin-left }` (TableCell 2.026) */
+        const pair = classesOf(parent).reduce((a, c) => {
+          for (const css of [screenCss, DS_CSS_ALL]) {
+            const r = new RegExp('\\.' + c.replace(/[-]/g, '\\-') + '\\s*>\\s*\\.ibtn--' + s1 + '\\s*\\+\\s*\\.ibtn--' + s2 + '\\s*\\{[^}]*?\\bmargin-left\\s*:\\s*([^;}]+)').exec(css);
+            if (r) return Math.max(a, lenPx(r[1].trim()));
+          }
+          return a;
+        }, 0);
         const b1 = classesOf(m[0]), b2 = classesOf(nx[0].slice(nx[0].lastIndexOf('<')));
         const margins = w1.concat(b1).reduce((a, c) => a + cssMargin(c, 'right'), 0) + w2.concat(b2).reduce((a, c) => a + cssMargin(c, 'left'), 0);
-        const need = (g1.layer - g1.icon) / 2 + (g2.layer - g2.icon) / 2 + 4;
-        if (gap + margins < need) near.push({ line: lineOf(src, m.index), have: gap + margins, need, sizes: s1 + '/' + s2, box: classesOf(parent).slice(0, 2).join('.') || '?' });
+        const need = (g1.layer - g1.icon) / 2 + (g2.layer - g2.icon) / 2;   // подложки не наезжают; свой зазор между ними — 0 или чётный, по ситуации
+        if (gap + margins + (w1.length || w2.length ? 0 : pair) < need) near.push({ line: lineOf(src, m.index), have: gap + margins + (w1.length || w2.length ? 0 : pair), need, sizes: s1 + '/' + s2, box: classesOf(parent).slice(0, 2).join('.') || '?' });
       }
     }
-    if (near.length) warn(`Б44 соседние IconButton слипаются подложками: между иконками ${near[0].have}px при нужных ≥${near[0].need}px (${near[0].sizes.toUpperCase()} в .${near[0].box}; выступ подложки с обеих сторон + 4px)${near.length > 1 ? `, мест: ${near.length}` : ''} — дать обёртке отступ или ряду gap, чтобы между подложками было 4–8px`, near[0].line);
+    if (near.length) warn(`Б44 подложки соседних IconButton наезжают друг на друга: между иконками ${near[0].have}px при нужных ≥${near[0].need}px (${near[0].sizes.toUpperCase()} в .${near[0].box}; выступ подложки с обеих сторон)${near.length > 1 ? `, мест: ${near.length}` : ''} — дать ряду gap или обёртке отступ: подложки не должны наезжать, зазор между ними — 0 или чётный`, near[0].line);
   }
 
   /* K12 — адаптивное правило, перебитое инлайн-стилем на том же элементе,

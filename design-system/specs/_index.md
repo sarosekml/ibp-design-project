@@ -27,7 +27,7 @@ purpose: Манифест спек компонентов. Читай нужну
 | Elevation | foundations/Elevation/Elevation.md | foundations/Elevation/Elevation.css | — | 1.003 |
 | Drawer | components/organisms/Drawer/Drawer.md | components/organisms/Drawer/Drawer.css | modal, button, icon-button, read-only-field, label-helper | 1.004 |
 | Entity | components/organisms/Entity/Entity.md | components/organisms/Entity/Entity.css | avatar, chip, icon-button, button, badge | 1.008 |
-| IconButton | components/atoms/IconButton/IconButton.md | components/atoms/IconButton/IconButton.css | badge, spinner | 1.011 |
+| IconButton | components/atoms/IconButton/IconButton.md | components/atoms/IconButton/IconButton.css | badge, spinner | 1.012 |
 | Icons | foundations/Icons/Icons.md | — | — | 1.003 |
 | Illustrations | foundations/Illustrations/Illustrations.md | foundations/Illustrations/Illustrations.css | — | 1.006 |
 | Layout | foundations/Layout/Layout.md | foundations/Layout/Layout.css | nav-panel, breadcrumbs, spacing | 1.015 |
