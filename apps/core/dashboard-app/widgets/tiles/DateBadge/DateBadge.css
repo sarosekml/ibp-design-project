@@ -1,0 +1,26 @@
+/* Локальный компонент «Блок даты» (DateBadge) — кандидат в ДС.
+   По макету главной 15.10.2026 — две строки текста БЕЗ подложки: день недели
+   над датой, прижаты к верху строки (align-self ведущего задаёт тайл),
+   выровнены по левому краю. Цвета, шрифты — токены ДС. */
+
+.lc-date {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: none;
+  color: var(--text-primary);
+}
+.lc-date__day {
+  font: var(--type-body-xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.lc-date__month {
+  font: var(--type-body-xs);
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+/* Вариант «день недели + дата»: ВТ / 13.10 — встречи в тайле главной */
+.lc-date--weekday .lc-date__day { text-transform: uppercase; }

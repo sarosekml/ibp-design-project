@@ -1,0 +1,8 @@
+{
+  "id": "dashboard-app",
+  "track": "product",
+  "title": "Дашборд Аналитика",
+  "desc": "Редизайн главной: профиль, встречи, задачи и новости по клиентам",
+  "home": "pages/HomePage.preview.html",
+  "icon": "layout-grid-01"
+}

@@ -666,12 +666,24 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
   const rgbs = [...html.matchAll(/rgba?\(/g)].map((m) => lineOf(html, m.index));
   ok(rgbs.length === 0, rgbs.length ? `Б3 rgb() на строках: ${[...new Set(rgbs)].join(', ')}` : 'Б3 нет rgb()');
 
+  /* Стартовая страница (Layout): .grid12 без шапки phead, крошка — не больше
+     одной текущей. Крошек может не быть вовсе: решение человека 15.10.2026
+     (new-dashboard-mvp) — на стартовой странице путь один, зона крошек не нужна. */
+  const crumbItems = [...html.matchAll(/class="[^"]*\bcrumbs__item\b[^"]*"/g)].map((m) => m[0]);
+  const isStartPage = crumbItems.length <= 1
+    && (crumbItems.length === 0 || /\bcrumbs__item--current\b/.test(crumbItems[0]))
+    && /class="[^"]*\bgrid12\b/.test(html) && !/\bphead\b/.test(html);
+
   /* Б5 каркас. Документу (`kind: document`) каркас приложения не положен —
      пропуск печатается строкой, молчаливого пропуска нет (process.md §9). */
   if (isDocument) {
     ok(true, `Б5 ПРОПУЩЕН: вид document (${path.basename(spec)}) — лист-документ без каркаса приложения по устройству`);
   } else {
     for (const [cls, label] of [['nav-layout', '.nav-layout'], ['class="nav ', '.nav'], ['class="screen', '.screen'], ['class="crumbs', '.crumbs'], ['screen__content', 'main.screen__content']]) {
+      if (cls === 'class="crumbs' && isStartPage && !html.includes(cls)) {
+        ok(true, 'Б5 каркас: .crumbs нет — стартовая страница без крошек (решение человека 15.10.2026)');
+        continue;
+      }
       ok(html.includes(cls), `Б5 каркас: ${label}`);
     }
   }
@@ -729,16 +741,15 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      Исключение — стартовая страница: по Layout.md её контентная область — один
      блок, сетка групп .grid12, без PageHeader (решение владельца 13.09.2026;
      формулировка Layout.md «заголовок — PageHeader, первый блок» противоречила
-     разделу о стартовой). Признак структурный, а не по тексту: в крошках ровно
-     один пункт и он текущий (у любой другой страницы первая крошка — ссылка на
-     стартовую), в разметке есть .grid12 и нет .phead. Больше одного h1 не
-     разрешено и стартовой.
+     разделу о стартовой). Признак структурный, а не по тексту: в крошках не
+     больше одного пункта (если он есть — текущий; крошек может и не быть —
+     решение человека 15.10.2026), в разметке есть .grid12 и нет .phead.
+     Больше одного h1 не разрешено и стартовой.
      Документ (`kind: document`): шапки страницы PageHeader у него нет, как нет
      и каркаса, — остаётся «ровно один h1», заголовок листа. */
   const h1s = [...html.matchAll(/<h1\b/g)].length;
-  const crumbItems = [...html.matchAll(/class="[^"]*\bcrumbs__item\b[^"]*"/g)].map((m) => m[0]);
-  const isStartPage = crumbItems.length === 1 && /\bcrumbs__item--current\b/.test(crumbItems[0])
-    && /class="[^"]*\bgrid12\b/.test(html) && !/\bphead\b/.test(html);
+  /* isStartPage посчитан выше, перед Б5: стартовая страница опознаётся по
+     .grid12 без .phead и не больше одной крошки; крошек может не быть вовсе. */
   if (isDocument) ok(h1s === 1, `Б6 документ: ровно один h1 (${h1s})`);
   else if (isStartPage) ok(h1s <= 1, `Б6 стартовая страница: не больше одного h1 (${h1s})`);
   else ok(h1s === 1 && /phead__title/.test(html), `Б6 ровно один h1 в .phead__title (${h1s})`);

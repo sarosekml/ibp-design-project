@@ -1,0 +1,41 @@
+# Сценарии показа прототипа Главная — дашборд (MVP) — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 4
+flows:
+  - id: main
+    title: Утро аналитика
+    desc: Главная → задача в работу → новая встреча в плане дня
+    steps:
+      - state: 1
+        id: start
+        title: Главная
+        page: HomePage.preview.html
+        note: Тайлы загружаются каскадом, каждый по ответу своего сервиса. Профиль, встречи, задачи и новости — на одном экране.
+        do:
+          - waitFor: '#tile-news[data-state="data"]'
+      - state: 2
+        id: take
+        title: Задача взята в работу
+        note: 'Меню строки задачи — «Взять в работу»: статус меняется на месте, уведомление даёт отменить.'
+        do:
+          - click: '#tile-tasks [data-task-id="T-1002"] [data-menu="lc-tasks-row-menu"]'
+          - click: '#lc-tasks-row-menu [data-task-act="take"]'
+          - waitFor: '#tile-tasks [data-task-id="T-1002"] .chip--dpurple'
+      - state: 4
+        id: meeting
+        title: Новая встреча в плане дня
+        note: Быстрое действие из профиля. Встреча на сегодня сразу встаёт в «Мои встречи».
+        do:
+          - click: '#tile-profile [data-modal="meeting-create-scrim"]'
+          - waitFor: '#meeting-create-scrim'
+          - click: '[data-ddl="meeting-create-client-list"]'
+          - click: '[data-code="ГК «Волга Тех»"]'
+          - fill:
+              target: '#meeting-create-topic'
+              value: Повестка по ковенантам
+          - click: '[data-meeting-create-save]'
+          - waitFor:
+              target: '#meeting-create-scrim'
+              state: hidden

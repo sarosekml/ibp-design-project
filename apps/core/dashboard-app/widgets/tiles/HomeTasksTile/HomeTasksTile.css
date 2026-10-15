@@ -1,0 +1,132 @@
+/* Локальный компонент «Задачи» (HomeTasksTile).
+   Только внутренняя раскладка и показ своих блоков по data-state / data-mode.
+   Цвета, шрифты, отступы — токены ДС; состояния компонентов ДС не
+   переопределяются. */
+
+.lc-tasks { container-type: inline-size; }
+
+.lc-tasks__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.lc-tasks__scope { align-self: stretch; }
+
+.lc-tasks__sk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  margin-top: var(--space-16);
+}
+
+/* Точка приоритета — Badge dot перед текстом Header строки */
+.lc-tasks__row .entity__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+/* Мета строки: приоритет · срок (по макету главной) */
+.lc-tasks__meta-sep { color: var(--text-inactive); }
+.lc-tasks__meta-date {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-secondary);
+}
+/* Иконки строки мелкие и приглушённые (канон подписи Entity: 1.15em,
+   --text-inactive) — срок в мета, сделка и клиент в подвале строки */
+.lc-tasks__meta-date [data-icon],
+.lc-tasks__link [data-icon] {
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--text-inactive);
+}
+/* Приоритет — прописными (макет главной 15.10.2026); в данных — «Высокий» */
+.lc-tasks__priority { text-transform: uppercase; }
+
+/* Исполнитель в «задачах моего деска»: имя, группа чипом, «+N» остальных
+   групп. В «моих задачах» строки нет — её рисует только JS. */
+.lc-tasks__assignee {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-width: 0;
+  font: var(--type-body-s);
+  color: var(--text-secondary);
+}
+.lc-tasks__assignee .chip { flex: none; max-width: 100%; }
+.lc-tasks__more { flex: none; color: var(--text-secondary); }
+/* Сделка и клиент — с иконками, в одну строку с переносом */
+.lc-tasks__links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+}
+.lc-tasks__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+/* Действие строки не сжимается */
+.lc-tasks__row .entity__actions { flex: none; }
+
+/* «Скрыть выполненные» убрало все строки: причина на месте списка */
+.lc-tasks__none {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+
+.lc-tasks__empty-text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+/* Пустой стейт по образцу тайла встреч: иллюстрация и строка причины */
+.lc-tasks__empty {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  padding: var(--space-24) 0;
+  text-align: center;
+}
+.lc-tasks__empty-ico {
+  display: inline-flex;
+  font-size: var(--space-64);
+  color: var(--primary-dark);
+  opacity: .35;
+}
+
+.lc-tasks__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-top: auto;
+}
+.lc-tasks__foot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-tasks__loading,
+.lc-tasks__empty,
+.lc-tasks__error,
+.lc-tasks__busy { display: none; }
+
+.lc-tasks[data-state="loading"] .lc-tasks__loading { display: block; }
+.lc-tasks[data-state="empty"] .lc-tasks__empty { display: flex; }
+.lc-tasks[data-state="error"] .lc-tasks__error { display: block; }
+.lc-tasks[data-state="updating"] .lc-tasks__busy { display: inline-block; }
+
+/* Список и строка-причина фильтра скрыты в загрузке, пустоте и ошибке;
+   переключатель и подвал уходят только в загрузке и ошибке — в пустоте
+   подвал со «Смотреть все…» остаётся */
+.lc-tasks:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-tasks__list, .lc-tasks__none) { display: none; }
+.lc-tasks:is([data-state="loading"], [data-state="error"]) :is(.lc-tasks__scope, .lc-tasks__foot) { display: none; }
+.lc-tasks:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-tasks__busy) { display: none; }
