@@ -109,15 +109,18 @@ const linesOf = (file) => {
 /** Сколько строк в файле прогона (гейт проверяет, что прогон по настоящему файлу записан). */
 export const countLines = (file) => linesOf(file).length;
 
-/** Все записи журнала по порядку прогонов. Битая строка чтение не роняет. */
-export function readRuns(dir = RUNS_DIR, legacy = LEGACY) {
+/** Записи одного файла прогона. Битая строка чтение не роняет. */
+export function readRunFile(file) {
   const out = [];
-  for (const f of runFiles(dir, legacy)) {
-    for (const l of linesOf(f)) {
-      try { out.push(JSON.parse(l)); } catch { /* битая строка журнала не роняет отчёт */ }
-    }
+  for (const l of linesOf(file)) {
+    try { out.push(JSON.parse(l)); } catch { /* битая строка журнала не роняет отчёт */ }
   }
   return out;
+}
+
+/** Все записи журнала по порядку прогонов. */
+export function readRuns(dir = RUNS_DIR, legacy = LEGACY) {
+  return runFiles(dir, legacy).flatMap(readRunFile);
 }
 
 /** Вращение: см. шапку. Возвращает, сколько строк осталось и какие файлы удалены. */

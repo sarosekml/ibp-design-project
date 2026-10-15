@@ -70,10 +70,19 @@
 
   /* ---------------- уведомления ---------------- */
 
+  /* Слои уведомлений ДС общие со страницей: свои уведомления панель помечает
+     data-pp-own — исполнитель и рекордер их пропускают, а снекбары и тосты
+     страницы остаются целью (waitFor '.snack--success'). */
+  function own(el) { if (el && el.setAttribute) el.setAttribute('data-pp-own', ''); }
   function toast(message, tone) {
-    if (window.DSToast) window.DSToast.show({ message: message, kind: 'bar', tone: tone || 'neutral', duration: 3000 });
+    if (window.DSToast) { var h = window.DSToast.show({ message: message, kind: 'bar', tone: tone || 'neutral', duration: 3000 }); own(h && h.el); }
   }
-  function snack(o) { if (window.DSSnack) return window.DSSnack.show(o); return null; }
+  function snack(o) {
+    if (!window.DSSnack) return null;
+    var id = window.DSSnack.show(o);
+    window.DSSnack.stack().forEach(function (s) { if (s.id === id) own(s.el); });
+    return id;
+  }
 
   function announce(text) {
     if (!el.live) return;

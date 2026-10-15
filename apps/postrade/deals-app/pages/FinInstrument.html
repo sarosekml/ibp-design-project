@@ -428,7 +428,7 @@
 
     var title = 'ФИ: ' + c.name;
     document.getElementById('fi-title').textContent = title;
-    document.getElementById('fi-crumb').textContent = title;
+    paintCrumb(title);
     document.title = title + ' — IBP';
     var dealUrl = DEAL_PAGE + '?id=' + encodeURIComponent(deal.id);
     document.getElementById('fi-return').setAttribute('href', dealUrl);
@@ -455,7 +455,20 @@
   }
 
   /* Крошка. До привязки рантайма крошек (DOMContentLoaded) звенья — разметка
-     экрана; после — рантайм читает их один раз, поэтому правится его список. */
+     экрана, #fi-crumb; после — рантайм читает их один раз и перерисовывает
+     сам (#fi-crumb пропадает), поэтому правится его список (api.items) и
+     список перерисовывается (api.refresh) — ds-breadcrumbs.js. Повторный
+     paint после правки карточки (commit) идёт уже по привязанному рантайму. */
+  function paintCrumb(text) {
+    var cur = document.getElementById('fi-crumb');
+    if (cur) { cur.textContent = text; return; }
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var api = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (!api || !api.items.length) return;
+    api.items[api.items.length - 1].text = text;
+    api.refresh();
+  }
+
   function init() {
     buildNav();
     var store = window.FinInstrumentsStore;

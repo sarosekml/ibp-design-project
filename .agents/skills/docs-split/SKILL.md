@@ -14,7 +14,8 @@ checked: "30.08.2026 — пилот AllocationBar2, тулчейн check/inject/
 Сценарий ведёт `ai-designer` сам (страницы документации не собираются через
 `screen-builder` и не имеют `.screen.md`). Приёмку делает `screen-reviewer`.
 
-Правила паттерна — раздел 11 `process.md`. Общий слой —
+Правила паттерна — `design-system/MAINTAINING.md`, раздел «Страницы документации»;
+граница сценария — `process.md` §11. Общий слой —
 `design-system/docs-kit/docs-split.css` + `design-system/docs-kit/docs-split.js` (не трогать).
 
 ## Правила чтения (экономия контекста)
@@ -41,7 +42,7 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css <пу�
 | Команда | Что делает |
 |---|---|
 | `map` | перегенерирует `references/pages-index.md` (структурная карта всех doc-страниц) |
-| `inject <page>` | вставляет полный CSS компонента в `src-code-css` (маппинг имя→css из `design-system/specs/_index.md`; для страниц без спеки — `--css`) |
+| `inject <page>` | вставляет полный CSS компонента в `src-code-css` (маппинг имя→css из `design-system/specs/_index.md`; для страниц без спеки — `--css`). **Обязательный шаг после любой правки `<Имя>.css` раскатанной страницы**: ручная правка без `inject` оставляет во вкладке «Код» старый CSS (Л24) |
 | `check <page>` | структурные проверки страницы. Состав не пересказывается — его печатает `docs-split.mjs --rules` (Л43, Л50); идентификаторы `ДС*`. Код выхода 1 при FAIL |
 | `--rules` | печатает состав проверок |
 
@@ -63,7 +64,7 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css <пу�
 
 ## Шаги раскатки (по странице)
 
-1. `map` — сверить статус/тип конструктора.
+1. `map` — сверить статус/тип конструктора (и после раскатки — снова).
 2. Ручная структура (следую `skeleton.md`):
    - head: `ds-toc.css` → `Splitter.css` + `SegmentControl.css` + `Tab.css` + `docs-split.css`;
    - `<style>`: playground `.panel.pg` → демо-стадия на `flex:1`; убрать
@@ -89,7 +90,8 @@ node .agents/skills/docs-split/tooling/docs-split.mjs <cmd> [page] [--css <пу�
      (выжимка API из page.js) + `segctrl[data-segctrl]` + три `code-view`.
 3. `inject <page>` — вставить CSS (если нужен `--css`, укажи).
 4. `check <page>` — должен дать ВЕРДИКТ: OK.
-5. Приёмка `screen-reviewer` — со скопом из карты, не «прочитай страницу целиком».
+5. Приёмка `screen-reviewer` — со скопом из карты, не «прочитай страницу целиком»;
+   особенности приёмки паттерна — `references/review.md`.
    Что проверяет только человек в браузере: табы, TOC≥11, две колонки
    конструктора, демо живо, код заполнен.
 

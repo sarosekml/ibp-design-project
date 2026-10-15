@@ -17,40 +17,40 @@ flows:
       - state: 2
         id: binding
         title: Обязательные сделки → сделка
-        page: BindingActiveNewOpportunities.preview.html?tab=BindingActiveNewOpportunities
+        page: BindingActiveNewOpportunities.preview.html?tab=BindingActiveNewOpportunities&mode=before
         note: 'Непросмотренные строки подсвечены. Переход по ID ведёт на страницу сделки. Разделов открыто: 2.'
         do:
           - click: '#nav .nav__item[href="BindingActiveNewOpportunities.preview.html"]'
       - state: 3
         id: deal
         title: Сделка 166092 — взять в работу
-        page: Opportunity.preview.html?source=binding&id=166092&tab=active-new
+        page: Opportunity.preview.html?source=binding&id=166092&tab=active-new&mode=before
         note: '«Взять в работу» (Р7): подтверждение → сделка уходит в Pipeline «Сделки моего деска». Разделов открыто: 3.'
       - state: 4
         id: pipeline
         title: Pipeline — сделка появилась
-        page: MyDeskOpportunities.preview.html?tab=MyDeskOpportunities
+        page: MyDeskOpportunities.preview.html?tab=MyDeskOpportunities&mode=before
         note: 'Взятая сделка видна в реестре Pipeline. Тот же клиент в CIB — дубль намеренный. Разделов открыто: 4.'
         do:
           - click: '#nav .nav__item[href="MyDeskOpportunities.preview.html"]'
       - state: 5
         id: cib
         title: Проекты продаж CIB — тот же клиент
-        page: OpportunityActiveSalesProjects.preview.html?tab=OpportunityActiveSalesProjects
+        page: OpportunityActiveSalesProjects.preview.html?tab=OpportunityActiveSalesProjects&mode=before
         note: 'Клиент второй раз в другом реестре — боль, с которой работает часть 2. Разделов открыто: 5.'
         do:
           - click: '#nav .nav__item[href="OpportunityActiveSalesProjects.preview.html"]'
       - state: 6
         id: leads
         title: Лиды → лид → Переместить в Pipeline
-        page: LeadsPage.preview.html?tab=LeadsPage
+        page: LeadsPage.preview.html?tab=LeadsPage&mode=before
         note: 'L-44: «Переместить в Pipeline» (Р7) создаёт сделку в Pipeline; лид уходит из реестра. Разделов открыто: 6.'
         do:
           - click: '#nav .nav__item[href="LeadsPage.preview.html"]'
       - state: 7
         id: client
         title: Клиент → Сделки — четыре таблицы лидов
-        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage
+        page: ClientInfoPage.preview.html?id=3000012345&tab=ClientInfoDealsPage&mode=before
         note: 'Вкладка «Сделки → Лиды»: лиды клиента разложены по четырём таблицам — то, что часть 2 заменяет единым разделом. Разделов открыто: 7.'
         do:
           - click: '#nav .nav__item[href="MyClientsPage.preview.html"]'

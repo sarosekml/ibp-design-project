@@ -203,6 +203,8 @@ node .agents/tools/kit-build.mjs --check    # сверить, ничего не 
 1. Заведите папку виджета `apps/<раздел>/<модуль>/widgets/<группа>/<Имя>/` — по правилам
    модуля (его `widgets/README.md`) и заготовке ДС
    [`templates/local-component/`](../../design-system/templates/local-component/).
+   Папку из заготовки ДС создаёт команда — категория сверяется со списком раздела:
+   `node .agents/tools/scaffold.mjs widget apps/<раздел>/<модуль> <группа> <Имя> --category <категория>`.
 2. Положите фрагмент `<Имя>.html` и паспорт `<Имя>.md` по шаблону
    [`Component.md`](../../design-system/templates/local-component/Component.md). Для
    витрины обязательны `name`, `category` и `purpose`; категория — из

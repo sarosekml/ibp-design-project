@@ -1482,6 +1482,25 @@ async function pageChecks(p, P, opts, out) {
   if (/\btabs--horiz\b/.test(markup) && !/\bdata-tabs\b/.test(markup)) {
     say('BLOCKER', 'F3', '.tabs--horiz без data-tabs — переполнение ряда не подключится (Tab.js молчит без атрибута)');
   }
+  /* F7 — data-tooltip на прямом потомке .btn-group. Tooltip.js оборачивает цель в
+     .tip-anchor: кнопка перестаёт быть прямым потомком группы, правила стыковки
+     (`.btn-group > .btn:first-child` и др.) её не видят — остаётся свой радиус
+     (урок Л193, 08.10.2026). Подсказка ставится на саму группу или в aria-label. */
+  for (const m of markup.matchAll(/<[a-z]+\b[^>]*\bclass="(?:[^"]*\s)?btn-group(?:\s[^"]*)?"[^>]*>/g)) {
+    const group = tagSlice(markup, m.index);
+    const VOID = new Set(['br', 'img', 'input', 'hr', 'meta', 'link', 'source', 'use', 'path', 'circle', 'rect', 'area', 'col', 'embed', 'track', 'wbr']);
+    const kids = [];
+    let depth = 0;
+    for (const t of group.slice(m[0].length).matchAll(/<(\/?)([a-z]+)\b[^>]*?(\/?)>/g)) {
+      if (t[1]) { depth--; continue; }
+      if (depth === 0 && /\sdata-tooltip\b/.test(t[0])) kids.push((t[0].match(/class="([^"]*)"/) || [, t[2]])[1]);
+      if (!t[3] && !VOID.has(t[2])) depth++;
+    }
+    if (kids.length) {
+      say('BLOCKER', 'F7', 'data-tooltip на прямом потомке .btn-group (' + kids.slice(0, 3).map((c) => '"' + c + '"').join(', ') + ') — Tooltip.js обернёт кнопку в .tip-anchor и стыковка группы её не увидит; подсказку ставить на саму группу или в aria-label');
+      break;
+    }
+  }
   /* F4 — одноколоночный grid-track на фиксированной ширине вместо minmax(0,1fr) — трек сжимается по контенту */
   if (/grid-template-columns:\s*[\d.]+px\s*;/.test(styleSrc)) {
     say('WARN', 'F4', 'grid-template-columns: <px> без minmax(0,1fr) — трек не тянется, только сжимается по max-content');
