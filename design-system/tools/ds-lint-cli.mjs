@@ -10,10 +10,17 @@
      node tools/ds-lint-cli.mjs components/molecules/SegmentControl/SegmentControl.html
      node tools/ds-lint-cli.mjs components/atoms/Chip/Chip.html components/atoms/Badge/Badge.html   # несколько страниц
      node tools/ds-lint-cli.mjs --parity                # гейт парности «доки = код»
+     node tools/ds-lint-cli.mjs --no-global ../apps/…/Screen.html   # только правила страницы
 
-   Код выхода: 1 если в отчёте есть BLOCKER (NEEDS-WORK), иначе 0.
+   --no-global — без глобальных правил ДС (реестры, @import, счётчики): они
+   читают только ДС и занимают ~3,5 с из ~4 с прогона одного экрана. Для
+   экранов проекта; правку ДС проверяет прогон без флага.
+
+   Код выхода: 1 если в отчёте есть BLOCKER (NEEDS-WORK), 2 — ошибка запуска
+   (нет файла, --no-global без страниц), иначе 0.
    ============================================================ */
 import { readFile as fsReadFile, readdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { importKitTool, projectRoot, projectBoot } from './kit-link.mjs';
@@ -39,7 +46,14 @@ const { run } = new Function('readFile', 'ls', 'dsLayout', src + ';return dsLint
 
 const args = process.argv.slice(2);
 const parity = args.includes('--parity');
+const noGlobal = args.includes('--no-global');
 const requested = args.filter((a) => !a.startsWith('--'));
+if (noGlobal && !requested.length && !parity) { console.log('--no-global без страниц: проверять нечего'); process.exit(2); }
+/* Несуществующий путь линтовался как пустая страница: ложный BLOCKER A7 и
+   строка в журнале прогонов, которую `stats` читал как настоящий экран
+   (RE0019, 14.10.2026). Опечатка в пути — ошибка запуска, не отчёт. */
+const missing = requested.filter((t) => !existsSync(path.join(ROOT, t)));
+if (missing.length) { for (const t of missing) console.log('НЕТ ФАЙЛА: ' + t); process.exit(2); }
 
 /* Фрагмент модульного экрана (модалка/таблица, вшиваемая через <ds-include>)
    экраном не является и линтуется в собранном файле. Определение — в оснастке
@@ -58,7 +72,7 @@ if (requested.length && !targets.length && !parity) process.exit(0);
 
 const report = parity
   ? await run([], { global: false, parity: true })
-  : await run(targets, { changed: targets, boot: projectBoot() });
+  : await run(targets, { changed: targets, boot: projectBoot(), global: !noGlobal });
 
 console.log(report);
 const bad = /^BLOCKER\s+[1-9]/m.test(report) || /NEEDS-WORK/.test(report);

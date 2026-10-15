@@ -117,7 +117,8 @@
         "design-system/specs/_runtime-hooks.md",
         ".agents/skills/screen-spec/SKILL.md",
         ".agents/skills/screen-spec/references/template.md",
-        ".agents/skills/screen-review/references/lessons.md"
+        ".agents/skills/screen-review/references/lessons.md",
+        ".agents/skills/screen-review/references/self-check.md"
       ],
       "выход_html": true,
       "выход_спека": true,

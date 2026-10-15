@@ -15,6 +15,13 @@
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
   function el(id) { return document.getElementById(id); }
   function put(id, html) { var node = el(id); if (node) node.innerHTML = html; }
+  // Крошку рантайм ДС пересобирает и снимает с неё id (Л185): текст — через его API, по id — только без рантайма.
+  function crumb(text) {
+    var ol = document.querySelector('[data-breadcrumbs]');
+    var api = ol && window.DSBreadcrumbs ? window.DSBreadcrumbs.bind(ol) : null;
+    if (api && api.items.length) { api.items[api.items.length - 1].text = text; api.refresh(); return; }
+    put('lead-crumb', esc(text));
+  }
   function money(v) { return v == null ? '—' : Number(v).toLocaleString('ru-RU', { maximumFractionDigits: 2 }); }
   function date(v) { return v ? String(v).slice(0, 10).split('-').reverse().join('.') : '—'; }
   function days(l) { return Math.max(0, Math.floor((Date.parse('2026-10-12') - Date.parse(l.stageEnteredAt)) / 86400000)); }
@@ -284,9 +291,9 @@
   function stageIndex(l) { var code=l.stage;if(code==='DECLINED'||code==='NOT_TAKEN')code=l.history.length?l.history[l.history.length-1].from:'REVIEW';return stages.all.findIndex(function(s){return s.code===code;}); }
   function stageMark(s,i,current,failed) { var status = i<current ? 'done' : i===current ? failed?'error':'current' : ''; return '<span class="stepmark stepmark--s' + (status ? ' stepmark--'+status : '') + '" aria-hidden="true"><span class="stepmark__num">'+(i+1)+'</span><i class="stepmark__icon" data-icon="check"></i><i class="stepmark__icon stepmark__icon--error" data-icon="alert-circle"></i></span>'; }
   function renderLead(l) {
-    if (!l) { put('lead-page-title','Лид не найден'); put('lead-page-actions','');put('lead-crumb','Лид не найден');var main=document.querySelector('main');Array.from(main.children).forEach(function(c){if(!c.classList.contains('phead'))c.hidden=true;});if(el('lead-path'))el('lead-path').hidden=true;main.insertAdjacentHTML('beforeend',empty('Лид не найден','Вернитесь в реестр лидов.'));return; }
+    if (!l) { put('lead-page-title','Лид не найден'); put('lead-page-actions','');crumb('Лид не найден');var main=document.querySelector('main');Array.from(main.children).forEach(function(c){if(!c.classList.contains('phead'))c.hidden=true;});if(el('lead-path'))el('lead-path').hidden=true;main.insertAdjacentHTML('beforeend',empty('Лид не найден','Вернитесь в реестр лидов.'));return; }
     var s = stages.get(l.stage), index = stageIndex(l);
-    put('lead-page-title',esc(l.id+' · '+l.clientName)); put('lead-crumb',esc(l.id));
+    put('lead-page-title',esc(l.id+' · '+l.clientName)); crumb(l.id);
     put('lead-page-chips',chip(s.title,s.tone)+basisHtml(l));
     put('lead-page-subtitle','<span class="phead__meta">Ответственный: '+esc(owner(l))+' · Появился '+date(l.createdAt)+' · '+days(l)+' дн. на стадии</span>');
     put('lead-page-actions',btn('Путь лида','path-expand')+(!s.final ? btn('Клиент отказался','decline') : '')+btn(l.stage==='MEETING_DONE' && l.repeatNeeded && l.meetings.some(function(m){return m.statusCode==='SCHEDULED';})?'Итоги повторной встречи':s.action,'primary',l.id,'accent'));

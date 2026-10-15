@@ -45,6 +45,7 @@ import { fileURLToPath } from 'node:url';
 import { logRun, codesFrom, failsFrom, isEtalon } from './runlog.mjs';
 import { includersOf } from './fragments.mjs';
 import { need, dsPaths } from './project.mjs';
+import { HOOK_BINDS as HOOK_BIND_ROWS } from './hook-binds.mjs';
 
 /* Корень проекта и каталоги ДС и харнеса — из манифеста project.json
    (project.mjs; реструктуризация, шаг Ш4), а не «четыре уровня вверх» и не
@@ -1608,16 +1609,9 @@ function checkMechanics(html, icons, pagePath, styles = screenStyles(html, pageP
      сторожем на угадывании — он дороже отсутствия сторожа (класс Л72).
      Сенсор называет случай и цену, решение остаётся за автором — тот же
      жанр, что З11. */
-  /* хук · как связывают поддерево · что засчитывается вызовом. Третий столбец
-     короче второго намеренно: связать можно и поштучно (`DSModal.bind(trigger)`
-     на реестре сделок) — это тот же ответ на вопрос правила. */
-  const HOOK_BINDS = [
-    ['data-modal', 'DSModal.bindAll', 'DSModal.bind'],
-    ['data-menu', 'DSMenu.bindAll', 'DSMenu.bind'],
-    ['data-drawer', 'DSDrawer.bindAll', 'DSDrawer.bind'],
-    ['data-tabs', 'DSTabs.wireAll', 'DSTabs.wire'],
-    ['data-icon', 'dsIcons.apply', 'dsIcons.apply'],
-  ];
+  /* хук · как связывают поддерево · что засчитывается вызовом — строки `static`
+     единого списка hook-binds.mjs (его же читает прогон page-run.mjs, ЖВ5). */
+  const HOOK_BINDS = HOOK_BIND_ROWS.filter((h) => h.static).map((h) => [h.hook, h.bind, h.accepted]);
   if (pagePath) {
     const pageDir = path.dirname(pagePath);
     /* Скрипты страницы: инлайновые и подключённые локальные, каждый ОТДЕЛЬНО.

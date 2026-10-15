@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 689.
+Документов: 702.
 
 ## Корень (4)
 
@@ -174,7 +174,7 @@
 |---|---|
 | [design-system/tools/ds-lint.md](../design-system/tools/ds-lint.md) | Линтер ДС: правила и проверки |
 
-## Агентная система (42)
+## Агентная система (45)
 
 | Документ | Аннотация |
 |---|---|
@@ -226,6 +226,7 @@
 | [.agents/skills/docs-split/SKILL.md](../.agents/skills/docs-split/SKILL.md) | Раскатка страниц документации ДС на docs-split |
 | [.agents/skills/docs-split/references/lessons.md](../.agents/skills/docs-split/references/lessons.md) | Уроки раскатки docs-split |
 | [.agents/skills/docs-split/references/pages-index.md](../.agents/skills/docs-split/references/pages-index.md) | Карта страниц документации |
+| [.agents/skills/docs-split/references/review.md](../.agents/skills/docs-split/references/review.md) | Приёмка страниц документации (паттерн \`docs-split\`) |
 | [.agents/skills/docs-split/references/skeleton.md](../.agents/skills/docs-split/references/skeleton.md) | Скелет страницы docs-split (эталон структуры) |
 | [.agents/skills/ds-lookup/SKILL.md](../.agents/skills/ds-lookup/SKILL.md) | Поиск по дизайн-системе IBP |
 | [.agents/skills/knowledge-lookup/SKILL.md](../.agents/skills/knowledge-lookup/SKILL.md) | Поиск по базе знаний продукта |
@@ -242,7 +243,9 @@
 | [.agents/skills/screen-review/SKILL.md](../.agents/skills/screen-review/SKILL.md) | Приёмка экрана |
 | [.agents/skills/screen-review/references/lessons-raw.md](../.agents/skills/screen-review/references/lessons-raw.md) | Журнал уроков — АРХИВ (raw) |
 | [.agents/skills/screen-review/references/lessons.md](../.agents/skills/screen-review/references/lessons.md) | Журнал уроков — выжимка (curated) |
+| [.agents/skills/screen-review/references/self-check.md](../.agents/skills/screen-review/references/self-check.md) | Самопроверка сборщика — короткий чек-лист |
 | [.agents/skills/screen-spec/SKILL.md](../.agents/skills/screen-spec/SKILL.md) | Спецификации и демо-данные прототипа |
+| [.agents/skills/screen-spec/references/concept-template.md](../.agents/skills/screen-spec/references/concept-template.md) | Досрочные проценты |
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
@@ -950,7 +953,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (84)
+## Задачи и заметки (94)
 
 ### Архив/черновики
 
@@ -978,7 +981,8 @@
 
 | Документ | Аннотация |
 |---|---|
-| [docs/tasks/0000-task-template.md](tasks/0000-task-template.md) | Implement feature X |
+| [docs/tasks/0000-review-template.md](tasks/0000-review-template.md) | XX0000 — ревью: что проверялось |
+| [docs/tasks/0000-task-template.md](tasks/0000-task-template.md) | Что сделать — одной строкой, по-русски |
 | [docs/tasks/MS0001-fix-repo.md](tasks/MS0001-fix-repo.md) | — |
 | [docs/tasks/MS0002-simplify-m4p-chat.md](tasks/MS0002-simplify-m4p-chat.md) | Упростить экран чата M4P: убрать временно ненужные функции |
 | [docs/tasks/MS0003-specs-to-common-template.md](tasks/MS0003-specs-to-common-template.md) | Привести спеки прототипов к общему шаблону |
@@ -1030,6 +1034,12 @@
 | [docs/tasks/RE0015-screen-map.md](tasks/RE0015-screen-map.md) | Карта экранов Post: майндмап страниц проекта, переход на любую страницу в один клик |
 | [docs/tasks/RE0016-dev-spec-template.md](tasks/RE0016-dev-spec-template.md) | Шаблон спецификации на разработку: md + автономный html со снимками состояний |
 | [docs/tasks/RE0017-early-interest.md](tasks/RE0017-early-interest.md) | Досрочные проценты: тайл транша, страница, окна «Новые проценты» и «Порядок погашения» |
+| [docs/tasks/RE0018-bank-contour-speed.md](tasks/RE0018-bank-contour-speed.md) | Скорость агентов на банковском контуре: диагноз потерь и ускорение харнеса |
+| [docs/tasks/RE0019-harness-speed.md](tasks/RE0019-harness-speed.md) | Ускорение харнеса: линтер, параллельный гейт, короткая самопроверка, заготовки, handoff, инструктаж |
+| [docs/tasks/RE0020-lessons-digest.md](tasks/RE0020-lessons-digest.md) | Уроки: выжимка без дублей, форма записей, сверка путей, прогон страницы в DOM |
+| [docs/tasks/RE0021-task-template.md](tasks/RE0021-task-template.md) | Задачи: единый шаблон, шаблон ревью, handoff и ревью в docs/tasks, учёт токенов и времени по этапам |
+| [docs/tasks/RE0022-contour-run.md](tasks/RE0022-contour-run.md) | Контрольный заход в рабочем контуре: замеры гейта, прогона страниц и сборки экрана |
+| [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
 
@@ -1050,6 +1060,9 @@
 | [docs/tasks/RE0011-ds-illustrations-dark.handoff.md](tasks/RE0011-ds-illustrations-dark.handoff.md) | RE0011 — handoff |
 | [docs/tasks/RE0015-screen-map.handoff.md](tasks/RE0015-screen-map.handoff.md) | RE0015 — handoff |
 | [docs/tasks/RE0017-early-interest.handoff.md](tasks/RE0017-early-interest.handoff.md) | RE0017-early-interest — handoff |
+| [docs/tasks/RE0019-harness-speed.handoff.md](tasks/RE0019-harness-speed.handoff.md) | RE0019 — handoff |
+| [docs/tasks/RE0020-lessons-digest.handoff.md](tasks/RE0020-lessons-digest.handoff.md) | RE0020 — handoff |
+| [docs/tasks/RE0021-task-template.handoff.md](tasks/RE0021-task-template.handoff.md) | RE0021 — handoff |
 
 ## Служебное (1)
 

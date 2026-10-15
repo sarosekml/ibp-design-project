@@ -43,7 +43,7 @@
   var PENDING_TTL = 20000, GUARD_TTL = 5000, SHOW_PAUSE = 450, POLL = 50;
   var LOG = '[proto panel]';
   /* свои элементы панели: не цель действий, не «изменено вручную», не запись */
-  var PANEL_SEL = '.pp-root, #pp-drawer, .pp-modal, .pp-hl, .snackbar-layer, .toast-layer';
+  var PANEL_SEL = '.pp-root, #pp-drawer, .pp-modal, .pp-hl, [data-pp-own]';
   var busy = null;   // { flow, from, to, phase } — пока идёт переход
   var playing = null;   // { node, state } — пока идут действия карты экранов (без busy и шины)
   var K_MAPNAV = 'pp.mapnav', MAP_RE = /(?:^#|&)ppmap=([^&]+)/;
