@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/core/dashboard-app/widgets/tiles/MeetingsTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Встречи — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.css">
+<link rel="stylesheet" href="../../../core/dashboard-app/widgets/tiles/StatCard/StatCard.css">
+<link rel="stylesheet" href="../../../core/dashboard-app/widgets/tiles/DateBadge/DateBadge.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Встречи">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Встречи» (MeetingsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+     Внешние отступы и место в колонках задаёт страница.
+
+     data-state — loading | data | empty | error | updating (partial не бывает:
+                  у встречи все поля обязательны)
+
+     Разметка держит все состояния сразу, нужное показывает MeetingsTile.css.
+     Строки, счётчики и выборку рисует MeetingsTile.js из HomeStore (выборка
+     «мои встречи», переключателя в тайле нет). У строки после контакта может
+     стоять «+N» других участников с тултипом-списком; у усечённого имени
+     клиента — тултип с полным именем (макет 15.10.2026). Счётчики — StatCard,
+     дата в строке — DateBadge в варианте «день недели + дата» (оба —
+     подчасти-кандидаты в ДС). Пустой стейт — по макету: счётчики остаются
+     с нулями, список заменяет иллюстрация; подвал со «Смотреть все…» на месте. -->
+<section class="tile lc-meetings" data-state="data" aria-labelledby="lc-meetings-title" id="tile-meetings">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" id="lc-meetings-title">Встречи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-meetings__busy" role="status" aria-label="Обновление встреч"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="meetings" aria-label="Перейти в раздел Встречи" data-tooltip="Перейти в раздел Встречи"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body lc-meetings__body">
+    <!-- Данные: счётчики-фильтры и список. Клик по счётчику показывает
+         только его выборку, повторный клик снимает фильтр. -->
+    <div class="lc-meetings__stats" role="group" aria-label="Фильтр встреч">
+      <button type="button" class="lc-stat lc-stat--s lc-stat--info" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">3</span></button>
+      <button type="button" class="lc-stat lc-stat--s" aria-pressed="false" data-stat="week"><span class="lc-stat__label">На неделе</span><span class="lc-stat__value">7</span></button>
+      <button type="button" class="lc-stat lc-stat--s lc-stat--warning" aria-pressed="false" data-stat="attention"><span class="lc-stat__label">Требует внимания</span><span class="lc-stat__value">1</span></button>
+    </div>
+    <div class="entity-list lc-meetings__list" aria-live="polite">
+      <div class="entity" data-meeting-id="M-0104">
+        <div class="entity__lead"><span class="lc-date" role="img" aria-label="12.10.2026"><span class="lc-date__day" aria-hidden="true">пн</span><span class="lc-date__month" aria-hidden="true">12.10</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО «АКЦИОНЕРНАЯ ФИНАНСОВАЯ КОРПОРАЦИЯ «СИСТЕМА»" data-tooltip-truncated="only">ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО «АКЦИОНЕРНАЯ …</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Ковалёв Д. Н. – Директор по строительству</span></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-meetings__time"><i data-icon="clock-timer" aria-hidden="true"></i>10:00</span></div>
+        </div>
+        <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">Запланирована</span></span></div>
+      </div>
+      <div class="entity" data-meeting-id="M-0105">
+        <div class="entity__lead"><span class="lc-date" role="img" aria-label="13.10.2026"><span class="lc-date__day" aria-hidden="true">вт</span><span class="lc-date__month" aria-hidden="true">13.10</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="ПАО «Трубная группа»" data-tooltip-truncated="only">ПАО «Трубная группа»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Морозова И. С. – Директор по финансам<span aria-hidden="true">,&nbsp;</span><span class="tip-anchor"><span class="lc-meetings__more" data-tooltip-align="start" aria-describedby="lc-tip-mp-M-0105" aria-label="Ещё участников: 2">+2</span><span class="tip tip--main tip--top tip--start tip--floating tip--rich" role="tooltip" id="lc-tip-mp-M-0105"><span class="tip__text">Иванов П. А. – Управляющий директор</span><span class="tip__text">Спиридонов Д. С. – Руководитель блока развития</span><span class="tip__arrow"></span></span></span></span></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-meetings__time"><i data-icon="clock-timer" aria-hidden="true"></i>15:30</span></div>
+        </div>
+        <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">Запланирована</span></span></div>
+      </div>
+    </div>
+    <!-- Выборка фильтра пуста — строка причины на месте списка -->
+    <p class="lc-meetings__none" hidden>Встреч, требующих внимания, нет</p>
+
+    <!-- Загрузка: каркас в габаритах итогового содержимого -->
+    <div class="lc-meetings__loading" aria-busy="true" aria-label="Загрузка встреч">
+      <div class="lc-meetings__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-meetings__sk-rows">
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:45%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:30%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+      </div>
+    </div>
+
+    <!-- Данных нет: счётчики остаются с нулями, список заменяет
+         иллюстрация и строка причины (по макету главной) -->
+    <div class="lc-meetings__empty">
+      <span class="lc-meetings__empty-ico" aria-hidden="true"><i data-icon="calendar"></i></span>
+      <p class="lc-meetings__empty-text">Пока нет запланированных встреч</p>
+    </div>
+
+    <!-- Ошибка: причина и повтор; остальные тайлы работают -->
+    <div class="lc-meetings__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить встречи</p>
+          <p class="alert__text">Сервис календаря не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-meetings-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-meetings__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-meetings__foot-row">
+        <a class="link link--accent link--s" href="#" data-home-goto="meetings">Смотреть все…</a>
+      </div>
+    </footer>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>1.004</b></span><span>Обновлено: <b>15.10.2026</b></span><span>Категория: <b>Другое</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../index.html">Локальные компоненты Core</a> · core/dashboard-app</p>
+  <h1>Встречи</h1>
+  <p class="lead">Ближайшие встречи сотрудника с клиентами — с выборками «сегодня», «на неделе», «требует внимания»</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/core/dashboard-app</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile">apps/core/dashboard-app/widgets/tiles/MeetingsTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Главная — дашборд, второй ряд, 4 колонки из 12</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../core/dashboard-app/pages/HomePage.preview.html">apps/core/dashboard-app/pages/HomePage.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="MeetingCreateModal.doc.html">Новая встреча (MeetingCreateModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Зависит от</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">HomeStore — выборка «мои встречи» и счётчики</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет дизайнера «Главная» от 15.10.2026 (в репозитории не хранится)<br>решения человека 09.10.2026 и 15.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1.004 · обновлено 15.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Ближайшие встречи сотрудника с клиентами (сотрудник — организатор или участник), начиная с сегодняшних: дата с днём недели, клиент (тултип с полным именем при усечении), контакт — с «+N» других участников и тултипом-списком скрытых участников, время начала и статус. Три счётчика — выборки списка: «Сегодня», «На неделе» (семь дней с сегодняшнего), «Требует внимания»; клик по счётчику показывает только его выборку, повторный — снимает фильтр.</p>
+<p class="desc">Тайл показывает до шести встреч; остальные — в разделе «Встречи» (в прототипе раздела нет, переход показывает уведомление). Точек входа в создание встречи в тайле нет — создание из быстрых действий профиля.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile («Встречи»; действия: Spinner в обновлении, стрелка «Перейти в раздел Встречи»)
+└── тело (колонка)
+    ├── 3 × StatCard S — Сегодня (info) · На неделе · Требует внимания (warning)
+    ├── .entity-list — до 6 строк Entity M: DateBadge «день недели + дата» · клиент ·
+    │   контакт [, «+N» участников с тултипом] · время с иконкой часов ·
+    │   Chip статуса справа строки
+    ├── строка «выборка пуста»
+    └── подвал: Divider · «Смотреть все…»</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">обычный</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">StatCard</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">локальный — <code class="tok">../StatCard/StatCard.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">размер S</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Entity</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M, без интерактива; Label с усечением и тултипом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">DateBadge</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">локальный — <code class="tok">../DateBadge/DateBadge.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вариант <code class="tok">weekday</code> («пт / 09.10»), сегодня — <code class="tok">--today</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Chip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">XS, rounded; тон по статусу</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">M, neutral — стрелка раздела, тот же тон, что у иконки меню</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Link</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">accent S — «Смотреть все…», без иконки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Divider</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">горизонтальный, над подвалом</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Skeleton, Spinner, Alert</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">загрузка, обновление, ошибка</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.9fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tooltip</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">стрелка шапки; клиент — тултип при усечении; «+N» участников — rich, построчный список, сверху</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../design-system/components/organisms/Entity/Entity.html">Entity</a> · <a class="inl" href="../../../../design-system/components/atoms/Chip/Chip.html">Chip</a> · <a class="inl" href="../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a> · <a class="inl" href="../../../../design-system/components/atoms/Link/Link.html">Link</a> · <a class="inl" href="../../../../design-system/components/atoms/Divider/Divider.html">Divider</a> · <a class="inl" href="../../../../design-system/components/atoms/Skeleton/Skeleton.html">Skeleton</a> · <a class="inl" href="../../../../design-system/components/atoms/Spinner/Spinner.html">Spinner</a> · <a class="inl" href="../../../../design-system/components/molecules/Alert/Alert.html">Alert</a> · <a class="inl" href="../../../../design-system/components/molecules/Tooltip/Tooltip.html">Tooltip</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Локальные компоненты</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="StatCard.doc.html">StatCard</a><br><a class="inl" href="DateBadge.doc.html">DateBadge</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.css">MeetingsTile.css</a> · <a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.html">MeetingsTile.html</a> · <a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.js">MeetingsTile.js</a> · <a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.md">MeetingsTile.md</a> · <a class="inl" href="../../../core/dashboard-app/widgets/tiles/MeetingsTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">startDateTime</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">дата (DateBadge) и время начала</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ISO дата-время</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">clientName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент — тултип с полным именем при усечении</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">contactName</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">контакт клиента</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«Фамилия И. О.»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">contactPosition</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">должность контакта</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">participants</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">другие участники с клиентской стороны: «+N» в строке, список — в тултипе</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">Array&lt;{name, position}&gt;</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.7fr) minmax(0,1.4fr) minmax(0,1.9fr) minmax(0,1.3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">statusCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">статус</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingStatusCode</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Тоны статуса: <code class="tok">SCHEDULED</code> — info «Запланирована», <code class="tok">NEEDS_ATTENTION</code> — warning «Требует внимания», <code class="tok">PROTOCOL_DONE</code> — success «Протокол заполнен», <code class="tok">CANCELLED</code> — grey «Отменена» (отменённые на главную не попадают).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Аналитик ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">свои встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">точек входа в правку в тайле нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Любая роль</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">свои встречи</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">то же</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Матрица ролей продукта — не решено (09.10.2026).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">скелетоны трёх счётчиков и четырёх строк; действий шапки нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">счётчики, до 6 строк, подвал</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у встречи все поля обязательны</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">счётчики остаются с нулями, список заменяет иллюстрация (иконка календаря) и «Пока нет запланированных встреч»; подвал на месте (макет главной)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert error «Не удалось загрузить встречи» + «Повторить»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">прежние строки на месте, в шапке Spinner S</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">точек входа в правку в тайле нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не применимо</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,0.9fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайла нет на странице — решает страница</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Когда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выборка</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">включён счётчик</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">только его встречи, счётчик выбран (<code class="tok">aria-pressed</code>)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1fr) minmax(0,0.8fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выборка пуста</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">у выборки нет встреч</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">строка «Сегодня встреч нет» / «На ближайшие семь дней встреч нет» / «Встреч, требующих внимания, нет»</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — это обзор.</li><li>Обязательные поля внутри: все поля встречи — см. «Поля».</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу: ничего.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент — одна строка с многоточием и тултипом с полным именем; контакт с «+N» — строка с усечением; подписи счётчиков — многоточие</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">до 6 строк, остальное — в разделе «Встречи»</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много участников</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">контакт + «+N»; тултип «+N» — список скрытых участников, по одному в строке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">до 300px своей ширины счётчики — в колонку</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">без изменений</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Результат</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Клик по счётчику</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список — только его выборка; повторный клик — снять</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Alert → «Повторить»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> → данные</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стрелка шапки, «Смотреть все…»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">событие перехода: страница показывает уведомление (раздела в прототипе нет)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeStore.focus('meetings', filter)</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">включается выборка, тайл прокручивается в зону видимости, фокус — на счётчик</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,3fr) minmax(0,2.2fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Новая встреча сохранена (<code class="tok">HomeStore</code>, событие <code class="tok">meetings</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список и счётчики пересчитываются</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2fr) minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Триггер</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что внутри</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Что меняется после</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Кто ещё вызывает</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,2fr) minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">модальное окно <code class="tok">MeetingCreateModal</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">клиент, тема, дата, начало, окончание</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">новая встреча в списке и счётчиках</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">HomeProfileTile</code> — быстрое действие</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкендa</h3>
+<p class="desc">Встречи сотрудника с сегодняшнего дня, без отменённых; поля — «Поля». Сортировка — по началу.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/mock-meetings.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.MOCK_MEETINGS</code>, <code class="tok">MEETING_STATUS_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingRsDto[]</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">../../../data/home-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">window.HomeStore</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">выборки и счётчики</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.8fr) minmax(0,2.3fr) minmax(0,1.6fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">fixtures.json</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">демо витрины</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (09.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,1fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-4 colw-12</code> на главной</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место в сетке страницы</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,1fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-state</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">loading</code> · <code class="tok">data</code> · <code class="tok">empty</code> · <code class="tok">error</code> · <code class="tok">updating</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">состояние данных</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Скрипт: <code class="tok">MeetingsTile.js</code> (<code class="tok">window.LcMeetingsTile</code>: <code class="tok">render</code>, <code class="tok">setState</code>, <code class="tok">refresh</code>, <code class="tok">focus</code>). Тайл сам находит корни <code class="tok">.lc-meetings</code> на загрузке.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MeetingsTile.html</code>, <code class="tok">.css</code>, <code class="tok">.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/MeetingsTile/MeetingsTile.tsx</code> (host-app)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,2fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Выборки и счётчики</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/home-store.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">селекторы стора главной</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.5fr) minmax(0,2.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Как сделано</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Почему</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.5fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: у счётчиков нет рамки</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тонкая нейтральная рамка видна всегда</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">образец Card — рамка читается и без наведения; решение 15.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.5fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Макет: иллюстрация-календарь</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">иконка calendar ДС крупным планом</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">фирменной иллюстрации в проекте нет — иконка как заменитель, вопрос дизайнеру</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.3fr) minmax(0,1.5fr) minmax(0,2.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Правило пустого стейта («строка причины и действие»)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">пустой стейт с иллюстрацией, без действия</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макет главной 15.10.2026 — счётчики с нулями и иллюстрация</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">№</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вопрос</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Статус</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">«На неделе» — семь дней с сегодняшнего, не календарная неделя — <b>допущение</b> (09.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нужно подтверждение владельца</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Что значит «Требует внимания» и кто ставит этот статус — <b>допущение</b> по подписи макета</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос владельцу продукта</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">3</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Поля <code class="tok">contactName</code> / <code class="tok">contactPosition</code> (контакт клиента) и <code class="tok">participants</code> (другие участники) — <b>допущение</b> по строкам макета «Иванов П. А. – Директор, +2»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос владельцу продукта</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">4</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Иллюстрация пустого стейта — фирменная или иконка ДС</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вопрос дизайнеру</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/core/dashboard-app/widgets/tiles/MeetingsTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/core/dashboard-app/pages/HomePage.html): окна и подчасти, которые открывает виджет. -->
+<!-- Локальный компонент «Карточка-счётчик» (StatCard) — подчасть, которую рисуют
+     скрипты тайлов главной (MeetingsTile, HomeTasksTile). Кандидат в ДС: в ДС нет
+     компонента «показатель-фильтр» с тоном и выбранным состоянием (решение
+     человека 09.10.2026 — пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     StatCard.css, а LcStatCard.render() (StatCard.js) клонирует шаблон.
+
+     Классы корня:
+       размер — без класса M (подпись, число, пояснение) · .lc-stat--s (число над подписью);
+       тон    — без класса нейтральный · --accent · --info · --warning · --error · --success;
+       выбор  — aria-pressed="true" на кнопке (фильтр списка включён);
+       .lc-stat--static — показатель без действия: корень span, без наведения и выбора. -->
+<template id="lc-stat-card-tpl">
+  <button type="button" class="lc-stat" aria-pressed="false">
+    <span class="lc-stat__label">Подпись</span>
+    <span class="lc-stat__value">0</span>
+    <span class="lc-stat__caption">Пояснение</span>
+  </button>
+</template>
+<!-- Локальный компонент «Блок даты» (DateBadge) — подчасть, которую рисуют скрипты
+     тайлов главной в ведущем слоте Entity M (строка встречи). Кандидат в ДС: в ДС
+     нет компактного «листка календаря» день + месяц (решение человека 09.10.2026 —
+     пока локально, с расчётом на перенос).
+
+     Страница вшивает фрагмент один раз — меткой ds-include; сборщик подключает
+     DateBadge.css, а LcDateBadge.render() (DateBadge.js) клонирует шаблон.
+
+     Модификатор .lc-date--today — дата совпадает с сегодняшней (тон accent).
+     Блок декоративен для чтения с экрана: дату полностью называет aria-label. -->
+<template id="lc-date-badge-tpl">
+  <span class="lc-date" role="img" aria-label="09.10.2026">
+    <span class="lc-date__day" aria-hidden="true">09</span>
+    <span class="lc-date__month" aria-hidden="true">окт</span>
+  </span>
+</template>
+<script src="../../../core/dashboard-app/data/mock-profile.js"></script>
+<script src="../../../core/dashboard-app/data/mock-meetings.js"></script>
+<script src="../../../core/dashboard-app/data/mock-tasks.js"></script>
+<script src="../../../core/dashboard-app/data/mock-news.js"></script>
+<script src="../../../core/dashboard-app/data/home-store.js"></script>
+<script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../kit-data.js"></script>
+<script src="../../kit-nav.js"></script>
+<script src="../../kit-docpage.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/StatCard/StatCard.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/DateBadge/DateBadge.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/HomeProfileTile/HomeProfileTile.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/MeetingsTile/MeetingsTile.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/HomeTasksTile/HomeTasksTile.js"></script>
+<script src="../../../core/dashboard-app/widgets/tiles/NewsTile/NewsTile.js"></script>
+<script src="../../../core/dashboard-app/widgets/modals/MeetingCreateModal/MeetingCreateModal.js"></script>
+<script src="../../../core/dashboard-app/widgets/modals/TaskCreateModal/TaskCreateModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"MeetingsTile","type":"tile","base":"../..","hub":"../../../../index.html","states":["data","loading","empty","error","updating"],"modes":[],"state":"data","mode":null,"width":530,"scenario":false,"fixtures":{"_":"Демо-данные витрины. Тайл берёт встречи из HomeStore (data/mock-meetings.js страницы-хозяина): объекты ниже описывают, что видно в каждом состоянии, а не подменяют данные.","data":{"counters":{"today":3,"week":7,"attention":1},"rows":6,"participants":{"M-0102":1,"M-0105":2}},"empty":{"counters":{"today":0,"week":0,"attention":0},"text":"Пока нет запланированных встреч"},"error":{"message":"Не удалось загрузить встречи"},"long":{"meetingId":"M-0104","clientName":"ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО «АКЦИОНЕРНАЯ ФИНАНСОВАЯ КОРПОРАЦИЯ «СИСТЕМА»","contactName":"Ковалёв Д. Н.","contactPosition":"Директор по строительству"}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Встречи» (MeetingsTile) — тайл главной.
+     Вшивается сборщиком (.agents/tools/assemble.mjs) по метке ds-include страницы.
+     Внешние отступы и место в колонках задаёт страница.
+
+     data-state — loading | data | empty | error | updating (partial не бывает:
+                  у встречи все поля обязательны)
+
+     Разметка держит все состояния сразу, нужное показывает MeetingsTile.css.
+     Строки, счётчики и выборку рисует MeetingsTile.js из HomeStore (выборка
+     «мои встречи», переключателя в тайле нет). У строки после контакта может
+     стоять «+N» других участников с тултипом-списком; у усечённого имени
+     клиента — тултип с полным именем (макет 15.10.2026). Счётчики — StatCard,
+     дата в строке — DateBadge в варианте «день недели + дата» (оба —
+     подчасти-кандидаты в ДС). Пустой стейт — по макету: счётчики остаются
+     с нулями, список заменяет иллюстрация; подвал со «Смотреть все…» на месте. -->
+<section class="tile lc-meetings" data-state="data" aria-labelledby="lc-meetings-title">
+  <header class="tile__header">
+    <div class="tile__header-main">
+      <div class="tile__title-row">
+        <h3 class="tile__title" id="lc-meetings-title">Встречи</h3>
+      </div>
+    </div>
+    <div class="tile__actions">
+      <span class="spin spin--s spin--accent lc-meetings__busy" role="status" aria-label="Обновление встреч"></span>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m" data-home-goto="meetings" aria-label="Перейти в раздел Встречи" data-tooltip="Перейти в раздел Встречи"><i data-icon="arrow-right"></i></button>
+    </div>
+  </header>
+
+  <div class="tile__body lc-meetings__body">
+    <!-- Данные: счётчики-фильтры и список. Клик по счётчику показывает
+         только его выборку, повторный клик снимает фильтр. -->
+    <div class="lc-meetings__stats" role="group" aria-label="Фильтр встреч">
+      <button type="button" class="lc-stat lc-stat--s lc-stat--info" aria-pressed="false" data-stat="today"><span class="lc-stat__label">Сегодня</span><span class="lc-stat__value">3</span></button>
+      <button type="button" class="lc-stat lc-stat--s" aria-pressed="false" data-stat="week"><span class="lc-stat__label">На неделе</span><span class="lc-stat__value">7</span></button>
+      <button type="button" class="lc-stat lc-stat--s lc-stat--warning" aria-pressed="false" data-stat="attention"><span class="lc-stat__label">Требует внимания</span><span class="lc-stat__value">1</span></button>
+    </div>
+    <div class="entity-list lc-meetings__list" aria-live="polite">
+      <div class="entity" data-meeting-id="M-0104">
+        <div class="entity__lead"><span class="lc-date" role="img" aria-label="12.10.2026"><span class="lc-date__day" aria-hidden="true">пн</span><span class="lc-date__month" aria-hidden="true">12.10</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО «АКЦИОНЕРНАЯ ФИНАНСОВАЯ КОРПОРАЦИЯ «СИСТЕМА»" data-tooltip-truncated="only">ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО «АКЦИОНЕРНАЯ …</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Ковалёв Д. Н. – Директор по строительству</span></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-meetings__time"><i data-icon="clock-timer" aria-hidden="true"></i>10:00</span></div>
+        </div>
+        <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">Запланирована</span></span></div>
+      </div>
+      <div class="entity" data-meeting-id="M-0105">
+        <div class="entity__lead"><span class="lc-date" role="img" aria-label="13.10.2026"><span class="lc-date__day" aria-hidden="true">вт</span><span class="lc-date__month" aria-hidden="true">13.10</span></span></div>
+        <div class="entity__main">
+          <div class="entity__titles"><div class="entity__labelrow"><span class="entity__label entity__label--truncate" data-tooltip="ПАО «Трубная группа»" data-tooltip-truncated="only">ПАО «Трубная группа»</span></div></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list">Морозова И. С. – Директор по финансам<span aria-hidden="true">,&nbsp;</span><span class="tip-anchor"><span class="lc-meetings__more" data-tooltip-align="start" aria-describedby="lc-tip-mp-M-0105" aria-label="Ещё участников: 2">+2</span><span class="tip tip--main tip--top tip--start tip--floating tip--rich" role="tooltip" id="lc-tip-mp-M-0105"><span class="tip__text">Иванов П. А. – Управляющий директор</span><span class="tip__text">Спиридонов Д. С. – Руководитель блока развития</span><span class="tip__arrow"></span></span></span></span></div>
+          <div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-meetings__time"><i data-icon="clock-timer" aria-hidden="true"></i>15:30</span></div>
+        </div>
+        <div class="entity__chips"><span class="chip chip--xs chip--rounded chip--info"><span class="chip__label">Запланирована</span></span></div>
+      </div>
+    </div>
+    <!-- Выборка фильтра пуста — строка причины на месте списка -->
+    <p class="lc-meetings__none" hidden>Встреч, требующих внимания, нет</p>
+
+    <!-- Загрузка: каркас в габаритах итогового содержимого -->
+    <div class="lc-meetings__loading" aria-busy="true" aria-label="Загрузка встреч">
+      <div class="lc-meetings__stats">
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+        <span class="sk-block sk-block--rounded" style="--sk-h:var(--space-48)" aria-hidden="true"></span>
+      </div>
+      <div class="lc-meetings__sk-rows">
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:55%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:45%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:30%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:60%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:40%" aria-hidden="true"></span></div></div>
+        <div class="sk-row"><div class="sk-group" style="flex:none;width:40px" aria-hidden="true"><span class="sk-line" style="--sk-w:55%"></span><span class="sk-line" style="--sk-w:90%"></span></div><div class="sk-group"><span class="sk-line sk-line--title" style="--sk-w:50%" aria-hidden="true"></span><span class="sk-line" style="--sk-w:35%" aria-hidden="true"></span></div></div>
+      </div>
+    </div>
+
+    <!-- Данных нет: счётчики остаются с нулями, список заменяет
+         иллюстрация и строка причины (по макету главной) -->
+    <div class="lc-meetings__empty">
+      <span class="lc-meetings__empty-ico" aria-hidden="true"><i data-icon="calendar"></i></span>
+      <p class="lc-meetings__empty-text">Пока нет запланированных встреч</p>
+    </div>
+
+    <!-- Ошибка: причина и повтор; остальные тайлы работают -->
+    <div class="lc-meetings__error">
+      <div class="alert alert--error alert--m" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body">
+          <p class="alert__title">Не удалось загрузить встречи</p>
+          <p class="alert__text">Сервис календаря не ответил. Остальные данные главной доступны.</p>
+          <div class="alert__buttons">
+            <button type="button" class="btn btn--outline btn--xs btn--error" data-meetings-act="retry"><span class="btn__label">Повторить</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="lc-meetings__foot">
+      <hr class="dvd dvd--h" aria-hidden="true">
+      <div class="lc-meetings__foot-row">
+        <a class="link link--accent link--s" href="#" data-home-goto="meetings">Смотреть все…</a>
+      </div>
+    </footer>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Встречи» (MeetingsTile).
+   Только внутренняя раскладка и показ своих блоков по data-state.
+   Цвета, шрифты, отступы — токены ДС; состояния компонентов ДС не
+   переопределяются. Счётчики — StatCard, дата — DateBadge (свои CSS). */
+
+/* Перестроение — по своей ширине: тайл стоит и на 4 колонках, и шире. */
+.lc-meetings { container-type: inline-size; }
+
+/* Тело — колонка: подвал прижат к низу, поэтому у тайлов одного ряда
+   «Смотреть все…» стоят на одной линии. */
+.lc-meetings__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lc-meetings__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+.lc-meetings__sk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+}
+
+/* Чип статуса — правее строки, по вертикали по центру (макет главной):
+   слот Chips вынесен из основной колонки Entity на уровень строки. */
+.lc-meetings .entity > .entity__chips {
+  flex: none;
+  align-self: center;
+  margin: 0 0 0 var(--space-8);
+}
+
+/* Бейдж даты прижат к верху строки (Entity ведущий по умолчанию центрует) */
+.lc-meetings .entity > .entity__lead { align-self: flex-start; }
+
+/* Время встречи — иконка часов и начало; иконка мелкая, приглушённая
+   (канон подписи Entity: 1.15em, --text-inactive) */
+.lc-meetings__time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.lc-meetings__time [data-icon] {
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--text-inactive);
+}
+
+/* «+N» других участников встречи — цель тултипа со списком скрытых */
+.lc-meetings__more { color: var(--text-secondary); }
+
+.lc-meetings__none,
+.lc-meetings__empty-text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+/* Пустой стейт по макету: иллюстрация (иконка календаря) и строка причины
+   по центру; счётчики остаются выше с нулями */
+.lc-meetings__empty {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  padding: var(--space-24) 0;
+  text-align: center;
+}
+.lc-meetings__empty-ico {
+  display: inline-flex;
+  font-size: var(--space-64);
+  color: var(--primary-dark);
+  opacity: .35;
+}
+
+.lc-meetings__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-top: auto;
+}
+.lc-meetings__foot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-meetings__loading,
+.lc-meetings__empty,
+.lc-meetings__error,
+.lc-meetings__busy { display: none; }
+
+.lc-meetings[data-state="loading"] .lc-meetings__loading { display: block; }
+.lc-meetings[data-state="empty"] .lc-meetings__empty { display: flex; }
+.lc-meetings[data-state="error"] .lc-meetings__error { display: block; }
+.lc-meetings[data-state="updating"] .lc-meetings__busy { display: inline-block; }
+
+/* Список скрыт в загрузке, пустоте и ошибке; счётчики и подвал уходят
+   только в загрузке и ошибке — в пустоте счётчики остаются с нулями,
+   подвал со «Смотреть все…» остаётся (макет главной). */
+.lc-meetings:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-meetings__list, .lc-meetings__none) { display: none; }
+.lc-meetings:is([data-state="loading"], [data-state="error"]) :is(.lc-meetings__body > .lc-meetings__stats, .lc-meetings__foot) { display: none; }
+/* Пока грузится или обновляется — действий в шапке нет: обновлять нечего */
+.lc-meetings:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-meetings__busy) { display: none; }
+
+/* Узкий тайл: подписи счётчиков длинные, ряд из трёх держится до 300px */
+@container (max-width: 300px) {
+  .lc-meetings__stats { grid-template-columns: minmax(0, 1fr); }
+}
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   MeetingsTile.js — тайл «Встречи» из HomeStore.
+
+   Тайл сам находит свои корни (.lc-meetings) на DOMContentLoaded и рисует
+   счётчики и список — так он живой на странице и в витрине. Выборка —
+   «мои встречи» (переключателя в тайле нет). Состояние загрузки ставит
+   страница (state="loading" метки); тайл его не снимает, а данные под ним
+   уже нарисованы.
+
+   API (window.LcMeetingsTile):
+     render(root)              — счётчики, список, «данных нет»
+     setState(root, state)     — data-state; data|empty считает сам по данным
+     refresh(root)             — обновление: updating → данные
+     focus(root, filter)       — показать выборку счётчика и прокрутить к тайлу
+   Слушает HomeStore: kind 'meetings' — перерисовка, 'focus' с widget
+   'meetings' — focus(). В пустом тайле счётчики остаются с нулями (макет).
+   Хуки рантаймов: data-modal (окно «Новая встреча» из витрины).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var LIMIT = 6;
+  var STATS = [
+    { key: 'today', label: 'Сегодня', tone: 'info' },
+    { key: 'week', label: 'На неделе', tone: '' },
+    { key: 'attention', label: 'Требует внимания', tone: 'warning' }
+  ];
+  var CHIP_TONE = { SCHEDULED: 'info', NEEDS_ATTENTION: 'warning', PROTOCOL_DONE: 'success', CANCELLED: 'grey' };
+  var NONE_TEXT = {
+    today: 'Сегодня встреч нет',
+    week: 'На ближайшие семь дней встреч нет',
+    attention: 'Встреч, требующих внимания, нет'
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  function st(root) { return root.__lcMeetings || (root.__lcMeetings = { filter: null }); }
+
+  /* Другие участники встречи: «, +N» после контакта, у «+N» — тултип со
+     списком скрытых участников (по одному в строке, tip--rich) — макет
+     главной 15.10.2026. */
+  function participantsHTML(m) {
+    if (!m.participants || !m.participants.length) return '';
+    var tipId = 'lc-tip-mp-' + String(m.meetingId).replace(/[^a-zA-Z0-9_-]/g, '');
+    var lines = m.participants.map(function (p) {
+      return '<span class="tip__text">' + esc(p.name + ' – ' + p.position) + '</span>';
+    }).join('');
+    return '<span aria-hidden="true">,&nbsp;</span>' +
+      '<span class="tip-anchor">' +
+        '<span class="lc-meetings__more" data-tooltip-align="start" aria-describedby="' + tipId + '" aria-label="Ещё участников: ' + m.participants.length + '">+' + m.participants.length + '</span>' +
+        '<span class="tip tip--main tip--top tip--start tip--floating tip--rich" role="tooltip" id="' + tipId + '">' + lines + '<span class="tip__arrow"></span></span>' +
+      '</span>';
+  }
+
+  function rowHTML(m, S) {
+    var labels = window.MEETING_STATUS_LABELS || {};
+    return '<div class="entity" data-meeting-id="' + esc(m.meetingId) + '">' +
+      '<div class="entity__lead" data-date="' + esc(m.startDateTime) + '"></div>' +
+      '<div class="entity__main">' +
+        '<div class="entity__titles"><div class="entity__labelrow">' +
+          '<span class="entity__label entity__label--truncate" data-tooltip="' + esc(m.clientName) + '" data-tooltip-truncated="only">' + esc(m.clientName) + '</span>' +
+        '</div></div>' +
+        '<div class="entity__subs entity__subs--single"><span class="entity__subs-list">' + esc(m.contactName + ' – ' + m.contactPosition) + participantsHTML(m) + '</span></div>' +
+        '<div class="entity__subs entity__subs--single"><span class="entity__subs-list lc-meetings__time"><i data-icon="clock-timer" aria-hidden="true"></i>' + esc(S.fmt.time(m.startDateTime)) + '</span></div>' +
+      '</div>' +
+      '<div class="entity__chips"><span class="chip chip--xs chip--rounded chip--' + CHIP_TONE[m.statusCode] + '"><span class="chip__label">' + esc(labels[m.statusCode] || m.statusCode) + '</span></span></div>' +
+    '</div>';
+  }
+
+  function setState(root, state) {
+    var S = window.HomeStore;
+    if (state === 'data' || state === 'empty') state = S && S.meetings('MY').length ? 'data' : 'empty';
+    root.setAttribute('data-state', state);
+  }
+
+  function render(root) {
+    var S = window.HomeStore;
+    if (!S || !window.LcStatCard || !window.LcDateBadge) return;
+    var s = st(root);
+    var empty = root.getAttribute('data-state') === 'empty';
+    var c = empty ? { today: 0, week: 0, attention: 0 } : S.meetingCounters('MY');
+    var stats = root.querySelector('.lc-meetings__body > .lc-meetings__stats');
+    stats.replaceChildren.apply(stats, STATS.map(function (d) {
+      return window.LcStatCard.render({ key: d.key, label: d.label, value: c[d.key], tone: d.tone, size: 's', pressed: s.filter === d.key, ariaLabel: d.label + ': ' + c[d.key] + (s.filter === d.key ? ', фильтр включён' : '') });
+    }));
+
+    var all = S.meetings('MY');
+    var shown = s.filter ? all.filter(function (m) { return S.meetingMatches(m, s.filter); }) : all;
+    var list = root.querySelector('.lc-meetings__list');
+    if (window.DSTooltip) window.DSTooltip.hideAll();
+    list.innerHTML = shown.slice(0, LIMIT).map(function (m) { return rowHTML(m, S); }).join('');
+    list.querySelectorAll('[data-date]').forEach(function (lead) {
+      lead.appendChild(window.LcDateBadge.render(lead.getAttribute('data-date'), { weekday: true }));
+    });
+
+    var none = root.querySelector('.lc-meetings__none');
+    none.hidden = shown.length > 0 || !all.length || empty;
+    if (s.filter) none.textContent = NONE_TEXT[s.filter];
+
+    if (window.dsIcons) window.dsIcons.apply(root);
+    if (window.DSTooltip) window.DSTooltip.bindAll(list);
+  }
+
+  /* Данные изменились или сменилась выборка: «данные» и «пусто» пересчитываются,
+     загрузку, ошибку и обновление не трогаем. Сам render() состояние не меняет —
+     состояние, заданное снаружи (страницей, витриной), он не перебивает. */
+  function update(root) {
+    var cur = root.getAttribute('data-state');
+    if (cur === 'data' || cur === 'empty') setState(root, 'data');
+    render(root);
+  }
+
+  function refresh(root) {
+    setState(root, 'updating');
+    setTimeout(function () { setState(root, 'data'); render(root); }, 900);
+  }
+
+  function focus(root, filter) {
+    st(root).filter = filter || null;
+    update(root);
+    root.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    var pressed = root.querySelector('.lc-stat[aria-pressed="true"]');
+    if (pressed) pressed.focus({ preventScroll: true });
+  }
+
+  function init(root) {
+    if (root.__lcMeetingsInit) return;
+    root.__lcMeetingsInit = true;
+    var s = st(root);
+
+    root.addEventListener('click', function (e) {
+      var card = e.target.closest('.lc-stat[data-stat]');
+      if (card && root.contains(card)) {
+        var key = card.getAttribute('data-stat');
+        s.filter = s.filter === key ? null : key;
+        render(root);
+        var again = root.querySelector('.lc-stat[data-stat="' + key + '"]');
+        if (again) again.focus();
+        return;
+      }
+      if (e.target.closest('[data-meetings-act="retry"]')) refresh(root);
+    });
+
+    if (window.HomeStore) window.HomeStore.on(function (ev) {
+      if (ev.kind === 'meetings') update(root);
+      if (ev.kind === 'focus' && ev.detail.widget === 'meetings') focus(root, ev.detail.filter);
+    });
+    render(root);
+  }
+
+  function initAll() { document.querySelectorAll('.lc-meetings').forEach(init); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
+
+  window.LcMeetingsTile = { render: render, setState: setState, refresh: refresh, focus: focus, init: init };
+})();
+</script>
+</body>
+</html>

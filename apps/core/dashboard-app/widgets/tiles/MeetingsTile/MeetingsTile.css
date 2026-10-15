@@ -1,0 +1,115 @@
+/* Локальный компонент «Встречи» (MeetingsTile).
+   Только внутренняя раскладка и показ своих блоков по data-state.
+   Цвета, шрифты, отступы — токены ДС; состояния компонентов ДС не
+   переопределяются. Счётчики — StatCard, дата — DateBadge (свои CSS). */
+
+/* Перестроение — по своей ширине: тайл стоит и на 4 колонках, и шире. */
+.lc-meetings { container-type: inline-size; }
+
+/* Тело — колонка: подвал прижат к низу, поэтому у тайлов одного ряда
+   «Смотреть все…» стоят на одной линии. */
+.lc-meetings__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lc-meetings__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+.lc-meetings__sk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+}
+
+/* Чип статуса — правее строки, по вертикали по центру (макет главной):
+   слот Chips вынесен из основной колонки Entity на уровень строки. */
+.lc-meetings .entity > .entity__chips {
+  flex: none;
+  align-self: center;
+  margin: 0 0 0 var(--space-8);
+}
+
+/* Бейдж даты прижат к верху строки (Entity ведущий по умолчанию центрует) */
+.lc-meetings .entity > .entity__lead { align-self: flex-start; }
+
+/* Время встречи — иконка часов и начало; иконка мелкая, приглушённая
+   (канон подписи Entity: 1.15em, --text-inactive) */
+.lc-meetings__time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.lc-meetings__time [data-icon] {
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--text-inactive);
+}
+
+/* «+N» других участников встречи — цель тултипа со списком скрытых */
+.lc-meetings__more { color: var(--text-secondary); }
+
+.lc-meetings__none,
+.lc-meetings__empty-text {
+  margin: 0;
+  font: var(--type-body-m);
+  color: var(--text-secondary);
+}
+/* Пустой стейт по макету: иллюстрация (иконка календаря) и строка причины
+   по центру; счётчики остаются выше с нулями */
+.lc-meetings__empty {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  padding: var(--space-24) 0;
+  text-align: center;
+}
+.lc-meetings__empty-ico {
+  display: inline-flex;
+  font-size: var(--space-64);
+  color: var(--primary-dark);
+  opacity: .35;
+}
+
+.lc-meetings__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-top: auto;
+}
+.lc-meetings__foot-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* ── Что видно в каком состоянии ─────────────────────────────────── */
+.lc-meetings__loading,
+.lc-meetings__empty,
+.lc-meetings__error,
+.lc-meetings__busy { display: none; }
+
+.lc-meetings[data-state="loading"] .lc-meetings__loading { display: block; }
+.lc-meetings[data-state="empty"] .lc-meetings__empty { display: flex; }
+.lc-meetings[data-state="error"] .lc-meetings__error { display: block; }
+.lc-meetings[data-state="updating"] .lc-meetings__busy { display: inline-block; }
+
+/* Список скрыт в загрузке, пустоте и ошибке; счётчики и подвал уходят
+   только в загрузке и ошибке — в пустоте счётчики остаются с нулями,
+   подвал со «Смотреть все…» остаётся (макет главной). */
+.lc-meetings:is([data-state="loading"], [data-state="empty"], [data-state="error"]) :is(.lc-meetings__list, .lc-meetings__none) { display: none; }
+.lc-meetings:is([data-state="loading"], [data-state="error"]) :is(.lc-meetings__body > .lc-meetings__stats, .lc-meetings__foot) { display: none; }
+/* Пока грузится или обновляется — действий в шапке нет: обновлять нечего */
+.lc-meetings:is([data-state="loading"], [data-state="updating"]) .tile__actions > :not(.lc-meetings__busy) { display: none; }
+
+/* Узкий тайл: подписи счётчиков длинные, ряд из трёх держится до 300px */
+@container (max-width: 300px) {
+  .lc-meetings__stats { grid-template-columns: minmax(0, 1fr); }
+}

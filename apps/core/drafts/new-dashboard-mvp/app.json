@@ -1,8 +1,0 @@
-{
-  "id": "new-dashboard-mvp",
-  "track": "rnd",
-  "title": "Главная — дашборд (MVP)",
-  "desc": "Редизайн главной: профиль, мой день, встречи, задачи и новости по клиентам",
-  "home": "pages/HomePage.preview.html",
-  "icon": "layout-grid-01"
-}

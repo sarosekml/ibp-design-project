@@ -82,6 +82,15 @@ window.IBPHub = [
     icon: 'layout-grid-01'
   },
   {
+    id: 'dashboard-app',
+    group: 'projects',
+    title: 'Дашборд Аналитика',
+    desc: 'Редизайн главной: профиль, встречи, задачи и новости по клиентам',
+    href: 'apps/core/dashboard-app/pages/HomePage.preview.html',
+    root: 'apps/core/dashboard-app',
+    icon: 'layout-grid-01'
+  },
+  {
     id: 'deals-app',
     group: 'projects',
     title: 'Post — ДИД',
@@ -160,15 +169,6 @@ window.IBPHub = [
     desc: 'Единые лиды, главная «Мои проекты» и путь лида (MS0015). Отдельная версия на базе контекстных страниц MS0014.',
     href: 'apps/core/drafts/ibp-redesign-v2/pages/HomeBoard.preview.html',
     root: 'apps/core/drafts/ibp-redesign-v2',
-    icon: 'layout-grid-01'
-  },
-  {
-    id: 'new-dashboard-mvp',
-    group: 'concepts',
-    title: 'Главная — дашборд (MVP)',
-    desc: 'Редизайн главной: профиль, мой день, встречи, задачи и новости по клиентам',
-    href: 'apps/core/drafts/new-dashboard-mvp/pages/HomePage.preview.html',
-    root: 'apps/core/drafts/new-dashboard-mvp',
     icon: 'layout-grid-01'
   },
   {
