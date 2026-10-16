@@ -11,11 +11,14 @@
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body { margin: 0; font-family: var(--font-text), system-ui, sans-serif; color: var(--text-primary); background: var(--bg-page); }
 
-  .screen__content { gap: var(--space-12); }
-  /* спека — на всю свободную высоту; прокручивается внутри своей страницы */
-  .dsp-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  .dsp-view .tile__body { flex: 1; min-height: 0; display: flex; }
-  .dsp-frame { flex: 1; min-height: 0; width: 100%; border: 0; }
+  .dsp-meta { margin: 0; font: var(--type-body-s); color: var(--text-secondary); }
+  .dsp-versions { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+  .dsp-card-actions { display: flex; gap: var(--space-8); margin-top: var(--space-12); }
+  .es[hidden], .grid12[hidden] { display: none; }
+
+  @container screen (max-width: 1240px) {
+    .grid12 > [class*="colw-"] { grid-column: span var(--colw); }
+  }
 </style>
 </head>
 <body>
@@ -51,23 +54,12 @@
           <div class="phead__title-row">
             <div class="phead__title-group"><h1 class="phead__title">Спецификации на разработку</h1></div>
           </div>
-          <div class="phead__subtitle" id="dsp-meta"></div>
-        </div>
-        <div class="phead__actions" id="dsp-actions">
-          <button type="button" class="btn btn--outline btn--m" data-dsp-get="md"><i data-icon="file"></i><span class="btn__label">Скачать .md</span></button>
-          <button type="button" class="btn btn--outline btn--m" data-dsp-get="html"><i data-icon="file"></i><span class="btn__label">Скачать .html</span></button>
-          <button type="button" class="btn btn--accent btn--m" data-dsp-get="zip"><i data-icon="download"></i><span class="btn__label">Скачать папку (.zip)</span></button>
+          <div class="phead__subtitle"><span class="phead__meta">Сценарии Post для разработки: шаги, экраны, новые компоненты и снимки состояний</span></div>
         </div>
       </div>
 
-      <!-- #sec:content -->
-      <div class="tabs tabs--horiz" role="tablist" aria-label="Спецификации" data-tabs id="dsp-tabs"></div>
-
-      <section class="tile tile--headless col-12 dsp-view" id="dsp-view">
-        <div class="tile__body">
-          <iframe class="dsp-frame" id="dsp-frame" title="Спецификация на разработку" sandbox="allow-scripts"></iframe>
-        </div>
-      </section>
+      <!-- #sec:content — карточка на каждую спеку; версии (этапы) одной спеки — в её карточке -->
+      <div class="grid12" id="dsp-list"></div>
 
       <div class="es es--l" id="dsp-empty" hidden>
         <span class="illu es__illu" data-illu="empty-folder" aria-hidden="true"></span>
@@ -83,100 +75,43 @@
 <script src="../data/dev-specs.js"></script>
 <script src="../../../../ds-body.js"></script>
 <script>
-/* Экранный скрипт: вкладка на каждую спеку из window.DEV_SPECS (генераты dev-spec.mjs),
-   выбранная спека — тот же автономный html, что уйдёт разработчикам (iframe srcdoc),
-   выгрузка — Blob: .md, .html или папка <Spec>/ в zip без сжатия. Работает по file://. */
+/* Экранный скрипт: каталог спек из window.DEV_SPECS (генераты dev-spec.mjs). Спеки с одним названием —
+   версии (этапы) одной спеки: одна карточка, ссылка на каждую. Сама спека — Spec.html?spec=<id>. */
 (function () {
   'use strict';
-  var specs = (window.DEV_SPECS || []).slice().sort(function (a, b) { return a.title.localeCompare(b.title, 'ru'); });
-  var tabs = document.getElementById('dsp-tabs');
-  var frame = document.getElementById('dsp-frame');
-  var meta = document.getElementById('dsp-meta');
-  var current = null;
-
+  var all = (window.DEV_SPECS || []).slice();
+  var list = document.getElementById('dsp-list');
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-  function ruDate(iso) { var d = new Date(iso); function p(n) { return (n < 10 ? '0' : '') + n; } return p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + d.getFullYear(); }
+  function href(s) { return 'Spec.html?spec=' + encodeURIComponent(s.id); }
+  function byVersion(a, b) { return String(a.version).localeCompare(String(b.version), 'ru', { numeric: true }); }
 
-  if (!specs.length) {
-    tabs.hidden = true;
-    document.getElementById('dsp-view').hidden = true;
-    document.getElementById('dsp-actions').hidden = true;
+  if (!all.length) {
+    list.hidden = true;
     document.getElementById('dsp-empty').hidden = false;
     return;
   }
-
-  function show(id) {
-    current = specs.filter(function (s) { return s.id === id; })[0] || specs[0];
-    Array.prototype.forEach.call(tabs.querySelectorAll('.tab'), function (t) {
-      var on = t.getAttribute('data-spec') === current.id;
-      t.classList.toggle('tab--selected', on);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.setAttribute('tabindex', on ? '0' : '-1');
-    });
-    frame.srcdoc = current.html;
-    frame.title = 'Спецификация на разработку: ' + current.title;
-    meta.innerHTML = '<span class="phead__meta">Модуль ' + esc(current.module) + (current.version ? ' · версия ' + esc(current.version) : '') + (current.date ? ' · ' + esc(current.date) : '') + '</span>'
-      + '<span class="phead__meta"><span class="phead__meta-ico"><i data-icon="file"></i></span>Снимков ' + current.snaps
-      + (current.viewport ? ' · ' + current.viewport.w + '×' + current.viewport.h : '') + (current.taken ? ' · сняты ' + ruDate(current.taken) : '') + '</span>';
-    if (window.dsIcons) window.dsIcons.apply(meta);
-    try { history.replaceState(null, '', '#' + current.id); } catch (e) { /* file:// без истории — не важно */ }
-  }
-
-  tabs.innerHTML = specs.map(function (s) {
-    return '<button type="button" class="tab tab--m" role="tab" aria-selected="false" tabindex="-1" data-spec="' + esc(s.id) + '"><span class="tab__label">' + esc(s.title) + '</span></button>';
-  }).join('');
-  if (window.DSTabs) window.DSTabs.tabs(tabs, { onChange: function (t) { show(t.getAttribute('data-spec')); } });
-  tabs.addEventListener('click', function (e) { var t = e.target.closest('.tab'); if (t) show(t.getAttribute('data-spec')); });
-  show(location.hash.slice(1));
-
-  /* ---------- выгрузка ---------- */
-  function save(blob, name) {
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-  }
-
-  var CRC = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
-  function crc32(b) { var c = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
-  /* zip без сжатия: [{ name, text }] → Blob */
-  function zip(files) {
-    var enc = new TextEncoder(), parts = [], central = [], offset = 0, d = new Date();
-    var time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
-    var date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
-    function header(size) { var b = new ArrayBuffer(size); return { buf: b, v: new DataView(b) }; }
-    files.forEach(function (f) {
-      var name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
-      var h = header(30), v = h.v;
-      v.setUint32(0, 0x04034b50, true); v.setUint16(4, 20, true); v.setUint16(6, 0x0800, true); v.setUint16(8, 0, true);
-      v.setUint16(10, time, true); v.setUint16(12, date, true); v.setUint32(14, crc, true);
-      v.setUint32(18, data.length, true); v.setUint32(22, data.length, true); v.setUint16(26, name.length, true); v.setUint16(28, 0, true);
-      parts.push(h.buf, name, data);
-      var c = header(46), w = c.v;
-      w.setUint32(0, 0x02014b50, true); w.setUint16(4, 20, true); w.setUint16(6, 20, true); w.setUint16(8, 0x0800, true); w.setUint16(10, 0, true);
-      w.setUint16(12, time, true); w.setUint16(14, date, true); w.setUint32(16, crc, true);
-      w.setUint32(20, data.length, true); w.setUint32(24, data.length, true); w.setUint16(28, name.length, true);
-      w.setUint32(42, offset, true);
-      central.push(c.buf, name);
-      offset += 30 + name.length + data.length;
-    });
-    var size = central.reduce(function (s, p) { return s + p.byteLength; }, 0);
-    var e = header(22), x = e.v;
-    x.setUint32(0, 0x06054b50, true); x.setUint16(8, files.length, true); x.setUint16(10, files.length, true);
-    x.setUint32(12, size, true); x.setUint32(16, offset, true);
-    return new Blob(parts.concat(central, [e.buf]), { type: 'application/zip' });
-  }
-
-  document.getElementById('dsp-actions').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-dsp-get]');
-    if (!b || !current) return;
-    var kind = b.getAttribute('data-dsp-get'), id = current.id;
-    if (kind === 'md') save(new Blob([current.md], { type: 'text/markdown;charset=utf-8' }), id + '.md');
-    else if (kind === 'html') save(new Blob([current.html], { type: 'text/html;charset=utf-8' }), id + '.html');
-    else save(zip([{ name: id + '/' + id + '.md', text: current.md }, { name: id + '/' + id + '.html', text: current.html }]), id + '.zip');
+  var groups = [];
+  all.sort(function (a, b) { return a.title.localeCompare(b.title, 'ru'); }).forEach(function (s) {
+    var g = groups.filter(function (x) { return x.title === s.title; })[0];
+    if (!g) groups.push(g = { title: s.title, items: [] });
+    g.items.push(s);
   });
+  list.innerHTML = groups.map(function (g) {
+    var items = g.items.sort(byVersion);
+    var last = items[items.length - 1];
+    var versions = items.length > 1
+      ? '<div class="dsp-versions">' + items.map(function (s) {
+        return '<a class="btn btn--outline btn--s" href="' + href(s) + '"><span class="btn__label">' + esc(s.stage || 'Версия ' + s.version) + '</span></a>';
+      }).join('') + '</div>'
+      : '<div class="dsp-card-actions"><a class="btn btn--outline btn--s" href="' + href(last) + '"><span class="btn__label">Открыть</span></a></div>';
+    return '<section class="tile col-4 colw-6">'
+      + '<header class="tile__header"><div class="tile__header-main"><div class="tile__title-row"><h2 class="tile__title">' + esc(g.title) + '</h2></div></div>'
+      + '<div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m" href="' + href(last) + '" aria-label="Открыть: ' + esc(g.title) + '"><i data-icon="arrow-right"></i></a></div></header>'
+      + '<div class="tile__body"><p class="dsp-meta">Модуль ' + esc(last.module) + '</p>'
+      + '<p class="dsp-meta">' + (last.version ? 'версия ' + esc(last.version) : '') + (last.date ? ' · ' + esc(last.date) : '') + ' · снимков ' + last.snaps + '</p>'
+      + versions + '</div></section>';
+  }).join('');
+  if (window.dsIcons) window.dsIcons.apply(list);
 })();
 </script>
 </body>

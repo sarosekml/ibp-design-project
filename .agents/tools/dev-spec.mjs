@@ -43,8 +43,20 @@
          do: [действия flows.yaml]     click, fill, press, hover, focus, scroll, waitFor, wait
 
    Маркеры в тексте: `<!-- snap: id -->` — снимок; `<!-- snaps: a b c -->` —
-   галерея в ряд. Разделы `## 1. Коротко` … `## 7. Открытые вопросы` — канон
-   шаблона (SECTIONS ниже).
+   несколько снимков сеткой: по ширине кадров — до трёх в ряд (тайлы), до двух
+   (средние), широкие кадры — по одному; снимки окон (target с `.modal`) стоят
+   на скриме. `<!-- matrix: cols="А|Б" rows="В|Г" ids="a b c d" -->` — сетка
+   снимков с подписями столбцов и строк (виды тайла «данные × права»), id по
+   строкам, rows необязателен, пустая клетка — `_`. `<!-- snaps: cols=2 a b -->` —
+   столбцы задаёт автор. Цветной блок — цитата `> [!warning] …`. Образец чипа в таблице — `{chip:success Текст}`
+   (success | error | dark …). Блок ```scenario — схема сценария со стрелками
+   и условиями (формат — parseScenario); в html узел ведёт к снимку, кнопка
+   «К схеме сценария» возвращает, в md схема уходит блоком mermaid. Разделы
+   «Коротко», «Сценарий», «Экраны», «Новые локальные компоненты», «Тексты» — обязательные
+   разделы шаблона, «Данные и API» и «Открытые вопросы» — по желанию; номера подряд (SECTIONS ниже).
+   Окна в сетке — по ширине в шагах ДС: до `modal--w4` три в ряд, `w5`–`w9` два, `w10`–`w12` один. Заголовок таблицы — `#####`.
+   Необязательное поле front matter `stage` — подпись вкладки версии: спеки с
+   одним названием страница показывает вкладками версий.
 
    Коды:
      СР1 — файл и front matter: место, имя, разбор YAML, поля
@@ -52,7 +64,8 @@
      СР3 — страница снимка: нет файла, источник с метками <ds-include>
      СР4 — селекторы target, mark и действий do не встречаются в странице
      СР5 — текст: маркер ведёт на необъявленный снимок, снимок не использован,
-           нет раздела шаблона, нет заголовка «# …»
+           нет раздела шаблона, нет заголовка «# …», клеток matrix не столько,
+           сколько снимков, ошибка в схеме сценария
      СР6 — съёмка: страница не открылась, цель не найдена, ошибки JS
 
    Использование (из корня проекта):
@@ -83,10 +96,13 @@ const SELF = path.resolve(fileURLToPath(import.meta.url));
 const SUFFIX = '.dev-spec.md';
 const SPEC_RX = /^[A-Z][A-Za-z0-9]*$/;
 const VIEWPORT_RX = /^(\d{3,4})x(\d{3,4})$/;
-const FIELDS = ['spec', 'title', 'module', 'version', 'date', 'designer', 'sources', 'viewport', 'snaps'];
+const FIELDS = ['spec', 'title', 'module', 'version', 'stage', 'date', 'designer', 'sources', 'viewport', 'snaps'];
 const SNAP_FIELDS = ['id', 'title', 'page', 'target', 'mark', 'height', 'note', 'do'];
 const SECTIONS = ['Коротко', 'Сценарий', 'Экраны', 'Новые локальные компоненты', 'Данные и API', 'Тексты', 'Открытые вопросы'];
-const MARK_RX = /<!--\s*(snaps?)\s*:\s*([^>]*?)\s*-->/g;
+const OPTIONAL_SECTIONS = ['Данные и API', 'Открытые вопросы'];   // API разработке не нужен; решения и ответы живут в задаче
+const MARK_RX = /<!--\s*(snaps?|matrix)\s*:\s*([^>]*?)\s*-->/g;
+const SCENARIO_KINDS = { page: 'Экран', modal: 'Окно', state: 'Состояние', error: 'Ошибка', ok: 'Готово', warn: 'Под вопросом' };
+const EMPTY_CELL = '_';   // пустая клетка в ids сетки matrix
 const THEME = 'IBP Legacy';
 const INDEX = 'dev-specs.js';
 const MIME = {
@@ -135,6 +151,7 @@ export function readFrontMatter(core, fm) {
     title: req('title', 'название сценария'),
     module: req('module', 'модуль, чьи страницы снимаются: <раздел>/<имя>-app'),
     version: f.version ? R.str(f.version, 'version', true, true) : null,
+    stage: f.stage ? R.str(f.stage, 'stage', true, true) : null,
     date: f.date ? R.str(f.date, 'date', true, true) : null,
     designer: f.designer ? R.str(f.designer, 'designer', false, true) : null,
     sources: [],
@@ -207,15 +224,89 @@ export function readFrontMatter(core, fm) {
   return { spec, errors };
 }
 
-/** Маркеры текста по порядку: [{ kind: snap|snaps, ids, line }]. */
+/**
+ * Маркер → { kind, ids, cols?, rows? }. snap / snaps — список id; matrix — сетка
+ * снимков с подписями столбцов и строк: `<!-- matrix: cols="А|Б" rows="В|Г" ids="a b c d" -->`
+ * (ids — по строкам; rows необязателен).
+ */
+export function markerOf(kind, raw) {
+  if (kind !== 'matrix') {
+    /* snaps: `cols=2` среди id — число столбцов задаёт автор (иначе по ширине кадров) */
+    const words = raw.split(/[\s,]+/).filter(Boolean);
+    const opt = words.find((w) => /^cols=\d$/.test(w));
+    return { kind, ids: words.filter((w) => w !== opt), ...(opt ? { cols: Number(opt.slice(5)) } : {}) };
+  }
+  const at = {};
+  for (const m of raw.matchAll(/(\w+)\s*=\s*"([^"]*)"/g)) at[m[1]] = m[2];
+  const parts = (s) => (s ? s.split('|').map((x) => x.trim()) : []);
+  return { kind, ids: (at.ids || '').split(/[\s,]+/).filter(Boolean), cols: parts(at.cols), rows: parts(at.rows) };
+}
+
+/** Маркеры текста по порядку: [{ kind: snap|snaps|matrix, ids, line }]. */
 export function markersOf(body, bodyLine = 1) {
   const out = [];
   let inCode = false;
   body.split('\n').forEach((ln, i) => {
     if (/^\s*```/.test(ln)) inCode = !inCode;
     if (inCode) return;
-    for (const m of ln.matchAll(MARK_RX)) out.push({ kind: m[1], ids: m[2].split(/[\s,]+/).filter(Boolean), line: bodyLine + i });
+    for (const m of ln.matchAll(MARK_RX)) out.push({ ...markerOf(m[1], m[2]), line: bodyLine + i });
   });
+  return out;
+}
+
+/* ---------------- схема сценария ---------------- */
+
+/**
+ * Блок ```scenario — узлы и связи схемы сценария:
+ *   id | Название | вид | снимок      вид: page | modal (форма) или state | error | ok | warn (тон; форму берёт
+ *                                     из снимка — см. nodeShape); по умолчанию page;
+ *                                     снимок — id из snaps, клик по узлу ведёт к нему
+ *   a -> b | подпись                  связь; подпись — условие или действие
+ * Пустые строки и строки с «#» пропускаются.
+ */
+export function parseScenario(lines, firstLine = 1) {
+  const nodes = [], edges = [], errors = [];
+  lines.forEach((raw, i) => {
+    const line = firstLine + i;
+    const t = raw.trim();
+    if (!t || t.startsWith('#')) return;
+    const e = /^([a-z0-9-]+)\s*->\s*([a-z0-9-]+)\s*(?:\|\s*(.*))?$/.exec(t);
+    if (e) { edges.push({ from: e[1], to: e[2], label: (e[3] || '').trim(), line }); return; }
+    const p = t.split('|').map((x) => x.trim());
+    if (!/^[a-z0-9-]+$/.test(p[0]) || !p[1]) { errors.push({ line, text: 'схема сценария: «' + t + '» — узел «id | Название | вид | снимок» или связь «a -> b | подпись»' }); return; }
+    const kind = p[2] || 'page';
+    if (!(kind in SCENARIO_KINDS)) errors.push({ line, text: 'схема сценария: вид «' + kind + '» — один из ' + Object.keys(SCENARIO_KINDS).join(', ') });
+    nodes.push({ id: p[0], label: p[1], kind: kind in SCENARIO_KINDS ? kind : 'page', snap: p[3] || null, line });
+  });
+  return { nodes, edges, errors };
+}
+
+/**
+ * Как рисуется узел: форма — экран (`page`) или окно (`modal`), тон — статус (`state`, `error`, `ok`, `warn`)
+ * или `plain`. Это два разных признака, а «вид» узла в схеме объединяет их в одном слове: `page` и `modal`
+ * задают форму, `state` / `error` / `ok` / `warn` — тон. Узел с тоном берёт форму из своего снимка:
+ * снимок окна (target с `.modal`) — окно, иначе экран. Так «Ошибка расчёта» в окне платежа не
+ * превращается в экран только потому, что в схеме у неё вид `error`.
+ * snapIsModal(id) → true, если снимок id — окно.
+ */
+export function nodeShape(n, snapIsModal) {
+  const tone = n.kind === 'page' || n.kind === 'modal' ? 'plain' : n.kind;
+  const shape = n.kind === 'modal' ? 'modal' : n.kind === 'page' ? 'page' : n.snap && snapIsModal(n.snap) ? 'modal' : 'page';
+  return { shape, tone };
+}
+
+/** Блоки ```scenario в тексте: [{ lines, line }] (line — строка первой строки блока). */
+export function scenarioBlocks(body, bodyLine = 1) {
+  const all = body.split('\n');
+  const out = [];
+  for (let i = 0; i < all.length; i++) {
+    if (!/^\s*```scenario\s*$/.test(all[i])) continue;
+    const buf = [];
+    let j = i + 1;
+    while (j < all.length && !/^\s*```/.test(all[j])) buf.push(all[j++]);
+    out.push({ lines: buf, line: bodyLine + i + 1 });
+    i = j;
+  }
   return out;
 }
 
@@ -223,7 +314,7 @@ export function markersOf(body, bodyLine = 1) {
 export function numberSnaps(markers) {
   const num = Object.create(null);
   let n = 0;
-  for (const m of markers) for (const id of m.ids) if (!(id in num)) num[id] = ++n;
+  for (const m of markers) for (const id of m.ids) if (id !== EMPTY_CELL && !(id in num)) num[id] = ++n;
   return num;
 }
 
@@ -234,22 +325,52 @@ export function bodyDefects(spec, body, bodyLine) {
   const h1 = lines.findIndex((l) => /^#\s+\S/.test(l));
   if (h1 < 0) out.push({ code: 'СР5', line: bodyLine, text: 'нет заголовка «# <название>» — первой строкой текста' });
   const heads = lines.map((l, i) => ({ m: /^##\s+(\d+)\.\s+(.+?)\s*$/.exec(l), line: bodyLine + i })).filter((x) => x.m);
-  SECTIONS.forEach((name, i) => {
-    const h = heads.find((x) => x.m[2].replace(/\s*\(.*\)$/, '') === name);
-    if (!h) out.push({ code: 'СР5', line: bodyLine, text: 'нет раздела «## ' + (i + 1) + '. ' + name + '» — разделы шаблона обязательны; нечего сказать — строка «Нет.»' });
-    else if (Number(h.m[1]) !== i + 1) out.push({ code: 'СР5', line: h.line, text: 'раздел «' + name + '» — номер ' + (i + 1) + ', а не ' + h.m[1] });
+  /* обязательные разделы есть, идут в порядке шаблона, номера — подряд с 1 (необязательный раздел сдвигает следующие) */
+  const found = SECTIONS.map((name) => ({ name, h: heads.find((x) => x.m[2].replace(/\s*\(.*\)$/, '') === name) }));
+  found.forEach(({ name, h }) => {
+    if (!h && !OPTIONAL_SECTIONS.includes(name)) out.push({ code: 'СР5', line: bodyLine, text: 'нет раздела «## N. ' + name + '» — обязательные разделы шаблона: ' + SECTIONS.filter((s) => !OPTIONAL_SECTIONS.includes(s)).join(', ') + '; нечего сказать — строка «Нет.»' });
+  });
+  let order = 0;
+  found.filter((x) => x.h).forEach(({ name, h }, i) => {
+    if (Number(h.m[1]) !== i + 1) out.push({ code: 'СР5', line: h.line, text: 'раздел «' + name + '» — номер ' + (i + 1) + ', а не ' + h.m[1] + ' (номера идут подряд, необязательный раздел сдвигает следующие)' });
+    if (h.line < order) out.push({ code: 'СР5', line: h.line, text: 'раздел «' + name + '» стоит не по порядку шаблона: ' + SECTIONS.join(' → ') });
+    order = Math.max(order, h.line);
   });
   const declared = new Set(spec.snaps.map((s) => s.id).filter(Boolean));
   const used = new Set();
   for (const m of markersOf(body, bodyLine)) {
     if (!m.ids.length) out.push({ code: 'СР5', line: m.line, text: 'маркер без id снимка: <!-- ' + m.kind + ': id -->' });
     if (m.kind === 'snap' && m.ids.length > 1) out.push({ code: 'СР5', line: m.line, text: 'snap — один снимок; несколько в ряд — <!-- snaps: ' + m.ids.join(' ') + ' -->' });
+    if (m.kind === 'matrix') {
+      const per = m.cols.length;
+      if (!per) out.push({ code: 'СР5', line: m.line, text: 'matrix: нужен cols="Столбец А|Столбец Б"' });
+      else if (m.ids.length !== per * Math.max(1, m.rows.length)) out.push({ code: 'СР5', line: m.line, text: 'matrix: снимков ' + m.ids.length + ', а клеток ' + per * Math.max(1, m.rows.length) + ' (столбцов ' + per + ' × строк ' + Math.max(1, m.rows.length) + ') — id идут по строкам' });
+    }
     for (const id of m.ids) {
+      if (m.kind === 'matrix' && id === EMPTY_CELL) continue;
       if (!declared.has(id)) out.push({ code: 'СР5', line: m.line, text: 'снимка «' + id + '» нет в snaps' });
       used.add(id);
     }
   }
   for (const s of spec.snaps) if (s.id && !used.has(s.id)) out.push({ code: 'СР5', line: s.line, text: 'снимок «' + s.id + '» объявлен, но в тексте нет его маркера' });
+  for (const b of scenarioBlocks(body, bodyLine)) {
+    const sc = parseScenario(b.lines, b.line);
+    sc.errors.forEach((e) => out.push({ code: 'СР5', line: e.line, text: e.text }));
+    const ids = new Set();
+    for (const n of sc.nodes) {
+      if (ids.has(n.id)) out.push({ code: 'СР5', line: n.line, text: 'схема сценария: узел «' + n.id + '» объявлен дважды' });
+      ids.add(n.id);
+      if (n.snap && !declared.has(n.snap)) out.push({ code: 'СР5', line: n.line, text: 'схема сценария: снимка «' + n.snap + '» нет в snaps' });
+      else if (n.snap && !used.has(n.snap)) out.push({ code: 'СР5', line: n.line, text: 'схема сценария: снимка «' + n.snap + '» нет в тексте — клик по узлу вёл бы в никуда' });
+      /* форма узла (экран или окно) не должна противоречить снимку: явная пометка page / modal сверяется с ним */
+      else if (n.snap && (n.kind === 'page' || n.kind === 'modal')) {
+        const modal = isModalSnap(spec.snaps.find((s) => s.id === n.snap));
+        if (n.kind === 'page' && modal) out.push({ code: 'СР5', line: n.line, text: 'схема сценария: узел «' + n.id + '» помечен экраном (page), но снимок «' + n.snap + '» — окно; пометь modal, а для состояния или ошибки окна — state / error / ok / warn: форма возьмётся из снимка' });
+        if (n.kind === 'modal' && !modal) out.push({ code: 'СР5', line: n.line, text: 'схема сценария: узел «' + n.id + '» помечен окном (modal), но снимок «' + n.snap + '» — не кадр окна (в target нет .modal)' });
+      }
+    }
+    for (const e of sc.edges) for (const end of [e.from, e.to]) if (!ids.has(end)) out.push({ code: 'СР5', line: e.line, text: 'схема сценария: связь ведёт к узлу «' + end + '», которого нет' });
+  }
   return out;
 }
 
@@ -310,14 +431,15 @@ export function checkSpec(P, core, specAbs, lazyDs) {
 
 /* ---------------- markdown → html ---------------- */
 
-/** Строчная разметка: `код`, **жирный**, *курсив*, [ссылка](адрес). */
+/** Строчная разметка: `код`, **жирный**, *курсив*, [ссылка](адрес), образец чипа {chip:success Текст}. */
 export function inline(s) {
   const codes = [];
   let t = String(s).replace(/`([^`]+)`/g, (m, c) => { codes.push('<code>' + esc(c) + '</code>'); return '\u0000' + (codes.length - 1) + '\u0000'; });
   t = esc(t)
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, href) => '<a href="' + href + '">' + txt + '</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>');
+    .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>')
+    .replace(/\{chip:(\w+)\s+([^}]+)\}/g, '<span class="chip chip--s chip--fit chip--$1"><span class="chip__label">$2</span></span>');
   return t.replace(/\u0000(\d+)\u0000/g, (m, i) => codes[Number(i)]);
 }
 
@@ -363,16 +485,17 @@ export function mdToHtml(md, ctx = {}) {
     const l = lines[i];
     if (!l.trim()) { i++; continue; }
     if (/^\s*```/.test(l)) {
+      const lang = /^\s*```(\w*)/.exec(l)[1];
       const buf = [];
       i++;
       while (i < lines.length && !/^\s*```/.test(lines[i])) buf.push(lines[i++]);
       i++;
-      out.push('<pre><code>' + esc(buf.join('\n')) + '</code></pre>');
+      out.push(lang === 'scenario' && ctx.scenario ? ctx.scenario(buf) : '<pre><code>' + esc(buf.join('\n')) + '</code></pre>');
       continue;
     }
     if (/^\s*<!--/.test(l)) {
       const one = l.match(MARK_RX);
-      if (one && ctx.snap) { MARK_RX.lastIndex = 0; for (const m of l.matchAll(MARK_RX)) out.push(ctx.snap({ kind: m[1], ids: m[2].split(/[\s,]+/).filter(Boolean) })); i++; continue; }
+      if (one && ctx.snap) { MARK_RX.lastIndex = 0; for (const m of l.matchAll(MARK_RX)) out.push(ctx.snap(markerOf(m[1], m[2]))); i++; continue; }
       while (i < lines.length && !/-->/.test(lines[i])) i++;
       i++;
       continue;
@@ -401,6 +524,12 @@ export function mdToHtml(md, ctx = {}) {
     if (/^\s*>/.test(l)) {
       const buf = [];
       while (i < lines.length && /^\s*>/.test(lines[i])) buf.push(lines[i++].replace(/^\s*>\s?/, ''));
+      const am = /^\[!(warning|info|error|success)\]\s*/i.exec(buf[0] || '');
+      if (am) {   // цитата вида «> [!warning] текст» — цветной блок-алерт
+        buf[0] = buf[0].slice(am[0].length);
+        out.push('<div class="sp-alert sp-alert--' + am[1].toLowerCase() + '" role="note">' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen }) + '</div>');
+        continue;
+      }
       out.push('<blockquote>' + mdToHtml(buf.join('\n'), { ...ctx, heads: [], seen }) + '</blockquote>');
       continue;
     }
@@ -443,7 +572,12 @@ function list(lines, i, ctx, seen) {
       i++;
     }
     const plain = body.every((b) => !LIST_RX.test(b) && !/^\s*(\||>|```|<!--)/.test(b) && b.trim() !== '');
-    items.push('<li>' + (plain ? inline(body.map((b) => b.trim()).join(' ')) : mdToHtml(body.join('\n'), { ...ctx, heads: [], seen }).replace(/^<p>([\s\S]*?)<\/p>/, '$1')) + '</li>');
+    /* у шагов (нумерованный список) текст остаётся абзацем: страница рисует шаги путём и ограничивает его ширину */
+    const textOf = (s) => (ordered ? '<p>' + s + '</p>' : s);
+    items.push('<li>' + (plain ? textOf(inline(body.map((b) => b.trim()).join(' '))) : (() => {
+      const h = mdToHtml(body.join('\n'), { ...ctx, heads: [], seen });
+      return ordered ? h : h.replace(/^<p>([\s\S]*?)<\/p>/, '$1');
+    })()) + '</li>');
     while (i < lines.length && !lines[i].trim()) {
       const nx = lines[i + 1];
       const nm = nx !== undefined ? LIST_RX.exec(nx) : null;
@@ -453,6 +587,158 @@ function list(lines, i, ctx, seen) {
   }
   const tag = ordered ? 'ol' : 'ul';
   return { html: '<' + tag + (ordered && start !== 1 ? ' start="' + start + '"' : '') + '>' + items.join('') + '</' + tag + '>', next: i };
+}
+
+/* ---------------- схема сценария: раскладка и разметка ---------------- */
+
+const FLOW = { W: 172, H: 76, GX: 200, GY: 40, PAD: 16 };
+
+/**
+ * Раскладка по слоям слева направо: слой — самая длинная цепочка связей до узла;
+ * связи, замыкающие цикл (в порядке объявления), рисуются снизу пунктиром.
+ * → { pos: Map id → { x, y, layer }, edges: [{ ...связь, kind: 'next' | 'skip' | 'back', d, lx, ly }], width, height }.
+ */
+export function layoutScenario(sc) {
+  const { W, H, GX, GY, PAD } = FLOW;
+  const ids = sc.nodes.map((n) => n.id);
+  const known = new Set(ids);
+  const edges = sc.edges.filter((e) => known.has(e.from) && known.has(e.to) && e.from !== e.to);
+  const outs = new Map(ids.map((id) => [id, []]));
+  edges.forEach((e, i) => outs.get(e.from).push(i));
+  const state = new Map();
+  const back = new Set();
+  const dfs = (u) => {
+    state.set(u, 1);
+    for (const i of outs.get(u)) {
+      const v = edges[i].to;
+      if (state.get(v) === 1) back.add(i);
+      else if (!state.get(v)) dfs(v);
+    }
+    state.set(u, 2);
+  };
+  ids.forEach((id) => { if (!state.get(id)) dfs(id); });
+  const layer = new Map(ids.map((id) => [id, 0]));
+  for (let k = 0; k <= ids.length; k++) {
+    let moved = false;
+    edges.forEach((e, i) => { if (!back.has(i) && layer.get(e.to) < layer.get(e.from) + 1) { layer.set(e.to, layer.get(e.from) + 1); moved = true; } });
+    if (!moved) break;
+  }
+  const cols = [];
+  ids.forEach((id) => { (cols[layer.get(id)] = cols[layer.get(id)] || []).push(id); });
+  const preds = new Map(ids.map((id) => [id, []]));
+  edges.forEach((e, i) => { if (!back.has(i)) preds.get(e.to).push(e.from); });
+  for (let pass = 0; pass < 2; pass++) {
+    for (let l = 1; l < cols.length; l++) {
+      const p = new Map();
+      cols.forEach((c) => c.forEach((id, i) => p.set(id, i)));
+      cols[l] = cols[l].map((id, i) => { const a = preds.get(id); return { id, i, k: a.length ? a.reduce((s, x) => s + p.get(x), 0) / a.length : i }; })
+        .sort((a, b) => a.k - b.k || a.i - b.i).map((x) => x.id);
+    }
+  }
+  const step = H + GY;
+  const y = new Map();
+  cols.forEach((col) => {
+    const want = col.map((id, i) => { const a = preds.get(id); return a.length ? a.reduce((s, x) => s + y.get(x), 0) / a.length : i * step; });
+    const ys = [];
+    col.forEach((id, i) => ys.push(i ? Math.max(want[i], ys[i - 1] + step) : want[i]));
+    const shift = col.length ? (want.reduce((s, v) => s + v, 0) - ys.reduce((s, v) => s + v, 0)) / col.length : 0;
+    col.forEach((id, i) => y.set(id, ys[i] + shift));
+  });
+  const minY = Math.min(...y.values());
+  const pos = new Map();
+  ids.forEach((id) => pos.set(id, { x: PAD + layer.get(id) * (W + GX), y: Math.round(y.get(id) - minY + PAD), layer: layer.get(id) }));
+  let bottom = Math.max(...[...pos.values()].map((p) => p.y + H));
+  /* порты: связи делят сторону узла, не сливаясь в одну точку */
+  const side = (key, mine, other) => {
+    const groups = new Map();
+    edges.forEach((e, i) => { if (!back.has(i)) { const id = e[mine]; (groups.get(id) || groups.set(id, []).get(id)).push(i); } });
+    const port = new Map();
+    for (const [id, list] of groups) {
+      list.sort((a, b) => pos.get(edges[a][other]).y - pos.get(edges[b][other]).y || a - b);
+      list.forEach((i, k) => port.set(i, Math.round(pos.get(id).y + (H * (k + 1)) / (list.length + 1))));
+    }
+    return port;
+  };
+  const outPort = side('out', 'from', 'to');
+  const inPort = side('in', 'to', 'from');
+  const backs = edges.map((e, i) => i).filter((i) => back.has(i));
+  let lane = 0;
+  const corridor = (la, lb) => {
+    const lo = Math.min(la, lb), hi = Math.max(la, lb);
+    let b = 0;
+    for (const p of pos.values()) if (p.layer >= lo && p.layer <= hi) b = Math.max(b, p.y + H);
+    return b + 24 + 18 * lane++;
+  };
+  const routed = edges.map((e, i) => {
+    const a = pos.get(e.from), b = pos.get(e.to);
+    if (back.has(i)) {
+      /* уходит влево из нижней части узла в зазор перед его слоем, идёт под узлами и поднимается к низу цели */
+      const from = backs.filter((j) => edges[j].from === e.from).indexOf(i);
+      const x1 = a.x - 10 - from * 5, y1 = a.y + H - 12 - from * 10;
+      const x2 = b.x + W / 2 + backs.filter((j) => edges[j].to === e.to).indexOf(i) * 14;
+      const yc = corridor(b.layer, a.layer);
+      bottom = Math.max(bottom, yc);
+      return { ...e, kind: 'back', d: 'M' + a.x + ' ' + y1 + ' L' + x1 + ' ' + y1 + ' L' + x1 + ' ' + yc + ' L' + x2 + ' ' + yc + ' L' + x2 + ' ' + (b.y + H + 2), lx: Math.round((x1 + x2) / 2), ly: yc };
+    }
+    const xs = a.x + W, ys = outPort.get(i), xe = b.x, ye = inPort.get(i);
+    if (b.layer - a.layer <= 1) {
+      const c = (xe - xs) / 2;
+      return { ...e, kind: 'next', d: 'M' + xs + ' ' + ys + ' C' + (xs + c) + ' ' + ys + ' ' + (xe - c) + ' ' + ye + ' ' + (xe - 2) + ' ' + ye, lx: Math.round((xs + xe) / 2), ly: Math.round((ys + ye) / 2) };
+    }
+    const yc = corridor(a.layer + 1, b.layer - 1);
+    const xa = xs + 22, xb = xe - 22;   // вертикали у самих узлов, подписи гладких связей — в середине зазора
+    bottom = Math.max(bottom, yc);
+    return { ...e, kind: 'skip', d: 'M' + xs + ' ' + ys + ' L' + xa + ' ' + ys + ' L' + xa + ' ' + yc + ' L' + xb + ' ' + yc + ' L' + xb + ' ' + ye + ' L' + (xe - 2) + ' ' + ye, lx: Math.round((xa + xb) / 2), ly: yc };
+  });
+  /* тон связи — по тому, куда она ведёт: ошибка, успех, «под вопросом», обычный переход; возврат — серый */
+  const kindOf = new Map(sc.nodes.map((n) => [n.id, n.kind]));
+  const TONE = { error: 'error', ok: 'ok', warn: 'warn' };
+  routed.forEach((e) => { e.tone = e.kind === 'back' ? 'back' : TONE[kindOf.get(e.to)] || 'info'; });
+  const width = PAD * 2 + cols.length * W + (cols.length - 1) * GX;
+  return { pos, edges: routed, width, height: bottom + PAD };
+}
+
+const TONE_TITLES = { info: 'Обычный переход', error: 'Переход в ошибку', ok: 'Переход в успешное состояние', warn: 'Под вопросом', back: 'Возврат' };
+
+/** Схема сценария → html: узлы-ссылки на снимки, связи со стрелками и подписями. num — номера снимков. */
+export function flowHtml(sc, num, index = 1, snapIsModal = () => false) {
+  if (!sc.nodes.length) return '';
+  const { W, H } = FLOW;
+  const L = layoutScenario(sc);
+  const tones = [...new Set(L.edges.map((e) => e.tone))];
+  const mk = (tone) => 'sp-arrow-' + index + '-' + tone;
+  const at = (e) => ' data-from="' + esc(e.from) + '" data-to="' + esc(e.to) + '"';
+  const paths = L.edges.map((e) => '<path class="sp-flow__edge sp-flow__edge--' + e.tone + '"' + at(e) + ' d="' + e.d + '" marker-end="url(#' + mk(e.tone) + ')"/>').join('');
+  const labels = L.edges.filter((e) => e.label).map((e) => '<span class="sp-flow__label sp-flow__label--' + e.tone + '"' + at(e) + ' style="left:' + e.lx + 'px;top:' + e.ly + 'px">' + inline(e.label) + '</span>').join('');
+  const nodes = sc.nodes.map((n) => {
+    const p = L.pos.get(n.id);
+    const { shape, tone } = nodeShape(n, snapIsModal);
+    const hint = SCENARIO_KINDS[shape] + (tone !== 'plain' ? ' · ' + SCENARIO_KINDS[tone].toLowerCase() : '') + (n.snap && num[n.snap] ? ' · снимок ' + num[n.snap] : '');
+    const inner = '<span class="sp-node__hint">' + esc(hint) + '</span><span class="sp-node__title">' + inline(n.label) + '</span>';
+    const attrs = 'class="sp-node sp-node--' + shape + ' sp-node--' + tone + '" data-node="' + esc(n.id) + '" style="left:' + p.x + 'px;top:' + p.y + 'px;width:' + W + 'px;height:' + H + 'px"';
+    return n.snap ? '<a ' + attrs + ' href="#snap-' + esc(n.snap) + '" data-flow-to="snap-' + esc(n.snap) + '">' + inner + '</a>' : '<div ' + attrs + '>' + inner + '</div>';
+  }).join('');
+  const markers = tones.map((t) => '<marker id="' + mk(t) + '" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path class="sp-flow__head sp-flow__head--' + t + '" d="M1 1L11 6L1 11z"/></marker>').join('');
+  const shapes = sc.nodes.map((n) => nodeShape(n, snapIsModal));
+  const legend = [...new Set(shapes.map((x) => x.shape))].map((k) => '<span class="sp-flow__nkey sp-flow__nkey--' + k + '">' + SCENARIO_KINDS[k] + '</span>').join('')
+    + [...new Set(shapes.map((x) => x.tone).filter((t) => t !== 'plain'))].map((k) => '<span class="sp-flow__tkey sp-flow__tkey--' + k + '">' + SCENARIO_KINDS[k] + '</span>').join('')
+    + tones.map((t) => '<span class="sp-flow__key sp-flow__key--' + t + '">' + TONE_TITLES[t] + '</span>').join('');
+  return '<div class="sp-flow" id="scenario-flow' + (index > 1 ? '-' + index : '') + '" role="group" aria-label="Схема сценария">'
+    + '<button type="button" class="sp-flow__full">На весь экран</button>'
+    + '<div class="sp-flow__scroll"><div class="sp-flow__sizer"><div class="sp-flow__canvas" data-w="' + L.width + '" data-h="' + L.height + '" style="width:' + L.width + 'px;height:' + L.height + 'px">'
+    + '<svg width="' + L.width + '" height="' + L.height + '" viewBox="0 0 ' + L.width + ' ' + L.height + '" aria-hidden="true"><defs>' + markers + '</defs>' + paths + '</svg>'
+    + labels + nodes + '</div></div></div><div class="sp-flow__legend">' + legend + '</div></div>';
+}
+
+/** Схема сценария → блок mermaid для md. */
+export function mermaidOf(sc, pad = '') {
+  const id = (s) => s.replace(/-/g, '_');
+  const q = (s) => '"' + String(s).replace(/"/g, "'") + '"';
+  const rows = ['```mermaid', 'flowchart LR']
+    .concat(sc.nodes.map((n) => '  ' + id(n.id) + '[' + q(n.label) + ']'))
+    .concat(sc.edges.map((e) => '  ' + id(e.from) + (e.label ? ' -->|' + q(e.label) + '| ' : ' --> ') + id(e.to)))
+    .concat(['```']);
+  return rows.map((r) => pad + r).join('\n');
 }
 
 /* ---------------- сборка выгрузки ---------------- */
@@ -470,7 +756,11 @@ export function exportMd(spec, body, capture) {
     const s = byId.get(id);
     return '> **Снимок ' + num[id] + '** — ' + (s ? s.title : id) + ' · ' + sizeOf(capture && capture.snaps[id]) + ' (`' + file + '#snap-' + id + '`)';
   };
-  let lines = body.replace(/\r\n?/g, '\n').split('\n');
+  const text = body.replace(/\r\n?/g, '\n')
+    .replace(/\{chip:\w+\s+([^}]+)\}/g, '$1')
+    .replace(/^(\s*>\s*)\[!(warning|info|error|success)\]/gim, (m, a, k) => a + '[!' + k.toUpperCase() + ']')
+    .replace(/^([ \t]*)```scenario[ \t]*\n([\s\S]*?)^[ \t]*```[ \t]*$/gm, (m, pad, block) => mermaidOf(parseScenario(block.split('\n')), pad));
+  let lines = text.split('\n');
   let inCode = false;
   lines = lines.flatMap((l) => {
     if (/^\s*```/.test(l)) inCode = !inCode;
@@ -478,7 +768,7 @@ export function exportMd(spec, body, capture) {
     const ms = [...l.matchAll(MARK_RX)];
     if (!ms.length) return [l];
     const pad = /^\s*/.exec(l)[0];   // маркер в пункте списка — с его отступом, иначе список рвётся
-    return ms.flatMap((m, k) => (k ? ['>'] : []).concat(m[2].split(/[\s,]+/).filter(Boolean).flatMap((id, j) => (j ? ['>', line(id)] : [line(id)])))).map((x) => pad + x);
+    return ms.flatMap((m, k) => (k ? ['>'] : []).concat(markerOf(m[1], m[2]).ids.filter((id) => id !== EMPTY_CELL).flatMap((id, j) => (j ? ['>', line(id)] : [line(id)])))).map((x) => pad + x);
   });
   const h1 = lines.findIndex((l) => /^#\s+\S/.test(l));
   const meta = [
@@ -495,10 +785,16 @@ export function exportMd(spec, body, capture) {
   return lines.join('\n').replace(/\s+$/, '') + '\n' + appendix.join('\n') + '\n';
 }
 
-/** :root-правила общего CSS — токены ДС для самой страницы спеки. */
+/** Правила общего CSS для самой страницы спеки: токены ДС (:root) и Chip — образцы чипов в таблицах. */
 function tokensOf(shared) {
-  return shared.filter((t) => /^:root\s*\{/.test(t)).join('\n');
+  return shared.filter((t) => /^:root\s*\{/.test(t) || /^\.chip[\w-]*\s*[,{.:\[]/.test(t)).join('\n');
 }
+
+/** Снимок окна показывается на скриме, как в продукте. */
+const isModalSnap = (s) => !!(s && s.target && /\.modal\b/.test(s.target));
+
+/** Ширина окна в шагах ДС (`modal--w2` = 289 px, шаг ≈ 152,6 px: w3 = 442, w4 = 595, w7 = 1053) по ширине кадра. */
+export const modalColumns = (px) => Math.max(2, Math.round((px - 289) / 152.6) + 2);
 
 /** Автономный html: текст, оглавление, снимки; данные снимков — JSON внутри. */
 export function exportHtml(spec, body, capture) {
@@ -512,17 +808,34 @@ export function exportHtml(spec, body, capture) {
     const cap = '<figcaption><span class="sp-snap__num">Снимок ' + num[id] + '</span> · ' + esc(s ? s.title : id) + ' · <span class="sp-snap__size">' + sizeOf(c) + '</span>'
       + (s && s.note ? '<span class="sp-snap__note">' + inline(s.note) + '</span>' : '') + '</figcaption>';
     if (!c) return '<figure class="sp-snap sp-snap--missing" id="snap-' + esc(id) + '"><div class="sp-snap__empty">Снимок не снят</div>' + cap + '</figure>';
-    return '<figure class="sp-snap" id="snap-' + esc(id) + '" data-snap="' + esc(id) + '"><button type="button" class="sp-snap__frame" aria-label="Открыть снимок ' + num[id] + ' в натуральную величину"><span class="sp-snap__scale"></span></button>' + cap + '</figure>';
+    return '<figure class="sp-snap' + (isModalSnap(s) ? ' sp-snap--modal' : '') + '" id="snap-' + esc(id) + '" data-snap="' + esc(id) + '"><button type="button" class="sp-snap__frame" aria-label="Открыть снимок ' + num[id] + ' в натуральную величину"><span class="sp-snap__scale"></span></button>' + cap + '</figure>';
+  };
+  /* сколько снимков в ряд. Окна — по ширине в колонках сетки: до 4 колонок — три в ряд, 5–9 — два, 10–12 — один.
+     Остальные кадры (тайлы, страницы) — по пикселям: до 520 — три, до 760 — два, шире — по одному. */
+  const colsFor = (ids) => {
+    const w = Math.max(0, ...ids.map((id) => (capture.snaps[id] ? capture.snaps[id].w : 0)));
+    if (ids.length && ids.every((id) => isModalSnap(byId.get(id)))) { const n = modalColumns(w); return n <= 4 ? 3 : n <= 9 ? 2 : 1; }
+    return w && w <= 520 ? 3 : w && w <= 760 ? 2 : 1;
+  };
+  const gallery = (ids, cols) => { const n = cols || colsFor(ids); return '<div class="sp-gallery" data-cols="' + n + '" style="--cols:' + n + '">' + ids.map(figure).join('') + '</div>'; };
+  const matrix = (m) => {
+    const n = m.cols.length || 1;
+    const rows = m.rows.length ? m.rows : [''];
+    const head = (m.rows.length ? '<span class="sp-matrix__corner"></span>' : '') + m.cols.map((c) => '<span class="sp-matrix__col">' + inline(c) + '</span>').join('');
+    const body2 = rows.map((r, i) => (m.rows.length ? '<span class="sp-matrix__row">' + inline(r) + '</span>' : '') + m.ids.slice(i * n, (i + 1) * n).map((id) => (id === EMPTY_CELL ? '<span class="sp-matrix__empty"></span>' : figure(id))).join('')).join('');
+    return '<div class="sp-matrix' + (m.rows.length ? ' sp-matrix--rows' : '') + '" data-cols="' + n + '" style="--cols:' + n + '">' + head + body2 + '</div>';
   };
   const text = body.replace(/\r\n?/g, '\n');
   const h1Rx = /^#\s+(.+)$/m;
   const h1 = h1Rx.exec(text);
   const rest = h1 ? text.slice(0, h1.index) + text.slice(h1.index + h1[0].length) : text;
+  let flows = 0;
   const main = mdToHtml(rest, {
     heads, seen,
-    snap: (m) => (m.kind === 'snaps' ? '<div class="sp-gallery">' + m.ids.map(figure).join('') + '</div>' : m.ids.map(figure).join('')),
+    snap: (m) => (m.kind === 'snaps' ? gallery(m.ids, m.cols) : m.kind === 'matrix' ? matrix(m) : m.ids.map(figure).join('')),
+    scenario: (lines) => flowHtml(parseScenario(lines), num, ++flows, (id) => isModalSnap(byId.get(id))),
   });
-  const toc = heads.filter((h) => h.level === 2 || h.level === 3)
+  const toc = heads.filter((h) => h.level >= 2 && h.level <= 4)
     .map((h) => '<a class="sp-toc__link sp-toc__link--' + h.level + '" href="#' + h.id + '">' + inline(h.text) + '</a>').join('')
     + '<a class="sp-toc__link sp-toc__link--2" href="#snaps">Снимки</a>';
   const list = [...spec.snaps].sort((a, b) => num[a.id] - num[b.id]).map((s) => '<tr><td>' + num[s.id] + '</td><td><a href="#snap-' + esc(s.id) + '">' + esc(s.title) + '</a></td><td><code>' + esc(s.page) + '</code></td><td>' + esc(frameOf(s)) + '</td><td>' + sizeOf(capture.snaps[s.id]) + '</td></tr>').join('');
@@ -531,7 +844,7 @@ export function exportHtml(spec, body, capture) {
     shared: capture.shared,
     snaps: Object.fromEntries(spec.snaps.filter((s) => capture.snaps[s.id]).map((s) => {
       const c = capture.snaps[s.id];
-      return [s.id, { id: s.id, n: num[s.id], title: s.title, page: s.page, target: s.target, mark: s.mark, height: s.height, w: c.w, h: c.h, crop: !!s.target, htmlAttrs: c.htmlAttrs, body: c.body, local: c.local.join('\n') }];
+      return [s.id, { id: s.id, n: num[s.id], title: s.title, page: s.page, target: s.target, mark: s.mark, height: s.height, w: c.w, h: c.h, crop: !!s.target, modal: isModalSnap(s), htmlAttrs: c.htmlAttrs, body: c.body, local: c.local.join('\n') }];
     })),
     capture: { taken: capture.taken, viewport: capture.viewport, userAgent: capture.userAgent },
   };
@@ -555,26 +868,40 @@ export function exportHtml(spec, body, capture) {
 /* Стиль страницы спеки — на токенах ДС (:root-правила снимков вшиты выше). */
 const PAGE_CSS = [
   '*,*::before,*::after{box-sizing:border-box}',
-  'html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}',
+  'html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}',
   'body{margin:0;background:var(--bg-page);color:var(--text-primary);font:var(--type-body-m);font-family:var(--font-text),system-ui,sans-serif}',
   '.sp{display:grid;grid-template-columns:288px minmax(0,1fr);min-height:100vh}',
   '.sp-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:var(--space-24) var(--space-16);background:var(--bg-tile);border-right:1px solid var(--border-light)}',
   '.sp-toc__title{font:var(--type-body-m-strong);margin:0 0 var(--space-16) var(--space-8)}',
   '.sp-toc nav{display:flex;flex-direction:column;gap:var(--space-2)}',
-  '.sp-toc__link{display:block;padding:var(--space-4) var(--space-8);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;font:var(--type-body-s)}',
+  '.sp-toc__link{display:block;padding:var(--space-4) var(--space-8);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;font:var(--type-body-s);cursor:pointer}',
   '.sp-toc__link:hover{background:var(--secondary-bg-light)}',
   '.sp-toc__link--3{padding-left:var(--space-24);color:var(--text-secondary)}',
-  '.sp-main{padding:var(--space-32) var(--space-48) var(--space-96);min-width:0;max-width:1400px}',
+  '.sp-toc__link--4{padding-left:var(--space-40);color:var(--text-secondary);font:var(--type-body-xs)}',
+  '.sp-toc__link--active{background:var(--primary-bg);color:var(--text-primary);font:var(--type-body-s-strong)}',
+  '.sp-main{padding:var(--space-32) var(--space-48) var(--space-96);min-width:0;max-width:1600px}',
   '.sp-head{margin-bottom:var(--space-32)}',
   '.sp-head__kicker{font:var(--type-body-s);color:var(--text-secondary);margin-bottom:var(--space-4)}',
   '.sp-head__meta{font:var(--type-body-s);color:var(--text-secondary);margin:var(--space-4) 0 0}',
   'h1{font:var(--type-h2);margin:0 0 var(--space-8)}',
-  'h2{font:var(--type-h3-strong);margin:var(--space-48) 0 var(--space-16);padding-top:var(--space-16);border-top:1px solid var(--border-light)}',
-  'h3{font:var(--type-h4-strong);margin:var(--space-32) 0 var(--space-12)}',
-  'h4{font:var(--type-h5-strong);margin:var(--space-24) 0 var(--space-8)}',
-  'p{margin:0 0 var(--space-12)}',
-  'ul,ol{margin:0 0 var(--space-12);padding-left:var(--space-24)}',
+  'h2,h3,h4,h5,.sp-snap,.sp-flow{scroll-margin-top:var(--space-24)}',
+  'h2{font:var(--type-h3-strong);margin:var(--space-96) 0 var(--space-24);padding-top:var(--space-24);border-top:1px solid var(--border-light)}',
+  'h3{font:var(--type-h4-strong);margin:var(--space-64) 0 var(--space-16)}',
+  'h4{font:var(--type-h5-strong);margin:var(--space-40) 0 var(--space-12)}',
+  'h5{font:var(--type-h6-strong);margin:var(--space-32) 0 var(--space-8)}',
+  'h2+h3,h3+h4,h4+h5{margin-top:var(--space-24)}',
+  'p{margin:0 0 var(--space-12);max-width:960px}',
+  'ul,ol{margin:0 0 var(--space-12);padding-left:var(--space-24);max-width:960px}',
   'li{margin:var(--space-4) 0}',
+  /* шаги сценария — вертикальный путь: номер белым в зелёном круге, между кругами линия */
+  'ol{list-style:none;padding:0;max-width:none}',
+  'ol>li{position:relative;margin:0;padding:0 0 var(--space-40) calc(var(--space-48) + var(--space-8))}',
+  'ol>li:last-child{padding-bottom:0}',
+  'ol>li::before{content:counter(list-item);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--text-on-primary,#fff);font:var(--type-body-m-strong);display:flex;align-items:center;justify-content:center}',
+  'ol>li::after{content:"";position:absolute;left:15px;top:36px;bottom:4px;width:2px;background:var(--border-primary)}',
+  'ol>li:last-child::after{display:none}',
+  'ol>li>p:first-child{margin-top:0;padding-top:var(--space-4)}',
+  'li>.sp-snap,li>.sp-gallery,li>.sp-matrix,li>.sp-flow,p+.sp-snap,p+.sp-gallery,p+.sp-matrix{margin-top:var(--space-24)}',
   'a{color:var(--link)}',
   'code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--secondary-bg-light);border-radius:var(--radius-xs);padding:0 var(--space-4)}',
   'pre{background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);padding:var(--space-12) var(--space-16);overflow-x:auto;margin:0 0 var(--space-16)}',
@@ -585,28 +912,117 @@ const PAGE_CSS = [
   '.sp-table{overflow-x:auto;margin:0 0 var(--space-16)}',
   'table{border-collapse:collapse;width:100%;background:var(--bg-tile);font:var(--type-body-s)}',
   'th,td{border:1px solid var(--border-light);padding:var(--space-8) var(--space-12);text-align:left;vertical-align:top}',
+  'td .chip{vertical-align:middle}',
   'th{background:var(--secondary-bg-light);font:var(--type-body-s-strong)}',
-  '.sp-snap{margin:0 0 var(--space-24);padding:var(--space-12);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);min-width:0}',
+  /* снимки: карточка, рамка кадра, подпись */
+  '.sp-snap{display:flex;flex-direction:column;margin:0 0 var(--space-24);padding:var(--space-12);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card);min-width:0}',
   '.sp-snap__frame{display:block;width:100%;padding:0;border:0;background:var(--bg-page);cursor:zoom-in;overflow:hidden;position:relative;text-align:left}',
   '.sp-snap__scale{display:block;transform-origin:0 0}',
   '.sp-snap iframe,.sp-zoom iframe{display:block;border:0;background:var(--bg-page)}',
   '.sp-snap__frame iframe{pointer-events:none}',
   'figcaption{font:var(--type-body-s);color:var(--text-secondary);margin-top:var(--space-8)}',
+  '.sp-snap figcaption{margin-top:auto;padding-top:var(--space-8)}',
   '.sp-snap__num{font:var(--type-body-s-strong);color:var(--text-primary)}',
   '.sp-snap__note{display:block;margin-top:var(--space-4);color:var(--text-primary)}',
   '.sp-snap__empty{padding:var(--space-24);text-align:center;color:var(--text-secondary);background:var(--bg-page)}',
-  '.sp-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--space-16);align-items:start;margin:0 0 var(--space-24)}',
-  '.sp-gallery .sp-snap{margin:0}',
+  /* окно — на скриме, как в продукте */
+  '.sp-snap--modal .sp-snap__frame,.sp-zoom__stage--modal{background:linear-gradient(var(--modal-scrim,rgba(60,66,72,.48)),var(--modal-scrim,rgba(60,66,72,.48))),var(--bg-page);padding:var(--space-32)}',
+  /* несколько снимков: сетка по ширине кадров, без «лесенки» */
+  '.sp-gallery,.sp-matrix{display:grid;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:var(--space-24);align-items:stretch;margin:0 0 var(--space-24)}',
+  '.sp-gallery .sp-snap,.sp-matrix .sp-snap{margin:0;height:100%}',
+  '.sp-matrix--rows{grid-template-columns:minmax(96px,152px) repeat(var(--cols,1),minmax(0,1fr))}',
+  '.sp-matrix__col,.sp-matrix__row{font:var(--type-body-s-strong);color:var(--text-primary);align-self:center}',
+  '.sp-matrix__col{padding:0 var(--space-4)}',
+  '.sp-matrix__row{padding-right:var(--space-8)}',
+  '.sp-matrix__empty{display:block;min-height:64px;border:1px dashed var(--border-light);border-radius:var(--radius-card)}',
+  /* схема сценария: связи окрашены по тому, куда ведут */
+  '.sp-flow{position:relative;margin:0 0 var(--space-32);padding:var(--space-16);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card)}',
+  '.sp-flow__full{position:absolute;top:var(--space-12);right:var(--space-12);z-index:2;font:var(--type-body-s);padding:var(--space-4) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
+  '.sp-flow__full:hover{background:var(--secondary-bg-light)}',
+  '.sp-flow__scroll{overflow-x:auto;padding-top:var(--space-32)}',
+  '.sp-flow__sizer{position:relative}',
+  '.sp-flow__canvas{position:absolute;left:0;top:0;transform-origin:0 0}',
+  '.sp-flow svg{position:absolute;left:0;top:0;overflow:visible}',
+  '.sp-flow__edge{fill:none;stroke-width:2;stroke-linejoin:round;transition:opacity .15s}',
+  '.sp-flow__edge--info,.sp-flow__head--info{stroke:var(--st-blue)}',
+  '.sp-flow__edge--error{stroke:var(--st-red)}',
+  '.sp-flow__edge--ok{stroke:var(--st-green)}',
+  '.sp-flow__edge--warn{stroke:var(--st-orange)}',
+  '.sp-flow__edge--back{stroke:var(--st-grey);stroke-dasharray:6 5}',
+  '.sp-flow__head{stroke:none}',
+  '.sp-flow__head--info{fill:var(--st-blue)}',
+  '.sp-flow__head--error{fill:var(--st-red)}',
+  '.sp-flow__head--ok{fill:var(--st-green)}',
+  '.sp-flow__head--warn{fill:var(--st-orange)}',
+  '.sp-flow__head--back{fill:var(--st-grey)}',
+  '.sp-flow__label{position:absolute;transform:translate(-50%,-50%);max-width:120px;padding:2px var(--space-8);background-color:var(--bg-tile);border:1px solid;border-radius:var(--radius-xs);font:var(--type-body-xs);text-align:center;line-height:1.3;pointer-events:none;transition:opacity .15s}',
+  '.sp-flow__label--info{background-image:linear-gradient(var(--st-blue-light),var(--st-blue-light));color:var(--st-blue-dark);border-color:var(--st-blue)}',
+  '.sp-flow__label--error{background-image:linear-gradient(var(--st-red-light),var(--st-red-light));color:var(--st-red-dark);border-color:var(--st-red)}',
+  '.sp-flow__label--ok{background-image:linear-gradient(var(--st-green-light),var(--st-green-light));color:var(--st-green-dark);border-color:var(--st-green)}',
+  '.sp-flow__label--warn{background-image:linear-gradient(var(--st-orange-light),var(--st-orange-light));color:var(--st-orange-dark);border-color:var(--st-orange)}',
+  '.sp-flow__label--back{background-image:linear-gradient(var(--st-grey-light),var(--st-grey-light));color:var(--st-grey-dark);border-color:var(--st-grey)}',
+  '.sp-flow__legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-24);margin-top:var(--space-16);font:var(--type-body-xs);color:var(--text-secondary)}',
+  '.sp-flow__nkey{display:inline-flex;align-items:center;gap:var(--space-8)}',
+  '.sp-flow__nkey::before{content:"";box-sizing:border-box;width:22px;height:14px;background:var(--bg-page);border:1px solid var(--border-light);border-left:4px solid var(--primary);border-radius:var(--radius-xs)}',
+  '.sp-flow__nkey--modal::before{border-left:1px solid var(--border-primary);border-top:5px solid var(--st-grey);border-radius:var(--radius-s);box-shadow:3px 3px 0 var(--st-grey-light);background:var(--bg-tile)}',
+  '.sp-flow__tkey{display:inline-flex;align-items:center;gap:var(--space-8)}',
+  '.sp-flow__tkey::before{content:"";width:14px;height:14px;border-radius:3px;background:var(--tone)}',
+  '.sp-flow__tkey--state{--tone:var(--st-grey)}',
+  '.sp-flow__tkey--error{--tone:var(--st-red)}',
+  '.sp-flow__tkey--ok{--tone:var(--st-green)}',
+  '.sp-flow__tkey--warn{--tone:var(--st-orange)}',
+  '.sp-flow__key{display:inline-flex;align-items:center;gap:var(--space-8)}',
+  '.sp-flow__key::before{content:"";width:28px;height:0;border-top:2px solid var(--key)}',
+  '.sp-flow__key--info{--key:var(--st-blue)}',
+  '.sp-flow__key--error{--key:var(--st-red)}',
+  '.sp-flow__key--ok{--key:var(--st-green)}',
+  '.sp-flow__key--warn{--key:var(--st-orange)}',
+  '.sp-flow__key--back{--key:var(--st-grey)}',
+  '.sp-flow__key--back::before{border-top-style:dashed}',
+  '.sp-flow--focus .sp-flow__edge:not(.is-on),.sp-flow--focus .sp-flow__label:not(.is-on),.sp-flow--focus .sp-node:not(.is-near){opacity:.2}',
+  '.sp-node{position:absolute;display:flex;flex-direction:column;justify-content:center;gap:var(--space-2);padding:var(--space-6) var(--space-10) var(--space-6) var(--space-12);background:var(--bg-page);border:1px solid var(--border-light);border-left:4px solid var(--primary);border-radius:var(--radius-s);color:var(--text-primary);text-decoration:none;overflow:hidden;transition:opacity .15s}',
+  'a.sp-node{cursor:pointer}',
+  'a.sp-node:hover,a.sp-node:focus-visible{border-color:var(--primary);outline:0;background:var(--primary-bg)}',
+  /* форма узла: экран — плоская карточка, окно — «окно» со строкой заголовка, скруглением и тенью;
+     тон узла (состояние, ошибка, готово, под вопросом) — цвет планки экрана или строки заголовка окна */
+  '.sp-node{--tone:var(--primary);border-left-color:var(--tone)}',
+  '.sp-node--state{--tone:var(--st-grey)}',
+  '.sp-node--error{--tone:var(--st-red)}',
+  '.sp-node--ok{--tone:var(--st-green)}',
+  '.sp-node--warn{--tone:var(--st-orange)}',
+  '.sp-node--page{border-radius:var(--radius-xs)}',
+  '.sp-node--modal{--tone:var(--st-grey);padding-top:var(--space-20);border-left:1px solid var(--border-primary);border-radius:var(--radius-card);background:var(--bg-tile);box-shadow:5px 5px 0 var(--st-grey-light)}',
+  '.sp-node--modal.sp-node--state{--tone:var(--st-grey)}',
+  '.sp-node--modal.sp-node--error{--tone:var(--st-red)}',
+  '.sp-node--modal.sp-node--ok{--tone:var(--st-green)}',
+  '.sp-node--modal.sp-node--warn{--tone:var(--st-orange)}',
+  '.sp-node--modal::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--tone)}',
+  '.sp-node__hint{font:var(--type-body-xs);color:var(--text-secondary)}',
+  '.sp-node__title{font:var(--type-body-s-strong);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+  /* алерт в тексте: «> [!warning] …» */
+  '.sp-alert{margin:0 0 var(--space-16);padding:var(--space-12) var(--space-16);border-left:4px solid var(--info);border-radius:var(--radius-s);background:var(--info-bg);max-width:960px}',
+  '.sp-alert--warning{border-left-color:var(--warning);background:var(--warning-bg)}',
+  '.sp-alert--error{border-left-color:var(--st-red);background:var(--st-red-light)}',
+  '.sp-alert--success{border-left-color:var(--st-green);background:var(--st-green-light)}',
+  '.sp-alert p:last-child{margin:0}',
+  '.sp-flash{outline:2px solid var(--primary);outline-offset:4px}',
+  '.sp-back{position:fixed;right:var(--space-24);bottom:var(--space-24);z-index:9;font:var(--type-body-s-strong);padding:var(--space-8) var(--space-16);border:0;border-radius:var(--radius-control);background:var(--primary);color:var(--text-on-primary,#fff);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.24)}',
+  '.sp-back[hidden]{display:none}',
+  /* снимок в натуральную величину */
   '.sp-zoom{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;background:var(--bg-page)}',
   '.sp-zoom[hidden]{display:none}',
   '.sp-zoom__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);padding:var(--space-12) var(--space-24);background:var(--bg-tile);border-bottom:1px solid var(--border-light)}',
   '.sp-zoom__title{font:var(--type-body-m-strong)}',
   '.sp-zoom__close{font:var(--type-body-s);padding:var(--space-6) var(--space-12);border:1px solid var(--border-primary);border-radius:var(--radius-control);background:var(--bg-tile);color:var(--text-primary);cursor:pointer}',
   '.sp-zoom__body{flex:1;min-height:0;overflow:auto;padding:var(--space-24)}',
+  '.sp-zoom__stage{overflow:hidden;position:relative}',
+  '.sp-zoom__stage--flow{padding:var(--space-24);background:var(--bg-tile);border:1px solid var(--border-light);border-radius:var(--radius-card)}',
 ].join('\n');
 
 /* Рантайм страницы спеки: выполняется в браузере (toString). Снимок — iframe
-   srcdoc без скриптов (sandbox), вписан по ширине; клик — в натуральную величину. */
+   srcdoc без скриптов (sandbox), вписан по ширине; клик — на весь экран по ширине окна.
+   Якорные ссылки (оглавление, узлы схемы) идут скроллом, а не навигацией: в iframe со srcdoc
+   переход по «#…» ненадёжен. После прыжка из схемы — кнопка «К схеме сценария». */
 function viewer() {
   var data = JSON.parse(document.getElementById('devspec-data').textContent);
   var fonts = document.createElement('style');
@@ -634,6 +1050,17 @@ function viewer() {
     f.srcdoc = srcdoc(s);
     return f;
   }
+  function px(el, a, b) { var cs = getComputedStyle(el); return parseFloat(cs[a]) + parseFloat(cs[b]); }
+  /* вписать кадр s (внутри рамки box, масштаб — scale) в ширину рамки; cap — потолок масштаба */
+  function place(box, scale, s, cap) {
+    var inner = box.clientWidth - px(box, 'paddingLeft', 'paddingRight');
+    var k = Math.min(cap, inner / s.w);
+    scale.style.transform = 'scale(' + k + ')';
+    scale.style.width = s.w + 'px';
+    scale.style.height = s.h + 'px';
+    scale.style.marginLeft = Math.max(0, Math.floor((inner - s.w * k) / 2)) + 'px';
+    box.style.height = Math.ceil(s.h * k + px(box, 'paddingTop', 'paddingBottom')) + 'px';
+  }
   var figs = [];
   Array.prototype.forEach.call(document.querySelectorAll('figure[data-snap]'), function (fig) {
     var s = data.snaps[fig.getAttribute('data-snap')];
@@ -641,35 +1068,159 @@ function viewer() {
     var btn = fig.querySelector('.sp-snap__frame');
     var scale = fig.querySelector('.sp-snap__scale');
     scale.appendChild(frame(s));
-    if (!fig.parentNode.classList.contains('sp-gallery')) fig.style.maxWidth = 'calc(' + s.w + 'px + 2 * var(--space-12) + 2px)';   // узкий снимок не тянет карточку
+    var grid = fig.parentNode;
+    var wide = !(grid.classList.contains('sp-gallery') || grid.classList.contains('sp-matrix')) || grid.getAttribute('data-cols') === '1';
+    if (wide) fig.style.maxWidth = 'calc(' + s.w + 'px + 2 * var(--space-12) + 2px' + (s.modal ? ' + 2 * var(--space-32)' : '') + ')';   // узкий снимок не тянет карточку
     figs.push({ s: s, btn: btn, scale: scale });
     btn.addEventListener('click', function () { zoom(s); });
   });
+  var flows = Array.prototype.map.call(document.querySelectorAll('.sp-flow'), function (el) {
+    return { el: el, c: el.querySelector('.sp-flow__canvas'), sizer: el.querySelector('.sp-flow__sizer'), scroll: el.querySelector('.sp-flow__scroll') };
+  });
+  /* схема не мельче 0.8: у́же карточки — прокрутка внутри неё; на весь экран — кнопка в углу */
   function fit() {
-    figs.forEach(function (x) {
-      var k = Math.min(1, x.btn.clientWidth / x.s.w);
-      x.scale.style.transform = 'scale(' + k + ')';
-      x.scale.style.width = x.s.w + 'px';
-      x.btn.style.height = Math.ceil(x.s.h * k) + 'px';
+    figs.forEach(function (x) { place(x.btn, x.scale, x.s, 1); });
+    flows.forEach(function (x) {
+      var w = Number(x.c.getAttribute('data-w')), h = Number(x.c.getAttribute('data-h'));
+      var k = Math.max(0.8, Math.min(1, x.scroll.clientWidth / w));
+      x.c.style.transform = 'scale(' + k + ')';
+      x.sizer.style.width = Math.ceil(w * k) + 'px';
+      x.sizer.style.height = Math.ceil(h * k) + 'px';
     });
+    fitZoom();
   }
-  fit();
-  if (window.ResizeObserver) new ResizeObserver(fit).observe(document.querySelector('.sp-main'));
-  else window.addEventListener('resize', fit);
+  /* снимок на весь экран: экран — по ширине окна, кадр (тайл, окно) — не крупнее натуральной величины */
   var z = document.querySelector('.sp-zoom');
   var zb = z.querySelector('.sp-zoom__body');
+  var zs = null;
   var last = null;
+  function fitZoom() {
+    if (!zs) return;
+    if (zs.flow) {   // схема — по ширине окна, не крупнее 1.5
+      var inner = zs.stage.clientWidth - px(zs.stage, 'paddingLeft', 'paddingRight');
+      var k = Math.min(1.5, inner / zs.w);
+      zs.canvas.style.transform = 'scale(' + k + ')';
+      zs.stage.style.height = Math.ceil(zs.h * k + px(zs.stage, 'paddingTop', 'paddingBottom')) + 'px';
+      return;
+    }
+    place(zs.stage, zs.scale, zs.s, zs.s.crop ? 1 : Infinity);
+  }
+  function zoomFlow(x) {
+    last = document.activeElement;
+    zb.innerHTML = '';
+    var stage = document.createElement('div');
+    stage.className = 'sp-zoom__stage sp-zoom__stage--flow';
+    var canvas = x.c.cloneNode(true);
+    canvas.style.left = 'var(--space-24)';
+    canvas.style.top = 'var(--space-24)';
+    stage.appendChild(canvas);
+    zb.appendChild(stage);
+    zs = { flow: x.el, stage: stage, canvas: canvas, w: Number(x.c.getAttribute('data-w')), h: Number(x.c.getAttribute('data-h')) };
+    z.querySelector('.sp-zoom__title').textContent = 'Схема сценария';
+    z.hidden = false;
+    fitZoom();
+    z.querySelector('.sp-zoom__close').focus();
+  }
   function zoom(s) {
     last = document.activeElement;
     zb.innerHTML = '';
-    zb.appendChild(frame(s));
+    var stage = document.createElement('div');
+    stage.className = 'sp-zoom__stage' + (s.modal ? ' sp-zoom__stage--modal' : '');
+    var scale = document.createElement('div');
+    scale.className = 'sp-snap__scale';
+    scale.appendChild(frame(s));
+    stage.appendChild(scale);
+    zb.appendChild(stage);
+    zs = { s: s, stage: stage, scale: scale };
     z.querySelector('.sp-zoom__title').textContent = 'Снимок ' + s.n + ' · ' + s.title + ' · ' + s.w + ' × ' + s.h + ' px';
     z.hidden = false;
+    fitZoom();
     z.querySelector('.sp-zoom__close').focus();
   }
-  function close() { z.hidden = true; zb.innerHTML = ''; if (last && last.focus) last.focus(); }
+  function close() { z.hidden = true; zb.innerHTML = ''; zs = null; if (last && last.focus) last.focus(); }
   z.querySelector('.sp-zoom__close').addEventListener('click', close);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !z.hidden) close(); });
+  fit();
+  if (window.ResizeObserver) { new ResizeObserver(fit).observe(document.querySelector('.sp-main')); new ResizeObserver(fitZoom).observe(zb); }
+  else window.addEventListener('resize', fit);
+
+  /* якоря: скролл вместо навигации */
+  var back = document.createElement('button');
+  back.type = 'button';
+  back.className = 'sp-back';
+  back.hidden = true;
+  back.textContent = '← К схеме сценария';
+  document.body.appendChild(back);
+  var from = null;
+  function jump(id) {
+    var el = document.getElementById(id);
+    if (!el) return false;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    try { history.replaceState(null, '', '#' + id); } catch (e) { /* srcdoc и file:// без истории — не важно */ }
+    el.classList.add('sp-flash');
+    setTimeout(function () { el.classList.remove('sp-flash'); }, 1600);
+    return true;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    if (!id || !document.getElementById(id)) return;
+    e.preventDefault();
+    if (a.hasAttribute('data-flow-to')) {   // узел схемы: запомнить, откуда прыгнули (в оверлее — исходную схему страницы)
+      var origin = a.closest('.sp-zoom') ? (zs && zs.flow) : a.closest('.sp-flow');
+      if (origin) { from = { flow: origin, node: origin.querySelector('[data-node="' + a.getAttribute('data-node') + '"]') }; back.hidden = false; }
+    }
+    if (!z.hidden) close();
+    jump(id);
+  });
+  back.addEventListener('click', function () {
+    if (!from) return;
+    from.flow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (from.node) from.node.focus({ preventScroll: true });
+    back.hidden = true;
+    from = null;
+  });
+  flows.forEach(function (x) { x.el.querySelector('.sp-flow__full').addEventListener('click', function () { zoomFlow(x); }); });
+
+  /* наведение на узел: его связи и соседи ярче, остальное тускнеет */
+  function light(node, on) {
+    var canvas = node.closest('.sp-flow__canvas');
+    if (!canvas) return;
+    var id = node.getAttribute('data-node');
+    var near = {};
+    near[id] = true;
+    Array.prototype.forEach.call(canvas.querySelectorAll('[data-from]'), function (el) {
+      var hit = on && (el.getAttribute('data-from') === id || el.getAttribute('data-to') === id);
+      el.classList.toggle('is-on', hit);
+      if (hit) { near[el.getAttribute('data-from')] = true; near[el.getAttribute('data-to')] = true; }
+    });
+    Array.prototype.forEach.call(canvas.querySelectorAll('.sp-node'), function (n) { n.classList.toggle('is-near', on && !!near[n.getAttribute('data-node')]); });
+    canvas.classList.toggle('sp-flow--focus', on);
+  }
+  ['mouseover', 'focusin'].forEach(function (t) { document.addEventListener(t, function (e) { var n = e.target.closest && e.target.closest('.sp-node'); if (n) light(n, true); }); });
+  ['mouseout', 'focusout'].forEach(function (t) { document.addEventListener(t, function (e) { var n = e.target.closest && e.target.closest('.sp-node'); if (n) light(n, false); }); });
+  if (window.IntersectionObserver) {
+    var seeFlow = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting && en.intersectionRatio > 0.6) back.hidden = true; }); }, { threshold: [0.6] });
+    flows.forEach(function (x) { seeFlow.observe(x.el); });
+  }
+
+  /* оглавление подсвечивает раздел, в котором читатель */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sp-toc__link'));
+  var marks = links.map(function (a) { return document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); });
+  var queued = false;
+  function spy() {
+    queued = false;
+    var cur = -1;
+    marks.forEach(function (m, i) { if (m && m.getBoundingClientRect().top <= 120) cur = i; });
+    links.forEach(function (a, i) {
+      a.classList.toggle('sp-toc__link--active', i === cur);
+      if (i === cur) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', function () { if (!queued) { queued = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+  if (location.hash.length > 1) setTimeout(function () { var el = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (el) el.scrollIntoView(); }, 0);
 }
 
 /* ---------------- съёмка: служебная страница ---------------- */
@@ -1087,7 +1638,7 @@ export function captureFromHtml(html) {
 }
 
 function generatText(spec, md, html, P, specAbs, capture) {
-  const rec = { id: spec.spec, title: spec.title, module: spec.module, version: spec.version, date: spec.date, designer: spec.designer,
+  const rec = { id: spec.spec, title: spec.title, module: spec.module, version: spec.version, stage: spec.stage, date: spec.date, designer: spec.designer,
     snaps: spec.snaps.filter((s) => capture.snaps[s.id]).length, viewport: capture.viewport, taken: capture.taken, md, html };
   return HEADER + spec.spec + '/' + spec.spec + SUFFIX + '. Руками не править. */\n'
     + '/* Источник: ' + P.rel(specAbs) + '; пересборка — node .agents/tools/dev-spec.mjs ' + P.rel(specAbs) + ' */\n'
@@ -1245,7 +1796,7 @@ function selftest() {
   t('текст: разделы и маркеры (СР5)', () => {
     assert.deepEqual(bodyDefects(fm.spec, split.body, split.bodyLine), []);
     const lost = bodyDefects(fm.spec, split.body.replace('## 6. Тексты', '## 6. Подписи').replace('<!-- snap: page-b -->', '<!-- snap: page-x -->'), split.bodyLine);
-    assert.ok(lost.some((e) => /«## 6\. Тексты»/.test(e.text)));
+    assert.ok(lost.some((e) => /«## N\. Тексты»/.test(e.text)));
     assert.ok(lost.some((e) => /page-x/.test(e.text)));
     const unused = bodyDefects(fm.spec, split.body.replace('<!-- snaps: tile-a page-b -->', ''), split.bodyLine);
     assert.ok(unused.some((e) => /tile-a.*нет его маркера/.test(e.text)));
@@ -1257,7 +1808,7 @@ function selftest() {
     assert.equal(inline('a **b** *c* `d<e>` [x](y)'), 'a <strong>b</strong> <em>c</em> <code>d&lt;e&gt;</code> <a href="y">x</a>');
     assert.equal(inline('snake_case и 2*3*4'), 'snake_case и 2*3*4');
     const h = mdToHtml(split.body.split('## 3.')[0].replace(/<!--[^>]*-->/g, ''));
-    assert.ok(/<ol><li>Шаг один<\/li><li>Шаг два\s*<ul><li>вложенный<\/li><\/ul><\/li><\/ol>/.test(h), h);
+    assert.ok(/<ol><li><p>Шаг один<\/p><\/li><li><p>Шаг два<\/p>\s*<ul><li>вложенный<\/li><\/ul><\/li><\/ol>/.test(h), h);
     const tb = mdToHtml('| A | B |\n|---|---:|\n| `a|b` | 2 |');
     assert.ok(tb.includes('<td><code>a|b</code></td><td style="text-align:right">2</td>'), tb);
   });
@@ -1291,8 +1842,93 @@ function selftest() {
     const h = mdToHtml(body, { snap: (m) => '<figure data-snap="' + m.ids[0] + '"></figure>' });
     assert.ok(h.includes('<figure data-snap="tile-a"></figure>'), h);
     assert.ok(!h.includes('&lt;!--'), h);
-    assert.ok(/<ol><li>Шаг\s*<figure[^>]*><\/figure><\/li><li>Дальше<\/li><\/ol>/.test(h), h);
+    assert.ok(/<ol><li><p>Шаг<\/p>\s*<figure[^>]*><\/figure><\/li><li><p>Дальше<\/p><\/li><\/ol>/.test(h), h);
     assert.ok(exportMd(fm.spec, body, capture).includes('\n   > **Снимок 1** — Тайл А'));
+  });
+  t('раздел «Открытые вопросы» необязателен; сетка matrix считает клетки', () => {
+    const noQ = split.body.replace(/## 7\. Открытые вопросы\nНет\.$/, '');
+    assert.deepEqual(bodyDefects(fm.spec, noQ, split.bodyLine), []);
+    const mx = markerOf('matrix', 'cols="А|Б" rows="В|Г" ids="tile-a page-b tile-a page-b"');
+    assert.deepEqual({ cols: mx.cols, rows: mx.rows, n: mx.ids.length }, { cols: ['А', 'Б'], rows: ['В', 'Г'], n: 4 });
+    const bad = bodyDefects(fm.spec, split.body.replace('<!-- snaps: tile-a page-b -->', '<!-- matrix: cols="А|Б" rows="В|Г" ids="tile-a page-b" -->'), split.bodyLine);
+    assert.ok(bad.some((e) => /клеток 4/.test(e.text)), bad.map((e) => e.text).join('; '));
+  });
+  t('схема сценария: слои, обратная связь пунктиром, узлы-ссылки, mermaid в md', () => {
+    const sc = parseScenario(['a | Начало | page | tile-a', 'b | Шаг | modal', 'c | Итог | ok', 'x | Ошибка | error', 'a -> b | клик', 'b -> c | успех', 'b -> x | сбой', 'x -> b | исправить', 'a -> c | сразу'], 1);
+    assert.deepEqual(sc.errors, []);
+    const L = layoutScenario(sc);
+    assert.deepEqual([...L.pos.values()].map((p) => p.layer), [0, 1, 2, 2]);
+    assert.deepEqual(L.edges.map((e) => e.kind), ['next', 'next', 'next', 'back', 'skip']);
+    const html = flowHtml(sc, { 'tile-a': 1 });
+    assert.ok(html.includes('href="#snap-tile-a" data-flow-to="snap-tile-a"'), 'узел со снимком — ссылка');
+    assert.ok(/<div class="sp-node sp-node--modal sp-node--plain"/.test(html), 'узел без снимка — не ссылка');
+    assert.ok(html.includes('sp-flow__edge sp-flow__edge--back'));
+    const bad = parseScenario(['a | Один', 'a -> b', 'мусор', 'c | Три | wrong']);
+    assert.equal(bad.errors.length, 2);
+    const md = exportMd(fm.spec, '# Д\n\n## 2. Сценарий\n```scenario\na | Один | page\nb | Два | modal\na -> b | клик\n```\n', capture);
+    assert.ok(md.includes('```mermaid\nflowchart LR\n  a["Один"]\n  b["Два"]\n  a -->|"клик"| b\n```'), md);
+    const defects = bodyDefects(fm.spec, split.body.replace('## 3. Экраны', '```scenario\na | Один | page | page-x\na -> z\n```\n## 3. Экраны'), split.bodyLine);
+    assert.ok(defects.some((e) => /page-x/.test(e.text)) && defects.some((e) => /«z»/.test(e.text)), defects.map((e) => e.text).join('; '));
+  });
+  t('схема: форма узла (экран или окно) берётся из снимка, тон — из вида; противоречие ловит СР5', () => {
+    const win = (id) => id === 'win';
+    assert.deepEqual(nodeShape({ kind: 'error', snap: 'win' }, win), { shape: 'modal', tone: 'error' }, 'ошибка в окне — окно');
+    assert.deepEqual(nodeShape({ kind: 'state', snap: 'scr' }, win), { shape: 'page', tone: 'state' }, 'состояние экрана — экран');
+    assert.deepEqual(nodeShape({ kind: 'ok', snap: null }, win), { shape: 'page', tone: 'ok' }, 'без снимка — экран');
+    assert.deepEqual(nodeShape({ kind: 'modal', snap: 'scr' }, win), { shape: 'modal', tone: 'plain' }, 'явная пометка сильнее');
+    const html = flowHtml(parseScenario(['w | Расчёт | state | win', 'e | Ошибка | error | win', 's | Список | page | scr', 'w -> e']), { win: 1, scr: 2 }, 1, win);
+    assert.ok(html.includes('sp-node--modal sp-node--state') && html.includes('sp-node--modal sp-node--error') && html.includes('sp-node--page sp-node--plain'), 'формы в разметке');
+    assert.ok(html.includes('Окно · состояние · снимок 1') && html.includes('Экран · снимок 2'), 'подсказка называет форму');
+    const spec3 = { ...fm.spec, snaps: [{ id: 'win', title: 'О', page: 'p.html', target: '#s .modal', do: [], at: {}, line: 1 }, { id: 'scr', title: 'Э', page: 'p.html', do: [], at: {}, line: 1 }] };
+    const body3 = (nodes) => '# Д\n\n## 1. Коротко\n```scenario\n' + nodes + '\n```\n<!-- snaps: win scr -->\n## 2. Сценарий\nНет.\n## 3. Экраны\nНет.\n## 4. Новые локальные компоненты\nНет.\n## 5. Тексты\nНет.\n';
+    assert.deepEqual(bodyDefects(spec3, body3('a | Окно | modal | win\nb | Экран | page | scr\nc | Ошибка окна | error | win'), 1), []);
+    const wrong = bodyDefects(spec3, body3('a | Список | page | win\nb | Экран | modal | scr'), 1);
+    assert.ok(wrong.some((e) => /«a» помечен экраном.*окно/.test(e.text)) && wrong.some((e) => /«b» помечен окном/.test(e.text)), wrong.map((e) => e.text).join('; '));
+  });
+  t('круг 3: «Данные и API» необязателен, номера идут подряд; окна — колонки по ширине в шагах ДС', () => {
+    const noApi = split.body.replace('## 5. Данные и API\nНет.\n', '').replace('## 6. Тексты', '## 5. Тексты').replace('## 7. Открытые вопросы', '## 6. Открытые вопросы');
+    assert.deepEqual(bodyDefects(fm.spec, noApi, split.bodyLine), []);
+    const skew = bodyDefects(fm.spec, split.body.replace('## 5. Данные и API\nНет.\n', ''), split.bodyLine);
+    assert.ok(skew.some((e) => /номер 5, а не 6/.test(e.text)), skew.map((e) => e.text).join('; '));
+    assert.deepEqual([289, 442, 595, 747, 1053, 1358, 1511, 1816].map(modalColumns), [2, 3, 4, 5, 7, 9, 10, 12]);
+    const mk = (target, w) => ({ id: 'x-' + w, title: 'x', page: 'p.html', target, do: [], at: {} });
+    const spec2 = { ...fm.spec, snaps: [mk('#a .modal', 442), mk('#a .modal', 595), mk('#a .modal', 1053), mk('#a .modal', 1816), mk('#t', 443)] };
+    const cap2 = { ...capture, snaps: Object.fromEntries(spec2.snaps.map((s) => [s.id, { w: Number(s.id.slice(2)), h: 100, htmlAttrs: '', body: '<body></body>', local: [] }])) };
+    const cols = (ids) => /sp-gallery" data-cols="(\d)"/.exec(exportHtml(spec2, '# Д\n\n<!-- snaps: ' + ids + ' -->\n', cap2))[1];
+    assert.equal(cols('x-442 x-595'), '3', 'окна до 4 колонок — три в ряд');
+    assert.equal(cols('x-1053'), '2', 'окно 7 колонок — два в ряд');
+    assert.equal(cols('x-1816'), '1', 'окно 12 колонок — одно в ряд');
+    assert.equal(cols('x-442 x-1053'), '2', 'смесь окон — по самому широкому');
+  });
+  t('круг 2: пустая клетка matrix, cols= у snaps, алерт, вид warn и тон связи', () => {
+    const mx = markerOf('matrix', 'cols="А|Б" rows="Р1|Р2" ids="tile-a _ tile-a tile-a"');
+    assert.deepEqual(mx.ids, ['tile-a', '_', 'tile-a', 'tile-a']);
+    assert.deepEqual({ ...numberSnaps([mx]) }, { 'tile-a': 1 }, 'пустая клетка не получает номера');
+    const sp = markerOf('snaps', 'cols=2 tile-a tile-a');
+    assert.deepEqual({ ids: sp.ids, cols: sp.cols }, { ids: ['tile-a', 'tile-a'], cols: 2 });
+    const ok = bodyDefects(fm.spec, split.body.replace('<!-- snaps: tile-a page-b -->', '<!-- matrix: cols="А|Б" rows="Р1|Р2" ids="tile-a _ page-b tile-a" -->'), split.bodyLine);
+    assert.deepEqual(ok, []);
+    const html = exportHtml(fm.spec, '# Д\n\n## 4. Новые\n<!-- matrix: cols="А|Б" rows="Р1" ids="tile-a _" -->\n<!-- snaps: cols=2 tile-a tile-a -->\n', capture);
+    assert.ok(html.includes('sp-matrix__empty'), 'пустая клетка нарисована');
+    assert.ok(html.includes('class="sp-gallery" data-cols="2"'), 'столбцы заданы автором');
+    const al = mdToHtml('> [!warning] Под вопросом\n> вторая строка');
+    assert.ok(al.startsWith('<div class="sp-alert sp-alert--warning" role="note"><p>Под вопросом вторая строка</p></div>'), al);
+    assert.ok(exportMd(fm.spec, '# Д\n\n> [!warning] Текст\n', capture).includes('> [!WARNING] Текст'));
+    const sc = parseScenario(['a | Старт | page', 'e | Сбой | error', 'g | Готово | ok', 'w | Вопрос | warn', 'a -> e', 'a -> g', 'a -> w', 'e -> a']);
+    assert.deepEqual(sc.errors, []);
+    assert.deepEqual(layoutScenario(sc).edges.map((e) => e.tone), ['error', 'ok', 'warn', 'back']);
+    const fl = flowHtml(sc, {});
+    assert.ok(fl.includes('sp-flow__key--warn') && fl.includes('sp-flow__full') && fl.includes('data-node="w"'));
+  });
+  t('образец чипа и сетки в выгрузке', () => {
+    assert.equal(inline('{chip:success Обработан}'), '<span class="chip chip--s chip--fit chip--success"><span class="chip__label">Обработан</span></span>');
+    assert.ok(exportMd(fm.spec, '# Д\n\n| А |\n|---|\n| {chip:error Не обработан} |\n', capture).includes('| Не обработан |'));
+    const body = '# Д\n\n## 4. Новые\n<!-- matrix: cols="Один|Два" rows="Ряд" ids="tile-a tile-a" -->\n';
+    const html = exportHtml(fm.spec, body, capture);
+    assert.ok(html.includes('class="sp-matrix sp-matrix--rows" data-cols="2"'), 'матрица с подписями строк');
+    assert.ok(html.includes('sp-matrix__col">Один'));
+    const wide = exportHtml(fm.spec, '# Д\n\n<!-- snaps: tile-a page-b -->\n', capture);
+    assert.ok(wide.includes('class="sp-gallery" data-cols="3"'), 'узкие кадры (300 px) — до трёх в ряд');
   });
   t('адреса сервера → data-URI', () => {
     const logo = path.join(P.dsAbs, 'assets', 'logo.svg');
