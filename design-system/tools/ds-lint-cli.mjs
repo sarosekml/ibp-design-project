@@ -60,12 +60,18 @@ if (missing.length) { for (const t of missing) console.log('НЕТ ФАЙЛА: '
    агентов (`fragments.mjs`), путь до неё — из манифеста проекта (kit-link.mjs);
    импорт мягкий: без неё всё линтуется как раньше. */
 let includersOf = () => [];
-try { const kit = await importKitTool('fragments.mjs'); if (kit) ({ includersOf } = kit); } catch { /* оснастки нет */ }
-const skippedFragments = requested.filter((t) => includersOf(path.join(ROOT, t)).length);
+let isWidgetFragment = () => false;
+try { const kit = await importKitTool('fragments.mjs'); if (kit) ({ includersOf } = kit); if (kit && kit.isWidgetFragment) ({ isWidgetFragment } = kit); } catch { /* оснастки нет */ }
+/* Виджет приложения (`widgets/`) — фрагмент и без вшивки: правила подключений
+   страницы (A2, A4, A7) к нему не применяются, проверяется собранная страница
+   (RE0023, Э8). */
+const skippedFragments = requested.filter((t) => includersOf(path.join(ROOT, t)).length || isWidgetFragment(path.join(ROOT, t)));
 const targets = requested.filter((t) => !skippedFragments.includes(t));
 for (const t of skippedFragments) {
   const hosts = includersOf(path.join(ROOT, t)).map((h) => path.relative(ROOT, h).split(path.sep).join('/'));
-  console.log('ПРОПУЩЕН: ' + t + ' — фрагмент, вшивается в ' + hosts.join(', ') + '; линтовать собранный файл.');
+  console.log('ПРОПУЩЕН: ' + t + (hosts.length
+    ? ' — фрагмент, вшивается в ' + hosts.join(', ') + '; линтовать собранный файл.'
+    : ' — фрагмент widgets/, ещё не вшит: подключения страницы (A2, A4, A7) к нему не применяются; линтовать собранную страницу.'));
 }
 // все цели оказались фрагментами — пустой список targets означал бы «глобальные правила»
 if (requested.length && !targets.length && !parity) process.exit(0);

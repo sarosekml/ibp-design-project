@@ -46,7 +46,11 @@
      node assemble.mjs <источник …>     — собрать указанные
      node assemble.mjs --check          — сверить, ничего не записывая
      node assemble.mjs --selftest       — откат на временном дереве
-   Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1.
+     node assemble.mjs --help           — справка
+   Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1; неизвестный флаг или
+   несуществующий источник — код 2 без сборки. Собранный файл, который не
+   объявлен строкой `file:` ни в одной спеке папки, — строка ПРЕДУПРЕЖДЕНИЕ
+   (на приёмке это Б12; спеку сборщик не правит).
    ============================================================ */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync, mkdtempSync } from 'node:fs';
 import path from 'node:path';
@@ -334,6 +338,27 @@ function ruleDefects(P, sourceAbs, includes) {
 }
 
 /* Проверка или сборка списка источников: { defects, lines }. */
+/* Б12 раньше приёмки (RE0023, Э10): спутник собранной страницы — спека в той же
+   папке со строкой `file:` на `<Имя>.preview.html` (поиск — как `specOf` сенсора).
+   Нет такой — предупреждение при сборке, не дефект: спеку сборщик не правит,
+   а без строки сенсор даст Б12 только на приёмке. Только для страниц `apps/`. */
+function specWarning(P, out) {
+  const rel = slash(path.relative(P.root, out));
+  if (!rel.startsWith((P.appsDir || 'apps') + '/')) return null;
+  /* спека с тем же именем (`<Имя>.preview.screen.md`) — первый шаг `specOf` сенсора (ревью RE0023 Р9) */
+  if (existsSync(out.replace(/\.html$/i, '.screen.md'))) return null;
+  const dir = path.dirname(out);
+  let names = [];
+  try { names = readdirSync(dir).filter((n) => n.endsWith('.screen.md')); } catch { return null; }
+  const declared = names.some((n) => {
+    const m = readFileSync(path.join(dir, n), 'utf8').match(/^file:\s*(.+)$/m);
+    const f = m ? m[1].trim().replace(/\\/g, '/') : '';
+    return f && f.endsWith(path.basename(out)) && rel.endsWith(f);
+  });
+  return declared ? null : 'ПРЕДУПРЕЖДЕНИЕ: ' + rel + ' — ни одна спека в папке не объявляет его строкой `file:`; на приёмке это Б12. '
+    + 'В шапку спеки источника: file: ' + rel;
+}
+
 export function run(P, files, write) {
   const defects = [];
   const lines = [];
@@ -351,6 +376,8 @@ export function run(P, files, write) {
       if (!existsSync(out) || readFileSync(out, 'utf8') !== built.html) writeFileSync(out, built.html, 'utf8');
       lines.push('собран ' + outRel + ' — фрагментов ' + built.inlined.length + ', CSS виджетов ' + built.css.length);
       built.inlined.forEach((f) => lines.push('  – ' + f));
+      const w = specWarning(P, out);
+      if (w) lines.push(w);
       continue;
     }
     if (!existsSync(out)) defects.push('СБ1 ' + rel + ' — нет собранного ' + path.basename(out) + ': node ' + P.tools + '/assemble.mjs');
@@ -473,7 +500,36 @@ function selftest() {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-  const total = CASES.length + 1;
+  /* Разбор аргументов (RE0023, Э5): справка, неизвестный флаг, несуществующий источник. */
+  {
+    const h = parseArgs(['--help'], os.tmpdir()), u = parseArgs(['--hlep'], os.tmpdir()), m = parseArgs(['нет-такого.html'], os.tmpdir()), c = parseArgs(['--check'], os.tmpdir());
+    const pass = h.code === 0 && /Использование/.test(h.out) && u.code === 2 && /неизвестный аргумент --hlep/.test(u.out)
+      && m.code === 2 && /НЕТ ФАЙЛА/.test(m.out) && c.check === true && c.named.length === 0;
+    if (!pass) failed++;
+    out.push((pass ? 'ok    ' : 'FAIL  ') + 'аргументы: --help — справка, неизвестный флаг и нет файла — код 2 без сборки');
+  }
+  /* Б12 при сборке (RE0023, Э10): спека без строки file: на собранный файл —
+     предупреждение; со строкой — тихо; спеку сборщик не правит. */
+  const wroot = mkdtempSync(path.join(os.tmpdir(), 'assemble-'));
+  try {
+    tree(wroot);
+    const spec = 'apps/postrade/deals-app/pages/Deal.screen.md';
+    put(wroot, spec, '---\nscreen: Deal\nfile: apps/postrade/deals-app/pages/Deal.html\n---\n');
+    const warn = run(project(wroot), sourcesUnder(path.join(wroot, 'apps')), true).lines.filter((l) => l.startsWith('ПРЕДУПРЕЖДЕНИЕ'));
+    const before = readFileSync(path.join(wroot, spec), 'utf8');
+    put(wroot, spec, '---\nscreen: Deal\nfile: apps/postrade/deals-app/pages/Deal.preview.html\n---\n');
+    const quiet = run(project(wroot), sourcesUnder(path.join(wroot, 'apps')), true).lines.filter((l) => l.startsWith('ПРЕДУПРЕЖДЕНИЕ'));
+    /* одноимённая спека собранного файла — тоже спутник, как у сенсора */
+    put(wroot, spec, '---\nscreen: Deal\nfile: apps/postrade/deals-app/pages/Deal.html\n---\n');
+    put(wroot, 'apps/postrade/deals-app/pages/Deal.preview.screen.md', '---\nscreen: Deal\ntitle: Сделка\n---\n');
+    const same = run(project(wroot), sourcesUnder(path.join(wroot, 'apps')), true).lines.filter((l) => l.startsWith('ПРЕДУПРЕЖДЕНИЕ'));
+    const pass = warn.length === 1 && warn[0].includes('Deal.preview.html') && /Б12/.test(warn[0]) && quiet.length === 0 && same.length === 0 && before.includes('pages/Deal.html\n');
+    if (!pass) failed++;
+    out.push((pass ? 'ok    ' : 'FAIL  ') + 'спека без file: на собранный файл — предупреждение, со строкой — тихо' + (pass ? '' : ' — ' + JSON.stringify({ warn, quiet })));
+  } finally {
+    rmSync(wroot, { recursive: true, force: true });
+  }
+  const total = CASES.length + 3;
   out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + total + ')' : 'OK (кейсов: ' + total + ')'));
   console.log(out.join('\n'));
   process.exit(failed ? 1 : 0);
@@ -481,12 +537,37 @@ function selftest() {
 
 /* ---------------- main ---------------- */
 
+const USAGE = [
+  'Использование:',
+  '  node assemble.mjs                  — собрать все источники apps/',
+  '  node assemble.mjs <источник …>     — собрать указанные',
+  '  node assemble.mjs --check          — сверить, ничего не записывая',
+  '  node assemble.mjs --selftest       — откат на временном дереве',
+  '  node assemble.mjs --help           — эта справка',
+].join('\n');
+
+/* Разбор аргументов (RE0023, Э5): неизвестный флаг собирал ВСЕ страницы всех
+   приложений — флаг отбрасывался, а без имён сборщик берёт весь apps/. Теперь
+   неизвестный флаг и несуществующий источник — ошибка запуска с кодом 2, без
+   сборки (класс Л231). Возвращает { code, out } или { files, check }. */
+export function parseArgs(args, cwd) {
+  if (args.includes('--help') || args.includes('-h')) return { code: 0, out: USAGE };
+  const unknown = args.filter((a) => a.startsWith('-') && a !== '--check');
+  if (unknown.length) return { code: 2, out: 'ОШИБКА: неизвестный аргумент ' + unknown.join(', ') + '\n' + USAGE };
+  const named = args.filter((a) => !a.startsWith('-')).map((a) => path.resolve(cwd, a));
+  const missing = named.filter((f) => !existsSync(f));
+  if (missing.length) return { code: 2, out: missing.map((f) => 'НЕТ ФАЙЛА: ' + f).join('\n') };
+  return { named, check: args.includes('--check') };
+}
+
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--selftest')) return selftest();
+  const a = parseArgs(args, process.cwd());
+  if (a.out !== undefined) { (a.code ? console.error : console.log)(a.out); process.exit(a.code); }
   const P = need('assemble', HERE);
-  const check = args.includes('--check');
-  const named = args.filter((a) => !a.startsWith('--')).map((a) => path.resolve(process.cwd(), a));
+  const check = a.check;
+  const named = a.named;
   const files = named.length ? named : sourcesUnder(path.join(P.root, P.appsDir || 'apps'), [], P.showcaseAbs);
   const res = run(P, files, !check);
   console.log(report(check ? 'assemble --check' : 'assemble', res));

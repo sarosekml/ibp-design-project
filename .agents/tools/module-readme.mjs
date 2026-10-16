@@ -101,7 +101,11 @@ function leadComment(file) {
 }
 
 const visible = (name) => !name.startsWith('.');
-const byName = (a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+const byName = (a, b) => nfc(a.name).localeCompare(nfc(b.name), 'en', { sensitivity: 'base' });
+/* Имена с диска — в NFC: ФС одного устройства отдаёт «й» готовой буквой (U+0439),
+   другого — «и» + бревис (U+0306); дерево из архива на такой машине вечно
+   «разошлось» (МР3, RE0022 О6). Генерат пишется в NFC, сверка — в NFC (RE0023, Э2). */
+const nfc = (s) => s.normalize('NFC');
 
 /* Подпись элемента дерева или null. */
 function noteFor(moduleAbs, abs, isDir, P) {
@@ -156,7 +160,7 @@ function treeLines(moduleAbs, P) {
       const last = i === entries.length - 1;
       const abs = path.join(dir, e.name);
       const isDir = e.isDirectory();
-      lines.push({ text: prefix + (last ? '└── ' : '├── ') + e.name + (isDir ? '/' : ''), note: noteFor(moduleAbs, abs, isDir, P) });
+      lines.push({ text: prefix + (last ? '└── ' : '├── ') + nfc(e.name) + (isDir ? '/' : ''), note: noteFor(moduleAbs, abs, isDir, P) });
       if (isDir) walk(abs, prefix + (last ? '    ' : '│   '), false);
     });
   };
@@ -287,7 +291,7 @@ export function check(P, write = false, namesFile = null) {
       continue;
     }
     if (!hasBlock) defects.push('МР2 ' + rel + ' — нет блока дерева (метки @tree): node ' + P.tools + '/' + GEN);
-    else if (text.slice(open.index, closeAt + CLOSE.length) !== block) defects.push('МР3 ' + rel + ' — дерево разошлось с папкой модуля: node ' + P.tools + '/' + GEN);
+    else if (nfc(text.slice(open.index, closeAt + CLOSE.length)) !== block) defects.push('МР3 ' + rel + ' — дерево разошлось с папкой модуля: node ' + P.tools + '/' + GEN);
   }
   return { defects, written };
 }
@@ -353,6 +357,22 @@ const CASES = [
     mutate: (r) => put(r, 'apps/postrade/deals-app/pages/Deal.html', '<p>экран</p>\n') },
   { name: 'новый файл и пересборка', expect: null, build: true,
     mutate: (r) => { put(r, 'apps/postrade/deals-app/pages/Deal.html', '<p>экран</p>\n'); check(project(r), true); } },
+  /* RE0023, Э2: дерево собрано с NFC-именем, ФС отдаёт то же имя в NFD
+     («й» = «и» + U+0306) — и наоборот; дерево не разошлось. */
+  { name: 'имя файла в NFD на диске, в README — NFC', expect: null, build: true,
+    mutate: (r) => {
+      put(r, 'apps/postrade/deals-app/refs/Текущий портфель.md', '');
+      check(project(r), true);
+      rmSync(path.join(r, 'apps/postrade/deals-app/refs/Текущий портфель.md'));
+      put(r, 'apps/postrade/deals-app/refs/Текущий портфель.md', '');
+    } },
+  { name: 'README в NFD, имя на диске — NFC', expect: null, build: true,
+    mutate: (r) => {
+      put(r, 'apps/postrade/deals-app/refs/Текущий портфель.md', '');
+      check(project(r), true);
+      const f = path.join(r, 'apps/postrade/deals-app/README.md');
+      writeFileSync(f, readFileSync(f, 'utf8').normalize('NFD'), 'utf8');
+    } },
 ];
 
 function selftest() {

@@ -1355,6 +1355,7 @@ const HUB_BUILD = path.join(HERE, 'hub-build.mjs');
 const BOOT_DIR = PRJ.boot && PRJ.boot.dir;   // загрузчик ДС (Ш8): сгенерированные теги экрана
 const AGENT_CONFIG = path.join(HERE, 'agent-config.mjs');
 const RUNLOG = path.join(HERE, 'runlog.mjs');
+const FRAGMENTS = path.join(HERE, 'fragments.mjs');
 const MANIFEST_CHECK = path.join(HERE, 'manifest-check.mjs');
 const ASSEMBLE = path.join(HERE, 'assemble.mjs');
 const MODULE_README = path.join(HERE, 'module-readme.mjs');
@@ -1549,6 +1550,7 @@ function gateStep(id, paths = null) {
        порядок чтения, один файл на прогон гейта. Заведён 21.09.2026 вместе с
        хранением «файл на прогон» (шапка runlog.mjs). */
     case 'runlog-selftest': return { title: 'runlog --selftest (журнал прогонов)', args: [RUNLOG, '--selftest'], cwd: ROOT };
+    case 'fragments-selftest': return { title: 'fragments --selftest (фрагмент: вшитый и widgets/)', args: [FRAGMENTS, '--selftest'], cwd: ROOT };
     /* Манифест проекта (Ш1 реструктуризации): project.json описывает, где ДС,
        харнес, хаб и треки. Идёт первым: при разошедшемся манифесте остальные
        шаги падали бы непонятным «файл не найден». */
@@ -1799,6 +1801,7 @@ function gateStepsFor(rel, deleted) {
   if (rel === TOOL_REL + '/agent-config.mjs') add('agent-config-selftest', 'agent-config');
   if (rel === TOOL_REL + '/vendor-scan.mjs') add('vendor-selftest');
   if (rel === TOOL_REL + '/runlog.mjs') add('runlog-selftest');
+  if (rel === TOOL_REL + '/fragments.mjs') add('fragments-selftest');
   if (rel === TOOL_REL + '/manifest-check.mjs') add('manifest-selftest', 'manifest');
   if (underKit('skills/[^/]+/references/[^/]+\\.html$').test(rel)) add('etalons');
   if (/(^|\/)lessons(-raw)?\.md$/.test(rel) && rel.startsWith(KIT_REL + '/')) add('check', 'stats');
@@ -1809,22 +1812,29 @@ function gateStepsFor(rel, deleted) {
   return s;
 }
 
-const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'brief', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'vendor-selftest', 'vendor'];
+const GATE_FULL = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'etalons', 'verify-sensor', 'verify-lint', 'anchors', 'check', 'stats', 'coverage', 'brief', 'ctx-budget', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'vendor-selftest', 'vendor'];
 // порядок: сначала дешёвое и пофайловое, в конце — дорогое и репозиторное
-const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'brief', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
+const GATE_ORDER = ['manifest-selftest', 'manifest', 'boot-selftest', 'boot', 'hub-selftest', 'hub', 'assemble-selftest', 'assemble', 'kit-selftest', 'kit', 'readme-selftest', 'readme', 'readme-stats-selftest', 'readme-stats', 'docs-index-selftest', 'docs-index', 'promote-selftest', 'scaffold-selftest', 'panel-selftest', 'panel', 'sensor', 'lint', 'lint-pages', 'split', 'syntax', 'registry-selftest', 'registry', 'agent-config-selftest', 'agent-config', 'runlog-selftest', 'fragments-selftest', 'lint-global', 'parity', 'spec-audit', 'icons-selftest', 'theme-build', 'theme-selftest', 'theme-files-selftest', 'ds-check', 'etalons', 'anchors', 'check', 'coverage', 'brief', 'ctx-budget', 'stats', 'verify-sensor', 'verify-lint', 'vendor-selftest', 'vendor'];
 const kindOf = (id) => id.split(':')[0];
 
 // строки находок, которые показываются при FAIL; остальной вывод остаётся за кадром
 const FINDING = /^\s*(FAIL|BLOCKER|NEEDS-WORK|НЕ ДОКАЗАН|БЛОКЕР|РЕГРЕСС|ОШИБКА|ВЕРДИКТ|ЖУРНАЛ)|Л-[А-ЯЁ]+|находок: [1-9]|^\s{2}\S+:\d+ — /u;
 
+/* Предел одного шага гейта. Самый долгий шаг — `verify --corpus lint`: 308,9 с на
+   устройстве контура (RE0022, О6) при прежнем пределе 300 с — вечный FAIL и +300 с
+   к каждому гейту. Запас втрое (RE0023, Э1). */
+const GATE_STEP_MS = 900000;
+const stepTimedOut = (sec) => 'FAIL  шаг оборван по пределу ' + (GATE_STEP_MS / 1000) + ' с (прошло ' + Math.round(sec) + ' с): поднять GATE_STEP_MS в lessons-cli.mjs или ускорить шаг\n';
+
 function runGateStep(step) {
   const t0 = Date.now();
   let out = '', code = 0;
   try {
-    out = execFileSync(process.execPath, step.args, { cwd: step.cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, timeout: 300000, windowsHide: true });
+    out = execFileSync(process.execPath, step.args, { cwd: step.cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, timeout: GATE_STEP_MS, windowsHide: true });
   } catch (e) {
     out = String(e.stdout || '') + String(e.stderr || '');
     code = typeof e.status === 'number' ? e.status : 1;
+    if (e.code === 'ETIMEDOUT') out += stepTimedOut((Date.now() - t0) / 1000);
   }
   return { out, code, sec: (Date.now() - t0) / 1000 };
 }
@@ -1843,14 +1853,17 @@ function runGateStepAsync(step) {
       resolve({ out: code === 0 ? out : out + err, code: typeof code === 'number' ? code : 1, sec: (Date.now() - t0) / 1000 });
     };
     let child;
-    try { child = spawn(process.execPath, step.args, { cwd: step.cwd, timeout: 300000, windowsHide: true }); }
+    try { child = spawn(process.execPath, step.args, { cwd: step.cwd, timeout: GATE_STEP_MS, windowsHide: true }); }
     catch (e) { err = String(e.message); end(1); return; }
     child.stdout.setEncoding('utf8');
     child.stderr.setEncoding('utf8');
     child.stdout.on('data', (d) => { out += d; });
     child.stderr.on('data', (d) => { err += d; });
     child.on('error', (e) => { err += String(e.message); end(1); });
-    child.on('close', (code) => end(code));
+    child.on('close', (code, signal) => {
+      if (code === null && signal && Date.now() - t0 >= GATE_STEP_MS) err += stepTimedOut((Date.now() - t0) / 1000);
+      end(code);
+    });
   });
 }
 
@@ -1916,12 +1929,16 @@ async function gate() {
       }
     }
   }
-  /* Упавшее в прошлый раз. Пофайловый шаг, чей файл не менялся, НЕ
-     перезапускается: результат не может измениться, а изменённый файл и так
-     попал в набор выше. Такой долг переносится в снимок и печатается одной
-     строкой. Репозиторный шаг зависит от многих файлов — он перезапускается.
-     В режиме `--changed` долг не подмешивается: там проверяется матрица. */
-  const retried = [], carried = [];
+  /* Упавшее в прошлый раз перезапускается на каждом гейте — и репозиторный
+     шаг, и пофайловый (решение человека 15.10.2026, RE0023 Э7). Раньше
+     пофайловый шаг, чей файл не менялся, переносился в долг без запуска: но его
+     результат зависит не только от файла — фрагмент виджета, красный до вшивки,
+     после вшивки сенсор пропускает, а долг жил до `gate --full` (RE0022 О10
+     п. 7). Перезапущенный долг вердикт по-прежнему не краснит (Л37), зелёный —
+     уходит из долга. Пофайловый шаг, которого файл больше не вызывает, и шаг
+     удалённого файла долгом не считаются. В режиме `--changed` долг не
+     подмешивается: там проверяется матрица. */
+  const retried = [];
   if (!changedArg && !isFull) {
     for (const id of prevFailed) {
       if (byStep.has(id)) continue;
@@ -1930,7 +1947,10 @@ async function gate() {
       if (id === 'docs-index') { want(id, null); continue; }
       const target = id.includes(':') ? id.slice(id.indexOf(':') + 1) : '';
       if (target && !(target in now)) continue;          // файл удалён — долга больше нет
-      if (target) { carried.push(id); continue; }
+      if (target) {
+        if (gateStepsFor(target, false).includes(id)) { retried.push(id); want(id, target); }
+        continue;
+      }
       retried.push(id);
       if (id === 'lint-pages') for (const rel of Object.keys(now)) { if (isDsPage(rel)) want(id, rel); }
       else want(id, null);
@@ -1944,22 +1964,14 @@ async function gate() {
   else log('изменено: ' + changed.length + (deleted.length ? ' · удалено: ' + deleted.length : '') + (changedArg ? ' (задано --changed, снимок не обновляется)' : ''));
   if (!isFull) for (const rel of [...changed, ...deleted].slice(0, 15)) log('  ' + rel + (deleted.includes(rel) ? ' (удалён)' : ''));
   if (!isFull && changed.length + deleted.length > 15) log('  … и ещё ' + (changed.length + deleted.length - 15));
-  if (retried.length) log('повтор упавшего в прошлом гейте (репозиторные шаги): ' + retried.length);
+  if (retried.length) log('повтор упавшего в прошлом гейте: ' + retried.length);
   log('');
-
-  const logCarried = () => {
-    if (!carried.length) return;
-    const files = [...new Set(carried.map((id) => id.slice(id.indexOf(':') + 1)))];
-    log('ДОЛГ: ' + carried.length + ' красн. шаг. на ' + files.length + ' файл. — не менялись, не перезапускались, вердикт не меняют: ' +
-        files.slice(0, 4).map((f) => path.basename(f)).join(', ') + (files.length > 4 ? ' …' : '') + ' (разбор — gate --full)');
-  };
 
   const logAfter = () => { for (const l of afterSession(changed)) log(l); };
 
   if (!ids.length) {
     log(changed.length + deleted.length ? 'изменения не задевают ни одного сторожа — проверок 0' : 'изменений с прошлого гейта нет — проверок 0');
-    logCarried();
-    if (!changedArg && !dry && (changed.length || deleted.length || fromArchive)) saveSnapshot(now, carried);
+    if (!changedArg && !dry && (changed.length || deleted.length || fromArchive || prevFailed.length)) saveSnapshot(now, []);
     logAfter();
     log('ВЕРДИКТ: OK');
     return 0;
@@ -2093,7 +2105,6 @@ async function gate() {
     for (const r of debtRed.slice(0, 10)) log('      ' + r.step.title);
     if (debtRed.length > 10) log('      … и ещё ' + (debtRed.length - 10));
   }
-  if (carried.length) { log(''); logCarried(); }
 
   // долг курации не зависит от текущей правки и вердикт не краснит, но молча не проходит
   const st = runGateStep({ args: [SELF, 'state'], cwd: ROOT });
@@ -2108,7 +2119,7 @@ async function gate() {
   const калибровка = st.out.split(/\r?\n/).find((l) => /калибровка сметы: ДОЛГ/.test(l));
 
   if (!changedArg) {
-    saveSnapshot(now, [...results.filter((r) => r.code !== 0).map((r) => r.id), ...carried]);
+    saveSnapshot(now, results.filter((r) => r.code !== 0).map((r) => r.id));
     rmSync(GATE_PROGRESS, { force: true });   // прогон дошёл до конца — продолжать нечего
   }
 

@@ -18,7 +18,8 @@
    `design-system/tools/ds-lint-cli.mjs` (мягко: ДС без оснастки линтуется как
    раньше), `lessons-cli gate`.
    ============================================================ */
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { project } from './project.mjs';
@@ -27,7 +28,8 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 /* Граница поиска вверх — корень проекта из манифеста (project.mjs; Ш4), а не
    «четыре уровня вверх». Проекта нет — каталог запуска: поиск по всему диску
    был бы хуже промаха. */
-export const REPO = project(HERE).root || process.cwd();
+const PRJ = project(HERE);
+export const REPO = PRJ.root || process.cwd();
 
 const stripComments = (s) => s.replace(/<!--[\s\S]*?-->/g, '');
 
@@ -83,8 +85,65 @@ export function includersOf(file) {
   return [];
 }
 
+/** Виджет приложения — фрагмент и без вшивки (решение человека 15.10.2026,
+    RE0023 Э8). Файл `.html` в `widgets/` приложения каркаса страницы не несёт:
+    его проверяет собранная страница, а до вшивки — витрина. Экранные правила
+    (каркас, загрузчик, подключения ДС) к нему не применяются; без этого
+    черновик окна краснил гейт как экран, пока его не вшили (RE0022 О10 п. 8).
+    Файл с `<!DOCTYPE`/`<html>` фрагментом не считается и здесь: целый документ
+    в `widgets/` — ошибка, и молча перестать его проверять нельзя (Л100). */
+export function isWidgetFragment(file, P = PRJ) {
+  const abs = path.resolve(file);
+  const rel = path.relative(P.root || REPO, abs).split(path.sep).join('/');
+  const apps = P.appsDir || 'apps';
+  const widgets = (P.appShape && P.appShape.widgets) || 'widgets';
+  if (!rel.startsWith(apps + '/') || !/\.html$/i.test(rel) || /\.preview\.html$/i.test(rel)) return false;
+  if (P.showcase && (rel + '/').startsWith(P.showcase + '/')) return false;
+  if (!rel.split('/').slice(1, -1).includes(widgets)) return false;
+  let text;
+  try { text = stripComments(readFileSync(abs, 'utf8')); } catch { return false; }
+  return !/<!DOCTYPE|<html\b/i.test(text);
+}
+
 /** Собранный файл источника: `<имя>.html` → `<имя>.preview.html`, если есть. */
 export function assembledOf(host) {
   const p = host.replace(/\.html$/, '.preview.html');
   return existsSync(p) ? p : null;
 }
+
+/* ---------------- selftest: временное дерево ----------------
+   Фикстура Э8 RE0023 — невшитый виджет без каркаса: фрагмент. Рядом — то,
+   что фрагментом считаться не должно: целый документ в widgets/, страница в
+   pages/, собранный файл, файл витрины. Корпус сенсора лежит вне apps/, поэтому
+   вход «файл в widgets/» доказывается здесь, а не парой фикстур сенсора. */
+function selftest() {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'fragments-'));
+  const put = (rel, text) => { const p = path.join(root, rel); mkdirSync(path.dirname(p), { recursive: true }); writeFileSync(p, text, 'utf8'); return p; };
+  const P = { root, appsDir: 'apps', appShape: { widgets: 'widgets' }, showcase: 'apps/local-components' };
+  const FRAG = '<div class="modal-scrim" hidden><div class="modal"><h2 class="modal__title">Окно</h2></div></div>\n';
+  const cases = [
+    ['невшитый виджет без каркаса — фрагмент', put('apps/core/drafts/c/widgets/modals/AModal/AModal.html', FRAG), true],
+    ['виджет с комментарием о <!DOCTYPE> — фрагмент', put('apps/core/x-app/widgets/tiles/BTile/BTile.html', '<!-- не <!DOCTYPE html> -->\n' + FRAG), true],
+    ['целый документ в widgets/ — не фрагмент', put('apps/core/x-app/widgets/tiles/CTile/CTile.html', '<!DOCTYPE html>\n<html><body></body></html>\n'), false],
+    ['страница в pages/ — не фрагмент', put('apps/core/x-app/pages/Main.html', FRAG), false],
+    ['собранный файл — не фрагмент', put('apps/core/x-app/widgets/tiles/BTile/BTile.preview.html', FRAG), false],
+    ['витрина локальных компонентов — не фрагмент', put('apps/local-components/core/widgets/D.html', FRAG), false],
+    ['вне apps/ — не фрагмент', put('docs/widgets/E.html', FRAG), false],
+  ];
+  let failed = 0;
+  const out = ['== fragments --selftest =='];
+  try {
+    for (const [name, file, want] of cases) {
+      const got = isWidgetFragment(file, P);
+      if (got !== want) failed++;
+      out.push((got === want ? 'ok    ' : 'FAIL  ') + name + (got === want ? '' : ' — получено ' + got));
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+  out.push('ВЕРДИКТ: ' + (failed ? 'FAIL (кейсов не прошло: ' + failed + ' из ' + cases.length + ')' : 'OK (кейсов: ' + cases.length + ')'));
+  console.log(out.join('\n'));
+  return failed ? 1 : 0;
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--selftest')) process.exit(selftest());

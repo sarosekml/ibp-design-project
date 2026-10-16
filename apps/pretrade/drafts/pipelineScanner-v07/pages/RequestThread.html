@@ -1114,6 +1114,12 @@
   }
 
   function addCtx(items) {
+    /* Фрагменты контекста кладутся в окно ввода; окна на странице нет — класть
+       некуда (без этой проверки «Доработать в чате» роняло скрипт на #cmp). */
+    if (!field) {
+      if (window.DSToast) window.DSToast.show({ message: 'Окно ввода в этом варианте убрано — фрагмент некуда добавить' });
+      return;
+    }
     var added = 0;
     items.forEach(function (it) {
       var kind = it.kind === 'chart' ? 'chart' : 'text';
@@ -1229,7 +1235,7 @@
     else if (act === 'finish') { finishRun(); }
     else if (act === 'rmctx') { removeCtx(t.getAttribute('data-id')); }
     else if (act === 'ctx-collapse') { S.ctxOpen = null; drawCtx(); field.focus(); }
-    else if (act === 'fix-request') {
+    else if (act === 'fix-request' && field) {
       /* текст запроса — обратно в поле; фрагменты снова связаны с конструктором */
       field.value = S.errorRequest || '';
       detect();
@@ -1316,7 +1322,9 @@
   var ORDER = ['object'].concat(FOCUS.map(function (f) { return 'focus:' + f.id; }), ['direction']);
 
   var field = el('cmpInput');
-  var fieldBox = document.querySelector('.cmp__field');
+  /* Окно ввода со страницы убрано (см. ниже): поля и его прокручиваемой обёртки
+     может не быть — обёртка берётся от поля, а не поиском по классу. */
+  var fieldBox = field ? field.parentNode : null;
   var B = {
     open: false,
     frag: {},        /* ключ контрола → фрагмент в тексте */
@@ -1836,7 +1844,8 @@
         '</ul>' +
       '</div>' +
       '<div class="err__acts">' +
-        '<button type="button" class="btn btn--accent btn--s" data-act="fix-request"><i data-icon="edit"></i><span class="btn__label">Исправить запрос</span></button>' +
+        /* «Исправить запрос» возвращает текст в окно ввода — без окна кнопки нет */
+        (field ? '<button type="button" class="btn btn--accent btn--s" data-act="fix-request"><i data-icon="edit"></i><span class="btn__label">Исправить запрос</span></button>' : '') +
         '<button type="button" class="btn btn--outline btn--s" data-act="restart-run"><i data-icon="refresh"></i><span class="btn__label">Перезапустить</span></button>' +
       '</div>' +
     '</div>';

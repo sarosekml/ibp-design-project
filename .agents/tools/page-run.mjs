@@ -41,8 +41,11 @@
    (в .gitignore). Нет — код 2 и как поставить.
 
    Вывод: строка ВЕРДИКТ:, коды выхода 0 — OK, 1 — FAIL, 2 — ОШИБКА (нет
-   linkedom, нет страницы, неверные аргументы, окружение упало). В журнал
-   прогонов не пишет и шагом гейта не является (RE0020, решение человека).
+   linkedom, нет страницы, неверные аргументы, окружение упало). Страница без
+   сценария (ни панели, ни --scenario) — замечание ЖВ10 и вердикт ТОЛЬКО
+   ЗАГРУЗКА с кодом 0: дефекта нет, но и действия не проверялись (RE0023).
+   В журнал прогонов не пишет и шагом гейта не является (RE0020, решение
+   человека).
    ============================================================ */
 import { existsSync, readdirSync, mkdirSync, writeFileSync, rmSync, mkdtempSync, readFileSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -70,6 +73,7 @@ const RULES = [
   ['ЖВ7', 'FAIL/WARN', 'шаг сценария панели не прошёл (FAIL) или ничего не изменил на странице (WARN)', 'Л186'],
   ['ЖВ8', 'FAIL', 'проверка или действие из --scenario не прошли', '—'],
   ['ЖВ9', 'FAIL', 'сценарий подменил рантайм ДС — прогон не засчитывается', 'Л34'],
+  ['ЖВ10', 'WARN', 'сценария нет — проверена только загрузка: действия не проигрывались, вердикт ТОЛЬКО ЗАГРУЗКА вместо OK', 'RE0023'],
 ];
 const NOT_CHECKED = 'пиксели и CSS-каскад; геометрия, скролл, перекрытия; видимость по стилям вне инлайна; настоящий клик (микрозадачи между слушателями, З13); переход на другую страницу';
 
@@ -170,6 +174,15 @@ function runPage(lk, page, { flows }) {
       loads.push(r);
     }
   }
+  /* ЖВ10 (RE0023, Э11 (б)): без сценария панели и без --scenario прогон видел
+     только загрузку. Зелёный вердикт на нём читался как «страница работает» —
+     и при мёртвой перестановке, и при окнах, недоступных в просмотре (RE0022:
+     у приложения не было flows.yaml). Теперь это замечание и свой вердикт. */
+  if (loads.length === 1 && !opt.scenario && !base.envError) {
+    base.findings = base.findings || [];
+    base.findings.push({ level: 'WARN', code: 'ЖВ10', msg: 'сценария нет — проверена только загрузка: клики, окна и переходы не проигрывались (сценарий панели flows.yaml или --scenario)' });
+    base.loadOnly = true;
+  }
   return loads;
 }
 
@@ -212,11 +225,12 @@ function report(page, loads, { compact } = {}) {
       out.push((f.step ? '    ' : '  ') + line(f));
     }
   }
-  if (!compact || fails || warns || envErr) {
+  /* в сводном прогоне (--all) страница с одним ЖВ10 не печатается: он у каждой без сценария, итог — в вердикте */
+  if (!compact || fails || warns - (loads.some((l) => l.loadOnly) ? 1 : 0) || envErr) {
     say('ПРОГОН ' + P.rel(page));
     for (const l of out) say(l);
   }
-  return { fails, warns, invalid, envErr };
+  return { fails, warns, invalid, envErr, loadOnly: loads.some((l) => l.loadOnly) };
 }
 
 /* ---------------- страницы ---------------- */
@@ -308,6 +322,18 @@ function selftest() {
     say(`${ok ? 'OK   ' : 'СБОЙ '} ${c.name}: ожидалось ${want.join(', ') || 'тишина'}, получено ${got.join(', ') || 'тишина'}`);
     if (!ok) for (const f of r.findings || []) say('       ' + line(f));
   }
+  /* ЖВ10: страница без сценария — замечание «только загрузка», со сценарием — нет. */
+  {
+    opt.scenario = null;
+    const bare = runPage(lk, cases[0].page, { flows: false })[0];
+    opt.scenario = clickGo;
+    const withScen = runPage(lk, cases[0].page, { flows: false })[0];
+    opt.scenario = null;
+    const has = (r) => (r.findings || []).some((f) => f.code === 'ЖВ10' && f.level === 'WARN');
+    const ok = has(bare) && bare.loadOnly && !has(withScen) && !withScen.loadOnly;
+    if (!ok) bad++;
+    say(`${ok ? 'OK   ' : 'СБОЙ '} ЖВ10: без сценария — «только загрузка», со сценарием — нет`);
+  }
   /* пустой каталог зависимостей — код 2, а не тихий OK */
   const empty = mkdtempSync(path.join(base, 'page-run-nodeps-'));
   const r2 = spawnSync(process.execPath, [fileURLToPath(import.meta.url), cases[0].page, '--deps', empty], { encoding: 'utf8', cwd: ROOT, windowsHide: true });
@@ -316,7 +342,7 @@ function selftest() {
   say(`${depsOk ? 'OK   ' : 'СБОЙ '} пустой --deps: ожидался код 2, получен ${r2.status}`);
   rmSync(empty, { recursive: true, force: true });
   rmSync(dir, { recursive: true, force: true });
-  say(bad ? `ВЕРДИКТ: FAIL (${bad} из ${cases.length + 1} случаев)` : `ВЕРДИКТ: OK (${cases.length + 1} случаев)`);
+  say(bad ? `ВЕРДИКТ: FAIL (${bad} из ${cases.length + 2} случаев)` : `ВЕРДИКТ: OK (${cases.length + 2} случаев)`);
   process.exit(bad ? 1 : 0);
 }
 
@@ -332,7 +358,7 @@ for (const [s, f] of opt.swaps) if (!existsSync(f)) fail(`--swap ${s}: файл 
 
 const lk = linkedomOrExit();
 const flows = opt.all ? opt.allFlows : opt.flows;
-let fails = 0, warns = 0, invalid = false, envErrors = 0, clean = 0;
+let fails = 0, warns = 0, invalid = false, envErrors = 0, clean = 0, loadOnly = 0;
 const t0 = Date.now();
 const raw = [];
 let modelLine = null;
@@ -344,12 +370,15 @@ for (const page of opt.pages) {
   const r = report(page, loads, { compact: opt.all });
   fails += r.fails; warns += r.warns; invalid = invalid || r.invalid;
   if (r.envErr) envErrors++;
-  if (!r.fails && !r.warns && !r.envErr) clean++;
+  if (r.loadOnly) loadOnly++;
+  if (!r.fails && !(r.warns - (r.loadOnly ? 1 : 0)) && !r.envErr) clean++;
 }
 if (opt.json) { say(JSON.stringify(raw, null, 1)); process.exit(0); }
 if (opt.all) say(`СТРАНИЦ: ${opt.pages.length}, чистых ${clean}, падений окружения ${envErrors}, время ${sec(Date.now() - t0)}`);
 say('НЕ ПРОВЕРЯЕТСЯ: ' + NOT_CHECKED);
 if (envErrors) { say(`ОШИБКА: окружение упало на ${envErrors} загрузк. — прогон не выполнен, это дефект page-env, а не страницы`); process.exit(2); }
 if (invalid) { say(`ВЕРДИКТ: FAIL — прогон не засчитывается (ЖВ9); блокеров ${fails}, замечаний ${warns}`); process.exit(1); }
+/* Без сценария — не OK (ЖВ10): код выхода 0, дефекта нет, но и действий никто не проверял. */
+if (!fails && loadOnly) { say(`ВЕРДИКТ: ТОЛЬКО ЗАГРУЗКА — сценария нет у страниц: ${loadOnly} из ${opt.pages.length}; блокеров 0, замечаний ${warns}`); process.exit(0); }
 say(fails === 0 ? `ВЕРДИКТ: OK (замечаний: ${warns})` : `ВЕРДИКТ: FAIL (${fails} блокер, ${warns} замечание)`);
 process.exit(fails ? 1 : 0);

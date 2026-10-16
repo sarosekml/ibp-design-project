@@ -41,6 +41,10 @@ const IGNORE_LOCAL = ['tmp', 'refs', '.zcodeignore', '.obsidian', ('cla' + 'ude'
 const slash = (p) => p.split(path.sep).join('/');
 const under = (rel, base) => Boolean(base) && (rel === base || rel.startsWith(base + '/'));
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+/* Имена с диска приходят в той нормализации, какую отдаёт ФС: «й» готовой буквой
+   (NFC) или «и» + U+0306 (NFD). Каталог пишется и сверяется в NFC, к файлу
+   обращаемся по имени с диска (RE0022 О6, RE0023 Э2). */
+const nfc = (s) => s.normalize('NFC');
 export const indexPath = (P) => P.docs + '/index.md';
 
 /* Не требует существования пути: тот же предикат работает для удалений. */
@@ -151,7 +155,8 @@ export function indexBlock(P, files = documentationPaths(P)) {
     ['Служебное', (rel) => under(rel, P.state)],
     ['Прочая документация', () => true],
   ].map(([title, match]) => ({ title, match, files: [] }));
-  for (const rel of files) clusters.find((cluster) => cluster.match(rel)).files.push(rel);
+  const disk = new Map(files.map((rel) => [nfc(rel), rel]));
+  for (const rel of [...disk.keys()].sort(compare)) clusters.find((cluster) => cluster.match(rel)).files.push(rel);
   const out = [OPEN, '<!-- генерирует ' + GEN + ', руками не править -->', '', 'Документов: ' + files.length + '.', ''];
   for (const cluster of clusters) {
     if (!cluster.files.length) continue;
@@ -165,7 +170,7 @@ export function indexBlock(P, files = documentationPaths(P)) {
     for (const [group, members] of [...groups].sort(([a], [b]) => compare(a, b))) {
       if (group) out.push('### ' + cell(group), '');
       out.push('| Документ | Аннотация |', '|---|---|');
-      for (const rel of members) out.push('| [' + cell(rel) + '](' + docLink(rel, P) + ') | ' + cell(annotation(readFileSync(path.join(P.root, rel), 'utf8'))) + ' |');
+      for (const rel of members) out.push('| [' + cell(rel) + '](' + docLink(rel, P) + ') | ' + cell(nfc(annotation(readFileSync(path.join(P.root, disk.get(rel)), 'utf8')))) + ' |');
       out.push('');
     }
   }
@@ -187,7 +192,7 @@ export function check(P, write = false) {
     return result;
   }
   const next = text.slice(0, begin) + indexBlock(P, files) + text.slice(end + CLOSE.length);
-  if (next !== text || !existsSync(file)) {
+  if (write ? next !== text || !existsSync(file) : nfc(next) !== nfc(text)) {
     if (write) { mkdirSync(path.dirname(file), { recursive: true }); writeFileSync(file, next, 'utf8'); result.written.push(rel); }
     else result.defects.push('КД3 ' + rel + ' — каталог разошёлся с документацией: ' + fix);
   }
@@ -218,6 +223,19 @@ function selftest() {
       assert.equal(documentationPaths(P).length, 7);
       for (const token of ['Название из шапки', 'refs/Текущий%20портфель.md', 'Архив/черновики', 'снимки задач', 'Служебное', 'Дизайн-система', 'Агентная система']) assert.ok(text.includes(token), token);
       for (const rel of documentationPaths(P)) assert.ok(existsSync(path.resolve(root, P.docs, decodeURIComponent(docLink(rel, P)))));
+    });
+    test('имя в NFD на диске и каталог в NFD — не расхождение (RE0023, Э2)', () => {
+      const nfcRel = 'apps/postrade/deals-app/refs/Текущий портфель.md';
+      const nfdRel = 'apps/postrade/deals-app/refs/Текущий портфель.md';
+      const before = read();
+      rmSync(path.join(root, nfcRel)); put(nfdRel, '# Портфель\n');
+      assert.equal(check(P).defects.length, 0);
+      put(indexPath(P), before.normalize('NFD'));
+      assert.equal(check(P).defects.length, 0);
+      check(P, true); assert.equal(read().normalize('NFC'), before);
+      assert.ok(read().includes(before.slice(before.indexOf(OPEN), before.indexOf(CLOSE))), 'генерат после сборки — в NFC');
+      put(indexPath(P), before);
+      rmSync(path.join(root, nfdRel)); put(nfcRel, '# Портфель\n');
     });
     test('повторная сборка и рукописная часть неизменны', () => {
       const before = read(); assert.equal(check(P, true).written.length, 0); assert.equal(read(), before);

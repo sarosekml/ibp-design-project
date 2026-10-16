@@ -68,7 +68,7 @@
   .bld-file > .entity { flex: 1; min-width: 0; }
   .bld-file__acts { flex: none; display: flex; gap: var(--space-4); }
   /* Подвал формы: нехватка сведений, разделитель, строка запуска */
-  .bld-end       { display: flex; flex-direction: column; gap: var(--space-16); margin-top: var(--space-24); }
+  .bld-end       { display: flex; flex-direction: column; gap: var(--space-16); }
   .bld-foot      { display: flex; align-items: center; gap: var(--space-16); }
   .bld-foot__note { flex: 1; min-width: 0; }
   .bld-foot__acts { flex: none; display: flex; gap: var(--space-8); }
@@ -346,30 +346,29 @@
                         </div>
                       </div>
 
-                    </div>
-
-                    <!-- Готовность и запуск (БТ-5.9, БТ-5.10) -->
-                    <div class="bld-end">
-                      <div class="bld-note" id="readyNote" hidden>
-                        <div class="alert alert--warning alert--m" role="alert" aria-live="assertive">
-                          <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
-                          <div class="alert__body">
-                            <p class="alert__title">Не хватает сведений</p>
-                            <p class="alert__text" id="readyText">Чтобы запустить подготовку, укажите: объект анализа.</p>
+                      <!-- Готовность и запуск (БТ-5.9, БТ-5.10) -->
+                      <div class="bld-end tile__grid-full">
+                        <div class="bld-note" id="readyNote" hidden>
+                          <div class="alert alert--warning alert--m" role="alert" aria-live="assertive">
+                            <span class="alert__icon" aria-hidden="true"><i data-icon="alert-triangle-filled"></i></span>
+                            <div class="alert__body">
+                              <p class="alert__title">Не хватает сведений</p>
+                              <p class="alert__text" id="readyText">Чтобы запустить подготовку, укажите: объект анализа.</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <hr class="dvd dvd--h" aria-hidden="true">
+                        <hr class="dvd dvd--h" aria-hidden="true">
 
-                      <div class="bld-foot">
-                        <span class="ds-helper ds-helper--left ds-helper--with-icon bld-foot__note">
-                          <span class="ds-helper__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
-                          <span class="ds-helper__text">Подготовка — до 30 минут</span>
-                        </span>
-                        <div class="bld-foot__acts">
-                          <button class="btn btn--outline btn--s" onclick="location.href='RequestThread.html'"><span class="btn__label">Отмена</span></button>
-                          <button class="btn btn--accent btn--s" id="btnRun"><i data-icon="ai-stars"></i><span class="btn__label">Запустить подготовку</span></button>
+                        <div class="bld-foot">
+                          <span class="ds-helper ds-helper--left ds-helper--with-icon bld-foot__note">
+                            <span class="ds-helper__icon" aria-hidden="true"><i data-icon="clock-timer"></i></span>
+                            <span class="ds-helper__text">Подготовка — до 30 минут</span>
+                          </span>
+                          <div class="bld-foot__acts">
+                            <button class="btn btn--outline btn--s" onclick="location.href='RequestThread.html'"><span class="btn__label">Отмена</span></button>
+                            <button class="btn btn--accent btn--s" id="btnRun"><i data-icon="ai-stars"></i><span class="btn__label">Запустить подготовку</span></button>
+                          </div>
                         </div>
                       </div>
                     </div>

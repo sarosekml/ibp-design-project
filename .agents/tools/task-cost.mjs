@@ -18,10 +18,17 @@
    ИСТОЧНИКИ (читаются все найденные, суммируются):
      журнал JSONL — CLI, который пишет сессию построчно в
        <дом>/.<каталог CLI>/projects/<корень проекта, всё кроме букв и цифр → «-»>/
-       <сессия>.jsonl и <сессия>/subagents/*.jsonl. Каталог CLI не называется:
-       ищется любой `.<имя>` в домашнем каталоге, где есть такая папка.
-       Токены — `message.usage` строк `assistant` (одна реплика пишется
-       несколькими строками с общим `message.id` — считается один раз).
+       <сессия>.jsonl (или chats/<сессия>.jsonl) и субагенты —
+       <сессия>/subagents/*.jsonl или subagents/<сессия>/*.jsonl. Каталог CLI
+       не называется: ищется любой `.<имя>` в домашнем каталоге, где есть такая
+       папка. Формы строки две (parseJsonl): `message.usage` строк `assistant`
+       (одна реплика пишется несколькими строками с общим `message.id` —
+       считается один раз) и `usageMetadata` реплик `role: "model"` с
+       `message.parts` (CLI контура, RE0023). Журналы с другой машины
+       копируются каталогом этой же формы и с сохранением времени (`cp -p`):
+       файлы, не менявшиеся с начала окна, не читаются. Имя папки проекта —
+       корень проекта НА ЭТОЙ машине (sanitize ниже), а не на той, где писался
+       журнал; его печатает `probe`.
      opencode — `opencode.db` (по умолчанию <дом>/.local/share/opencode/;
        другой путь — `--db`): v2 — `session_v2` + `session_message`, v1 —
        `session` + `message`; сессии — по `directory` = корень проекта.
@@ -49,12 +56,20 @@
    Субагенты входят в токены, но не во время: их работа идёт, пока основная
    сессия ждёт результата инструмента, и уже входит в её время.
 
-   АКТИВНОЕ ВРЕМЯ: сумма промежутков между соседними событиями сессии, кроме
+   АКТИВНОЕ ВРЕМЯ: промежутки между соседними событиями сессии, кроме
    промежутков, которые кончаются сообщением человека (пауза между ходами), и
    ожидания ответа на инструмент вопроса или одобрения (WAIT_TOOLS). Ожидание
    подтверждения прав внутри хода от работы инструмента не отличить — оно
    входит. В opencode инструмент вопроса не вычитается: в журнале v2 его
-   ожидание не отделено от шага.
+   ожидание не отделено от шага. Несколько сессий — длина объединения их
+   промежутков, а не сумма (урок Л234): параллельные сессии время не удваивают.
+
+   МЕТКИ: каждая из двух — ровно одна в файле и строкой целиком; иначе `mark`
+   отказывает и файл не трогает (цитата метки в прозе сожгла 97 строк, RE0022).
+   ОТКАЗ без чисел называет причину: журналов нет / журналы старше окна /
+   форма не узнана / в окне нет записей / задача не упомянута. Субагент,
+   чья сессия задачу не упоминает, в счёт не идёт — `report`/`mark`
+   предупреждают строкой; включает его `--all-sessions`.
 
    Шапка задачи: `status` не из словаря docs/tasks/README.md или `id` не равен
    ID из имени файла — предупреждение (проверки шапки в гейте нет, решение
@@ -70,7 +85,7 @@
    Общие флаги: --db <путь к opencode.db>, --home <домашний каталог>.
    Строка `ВЕРДИКТ: OK | FAIL`, код выхода 0 | 1 (2 — нет проекта).
    ============================================================ */
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, appendFileSync, rmSync, mkdtempSync, openSync, readSync, closeSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, appendFileSync, rmSync, mkdtempSync, openSync, readSync, closeSync, utimesSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -123,11 +138,20 @@ function walk(dir, out = [], depth = 0) {
 /** Одна сессия JSONL → { usage: [{t,in,cache,out}], events: [{t,human}], waits: [[s,e]] }. */
 /* task — ID задачи. Упоминание считается, только если его написал человек или
    агент (текст, аргументы инструмента); вывод инструментов не в счёт: сессия
-   о другой задаче видит ID в пересобранном docs/index.md или в диффе. */
+   о другой задаче видит ID в пересобранном docs/index.md или в диффе.
+   Формы строки — две (RE0023, Э4):
+     content — `message.content[]` с `tool_use` / `tool_result`, счётчик
+       `message.usage` (`input_tokens`, `cache_*`, `output_tokens`);
+     parts — CLI контура: реплика модели `role: "model"`, `message.parts[]` с
+       `text` / `functionCall`, ответ инструмента — строка `type: "tool_result"`
+       с `functionResponse`, счётчик `usageMetadata` (`promptTokenCount`,
+       `candidatesTokenCount`, `cachedContentTokenCount`, `thoughtsTokenCount`)
+       на строке или в `message`. Строки `system` не читаются: служебные записи
+       CLI повторяют счётчики реплик и удвоили бы их. */
 function parseJsonl(text, task) {
-  const usage = [], events = [], waits = [], calls = [], open = new Map(), seen = new Set(), seenCall = new Set();
+  const usage = [], events = [], waits = [], calls = [], open = new Map(), seen = new Set(), seenCall = new Set(), forms = new Set();
   let hit = !task;
-  const says = (c) => !hit && c && c.type !== 'tool_result' && JSON.stringify(c).includes(task);
+  const says = (c) => !hit && c && c.type !== 'tool_result' && !c.functionResponse && JSON.stringify(c).includes(task);
   for (const line of text.split('\n')) {
     if (!line.trim()) continue;
     let e;
@@ -135,56 +159,92 @@ function parseJsonl(text, task) {
     const t = Date.parse(e.timestamp);
     if (!Number.isFinite(t)) continue;
     const msg = e.message || {};
-    const content = Array.isArray(msg.content) ? msg.content : [];
-    if (e.type === 'assistant') {
+    const content = Array.isArray(msg.content) ? msg.content : Array.isArray(msg.parts) ? msg.parts : [];
+    if (e.type === 'assistant' || (e.type !== 'system' && msg.role === 'model')) {
       events.push({ t, human: false });
-      const key = msg.id || e.requestId || e.uuid;
-      const u = msg.usage;
-      if (u && !seen.has(key)) {
-        seen.add(key);
-        const x = {
-          t,
-          in: (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0),
-          cache: u.cache_read_input_tokens || 0,
-          out: u.output_tokens || 0,
-        };
-        usage.push({ ...x, peak: x.in + x.cache + x.out });
+      const key = msg.id || e.requestId || e.responseId || e.uuid;
+      const meta = e.usageMetadata || msg.usageMetadata;
+      let x = null;
+      if (msg.usage) {
+        const u = msg.usage;
+        x = { in: (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0), cache: u.cache_read_input_tokens || 0, out: u.output_tokens || 0, form: 'message.usage' };
+      } else if (meta && has(meta, 'promptTokenCount', 'candidatesTokenCount')) {
+        const [form, , split] = USAGE_FORMS.find(([f]) => f === 'promptTokenCount');
+        x = { ...split(meta), form: 'usageMetadata.' + form };
       }
-      for (const c of content) {
-        if (c && c.type === 'tool_use' && !seenCall.has(c.id)) { seenCall.add(c.id); calls.push(t); }
-        if (c && c.type === 'tool_use' && WAIT_TOOLS.has(c.name)) open.set(c.id, t);
+      if (x && !seen.has(key || t + '|' + x.in + '|' + x.cache + '|' + x.out)) {
+        seen.add(key || t + '|' + x.in + '|' + x.cache + '|' + x.out);
+        forms.add(x.form);
+        usage.push({ t, in: x.in, cache: x.cache, out: x.out, peak: x.in + x.cache + x.out });
+      }
+      content.forEach((c, i) => {
+        if (!c) return;
+        const fc = c.type === 'tool_use' ? c : c.functionCall && typeof c.functionCall === 'object' ? c.functionCall : null;
+        if (fc) {
+          const id = fc.id || (key || t) + ':' + i;
+          if (!seenCall.has(id)) { seenCall.add(id); calls.push(t); }
+          if (WAIT_TOOLS.has(fc.name)) open.set(fc.id || fc.name, t);
+        }
         if (says(c)) hit = true;
+      });
+    } else if (e.type === 'user' || e.type === 'tool_result') {
+      const results = content.filter((c) => c && (c.type === 'tool_result' || c.functionResponse));
+      for (const r of results) {
+        const k = r.tool_use_id || (r.functionResponse && (r.functionResponse.id || r.functionResponse.name));
+        if (open.has(k)) { waits.push([open.get(k), t]); open.delete(k); }
       }
-    } else if (e.type === 'user') {
-      const results = content.filter((c) => c && c.type === 'tool_result');
-      for (const r of results) if (open.has(r.tool_use_id)) { waits.push([open.get(r.tool_use_id), t]); open.delete(r.tool_use_id); }
-      events.push({ t, human: !results.length && !e.isMeta });
-      if (typeof msg.content === 'string' ? !hit && task && msg.content.includes(task) : content.some(says)) hit = true;
+      events.push({ t, human: e.type === 'user' && !results.length && !e.isMeta });
+      /* Текстом упоминает задачу только реплика человека; строка `tool_result`
+         с текстом — вывод инструмента, он не в счёт (ревью RE0023 Р6). */
+      if (typeof msg.content === 'string' ? e.type === 'user' && !hit && task && msg.content.includes(task) : content.some(says)) hit = true;
     }
   }
-  return { usage, events, waits, calls, hit };
+  return { usage, events, waits, calls, hit, forms: [...forms] };
 }
 
-/** task — ID задачи: берутся сессии, где он встречается; субагент — вместе со своей сессией. */
-function readJsonl(home, root, from, to, task) {
+/* Сессия, которой принадлежит журнал субагента: `<сессия>/subagents/<агент>.jsonl`
+   или `subagents/<сессия>/<агент>.jsonl` (CLI контура, RE0022 О6). null — не субагент. */
+function subagentOf(dir, file) {
+  const seg = path.relative(dir, file).split(path.sep);
+  const i = seg.indexOf('subagents');
+  if (i < 0) return null;
+  return i + 2 < seg.length ? seg[i + 1] : (seg[i - 1] || '');
+}
+
+/** task — ID задачи: берутся сессии, где он встречается; субагент — вместе со своей сессией.
+    diag — счётчики для текста отказа (diagnose): что нашлось и на каком шаге отсеялось. */
+function readJsonl(home, root, from, to, task, diag = newDiag()) {
   const sessions = [];
   for (const dir of jsonlDirs(home, root)) {
-    const files = walk(dir).filter((f) => { try { return statSync(f).mtimeMs >= from; } catch { return false; } });
-    const isSub = (f) => path.basename(path.dirname(f)) === 'subagents';
+    diag.dirs++;
+    const all = walk(dir);
+    diag.files += all.length;
+    const files = all.filter((f) => { try { return statSync(f).mtimeMs >= from; } catch { return false; } });
+    diag.fresh += files.length;
+    const isSub = (f) => subagentOf(dir, f) !== null;
     const taken = new Set();
     for (const file of [...files.filter((f) => !isSub(f)), ...files.filter(isSub)]) {
       const text = readFileSync(file, 'utf8');
       const id = path.basename(file, '.jsonl');
-      const sub = isSub(file);
-      const parent = sub ? path.basename(path.dirname(path.dirname(file))) : null;
+      const parent = subagentOf(dir, file);
+      const sub = parent !== null;
       const s = parseJsonl(text, task);
-      if (!s.hit && !(sub && taken.has(parent))) continue;
+      const inWindow = s.usage.some((x) => x.t >= from && x.t <= to);
+      if (s.usage.length) diag.recognized++;
+      if (inWindow) diag.inWindow++;
+      if (!s.hit && !(sub && taken.has(parent))) {
+        if (sub && inWindow) diag.orphanSubs++;
+        continue;
+      }
+      if (inWindow) diag.hit++;
       if (!sub) taken.add(id);
       sessions.push({ id, sub, src: 'jsonl', ...s });
     }
   }
   return sessions;
 }
+
+const newDiag = () => ({ dirs: 0, files: 0, fresh: 0, recognized: 0, inWindow: 0, hit: 0, orphanSubs: 0, db: false, ocProject: 0, generic: 0, genericInWindow: 0 });
 
 /* ---------------- источник: opencode ---------------- */
 
@@ -205,7 +265,7 @@ function ocTokens(tk, t) {
   return { ...x, peak: x.in + x.cache + x.out };
 }
 
-async function readOpencode(dbPath, root, from, to, task) {
+async function readOpencode(dbPath, root, from, to, task, diag = newDiag()) {
   if (!dbPath || !existsSync(dbPath)) return [];
   const DB = await sqlite();
   if (!DB) return [];
@@ -217,13 +277,17 @@ async function readOpencode(dbPath, root, from, to, task) {
     const mentions = (msgTable, id) => (msgTable === 'session_message'
       ? db.prepare("select 1 from session_message where session_id = ? and type = 'user' and data like ? limit 1").get(id, '%' + task + '%')
       : tables.has('part') && db.prepare('select 1 from part where session_id = ? and data like ? and data like ? limit 1').get(id, '%"type":"text"%', '%' + task + '%'));
+    /* Счётчики для текста отказа (ревью RE0023 Р7): сессий проекта, из них с
+       записями в окне, из них упоминающих задачу — как у журнала JSONL. */
     const pick = (sessTable, msgTable, kindOf) => {
-      if (!tables.has(sessTable) || !tables.has(msgTable)) return [];
-      const ids = db.prepare(`select id, directory from ${sessTable}`).all().filter((r) => sameDir(r.directory, root)).map((r) => r.id)
-        .filter((id) => !task || mentions(msgTable, id));
+      const stats = { project: 0, inWindow: 0, hit: 0 };
+      if (!tables.has(sessTable) || !tables.has(msgTable)) return { out: [], stats };
+      const all = db.prepare(`select id, directory from ${sessTable}`).all().filter((r) => sameDir(r.directory, root)).map((r) => r.id);
+      stats.project = all.length;
       const out = [];
       const q = db.prepare(`select ${kindOf}, data from ${msgTable} where session_id = ? and time_created >= ? and time_created <= ?`);
-      for (const id of ids) {
+      for (const id of all) {
+        const said = !task || Boolean(mentions(msgTable, id));
         const usage = [], events = [];
         for (const r of q.all(id, from - 864e5, to)) {
           let d;
@@ -235,12 +299,18 @@ async function readOpencode(dbPath, root, from, to, task) {
           if (time.completed) events.push({ t: time.completed, human: false });
           if (kind === 'assistant' && d.tokens) usage.push(ocTokens(d.tokens, time.completed || time.created));
         }
-        if (usage.length || events.length) out.push({ id, sub: false, usage, events, waits: [], calls: null, src: 'opencode' });
+        const inWindow = usage.some((x) => x.t >= from && x.t <= to);
+        if (inWindow) { stats.inWindow++; if (said) stats.hit++; }
+        if (said && (usage.length || events.length)) out.push({ id, sub: false, usage, events, waits: [], calls: null, src: 'opencode' });
       }
-      return out;
+      return { out, stats };
     };
-    const v2 = pick('session_v2', 'session_message', 'type as kind');
-    return v2.length ? v2 : pick('session', 'message', 'null as kind');
+    let r = pick('session_v2', 'session_message', 'type as kind');
+    if (!r.stats.project) r = pick('session', 'message', 'null as kind');
+    diag.ocProject += r.stats.project;
+    diag.inWindow += r.stats.inWindow;
+    diag.hit += r.stats.hit;
+    return r.out;
   } finally {
     db.close();
   }
@@ -349,7 +419,7 @@ const needlesOf = (root) => [root, root.split(path.sep).join('/'), root.split(pa
    existsSync путь «E--…» — один каталог, иначе общий читатель посчитал бы его второй раз. */
 const under = (p, k) => (process.platform === 'linux' ? p.startsWith(k) : p.toLowerCase().startsWith(k.toLowerCase()));
 
-function readGeneric(home, root, from, to, task) {
+function readGeneric(home, root, from, to, task, diag = newDiag()) {
   const skip = jsonlDirs(home, root);
   const needles = needlesOf(root);
   const sessions = [];
@@ -369,9 +439,12 @@ function readGeneric(home, root, from, to, task) {
       let txt;
       try { txt = readFileSync(p, 'utf8'); } catch { continue; }
       const hay = process.platform === 'linux' ? txt : txt.toLowerCase();
-      if (!needles.some((n) => hay.includes(process.platform === 'linux' ? n : n.toLowerCase())) || (task && !txt.includes(task))) continue;
+      if (!needles.some((n) => hay.includes(process.platform === 'linux' ? n : n.toLowerCase()))) continue;
+      diag.generic++;
+      if (task && !txt.includes(task)) continue;
       const g = parseGeneric(txt);
       if (!g.usage.some((x) => x.t >= from && x.t <= to)) continue;
+      diag.genericInWindow++;
       sessions.push({ id: p, sub: false, src: 'generic', usage: g.usage, events: g.events, waits: [], calls: g.calls, forms: [...g.forms] });
     }
   };
@@ -381,25 +454,39 @@ function readGeneric(home, root, from, to, task) {
 
 /* ---------------- счёт окна ---------------- */
 
-function activeMs(events, waits, from, to) {
+/** Промежутки работы сессии [[начало, конец]]: между соседними событиями, кроме
+    промежутков, что кончаются сообщением человека, и за вычетом ожиданий (waits). */
+function activeSpans(events, waits, from, to) {
   const ev = events.filter((e) => e.t >= from && e.t <= to).sort((a, b) => a.t - b.t);
-  let ms = 0;
+  const spans = [];
   for (let i = 1; i < ev.length; i++) {
     const a = ev[i - 1], b = ev[i];
-    if (b.human) continue;
-    let gap = b.t - a.t;
-    for (const [s, e] of waits) {
-      const o = Math.min(e, b.t) - Math.max(s, a.t);
-      if (o > 0) gap -= o;
-    }
-    ms += Math.max(0, gap);
+    if (b.human || b.t <= a.t) continue;
+    let pieces = [[a.t, b.t]];
+    for (const [s, e] of waits) pieces = pieces.flatMap(([x, y]) => (e <= x || s >= y ? [[x, y]] : [[x, Math.max(x, s)], [Math.min(y, e), y]].filter(([p, q]) => q > p)));
+    spans.push(...pieces);
+  }
+  return spans;
+}
+
+/* Время нескольких сессий — длина ОБЪЕДИНЕНИЯ их промежутков, а не сумма: две
+   параллельные сессии по 25 мин за одни и те же 25 мин — это 25 мин окна, а не
+   50 (урок Л234: «Время» сложилось в 1 ч 07 мин при 25,5 мин по меткам). */
+function unionMs(spans) {
+  let ms = 0, end = -Infinity;
+  for (const [s, e] of [...spans].sort((a, b) => a[0] - b[0])) {
+    if (e <= end) continue;
+    ms += e - Math.max(s, end);
+    end = e;
   }
   return ms;
 }
 
+const activeMs = (events, waits, from, to) => unionMs(activeSpans(events, waits, from, to));
+
 function tally(sessions, from, to) {
   const r = { in: 0, cache: 0, out: 0, peak: 0, ms: 0, sessions: 0, reqs: 0, calls: 0, callsKnown: true, src: {}, forms: new Set() };
-  const counted = new Set();
+  const counted = new Set(), spans = [];
   for (const s of sessions) {
     const u = s.usage.filter((x) => x.t >= from && x.t <= to);
     for (const x of u) { r.in += x.in; r.cache += x.cache; r.out += x.out; r.peak = Math.max(r.peak, x.peak); }
@@ -410,21 +497,60 @@ function tally(sessions, from, to) {
       for (const f of s.forms || []) r.forms.add(f);
     }
     if (!s.sub) {
-      r.ms += activeMs(s.events, s.waits, from, to);
+      spans.push(...activeSpans(s.events, s.waits, from, to));
       if (u.length && !counted.has(s.id)) { counted.add(s.id); r.sessions++; }
     }
   }
+  r.ms = unionMs(spans);
   return r;
 }
 
 async function collect(opts, root, from, to, task) {
+  const diag = newDiag();
+  diag.db = Boolean(opts.db && existsSync(opts.db));
   const sessions = [
-    ...readJsonl(opts.home, root, from, to, task),
-    ...(await readOpencode(opts.db, root, from, to, task)),
+    ...readJsonl(opts.home, root, from, to, task, diag),
+    ...(await readOpencode(opts.db, root, from, to, task, diag)),
   ];
   const known = tally(sessions, from, to);
+  known.diag = diag;
   if (!opts.generic && known.reqs) return known;
-  return tally([...sessions, ...readGeneric(opts.home, root, from, to, task)], from, to);
+  const all = tally([...sessions, ...readGeneric(opts.home, root, from, to, task, diag)], from, to);
+  all.diag = diag;
+  return all;
+}
+
+/** Почему за окно нечего считать — разные причины, разные тексты (RE0022 О10 п. 4):
+    журналов нет / журналы старше окна / форма не узнана / в окне нет записей /
+    задача не упомянута. Порядок — от самой ранней ступени, на которой всё отсеялось. */
+function diagnose(d, opts, from, to, task) {
+  const win = new Date(from).toISOString() + ' → ' + new Date(to).toISOString();
+  const tail = '; без журналов — --manual --tokens <N> --minutes <M>';
+  if (!d.files && !d.db && !d.generic) {
+    return 'журналов сессий не найдено: нет ни каталога <дом>/.<CLI>/projects/<корень проекта, всё кроме букв и цифр → «-»>/, '
+      + 'ни базы opencode, ни файлов с упоминанием проекта (дом: ' + opts.home + '). Журналы скопированы — --home <дом копии>; '
+      + 'неизвестный CLI — probe' + tail;
+  }
+  if (!d.files && d.db && !d.ocProject && !d.genericInWindow) {
+    return 'журналов JSONL нет, а в базе opencode (' + opts.db + ') нет сессий этого проекта — сессии открывались в другом '
+      + 'каталоге или база не та (--db)' + tail;
+  }
+  if (d.files && !d.fresh && !d.genericInWindow) {
+    return 'журналы есть (файлов: ' + d.files + '), но ни один не менялся после начала окна ' + win
+      + ': окно не то (--from) или копия журналов старше окна — скопировать заново с сохранением времени (cp -p)' + tail;
+  }
+  if (d.fresh && !d.recognized && !d.genericInWindow) {
+    return 'форма журналов не узнана: файлов за окно ' + d.fresh + ', ни одной записи со счётчиком токенов — probe, '
+      + 'вывод в отчёт задачи: по нему дописывается читатель' + tail;
+  }
+  if (!d.inWindow && !d.genericInWindow) {
+    return 'за окно ' + win + ' записей нет: журналы узнаны, но ни одной записи со временем внутри окна — проверьте --from/--at (время в UTC)' + tail;
+  }
+  if (task && !d.hit && !d.genericInWindow) {
+    return 'в окне есть сессии (' + d.inWindow + '), но ни одна не упоминает ' + task
+      + ': назовите задачу в разговоре или --all-sessions — все сессии проекта за окно' + tail;
+  }
+  return 'за окно ' + win + ' запросов к модели не найдено' + tail;
 }
 
 /** Строки «источники» и «запросов / вызовов» под строкой отчёта. */
@@ -477,10 +603,34 @@ function render(rows) {
   return [HEAD, SEP, ...rows.map(line), line(total), '', NOTE].join('\n');
 }
 
+/* Метки блока «Затраты»: каждая — ровно одна и строкой целиком, конец после
+   начала. Иначе { error } и запись не делается: `mark` резал блок от ПЕРВОГО
+   вхождения, и метка, процитированная в прозе, сожгла 97 строк задачи
+   (RE0022 О10 п. 3). Голое имя без обрамления комментарием меткой не считается. */
+function markers(text) {
+  const where = (m) => {
+    const at = [];
+    for (let i = text.indexOf(m); i >= 0; i = text.indexOf(m, i + m.length)) at.push(i);
+    return at;
+  };
+  const lineAt = (i) => text.slice(0, i).split('\n').length;
+  const whole = (i, m) => (i === 0 || text[i - 1] === '\n') && /^[ \t]*(\r?\n|$)/.test(text.slice(i + m.length));
+  const b = where(BEGIN), e = where(END);
+  const bad = [];
+  if (!b.length || !e.length) return { error: 'нет меток ' + BEGIN + ' / ' + END + ' (раздел «Затраты» шаблона)', missing: true };
+  if (b.length > 1) bad.push('начало — ' + b.length + ' раза (строки ' + b.map(lineAt).join(', ') + ')');
+  if (e.length > 1) bad.push('конец — ' + e.length + ' раза (строки ' + e.map(lineAt).join(', ') + ')');
+  for (const [m, at] of [[BEGIN, b], [END, e]]) for (const i of at) if (!whole(i, m)) bad.push('строка ' + lineAt(i) + ': метка внутри текста, а не строкой целиком');
+  if (!bad.length && e[0] < b[0]) bad.push('конец (строка ' + lineAt(e[0]) + ') раньше начала (строка ' + lineAt(b[0]) + ')');
+  if (bad.length) return { error: 'метки блока «Затраты» неоднозначны: ' + bad.join('; ') + '. Метку в тексте задачи не цитировать — файл не изменён' };
+  return { b: b[0], e: e[0] };
+}
+
 /** Вставить или заменить строку этапа; текст вне меток не трогается. */
 function upsert(text, row) {
-  const b = text.indexOf(BEGIN), e = text.indexOf(END);
-  if (b < 0 || e < b) return null;
+  const m = markers(text);
+  if (m.error) return null;
+  const b = m.b, e = m.e;
   const rows = parseRows(text.slice(b + BEGIN.length, e));
   const i = rows.findIndex((r) => r.stage === row.stage);
   if (i >= 0) rows[i] = row; else rows.push(row);
@@ -559,19 +709,20 @@ async function run(ctx, argv) {
   if (!file) return fail('задача ' + id + ' не найдена в ' + ctx.tasksDir);
   const text = readFileSync(file, 'utf8');
   for (const w of headerWarnings(text, id)) out.push('ПРЕДУПРЕЖДЕНИЕ: ' + w);
-  const marked = text.includes(BEGIN) && text.includes(END);
+  const marks = markers(text);
 
   let now;
   try { now = time(fl.at, ctx.now()); } catch (e) { return fail(e.message); }
 
   if (cmd === 'start') {
-    if (!marked) out.push('ПРЕДУПРЕЖДЕНИЕ: в задаче нет меток ' + BEGIN + ' / ' + END + ' — mark не сможет записать строку');
+    if (marks.error) out.push('ПРЕДУПРЕЖДЕНИЕ: ' + marks.error + ' — mark не сможет записать строку');
     note(ctx.stateAbs, id, { t: new Date(now).toISOString(), kind: 'start' });
     out.push('старт ' + id + ': ' + new Date(now).toISOString(), 'ВЕРДИКТ: OK');
     return { out, ok: true };
   }
   if (cmd !== 'mark' && cmd !== 'report') return fail('команда: start | mark | report | probe');
   if (cmd === 'mark' && !stage) return fail('нужен этап: mark ' + id + ' Э1');
+  if (cmd === 'mark' && !fl.dry && marks.error) return fail(marks.error);
 
   let from;
   try { from = time(fl.from, null); } catch (e) { return fail(e.message); }
@@ -588,18 +739,22 @@ async function run(ctx, argv) {
     if (peak !== null && !Number.isFinite(peak)) return fail('--peak: нужно число токенов');
     r = rowOf(stage, { in: null, cache: null, out: null, total: tokens, peak, min: minutes, sessions: null });
   } else {
-    const c = await collect(opts, ctx.root, from, now, fl['all-sessions'] ? null : id);
-    if (!c.sessions && !(c.in + c.cache + c.out)) {
-      return fail('за окно ' + new Date(from).toISOString() + ' → ' + new Date(now).toISOString()
-        + ' журналов сессий не найдено. Неизвестный CLI — probe; без журналов — --manual --tokens <N> --minutes <M>');
-    }
+    const task = fl['all-sessions'] ? null : id;
+    const c = await collect(opts, ctx.root, from, now, task);
+    if (!c.sessions && !(c.in + c.cache + c.out)) return fail(diagnose(c.diag, opts, from, now, task));
     r = rowOf(stage || 'окно', { ...c, min: c.ms / 60000 });
     extra = extraLines(c);
+    /* Субагент без своей сессии в счёте: его журнал не упоминает задачу, а сессия-
+       родитель не взята. --all-sessions по умолчанию не включается — он берёт и
+       параллельные сессии о другом; предупреждение называет расхождение (RE0023, Э4). */
+    if (task && c.diag.orphanSubs) {
+      extra.push('ПРЕДУПРЕЖДЕНИЕ: в окне журналов субагентов вне счёта: ' + c.diag.orphanSubs
+        + ' (их сессия не упоминает ' + id + '). Если это работа задачи — --all-sessions');
+    }
   }
   out.push('окно: ' + new Date(from).toISOString() + ' → ' + new Date(now).toISOString(), HEAD, SEP, line(r), ...extra);
 
   if (cmd === 'report' || fl.dry) { out.push('ВЕРДИКТ: OK'); return { out, ok: true }; }
-  if (!marked) return fail('в задаче нет меток ' + BEGIN + ' / ' + END + ' (раздел «Затраты» шаблона)');
   writeFileSync(file, upsert(text, r), 'utf8');
   note(ctx.stateAbs, id, { t: new Date(now).toISOString(), kind: 'mark', stage, from: new Date(from).toISOString(), total: r.total, min: r.min });
   out.push('строка ' + stage + ' записана: ' + path.relative(ctx.root, file).split(path.sep).join('/'), 'ВЕРДИКТ: OK');
@@ -628,6 +783,7 @@ function probe(ctx, opts) {
   const out = ['== ' + TOOL + ' probe: журналы сессий агента =='];
   const known = jsonlDirs(opts.home, ctx.root);
   out.push('журнал JSONL: ' + (known.length ? known.length + ' каталог(ов) найдено' : 'нет'));
+  out.push('ожидаемая папка журналов: ' + path.join(opts.home, '.<CLI>', 'projects', sanitize(ctx.root)) + ' (копию журналов класть под этим именем)');
   out.push('opencode: ' + (existsSync(opts.db) ? 'база есть' : 'базы нет'));
   const needles = [ctx.root, ctx.root.split(path.sep).join('/'), ctx.root.split(path.sep).join('\\\\'), sanitize(ctx.root)];
   const roots = [];
@@ -782,7 +938,87 @@ async function selftest() {
       && text.includes('| **Итого** | 1 | 2 | 3 | 16 | 7 | 5 мин | — |') && text.includes(HEAD) && !text.includes('| Этап | Вход | Кэш | Выход | Всего | Время |'), r.out.join(' / '));
 
     r = await run(s.ctx, ['report', 'RE0099', '--from', at(150), '--at', at(160), ...H]);
-    check('пустое окно — отказ с подсказкой probe и --manual', !r.ok && /probe/.test(r.out.join(' ')));
+    check('пустое окно — свой текст отказа и --manual', !r.ok && /за окно .* записей нет/.test(r.out.join(' ')) && /--manual/.test(r.out.join(' ')), r.out.join(' / '));
+
+    /* Тексты отказа различаются по причине (RE0022 О10 п. 4). */
+    const empty = path.join(s.root, '_empty');
+    mkdirSync(empty, { recursive: true });
+    r = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(100), '--home', empty, '--db', path.join(s.root, 'none.db')]);
+    check('отказ: журналов нет вовсе', !r.ok && /журналов сессий не найдено/.test(r.out.join(' ')), r.out.join(' / '));
+    const home4 = path.join(s.root, '_home4'), sess4 = path.join(home4, '.cli', 'projects', sanitize(s.root));
+    put(sess4, 'old.jsonl', human(0, 'RE0099') + '\n' + asst(1, 'x1', U(1, 1, 1)) + '\n');
+    utimesSync(path.join(sess4, 'old.jsonl'), new Date(T0 - 864e5), new Date(T0 - 864e5));
+    r = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(100), '--home', home4, '--db', path.join(s.root, 'none.db')]);
+    check('отказ: журналы старше окна (копия без сохранения времени)', !r.ok && /ни один не менялся после начала окна/.test(r.out.join(' ')) && /cp -p/.test(r.out.join(' ')), r.out.join(' / '));
+    put(sess4, 'odd.jsonl', JSON.stringify({ type: 'assistant', timestamp: at(1), message: { role: 'model', parts: [{ text: 'RE0099' }] }, tally: { a: 1 } }) + '\n');
+    r = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(100), '--home', home4, '--db', path.join(s.root, 'none.db')]);
+    check('отказ: форма журналов не узнана — probe', !r.ok && /форма журналов не узнана/.test(r.out.join(' ')) && /probe/.test(r.out.join(' ')), r.out.join(' / '));
+    put(s.root, 'docs/tasks/RE0777-other.md', TASK.replace("id: 'RE0099'", "id: 'RE0777'"));
+    r = await run(s.ctx, ['report', 'RE0777', '--from', at(0), '--at', at(100), ...H]);
+    check('отказ: в окне есть сессии, задача не упомянута — --all-sessions', !r.ok && /ни одна не упоминает RE0777/.test(r.out.join(' ')), r.out.join(' / '));
+
+    /* Журнал CLI контура (RE0022 О7): реплика модели role "model", message.parts с
+       functionCall, ответ инструмента — строка tool_result с functionResponse,
+       счётчик usageMetadata на строке; строка system со счётчиком не считается.
+       Субагенты — subagents/<сессия>/agent-*.jsonl; субагент чужой сессии — вне
+       счёта и с предупреждением. Значения придуманы по форме: в отчёте их нет. */
+    const home3 = path.join(s.root, '_home3'), sess3 = path.join(home3, '.ccli', 'projects', sanitize(s.root));
+    const rec = (min, type, role, parts, extra = {}) => JSON.stringify({ uuid: type + min, sessionId: 'c1', timestamp: at(min), type, cwd: s.root, message: { role, parts }, ...extra });
+    const UM = (p, c, o, th = 0) => ({ usageMetadata: { promptTokenCount: p, candidatesTokenCount: o, cachedContentTokenCount: c, thoughtsTokenCount: th, totalTokenCount: p + o + th } });
+    put(sess3, 'chats/c1.jsonl', [
+      rec(0, 'user', 'user', [{ text: 'начинаем RE0099' }]),
+      rec(1, 'assistant', 'model', [{ text: 'читаю' }, { functionCall: { id: 'f1', name: 'read_file', args: { path: 'a' } } }], UM(1000, 800, 50, 10)),
+      rec(2, 'tool_result', 'user', [{ functionResponse: { id: 'f1', name: 'read_file', response: { output: 'RE0123' } } }]),
+      rec(3, 'assistant', 'model', [{ functionCall: { id: 'f2', name: 'edit' } }, { functionCall: { id: 'f3', name: 'shell' } }], UM(3000, 2500, 100)),
+      rec(3, 'system', 'user', [], { subtype: 'ui_telemetry', ...UM(9e6, 0, 9e6) }),
+      rec(4, 'tool_result', 'user', [{ functionResponse: { id: 'f2', name: 'edit' } }, { functionResponse: { id: 'f3', name: 'shell' } }]),
+      rec(5, 'assistant', 'model', [{ text: 'готово' }], UM(3200, 3000, 20)),
+    ].join('\n') + '\n');
+    put(sess3, 'subagents/c1/agent-general-purpose-1.jsonl', [rec(2, 'user', 'user', [{ text: 'задание' }]), rec(3, 'assistant', 'model', [{ text: 'ok' }], UM(400, 0, 40))].join('\n') + '\n');
+    put(sess3, 'chats/c9.jsonl', rec(1, 'user', 'user', [{ text: 'другое' }]) + '\n' + rec(2, 'assistant', 'model', [{ text: 'x' }], UM(7, 0, 7)) + '\n');
+    put(sess3, 'subagents/c9/agent-general-purpose-2.jsonl', rec(2, 'assistant', 'model', [{ text: 'x' }], UM(5, 0, 5)) + '\n');
+    const H3 = ['--home', home3, '--db', path.join(s.root, 'none.db')];
+    const k = await collect({ home: home3, db: null }, s.root, T0, T0 + 100 * 60000, 'RE0099');
+    check('журнал контура: вход без кэша, кэш, выход с рассуждениями; system не считается; субагент своей сессии — в счёте',
+      k.in === 200 + 500 + 200 + 400 && k.cache === 800 + 2500 + 3000 && k.out === 60 + 100 + 20 + 40 && k.peak === 3220 && k.reqs === 4,
+      JSON.stringify({ in: k.in, cache: k.cache, out: k.out, peak: k.peak, reqs: k.reqs }));
+    check('журнал контура: вызовы functionCall, сессий 1, время по меткам, вывод инструмента — не упоминание',
+      k.calls === 3 && k.sessions === 1 && Math.round(k.ms / 60000) === 5 && k.diag.orphanSubs === 1,
+      JSON.stringify({ calls: k.calls, sessions: k.sessions, min: k.ms / 60000, orphan: k.diag.orphanSubs }));
+    r = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(100), ...H3]);
+    const rs = r.out.join('\n');
+    check('report по журналу контура: числа, источник с узнанной формой, предупреждение о субагенте вне счёта',
+      r.ok && /\| окно \| 1 300 \| 6 300 \| 220 \| 7 820 \| 3 220 \| 5 мин \| 1 \|/.test(rs) && /журнал JSONL — файлов 2 \(форма: usageMetadata\.promptTokenCount\)/.test(rs)
+      && /субагентов вне счёта: 1/.test(rs), rs.replace(/\n/g, ' / '));
+
+    /* Вывод инструмента текстом (строка tool_result со строковым content) — не
+       упоминание задачи (ревью RE0023 Р6): сессия о другом с таким выводом не в счёте. */
+    const home6 = path.join(s.root, '_home6'), sess6 = path.join(home6, '.cli', 'projects', sanitize(s.root));
+    put(sess6, 'o.jsonl', [human(1, 'другое'), asst(2, 'q1', U(5, 5, 5)), JSON.stringify({ type: 'tool_result', timestamp: at(3), message: { content: 'вывод: RE0099 в docs/index.md' } })].join('\n') + '\n');
+    const six = await collect({ home: home6, db: null }, s.root, T0, T0 + 100 * 60000, 'RE0099');
+    check('вывод инструмента текстом — не упоминание задачи', six.sessions === 0 && six.diag.inWindow === 1 && six.diag.hit === 0, JSON.stringify({ sessions: six.sessions, diag: six.diag }));
+
+    /* Время двух параллельных сессий — объединение промежутков, не сумма (Л234):
+       c1 работает 0 → 5 мин, c2 — 2 → 8 мин; вместе 8 мин, а не 11. */
+    put(sess3, 'chats/c2.jsonl', [rec(2, 'user', 'user', [{ text: 'RE0099, приёмка' }]), rec(4, 'assistant', 'model', [{ text: 'a' }], UM(10, 0, 1)), rec(8, 'assistant', 'model', [{ text: 'b' }], UM(10, 0, 1))].join('\n') + '\n');
+    const two = await collect({ home: home3, db: null }, s.root, T0, T0 + 100 * 60000, 'RE0099');
+    check('время двух перекрывающихся сессий — объединение, а не сумма (Л234)', two.sessions === 2 && Math.round(two.ms / 60000) === 8, two.sessions + ' сессий, ' + two.ms / 60000 + ' мин');
+
+    /* Метки «Затраты»: цитата метки в прозе и вторая пара — отказ, файл не изменён. */
+    const tf = path.join(s.root, 'docs/tasks/RE0099-probe.md');
+    for (const [name, body] of [
+      ['цитата метки в прозе', TASK.replace('# Проба\n', '# Проба\n\nБлок ведётся между `' + BEGIN + '` и `' + END + '`.\n')],
+      ['вторая пара меток', TASK + '\n' + BEGIN + '\n' + END + '\n'],
+      ['метки в обратном порядке', TASK.replace(BEGIN + '\n' + END, END + '\n' + BEGIN)],
+    ]) {
+      put(s.root, 'docs/tasks/RE0099-probe.md', body);
+      r = await run(s.ctx, ['mark', 'RE0099', 'Э5', '--manual', '--tokens', '1', '--minutes', '1', '--from', at(0), ...H]);
+      check('mark: ' + name + ' — отказ, файл не изменён', !r.ok && /метки блока «Затраты» неоднозначны/.test(r.out.join(' ')) && readFileSync(tf, 'utf8') === body, r.out.join(' / '));
+    }
+    put(s.root, 'docs/tasks/RE0099-probe.md', TASK.replace('# Проба\n', '# Проба\n\nСлужебные метки task-cost:begin / task-cost:end ведёт инструмент.\n'));
+    r = await run(s.ctx, ['mark', 'RE0099', 'Э5', '--manual', '--tokens', '1', '--minutes', '1', '--from', at(0), ...H]);
+    check('mark: имя метки без обрамления комментарием — не метка, строка записана', r.ok && readFileSync(tf, 'utf8').includes('| Э5 |'), r.out.join(' / '));
+    put(s.root, 'docs/tasks/RE0099-probe.md', TASK);
 
     put(s.root, 'docs/tasks/RE0099-probe.md', TASK.replace('status: in-progress', 'status: pending').replace("id: 'RE0099'", "id: '099'").replace(BEGIN + '\n' + END + '\n', ''));
     r = await run(s.ctx, ['mark', 'RE0099', 'Э3', '--from', at(0), ...H]);
@@ -806,6 +1042,21 @@ async function selftest() {
       db.close();
       const oc = tally(await readOpencode(dbPath, s.root, T0, T0 + 10 * 60000, 'RE0099'), T0, T0 + 10 * 60000);
       check('opencode v2: только сессии проекта, вход с записью в кэш, выход с рассуждениями', oc.in === 15 && oc.cache === 900 && oc.out === 10 && oc.peak === 925 && Math.round(oc.ms / 60000) === 2 && oc.sessions === 1, JSON.stringify(oc));
+
+      /* Тексты отказа для opencode без журналов JSONL (ревью RE0023 Р7): в базе нет
+         сессий проекта / сессия проекта есть, но задачу не упоминает. */
+      const empty7 = path.join(s.root, '_empty7');
+      mkdirSync(empty7, { recursive: true });
+      const db2Path = path.join(s.root, 'oc2.db');
+      const db2 = new DB(db2Path);
+      db2.exec('create table session_v2 (id text, directory text); create table session_message (id text, session_id text, type text, time_created integer, data text);');
+      db2.prepare('insert into session_v2 values (?, ?)').run('x', path.join(s.root, 'другой'));
+      db2.prepare('insert into session_message values (?, ?, ?, ?, ?)').run('1', 'x', 'assistant', m(1), JSON.stringify({ time: { created: m(1), completed: m(2) }, tokens: { input: 1, output: 1, reasoning: 0, cache: { read: 0, write: 0 } } }));
+      db2.close();
+      let r7 = await run(s.ctx, ['report', 'RE0099', '--from', at(0), '--at', at(10), '--home', empty7, '--db', db2Path]);
+      check('отказ: в базе opencode нет сессий проекта', !r7.ok && /нет сессий этого проекта/.test(r7.out.join(' ')), r7.out.join(' / '));
+      r7 = await run(s.ctx, ['report', 'RE0777', '--from', at(0), '--at', at(10), '--home', empty7, '--db', dbPath]);
+      check('отказ: сессия opencode есть, задачу не упоминает', !r7.ok && /ни одна не упоминает RE0777/.test(r7.out.join(' ')), r7.out.join(' / '));
     }
   } finally {
     rmSync(s.root, { recursive: true, force: true });
