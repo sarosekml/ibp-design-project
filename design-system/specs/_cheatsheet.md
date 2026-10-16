@@ -486,10 +486,10 @@ css: `components/atoms/Divider/Divider.css` · deps: [button]
 
 ## IconButton
 css: `components/atoms/IconButton/IconButton.css` · deps: [badge, spinner]
-**Оси:** тон (neutral/primary/danger/contrast) · размер (L/M/S = размеру иконки) · форма стейт-слоя (квадрат — по умолчанию / круг `.ibtn--circle`) · режим-переключатель (selected) · встроенный вариант (`--embedded`, без рипла) · бейдж.
+**Оси:** тон (neutral/primary/danger; на hover иконка → `-dark` токен тона) · размер (L/M/S = размеру иконки) · форма стейт-слоя (квадрат — по умолчанию / круг `.ibtn--circle`) · режим-переключатель (selected) · встроенный вариант (`--embedded`, без рипла) · бейдж.
 **Инварианты:** обязателен `aria-label` — нет видимого текста. Соседние IconButton: подложки (`::before`, 24 · 32 · 40 при иконке 16 · 20 · 24) не наезжают друг на друга — между иконками не меньше S 8 · M 12 · L 16; зазор между подложками — 0 или чётное по ситуации.
 **Корнер-кейсы:** `.ibtn{flex:none}` — не сжимается в тесном flex-ряду.
-**Классы:** .ibtn · .ibtn--neutral / --primary / --danger / --contrast · .ibtn--l / --m / --s · .ibtn--circle (круг, явный) · .ibtn--embedded · .ibtn--selected · .ibtn--loading · disabled · .is-hover / .is-pressed / .is-focus · .spin.spin--current · .ibtn__badge · aria-label · aria-pressed (форма по умолчанию — квадрат, radius-control; .ibtn--square — алиас, нооп)
+**Классы:** .ibtn · .ibtn--neutral / --primary / --danger · .ibtn--l / --m / --s · .ibtn--circle (круг, явный) · .ibtn--embedded · .ibtn--selected · .ibtn--loading · disabled · .is-hover / .is-pressed / .is-focus · .spin.spin--current · .ibtn__badge · aria-label · aria-pressed (форма по умолчанию — квадрат, radius-control; .ibtn--square — алиас, нооп)
 **Диагностика:** «Кнопка сжимается в тесном flex-ряду» → `.ibtn{flex:none}` — по спеке не должна сжиматься, проверить переопределение flex · «Скринридер не озвучивает кнопку» → отсутствует `aria-label`
 
 Безрамочная кнопка с одной иконкой и квадратным (скруглённым control) стейт-слоем (риплом).

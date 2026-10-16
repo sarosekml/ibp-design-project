@@ -3095,17 +3095,14 @@
 :where([data-theme]:not([data-theme="legacy"])) .ibtn--primary:where(:not([data-theme="legacy"] *)) {
   color: var(--color-accent-fg);
 }
-:where([data-theme]:not([data-theme="legacy"])) .ibtn--contrast:where(:not([data-theme="legacy"] *)) {
-  color: var(--color-fg-inverse);
-}
-:where([data-theme]:not([data-theme="legacy"])) .ibtn--contrast:hover:where(:not([data-theme="legacy"] *))::before, :where([data-theme]:not([data-theme="legacy"])) .ibtn--contrast.is-hover:where(:not([data-theme="legacy"] *))::before {
-  background: color-mix(in srgb, var(--color-fg-inverse) 18%, transparent);
-}
-:where([data-theme]:not([data-theme="legacy"])) .ibtn--contrast:active:where(:not([data-theme="legacy"] *))::before, :where([data-theme]:not([data-theme="legacy"])) .ibtn--contrast.is-pressed:where(:not([data-theme="legacy"] *))::before {
-  background: color-mix(in srgb, var(--color-fg-inverse) 30%, transparent);
+:where([data-theme]:not([data-theme="legacy"])) .ibtn--primary:where(:not(:disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .ibtn--disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .ibtn--embedded)):is(:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .is-hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) :active:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .is-pressed):where(:not([data-theme="legacy"] *)) {
+  color: var(--color-accent-fg-strong);
 }
 :where([data-theme]:not([data-theme="legacy"])) .ibtn:is(.ibtn--selected:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-pressed="true"]):where(:not([data-theme="legacy"] *)) {
   color: var(--color-accent-fg);
+}
+:where([data-theme]:not([data-theme="legacy"])) .ibtn:is(.ibtn--selected:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) [aria-pressed="true"]):where(:not(:disabled:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .ibtn--disabled)):is(:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .is-hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) :active:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .is-pressed):where(:not([data-theme="legacy"] *)) {
+  color: var(--color-accent-fg-strong);
 }
 :where([data-theme]:not([data-theme="legacy"])) .ibtn--embedded:hover:where(:not([data-theme="legacy"] *)), :where([data-theme]:not([data-theme="legacy"])) .ibtn--embedded.is-hover:where(:not([data-theme="legacy"] *)) {
   color: var(--color-accent-fg);

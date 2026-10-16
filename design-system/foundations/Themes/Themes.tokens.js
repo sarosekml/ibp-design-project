@@ -2661,33 +2661,13 @@ window.DS_THEMES = {
     },
     {
       "file": "components/atoms/IconButton/IconButton.css",
-      "line": 90,
-      "selector": ".ibtn--contrast",
+      "line": 102,
+      "selector": ".ibtn--primary:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed)",
       "prop": "color",
-      "from": "var(--text-on-dark)",
-      "value": "var(--color-fg-inverse)",
+      "from": "var(--primary-dark)",
+      "value": "var(--color-accent-fg-strong)",
       "kind": "роль",
-      "why": "тон Contrast — «для тёмных поверхностей» (спека IconButton)"
-    },
-    {
-      "file": "components/atoms/IconButton/IconButton.css",
-      "line": 100,
-      "selector": ".ibtn--contrast:hover::before, .ibtn--contrast.is-hover::before",
-      "prop": "background",
-      "from": "color-mix(in srgb, #fff 18%, transparent)",
-      "value": "color-mix(in srgb, var(--color-fg-inverse) 18%, transparent)",
-      "kind": "мимо токена",
-      "why": "стейт-слой тона Contrast — от цвета его иконки"
-    },
-    {
-      "file": "components/atoms/IconButton/IconButton.css",
-      "line": 101,
-      "selector": ".ibtn--contrast:active::before, .ibtn--contrast.is-pressed::before",
-      "prop": "background",
-      "from": "color-mix(in srgb, #fff 30%, transparent)",
-      "value": "color-mix(in srgb, var(--color-fg-inverse) 30%, transparent)",
-      "kind": "мимо токена",
-      "why": "стейт-слой тона Contrast — от цвета его иконки"
+      "why": "hover primary-иконки — тёмный тон акцента, как у embedded:active"
     },
     {
       "file": "components/atoms/IconButton/IconButton.css",
@@ -2698,6 +2678,16 @@ window.DS_THEMES = {
       "value": "var(--color-accent-fg)",
       "kind": "роль",
       "why": ""
+    },
+    {
+      "file": "components/atoms/IconButton/IconButton.css",
+      "line": 114,
+      "selector": ".ibtn:is(.ibtn--selected,[aria-pressed=\"true\"]):where(:not(:disabled,.ibtn--disabled)):is(:hover,.is-hover,:active,.is-pressed)",
+      "prop": "color",
+      "from": "var(--primary-dark)",
+      "value": "var(--color-accent-fg-strong)",
+      "kind": "роль",
+      "why": "hover выбранной иконки — тёмный тон акцента"
     },
     {
       "file": "components/atoms/IconButton/IconButton.css",

@@ -147,10 +147,10 @@
             <div class="docs-main">
 
 <header class="masthead">
-    <div class="meta"><span>Версия: <b>1.012</b></span><span>Обновлено: <b>14.10.2026</b></span></div>
+    <div class="meta"><span>Версия: <b>1.013</b></span><span>Обновлено: <b>16.10.2026</b></span></div>
     <p class="eyebrow">Дизайн-система · Компоненты</p>
     <h1>IconButton</h1>
-    <p class="lead">Безрамочная кнопка с одной иконкой и квадратным (скруглённым control) стейт-слоем (риплом). Цвет рипла соответствует цвету иконки. Тоны Neutral / Primary / Danger / Contrast, размеры L / M / S, состояния Default / Hover / Pressed / Focus / Disabled / Loading, режим-переключатель и встроенный вариант для полей ввода.</p>
+    <p class="lead">Безрамочная кнопка с одной иконкой и квадратным (скруглённым control) стейт-слоем (риплом). Цвет рипла соответствует цвету иконки. Тоны Neutral / Primary / Danger, размеры L / M / S, состояния Default / Hover / Pressed / Focus / Disabled / Loading, режим-переключатель и встроенный вариант для полей ввода.</p>
   </header>
 
 
@@ -205,12 +205,9 @@
   
 <div class="subsec" data-screen-label="Tones">
     <h3>Тоны</h3>
-    <p class="desc">Тон задаёт цвет иконки, а стейт-слой автоматически берёт полупрозрачный оттенок этого же цвета. <b>Neutral</b> — нейтральные действия, иконка <code class="tok">--secondary</code> (Active · Secondary, Emerald_200); <b>Primary</b> — акцентные (<code class="tok">--primary</code>); <b>Danger</b> — деструктивные, например удалить (<code class="tok">--error</code>); <b>Contrast</b> — для тёмных поверхностей (<code class="tok">--text-on-dark</code>).</p>
+    <p class="desc">Тон задаёт цвет иконки, а стейт-слой автоматически берёт полупрозрачный оттенок этого же цвета. <b>Neutral</b> — нейтральные действия, иконка <code class="tok">--secondary</code> (Active · Secondary, Emerald_200); <b>Primary</b> — акцентные (<code class="tok">--primary</code>); <b>Danger</b> — деструктивные, например удалить (<code class="tok">--error</code>). На Hover и Pressed иконка темнеет до <code class="tok">-dark</code> токена своего тона: <code class="tok">--secondary-dark</code>, <code class="tok">--primary-dark</code>, <code class="tok">--error-dark</code>.</p>
     <div class="panel">
       <div class="tonegrid" id="tonegrid"></div>
-    </div>
-    <div class="panel" style="margin-top:20px; background:var(--cgrey-800); border-color:var(--cgrey-800);">
-      <div class="row" id="contrast-row" style="gap:20px;"></div>
     </div>
   </div>
 
@@ -349,7 +346,7 @@
     <h2>Цвета</h2>
     <p class="desc">Компонент использует только семантические токены. Стейт-слой — это <code class="tok">color-mix</code> цвета иконки (<code class="tok">currentColor</code>) с прозрачным: 12% на Hover, 22% на Pressed.</p>
     <div class="panel" style="padding:0;overflow:hidden;">
-      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Раздел</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Hex</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Neutral</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--secondary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--secondary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#B8D6D3</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Primary</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Danger</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--error</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--error)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#E5625C</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Contrast</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-on-dark</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-on-dark)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#FFFFFF</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Disabled</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-inactive</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-inactive)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#AAB2B1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Neutral 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Pressed · Neutral 22%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Primary 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Danger 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Selected · Primary 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+      <div class="tbl" style="grid-template-columns:none;border:none;border-radius:0;"><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Раздел</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Токен</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Образец</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Hex</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Neutral</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--secondary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--secondary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#B8D6D3</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Primary</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--primary</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--primary)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#00AA9B</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Danger</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--error</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--error)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#E5625C</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Иконка (тон)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Disabled</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">--text-inactive</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><span style="display:inline-block;width:22px;height:22px;border-radius:var(--radius-xs);border:1px solid rgba(40,50,55,.12);vertical-align:middle;background:var(--text-inactive)"></span></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">#AAB2B1</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Neutral 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Pressed · Neutral 22%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Primary 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Hover · Danger 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px 1.22fr 1.44fr 1.13fr 0.77fr 0.77fr 8px;"><div class="tc tc--separator"></div><div class="tc"><span class="tc__row"><span class="tc__text">Стейт-слой (рипл)</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">Selected · Primary 12%</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text"><code class="tok">color-mix(in</code></span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
     </div>
     <div id="color-ref" style="display:none"></div>
   </section>
@@ -426,7 +423,7 @@ glyph = selected ? iconSelected : icon
 
 <footer class="page-foot">
     <span>Дизайн-система · IconButton</span>
-    <span>Neutral · Primary · Danger · Contrast — L / M / S</span>
+    <span>Neutral · Primary · Danger — L / M / S</span>
   </footer>
             </div><!-- /docs-main -->
             <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
@@ -541,13 +538,6 @@ function makeIB(o = {}) {
       cell.appendChild(makeIB({ tone, size:'l', icon, state:st, frozen:true, label:name }));
       g.appendChild(cell);
     });
-  });
-  // contrast on dark
-  const cr = document.getElementById('contrast-row');
-  const cap = document.createElement('span'); cap.style.cssText='font:var(--type-body-s); color:var(--swamp-300); margin-right:8px;'; cap.textContent='Contrast на тёмной поверхности:';
-  cr.appendChild(cap);
-  ['default','hover','pressed'].forEach(st=>{
-    cr.appendChild(makeIB({ tone:'contrast', size:'l', icon:'settings', state:st, frozen:true, label:'Настройки' }));
   });
 })();
 
@@ -716,7 +706,9 @@ document.getElementById('ic-good').innerHTML = UI.good;
       ['Neutral',  '--secondary', false],
       ['Primary',  '--primary', false],
       ['Danger',   '--error', false],
-      ['Contrast', '--text-on-dark', false],
+      ['Hover · Neutral', '--secondary-dark', false],
+      ['Hover · Primary', '--primary-dark', false],
+      ['Hover · Danger',  '--error-dark', false],
       ['Disabled', '--text-inactive', false],
     ]},
     { name:'Стейт-слой (рипл)', rows:[
@@ -778,7 +770,7 @@ document.getElementById('ic-good').innerHTML = UI.good;
   }
 
   controls.appendChild(select('Тон',
-    [['neutral','Neutral'],['primary','Primary'],['danger','Danger'],['contrast','Contrast']],
+    [['neutral','Neutral'],['primary','Primary'],['danger','Danger']],
     ()=>state.tone, v=>state.tone=v));
   controls.appendChild(select('Размер', [['l','L · 24 px'],['m','M · 20 px'],['s','S · 16 px']], ()=>state.size, v=>state.size=v));
   controls.appendChild(select('Иконка',
@@ -794,7 +786,6 @@ document.getElementById('ic-good').innerHTML = UI.good;
   controls.appendChild(ctlToggle('Бейдж','badge'));
 
   function render(){
-    const onDark = state.tone==='contrast';
     const o = {
       tone: state.tone, size: state.size, icon: state.icon, shape: state.shape,
       embedded: state.embedded, selected: state.selected, label: state.icon, frozen:true,
@@ -804,7 +795,6 @@ document.getElementById('ic-good').innerHTML = UI.good;
 
     preview.innerHTML='';
     const box = document.getElementById('pg-preview');
-    box.classList.toggle('dark', onDark);
     box.appendChild(makeIB(o));
 
     const cls=['ibtn','ibtn--'+state.tone,'ibtn--'+state.size];
@@ -917,7 +907,7 @@ document.getElementById('ic-good').innerHTML = UI.good;
 </button></script>
 <script type="text/plain" id="src-code-js">// Выжимка API (полный код — инлайн-скрипт страницы)
 function makeIB(o) {
-  // o: { tone:'neutral'|'primary'|'danger'|'contrast', size:'l'|'m'|'s', icon, shape:'circle'|'square', state, embedded?, selected?, badge? }
+  // o: { tone:'neutral'|'primary'|'danger', size:'l'|'m'|'s', icon, shape:'circle'|'square', state, embedded?, selected?, badge? }
   // button.ibtn.ibtn--<tone>.ibtn--<size>(.ibtn--circle)(.ibtn--embedded)(.ibtn--selected) → <i data-icon> / спиннер при loading
   // embedded — для ячеек таблиц/полей; selected — состояние «выбрано» (toggle)
 }</script>
@@ -928,7 +918,7 @@ function makeIB(o) {
    отдельный слой (::before), который появляется на hover/pressed и ВЫХОДИТ ЗА
    ГРАНИЦЫ кнопки, никак не влияя на её размер в потоке. Он же расширяет зону
    клика (pointer-events).
-   Tones:  neutral (--secondary) · primary · danger · contrast
+   Tones:  neutral (--secondary) · primary · danger
    States: default · hover · pressed · focus · selected · disabled · loading
    Shape:  square (default) · circle
    Variant: embedded (без стейт-слоя — для полей ввода/плотных тулбаров)
@@ -1010,8 +1000,7 @@ function makeIB(o) {
 .ibtn--neutral  { color: var(--secondary); }
 .ibtn--primary  { color: var(--primary); }
 .ibtn--danger   { color: var(--error); }
-.ibtn--contrast { color: var(--text-on-dark); }
-.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]):not([class*="ibtn--contrast"]) {
+.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]) {
   color: var(--secondary);
 }
 
@@ -1020,8 +1009,14 @@ function makeIB(o) {
 .ibtn.is-hover::before   { background: color-mix(in srgb, currentColor 12%, transparent); }
 .ibtn:active::before,
 .ibtn.is-pressed::before { background: color-mix(in srgb, currentColor 22%, transparent); }
-.ibtn--contrast:hover::before,   .ibtn--contrast.is-hover::before   { background: color-mix(in srgb, #fff 18%, transparent); }
-.ibtn--contrast:active::before,  .ibtn--contrast.is-pressed::before { background: color-mix(in srgb, #fff 30%, transparent); }
+
+/* Hover/pressed: иконка темнеет до -dark токена своего тона (без тона — как
+   neutral); стейт-слой следует за ней через currentColor. Исключения (disabled,
+   embedded) — в :where, чтобы не поднимать специфичность. */
+.ibtn--neutral:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed),
+.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]):where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--secondary-dark); }
+.ibtn--primary:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--primary-dark); }
+.ibtn--danger:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed)  { color: var(--error-dark); }
 
 /* ---------- selected (toggle on) ------------------------------------------
    Класс .ibtn--selected — форс-состояние витрины; реальный toggle несёт
@@ -1030,6 +1025,7 @@ function makeIB(o) {
 .ibtn:is(.ibtn--selected,[aria-pressed="true"])::before { background: color-mix(in srgb, var(--primary) 12%, transparent); }
 .ibtn:is(.ibtn--selected,[aria-pressed="true"]):hover::before,
 .ibtn:is(.ibtn--selected,[aria-pressed="true"]).is-hover::before { background: color-mix(in srgb, var(--primary) 20%, transparent); }
+.ibtn:is(.ibtn--selected,[aria-pressed="true"]):where(:not(:disabled,.ibtn--disabled)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--primary-dark); }
 
 /* ---------- variant: embedded (поля ввода / плотные тулбары) -------------- */
 /* Стейт-слоя нет; на hover иконка перекрашивается в primary. */

@@ -5,7 +5,7 @@
    отдельный слой (::before), который появляется на hover/pressed и ВЫХОДИТ ЗА
    ГРАНИЦЫ кнопки, никак не влияя на её размер в потоке. Он же расширяет зону
    клика (pointer-events).
-   Tones:  neutral (--secondary) · primary · danger · contrast
+   Tones:  neutral (--secondary) · primary · danger
    States: default · hover · pressed · focus · selected · disabled · loading
    Shape:  square (default) · circle
    Variant: embedded (без стейт-слоя — для полей ввода/плотных тулбаров)
@@ -87,8 +87,7 @@
 .ibtn--neutral  { color: var(--secondary); }
 .ibtn--primary  { color: var(--primary); }
 .ibtn--danger   { color: var(--error); }
-.ibtn--contrast { color: var(--text-on-dark); }
-.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]):not([class*="ibtn--contrast"]) {
+.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]) {
   color: var(--secondary);
 }
 
@@ -97,8 +96,14 @@
 .ibtn.is-hover::before   { background: color-mix(in srgb, currentColor 12%, transparent); }
 .ibtn:active::before,
 .ibtn.is-pressed::before { background: color-mix(in srgb, currentColor 22%, transparent); }
-.ibtn--contrast:hover::before,   .ibtn--contrast.is-hover::before   { background: color-mix(in srgb, #fff 18%, transparent); }
-.ibtn--contrast:active::before,  .ibtn--contrast.is-pressed::before { background: color-mix(in srgb, #fff 30%, transparent); }
+
+/* Hover/pressed: иконка темнеет до -dark токена своего тона (без тона — как
+   neutral); стейт-слой следует за ней через currentColor. Исключения (disabled,
+   embedded) — в :where, чтобы не поднимать специфичность. */
+.ibtn--neutral:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed),
+.ibtn:not([class*="ibtn--neutral"]):not([class*="ibtn--primary"]):not([class*="ibtn--danger"]):where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--secondary-dark); }
+.ibtn--primary:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--primary-dark); }
+.ibtn--danger:where(:not(:disabled,.ibtn--disabled,.ibtn--embedded)):is(:hover,.is-hover,:active,.is-pressed)  { color: var(--error-dark); }
 
 /* ---------- selected (toggle on) ------------------------------------------
    Класс .ibtn--selected — форс-состояние витрины; реальный toggle несёт
@@ -107,6 +112,7 @@
 .ibtn:is(.ibtn--selected,[aria-pressed="true"])::before { background: color-mix(in srgb, var(--primary) 12%, transparent); }
 .ibtn:is(.ibtn--selected,[aria-pressed="true"]):hover::before,
 .ibtn:is(.ibtn--selected,[aria-pressed="true"]).is-hover::before { background: color-mix(in srgb, var(--primary) 20%, transparent); }
+.ibtn:is(.ibtn--selected,[aria-pressed="true"]):where(:not(:disabled,.ibtn--disabled)):is(:hover,.is-hover,:active,.is-pressed) { color: var(--primary-dark); }
 
 /* ---------- variant: embedded (поля ввода / плотные тулбары) -------------- */
 /* Стейт-слоя нет; на hover иконка перекрашивается в primary. */
