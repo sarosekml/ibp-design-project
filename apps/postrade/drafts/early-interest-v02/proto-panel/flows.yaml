@@ -1,0 +1,244 @@
+# Сценарии показа прототипа Post — Досрочное погашение процентов v2 — панель прототипа.
+# Формат — .agents/proto-panel/README.md, раздел «flows.yaml».
+# После правки: node .agents/tools/proto-panel.mjs (пересобрать зеркало).
+version: 1
+lastState: 31
+flows:
+  - id: main
+    title: Основной путь
+    steps:
+      - state: 1
+        id: start
+        title: Стартовая страница — транш
+        page: Tranche.preview.html
+
+  - id: ei-tile
+    title: Тайл «Досрочное погашение процентов» на странице транша
+    desc: Пять видов листа состояний — условие, данные, права — и пометки о пересчёте
+    steps:
+      - state: 2
+        id: ei-tile-locked
+        title: Нет рассчитанных платежей
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=locked
+        note: «Для внесения досрочных платежей рассчитайте процентные платежи» — без стрелки и кнопки; у «Процентных платежей» — «Рассчитать».
+      - state: 3
+        id: ei-tile-none-edit
+        title: Нет данных, редактирование доступно
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=none
+        note: Стрелка в шапке ведёт на страницу, «Новый платеж →» — на страницу с поднятым окном нового платежа.
+      - state: 4
+        id: ei-tile-none-view
+        title: Нет данных, редактирование недоступно
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=none&mode=view
+        note: Без права редактирования и без данных нет ни кнопки, ни стрелки.
+      - state: 5
+        id: ei-tile-data-edit
+        title: Есть данные, редактирование доступно
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=filled
+        note: Сводка по обработанным платежам — число, общая сумма, последний платёж и его сумма; платежи «В обработке» и «Не обработан» в счёт не идут.
+      - state: 6
+        id: ei-tile-data-view
+        title: Есть данные, редактирование недоступно
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=filled&mode=view
+        note: Сводка и стрелка на страницу; кнопки «Новый платеж» нет.
+      - state: 7
+        id: ei-tile-calc
+        title: Процентные платежи рассчитаны
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=locked
+        note: «Рассчитать» открывает тайл — он становится «Нет данных».
+        do:
+          - click: '#tr-interest-calc'
+      - state: 8
+        id: ei-tile-recalc
+        title: Нужен пересчёт
+        page: Tranche.preview.html?id=1024&tr=1024.d1.p1.i1.t1&eiState=filled&recalc=1
+        note: 'ПОД ВОПРОСОМ (комментарий К-1): аналитики хотят автоматический пересчёт после «Добавить» / «Сохранить» — тогда состояние и пометки не нужны. Сейчас: досрочное погашение изменено — пометки Note на «Процентных» и «Плановых платежах»; «Пересчитать» их снимает.'
+
+  - id: ei-page
+    title: Страница «Досрочное погашение процентов»
+    desc: Таблица платежей со статусами, действия, режим просмотра и обработка платежа
+    steps:
+      - state: 9
+        id: ei-page-empty
+        title: Платежей нет
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+        note: Шапка таблицы и «Нет данных»; справа — приоритет погашения.
+      - state: 10
+        id: ei-page-filled
+        title: Платежи со статусами
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled
+        note: «В обработке», «Обработан», «Не обработан»; у «В обработке» карандаш и корзина выключены.
+      - state: 11
+        id: ei-page-view
+        title: Только просмотр
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled&mode=view
+        note: Без «Новый платеж», колонки «Действия» и карандаша приоритета.
+      - state: 12
+        id: ei-page-edit
+        title: Изменение платежа
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=edit
+        note: Карандашом в колонке «Действия» или двойным кликом; после сохранения платёж снова «В обработке».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 13
+        id: ei-page-delete
+        title: Подтверждение удаления
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=delete
+        note: После «Удалить» — тост «Платеж удален. Процентные и плановые платежи будут пересчитаны».
+        do:
+          - waitFor: '#ei-delete-scrim:not([hidden])'
+      - state: 14
+        id: ei-page-process-ok
+        title: Платёж обработан
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add
+        note: «Добавить» — «В обработке» и тост; через 3 секунды «Обработан» и уведомление об успехе.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+          - fill:
+              target: '#ei-pay-date'
+              value: 31.03.2025
+          - fill:
+              target: '#ei-pay-amt'
+              value: '100000'
+          - click: '[data-ei-calc]'
+          - click: '[data-ei-submit]'
+      - state: 15
+        id: ei-page-process-fail
+        title: Платёж не обработан
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&open=add&outcome=fail
+        note: Тот же путь, но обработка заканчивается «Не обработан» и уведомлением об ошибке.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+          - fill:
+              target: '#ei-pay-date'
+              value: 31.03.2025
+          - fill:
+              target: '#ei-pay-amt'
+              value: '100000'
+          - click: '[data-ei-calc]'
+          - click: '[data-ei-submit]'
+
+  - id: ei-modal
+    title: Окно «Новый платеж»
+    desc: Расчёт задолженности на дату, ручная правка и все ошибки макета и решений человека
+    steps:
+      - state: 16
+        id: ei-modal-empty
+        title: Пустое окно
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-empty
+        note: «Нет данных» в таблице «Задолженность на дату».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 17
+        id: ei-modal-validate
+        title: Не заполнены поля
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-validate
+        note: «Рассчитать платежи» без даты и суммы — красные рамки полей.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 18
+        id: ei-modal-calc
+        title: Платежи рассчитаны
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-calc
+        note: Сумма гасит виды по приоритету — первый целиком, остаток во второй.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 19
+        id: ei-modal-manual
+        title: Ручная правка досрочной суммы
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-manual
+        note: Поле в каждой строке; любую строку, но не больше её начисленной суммы. «Общая досрочная сумма» под таблицей пересчитывается после ухода фокуса с поля.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+          - fill:
+              target: '[data-early-input][data-idx="1"]'
+              value: '50000'
+          - click: '#ei-pay-title'
+      - state: 20
+        id: ei-modal-nodebt
+        title: Нет начислений на дату
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-nodebt
+        note: '«На указанную дату начисления отсутствуют» — ошибка показывается только в сценарии панели: на обычной дате расчёт проходит.'
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 21
+        id: ei-modal-excess
+        title: Сумма больше задолженности
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-excess
+        note: «Сумма платежа превышает общую сумму задолженности»; таблица заполнена начисленными суммами.
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 22
+        id: ei-modal-notcalc
+        title: Платежи не рассчитаны
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-notcalc
+        note: «Добавить» без расчёта — «Не рассчитаны платежи».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 23
+        id: ei-modal-partial
+        title: Распределена не полностью
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-partial
+        note: Сумма строк меньше суммы платежа — «Сумма платежа распределена не полностью».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 24
+        id: ei-modal-row
+        title: Строка больше начисленной
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-row
+        note: «Досрочная сумма превышает начисленную сумму задолженности».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+      - state: 25
+        id: ei-modal-over
+        title: Сумма строк больше платежа
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=pay-err-over
+        note: «Сумма досрочных платежей превышает сумму платежа».
+        do:
+          - waitFor: '#ei-pay-scrim:not([hidden])'
+
+  - id: repay-order
+    title: Приоритет погашения
+    desc: Окно с перестановкой стрелками вверх и вниз
+    steps:
+      - state: 26
+        id: repay-order-open
+        title: Окно «Приоритет погашения»
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order
+        note: Все виды задолженности, приоритет 1 сверху; вид переставляют перетаскиванием за грип (линия вставки) или стрелками на одно место.
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+      - state: 27
+        id: repay-order-move
+        title: Вид опущен ниже
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order
+        note: Первый вид стал вторым, номера пересчитались; «Сохранить» обновит тайл и покажет тост «Приоритет погашения изменен».
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+          - click: '[data-move="down"]'
+      - state: 28
+        id: repay-order-save
+        title: Приоритет изменён
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order
+        note: После «Сохранить» тайл справа показывает новый порядок.
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+          - click: '[data-move="down"]'
+          - click: '[data-repay-save]'
+      - state: 29
+        id: repay-order-view
+        title: Тайл без права редактирования
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled&mode=view
+        note: Список приоритета без карандаша.
+      - state: 30
+        id: repay-order-modal-view
+        title: Окно на чтение
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1&demo=filled,order&mode=view
+        note: Режим виджета без стрелок и с кнопкой «Закрыть»; из тайла без права редактирования не открывается (вопрос 4 паспорта окна).
+        do:
+          - waitFor: '#repay-order-scrim:not([hidden])'
+      - state: 31
+        id: repay-order-default
+        title: Приоритет по умолчанию
+        page: EarlyInterestPayments.preview.html?id=1024&tr=1024.d1.p1.i1.t1
+        note: Порядок по умолчанию — как в справочнике видов задолженности.

@@ -1,0 +1,20 @@
+/* Окно «Новый платеж» — связанный артефакт тайла EarlyInterestRepaymentTile.
+   Только раскладка: форма в три колонки, кнопка расчёта, таблица «Задолженность на дату».
+   Цвета, шрифты и отступы тела окна даёт Modal; здесь токены ДС. */
+.lc-ei-pay .modal__body { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-ei-pay__form { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-ei-pay__row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-16); }
+.lc-ei-pay__calc { display: flex; }
+
+.lc-ei-pay__debt { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-ei-pay__debt-title { margin: 0; font: var(--type-body-m-strong); color: var(--text-primary); }
+.lc-ei-pay__table { border: 1px solid var(--border-light); border-radius: var(--radius-m); overflow: hidden; }
+.lc-ei-pay__empty[hidden] { display: none; }
+.lc-ei-pay__empty { display: flex; align-items: center; justify-content: center; padding: var(--space-16); font: var(--type-body-s); color: var(--text-primary); }
+
+/* Итоги под таблицей: серая подложка со скруглением 8px — как у блоков метрик deals-app */
+.lc-ei-pay__totals { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); padding: var(--space-12) var(--space-16); border-radius: var(--radius-m); background: var(--tertiary-bg); }
+.lc-ei-pay__totals[hidden] { display: none; }
+
+/* Строка с полем «Досрочной суммы» в фокусе */
+.lc-ei-pay__table .tbl__row:focus-within { background: var(--st-primary-light); }

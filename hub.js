@@ -154,6 +154,15 @@ window.IBPHub = [
     icon: 'folder'
   },
   {
+    id: 'early-interest-v02',
+    group: 'concepts',
+    title: 'Post — Досрочное погашение процентов v2',
+    desc: 'Транш: тайл «Досрочное погашение процентов», страница платежей со статусами обработки и приоритетом погашения, окно платежа с расчётом задолженности на дату (RE0025)',
+    href: 'apps/postrade/drafts/early-interest-v02/pages/Tranche.preview.html',
+    root: 'apps/postrade/drafts/early-interest-v02',
+    icon: 'folder'
+  },
+  {
     id: 'ibp-redesign-v1',
     group: 'concepts',
     title: 'Текущая система - Аналитик ДИД',

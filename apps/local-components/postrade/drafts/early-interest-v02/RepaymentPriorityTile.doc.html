@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!-- СГЕНЕРИРОВАН kit-build.mjs из apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/ — руками не править.
+     Паспорт, фрагмент, CSS и JS — в папке виджета; пересобрать —
+     node .agents/tools/kit-build.mjs (гейт сверяет, шаг kit). -->
+<html lang="ru">
+<head>
+<script src="../../../../ds-config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Приоритет погашения — Локальные компоненты</title>
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Splitter/Splitter.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/SegmentControl/SegmentControl.css">
+<link rel="stylesheet" href="../../../../../design-system/components/molecules/Tab/Tab.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/docs-split.css">
+<link rel="stylesheet" href="../../../../../design-system/docs-kit/ds-docs.css">
+<link rel="stylesheet" href="../../../kit.css">
+<!-- @lc-css -->
+<link rel="stylesheet" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.css">
+<link rel="stylesheet" href="../../../../postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.css">
+</head>
+<body>
+<div class="nav-layout">
+  <nav class="nav nav--fixed" id="nav" aria-label="Локальные компоненты">
+    <div class="nav__top">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню"><i data-icon="left-menu"></i></button>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель"><i data-icon="pin-menu"></i></button>
+    </div>
+    <div class="nav__list"></div>
+    <div class="nav__footer">
+      <a class="nav__user" href="../../../../../index.html" aria-label="Хаб проектов">
+        <span class="av av--circular av--m"><span class="av__text">АП</span></span>
+        <span class="nav__user-text"><span class="nav__user-name">Александров Петр Константинович</span><span class="nav__user-role">Финансист ДИД</span></span>
+      </a>
+      <button type="button" class="ibtn ibtn--neutral ibtn--m nav__logout" aria-label="Выйти"><i data-icon="logout"></i></button>
+    </div>
+  </nav>
+  <main class="page ds-split" data-screen-label="Приоритет погашения">
+    <div class="splitpane splitpane--h" data-splitter data-min="25" data-max="75" data-initial="42">
+      <div class="splitpane__panel splitpane__a app-pane-demo">
+        <div class="demo-stage">
+          <div class="pg__stage"><div class="pg__stagebox kit-stage kit-stage--tile" id="pg-stage">
+<!-- Локальный компонент «Приоритет погашения» — фрагмент страницы «Досрочное погашение процентов».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Показывает все виды задолженности по приоритету (номер в квадрате + название) и открывает
+     окно «Приоритет погашения».
+
+     Ось data-mode — права: edit (карандаш в шапке — окно на правку) | view (карандаша нет,
+     список только для чтения). Приоритет есть всегда (по умолчанию — исходный порядок),
+     поэтому data-state — только data.
+     Строки в разметке — демо; список и обработчик карандаша ставит RepaymentPriorityTile.js. -->
+<section class="tile lc-repay-order" data-state="data" data-mode="edit" id="tile-repay-order">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Приоритет погашения</h3></div></div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-repay-order__edit" data-repay-open aria-label="Изменить приоритет погашения"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="lc-repay-order__list" data-repay-list>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Процентная задолженность</span></div></div></div></div>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированная процентная задолженность</span></div></div></div></div>
+    </div>
+  </div>
+</section>
+          </div></div>
+        </div>
+      </div>
+      <div class="spl spl--h" role="separator" aria-orientation="horizontal" aria-label="Изменить высоту демо" tabindex="0"><span class="spl__grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="splitpane__panel splitpane__b app-pane-docs">
+        <div class="tabs tabs--horiz" role="tablist" data-tabs aria-label="Разделы страницы">
+          <button type="button" class="tab tab--m" id="tab-constructor" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-constructor" aria-controls="pane-constructor"><span class="tab__label">Конструктор</span></button>
+          <button type="button" class="tab tab--m tab--selected" id="tab-docs" role="tab" aria-selected="true" tabindex="0" data-pane="pane-docs" aria-controls="pane-docs"><span class="tab__label">Документация</span></button>
+          <button type="button" class="tab tab--m" id="tab-code" role="tab" aria-selected="false" tabindex="-1" data-pane="pane-code" aria-controls="pane-code"><span class="tab__label">Код</span></button>
+        </div>
+        <div class="tabs-body">
+          <div class="tabpane" id="pane-docs" role="tabpanel" aria-labelledby="tab-docs">
+            <div class="docs-layout">
+              <div class="docs-main">
+<header class="masthead">
+  <div class="meta"><span>Тип: <b>тайл</b></span><span>Версия: <b>2.000</b></span><span>Обновлено: <b>16.10.2026</b></span><span>Категория: <b>Транш</b></span></div>
+  <p class="eyebrow"><a class="inl" href="../../index.html">Локальные компоненты Post</a> · postrade/drafts/early-interest-v02</p>
+  <h1>Приоритет погашения</h1>
+  <p class="lead">Все виды процентной задолженности в порядке, в котором их гасит досрочный платёж, — с входом в окно «Приоритет погашения»</p>
+</header>
+<section class="section kit-md" data-screen-label="Паспорт">
+<h2>Паспорт</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Тип</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">тайл</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Модуль</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">apps/postrade/drafts/early-interest-v02</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Папка</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile">apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Пара во фронтенде</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">new</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Где стоит</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Страница «Досрочное погашение процентов» — правая колонка рядом с таблицей платежей</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Страницы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest-v02/pages/EarlyInterestPayments.preview.html">apps/postrade/drafts/early-interest-v02/pages/EarlyInterestPayments.html</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Открывает</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="RepaymentPriorityModal.doc.html">Окно «Приоритет погашения» (RepaymentPriorityModal)</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Владелец</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (16.10.2026)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Дизайнер</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роман Эсэф</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Требования</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">макеты «Section 1»<br>«Section 2»<br>«Section 3»<br>решения человека 16.10.2026 (RE0025)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000 · обновлено 16.10.2026</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Версия правил</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">2.000</span></span></div><div class="tc tc--separator"></div></div></div>
+</section>
+<section class="section kit-md" data-screen-label="Описание">
+<h2>Описание</h2>
+<p class="desc">Тайл страницы «Досрочное погашение процентов». Сумма досрочного платежа гасит процентную задолженность по видам в заданном порядке: сначала весь вид с приоритетом 1, остаток — вид с приоритетом 2 и далее. Приоритет один на весь инструмент. Тайл показывает все виды списком: номер приоритета в сером квадрате и название. Перестановка — в окне «Приоритет погашения», которое открывает карандаш в шапке (только с правом редактирования).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Раскладка">
+<h2>Раскладка</h2>
+<pre class="kit-md__pre"><code>Tile (заголовок «Приоритет погашения»)
+├── шапка: IconButton edit «Изменить приоритет погашения» (только data-mode=&quot;edit&quot;)
+└── тело — список Entity S: номер приоритета в квадрате (entity__icon--neutral) + название вида</code></pre>
+
+</section>
+<section class="section kit-md" data-screen-label="Компоненты">
+<h2>Компоненты</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,2.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Компонент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Откуда</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Варианты и ключевые параметры</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Tile</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Tile/Tile.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">заголовок, действие шапки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Entity</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/organisms/Entity/Entity.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">entity--s</code>, ведущий <code class="tok">entity__icon--neutral</code> с номером; название переносится по словам</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.1fr) minmax(0,2.2fr) minmax(0,2.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">IconButton</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">ДС — <code class="tok">design-system/components/atoms/IconButton/IconButton.md</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">edit</code>, <code class="tok">ibtn--neutral ibtn--m</code></span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Из чего собран</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Компоненты ДС</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../../design-system/components/organisms/Tile/Tile.html">Tile</a> · <a class="inl" href="../../../../../design-system/components/organisms/Entity/Entity.html">Entity</a> · <a class="inl" href="../../../../../design-system/components/atoms/IconButton/IconButton.html">IconButton</a></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.5fr) minmax(0,1.5fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><b>Файлы</b></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md">CHANGELOG.md</a> · <a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.css">RepaymentPriorityTile.css</a> · <a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html">RepaymentPriorityTile.html</a> · <a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.js">RepaymentPriorityTile.js</a> · <a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md">RepaymentPriorityTile.md</a> · <a class="inl" href="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/fixtures.json">fixtures.json</a></span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поля">
+<h2>Поля</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Поле</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип, единица</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Обязательное</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Номер</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место вида в приоритете</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">число от 1</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">позиция в <code class="tok">repaymentOrder.debtTypeCodes</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.9fr) minmax(0,1.4fr) minmax(0,0.8fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">вид задолженности</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">подпись кода</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">INTEREST_DEBT_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Права">
+<h2>Права</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Роль</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Просмотр</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Редактирование</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист ДИД</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Финансист СБИ</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.2fr) minmax(0,0.9fr) minmax(0,1.6fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Роли, которые видят «Процентные схемы» и «Процентные периоды»</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">В режиме <code class="tok">view</code> карандаша нет, список остаётся (макет «Section 3»).</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Состояния">
+<h2>Состояния</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Состояние</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Есть в продукте</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Вид</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Загрузка (Loading)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (16.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данные есть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">список видов</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Заполнено частично</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Данных нет (Empty)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">нет</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">приоритет есть всегда — по умолчанию исходный порядок видов (допущение агента, вопрос 3)</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Ошибка (Error)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (16.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Обновление</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (16.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Редактирование доступно</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;edit&quot;</code> — карандаш в шапке</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Только просмотр (Disabled)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">да</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data-mode=&quot;view&quot;</code> — карандаша нет</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Нет права видеть</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">не решено (16.10.2026)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+<h3 class="kit-md__h3">Свои состояния</h3>
+<p class="desc">Своих состояний нет.</p>
+<h3 class="kit-md__h3">Все состояния рядом</h3>
+<p class="desc">Каждая комбинация состояния данных и режима прав — копия фрагмента виджета.</p>
+<div class="kit-cases" id="kit-cases"></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Обязательность заполнения">
+<h2>Обязательность заполнения</h2>
+<ul class="bullets"><li>Компонент обязателен к заполнению целиком: нет — приоритет задан по умолчанию.</li><li>Обязательные поля внутри: нет.</li><li>Что показывает, когда обязательное не заполнено: не применимо.</li><li>Что отдаёт наружу: ничего.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Переполнение">
+<h2>Переполнение</h2>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Случай</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Правило</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Длинный текст в поле</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Название переносится на следующую строку, номер остаётся по центру высоты строки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Много строк или записей</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Показываются все виды; тайл тянется на высоту колонки</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Узкая ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Названия переносятся</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.7fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Полная ширина</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Без изменений</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Поведение">
+<h2>Поведение</h2>
+<ul class="bullets"><li>Карандаш «Изменить приоритет погашения» → окно «Приоритет погашения» с перестановкой.</li><li>После «Сохранить» в окне → список показывает новый порядок, страница показывает тост «Приоритет погашения изменен».</li></ul>
+<h3 class="kit-md__h3">Связанные артефакты</h3>
+<p class="desc">Окно «Приоритет погашения» — <a class="inl" href="RepaymentPriorityModal.doc.html">RepaymentPriorityModal.md</a>. Тайл зовёт <code class="tok">opts.onOpen</code>, окно открывает страница.</p>
+
+</section>
+<section class="section kit-md" data-screen-label="Данные">
+<h2>Данные</h2>
+<h3 class="kit-md__h3">API — что нужно от бэкенда</h3>
+<p class="desc">Приоритет погашения инструмента (коды видов по порядку) и справочник подписей видов задолженности.</p>
+<h3 class="kit-md__h3">Mock — демо-данные прототипа</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Файл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Глобальная переменная</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Тип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Источник имён</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,2.4fr) minmax(0,3fr) minmax(0,3fr) minmax(0,1.3fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">data/early-interest-data.js</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">MOCK_EARLY_INTEREST_PAYMENTS.repaymentOrder</code>, <code class="tok">INTEREST_DEBT_TYPE_LABELS</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">InterestRepaymentOrderRsDto</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">invented (16.10.2026)</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Для разработчиков">
+<h2>Для разработчиков</h2>
+<h3 class="kit-md__h3">Параметры метки (Props)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.8fr) minmax(0,1.4fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Атрибут метки</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">На корне компонента</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Значения</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Смысл</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.8fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">class</code> (слияние)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">col-3</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">место на странице; ширина тайла фиксирована — 360px</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.8fr) minmax(0,1.4fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">id</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">tile-repay-order</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по нему страница находит тайл</span></span></div><div class="tc tc--separator"></div></div></div>
+<p class="desc">Режим ставит <code class="tok">PostTileRepaymentOrder.render(tile, { order, labels, mode, onOpen })</code>.</p>
+<h3 class="kit-md__h3">Соответствие файлов (Implementation mapping)</h3>
+<div class="tbl kit-tbl" data-table><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="th th--separator"></div><div class="th"><span class="th__label">Элемент</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Прототип</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th"><span class="th__label">Фронтенд (предложение)</span><span class="th__resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину колонки"></span></div><div class="th th--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Тайл</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.html</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">src/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.tsx</code></span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Стили</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">RepaymentPriorityTile.css</code></span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">по соглашениям модуля</span></span></div><div class="tc tc--separator"></div></div><div class="tbl__row" style="grid-template-columns:8px minmax(0,0.8fr) minmax(0,3fr) minmax(0,2.8fr) 8px;"><div class="tc tc--separator"></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">Вид по данным</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text"><code class="tok">RepaymentPriorityTile.js</code> (<code class="tok">PostTileRepaymentOrder.render</code>)</span></span></div><div class="tc tc--wrap"><span class="tc__row"><span class="tc__text">—</span></span></div><div class="tc tc--separator"></div></div></div>
+
+</section>
+<section class="section kit-md" data-screen-label="Осознанные отклонения">
+<h2>Осознанные отклонения</h2>
+<ul class="bullets"><li>Ширина тайла фиксирована — 360px, а не колонки сетки (требование человека 16.10.2026); сенсор Б10 даёт замечание.</li></ul>
+
+</section>
+<section class="section kit-md" data-screen-label="Открытые вопросы">
+<h2>Открытые вопросы</h2>
+<ol class="kit-md__ol"><li>Пары во фронтенде нет — имя наше (16.10.2026).</li><li>Владелец компонента — <code class="tok">не решено (16.10.2026)</code>.</li><li>Допущение агента (12.10.2026): приоритет есть всегда — пока его не меняли, действует исходный порядок видов из справочника; состояния «приоритет не задан» нет.</li><li>На макете «Отложная капитализированная задолженность» — опечатка, в прототипе «Отложенная капитализированная задолженность» (решение человека, 16.10.2026).</li><li>Без права редактирования у тайла нет ни карандаша, ни «Посмотреть» (макет «Section 3») — решено человеком 16.10.2026: кнопки убираем, порядок виден и без окна.</li></ol>
+
+</section>
+<footer class="page-foot"><p class="desc">Страница собрана из паспорта <code class="tok">apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md</code> и файлов виджета. Правится паспорт и виджет, затем <code class="tok">node .agents/tools/kit-build.mjs</code>.</p></footer>
+              </div>
+              <nav class="docs-toc" id="docs-toc" aria-label="Содержание страницы"></nav>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-constructor" role="tabpanel" aria-labelledby="tab-constructor" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Конструктор</h2>
+                <p class="desc">Состояния данных — из селекторов <code class="tok">[data-state]</code> в CSS виджета, режимы прав — из <code class="tok">[data-mode]</code>.</p>
+                <div class="pg__controls" id="pg-controls"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabpane" id="pane-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+            <div class="docs-layout">
+              <div class="docs-main">
+                <h2>Код компонента</h2>
+                <p class="desc">Файлы виджета как есть, из <code class="tok">apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/</code>.</p>
+                <div class="segctrl segctrl--s code-switch" role="radiogroup" aria-label="Язык кода" data-segctrl>
+                  <div class="segctrl__thumb"></div>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="true" data-lang="html"><span class="segctrl__label">HTML</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="css"><span class="segctrl__label">CSS</span></button>
+                  <button type="button" class="segctrl__item" role="radio" aria-checked="false" data-lang="js"><span class="segctrl__label">JS</span></button>
+                </div>
+                <div class="code-panel code-view" data-view="html"><pre><code id="code-out-html"></code></pre></div>
+                <div class="code-panel code-view" data-view="css" hidden><pre><code id="code-out-css"></code></pre></div>
+                <div class="code-panel code-view" data-view="js" hidden><pre><code id="code-out-js"></code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<!-- Соседние фрагменты — как на странице-хозяине (apps/postrade/drafts/early-interest-v02/pages/EarlyInterestPayments.html): окна и подчасти, которые открывает виджет. -->
+<!-- Связанный артефакт тайла «Приоритет погашения»: окно с приоритетом погашения процентной
+     задолженности инструмента. Все виды задолженности списком Entity; приоритет 1 — сверху,
+     гасится первым. Приоритет меняется стрелками вверх / вниз в строке.
+
+     Ось data-mode на .modal — права: edit (стрелки, «Отменить» + «Сохранить») | view (только
+     список и «Закрыть»). Строки и режим ставит RepaymentPriorityModal.js
+     (PostModalRepaymentOrder); строки в разметке — демо.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце страницы. -->
+
+<div class="modal-scrim" id="repay-order-scrim" hidden>
+  <div class="modal modal--w4 lc-repay-order-modal" data-mode="edit" role="dialog" aria-modal="true" aria-labelledby="repay-order-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="repay-order-title">Приоритет погашения</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="note note--s">
+        <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+        <span class="note__text">Досрочный платёж гасит задолженность сверху вниз: сначала тип с приоритетом 1, остаток — следующий по порядку. Порядок один на весь инструмент.</span>
+      </p>
+      <div class="entity-list" data-repay-list>
+        <div class="entity entity--s" data-code="INTEREST">
+          <div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order-modal__num" aria-hidden="true">1</span></div>
+          <div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Процентная задолженность</span></div></div></div>
+          <div class="entity__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-move="up" aria-label="Выше: Процентная задолженность" disabled><i data-icon="chevron-up"></i></button>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-move="down" aria-label="Ниже: Процентная задолженность"><i data-icon="chevron-down"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-repay-order-modal__edit" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m lc-repay-order-modal__edit" data-repay-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--accent btn--m lc-repay-order-modal__view" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="../../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../../kit-data.js"></script>
+<script src="../../../kit-nav.js"></script>
+<script src="../../../kit-docpage.js"></script>
+<script src="../../../../postrade/drafts/early-interest-v02/data/tranche-data.js"></script>
+<script src="../../../../postrade/drafts/early-interest-v02/data/early-interest-data.js"></script>
+<script src="../../../../postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.js"></script>
+<script src="../../../../postrade/drafts/early-interest-v02/widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.js"></script>
+<script src="../../../../postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.js"></script>
+<script>
+window.IBPKitPage = {"id":"RepaymentPriorityTile","type":"tile","base":"../../..","hub":"../../../../../index.html","states":["data"],"modes":["edit","view"],"state":"data","mode":"edit","width":400,"scenario":false,"fixtures":{"_":"Демо-данные витрины: аргумент PostTileRepaymentOrder.render. order — коды по приоритету, labels — подписи; long — длинные подписи и много видов.","data":{"order":["INTEREST","CAPITALIZED_INTEREST","CAPITALIZED","CAPITALIZED_CAPITALIZED","DEFERRED_INTEREST","DEFERRED_CAPITALIZED"],"labels":{"INTEREST":"Процентная задолженность","CAPITALIZED_INTEREST":"Капитализированная процентная задолженность","CAPITALIZED":"Капитализированная задолженность","CAPITALIZED_CAPITALIZED":"Капитализированная капитализированная задолженность","DEFERRED_INTEREST":"Отложенная процентная задолженность","DEFERRED_CAPITALIZED":"Отложенная капитализированная задолженность"}},"long":{"order":["A","B","C","D","E","F","G","H","I","J"],"labels":{"A":"Капитализированная отложенная задолженность по процентам за пользование кредитом","B":"Отложенная задолженность по процентам на просроченную задолженность","C":"Капитализированная задолженность"}}}};
+window.IBPKitDoc.page(window.IBPKitPage);
+</script>
+<script src="../../../../../design-system/docs-kit/docs-split.js"></script>
+<script type="text/plain" id="src-code-html">
+<!-- Локальный компонент «Приоритет погашения» — фрагмент страницы «Досрочное погашение процентов».
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Показывает все виды задолженности по приоритету (номер в квадрате + название) и открывает
+     окно «Приоритет погашения».
+
+     Ось data-mode — права: edit (карандаш в шапке — окно на правку) | view (карандаша нет,
+     список только для чтения). Приоритет есть всегда (по умолчанию — исходный порядок),
+     поэтому data-state — только data.
+     Строки в разметке — демо; список и обработчик карандаша ставит RepaymentPriorityTile.js. -->
+<section class="tile lc-repay-order" data-state="data" data-mode="edit">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Приоритет погашения</h3></div></div>
+    <div class="tile__actions">
+      <button type="button" class="ibtn ibtn--neutral ibtn--m lc-repay-order__edit" data-repay-open aria-label="Изменить приоритет погашения"><i data-icon="edit"></i></button>
+    </div>
+  </header>
+  <div class="tile__body">
+    <div class="lc-repay-order__list" data-repay-list>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">1</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Процентная задолженность</span></div></div></div></div>
+      <div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">2</span></div><div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Капитализированная процентная задолженность</span></div></div></div></div>
+    </div>
+  </div>
+</section>
+</script>
+<script type="text/plain" id="src-code-css">
+/* Локальный компонент «Приоритет погашения».
+   Только раскладка списка и показ карандаша по оси data-mode. Токены ДС. */
+
+.lc-repay-order .tile__body { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-repay-order__list { display: flex; flex-direction: column; gap: var(--space-16); }
+
+/* Номер приоритета — серый квадрат слева от названия (макет «Section 1») */
+.lc-repay-order__num { font: var(--type-body-s); color: var(--text-secondary); }
+.lc-repay-order .entity__label { font: var(--type-body-m); }
+
+/* Только просмотр — карандаша нет */
+.lc-repay-order[data-mode="view"] .lc-repay-order__edit { display: none; }
+</script>
+<script type="text/plain" id="src-code-js">
+/* ============================================================
+   RepaymentPriorityTile.js — вид тайла «Приоритет погашения».
+
+   API:
+     PostTileRepaymentOrder.render(tile, opts)
+       opts.order   — коды видов задолженности по приоритету (первый — приоритет 1)
+       opts.labels  — подписи кодов { CODE: 'Подпись' }
+       opts.mode    — 'edit' | 'view' (data-mode, по умолчанию edit)
+       opts.onOpen  — вызывается по карандашу шапки; окно открывает страница
+   Показываются все виды: номер приоритета в квадрате, рядом название.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function row(i, label) {
+    return '<div class="entity entity--s"><div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order__num" aria-hidden="true">' + (i + 1) + '</span></div>'
+      + '<div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">' + esc(label) + '</span></div></div></div></div>';
+  }
+
+  function render(tile, opts) {
+    if (!tile) return;
+    opts = opts || {};
+    var order = opts.order || [], labels = opts.labels || {};
+    tile.setAttribute('data-mode', opts.mode === 'view' ? 'view' : 'edit');
+
+    var list = tile.querySelector('[data-repay-list]');
+    if (list) list.innerHTML = order.map(function (code, i) { return row(i, labels[code] || code); }).join('');
+
+    if (!tile.__repayBound) {
+      tile.__repayBound = true;
+      tile.addEventListener('click', function (e) {
+        if (tile.getAttribute('data-mode') === 'view') return;
+        if (e.target.closest('[data-repay-open]') && tile.__repayOpen) tile.__repayOpen();
+      });
+    }
+    tile.__repayOpen = opts.onOpen || null;
+  }
+
+  window.PostTileRepaymentOrder = { render: render };
+})();
+</script>
+</body>
+</html>

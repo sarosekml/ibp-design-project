@@ -1,0 +1,37 @@
+/* Окно «Приоритет погашения» — связанный артефакт тайла RepaymentPriorityTile.
+   Только раскладка тела, рамки строк и показ кнопок по оси data-mode. Токены ДС. */
+.lc-repay-order-modal .modal__body { display: flex; flex-direction: column; gap: var(--space-16); }
+
+/* Строка приоритета — в рамке, номер в сером квадрате (макет «Modal_») */
+.lc-repay-order-modal .entity-list { display: flex; flex-direction: column; gap: var(--space-8); }
+.lc-repay-order-modal .entity { border: 1px solid var(--border-primary); border-radius: var(--radius-m); padding: var(--space-8) var(--space-12); }
+.lc-repay-order-modal__num { font: var(--type-body-s); color: var(--text-secondary); }
+.lc-repay-order-modal .entity__label { font: var(--type-body-m); }
+
+/* Правка — стрелки в строках, «Отменить» и «Сохранить»; просмотр — только «Закрыть» */
+.lc-repay-order-modal[data-mode="view"] .entity__actions,
+.lc-repay-order-modal[data-mode="view"] .entity__drag,
+.lc-repay-order-modal[data-mode="view"] .lc-repay-order-modal__edit,
+.lc-repay-order-modal[data-mode="edit"] .lc-repay-order-modal__view { display: none; }
+
+/* Кнопки «выше» / «ниже» — по центру высоты строки (в Entity они по умолчанию у верхнего края) */
+.lc-repay-order-modal .entity__actions { align-self: center; }
+
+/* Перетаскивание: строка в руке бледнеет, место вставки — линия в зазоре между строками
+   (2px --primary-dark, как .kbcol__guide у Kanban), а не подсветка рамки строки */
+.lc-repay-order-modal .entity { position: relative; }
+.lc-repay-order-modal .entity.is-dragging { opacity: .4; }
+.lc-repay-order-modal .entity.drop-before::before,
+.lc-repay-order-modal .entity.drop-after::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: var(--radius-2xs);
+  background: var(--primary-dark);
+  pointer-events: none;
+}
+/* зазор между строками — space-8: линия по его середине */
+.lc-repay-order-modal .entity.drop-before::before { top: calc(-1 * var(--space-4) - 1px); }
+.lc-repay-order-modal .entity.drop-after::after { bottom: calc(-1 * var(--space-4) - 1px); }

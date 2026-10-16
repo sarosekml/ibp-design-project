@@ -1,0 +1,25 @@
+/* Локальный компонент «Досрочное погашение процентов».
+   Только внутренняя раскладка и показ блоков по осям data-calc, data-state, data-mode.
+   Цвета, шрифты, отступы — токены ДС. */
+
+.lc-early-int .tile__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-12); }
+.lc-early-int__text { margin: 0; font: var(--type-body-m); color: var(--text-secondary); }
+.lc-early-int__summary { width: 100%; }
+
+/* База — тексты, сводка и кнопка скрыты; нужное открывают оси */
+.lc-early-int__text,
+.lc-early-int__summary,
+.lc-early-int__fill { display: none; }
+
+.lc-early-int[data-calc="required"] .lc-early-int__text--locked { display: block; }
+.lc-early-int[data-calc="done"][data-state="empty"] .lc-early-int__text--empty { display: block; }
+.lc-early-int[data-calc="done"][data-state="data"] .lc-early-int__summary { display: grid; }
+
+/* «Новый платеж» — только у тайла без данных и только с правом редактирования */
+.lc-early-int[data-calc="done"][data-state="empty"][data-mode="edit"] .lc-early-int__fill { display: inline-flex; }
+
+/* «Недоступна к заполнению»: перехода на страницу нет */
+.lc-early-int[data-calc="required"] .lc-early-int__open { display: none; }
+
+/* Без права редактирования и без данных открывать нечего — стрелки нет (лист состояний 16.10.2026) */
+.lc-early-int[data-calc="done"][data-state="empty"][data-mode="view"] .lc-early-int__open { display: none; }

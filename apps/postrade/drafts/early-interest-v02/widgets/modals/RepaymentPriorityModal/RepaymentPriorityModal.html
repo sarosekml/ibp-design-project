@@ -1,0 +1,43 @@
+<!-- Связанный артефакт тайла «Приоритет погашения»: окно с приоритетом погашения процентной
+     задолженности инструмента. Все виды задолженности списком Entity; приоритет 1 — сверху,
+     гасится первым. Приоритет меняется стрелками вверх / вниз в строке.
+
+     Ось data-mode на .modal — права: edit (стрелки, «Отменить» + «Сохранить») | view (только
+     список и «Закрыть»). Строки и режим ставит RepaymentPriorityModal.js
+     (PostModalRepaymentOrder); строки в разметке — демо.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include в конце страницы. -->
+
+<div class="modal-scrim" id="repay-order-scrim" hidden>
+  <div class="modal modal--w4 lc-repay-order-modal" data-mode="edit" role="dialog" aria-modal="true" aria-labelledby="repay-order-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="repay-order-title">Приоритет погашения</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__body">
+      <p class="note note--s">
+        <span class="note__icon" aria-hidden="true"><i data-icon="info-circle"></i></span>
+        <span class="note__text">Досрочный платёж гасит задолженность сверху вниз: сначала тип с приоритетом 1, остаток — следующий по порядку. Порядок один на весь инструмент.</span>
+      </p>
+      <div class="entity-list" data-repay-list>
+        <div class="entity entity--s" data-code="INTEREST">
+          <div class="entity__lead"><span class="entity__icon entity__icon--neutral lc-repay-order-modal__num" aria-hidden="true">1</span></div>
+          <div class="entity__main"><div class="entity__titles"><div class="entity__labelrow"><span class="entity__label">Процентная задолженность</span></div></div></div>
+          <div class="entity__actions">
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-move="up" aria-label="Выше: Процентная задолженность" disabled><i data-icon="chevron-up"></i></button>
+            <button type="button" class="ibtn ibtn--neutral ibtn--l" data-move="down" aria-label="Ниже: Процентная задолженность"><i data-icon="chevron-down"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m lc-repay-order-modal__edit" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m lc-repay-order-modal__edit" data-repay-save><span class="btn__label">Сохранить</span></button>
+        <button type="button" class="btn btn--accent btn--m lc-repay-order-modal__view" data-modal-close><span class="btn__label">Закрыть</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

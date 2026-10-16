@@ -1,0 +1,30 @@
+{
+  "_": "Демо-данные витрины. options — валюта, задолженность по процентным периодам, приоритет погашения (коды видов) и подписи видов; edit — платёж, с которым окно открыто на изменение (дата ISO, распределение по видам).",
+
+  "options": {
+    "currencyCode": "RUB",
+    "periodDebts": [
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "accrued": { "INTEREST": 40000, "CAPITALIZED_INTEREST": 60000, "CAPITALIZED": 30000, "CAPITALIZED_CAPITALIZED": 25000, "DEFERRED_INTEREST": 15000, "DEFERRED_CAPITALIZED": 20000 } }
+    ],
+    "order": ["INTEREST", "CAPITALIZED_INTEREST", "CAPITALIZED", "CAPITALIZED_CAPITALIZED", "DEFERRED_INTEREST", "DEFERRED_CAPITALIZED"],
+    "debtLabels": {
+      "INTEREST": "Процентная задолженность",
+      "CAPITALIZED_INTEREST": "Капитализированная процентная задолженность",
+      "CAPITALIZED": "Капитализированная задолженность",
+      "CAPITALIZED_CAPITALIZED": "Капитализированная капитализированная задолженность",
+      "DEFERRED_INTEREST": "Отложенная процентная задолженность",
+      "DEFERRED_CAPITALIZED": "Отложенная капитализированная задолженность"
+    }
+  },
+  "edit": {
+    "paymentDate": "2025-03-31", "paymentAmount": 100000.00, "comment": "Текст комментария",
+    "allocations": [
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "INTEREST", "accruedAmount": 40000, "earlyAmount": 40000 },
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "CAPITALIZED_INTEREST", "accruedAmount": 60000, "earlyAmount": 60000 },
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "CAPITALIZED", "accruedAmount": 30000, "earlyAmount": 0 },
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "CAPITALIZED_CAPITALIZED", "accruedAmount": 25000, "earlyAmount": 0 },
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "DEFERRED_INTEREST", "accruedAmount": 15000, "earlyAmount": 0 },
+      { "periodStartDate": "2025-01-01", "periodEndDate": "2025-03-31", "debtTypeCode": "DEFERRED_CAPITALIZED", "accruedAmount": 20000, "earlyAmount": 0 }
+    ]
+  }
+}

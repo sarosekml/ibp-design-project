@@ -1,0 +1,12 @@
+/* Локальный компонент «Приоритет погашения».
+   Только раскладка списка и показ карандаша по оси data-mode. Токены ДС. */
+
+.lc-repay-order .tile__body { display: flex; flex-direction: column; gap: var(--space-16); }
+.lc-repay-order__list { display: flex; flex-direction: column; gap: var(--space-16); }
+
+/* Номер приоритета — серый квадрат слева от названия (макет «Section 1») */
+.lc-repay-order__num { font: var(--type-body-s); color: var(--text-secondary); }
+.lc-repay-order .entity__label { font: var(--type-body-m); }
+
+/* Только просмотр — карандаша нет */
+.lc-repay-order[data-mode="view"] .lc-repay-order__edit { display: none; }

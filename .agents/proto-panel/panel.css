@@ -16,7 +16,7 @@
   position: fixed;
   right: var(--space-24);
   bottom: var(--space-24);
-  z-index: calc(var(--modal-z) - 1);
+  z-index: calc(var(--modal-z) + 30); /* выше модалок страницы: панель всегда доступна */
   display: flex;
   align-items: center;
   gap: var(--space-8);
@@ -386,3 +386,7 @@
 .pp-map__state { text-decoration: none; cursor: pointer; }
 .pp-map--tree .pp-map__states { padding-inline-start: var(--space-16); }
 .pp-map__empty { margin: 0; color: var(--text-secondary); }
+
+/* Слои панели выше любых модалок страницы: кнопка (root) < панель (drawer) < её окна */
+#pp-drawer.modal-scrim { z-index: calc(var(--modal-z) + 40); }
+.pp-modal.pp-modal { z-index: calc(var(--modal-z) + 45); }

@@ -1,0 +1,91 @@
+<!-- Связанный артефакт тайла «Досрочное погашение процентов»: окно внесения и изменения досрочного
+     платежа процентов. Одна форма на оба случая — «Новый платеж» (кнопка «Добавить») и
+     «Изменение платежа» (кнопка «Сохранить»); заголовок и кнопку ставит
+     EarlyInterestRepaymentModal.js (PostModalEarlyInterest) по записи, с которой окно открыто.
+
+     Фрагмент вшивается ассемблером отдельной меткой ds-include — скрим должен лежать
+     в конце body, а не внутри тайла.
+
+     Значения в разметке — пустая форма. «Дата платежа» — InputDate с календарём, «Сумма платежа»
+     больше нуля, «Тип платежа» заполнен и не меняется, «Комментарий» необязателен. «Рассчитать
+     платежи» распределяет сумму по задолженности на дату в порядке приоритета; строки таблицы
+     рисует скрипт. Ошибка расчёта или добавления — Alert вверху окна (заголовок и текст),
+     пустые поля при расчёте — красная рамка без текста. -->
+
+<div class="modal-scrim" id="ei-pay-scrim" hidden>
+  <div class="modal modal--w7 lc-ei-pay" role="dialog" aria-modal="true" aria-labelledby="ei-pay-title">
+    <header class="modal__head">
+      <h2 class="modal__title" id="ei-pay-title">Новый платеж</h2>
+      <button type="button" class="ibtn ibtn--neutral ibtn--l" aria-label="Закрыть" data-modal-close><i data-icon="close"></i></button>
+    </header>
+
+    <div class="modal__alert" hidden>
+      <div class="alert alert--error alert--m alert--flush" data-alert-tone="error" role="alert">
+        <span class="alert__icon" aria-hidden="true"><i data-icon="alert-circle-filled"></i></span>
+        <div class="alert__body"><p class="alert__title" hidden></p><p class="alert__text"></p></div>
+      </div>
+    </div>
+
+    <div class="modal__body">
+      <form class="lc-ei-pay__form" id="ei-pay-form" onsubmit="return false" novalidate>
+        <div class="lc-ei-pay__row">
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-date"><span class="ds-label__text">Дата платежа</span></label>
+            <div class="inp__field">
+              <input class="inp__control" id="ei-pay-date" name="paymentDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+              <span class="inp__acts">
+                <button type="button" class="inp__act" aria-label="Очистить поле" hidden><i data-icon="close"></i></button>
+                <button type="button" class="inp__act" aria-label="Открыть календарь" aria-haspopup="dialog"><i data-icon="calendar"></i></button>
+              </span>
+            </div>
+          </div>
+          <div class="inp inp--m">
+            <label class="ds-label ds-label--wrap" for="ei-pay-amt"><span class="ds-label__text">Сумма платежа</span></label>
+            <div class="inp__field"><input class="inp__control" id="ei-pay-amt" name="paymentAmount" inputmode="decimal" autocomplete="off" data-amount><span class="inp__postfix" data-ei-currency>RUB</span></div>
+          </div>
+          <div class="inp inp--m inp--disabled">
+            <label class="ds-label ds-label--wrap" for="ei-pay-type"><span class="ds-label__text">Тип платежа</span></label>
+            <div class="inp__field"><input class="inp__control" id="ei-pay-type" name="paymentType" value="Погашение процентов (досрочное)" disabled></div>
+          </div>
+        </div>
+        <div class="inp inp--m inp--multiline">
+          <label class="ds-label ds-label--wrap" for="ei-pay-cmt"><span class="ds-label__text">Комментарий</span></label>
+          <div class="inp__field"><textarea class="inp__control" id="ei-pay-cmt" name="comment" rows="3"></textarea></div>
+        </div>
+        <div class="lc-ei-pay__calc">
+          <button type="button" class="btn btn--outline btn--s" data-ei-calc><i data-icon="calc"></i><span class="btn__label">Рассчитать платежи</span></button>
+        </div>
+      </form>
+
+      <section class="lc-ei-pay__debt" aria-labelledby="ei-pay-debt-title">
+        <h3 class="lc-ei-pay__debt-title" id="ei-pay-debt-title">Задолженность на дату</h3>
+        <div class="lc-ei-pay__table">
+          <div class="tbl" data-table id="ei-pay-tbl">
+            <div class="tbl__row tbl__row--head" style="grid-template-columns:8px 104px 104px minmax(240px,1fr) 72px 128px 144px 8px;">
+              <div class="th th--separator"></div>
+              <div class="th" data-col="periodStart"><span class="th__label">Дата начала ПП</span></div>
+              <div class="th" data-col="periodEnd"><span class="th__label">Дата оконч. ПП</span></div>
+              <div class="th" data-col="debtType"><span class="th__label">Вид задолженности</span></div>
+              <div class="th" data-col="currency"><span class="th__label">Валюта</span></div>
+              <div class="th th--right" data-col="accrued"><span class="th__label">Начисленная сумма</span></div>
+              <div class="th th--right" data-col="early"><span class="th__label">Досрочная сумма</span></div>
+              <div class="th th--separator"></div>
+            </div>
+          </div>
+          <div class="lc-ei-pay__empty" data-ei-debt-empty>Нет данных</div>
+        </div>
+        <div class="lc-ei-pay__totals" data-ei-totals hidden>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма задолженности</span></span><div class="rof__row"><span class="rof__value" data-ei-total-debt>0,00</span><span class="rof__affix" data-ei-currency>RUB</span></div></div>
+          <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая досрочная сумма</span></span><div class="rof__row"><span class="rof__value" data-ei-total-early>0,00</span><span class="rof__affix" data-ei-currency>RUB</span></div></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="modal__foot">
+      <div class="modal__foot-right">
+        <button type="button" class="btn btn--transparent btn--m" data-modal-close><span class="btn__label">Отменить</span></button>
+        <button type="button" class="btn btn--accent btn--m" data-ei-submit><span class="btn__label">Добавить</span></button>
+      </div>
+    </footer>
+  </div>
+</div>

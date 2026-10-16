@@ -1,0 +1,17 @@
+{
+  "_": "Демо-данные витрины: по объекту на вид тайла (аргумент PostTileEarlyInterest.render). state — locked | none | filled; payments — платежи со статусом, в сводку идут только PROCESSED; long — проверка переполнения (крупные суммы).",
+
+  "none":   { "state": "none",   "payments": [], "currencyCode": "RUB" },
+  "filled": { "state": "filled", "currencyCode": "RUB", "payments": [
+    { "statusCode": "PROCESSED",  "paymentDate": "2025-03-31", "paymentAmount": 250000.00 },
+    { "statusCode": "PROCESSED",  "paymentDate": "2025-06-30", "paymentAmount": 180500.50 },
+    { "statusCode": "PROCESSED",  "paymentDate": "2025-09-30", "paymentAmount": 40000.00 },
+    { "statusCode": "PROCESSING", "paymentDate": "2025-10-31", "paymentAmount": 90000.00 },
+    { "statusCode": "FAILED",     "paymentDate": "2025-11-30", "paymentAmount": 70000.00 }
+  ] },
+  "locked": { "state": "locked", "payments": [], "currencyCode": "RUB" },
+  "long":   { "state": "filled", "currencyCode": "RUB", "payments": [
+    { "statusCode": "PROCESSED", "paymentDate": "2025-01-31", "paymentAmount": 98765432109.99 },
+    { "statusCode": "PROCESSED", "paymentDate": "2025-12-31", "paymentAmount": 12345678901.01 }
+  ] }
+}

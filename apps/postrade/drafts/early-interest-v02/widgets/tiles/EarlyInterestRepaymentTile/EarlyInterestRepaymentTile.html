@@ -1,0 +1,27 @@
+<!-- Локальный компонент «Досрочное погашение процентов» — тайл страницы транша.
+     Вшивается общим сборщиком (.agents/tools/assemble.mjs) по метке ds-include на экране.
+     Здесь только разметка: внешние отступы и место в колонках задаёт экран.
+
+     Три оси, разметка держит все блоки сразу, нужный показывает EarlyInterestRepaymentTile.css:
+     data-calc  — условия: done (процентные платежи рассчитаны) | required (не рассчитаны —
+                  только строка причины, ни стрелки, ни кнопки);
+     data-state — данные: data (есть обработанные платежи — сводка) | empty (нет данных);
+     data-mode  — права: edit (есть «Новый платеж») | view (без кнопки; без данных и стрелки нет).
+     Оси, ссылки и сводку ставит EarlyInterestRepaymentTile.js; значения сводки в разметке — демо. -->
+<section class="tile lc-early-int" data-state="empty" data-mode="edit" data-calc="done">
+  <header class="tile__header">
+    <div class="tile__header-main"><div class="tile__title-row"><h3 class="tile__title">Досрочное погашение процентов</h3></div></div>
+    <div class="tile__actions"><a class="ibtn ibtn--neutral ibtn--m lc-early-int__open" href="#" aria-label="Открыть: Досрочное погашение процентов"><i data-icon="arrow-right"></i></a></div>
+  </header>
+  <div class="tile__body">
+    <p class="lc-early-int__text lc-early-int__text--locked">Для внесения досрочных платежей рассчитайте процентные платежи</p>
+    <p class="lc-early-int__text lc-early-int__text--empty">Досрочные погашения отсутствуют</p>
+    <div class="tile__grid lc-early-int__summary" style="grid-template-columns:repeat(2,1fr);">
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Внесено платежей</span></span><div class="rof__row"><span class="rof__value" data-ei-count>6</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Общая сумма</span></span><div class="rof__row"><span class="rof__value" data-ei-total>300 000 000,00</span><span class="rof__affix" data-ei-currency>RUB</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Последний платеж</span></span><div class="rof__row"><span class="rof__value" data-ei-last>30.09.2025</span></div></div>
+      <div class="rof"><span class="ds-label"><span class="ds-label__text">Последняя сумма</span></span><div class="rof__row"><span class="rof__value" data-ei-last-amount>40 000 000,00</span><span class="rof__affix" data-ei-currency>RUB</span></div></div>
+    </div>
+    <a class="btn btn--outline btn--s lc-early-int__fill" href="#"><span class="btn__label">Новый платеж</span><i data-icon="arrow-right"></i></a>
+  </div>
+</section>

@@ -95,6 +95,18 @@
   function appTitle() { var d = store.data(); return d && d.app && d.app.title ? d.app.title : ''; }
   function appId() { var d = store.data(); return d && d.app && d.app.id ? d.app.id : String(ctx.app || '').split('/').pop(); }
 
+  /* Панель всегда поверх страницы и модалок: Modal ДС при открытии гасит все дочерние узлы body
+     (inert + aria-hidden), кроме своих скримов, — кнопка панели оказывалась недоступной, пока
+     модалка открыта. Здесь инертность с корня панели снимается сразу, как только её поставили. */
+  function keepActive(node) {
+    function free() {
+      if (node.inert) node.inert = false;
+      if (node.hasAttribute('aria-hidden')) node.removeAttribute('aria-hidden');
+    }
+    free();
+    if (window.MutationObserver) new MutationObserver(free).observe(node, { attributes: true, attributeFilter: ['inert', 'aria-hidden'] });
+  }
+
   function buildRoot() {
     var root = document.createElement('div');
     root.className = 'pp-root';
@@ -943,6 +955,7 @@
     document.body.appendChild(root[1]);
     el.root = root[0];
     el.live = root[1];
+    keepActive(el.root);
     el.fab = document.getElementById('pp-fab');
     el.drawer = buildDrawer();
     document.body.appendChild(el.drawer);

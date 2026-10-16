@@ -14,6 +14,7 @@
     "ib/drafts/ai-bankster-prototype-v02",
     "postrade/deals-app",
     "postrade/drafts/early-interest",
+    "postrade/drafts/early-interest-v02",
     "postrade/drafts/tranche-page",
     "postrade/drafts/tranche-page-v02",
     "postrade/post-reports-app"
