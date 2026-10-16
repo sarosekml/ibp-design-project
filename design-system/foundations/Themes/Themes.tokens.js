@@ -4360,26 +4360,6 @@ window.DS_THEMES = {
       "why": ""
     },
     {
-      "file": "components/organisms/Table/TableSettings.css",
-      "line": 49,
-      "selector": ".col-item.drop-before",
-      "prop": "box-shadow",
-      "from": "inset 0 2px 0 0 var(--primary)",
-      "value": "inset 0 2px 0 0 var(--color-accent-border)",
-      "kind": "роль",
-      "why": ""
-    },
-    {
-      "file": "components/organisms/Table/TableSettings.css",
-      "line": 50,
-      "selector": ".col-item.drop-after",
-      "prop": "box-shadow",
-      "from": "inset 0 -2px 0 0 var(--primary)",
-      "value": "inset 0 -2px 0 0 var(--color-accent-border)",
-      "kind": "роль",
-      "why": ""
-    },
-    {
       "file": "components/organisms/TableCell/TableCell.css",
       "line": 65,
       "selector": ".tc:focus-visible",

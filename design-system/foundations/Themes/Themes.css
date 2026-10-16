@@ -3529,12 +3529,6 @@
 :where([data-theme]:not([data-theme="legacy"])) .dtable__body:where(:not([data-theme="legacy"] *))::-webkit-scrollbar-thumb:horizontal {
   border-color: var(--color-scrollbar);
 }
-:where([data-theme]:not([data-theme="legacy"])) .col-item.drop-before:where(:not([data-theme="legacy"] *)) {
-  box-shadow: inset 0 2px 0 0 var(--color-accent-border);
-}
-:where([data-theme]:not([data-theme="legacy"])) .col-item.drop-after:where(:not([data-theme="legacy"] *)) {
-  box-shadow: inset 0 -2px 0 0 var(--color-accent-border);
-}
 :where([data-theme]:not([data-theme="legacy"])) .tc:focus-visible:where(:not([data-theme="legacy"] *)) {
   box-shadow: inset 0 0 0 2px var(--color-focus-ring);
 }

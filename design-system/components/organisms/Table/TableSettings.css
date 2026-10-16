@@ -45,9 +45,23 @@
   padding: 8px 0;
 }
 .col-item.is-dragging { opacity: .4; }
-/* индикатор места вставки — линия --primary (как .tbl__guide) */
-.col-item.drop-before { box-shadow: inset 0 2px 0 0 var(--primary); }
-.col-item.drop-after  { box-shadow: inset 0 -2px 0 0 var(--primary); }
+/* Индикатор места вставки — линия в зазоре между строками, как .kbcol__guide у Kanban:
+   2px, --primary-dark (контраст 3:1 по WCAG 1.4.11), не подсветка рамки строки.
+   Линия — псевдоэлемент на границе соседних строк: раскладка не сдвигается. */
+.col-item { position: relative; }
+.col-item.drop-before::before,
+.col-item.drop-after::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: var(--radius-2xs);
+  background: var(--primary-dark);
+  pointer-events: none;
+}
+.col-item.drop-before::before { top: -1px; }
+.col-item.drop-after::after { bottom: -1px; }
 
 /* компоненты строки */
 .col-item .cb       { flex: 1; min-width: 0; }   /* чекбокс занимает свободное место */

@@ -172,4 +172,4 @@ status: curated
 | `.col-desc` | описание «Выберите столбцы для отображения» (Body M, `--text-secondary`) |
 | `.col-list` / `.col-item` | список колонок / строка (чекбокс видимости + pin + drag) |
 | `.col-item__pin` / `.col-item__drag` | кнопки закрепления / перетаскивания (ibtn neutral M) |
-| `.col-item.drop-before` / `.drop-after` | индикатор места вставки при перетаскивании (линия `--primary`) |
+| `.col-item.drop-before` / `.drop-after` | индикатор места вставки при перетаскивании: линия 2px `--primary-dark` в зазоре между строками (как у Kanban) |
