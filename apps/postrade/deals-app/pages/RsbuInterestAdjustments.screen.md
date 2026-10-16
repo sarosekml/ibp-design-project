@@ -40,10 +40,14 @@ widgets: [RsbuAdjustmentModal]
 |---|---|---|
 | 1 | Главная | `MainPage.html` |
 | 2 | Текущий портфель ДИД | `Portfolio.html` |
-| 3 | 348. МКС | `Deal.html?id=` |
-| 4 | 1.1.1. Договор займа (НКЛ) | `Deal.html?id=` |
-| 5 | 1.1.1.1. Транш | `Tranche.html?id=&tr=` |
+| 3 | `<номер>. <наименование сделки>` | `Deal.html?id=` |
+| 4 | `<номер инструмента> <его название>` | `Deal.html?id=` |
+| 5 | `<номер транша> <его название>` | `Tranche.html?id=&tr=` |
 | 6 (текущий) | Корректировки процентов РСБУ | — |
+
+Тексты крошек 3–5 — те же, что на странице транша (`Tranche.screen.md`, §2): из записи сделки и
+дерева продуктов, например «1067. Приобретение сети торговых центров» → «2.1.1. Договор займа (НКЛ)»
+→ «2.1.1.1. Транш».
 
 ## 3. Раскладка (Layout)
 
@@ -141,7 +145,7 @@ Page (Layout, nav--rail)
 ## 10. Данные (Data dependencies)
 
 `../data/tranche-data.js`: `window.MOCK_RSBU_ADJUSTMENTS` (тип `RsbuInterestAdjustmentsRsDto`, строка —
-`RsbuInterestAdjustmentRsDto`; список дат для выбора — `startDateOptions`; имена выдуманы 09.10.2026, DTO нет) и `window.MOCK_TRANCHE` для крошек.
+`RsbuInterestAdjustmentRsDto`; список дат для выбора — `startDateOptions`; имена выдуманы 09.10.2026, DTO нет) Крошки — из `../data/tranche-context.js` (сделка и дерево продуктов), не из `MOCK_TRANCHE`.
 Добавленные и изменённые строки живут в памяти страницы — после перезагрузки не сохраняются.
 
 ## 11. Соответствие файлов (Implementation mapping)
@@ -152,6 +156,7 @@ Page (Layout, nav--rail)
 | `widgets/modals/RsbuAdjustmentModal/` | окно «Новая корректировка» / «Редактирование корректировки» |
 | `pages/Tranche.html` | страница транша, карточка «Корректировки процентов РСБУ» ведёт сюда |
 | `data/tranche-data.js` | демо-данные |
+| `data/tranche-context.js` | сделка, договор и транш для крошек и возврата |
 | `proto-panel/flows.yaml` | сценарии панели прототипа (Alt+Shift+P): вид тайла, пустая страница, модалка, список, правка, удаление |
 
 ## 12. Доступность

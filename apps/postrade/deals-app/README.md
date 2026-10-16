@@ -488,6 +488,7 @@ deals-app/
 │   ├── mock-team.js                            ← Мок-данные ДИД — сотрудники банка для выпадающих списков окна «Команда
 │   ├── post-api.js                             ← PostApi — адаптер хранения данных направления Post.
 │   ├── product-tree-store.js                   ← ProductTreeStore — дерево продуктов текущей сделки.
+│   ├── tranche-context.js                      ← TrancheContext — какой транш открыт на странице и как он назван в крошк…
 │   └── tranche-data.js                         ← Транш — демо-данные страницы транша (window.MOCK_TRANCHE).
 ├── refs/
 │   └── Текущий портфель.md

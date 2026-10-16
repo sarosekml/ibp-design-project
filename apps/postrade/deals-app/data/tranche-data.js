@@ -4,6 +4,8 @@
    Обычный <script> (file://, без fetch). Подключается до экранного скрипта:
    <script src="../data/tranche-data.js"></script>.
    Значения — рыба по макету дизайнера 07.10.2026, правятся по ходу дизайна.
+   Номер и название транша, договора и сделки (шапка и крошки) сюда не входят:
+   их считает data/tranche-context.js из дерева продуктов и записи сделки.
    ========================================================================= */
 
 /**
@@ -31,10 +33,7 @@
  * Транш (страница транша).
  * Source: invented (07.10.2026).
  * @typedef {Object} TrancheRsDto
- * @property {string} trancheNumber               номер транша в дереве («1.1.1.1.»)
  * @property {string} productCode                 код продукта («НКЛ»)
- * @property {string} dealName                    номер и название сделки для крошек
- * @property {string} parentContractName          родительский договор для крошек
  * @property {string} counterpartyName            контрагент
  * @property {string} balanceCode                 баланс
  * @property {string} currencyCode                валюта транша, ISO 4217
@@ -57,10 +56,7 @@
 
 /** @type {TrancheRsDto} */
 window.MOCK_TRANCHE = {
-  trancheNumber: '1.1.1.1.',
   productCode: 'НКЛ',
-  dealName: '348. МКС',
-  parentContractName: '1.1.1. Договор займа (НКЛ)',
   counterpartyName: 'СамолетИнвестХолдинг inc',
   balanceCode: 'SBIL',
   currencyCode: 'RUB',

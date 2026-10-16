@@ -20,6 +20,7 @@
      view() → ProductTreeNodeView[]        — корни дерева с номерами, кнопками
                                              и меню, готовые к отрисовке
      node(id) → ProductTreeNodeView|null
+     path(id) → ProductTreeNodeView[]|null — путь от продукта ДИД до узла
      didCatalog() → продукты ДИД[]         — полный список для окна «Продукты ДИД»
      availableProducts(didId) → продукты[] — список окна «Продукты»
      availableInstruments(productId) → типы инструментов[] — окно «Инструменты»
@@ -330,6 +331,19 @@
     return hit;
   }
 
+  /* Путь от продукта ДИД до узла: [DID, PRODUCT, …, узел]; нет узла — null. */
+  function path(id) {
+    var hit = null;
+    (function scan(list, trail) {
+      list.forEach(function (v) {
+        if (hit) return;
+        var next = trail.concat(v);
+        if (v.id === id) hit = next; else scan(v.children, next);
+      });
+    })(view(), []);
+    return hit;
+  }
+
   function didCatalog() { return clone(window.PRODUCT_DID_CATALOG || []); }
 
   /* Продукты окна «Продукты». Окно на макете есть только у «Кредитный
@@ -632,6 +646,7 @@
     tree: function () { return clone(current.tree); },
     view: view,
     node: node,
+    path: path,
     didCatalog: didCatalog,
     availableProducts: availableProducts,
     availableInstruments: availableInstruments,

@@ -44,8 +44,8 @@
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
       <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
-      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
-      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор</a></li>
       <li class="crumbs__item crumbs__item--current">
         <span class="crumbs__current" aria-current="page" id="tr-crumb">Транш</span>
       </li>
@@ -266,6 +266,15 @@
 <!-- #sec:modals ── модальных окон на странице пока нет -->
 
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/tranche-context.js"></script>
 <script src="../data/tranche-data.js"></script>
 <script src="../widgets/tiles/RsbuInterestAdjustmentsTile/RsbuInterestAdjustmentsTile.js"></script>
 <script>
@@ -334,8 +343,6 @@
       fundingDate: date(t.fundingLink.fundingDate),
       fundingAmount: money(t.fundingLink.fundingAmount),
       fundingCurrencyCode: t.fundingLink.currencyCode,
-      dealName: t.dealName,
-      parentContractName: t.parentContractName,
       productCode: t.productCode,
       fixedRatePercent: String(t.fixedRatePercent),
       percent: '%',
@@ -356,46 +363,52 @@
     document.querySelectorAll('[data-f-show]').forEach(function (el) {
       el.hidden = !t[el.getAttribute('data-f-show')];
     });
-    var title = t.trancheNumber + ' Транш';
-    document.getElementById('tr-title').textContent = title;
-    document.getElementById('tr-crumb').textContent = title;
-    document.title = title + ' — IBP';
   }
 
-  /* Адрес: Tranche.html?id=<номер сделки>&tr=<id транша>. Без параметров — каркас
-     на демо-данных. Параметры переходят в крошки и на страницу корректировок. */
+  /* Адрес: Tranche.html?id=<номер сделки>&tr=<id транша>. Номер и название
+     транша, договора и сделки в шапке и крошках — из дерева продуктов и записи
+     сделки (TrancheContext), как на странице сделки. Без параметров — каркас:
+     первый транш первой сделки, где он есть. Параметры идут в крошки и на
+     страницу корректировок. */
   var IS_PREVIEW = /.preview.html$/.test(window.location.pathname);
-  var PARAMS = (function () {
-    var out = [];
-    ['id', 'tr'].forEach(function (k) {
-      var m = new RegExp('[?&]' + k + '=([^&]*)').exec(location.search);
-      if (m) out.push(k + '=' + m[1]);
-    });
-    return out.length ? '?' + out.join('&') : '';
-  })();
 
-  function crumbs() {
-    var a = document.querySelectorAll('[data-breadcrumbs] .crumbs__item a');
-    var dealPage = (IS_PREVIEW ? 'Deal.preview.html' : 'Deal.html');
-    var dealHref = dealPage + (PARAMS ? '?' + PARAMS.slice(1).split('&')[0] : '');
-    if (a[1]) a[1].setAttribute('href', 'Portfolio.html');
-    if (a[2]) a[2].setAttribute('href', dealHref);
-    if (a[3]) a[3].setAttribute('href', dealHref);
+  function head(ctx) {
+    var title = ctx.trancheLabel;
+    document.getElementById('tr-title').textContent = title;
+    document.title = title + ' — IBP';
+    var dealPage = IS_PREVIEW ? 'Deal.preview.html' : 'Deal.html';
+    var dealHref = dealPage + ctx.dealQuery;
+    window.TrancheContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null,
+      { href: 'Portfolio.html' },
+      { text: ctx.dealLabel, href: dealHref },
+      { text: ctx.parentLabel, href: dealHref },
+      { text: title }
+    ]);
   }
 
   /* Тайл «Корректировки процентов РСБУ»: locked | none | filled.
      Из данных; параметр адреса ?hardsState=… переопределяет (сценарии панели прототипа),
      ?hardsMode=view — без права редактирования (нет кнопки «Внести корректировку»). */
-  function rsbuState() {
+  function rsbuState(ctx) {
     var m = /[?&]hardsState=(locked|none|filled)/.exec(location.search);
     var st = m ? m[1] : window.MOCK_TRANCHE.rsbuInterestAdjustmentsState;
     var mode = /[?&]hardsMode=view/.test(location.search) ? 'view' : 'edit';
     window.PostTileRsbuAdjustments.render(document.getElementById('tile-rsbu-adjustments'), {
-      state: st, mode: mode, count: window.MOCK_RSBU_ADJUSTMENTS.adjustments.length, query: PARAMS
+      state: st, mode: mode, count: window.MOCK_RSBU_ADJUSTMENTS.adjustments.length,
+      query: ctx ? ctx.trancheQuery : ''
     });
   }
 
-  buildNav(); fill(); crumbs(); rsbuState();
+  /* Дерево продуктов подтягивает сохранённые правки (ProductTreeStore.ready) —
+     номер и название транша читаются после него. */
+  buildNav(); fill();
+  window.ProductTreeStore.ready.then(function () {
+    var ctx = window.TrancheContext.resolve(location.search);
+    if (ctx) head(ctx);
+    rsbuState(ctx);
+    if (window.dsIcons) window.dsIcons.apply(document);
+  });
   if (window.dsIcons) window.dsIcons.apply(document);
 })();
 </script>

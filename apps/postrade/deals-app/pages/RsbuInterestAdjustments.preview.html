@@ -29,9 +29,9 @@
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
       <li class="crumbs__item"><a class="link link--muted" href="MainPage.html">Главная</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
-      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
-      <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
-      <li class="crumbs__item"><a class="link link--muted" href="Tranche.html" id="rh-crumb-tranche">Транш</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Сделка</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Договор</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="Tranche.html">Транш</a></li>
       <li class="crumbs__item crumbs__item--current">
         <span class="crumbs__current" aria-current="page">Корректировки процентов РСБУ</span>
       </li>
@@ -163,6 +163,15 @@
 </div>
 
 <script src="../../../ds-body.js" data-ds="patterns/HomeRoles/ibp-home.js"></script>
+<script src="../data/mock-deals.js"></script>
+<script src="../data/deal-status-model.js"></script>
+<script src="../data/deals-store.js"></script>
+<script src="../data/post-api.js"></script>
+<script src="../data/mock-product-catalog.js"></script>
+<script src="../data/mock-fin-instruments.js"></script>
+<script src="../data/mock-deal-trees.js"></script>
+<script src="../data/product-tree-store.js"></script>
+<script src="../data/tranche-context.js"></script>
 <script src="../data/tranche-data.js"></script>
 <script src="../widgets/modals/RsbuAdjustmentModal/RsbuAdjustmentModal.js"></script>
 <script>
@@ -314,30 +323,28 @@
     if (d) openDelete(idxOfRow(d.closest('.tbl__row')));
   });
 
-  /* ---------- поля с data-f из данных транша ---------- */
+  /* ---------- крошки и возврат: сделка, договор и транш из дерева продуктов ----------
+     Адрес ?id=<сделка>&tr=<транш> идёт обратно на транш и в крошки
+     (Tranche.html?id=<сделка>&tr=<транш>); названия — как на странице транша
+     (TrancheContext). Дерево читается после ProductTreeStore.ready. */
   function fill() {
-    var t = window.MOCK_TRANCHE;
-    var values = { dealName: t.dealName, parentContractName: t.parentContractName };
-    document.querySelectorAll('[data-f]').forEach(function (el) {
-      var k = el.getAttribute('data-f');
-      if (k in values) el.textContent = values[k];
-    });
-    document.getElementById('rh-crumb-tranche').textContent = t.trancheNumber + ' Транш';
-    /* параметры ?id=&tr= идут обратно на транш и в крошки (Tranche.html?id=<сделка>&tr=<транш>) */
-    var ids = ['id', 'tr'].map(function (k) { var m = new RegExp('[?&]' + k + '=([^&]*)').exec(location.search); return m ? k + '=' + m[1] : ''; }).filter(Boolean);
-    var q = ids.length ? '?' + ids.join('&') : '';
-    var crumbs = document.querySelectorAll('[data-breadcrumbs] .crumbs__item a');
-    if (crumbs[1]) crumbs[1].setAttribute('href', 'Portfolio.html');
-    var dealQ = ids.length && ids[0].indexOf('id=') === 0 ? '?' + ids[0] : '';
-    if (crumbs[2]) crumbs[2].setAttribute('href', 'Deal.html' + dealQ);
-    if (crumbs[3]) crumbs[3].setAttribute('href', 'Deal.html' + dealQ);
+    var ctx = window.TrancheContext.resolve(location.search);
+    if (!ctx) return;
     var preview = /\.preview\.html$/.test(location.pathname);
-    var tranche = (preview ? 'Tranche.preview.html' : 'Tranche.html') + q;
-    document.getElementById('rh-crumb-tranche').setAttribute('href', tranche);
+    var dealHref = (preview ? 'Deal.preview.html' : 'Deal.html') + ctx.dealQuery;
+    var tranche = (preview ? 'Tranche.preview.html' : 'Tranche.html') + ctx.trancheQuery;
+    window.TrancheContext.paintCrumbs(document.querySelector('[data-breadcrumbs]'), [
+      null,
+      { href: 'Portfolio.html' },
+      { text: ctx.dealLabel, href: dealHref },
+      { text: ctx.parentLabel, href: dealHref },
+      { text: ctx.trancheLabel, href: tranche }
+    ]);
     document.getElementById('rh-return').setAttribute('href', tranche);
   }
 
-  buildNav(); fill(); render();
+  buildNav(); render();
+  window.ProductTreeStore.ready.then(fill);
   /* ?open=add — страница открыта кнопкой «Внести корректировку» с тайла: модалка поднята сразу */
   if (/[?&]open=add/.test(location.search)) openModal(-1);
   if (demoHas('edit')) openModal(0);
