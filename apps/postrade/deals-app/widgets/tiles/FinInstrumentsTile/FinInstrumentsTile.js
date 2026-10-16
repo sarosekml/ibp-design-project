@@ -186,7 +186,7 @@
 
   function headHTML(c, edit, open) {
     var pe = c.isTypeC
-      ? '<span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">ФИ типа С</span></span></span>' : '';
+      ? '<span class="tile__title-add"><span class="chip chip--s chip--fit lc-fin-card__pe"><span class="chip__label">Требуется переоценка</span></span></span>' : '';
     return '<header class="tile__header"><div class="tile__header-main">'
       + '<div class="tile__title-row"><h4 class="tile__title">' + esc(c.name) + '</h4>' + pe + '</div>'
       + subtitleHTML(c) + '</div>'

@@ -80,7 +80,7 @@
 .lc-deal-metrics[data-state="empty"] .lc-deal-metrics__empty { display: block; }
 .lc-deal-metrics[data-state="error"] .lc-deal-metrics__error { display: block; }
 
-/* Без ФИ типа С плашки нет совсем: пустая плашка читалась бы как «переоценки нет». */
+/* Без признака «Требуется переоценка» плашки нет совсем: пустая плашка читалась бы как «переоценки нет». */
 .lc-deal-metrics[data-pe="no"] .lc-deal-metrics__pe { display: none; }
 
 /* «Развернуть» — только когда есть что разворачивать. */

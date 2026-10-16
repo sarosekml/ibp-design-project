@@ -130,8 +130,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/DealFinancialInstrumentEditModal.doc.html",
       "owner": "FinInstrumentsTile",
       "stub": false,
-      "version": "1.001",
-      "updated": "09.10.2026"
+      "version": "1.002",
+      "updated": "16.10.2026"
     },
     {
       "id": "DealFinancialMetricsModal",
@@ -312,8 +312,8 @@ window.IBPKit = {
       "doc": "postrade/deals-app/FinInstrumentsTile.doc.html",
       "owner": null,
       "stub": false,
-      "version": "1.003",
-      "updated": "10.10.2026"
+      "version": "1.004",
+      "updated": "16.10.2026"
     },
     {
       "id": "InstrumentsCounterpartiesModal",
