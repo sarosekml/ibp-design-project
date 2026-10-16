@@ -149,7 +149,7 @@ window.IBPHub = [
     group: 'concepts',
     title: 'Post — Досрочные проценты',
     desc: 'Транш: карточка «Досрочные проценты», страница досрочных платежей процентов, окна «Новые проценты» и «Порядок погашения» (RE0017)',
-    href: 'apps/postrade/drafts/early-interest/pages/index.html',
+    href: 'apps/postrade/drafts/early-interest/pages/Tranche.preview.html',
     root: 'apps/postrade/drafts/early-interest',
     icon: 'folder'
   },

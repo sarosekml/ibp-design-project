@@ -24,7 +24,7 @@
 
   <div class="screen screen--app">
     <nav class="crumbs" aria-label="Хлебные крошки" data-breadcrumbs>
-      <li class="crumbs__item"><a class="link link--muted" href="index.html">Главная</a></li>
+      <li class="crumbs__item"><a class="link link--muted" href="#">Главная</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="#">Текущий портфель ДИД</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="#" data-f="dealName">348. МКС</a></li>
       <li class="crumbs__item"><a class="link link--muted" href="#" data-f="parentContractName">1.1.1. Договор займа (НКЛ)</a></li>
@@ -168,7 +168,7 @@
       + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__burger" aria-label="Свернуть меню">' + ic('left-menu') + '</button>'
       + '<button type="button" class="ibtn ibtn--neutral ibtn--m nav__pin" aria-pressed="false" aria-label="Закрепить панель">' + ic('pin-menu') + '</button>'
       + '</div><div class="nav__list">'
-      + '<a class="nav__item" href="index.html"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
+      + '<a class="nav__item" href="#"><span class="nav__ico">' + ic('main-page') + '</span><span class="nav__label">Главная</span></a>';
     IBPHome.itemsFor(role).forEach(function (g, i) {
       s += '<div class="nav__block' + (i === 0 ? ' nav__block--first' : '') + '"><div class="nav__block-label">' + g.label + '</div>';
       g.items.forEach(function (it) { s += itemHTML(it); });

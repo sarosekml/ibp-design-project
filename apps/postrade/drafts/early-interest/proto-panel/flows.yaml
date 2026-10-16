@@ -9,8 +9,8 @@ flows:
     steps:
       - state: 1
         id: start
-        title: Стартовая страница
-        page: index.html
+        title: Стартовая страница — транш
+        page: Tranche.preview.html
 
   - id: ei-tile
     title: Карточка «Досрочные проценты» на странице транша

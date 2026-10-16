@@ -7,7 +7,7 @@ window.ProtoPanelData = {
     "title": "Post \u2014 \u0414\u043e\u0441\u0440\u043e\u0447\u043d\u044b\u0435 \u043f\u0440\u043e\u0446\u0435\u043d\u0442\u044b"
   },
   "sources": {
-    "flows": "aa913fdb",
+    "flows": "4fa5ca4c",
     "comments": "e533f5f9"
   },
   "flowsHeader": [
@@ -25,8 +25,8 @@ window.ProtoPanelData = {
         {
           "state": 1,
           "id": "start",
-          "title": "\u0421\u0442\u0430\u0440\u0442\u043e\u0432\u0430\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430",
-          "page": "index.html",
+          "title": "\u0421\u0442\u0430\u0440\u0442\u043e\u0432\u0430\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u2014 \u0442\u0440\u0430\u043d\u0448",
+          "page": "Tranche.preview.html",
           "note": null,
           "recorded": null,
           "issues": [],
