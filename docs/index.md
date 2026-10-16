@@ -54,7 +54,7 @@
 <!-- @docs-index -->
 <!-- генерирует docs-index.mjs, руками не править -->
 
-Документов: 700.
+Документов: 714.
 
 ## Корень (4)
 
@@ -249,7 +249,7 @@
 | [.agents/skills/screen-spec/references/template.md](../.agents/skills/screen-spec/references/template.md) | Реестр сделок |
 | [.agents/skills/session-plan/SKILL.md](../.agents/skills/session-plan/SKILL.md) | Планирование захода: смета и границы сессии |
 
-## Приложения (477)
+## Приложения (487)
 
 | Документ | Аннотация |
 |---|---|
@@ -816,7 +816,9 @@
 
 | Документ | Аннотация |
 |---|---|
+| [apps/postrade/drafts/dev-specs/pages/Spec.screen.md](../apps/postrade/drafts/dev-specs/pages/Spec.screen.md) | Спецификация на разработку |
 | [apps/postrade/drafts/dev-specs/pages/index.screen.md](../apps/postrade/drafts/dev-specs/pages/index.screen.md) | Спецификации на разработку |
+| [apps/postrade/drafts/dev-specs/refs/EarlyInterestPayments/EarlyInterestPayments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/EarlyInterestPayments/EarlyInterestPayments.dev-spec.md) | Досрочное погашение процентов |
 | [apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md](../apps/postrade/drafts/dev-specs/refs/RsbuInterestAdjustments/RsbuInterestAdjustments.dev-spec.md) | Корректировки процентов РСБУ |
 
 ### apps/postrade/drafts/early-interest
@@ -825,7 +827,6 @@
 |---|---|
 | [apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.screen.md](../apps/postrade/drafts/early-interest/pages/EarlyInterestPayments.screen.md) | Досрочные проценты |
 | [apps/postrade/drafts/early-interest/pages/Tranche.screen.md](../apps/postrade/drafts/early-interest/pages/Tranche.screen.md) | Страница транша (концепт «Досрочные проценты») |
-| [apps/postrade/drafts/early-interest/pages/index.screen.md](../apps/postrade/drafts/early-interest/pages/index.screen.md) | Главная концепта «Досрочные проценты» |
 | [apps/postrade/drafts/early-interest/proto-panel/comments.md](../apps/postrade/drafts/early-interest/proto-panel/comments.md) | Комментарии к прототипу |
 | [apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/CHANGELOG.md) | Новые проценты — журнал изменений |
 | [apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md](../apps/postrade/drafts/early-interest/widgets/modals/EarlyInterestPaymentModal/EarlyInterestPaymentModal.md) | Окно «Новые проценты» |
@@ -836,13 +837,28 @@
 | [apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/CHANGELOG.md](../apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/CHANGELOG.md) | Порядок погашения — журнал изменений |
 | [apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.md](../apps/postrade/drafts/early-interest/widgets/tiles/InterestRepaymentOrderTile/InterestRepaymentOrderTile.md) | Порядок погашения |
 
+### apps/postrade/drafts/early-interest-v02
+
+| Документ | Аннотация |
+|---|---|
+| [apps/postrade/drafts/early-interest-v02/pages/EarlyInterestPayments.screen.md](../apps/postrade/drafts/early-interest-v02/pages/EarlyInterestPayments.screen.md) | Досрочное погашение процентов |
+| [apps/postrade/drafts/early-interest-v02/pages/Tranche.screen.md](../apps/postrade/drafts/early-interest-v02/pages/Tranche.screen.md) | Страница транша (концепт «Досрочное погашение процентов v2») |
+| [apps/postrade/drafts/early-interest-v02/proto-panel/comments.md](../apps/postrade/drafts/early-interest-v02/proto-panel/comments.md) | Комментарии к прототипу |
+| [apps/postrade/drafts/early-interest-v02/widgets/modals/EarlyInterestRepaymentModal/CHANGELOG.md](../apps/postrade/drafts/early-interest-v02/widgets/modals/EarlyInterestRepaymentModal/CHANGELOG.md) | Новый платеж — журнал изменений |
+| [apps/postrade/drafts/early-interest-v02/widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.md](../apps/postrade/drafts/early-interest-v02/widgets/modals/EarlyInterestRepaymentModal/EarlyInterestRepaymentModal.md) | Окно «Новый платеж» |
+| [apps/postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/CHANGELOG.md](../apps/postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/CHANGELOG.md) | Приоритет погашения (окно) — журнал изменений |
+| [apps/postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.md](../apps/postrade/drafts/early-interest-v02/widgets/modals/RepaymentPriorityModal/RepaymentPriorityModal.md) | Окно «Приоритет погашения» |
+| [apps/postrade/drafts/early-interest-v02/widgets/tiles/EarlyInterestRepaymentTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/EarlyInterestRepaymentTile/CHANGELOG.md) | Досрочное погашение процентов — журнал изменений |
+| [apps/postrade/drafts/early-interest-v02/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/EarlyInterestRepaymentTile/EarlyInterestRepaymentTile.md) | Досрочное погашение процентов |
+| [apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/CHANGELOG.md) | Приоритет погашения — журнал изменений |
+| [apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md](../apps/postrade/drafts/early-interest-v02/widgets/tiles/RepaymentPriorityTile/RepaymentPriorityTile.md) | Приоритет погашения |
+
 ### apps/postrade/drafts/tranche-page
 
 | Документ | Аннотация |
 |---|---|
 | [apps/postrade/drafts/tranche-page/pages/RsbuHards.screen.md](../apps/postrade/drafts/tranche-page/pages/RsbuHards.screen.md) | Харды в РСБУ |
 | [apps/postrade/drafts/tranche-page/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page/pages/Tranche.screen.md) | Страница транша |
-| [apps/postrade/drafts/tranche-page/pages/index.screen.md](../apps/postrade/drafts/tranche-page/pages/index.screen.md) | Главная концепта «Страница транша» |
 | [apps/postrade/drafts/tranche-page/proto-panel/comments.md](../apps/postrade/drafts/tranche-page/proto-panel/comments.md) | Комментарии к прототипу |
 
 ### apps/postrade/drafts/tranche-page-v02
@@ -851,7 +867,6 @@
 |---|---|
 | [apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/RsbuInterestAdjustments.screen.md) | Корректировки процентов РСБУ |
 | [apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/Tranche.screen.md) | Страница транша |
-| [apps/postrade/drafts/tranche-page-v02/pages/index.screen.md](../apps/postrade/drafts/tranche-page-v02/pages/index.screen.md) | Главная концепта «Страница транша v02» |
 | [apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md](../apps/postrade/drafts/tranche-page-v02/proto-panel/comments.md) | Комментарии к прототипу |
 
 ### apps/postrade/payments-app
@@ -951,7 +966,7 @@
 |---|---|
 | [apps/screen-map/README.md](../apps/screen-map/README.md) | Карта экранов |
 
-## Задачи и заметки (94)
+## Задачи и заметки (98)
 
 ### Архив/черновики
 
@@ -1037,6 +1052,10 @@
 | [docs/tasks/RE0020-lessons-digest.md](tasks/RE0020-lessons-digest.md) | Уроки: выжимка без дублей, форма записей, сверка путей, прогон страницы в DOM |
 | [docs/tasks/RE0021-task-template.md](tasks/RE0021-task-template.md) | Задачи: единый шаблон, шаблон ревью, handoff и ревью в docs/tasks, учёт токенов и времени по этапам |
 | [docs/tasks/RE0022-contour-run.md](tasks/RE0022-contour-run.md) | Контрольный заход в рабочем контуре: замеры гейта, прогона страниц и сборки экрана |
+| [docs/tasks/RE0023-contour-tool-fixes.md](tasks/RE0023-contour-tool-fixes.md) | Перенос правок и дефектов оснастки из контрольного захода в контуре |
+| [docs/tasks/RE0023-contour-tool-fixes.review.md](tasks/RE0023-contour-tool-fixes.review.md) | RE0023 — ревью: перенос правок и дефектов оснастки из контрольного захода в контуре |
+| [docs/tasks/RE0024-contour-speedup.md](tasks/RE0024-contour-speedup.md) | Ускорение работы в контуре банка по замерам контрольного захода |
+| [docs/tasks/RE0025-early-interest-v02.md](tasks/RE0025-early-interest-v02.md) | Досрочное погашение процентов v2: концепт по новым макетам и спека на разработку |
 | [docs/tasks/README.md](tasks/README.md) | Задачи: как заводить, какие файлы бывают, как считать затраты |
 
 ### Снимки задач
